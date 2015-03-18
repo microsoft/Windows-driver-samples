@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{1C3E1DE9-A703-46CB-B4E4-8CD906C9E6FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Forward", "Forward", "{433D0832-2B1B-46AB-94E8-0A7979ACA4CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BC0A3E55-CAE0-4CCE-BA15-0784AEF76215}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Passthrough", "Passthrough", "{7C717732-18C9-4892-A6FF-B4DD1D72C12B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sxbase", "base\sxbase.vcxproj", "{63FF1428-95CA-4751-A701-244D54A31BD9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "msforwardext", "samples\forward\msforwardext.vcxproj", "{404E1399-EA48-4CEE-A59E-EA0D4C01928A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63FF1428-95CA-4751-A701-244D54A31BD9} = {63FF1428-95CA-4751-A701-244D54A31BD9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mspassthroughext", "samples\passthrough\mspassthroughext.vcxproj", "{2339B4A8-60AF-4172-AC68-3159E6D001EC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63FF1428-95CA-4751-A701-244D54A31BD9} = {63FF1428-95CA-4751-A701-244D54A31BD9}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63FF1428-95CA-4751-A701-244D54A31BD9}.Debug|x64.ActiveCfg = Debug|x64
+		{63FF1428-95CA-4751-A701-244D54A31BD9}.Debug|x64.Build.0 = Debug|x64
+		{63FF1428-95CA-4751-A701-244D54A31BD9}.Release|x64.ActiveCfg = Release|x64
+		{63FF1428-95CA-4751-A701-244D54A31BD9}.Release|x64.Build.0 = Release|x64
+		{404E1399-EA48-4CEE-A59E-EA0D4C01928A}.Debug|x64.ActiveCfg = Debug|x64
+		{404E1399-EA48-4CEE-A59E-EA0D4C01928A}.Debug|x64.Build.0 = Debug|x64
+		{404E1399-EA48-4CEE-A59E-EA0D4C01928A}.Release|x64.ActiveCfg = Release|x64
+		{404E1399-EA48-4CEE-A59E-EA0D4C01928A}.Release|x64.Build.0 = Release|x64
+		{2339B4A8-60AF-4172-AC68-3159E6D001EC}.Debug|x64.ActiveCfg = Debug|x64
+		{2339B4A8-60AF-4172-AC68-3159E6D001EC}.Debug|x64.Build.0 = Debug|x64
+		{2339B4A8-60AF-4172-AC68-3159E6D001EC}.Release|x64.ActiveCfg = Release|x64
+		{2339B4A8-60AF-4172-AC68-3159E6D001EC}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63FF1428-95CA-4751-A701-244D54A31BD9} = {1C3E1DE9-A703-46CB-B4E4-8CD906C9E6FE}
+		{404E1399-EA48-4CEE-A59E-EA0D4C01928A} = {433D0832-2B1B-46AB-94E8-0A7979ACA4CA}
+		{2339B4A8-60AF-4172-AC68-3159E6D001EC} = {7C717732-18C9-4892-A6FF-B4DD1D72C12B}
+		{433D0832-2B1B-46AB-94E8-0A7979ACA4CA} = {BC0A3E55-CAE0-4CCE-BA15-0784AEF76215}
+		{7C717732-18C9-4892-A6FF-B4DD1D72C12B} = {BC0A3E55-CAE0-4CCE-BA15-0784AEF76215}
+	EndGlobalSection
+EndGlobal

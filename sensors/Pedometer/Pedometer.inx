@@ -1,0 +1,95 @@
+/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    Pedometer.INF
+;
+;Abstract:
+;    INF file for installing the Sensors 2.0 Pedometer sample driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install Pedometer.inf umdf2\Pedometer" to install
+;
+;--*/
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sensor
+ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
+Provider    = %MSFT%
+CatalogFile = Pedometer.cat
+DriverVer   = 09/09/2014,2.00.00.01
+
+[DestinationDirs]
+;12 == Windows\System32\Drivers\UMDF
+DefaultDestDir = 12,UMDF
+
+[SourceDisksNames]
+1 = %MediaDescription%,,,""
+
+[SourceDisksFiles]
+Pedometer.dll   = 1,,
+
+[Manufacturer]
+%MSFT% = Pedometer_Device, NT$ARCH$
+
+;*******************************
+; Pedometer Install Section
+;*******************************
+
+[Pedometer_Device.NT$ARCH$]
+; DisplayName       Section          DeviceId
+; -----------       -------          --------
+%Pedometer_DevDesc% = Pedometer_Inst, umdf2\Pedometer
+
+[Pedometer_Inst.NT]
+CopyFiles = PedometerDriverCopy
+
+[PedometerDriverCopy]
+Pedometer.dll
+
+[DestinationDirs]
+PedometerDriverCopy = 12,UMDF
+
+;-------------- Service installation
+
+[Pedometer_Inst.NT.Services]
+AddService = WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Pedometer_Inst.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+
+[WUDFRD_ServiceInstall]
+DisplayName   = %WudfRdDisplayName%
+ServiceType   = %SERVICE_KERNEL_DRIVER%
+StartType     = %SERVICE_DEMAND_START%
+ErrorControl  = %SERVICE_ERROR_NORMAL%
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section
+
+[Pedometer_Inst.NT.Wdf]
+UmdfService              = Pedometer, Pedometer_Install
+UmdfServiceOrder         = Pedometer
+UmdfDirectHardwareAccess = AllowDirectHardwareAccess
+UmdfFileObjectPolicy     = AllowNullAndUnknownFileObjects
+UmdfFsContextUsePolicy   = CannotUseFsContexts
+
+[Pedometer_Install]
+UmdfLibraryVersion       = $UMDFVERSION$
+ServiceBinary            = %12%\UMDF\Pedometer.dll
+UmdfExtensions           = SensorsCx0102
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
+
+[Strings]
+MediaDescription         = "Windows Pedometer Driver"
+MSFT                     = "Microsoft"
+Pedometer_DevDesc        = "Pedometer"
+WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
+
+SERVICE_KERNEL_DRIVER    = 1
+SERVICE_DEMAND_START     = 3
+SERVICE_ERROR_NORMAL     = 1

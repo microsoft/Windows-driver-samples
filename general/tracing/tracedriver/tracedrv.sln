@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracectl", "Tracectl", "{F3C08B55-33D7-458F-BE79-6878512FF1B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracedrv", "Tracedrv", "{93C02447-AFF7-40E8-AED1-849588063150}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracectl", "tracectl\tracectl.vcxproj", "{72739B3A-9B9B-41EE-9B0E-E73482470A03}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracedrv", "tracedrv\tracedrv.vcxproj", "{959FDB65-EF62-4ED3-8856-326B5AD4BB41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|Win32.ActiveCfg = Debug|Win32
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|Win32.Build.0 = Debug|Win32
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|Win32.ActiveCfg = Release|Win32
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|Win32.Build.0 = Release|Win32
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|x64.ActiveCfg = Debug|x64
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|x64.Build.0 = Debug|x64
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|x64.ActiveCfg = Release|x64
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|x64.Build.0 = Release|x64
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|Win32.Build.0 = Debug|Win32
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|Win32.ActiveCfg = Release|Win32
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|Win32.Build.0 = Release|Win32
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|x64.ActiveCfg = Debug|x64
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|x64.Build.0 = Debug|x64
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|x64.ActiveCfg = Release|x64
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{72739B3A-9B9B-41EE-9B0E-E73482470A03} = {F3C08B55-33D7-458F-BE79-6878512FF1B1}
+		{959FDB65-EF62-4ED3-8856-326B5AD4BB41} = {93C02447-AFF7-40E8-AED1-849588063150}
+	EndGlobalSection
+EndGlobal

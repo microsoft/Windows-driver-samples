@@ -1,0 +1,78 @@
+;
+; VirtualSerial.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFTUMDF%
+CatalogFile=WUDF.cat
+DriverVer=03/25/2005,0.0.0.1
+
+[Manufacturer]
+%MSFTUMDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%VirtualSerialDeviceName%=VirtualSerial_Install,UMDF\VirtualSerial
+
+[SourceDisksFiles]
+Virtualserial.dll=1
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF VirtualSerial Device ==================================
+
+[VirtualSerial_Install.NT]
+CopyFiles=UMDriverCopy
+
+[VirtualSerial_Install.NT.hw]
+
+[VirtualSerial_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[VirtualSerial_Install.NT.CoInstallers]
+CopyFiles=CoInstallers_CopyFiles
+AddReg=CoInstallers_AddReg
+
+[VirtualSerial_Install.NT.Wdf]
+UmdfService=VirtualSerial,VirtualSerial_Install
+UmdfServiceOrder=VirtualSerial
+UmdfKernelModeClientPolicy = AllowKernelModeClients
+UmdfFileObjectPolicy = AllowNullAndUnknownFileObjects
+UmdfFsContextUsePolicy = CannotUseFsContexts
+
+[VirtualSerial_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\Virtualserial.dll
+DriverCLSID={C8ECC087-6B79-4de5-8FB4-C03358A29617}
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WUDFUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\UMDF
+CoInstallers_CopyFiles=11
+
+[UMDriverCopy]
+Virtualserial.dll
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTUMDF="Microsoft"
+MediaDescription="Microsoft Sample Driver Installation Media"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+VirtualSerialDeviceName="Microsoft VirtualSerial User-Mode Device Sample"

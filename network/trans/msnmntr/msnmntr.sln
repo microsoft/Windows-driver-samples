@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{18ABBE0C-EBB5-4181-AB5D-AD526B2CB283}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sys", "Sys", "{B9075E40-A5B9-42B8-A185-CB3290C4EC12}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitor", "exe\monitor.vcxproj", "{BF8F75F9-23E9-4925-96A1-76FD729EBA93}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "msnmntr", "sys\msnmntr.vcxproj", "{A0314F39-C7C2-463C-B2BE-DF387AB755F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Debug|Win32.Build.0 = Debug|Win32
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Release|Win32.ActiveCfg = Release|Win32
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Release|Win32.Build.0 = Release|Win32
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Debug|x64.ActiveCfg = Debug|x64
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Debug|x64.Build.0 = Debug|x64
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Release|x64.ActiveCfg = Release|x64
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93}.Release|x64.Build.0 = Release|x64
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Debug|Win32.Build.0 = Debug|Win32
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Release|Win32.ActiveCfg = Release|Win32
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Release|Win32.Build.0 = Release|Win32
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Debug|x64.ActiveCfg = Debug|x64
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Debug|x64.Build.0 = Debug|x64
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Release|x64.ActiveCfg = Release|x64
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF8F75F9-23E9-4925-96A1-76FD729EBA93} = {18ABBE0C-EBB5-4181-AB5D-AD526B2CB283}
+		{A0314F39-C7C2-463C-B2BE-DF387AB755F5} = {B9075E40-A5B9-42B8-A185-CB3290C4EC12}
+	EndGlobalSection
+EndGlobal

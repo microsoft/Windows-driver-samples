@@ -1,0 +1,11 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define	VER_FILETYPE	VFT_DRV
+#define	VER_FILESUBTYPE	VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "Simulated Thermal Client Driver"
+#define VER_INTERNALNAME_STR        "simtc.sys"
+#define VER_ORIGINALFILENAME_STR    "simtc.sys"
+
+#include "common.ver"

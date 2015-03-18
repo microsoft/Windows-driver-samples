@@ -1,0 +1,89 @@
+;
+; Copyright (c) Microsoft Corporation. All Rights Reserved.
+;
+
+[version]
+Signature   = "$Windows NT$"
+Class       = NetService
+ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
+Provider    = %Msft%
+CatalogFile = mspassthroughext.cat
+DriverVer   = 08/29/2011,1.0
+
+[Manufacturer]
+%Msft%=MSFT,NTx86,NTia64,NTamd64
+
+[MSFT.NTx86]
+%MSPassthroughExt_Desc%=Install, MS_passthroughext
+
+[MSFT.NTia64]
+%MSPassthroughExt_Desc%=Install, MS_passthroughext
+
+[MSFT.NTamd64]
+%MSPassthroughExt_Desc%=Install, MS_passthroughext
+
+;-------------------------------------------------------------------------
+; Installation Section
+;-------------------------------------------------------------------------
+[Install]
+AddReg=Inst_Ndi
+Characteristics=0x40000
+NetCfgInstanceId="{2A06F1CB-1B9B-43A8-ADF7-B7D44A9EE71C}"
+Copyfiles = MSPassthroughExt.copyfiles.sys
+
+[SourceDisksNames]
+1=%MSPassthroughExt_Desc%,"",,
+
+[SourceDisksFiles]
+MSPassthroughExt.sys=1
+
+[DestinationDirs]
+DefaultDestDir=12
+MSPassthroughExt.copyfiles.sys=12
+
+[MSPassthroughExt.copyfiles.sys]
+MSPassthroughExt.sys,,,2
+
+
+;-------------------------------------------------------------------------
+; Ndi installation support
+;-------------------------------------------------------------------------
+[Inst_Ndi]
+HKR, Ndi,Service,,"MSPassthroughExt"
+HKR, Ndi,CoServices,0x00010000,"MSPassthroughExt"
+HKR, Ndi,HelpText,,%MSPassthroughExt_HelpText%
+HKR, Ndi,FilterClass,,"ms_switch_filter"
+HKR, Ndi,FilterType,0x00010001,0x00000002
+HKR, Ndi\Interfaces,UpperRange,,"noupper"
+HKR, Ndi\Interfaces,LowerRange,,"nolower"
+HKR, Ndi\Interfaces, FilterMediaTypes,,"vmnetextension"
+HKR, Ndi,FilterRunType, 0x00010001, 2 ; optional
+
+;-------------------------------------------------------------------------
+; Service installation support, common.EventLog here is to demonstrate how to
+; write an enent log 
+;-------------------------------------------------------------------------
+[Install.Services]
+AddService=MSPassthroughExt,,MSPassthroughExt_Service_Inst;, common.EventLog
+
+[MSPassthroughExt_Service_Inst]
+DisplayName     = %MSPassthroughExt_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 1 ;SERVICE_SYSTEM_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\MSPassthroughExt.sys
+LoadOrderGroup  = NDIS
+Description     = %MSPassthroughExt_Desc%
+AddReg          = Common.Params.reg
+
+[Install.Remove.Services]
+DelService=MSPassthroughExt,0x200
+
+[Strings]
+Msft = "Microsoft"
+MSPassthroughExt_Desc = "Microsoft Sample Passthrough Extension"
+MSPassthroughExt_HelpText = "Sample for filtering extension using SxBase"
+
+
+
+

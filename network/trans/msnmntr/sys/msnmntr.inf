@@ -1,0 +1,54 @@
+;;;
+;;; Copyright (c) Microsoft Corporation. All rights reserved
+;;;
+;;; Abstract:
+;;;    Monitor Callout sample driver install configuration.
+;;;
+
+[Version]
+    Signature   = "$Windows NT$"
+    Class       = WFPCALLOUTS
+    ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
+    Provider    = %Contoso%
+    CatalogFile = MSNMntr.cat
+    DriverVer   = 11/24/2014,14.24.55.836
+
+[SourceDisksNames]
+   1 = %MSNMntrDisk%,,,""
+
+[SourceDisksFiles]
+   MSNMntr.sys = 1,,
+
+[DestinationDirs]
+    DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
+    MSNMntr.DriverFiles = 12                              ; %WinDir%\System32\Drivers
+
+[DefaultInstall]
+    OptionDesc = %MSNMntrServiceDesc%
+    CopyFiles  = MSNMntr.DriverFiles
+
+[DefaultInstall.Services]
+    AddService = %MSNMntrServiceName%,,MSNMntr.Service
+
+[DefaultUninstall]
+    DelFiles = MSNMntr.DriverFiles
+
+[DefaultUninstall.Services]
+    DelService = %MSNMntrServiceName%,0x200               ; SPSVCINST_STOPSERVICE
+
+[MSNMntr.DriverFiles]
+    MSNMntr.sys,,,0x00000040                              ; COPYFLG_OVERWRITE_OLDER_ONLY
+
+[MSNMntr.Service]
+    DisplayName   = %MSNMntrServiceName%
+    Description   = %MSNMntrServiceDesc%
+    ServiceType   = 1                                     ; SERVICE_KERNEL_DRIVER
+    StartType     = 3                                     ; SERVICE_DEMAND_START
+    ErrorControl  = 1                                     ; SERVICE_ERROR_NORMAL
+    ServiceBinary = %12%\MSNMntr.sys                      ; %WinDir%\System32\Drivers\MSNMntr.sys
+
+[Strings]
+    Contoso            = "Contoso Ltd."
+    MSNMntrDisk        = "Monitor Installation Disk"
+    MSNMntrServiceDesc = "Monitor Callout Driver"
+    MSNMntrServiceName = "MSNMntr"

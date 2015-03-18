@@ -1,0 +1,21 @@
+//---------------------------------------------------------------------------
+// wmicore.rc
+//
+// Copyright (c) Microsoft Corporation, 1996-
+//---------------------------------------------------------------------------
+
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE			VFT_DLL
+#define VER_FILESUBTYPE			VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "Resource only DLL containing MOF for ASL code"
+#define VER_INTERNALNAME_STR            "acpimof"
+#define VER_ORIGINALFILENAME_STR        "acpimof.DLL"
+
+#include "common.ver"
+
+//
+// WMIACPI.SYS requires that the mof resource be named MofResource
+MofResource MOFDATA acpimof.bmf

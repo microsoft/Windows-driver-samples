@@ -1,0 +1,13094 @@
+//***************************************************************************
+//
+// 
+//  Module: iScsi Discovery api
+//
+//  Purpose: 
+//
+//  Copyright (c) 2001 Microsoft Corporation
+//
+//***************************************************************************
+
+
+#pragma namespace("\\\\.\\Root\\WMI")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+ WmiGenerateHeader(TRUE),
+ WMI,
+ DisplayName("IP Address") : amended,
+ guid("{9AC5D4A1-1A1A-48ec-8E79-735806E9A1FA}"),
+ cpp_quote("\n" "//***************************************************************************\n" "//\n" "//  iscsidef.h\n" "// \n" "//  Module: iScsi Discovery api\n" "//\n" "//  Purpose: Internal header defining interface between user mode discovery\n" "//           api dll and HBA driver miniport.\n" "//\n" "//  Copyright (c) 2001 Microsoft Corporation\n" "//\n" "//***************************************************************************\n\n"
+"//\n" "// Definitions for iscsi security flags. These flags provide\n" "// information about the security expectations of a target portal and\n" "// are needed to insure a successful IKE/IPSEC negotiation. Note that\n" "// the flags and values are taken directly from the iSNS spec\n" "//\n" "\n" "    // 1 = Tunnel Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TUNNEL_MODE_PREFERRED    0x00000040\n" "\n" "    // 1 = Transport Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TRANSPORT_MODE_PREFERRED 0x00000020\n" "               \n" "    // 1 = PFS Enabled; 0 = PFS Disabled\n" "#define ISCSI_SECURITY_FLAG_PFS_ENABLED              0x00000010\n" "               \n" "    // 1 = Aggressive Mode Enabled; 0 = Disabled\n" "#define ISCSI_SECURITY_FLAG_AGGRESSIVE_MODE_ENABLED  0x00000008\n" "               \n" "    // 1 = Main Mode Enabled; 0 = MM Disabled\n" "#define ISCSI_SECURITY_FLAG_MAIN_MODE_ENABLED        0x00000004\n" "               \n" "    // 1 = IKE/IPSec Enabled; 0 = IKE/IPSec Disabled\n" "#define ISCSI_SECURITY_FLAG_IKE_IPSEC_ENABLED        0x00000002\n" "\n" "    // If set then all other ISCSI_SECURITY_FLAGS are valid                \n" "#define ISCSI_SECURITY_FLAG_VALID                    0x00000001                \n" "\n"
+"\n"
+"//\n"                              
+"// Types of addresses that can be passed by management app to driver\n"
+"//\n"                              
+"typedef enum {\n"
+"           // Text based host name. This needs to be resolved to binary form\n"
+"    ISCSI_IP_ADDRESS_TEXT = 0,\n"
+"           // Binary IPv4 address\n"
+"    ISCSI_IP_ADDRESS_IPV4 = 1,\n"
+"           // Binary IPv6 address\n"
+"    ISCSI_IP_ADDRESS_IPV6 = 2,\n"                              
+"           // Empty address\n"
+"    ISCSI_IP_ADDRESS_EMPTY = 3\n"                              
+"} ISCSIIPADDRESSTYPE, *PISCSIIPADDRESSTYPE;\n"
+                               )
+]
+class ISCSI_IP_Address
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Address Format") : amended,
+     description("Type of address specified. It can be text: a DNS or dotted address or it can be a binary ipv4 or ipv6 address") : amended,
+     Values{ "Text Address",
+             "IpV4 Address",
+             "IpV6 Address",
+             "Empty Address"},
+     ValueMap{ "0",
+               "1",
+               "2",
+               "3"}
+    ]
+
+        uint32 Type;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayInHex,
+     DisplayName("IPV4 Address"): amended,
+     description("If IPV4 Address is specified as the Address Format then this conains the binary IPv4 ip address") : amended
+    ]
+    uint32 IpV4Address;
+
+    [WmiDataId(3),
+     DisplayName("IPV6 Address"): amended,
+     read, write,
+     description("If IPV6 Address is specified as the Address Format then this conains the binary IPv6 ip address") : amended
+    ]
+    uint8 IpV6Address[16];
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("IPV6 Flow Information") : amended,
+     description("IPV6 flow information") : amended
+    ]
+    uint32 IpV6FlowInfo;
+
+    [WmiDataId(5),
+     read, write,
+     DisplayName("IPV6 Scope Id") : amended,
+     description("IPV6 scope id") : amended
+    ]
+    uint32 IpV6ScopeId;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("Text Address") : amended,
+     description("Text address, either a DNS address or dotted address") : amended,
+     MaxLen(256)
+    ]
+    string TextAddress;
+};
+
+             
+[
+ WmiGenerateHeader(TRUE),
+ WMI,
+ guid("{DE5051A7-BF27-48f1-BD12-07CADE92AEFD}"),
+ description("ISCSI target portal") : amended
+]
+class ISCSI_TargetPortal
+{
+    [WmiDataId(1),
+     Description("Network Address") : amended
+    ]
+    ISCSI_IP_Address Address;
+
+    [WmiDataId(2),
+     Description("Reserved") : amended
+    ]
+    uint32 Reserved;
+
+    [WmiDataId(3),
+     Description("Socket number") : amended
+    ]
+    uint16 Socket;
+};
+
+[WMI,
+ WmiGenerateHeader(TRUE),
+ guid("{3081F2A5-95F5-4d2a-813D-EE59864C6FC5}"),
+ description("iSCSI target portal group") : amended
+]
+class ISCSI_TargetPortalGroup
+{
+    [WmiDataId(1),
+     description("Number of portals in group") : amended
+    ]
+    uint32 PortalCount;
+
+    [WmiDataId(2),
+     WmiSizeIs("PortalCount"),
+     description("Target portals in group") : amended
+    ]
+    ISCSI_TargetPortal Portals[];
+};
+
+
+[WMI,
+ WmiGenerateHeader(TRUE),
+ guid("{3011A7BD-0491-478e-8C79-3C76424D05E2}"),
+ cpp_quote("#ifndef _ISCSI_ISCSIDSC_\n" "typedef enum\n" "{\n" "   ISCSI_DIGEST_TYPE_NONE = 0,\n" "   ISCSI_DIGEST_TYPE_CRC32C = 1\n" "} ISCSI_DIGEST_TYPES, *PISCSI_DIGEST_TYPES;\n" "\n" "typedef enum\n" "{\n" "   ISCSI_NO_AUTH_TYPE = 0,\n" "   ISCSI_CHAP_AUTH_TYPE = 1,\n" "   ISCSI_MUTUAL_CHAP_AUTH_TYPE = 2 \n" "} ISCSI_AUTH_TYPES, *PISCSI_AUTH_TYPES;\n" "#endif\n"),
+ Description("These are options that can be used for logging into a target")
+]
+class ISCSI_LoginOptions
+{
+    [WmiDataId(1),
+     description("Bit flags that specify which login option values are specified") : amended,
+     BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008", "0x00000010" }, BitValues{"HeaderDigest", "DataDigest", "MaxConnections", "DefaultTime2Wait", "DefaultTime2Retain" } : amended,
+     cpp_quote("//\n" "// Bit flags for InformationSpecifies\n" "//\n" "#define ISCSI_LOGIN_OPTIONS_HEADER_DIGEST               0x00000001\n" "#define ISCSI_LOGIN_OPTIONS_DATA_DIGEST                 0x00000002\n" "#define ISCSI_LOGIN_OPTIONS_MAXIMUM_CONNECTIONS         0x00000004\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_WAIT         0x00000008\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_RETAIN       0x00000010\n" "#define ISCSI_LOGIN_OPTIONS_USERNAME                    0x00000020\n" "#define ISCSI_LOGIN_OPTIONS_PASSWORD                    0x00000040\n" "#define ISCSI_LOGIN_OPTIONS_AUTH_TYPE                   0x00000080\n" "\n")
+    ] uint32 InformationSpecified;
+    
+    [WmiDataId(2),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 HeaderDigest;
+    
+    [WmiDataId(3),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 DataDigest;
+
+    [WmiDataId(4),
+     Description("Maximum number of connections, 0 implies no limit") : amended
+    ]
+    uint32 MaximumConnections;
+
+    [WmiDataId(5),
+     Description("The initiator and target negotiate the minimum time, in seconds, to wait before attempting an explicit/implicit logout or active task reassignment after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Wait;
+
+    [WmiDataId(6),
+     Description(" The initiator and target negotiate the maximum time, in seconds after an initial wait (Time2Wait), before which an explicit/implicit connection Logout or active task reassignment is still possible after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Retain;
+
+    [WmiDataId(7),
+     Description("Flags that affect how login occurs") : amended,
+     cpp_quote("//\n" "// bit flags for ISCSI_LOGIN_FLAGS\n" "//\n" "#ifndef _ISCSI_ISCSIDSC_\n" "#define ISCSI_LOGIN_FLAGS ULONG\n\n" "#define ISCSI_LOGIN_FLAG_REQUIRE_IPSEC                0x00000001\n" "#define ISCSI_LOGIN_FLAG_MULTIPATH_ENABLED            0x00000002\n" "#define ISCSI_LOGIN_FLAG_RESERVED1                    0x00000004\n" "#define ISCSI_LOGIN_FLAG_ALLOW_PORTAL_HOPPING         0x00000008\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_RESPONSE          0x00000010\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_VERIFICATION          0x00000020\n" "\n" "#endif\n"),
+     BitValues{"Require IPSEC", "Multipath Enabled", "Reserved1", "Allow Portal Hopping"}, BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008" }
+    ]
+    uint32 LoginFlags;
+
+    [WmiDataId(8),
+     Description("Authentication method specified for login") : amended,
+     Values{"No Authentication", "CHAP", "Mutual CHAP" } : amended, ValueMap{"0", "1", "2"}
+    ]
+    uint32 AuthType;
+};
+
+
+[WMI,
+ WmiGenerateHeader(TRUE),
+ guid("{994FF278-3512-4d9b-A241-54CEF45F5A25}"),
+ description("This class describes a mapping from a an OS LUN to target device LUN") : amended
+]
+class ISCSI_LUNList
+{
+    [WmiDataId(1),
+     description("Target LUN") : amended
+    ]
+    uint64 TargetLUN;
+    
+    [WmiDataId(2),
+     description("OS Scsi bus number target is mapped to") : amended
+    ]
+    uint32 OSLUN;
+    
+    [WmiDataId(3),
+     description("Reserved") : amended
+    ]
+    uint32 Reserved;    
+};
+
+
+[WMI,
+ WmiGenerateHeader(TRUE),
+ guid("{21A28820-3C4C-4944-AC4F-DA7FEBA21168}"),
+ description("This class describes a mapping from a target LUN to a Windows port driver LUN") : amended
+]
+class ISCSI_TargetMapping
+{
+    [WmiDataId(1),
+     description("OS Scsi bus number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSBus;
+    
+    [WmiDataId(2),
+     description("OS Scsi Target number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSTarget;
+    
+    [WmiDataId(3),
+     Description("Unique Session ID for the target mapping") : amended
+    ] uint64 UniqueSessionId;
+    
+    [WmiDataId(4),
+     description("Count of LUNs mapped for this target") : amended
+    ]
+    uint32 LUNCount;
+
+    [WmiDataId(5),
+     MaxLen(223),
+     description("Target Name") : amended
+    ]
+    string TargetName;
+
+    [WmiDataId(6),
+     Description("TRUE if session created from a persistent login") : amended
+    ]
+    boolean FromPersistentLogin;
+    
+    [WmiDataId(7),
+     description("Reserved") : amended
+    ]
+    uint64 Reserved;
+        
+    [WmiDataId(8),
+     WmiSizeIs("LunCount"),
+     description("List of LUNs mapped for this target") : amended
+    ]
+    ISCSI_LUNList LUNList[];    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+ WmiGenerateHeader(FALSE),
+ WMI,
+ DisplayName("IP Address") : amended,
+ guid("{9AC5D4A1-1A1A-48ec-8E79-735806E9A1FA}"),
+ cpp_quote("\n" "//***************************************************************************\n" "//\n" "//  iscsicfg.h\n" "// \n" "//  Module: iScsi Discovery api\n" "//\n" "//  Purpose: Header defining interface between user mode configuration\n" "//           apps and HBA driver miniport.\n" "//\n" "//  Copyright (c) 2001 Microsoft Corporation\n" "//\n" "//***************************************************************************\n\n"
+"//\n" "// Definitions for iscsi security flags. These flags provide\n" "// information about the security expectations of a target portal and\n" "// are needed to insure a successful IKE/IPSEC negotiation. Note that\n" "// the flags and values are taken directly from the iSNS spec\n" "//\n" "\n" "    // 1 = Tunnel Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TUNNEL_MODE_PREFERRED    0x00000040\n" "\n" "    // 1 = Transport Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TRANSPORT_MODE_PREFERRED 0x00000020\n" "               \n" "    // 1 = PFS Enabled; 0 = PFS Disabled\n" "#define ISCSI_SECURITY_FLAG_PFS_ENABLED              0x00000010\n" "               \n" "    // 1 = Aggressive Mode Enabled; 0 = Disabled\n" "#define ISCSI_SECURITY_FLAG_AGGRESSIVE_MODE_ENABLED  0x00000008\n" "               \n" "    // 1 = Main Mode Enabled; 0 = MM Disabled\n" "#define ISCSI_SECURITY_FLAG_MAIN_MODE_ENABLED        0x00000004\n" "               \n" "    // 1 = IKE/IPSec Enabled; 0 = IKE/IPSec Disabled\n" "#define ISCSI_SECURITY_FLAG_IKE_IPSEC_ENABLED        0x00000002\n" "\n" "    // If set then all other ISCSI_SECURITY_FLAGS are valid                \n" "#define ISCSI_SECURITY_FLAG_VALID                    0x00000001                \n" "\n"
+"\n"
+"//\n"                              
+"// Types of addresses that can be passed by management app to driver\n"
+"//\n"                              
+"typedef enum {\n"
+"           // Text based host name. This needs to be resolved to binary form\n"
+"    ISCSI_IP_ADDRESS_TEXT = 0,\n"
+"           // Binary IPv4 address\n"
+"    ISCSI_IP_ADDRESS_IPV4 = 1,\n"
+"           // Binary IPv6 address\n"
+"    ISCSI_IP_ADDRESS_IPV6 = 2,\n"                              
+"           // Empty address\n"
+"    ISCSI_IP_ADDRESS_EMPTY = 3\n"                              
+"} ISCSIIPADDRESSTYPE, *PISCSIIPADDRESSTYPE;\n"
+                               )
+]
+class ISCSI_IP_Address
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Address Format") : amended,
+     description("Type of address specified. It can be text: a DNS or dotted address or it can be a binary ipv4 or ipv6 address") : amended,
+     Values{ "Text Address",
+             "IpV4 Address",
+             "IpV6 Address",
+             "Empty Address"},
+     ValueMap{ "0",
+               "1",
+               "2",
+               "3"}
+    ]
+
+        uint32 Type;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayInHex,
+     DisplayName("IPV4 Address"): amended,
+     description("If IPV4 Address is specified as the Address Format then this conains the binary IPv4 ip address") : amended
+    ]
+    uint32 IpV4Address;
+
+    [WmiDataId(3),
+     DisplayName("IPV6 Address"): amended,
+     read, write,
+     description("If IPV6 Address is specified as the Address Format then this conains the binary IPv6 ip address") : amended
+    ]
+    uint8 IpV6Address[16];
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("IPV6 Flow Information") : amended,
+     description("IPV6 flow information") : amended
+    ]
+    uint32 IpV6FlowInfo;
+
+    [WmiDataId(5),
+     read, write,
+     DisplayName("IPV6 Scope Id") : amended,
+     description("IPV6 scope id") : amended
+    ]
+    uint32 IpV6ScopeId;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("Text Address") : amended,
+     description("Text address, either a DNS address or dotted address") : amended,
+     MaxLen(256)
+    ]
+    string TextAddress;
+};
+
+             
+[
+ WmiGenerateHeader(FALSE),
+ WMI,
+ guid("{DE5051A7-BF27-48f1-BD12-07CADE92AEFD}"),
+ description("ISCSI target portal") : amended
+]
+class ISCSI_TargetPortal
+{
+    [WmiDataId(1),
+     Description("Network Address") : amended
+    ]
+    ISCSI_IP_Address Address;
+
+    [WmiDataId(2),
+     Description("Reserved") : amended
+    ]
+    uint32 Reserved;
+
+    [WmiDataId(3),
+     Description("Socket number") : amended
+    ]
+    uint16 Socket;
+};
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{3081F2A5-95F5-4d2a-813D-EE59864C6FC5}"),
+ description("iSCSI target portal group") : amended
+]
+class ISCSI_TargetPortalGroup
+{
+    [WmiDataId(1),
+     description("Number of portals in group") : amended
+    ]
+    uint32 PortalCount;
+
+    [WmiDataId(2),
+     WmiSizeIs("PortalCount"),
+     description("Target portals in group") : amended
+    ]
+    ISCSI_TargetPortal Portals[];
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{3011A7BD-0491-478e-8C79-3C76424D05E2}"),
+ cpp_quote("#ifndef _ISCSI_ISCSIDSC_\n" "typedef enum\n" "{\n" "   ISCSI_DIGEST_TYPE_NONE = 0,\n" "   ISCSI_DIGEST_TYPE_CRC32C = 1\n" "} ISCSI_DIGEST_TYPES, *PISCSI_DIGEST_TYPES;\n" "\n" "typedef enum\n" "{\n" "   ISCSI_NO_AUTH_TYPE = 0,\n" "   ISCSI_CHAP_AUTH_TYPE = 1,\n" "   ISCSI_MUTUAL_CHAP_AUTH_TYPE = 2 \n" "} ISCSI_AUTH_TYPES, *PISCSI_AUTH_TYPES;\n" "#endif\n"),
+ Description("These are options that can be used for logging into a target")
+]
+class ISCSI_LoginOptions
+{
+    [WmiDataId(1),
+     description("Bit flags that specify which login option values are specified") : amended,
+     BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008", "0x00000010" }, BitValues{"HeaderDigest", "DataDigest", "MaxConnections", "DefaultTime2Wait", "DefaultTime2Retain" } : amended,
+     cpp_quote("//\n" "// Bit flags for InformationSpecifies\n" "//\n" "#define ISCSI_LOGIN_OPTIONS_HEADER_DIGEST               0x00000001\n" "#define ISCSI_LOGIN_OPTIONS_DATA_DIGEST                 0x00000002\n" "#define ISCSI_LOGIN_OPTIONS_MAXIMUM_CONNECTIONS         0x00000004\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_WAIT         0x00000008\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_RETAIN       0x00000010\n" "#define ISCSI_LOGIN_OPTIONS_USERNAME                    0x00000020\n" "#define ISCSI_LOGIN_OPTIONS_PASSWORD                    0x00000040\n" "#define ISCSI_LOGIN_OPTIONS_AUTH_TYPE                   0x00000080\n" "\n")
+    ] uint32 InformationSpecified;
+    
+    [WmiDataId(2),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 HeaderDigest;
+    
+    [WmiDataId(3),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 DataDigest;
+
+    [WmiDataId(4),
+     Description("Maximum number of connections, 0 implies no limit") : amended
+    ]
+    uint32 MaximumConnections;
+
+    [WmiDataId(5),
+     Description("The initiator and target negotiate the minimum time, in seconds, to wait before attempting an explicit/implicit logout or active task reassignment after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Wait;
+
+    [WmiDataId(6),
+     Description(" The initiator and target negotiate the maximum time, in seconds after an initial wait (Time2Wait), before which an explicit/implicit connection Logout or active task reassignment is still possible after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Retain;
+
+    [WmiDataId(7),
+     Description("Flags that affect how login occurs") : amended,
+     cpp_quote("//\n" "// bit flags for ISCSI_LOGIN_FLAGS\n" "//\n" "#ifndef _ISCSI_ISCSIDSC_\n" "#define ISCSI_LOGIN_FLAGS ULONG\n\n" "#define ISCSI_LOGIN_FLAG_REQUIRE_IPSEC                0x00000001\n" "#define ISCSI_LOGIN_FLAG_MULTIPATH_ENABLED            0x00000002\n" "#define ISCSI_LOGIN_FLAG_RESERVED1                    0x00000004\n" "#define ISCSI_LOGIN_FLAG_ALLOW_PORTAL_HOPPING         0x00000008\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_RESPONSE          0x00000010\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_VERIFICATION          0x00000020\n" "\n" "#endif\n"),
+     BitValues{"Require IPSEC", "Multipath Enabled", "Reserved1", "Allow Portal Hopping"}, BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008" }
+    ]
+    uint32 LoginFlags;
+
+    [WmiDataId(8),
+     Description("Authentication method specified for login") : amended,
+     Values{"No Authentication", "CHAP", "Mutual CHAP" } : amended, ValueMap{"0", "1", "2"}
+    ]
+    uint32 AuthType;
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{994FF278-3512-4d9b-A241-54CEF45F5A25}"),
+ description("This class describes a mapping from a an OS LUN to target device LUN") : amended
+]
+class ISCSI_LUNList
+{
+    [WmiDataId(1),
+     description("Target LUN") : amended
+    ]
+    uint64 TargetLUN;
+    
+    [WmiDataId(2),
+     description("OS Scsi bus number target is mapped to") : amended
+    ]
+    uint32 OSLUN;
+    
+    [WmiDataId(3),
+     description("Reserved") : amended
+    ]
+    uint32 Reserved;    
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{21A28820-3C4C-4944-AC4F-DA7FEBA21168}"),
+ description("This class describes a mapping from a target LUN to a Windows port driver LUN") : amended
+]
+class ISCSI_TargetMapping
+{
+    [WmiDataId(1),
+     description("OS Scsi bus number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSBus;
+    
+    [WmiDataId(2),
+     description("OS Scsi Target number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSTarget;
+    
+    [WmiDataId(3),
+     Description("Unique Session ID for the target mapping") : amended
+    ] uint64 UniqueSessionId;
+    
+    [WmiDataId(4),
+     description("Count of LUNs mapped for this target") : amended
+    ]
+    uint32 LUNCount;
+
+    [WmiDataId(5),
+     MaxLen(223),
+     description("Target Name") : amended
+    ]
+    string TargetName;
+
+    [WmiDataId(6),
+     Description("TRUE if session created from a persistent login") : amended
+    ]
+    boolean FromPersistentLogin;
+    
+    [WmiDataId(7),
+     description("Reserved") : amended
+    ]
+    uint64 Reserved;
+        
+    [WmiDataId(8),
+     WmiSizeIs("LunCount"),
+     description("List of LUNs mapped for this target") : amended
+    ]
+    ISCSI_LUNList LUNList[];    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+ WMI,
+ guid("{7A2C6C2B-E5A5-49ad-AD68-133089ACD74D}"),
+ Dynamic,
+ Provider("wmiprov"),
+ DisplayName("TCP/IP configuration") : amended,
+ cpp_quote("\n" "//***************************************************************************\n" "//\n" "//  iscsicfg.h\n" "// \n" "//  Module: iScsi Discovery api\n" "//\n" "//  Purpose: Header defining interface between user mode configuration\n" "//           apps and HBA driver miniport.\n" "//\n" "//  Copyright (c) 2001 Microsoft Corporation\n" "//\n" "//***************************************************************************\n\n"
+           "#include <iscsidef.h>\n\n"
+"//\n"
+"//\n"
+"// This class is required.\n"
+"//\n"         
+"// TCP/IP configuration class, implement one instance for each IP address on\n"
+"// your adapter. For example, if you adapter supports 3 IP addresses then\n"
+"// your adapter would implement 3 instances of this class.\n"
+"//\n"
+"// This class uses PDO instance names with 1 instance for each TCP/IP interface.\n"
+"//\n"
+          )
+]
+class MSiSCSI_TCPIPConfig
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [read, write,
+     WmiDataId(1),
+     DisplayName("Use Link Local Address") : amended,
+     description("TRUE if the adapter should use an autogenerated and non routable (link local) address as its IP address.") : amended
+    ]
+    boolean UseLinkLocalAddress;
+
+    [read, write,
+     WmiDataId(2),
+     displayName("DHCP Enabled") : amended,
+     description("TRUE if the adapter should use DHCP to discovery its IP address information.") : amended
+    ]
+    boolean EnableDHCP;
+
+    [read, write,
+     WmiDataId(3),
+     displayName("Use DHCP for DNS") : amended,
+     description("TRUE if the adapter should use DHCP to discover DNS addresses.") : amended
+    ]
+    boolean UseDHCPForDNS;
+
+    [read,
+     WmiDataId(4),
+     description("IP Versions supported **Add #defines**") : amended,
+     BitValues{ "IPV4", "IPV6"},
+     BitMap{"0x00000001", "0x00000002"}
+    ]
+    uint32 IPVersions;
+    
+    [read, write,
+     WmiDataId(5),
+     DisplayName("IP Address") : amended,
+     description("IP address of the adapter") : amended
+    ]
+    ISCSI_IP_Address IpAddress;
+
+    [read, write,
+     WmiDataId(6),
+     DisplayName("Default Gateway") : amended,
+     Description("Static Default Gateway IP address") : amended
+    ]
+    ISCSI_IP_Address DefaultGateway;
+
+    [read, write,
+     WmiDataId(7),
+     DisplayName("Subnet Mask") : amended,
+     Description("Static Subnet Mask") : amended
+    ]
+    ISCSI_IP_Address SubnetMask;    
+
+    [read, write,
+     WmiDataId(8),
+     DisplayName("Preferred DNS Server") : amended,
+     Description("Preferred DNS Server") : amended
+    ]
+    ISCSI_IP_Address PreferredDNSServer;    
+
+    [read, write,
+     WmiDataId(9),
+     DisplayName("Alternate DNS Server") : amended,
+     Description("Alternate DNS Server") : amended
+    ]
+    ISCSI_IP_Address AlternateDNSServer;    
+
+};
+
+
+
+
+
+[
+ WMI,
+ guid("{C75258E9-BE79-4a48-A23D-EEB6F8FB940C}"),
+ Dynamic,
+ DisplayName("NIC Port Configuration") : amended,
+ Provider("wmiprov"),
+cpp_quote(
+"//\n"
+"// This class is optional.\n"
+"//\n"
+"// NIC Port configuration class, implement one instance for each physical \n"
+"// network interface port on your adapter.\n"
+"//\n"
+"// This class uses PDO instance names with 1 instance for each physical\n"
+"// network interface port on your adapter.\n"
+"//\n"
+"\n"
+"typedef enum \n"
+"{\n"
+"    ISCSI_NIC_LINKSTATE_DISCONNECTED = 0,\n"
+"    ISCSI_NIC_LINKSTATE_CONNECTED = 1\n"
+"} ISCSI_NIC_LINKSTATE, *PISCSI_NIC_LINKSTATE;\n"
+)
+]
+class MSiSCSI_NICConfig
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [read,
+     WmiDataId(1),
+     DisplayName("Link Speed") : amended,
+     Description("Speed of network link in megabits per second.") : amended
+    ]
+    uint32 LinkSpeed;
+
+    [read,
+     WmiDataId(2),
+     DisplayName("Max Link Speed") : amended,
+     Description("Maximum Speed of network link in megabits per second.") : amended
+    ]
+    uint32 MaxLinkSpeed;
+
+    [read,
+     WmiDataId(3),
+     DisplayName("Link State") : amended,
+     description("Link State **typedef**") : amended,
+     Values{"Media Disconnected", "Media Connected"} : amended,
+     ValueMap{"0", "1"}
+    ]
+    uint32 LinkState;
+    
+    [read,
+     WmiDataId(4),
+     DisplayName("Max Frame Size") : amended,
+     description("Maximum frame size") : amended
+    ]
+    uint32 MaxFrameSize;
+    
+    [read,
+     WmiDataId(5),
+     DisplayName("MAC Address") : amended,
+     description("Ethernet MAC Address") : amended
+    ]
+    uint8 MacAddress[6];
+
+};
+
+[WMI,
+ guid("{53EF8D5F-36F3-4124-8B76-C6AD521A1021}"),
+ Dynamic, Provider("wmiprov"),
+ DisplayName("Boot device configuration") : amended,
+ cpp_quote(
+"//\n"
+"// This class is optional.\n"
+"//\n"
+"// This class exposes the boot configuration if the adapter is configured to\n"
+"// boot from an iSCSI disk.\n"          
+"//\n"
+"// This class uses PDO instance names with a single instance.\n"
+"//\n"
+         )        
+]
+class MSiSCSI_BootConfiguration
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [read,
+     write,
+     WmiDataId(1),
+     Description("LUN on target to use as boot device.") : amended,
+     DisplayName("Target LUN") : amended
+    ]
+    uint64 LUN;
+
+    [ read, write,
+     WmiDataId(2),
+     description("Security flags") : amended, BitMap{ "0x00000040", "0x00000020", "0x00000010", "0x00000008", "0x00000004", "0x00000002", "0x00000001" }, BitValues{ "Tunnel mode preferred", "Transport mode preferred", "PFS Enabled", "Aggressive mode enabled", "Main Mode Enabled", "IKE/IPSec Enabled", "ISCSI_SECURITY_FLAGS are valid" } : amended
+    ]
+    uint64 SecurityFlags;
+
+    [ read, write,
+     WmiDataId(3),
+     description("Size in bytes of Target Username.") : amended
+    ] uint32 UsernameSize;
+
+    [ read, write,
+      WmiDataId(4),
+      description("Size in bytes of Target Password.") : amended
+    ] uint32 PasswordSize;
+                     
+    [ read, write,
+     WmiDataId(5),
+     description("If TRUE dynamically discover boot device.") : amended
+    ]
+    boolean DiscoverBootDevice;
+    
+    [ read, write,
+      WmiDataId(6),
+     MaxLen(223),
+     description("The InitiatorNode specifies the iSCSI name of the initiator node to use for the connection. If empty, then the adapter can choose any initiator node name.") : amended
+    ] string InitiatorNode;
+
+    [ read, write,
+     WmiDataId(7),
+     MaxLen(223),
+     description("TargetName specifies the iSCSI target name on which the boot device resides.") : amended
+    ] string TargetName;
+
+    [ read, write,
+      WmiDataId(8),
+     description("Target portal to use for connection to the target.") : amended
+    ] ISCSI_TargetPortal TargetPortal;
+
+    [read, write,
+     WmiDataId(9),
+     description("Options that affect how login is performed. See ISCSI_LoginOptions") : amended
+    ] ISCSI_LoginOptions LoginOptions;
+    
+    [ read, write,
+     WmiDataId(10),
+     WmiSizeIs("UsernameSize"),
+     description("**extra fields** Authentication Username, for CHAP this is the CHAP Name (CHAP_N) use when authenticating with the target. NOTE: This field is a variable length array, the field that follows this field starts immediately after the end of this field subject to appropriate padding.") : amended
+    ] uint8 Username[];
+    
+    [ read, write,
+     WmiDataId(11),
+     WmiSizeIs("PasswordSize"),
+     description("Authentication Password, for CHAP this is the shared secret to use when generating the response to the target challange. This field is a variable length array.") : amended
+    ] uint8 Password[]; 
+};
+
+
+
+
+
+
+
+
+
+
+
+
+[
+ WMI,
+ guid("{225B9D64-47A9-41c8-81CD-69BC02652D87}"),
+ Dynamic,
+ Provider("wmiprov"),
+ DisplayName("Security Capabilities") : amended,
+ cpp_quote(
+"//\n"
+"// This class is required if adapter supports IPSEC.\n"
+"//\n"
+"// This class exposes the security capabilities if the adapter \n"
+"// supports IPSEC.\n"
+"//\n"
+"// This class uses PDO instance names with a single instance.\n"
+"//\n"
+"typedef enum {\n"
+"    ISCSI_ENCRYPT_NONE = 0,\n"
+"    ISCSI_ENCRYPT_3DES_HMAC_SHA1 = 1,\n"
+"    ISCSI_ENCRYPT_AES_CTR = 2              \n"
+"} ISCSI_ENCRYPTION_TYPES, *PISCSI_ENCRYPTION_TYPES;\n\n"
+          )
+]
+class MSiSCSI_SecurityCapabilities
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [read,
+    DisplayName("Protect iSCSI") : amended,
+     WmiDataId(1),
+     description("TRUE if the adapter can use IPSEC to protect iSCSI traffic.") : amended
+    ]
+    boolean ProtectiScsiTraffic;
+
+    
+    [read,
+     WmiDataId(2),
+     DisplayName("Protect iSNS") : amended,
+     description("TRUE if the adapter can use IPSEC to protect iSNS traffic.") : amended
+    ]
+    boolean ProtectiSNSTraffic;
+    
+    [read,
+     WmiDataId(3),
+     DisplayName("Certificates Supported") : amended,
+     description("TRUE if adapter supports certificates") : amended
+    ]
+    boolean CertificatesSupported;
+    
+    [read,
+     WmiDataId(4),
+     DisplayName("Encryption Types Available") : amended,
+     description("Number of encryption types available.")
+    ]
+    uint32 EncryptionAvailableCount;
+    
+    [ read,
+     WmiDataId(5),
+     WmiSizeIs("EncryptionAvailableCount"),
+     Values {"No Encryption/Authentication", "3DES HMAC/SHA1", "AES-CTR/CBC-MAC with XCBC"} : amended, ValueMap{ "0", "1", "2" },
+     DisplayName("Encryption Types") : amended,
+     description("**typedef** Array of encryption types. This field is a variable length array.")
+    ]
+    uint32 EncryptionAvailable[];    
+};
+
+
+[WMI,
+ guid("{45755098-4291-43df-9720-B58642DD63DF}"),
+ Dynamic,
+ Provider("wmiprov"),
+ DisplayName("Discovery Configuration") : amended,
+ cpp_quote(
+"//\n"
+"// This class is required.\n"
+"//\n"
+"// This class exposes the configuration capabilities for the adapter to be able to\n"
+"// perform target discovery. An adapter needs to support target discovery\n"
+"// if it is ever placed on a separate network from the PC NIC. Although\n"
+"// the iSCSI Initiator service can use this class with any discovery mechanism\n"
+"// the best results are obtained by using iSNS.\n"
+"//\n"
+"// This class uses PDO instance names with a single instance.\n"
+"//\n"
+          )
+]
+class MSiSCSI_DiscoveryConfig
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     description("TRUE if adapter should perform target discovery via iSNS.") : amended
+    ] boolean PerformiSNSDiscovery;
+
+    [WmiDataId(2),
+     read, write,
+     description("TRUE if adapter should perform target discovery via SLP.") : amended
+    ] boolean PerformSLPDiscovery;
+
+    [WmiDataId(3),
+     read, write,
+     description("TRUE if adapter should perform automatic discovery of iSNS server.") : amended
+    ] boolean AutomaticiSNSDiscovery;
+    
+    [WmiDataId(4),
+     read, write,
+     MaxLen(256),
+     description("Default initiator name for registering with iSNS.") : amended
+    ] string InitiatorName;
+    
+    [WmiDataId(5),
+     read, write,    
+     description("If AutomaticiSNSDiscovery is FALSE then this contains the fixed addresses of iSNS servers") : amended
+    ] ISCSI_IP_Address iSNSServer;
+    
+};
+
+[WMI,
+ guid("{8EAEF9D8-C053-49d3-9205-65C703C2ECC1}"),
+ Dynamic,
+ Provider("wmiprov"),
+ DisplayName("Radius Configuration") : amended,
+ cpp_quote(
+"//\n"
+"// This class is required if adapter supports using RADIUS for CHAP authentication.\n"
+"//\n"
+"// This class exposes the configuration capabilities if the adapter able to\n"
+"// use radius to perform CHAP authentication. Using RADIUS is encouraged\n"
+"// since it allows centralized management of CHAP credentials.\n"
+"//\n"
+"// This class uses PDO instance names with a single instance.\n"
+"//\n"
+          )
+]
+class MSiSCSI_RADIUSConfig
+{
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     description("TRUE if adapter should use RADIUS for CHAP authentication") : amended
+    ] boolean UseRADIUSForCHAP;
+
+    [WmiDataId(2),
+     read, write,
+     description("Size in bytes of shared secret used to communicate with RADIUS servers") : amended
+    ] uint32 SharedSecretSizeInBytes;
+
+    [WmiDataId(3),
+     read, write,    
+     description("Fixed address of primary RADIUS server") : amended
+    ] ISCSI_IP_Address RADIUSServer;
+
+    [WmiDataId(4),
+     read, write,    
+     description("Fixed address of backup RADIUS server") : amended
+    ] ISCSI_IP_Address BackupRADIUSServer;
+
+    [WmiDataId(5),
+     Description("Must be zero")
+    ]
+    uint32 Reserved;
+    
+    [WmiDataId(6),
+     read, write,
+     WmiSizeIs("SharedSecretSizeInBytes"),
+     description("Shared secret for communicating with primary and backup RADIUS servers. This field is a variable length array.") : amended
+    ] uint8 SharedSecret[];
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+                
+    
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+ WmiGenerateHeader(FALSE),
+ WMI,
+ DisplayName("IP Address") : amended,
+ guid("{9AC5D4A1-1A1A-48ec-8E79-735806E9A1FA}"),
+ cpp_quote("\n" "//***************************************************************************\n" "//\n" "//  iscsimgt.h\n" "// \n" "//  Module: iScsi Discovery api\n" "//\n" "//  Purpose: Internal header defining interface between user mode discovery\n" "//           api dll and HBA driver miniport.\n" "//\n" "//  Copyright (c) 2001 Microsoft Corporation\n" "//\n" "//***************************************************************************\n\n"
+"//\n" "// Definitions for iscsi security flags. These flags provide\n" "// information about the security expectations of a target portal and\n" "// are needed to insure a successful IKE/IPSEC negotiation. Note that\n" "// the flags and values are taken directly from the iSNS spec\n" "//\n" "\n" "    // 1 = Tunnel Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TUNNEL_MODE_PREFERRED    0x00000040\n" "\n" "    // 1 = Transport Mode Preferred; 0 = No Preference\n" "#define ISCSI_SECURITY_FLAG_TRANSPORT_MODE_PREFERRED 0x00000020\n" "               \n" "    // 1 = PFS Enabled; 0 = PFS Disabled\n" "#define ISCSI_SECURITY_FLAG_PFS_ENABLED              0x00000010\n" "               \n" "    // 1 = Aggressive Mode Enabled; 0 = Disabled\n" "#define ISCSI_SECURITY_FLAG_AGGRESSIVE_MODE_ENABLED  0x00000008\n" "               \n" "    // 1 = Main Mode Enabled; 0 = MM Disabled\n" "#define ISCSI_SECURITY_FLAG_MAIN_MODE_ENABLED        0x00000004\n" "               \n" "    // 1 = IKE/IPSec Enabled; 0 = IKE/IPSec Disabled\n" "#define ISCSI_SECURITY_FLAG_IKE_IPSEC_ENABLED        0x00000002\n" "\n" "    // If set then all other ISCSI_SECURITY_FLAGS are valid                \n" "#define ISCSI_SECURITY_FLAG_VALID                    0x00000001                \n" "\n"
+"\n"
+"//\n"                              
+"// Types of addresses that can be passed by management app to driver\n"
+"//\n"                              
+"typedef enum {\n"
+"           // Text based host name. This needs to be resolved to binary form\n"
+"    ISCSI_IP_ADDRESS_TEXT = 0,\n"
+"           // Binary IPv4 address\n"
+"    ISCSI_IP_ADDRESS_IPV4 = 1,\n"
+"           // Binary IPv6 address\n"
+"    ISCSI_IP_ADDRESS_IPV6 = 2,\n"                              
+"           // Empty address\n"
+"    ISCSI_IP_ADDRESS_EMPTY = 3\n"                              
+"} ISCSIIPADDRESSTYPE, *PISCSIIPADDRESSTYPE;\n"
+                               )
+]
+class ISCSI_IP_Address
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Address Format") : amended,
+     description("Type of address specified. It can be text: a DNS or dotted address or it can be a binary ipv4 or ipv6 address") : amended,
+     Values{ "Text Address",
+             "IpV4 Address",
+             "IpV6 Address",
+             "Empty Address"},
+     ValueMap{ "0",
+               "1",
+               "2",
+               "3"}
+    ]
+
+        uint32 Type;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayInHex,
+     DisplayName("IPV4 Address"): amended,
+     description("If IPV4 Address is specified as the Address Format then this conains the binary IPv4 ip address") : amended
+    ]
+    uint32 IpV4Address;
+
+    [WmiDataId(3),
+     DisplayName("IPV6 Address"): amended,
+     read, write,
+     description("If IPV6 Address is specified as the Address Format then this conains the binary IPv6 ip address") : amended
+    ]
+    uint8 IpV6Address[16];
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("IPV6 Flow Information") : amended,
+     description("IPV6 flow information") : amended
+    ]
+    uint32 IpV6FlowInfo;
+
+    [WmiDataId(5),
+     read, write,
+     DisplayName("IPV6 Scope Id") : amended,
+     description("IPV6 scope id") : amended
+    ]
+    uint32 IpV6ScopeId;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("Text Address") : amended,
+     description("Text address, either a DNS address or dotted address") : amended,
+     MaxLen(256)
+    ]
+    string TextAddress;
+};
+
+             
+[
+ WmiGenerateHeader(FALSE),
+ WMI,
+ guid("{DE5051A7-BF27-48f1-BD12-07CADE92AEFD}"),
+ description("ISCSI target portal") : amended
+]
+class ISCSI_TargetPortal
+{
+    [WmiDataId(1),
+     Description("Network Address") : amended
+    ]
+    ISCSI_IP_Address Address;
+
+    [WmiDataId(2),
+     Description("Reserved") : amended
+    ]
+    uint32 Reserved;
+
+    [WmiDataId(3),
+     Description("Socket number") : amended
+    ]
+    uint16 Socket;
+};
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{3081F2A5-95F5-4d2a-813D-EE59864C6FC5}"),
+ description("iSCSI target portal group") : amended
+]
+class ISCSI_TargetPortalGroup
+{
+    [WmiDataId(1),
+     description("Number of portals in group") : amended
+    ]
+    uint32 PortalCount;
+
+    [WmiDataId(2),
+     WmiSizeIs("PortalCount"),
+     description("Target portals in group") : amended
+    ]
+    ISCSI_TargetPortal Portals[];
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{3011A7BD-0491-478e-8C79-3C76424D05E2}"),
+ cpp_quote("#ifndef _ISCSI_ISCSIDSC_\n" "typedef enum\n" "{\n" "   ISCSI_DIGEST_TYPE_NONE = 0,\n" "   ISCSI_DIGEST_TYPE_CRC32C = 1\n" "} ISCSI_DIGEST_TYPES, *PISCSI_DIGEST_TYPES;\n" "\n" "typedef enum\n" "{\n" "   ISCSI_NO_AUTH_TYPE = 0,\n" "   ISCSI_CHAP_AUTH_TYPE = 1,\n" "   ISCSI_MUTUAL_CHAP_AUTH_TYPE = 2 \n" "} ISCSI_AUTH_TYPES, *PISCSI_AUTH_TYPES;\n" "#endif\n"),
+ Description("These are options that can be used for logging into a target")
+]
+class ISCSI_LoginOptions
+{
+    [WmiDataId(1),
+     description("Bit flags that specify which login option values are specified") : amended,
+     BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008", "0x00000010" }, BitValues{"HeaderDigest", "DataDigest", "MaxConnections", "DefaultTime2Wait", "DefaultTime2Retain" } : amended,
+     cpp_quote("//\n" "// Bit flags for InformationSpecifies\n" "//\n" "#define ISCSI_LOGIN_OPTIONS_HEADER_DIGEST               0x00000001\n" "#define ISCSI_LOGIN_OPTIONS_DATA_DIGEST                 0x00000002\n" "#define ISCSI_LOGIN_OPTIONS_MAXIMUM_CONNECTIONS         0x00000004\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_WAIT         0x00000008\n" "#define ISCSI_LOGIN_OPTIONS_DEFAULT_TIME_2_RETAIN       0x00000010\n" "#define ISCSI_LOGIN_OPTIONS_USERNAME                    0x00000020\n" "#define ISCSI_LOGIN_OPTIONS_PASSWORD                    0x00000040\n" "#define ISCSI_LOGIN_OPTIONS_AUTH_TYPE                   0x00000080\n" "\n")
+    ] uint32 InformationSpecified;
+    
+    [WmiDataId(2),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 HeaderDigest;
+    
+    [WmiDataId(3),
+     ValueMap{ "0",
+               "1" },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 DataDigest;
+
+    [WmiDataId(4),
+     Description("Maximum number of connections, 0 implies no limit") : amended
+    ]
+    uint32 MaximumConnections;
+
+    [WmiDataId(5),
+     Description("The initiator and target negotiate the minimum time, in seconds, to wait before attempting an explicit/implicit logout or active task reassignment after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Wait;
+
+    [WmiDataId(6),
+     Description(" The initiator and target negotiate the maximum time, in seconds after an initial wait (Time2Wait), before which an explicit/implicit connection Logout or active task reassignment is still possible after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Retain;
+
+    [WmiDataId(7),
+     Description("Flags that affect how login occurs") : amended,
+     cpp_quote("//\n" "// bit flags for ISCSI_LOGIN_FLAGS\n" "//\n" "#ifndef _ISCSI_ISCSIDSC_\n" "#define ISCSI_LOGIN_FLAGS ULONG\n\n" "#define ISCSI_LOGIN_FLAG_REQUIRE_IPSEC                0x00000001\n" "#define ISCSI_LOGIN_FLAG_MULTIPATH_ENABLED            0x00000002\n" "#define ISCSI_LOGIN_FLAG_RESERVED1                    0x00000004\n" "#define ISCSI_LOGIN_FLAG_ALLOW_PORTAL_HOPPING         0x00000008\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_RESPONSE          0x00000010\n" "#define ISCSI_LOGIN_FLAG_USE_RADIUS_VERIFICATION          0x00000020\n" "\n" "#endif\n"),
+     BitValues{"Require IPSEC", "Multipath Enabled", "Reserved1", "Allow Portal Hopping"}, BitMap{ "0x00000001", "0x00000002", "0x00000004", "0x00000008" }
+    ]
+    uint32 LoginFlags;
+
+    [WmiDataId(8),
+     Description("Authentication method specified for login") : amended,
+     Values{"No Authentication", "CHAP", "Mutual CHAP" } : amended, ValueMap{"0", "1", "2"}
+    ]
+    uint32 AuthType;
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{994FF278-3512-4d9b-A241-54CEF45F5A25}"),
+ description("This class describes a mapping from a an OS LUN to target device LUN") : amended
+]
+class ISCSI_LUNList
+{
+    [WmiDataId(1),
+     description("Target LUN") : amended
+    ]
+    uint64 TargetLUN;
+    
+    [WmiDataId(2),
+     description("OS Scsi bus number target is mapped to") : amended
+    ]
+    uint32 OSLUN;
+    
+    [WmiDataId(3),
+     description("Reserved") : amended
+    ]
+    uint32 Reserved;    
+};
+
+
+[WMI,
+ WmiGenerateHeader(FALSE),
+ guid("{21A28820-3C4C-4944-AC4F-DA7FEBA21168}"),
+ description("This class describes a mapping from a target LUN to a Windows port driver LUN") : amended
+]
+class ISCSI_TargetMapping
+{
+    [WmiDataId(1),
+     description("OS Scsi bus number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSBus;
+    
+    [WmiDataId(2),
+     description("OS Scsi Target number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSTarget;
+    
+    [WmiDataId(3),
+     Description("Unique Session ID for the target mapping") : amended
+    ] uint64 UniqueSessionId;
+    
+    [WmiDataId(4),
+     description("Count of LUNs mapped for this target") : amended
+    ]
+    uint32 LUNCount;
+
+    [WmiDataId(5),
+     MaxLen(223),
+     description("Target Name") : amended
+    ]
+    string TargetName;
+
+    [WmiDataId(6),
+     Description("TRUE if session created from a persistent login") : amended
+    ]
+    boolean FromPersistentLogin;
+    
+    [WmiDataId(7),
+     description("Reserved") : amended
+    ]
+    uint64 Reserved;
+        
+    [WmiDataId(8),
+     WmiSizeIs("LunCount"),
+     description("List of LUNs mapped for this target") : amended
+    ]
+    ISCSI_LUNList LUNList[];    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma autorecover
+
+[
+ WMI,
+ cpp_quote("\n" "//***************************************************************************\n" "//\n" "//  iscsimgt.h\n" "// \n" "//  Module: iScsi Discovery api\n" "//\n" "//  Purpose: Internal header defining interface between user mode discovery\n" "//           api dll and HBA driver miniport.\n" "//\n" "//  Copyright (c) 2001 Microsoft Corporation\n" "//\n" "//***************************************************************************\n\n"
+          "#include <iscsidef.h>\n\n"
+"//\n"
+"//\n"
+"// This class is required.\n"
+"//\n"      
+"// Adapter Information class. The iSCSI initiator service relies upon this\n"
+"// class in order to interface with your adapter. Implement one instance\n"
+"// per adapter instance.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          ),
+ guid("{58515BF3-2F59-4f37-B74F-85AEEC652AD6}"),
+ Dynamic,
+ DisplayName("HBA Information") : amended,
+ Provider("wmiprov")
+]
+class MSiSCSI_HBAInformation
+{
+    
+    
+    
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique for all instances of iSCSI initiators. Use the address of the Adapter Extension or another address owned by the device driver.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     DisplayName("Integrated Networking") : amended,
+     description("TRUE if TCP/IP traffic is integrated with the Windows networking TCP/IP stack via a software only initiator. An adapter with its own TCP/IP stack would set this to FALSE.") : amended
+    ]
+    boolean IntegratedTCPIP;
+
+    [WmiDataId(3),
+     Displayname("Requires Binary Addresses") : amended,
+     description("If TRUE the iSCSI Initiator service will perform any DNS lookup and pass binary IP addresses to the adapter; the adapter must be on the same network as the Windows TCP/IP stack. If FALSE then DNS must be available on adapter.") : amended
+    ]
+    boolean RequiresBinaryIpAddresses;
+
+    [read,
+     WmiDataId(4),
+     DisplayName("Minimum iSCSI Version") : amended,
+     description("Minimum version number of the iScsi spec supported by adapter") : amended
+     ] uint8 VersionMin;
+
+    [read,
+     WmiDataId(5),
+    DisplayName("Maximum iSCSI Version") : amended,
+     description("Maximum version number of the iSCSI spec supported by adapter") : amended
+     ] uint8 VersionMax;
+
+    [read,
+     WmiDataId(6),
+     DisplayName("Multifunction Device") : amended,
+     description("TRUE if this adapter is a multifunction device, that is it also exposes a netcard interface") : amended
+    ] boolean MultifunctionDevice;
+
+    [read,
+     WmiDataId(7),
+     DisplayName("Valid Cache") : amended,
+     description("TRUE if the adapter caches are valid") : amended
+    ] boolean CacheValid;
+
+    [read,
+     WmiDataId(8),
+     Displayname("Number of ports") : amended,
+     description("Number of ports (or TCP/IP addresses) on the adapter") : amended
+    ] uint32 NumberOfPorts;
+
+
+    [read,
+     WmiDataId(9),
+     Displayname("Status") : amended,
+     description("**typedef** Current status of adapter") : amended,
+     Values{ "Working", "Degraded", "Critical", "Failed"},
+     ValueMap{ "0",     "1",        "2",        "3" },
+     cpp_quote(
+"#define ISCSI_HBA_STATUS_WORKING           0\n"            
+"#define ISCSI_HBA_STATUS_DEGRADED          1\n"            
+"#define ISCSI_HBA_STATUS_CRITICAL          2\n"            
+"#define ISCSI_HBA_STATUS_FAILED            3\n"
+)
+    ] uint32 Status;
+
+        [read,
+         WmiDataId(10),
+         DisplayName("Functionality Supported") : amended,
+         Description("**typedef** Bit flags that indicate various functionality supported") : amended,
+     BitValueMap{"0x00000001",
+                 "0x00000002",
+                 "0x00000004",
+                 "0x00000008",
+                 "0x00000010",
+                 "0x00000020"
+                    },
+         BitValues{"Preshared Key Cache",
+                   "iSCSI Authentication Cache",
+                   "Tunnel Mode",
+                   "CHAP authentication via RADIUS",
+                   "Discovery via iSNS",
+                   "Discovery via SLP"
+                  } : amended,
+     cpp_quote(
+"\n"
+"//\n"
+"// Flags that define the functionality supported by the HBA\n"
+"//\n"
+"#define ISCSI_HBA_PRESHARED_KEY_CACHE              0x00000001\n"
+"#define ISCSI_HBA_ISCSI_AUTHENTICATION_CACHE       0x00000002\n"
+"#define ISCSI_HBA_IPSEC_TUNNEL_MODE                0x00000004\n"
+"#define ISCSI_HBA_CHAP_VIA_RADIUS                  0x00000008\n"
+"#define ISCSI_HBA_ISNS_DISCOVERY                   0x00000010\n"
+"#define ISCSI_HBA_SLP_DISCOVERY                    0x00000020\n"
+"\n"
+)
+    ] uint32 FunctionalitySupported;
+
+    [read,
+     WmiDataId(11),
+     DisplayName("Generational Guid") : amended,
+     Description("This is the GUID value last set by the SetGenerationalGuid method in the MSiSCSI_Operations class.") : amended
+    ] uint8 GenerationalGuid[16];
+
+    [read,
+     WmiDataId(12),
+     DisplayName("Max CDB Length") : amended,
+     Description("Maxumum CDB length supported by the adapter") : amended
+    ] uint32 MaxCDBLength;
+
+    [read,
+     WmiDataId(13),
+     DisplayName("Bi-directionsal SCSI comamnd supported") : amended,
+     Description("TRUE if Bi-directionsal SCSI comamnd supported") : amended
+    ] boolean BiDiScsiCommands;
+
+    [read,
+     WmiDataId(14),
+     DisplayName("Manufacturer") : amended,
+     description("A text string describing the manufacturer of adapter") : amended,
+     MaxLen(255)] string VendorID;
+
+    [read,
+     WmiDataId(15),
+     Displayname("Model") : amended,
+     description("A text string set by the manufacturer describing the model of adapter") : amended,
+     MaxLen(255)] string VendorModel;
+
+    [read,
+     WmiDataId(16),
+     Displayname("Version") : amended,
+     description("A text string set by the manufacturer describing the version of adapter") : amended,
+     MaxLen(255)] string VendorVersion;
+
+    [read,
+     WmiDataId(17),
+     displayName("Firmware Version") : amended,
+     description("A text string set by the manufacturer describing the firmware version of adapter") : amended,
+     MaxLen(255)] string FirmwareVersion;
+
+    [read,
+     WmiDataId(18),
+     displayName("ASIC Version") : amended,
+     description("A text string set by the manufacturer describing the Asic version") : amended,
+     MaxLen(255)] string AsicVersion;
+
+    [read,
+     WmiDataId(19),
+     displayName("Option Rom Version") : amended,
+     description("A text string set by the manufacturer describing the option rom version of adapter") : amended,
+     MaxLen(255)] string OptionRomVersion;
+
+    [read,
+     WmiDataId(20),
+     Displayname("Serial Number") : amended,
+     description("A text string set by the manufacturer describing the serial number of adapter") : amended,
+     MaxLen(255)] string SerialNumber;
+
+    [read,
+     WmiDataId(21),
+     Displayname("Driver Name") : amended,
+     description("A text string specifying the name of the driver for the adapter") : amended,
+     MaxLen(255)] string DriverName;
+};
+
+
+[WMI, Dynamic, Provider("wmiprov"),
+ DisplayName("HBA Session Default Configuration") : amended,
+ guid("{B35694DE-D323-49d2-ABB2-8139209AD150}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is optional.\n"
+"//\n"      
+"// This class allows the default session configuration to be managed. It \n"
+"// contains the default values to use when establishing a session.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )     
+]
+class MSiSCSI_HBASessionConfig
+{
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("The InitialR2T key is used to turn off the default use of R2T, thus allowing an initiator to start sending data to a target as if it has received an initial R2T with Buffer Offset=0 and Desired Data Transfer Length=min (FirstBurstSize, Expected Data Transfer Length).") : amended
+    ]
+    boolean InitialR2T;
+
+    [WmiDataId(2),
+     read, write,
+     Description("The initiator and target negotiate support for immediate data. To turn immediate data off, the initiator or target must state its desire to do so.  ImmediateData can be turned on if both the initiator and target have ImmediateData=Yes.") : amended
+    ]
+    boolean ImmediateData;
+
+    [WmiDataId(3),
+     read, write,
+     Description("Maximum data segment length in bytes they can receive in an iSCSI PDU.") : amended
+    ]
+    uint32 MaxRecvDataSegmentLength;
+
+    [WmiDataId(4),
+     read, write,
+     Description("Maximum SCSI data payload in bytes in an Data-In or a solicited Data-Out iSCSI sequence.") : amended
+    ]
+    uint32 MaxBurstLength;
+
+    [WmiDataId(5),
+     read, write,
+     Description("maximum amount in bytes of unsolicited data an iSCSI initiator may send to the target, during the execution of a single SCSI command. This covers the immediate data (if any) and the sequence of unsolicited Data-Out PDUs (if any) that follow the command.") : amended
+    ]
+    uint32 FirstBurstLength;
+
+    [WmiDataId(6),
+     read, write,
+     Description("Initiator and target negotiate the maximum number of outstanding R2Ts per task, excluding any implied initial R2T that might be part of that task.  An R2T is considered outstanding until the last data PDU (with the F bit set to 1) is transferred, or a sequence reception timeout (section 6.12.1) is encountered for that data sequence.") : amended
+    ]
+    uint32 MaxOutstandingR2T;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+    WMI,
+    Description ("iSCSI Static Connection Statistics Information") : amended,
+    guid ("{3CE2D6A0-7346-4826-972F-F2C19779D1D1}")
+]
+class ISCSI_ConnectionStaticInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated connection ID. Do not confuse this with CID."): amended
+     ] uint64 UniqueConnectionId;
+
+    [read,
+     WmiDataId(2),
+     Description("The iSCSI connection ID for this connection instance."): amended
+    ] uint16 CID; 
+
+    [read,
+     WmiDataId(3),
+     ValueMap{"0", "1","2"}, Values{ "login", "full", "logout" }, DefineValues {"login", "full", "logout"},
+     Description("**typedef** Indicates the current state of this connection"): amended,
+     cpp_quote("\n"
+                     "    //login          - The TCP connection has been established, but a valid iSCSI\n"
+                     "    //                    login response with the final bit set has not been sent or received.\n"
+                     "    //full            - A valid iSCSI login response with the final bit set \n"
+                     "    //                   has been sent or received.\n"
+                     "    //logout       - A valid iSCSI logout command has been sent or received, but\n"
+                     "    //                  the TCP connection has not yet been closed.\n"
+                     "\n"
+     )
+     ] uint8 State;
+
+
+    [read,
+     WmiDataId(4),
+     ValueMap{"6"}, Values{ "TCP" }, DefineValues {"TCP"},
+     Description("**typedef** The transport protocol over which this connection instance is running."): amended
+     ] uint8 Protocol;
+
+    [read,
+     WmiDataId(5),
+     ValueMap{"0", "1"}, Values{ "None", "crc32c" }, DefineValues {"None", "crc32c" },
+     description("**typedef** The name of the iSCSI header digest scheme in use within this session."),
+     WmiVersion(1)
+     ] uint8 HeaderIntegrity;
+
+    [read,
+     WmiDataId(6),
+     ValueMap{"0", "1"}, Values{ "None", "crc32c" }, DefineValues {"None", "crc32c" },
+     description("**typedef** The name of the iSCSI data digest scheme in use within this session."),
+     WmiVersion(1)
+     ] uint8 DataIntegrity;
+
+    [read,
+     WmiDataId(7),
+     description("Must be zero")
+    ] uint16 Reserved;
+    
+    [read,
+     WmiDataId(8),
+     description("The maximum data payload size supported for command or data PDUs within this session."),
+     WmiVersion(1)] uint32 MaxRecvDataSegmentLength;
+
+    [read,
+     WmiDataId(9),
+     Values{"No Authentication", "CHAP", "Mutual CHAP" } : amended, ValueMap{"0", "1", "2"},
+     description("**typedef** Authentication type used when establishing the connection.")
+    ] uint32 AuthType;
+
+    
+    [read,
+     WmiDataId(10),
+     Description("The local network address used for the connection"): amended
+     ] ISCSI_IP_Address LocalAddr;
+
+    [read,
+     WmiDataId(11),
+     Description("The local port used for the connection"): amended
+     ] uint32 LocalPort;
+
+    [read,
+     WmiDataId(12),
+     Description("The remote network address used for the connection"): amended
+     ] ISCSI_IP_Address RemoteAddr;
+
+    [read,
+     WmiDataId(13),
+     Description("The remote port used for the connection"): amended
+     ] uint32 RemotePort;
+
+    [read,
+     WmiDataId(14),
+     Description("Estimated throughput of the link in bytes per second"): amended
+     ] uint64 EstimatedThroughput;
+
+    [read,
+     WmiDataId(15),
+     Description("Maximum Datagram size supported by the transport in bytes"): amended
+     ] uint32 MaxDatagramSize;
+};
+
+
+[
+    WMI,
+    Description ("iSCSI Static Sessions Statistics Information") : amended,
+    guid ("{B71D2538-57E2-4228-888B-1AF9B3BD01CD}")
+]
+class ISCSI_SessionStaticInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated session ID, it is the same id returned by the LoginToTarget method.  Do not confuse this with ISID or SSID."): amended,
+     WmiVersion(1)] uint64 UniqueSessionId;
+
+    [read,
+     WmiDataId(2),
+     WmiVersion(1),
+     description("Initiator node name used to establish the session"),
+     MaxLen(223)] string InitiatoriSCSIName;
+    
+    [read,
+     WmiDataId(3),
+     WmiVersion(1),
+     Description("iSCSI node name of the target"): amended,
+     MaxLen(223)] String TargetiSCSIName;
+
+    [read,
+     WmiDataId(4),
+     Description("Target-defined portion of the iSCSI Session ID"): amended,
+     WmiVersion(1)] uint16 TSID;
+
+    [read,
+     WmiDataId(5),
+     Description("Initiator-defined portion of the iSCSI Session ID"): amended,
+     WmiVersion(1)] uint8 ISID[6];
+
+    [read,
+     WmiDataId(6),
+     description("If TRUE, the initiator must wait for an R2T before sending data to the target.  If FALSE, the initiator may send data immediately, within limits set by FirstBurstSize and the expected data transfer length of the request."),
+     WmiVersion(1)] boolean InitialR2t;
+
+    [read,
+     WmiDataId(7),
+     description("If TRUE indicates whether the initiator and target have agreed to support immediate commands on this session."),
+     WmiVersion(1)] boolean ImmediateData;
+
+    [read,
+     WmiDataId(8),
+     Description("**typedef** Type of iSCSI session") : amended, \
+     ValueMap{"0", "1","2","3"}, Values{ "discoverySession", "informationalSession", "dataSession", "bootSession" }, DefineValues { "discoverySession", "informationalSession", "dataSession", "bootSession" },
+     cpp_quote("\n"
+                     "    // Type of iSCSI session\n"
+                     "    // discoverySession      - session is being used only for discovery\n"
+                     "    // informationalSession  - session is used for a limited number of scsi commands\n"
+                     "    // dataSession           - session is being used as a full feature session\n"
+                     "    // bootSession           - session is being used to boot an initiator\n"
+                     "\n"
+     ),
+     WmiVersion(1)] uint8 Type;
+
+    [read,
+     WmiDataId(9),
+     description("If FALSE indicates that data PDU Sequences may be transferred in any order.  If TRUE indicates that data PDU sequences must be transferred using continuously increasing offsets, except during error recovery."),
+     WmiVersion(1)] boolean DataSequenceInOrder;
+
+    [read,
+     WmiDataId(10),
+     description("If FALSE indicates that data PDUs within sequences may be in any order. If TRUE indicates that data PDUs within sequences must be at continuously increasing addresses, with no gaps or overlay between PDUs."),
+     WmiVersion(1)] boolean DataPduInOrder;
+
+    [read,
+     WmiDataId(11),
+     description("The level of error recovery negotiated between the initiator and the target."),
+     WmiVersion(1)] uint8 ErrorRecoveryLevel;
+
+    [read,
+     WmiDataId(12),
+     description("The maximum number of outstanding request-to-transmit (R2T) per task within this session"),
+     WmiVersion(1)] uint32 MaxOutstandingR2t;
+
+    [read,
+     WmiDataId(13),
+     description("The maximum length supported for unsolicited data sent within this session"),
+     WmiVersion(1)] uint32 FirstBurstLength;
+
+    [read,
+     WmiDataId(14),
+     description("The maximum number of bytes which can be sent within a single sequence of Data-In or Data-Out PDUs"),
+     WmiVersion(1)] uint32 MaxBurstLength;
+
+    [read,
+     WmiDataId(15),
+     description("The maximum number of connections that will be allowed within this session"),
+     WmiVersion(1)] uint32 MaxConnections;
+
+    [read,
+     WmiDataId(16),
+     description("The number of connections that currently belong to this session"),
+     WmiVersion(1)] uint16 ConnectionCount;
+
+    [WmiDataId(17),
+     read,
+     DisplayName("List of Connections") : amended,
+     Description("List of ISCSI_ConnectionStaticInfo.  ConnectionCount specifies the number of elements in the array. NOTE: This is a variable length array.") : amended,
+     WmiSizeIs("ConnectionCount")
+    ]  ISCSI_ConnectionStaticInfo ConnectionsList[];
+};
+
+
+[
+    WMI,
+    Description ("iSCSI Portal Info") : amended,
+    guid ("{4FB9130E-1FEF-4ae6-9E48-77839204D413}")
+]
+class ISCSI_PortalInfo
+{
+    [read,
+     WmiDataId(1),
+     description("An integer used to uniquely identify a paticular port"),
+     WmiVersion(1)] uint32 Index;
+
+    [read,
+     WmiDataId(2),
+     ValueMap{"0", "1"}, Values{ "Initiator", "Target" }, DefineValues {"InitiatorPortals", "TargetPortals"},
+     description("**typedef** The type of portal (Initiator or Target) \n"),
+     WmiVersion(1)] uint8 PortalType;
+
+    [read,
+     WmiDataId(3),
+     ValueMap{"6"}, Values{ "TCP" }, DefineValues {"TCP"},
+     
+     description("The portal's transport protocol"),
+     WmiVersion(1)] uint8 Protocol;
+
+    [read,
+     WmiDataId(4),
+     WmiVersion(1)] uint8 Reserved1;
+
+    [read,
+     WmiDataId(5),
+     WmiVersion(1)] uint8 Reserved2;
+	
+    [read,
+     WmiDataId(6),
+     description("The portal's network address"),
+     WmiVersion(1)] ISCSI_IP_Address IPAddr;
+
+    [read,
+     WmiDataId(7),
+     description("The portal's socket number"),
+     WmiVersion(1)] uint32 Port;
+
+    [read,
+     WmiDataId(8),
+     description("The portal's aggregation tag"),
+     WmiVersion(1)] uint16 PortalTag;
+};
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iScsi Portal Information Class") : amended,
+    guid ("{84CA6FD6-B152-4e6a-8869-FDE5E37B6157}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class exposes portal information.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )     
+]
+class MSiSCSI_PortalInfoClass
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read,
+     DisplayName("Count of Elements in iScsiPortalInfo array") : amended,
+     Description("Number of elements in iScsiPortalInfo array") : amended
+    ] uint32 PortalInfoCount;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("List Of Portals") : amended,
+     Description("Variable length array of iScsiPortalInfo.  PortalInfoCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("PortalInfoCount")
+    ]  ISCSI_PortalInfo PortalInformation[];
+
+};
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Static Initiator Session Information") : amended,
+    guid ("{D7931411-0376-4869-A491-8D679BFC004A}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is required. \n"
+"//\n"      
+"// This class exposes session and connection information on the initiator.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorSessionInfo
+{
+    [read,key] String InstanceName;
+    
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique to each instance of each adapter. Using the address of the Adapter Extension is a good idea.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("Count of Elements in SessionList array") : amended,
+     Description("Number of elements in SessionList array") : amended
+    ] uint32 SessionCount;
+
+    [WmiDataId(3),
+     read,
+     DisplayName("List Of Sessions") : amended,
+     Description("Variable length array of sessions.  SessionCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("SessionCount")
+    ]  ISCSI_SessionStaticInfo SessionsList[];
+
+};
+
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Initiator Node Failure Event") : amended,
+    guid ("{1221948A-6332-4ac2-AA04-268AABCECE4F}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class fires an event when a node failure occurs.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorNodeFailureEvent : __ExtrinsicEvent
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     WmiTimeStamp,
+     Description("Timestamp denoting time failure occured"),
+     WmiVersion(1)] uint64 FailureTime;
+
+    [read,
+     WmiDataId(2),
+     Description("**typedef** Types of initiator node failure") : amended, \
+     ValueMap{"0", "1","2","3","4"}, Values{ "LoginOtherFail", "LoginAuthFail", "LoginAuthenticateFail", "LoginNegotiateFail", "LogoutOthers" }, DefineValues {"LoginOtherFail", "LoginAuthFail", "LoginAuthenticateFail", "LoginNegotiateFail", "LogoutOthers"},
+     WmiVersion(1)] uint8 FailureType;
+
+    [read,
+     WmiDataId(3),
+     description("Name of target involved in failure"),
+     WmiVersion(1),
+     MaxLen(223)] string TargetFailureName;
+
+    [read,
+     WmiDataId(4),
+     description("Network address of target involved in failure"),
+     WmiVersion(1)] ISCSI_IP_Address TargetFailureAddr;
+};
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Initiator Instance Failure Event") : amended,
+    guid ("{E67E1BDB-D130-4143-9EB2-8BEE1899FD52}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class fires an event when an initiator failure occurs.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorInstanceFailureEvent : __ExtrinsicEvent
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     description("**typedef** Type of failure"),
+     ValueMap{"0", "1","2"}, Values{ "SessionDigestError", "SessionCxnTimeoutError", "SessionFormatError" }, DefineValues {"SessionDigestError", "SessionCxnTimeoutError", "SessionFormatError"},
+     WmiVersion(1)] uint8 FailureType;
+
+    [read,
+     WmiDataId(2),
+     description("Name of target involved in failure"),
+     WmiVersion(1),
+     MaxLen(223)] string RemoteNodeName;
+};
+
+
+
+
+
+[
+ WMI,
+ guid("{C8775641-5430-4220-BA25-7DA561CB64CE}"),
+ Description("This class describes an iSCSI Path (A TCP Connection to the target)") : amended
+]
+class ISCSI_Path
+{
+    [WmiDataId(1),
+     Description("iSCSI Unique connection id") : amended
+    ]
+    uint64 UniqueConnectionId;
+
+    [WmiDataId(2),
+     Description("Estimated speed of the connection in MegaBits Per Second") : amended
+    ]
+    uint64 EstimatedLinkSpeed;
+
+    [WmiDataId(3),
+     Description("Weight assigned to the path") : amended
+    ]
+    uint32 PathWeight;
+
+    [WmiDataId(4),
+     Description("Flag set to 1 if the path is a primary path, 0 otherwise.") : amended
+    ]
+    uint32 PrimaryPath;
+
+    [WmiDataId(5),
+     Description("Status of the path - connected, disconnected, reconnecting") : amended,
+     Values{"Connected",
+            "Disconnected",
+            "Reconnecting"} : amended,
+     DefineValues{"CONNECTION_STATE_CONNECTED",
+                  "CONNECTION_STATE_DISCONNECTED",
+                  "CONNECTION_STATE_RECONNECTING"
+                 },
+     ValueMap{"1", "2", "3"}
+    ]
+    uint32 ConnectionStatus;
+
+    [WmiDataId(6),
+     Description("Flag set to 1 if TCP offload is supported for this connection, 0 otherwise.") : amended
+    ]
+    uint32 TCPOffLoadAvailable;
+};
+
+[WMI,
+ guid("{749AFE4D-804D-4662-A68B-DC696655C79A}"),
+ Description("iSCSI Initiator Load Balance Policies supported") : amended
+]
+class ISCSI_Supported_LB_Policies {
+
+    [WmiDataId(1),
+     description("Id that is unique to this session within this adapter. ") : amended
+    ]
+    uint64 UniqueSessionId;
+
+    [WmiDataId(2),
+     Description("Load Balance policy supported by the iSCSI Initiator") : amended,
+     Values{"Fail Over Only",
+            "Round Robin",
+            "Round Robin with Subset",
+            "Dynamic Least Queue Depth",
+            "Weighted Paths",
+            "Vendor Specific"} : amended,
+     DefineValues{"MSiSCSI_LB_FAILOVER",
+                  "MSiSCSI_LB_ROUND_ROBIN",
+                  "MSiSCSI_LB_ROUND_ROBIN_WITH_SUBSET",
+                  "MSiSCSI_LB_DYN_LEAST_QUEUE_DEPTH",
+                  "MSiSCSI_LB_WEIGHTED_PATHS",
+                  "MSiSCSI_LB_VENDOR_SPECIFIC"},
+     ValueMap{"1", "2", "3", "4", "5", "6"}
+    ] 
+    uint32 LoadBalancePolicy;
+    
+    
+    
+    
+    
+    
+    
+    [WmiDataId(3),
+     Description("Number of entries in MSiSCSI_Paths array") : amended
+    ]
+
+    uint32 iSCSI_PathCount;
+
+    [WmiDataId(4),
+     WmiSizeIs("iSCSI_PathCount"),
+     Description("Describes iSCSI Initiator Paths") : amended
+    ]
+    ISCSI_Path iSCSI_Paths[];
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Set iSCSI Initiator Load Balance Policies"),
+ guid("{A7DFE761-B6BC-4490-91B0-D9CF4A24D37C}")
+]
+class MSiSCSI_LB_Operations {
+
+    [key, read]
+    string InstanceName;
+
+    [read] 
+    boolean Active;
+
+    
+    
+    
+    [WmiMethodId(10),
+     Implemented,
+     Description("Sets Load Balance Policy for the iSCSI Initiator") : amended,
+     cpp_quote(
+       "//\n"
+       "// SetLoadBalancePolicy instructs the iSCSI Initiator what Load Balance\n"
+       "// policy to use.\n"
+       "//\n"
+              )            
+    ]
+    void SetLoadBalancePolicy(
+        [in,
+         Description("New Load Balance policy to be set")
+        ] ISCSI_Supported_LB_Policies LoadBalancePolicies,
+
+        [out,
+         Description("Status of the operation")
+        ] uint32 Status
+    );
+};
+
+[
+ WMI,
+ guid("{E0AECAEE-B311-426f-B67A-18D5E55D0996}"),
+ Dynamic,
+ DisplayName("iSCSI Initiator Query LoadBalance Policy") : amended,
+ Provider("wmiprov"),
+ description("Query Load Balance policy used by iSCSI Initiator") : amended,
+ cpp_quote(
+"//\n"
+"// MSiSCSI_QueryLBPolicy class is used to query the Initiator about\n"
+"// the load balance policy that is currently used.\n"
+"//\n"
+          )
+]
+class MSiSCSI_QueryLBPolicy 
+{
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     Description("Id that is globally unique to each instance of each adapter. Using the address of the Adapter Extension is a good idea.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("Reserved field") : amended
+    ] uint32 Reserved;
+
+    [WmiDataId(3),
+     read,
+     DisplayName("Count of Elements in LoadBalancePolicies array") : amended,
+     cpp_quote("\n    // Number of elements in LoadBalancePolicies array\n"),
+     Description("Number of elements in LoadBalancePolicies array") : amended
+    ] uint32 SessionCount;
+
+    [WmiDataId(4),
+     DisplayName("Load Balance Policy for each session") : amended,
+     description("Load Balance Policy that is currently being used by iSCSI Initiator - one element for each session on the adapter") : amended,
+     WmiSizeIs("SessionCount")
+    ]
+    ISCSI_Supported_LB_Policies LoadBalancePolicies[];
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[WMI,
+ guid("{E6B8552B-7C62-4c6e-99EB-67CE6087894C}"),
+ description("iSCSI Eventlog generation event") : amended,
+ Dynamic,
+ Provider("wmiprov"),
+ cpp_quote(
+"//\n"
+"// Miniports can fire this event to cause eventlog entries to be\n"
+"// included in the system eventlog. This is useful as the iscsilog.h\n"
+"// header has many iSCSI specific eventlog messages that are useful for\n"
+"// troubleshooting, but can't be fired directly by a miniport. By\n"
+"// firing this WMI event appropriately a miniport can cause a useful\n"
+"// eventlog entry to be included in the system eventlog\n"
+"//\n")
+]
+class MSiSCSI_Eventlog : __ExtrinsicEvent
+{
+    [key] 
+    string InstanceName;
+ 
+    boolean Active;
+    
+    [WmiDataId(1),
+     Values{ "ISCSI_ERR_TDI_CONNECT_FAILED", "ISCSI_ERR_INSUFFICIENT_SESSION_RESOURCES", "ISCSI_ERR_INVALID_COMMAND_SEQUENCE_NUMBER", "ISCSI_ERR_INVALID_BURST_LENGTH", "ISCSI_ERR_SETUP_NETWORK_NODE", "ISCSI_ERR_INSUFFICIENT_CONNECTION_RESOURCES", "ISCSI_ERR_SEND_FAILED", "ISCSI_ERR_ISCSI_REQUEST_TIMEOUT", "ISCSI_ERR_SCSI_REQUEST_TIMEOUT", "ISCSI_ERR_LOGIN_FAILED", "ISCSI_ERR_LOGIN_PDU_ERROR", "ISCSI_ERR_INVALID_LOGIN_REDIRECT_DATA", "ISCSI_ERR_INVALID_AUTHMETHOD", "ISCSI_ERR_INVALID_CHAP_ALGORITHM", "ISCSI_ERR_INVALID_CHAP_CHALLENGE", "ISCSI_ERR_INVALID_KEY_DURING_CHAP", "ISCSI_ERR_INVALID_CHAP_RESPONSE", "ISCSI_ERR_HEADER_DIGEST_NEEDED", "ISCSI_ERR_HEADER_DATA_NEEDED", "ISCSI_ERR_CONNECTION_LOST", "ISCSI_ERR_INVALID_DATA_SEGMENT_LENGTH", "ISCSI_ERR_HEADER_DIGEST_ERROR", "ISCSI_ERR_ISCSI_PDU_ERROR", "ISCSI_ERR_UNKNOWN_ISCSI_OPCODE", "ISCSI_ERR_DATA_DIGEST_ERROR", "ISCSI_ERR_EXCESS_DATA_SENT", "ISCSI_ERR_UNEXPECTED_PDU", "ISCSI_ERR_INVALID_RTT_PDU", "ISCSI_ERR_ISCSI_PDU_REJECTED", "ISCSI_ERR_INSUFFICIENT_WORKITEM_RESOURCES", "ISCSI_ERR_INSUFFICIENT_REQ_PACKET_RESOURCES", "ISCSI_WRN_RECEIVED_ASYNC_LOGOUT", "ISCSI_ERR_INVALID_CHAP_CHALLENGE_SIZE", "ISCSI_INFO_RECONNECTED_TO_TARGET", "ISCSI_ERR_INVALID_TARGET_CHAP_SECRET", "ISCSI_ERR_INVALID_INITIATOR_CHAP_SECRET", "ISCSI_ERR_FIPS_NOT_AVAILABLE", "ISCSI_ERR_CHAP_NOT_OFFERED", "ISCSI_ERR_DEVICE_RESET", "ISCSI_ERR_CHAP_OFFERED", "ISCSI_ERR_AUTH_METHOD_NOT_OFFERED", "ISCSI_ERR_INVALID_STATUS_SEQ_NUM" }, ValueMap{ "0xC0000001", "0xC0000002", "0xC0000003", "0xC0000004", "0xC0000005", "0xC0000006", "0xC0000007", "0xC0000008", "0xC0000009", "0xC000000A", "0xC000000B", "0xC000000C", "0xC000000D", "0xC000000E", "0xC000000F", "0xC0000010", "0xC0000011", "0xC0000012", "0xC0000013", "0xC0000014", "0xC0000015", "0xC0000016", "0xC0000017", "0xC0000018", "0xC0000019", "0xC000001A", "0xC000001B", "0xC000001C", "0xC000001D", "0xC000001E", "0xC000001F", "0x80000020", "0xC0000021", "0x40000022", "0xC0000023", "0xC0000024", "0xC0000025", "0xC0000026", "0xC0000027", "0xC0000028", "0xC0000029", "0xC000002A" }, Description("Type of eventlog message") : amended
+    ]
+    uint32 Type;
+
+    [WmiDataId(2),
+     Description("If zero then this event is not logged to system eventlog") : amended
+    ]
+    uint32 LogToEventlog;
+
+    [WmiDataId(3),
+     Description("Size of Additional Data") : amended
+    ]
+    uint32 Size;
+
+    [WmiDataId(4),
+     WmiSizeIs("Size"),
+     Description("Additional data to include in eventlog message, typically iSCSI Header") : amended
+    ]
+    uint8 AdditionalData[];    
+};
+
+[
+    WMI,
+    Description ("iSCSI Redirect Portal Info") : amended,
+    guid ("{F6004CE6-9507-4d86-AE1E-E9D64F166F2F}")
+]
+class ISCSI_RedirectPortalInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated connection ID. Do not confuse this with CID."): amended,
+     WmiVersion(1)
+     ] uint64 UniqueConnectionId;
+
+    [read,
+     WmiDataId(2),
+     Description("Original Target IP Address given in the login"): amended,
+     WmiVersion(1)] ISCSI_IP_Address OriginalIPAddr;
+
+    [read,
+     WmiDataId(3),
+     Description("Original Target portal's socket number given in the login"): amended,
+     WmiVersion(1)] uint32 OriginalPort;
+
+    [read,
+     WmiDataId(4),
+     Description("Redirected Target IP Address"): amended,
+     WmiVersion(1)] ISCSI_IP_Address RedirectedIPAddr;
+
+    [read,
+     WmiDataId(5),
+     Description("Redirected Target portal's socket number"): amended,
+     WmiVersion(1)] uint32 RedirectedPort;
+
+    [read,
+     WmiDataId(6),
+     Description("TRUE if login was redirected. RedirectedIPAddr and RedirectedPort are valid then."): amended,
+     WmiVersion(1)] uint8 Redirected;
+
+    [read,
+     WmiDataId(7),
+     Description("TRUE if the redirection is temporary. FALSE otherwise"): amended,
+     WmiVersion(1)] uint8 TemporaryRedirect;
+};
+
+[
+    WMI,
+    Description ("iSCSI Redirect Session Info") : amended,
+    guid ("{ED60BC3F-3D56-42f0-B4D0-81DD16E28515}")
+]
+class ISCSI_RedirectSessionInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated session ID, it is the same id returned by the LoginToTarget method.  Do not confuse this with ISID or SSID."): amended,
+     WmiVersion(1)] uint64 UniqueSessionId;
+
+    [read,
+     WmiDataId(2),
+     Description("Target portal group tag for this Session "): amended,
+     WmiVersion(1)] uint32 TargetPortalGroupTag;
+
+    [read,
+     WmiDataId(3),
+     DisplayName("Number of elements in RedirectPortalList array") : amended,
+     cpp_quote("\n    // Number of elements in RedirectPortalList array\n"),
+     Description("Number of elements in RedirectPortalList array") : amended,
+     WmiVersion(1)
+    ] uint32 ConnectionCount;
+
+    [read,
+     WmiDataId(4),
+     DisplayName("Redirect Portal info for each connection") : amended,
+     Description("Redirect portal info - one element for each connection in the session") : amended,
+     WmiSizeIs("ConnectionCount"),
+     WmiVersion(1)
+    ] ISCSI_RedirectPortalInfo RedirectPortalList[];
+};
+
+[
+    WMI, Dynamic, Provider("WMIProv"),
+    Description ("iScsi Redirect Portal Information Class") : amended,
+    guid ("{DAF7F63A-F9EA-4869-87E1-AE8A7C2261E2}"),
+cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"
+"// This class exposes portal information. It provides the original and \n"
+"// redirected target portal information for an iSCSI Connection.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )
+]
+class MSiSCSI_RedirectPortalInfoClass
+{
+    [read,key] String InstanceName;
+
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique for all instances of iSCSI initiators.") : amended,
+     WmiVersion(1)
+    ]
+    uint64 UniqueAdapterId;
+
+    [read,
+     WmiDataId(2),
+     DisplayName("Number of session on the adapter : Number of elements in RedirectSessionInfo array") : amended,
+     Description("Number of elements in RedirectSessionInfo array") : amended,
+     WmiVersion(1)
+    ] uint32 SessionCount;
+
+    [read,
+     WmiDataId(3),
+     DisplayName("List Of ISCSI_RedirectSessionInfo ") : amended,
+     Description("Variable length array of ISCSI_RedirectSessionInfo. SessionCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("SessionCount"),
+     WmiVersion(1)
+    ] ISCSI_RedirectSessionInfo RedirectSessionList[];
+};
+
+[
+ WMI,
+ guid("{B8D765F0-2D93-4da2-8186-A187622B4302}"),
+ Dynamic,
+ Provider("wmiprov"),
+ cpp_quote(
+"\n"           
+"//\n"
+"//\n"
+"// This class is recommended.\n"
+"//\n"         
+"// iSCSI management applications rely upon this\n"
+"// class in order to interface with the adapter. Implement one instance\n"
+"// per miniport instance (adapter). \n"
+"//\n"         
+"// This class must be registered using PDO instance names with a single instance.\n"
+"//\n"
+          )        
+]
+class MSiSCSI_ManagementOperations
+{
+    
+    
+    
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [WmiMethodId(10),
+     Implemented,
+     Description("Perform an ICMP ping") : amended,
+     cpp_quote(
+"//\n"
+"// This method is recommended.\n"
+"//\n"             
+"// Ping will perform ICMP ping requests to the destination address \n"
+"// and return the number of ping responses received. This is only supported\n"
+"// by some HBA, use the ping command for the software initiator.\n"
+"//\n"
+              )            
+    ]
+    void PingIPAddress(
+                     [in,
+                      Description("Number of requests to send") : amended
+                     ] uint32 RequestCount,
+
+                     [in,
+                      Description("Number of bytes in each request") : amended
+                     ] uint32 RequestSize,
+
+                     [in,
+                      Description("Number of ms to wait for response") : amended
+                     ] uint32 Timeout,
+
+                     [in,
+                      description("IP address to ping") : amended
+                     ] ISCSI_IP_Address Address,
+            
+                     [out,
+                      Description("Status code resulting from operation") : amended, Values { "Success", "Non Specific Error", "Login Failed", "Connection Failed", "Initiator Node Already Exists", "Initiator Node Does Not Exist", "Target Moved Temporarily", "Target Moved Permamently", "Initiator Error", "Authentication Failure", "Authorization Failure", "Not Found", "Target Removed", "Unsupported Version", "Too many Connections", "Missing Parameter", "Can not include in session", "Session type not supported", "Target Error", "Service Unavailable", "Out of Resources", "Connections already exist on initiator node", "Session Already Exists", "Initiator Instance Does Not Exist", "Target Already Exists", "The iscsi driver implementation did not complete an operation correctly", "An invalid key text was encountered", "Invalid SendTargets response text was encountered", "Invalid Session Id", "The scsi request failed", "Exceeded max sessions for this initiator.", "Session is busy since a request is already in progress.", "The target mapping is not available", "The Target Address type given is not supported", "Logon Failed", "TCP Send Failed", "TCP Transport Error", "iSCSI Version Mismatch", "The Target Mapping Address passed is out of range for the adapter configuration", "The preshared key for the target or IKE identification payload is not available.", "The authentication information for the target is not available", "The target name is not found or is marked as hidden from login.", "One or more parameters specified in LoginTargetIN structure is invalid.", "Given target mapping already exists.", "The HBA security information cache is full.", "The port number passed is not valid for the initiator.", "Operation was not successful for all initiators.", "The HBA security information cache is not supported by this adapter.", "The IKE id payload type specified is not supported.", "The IKE id payload size specified is not correct.", "Target Portal Structure Already Exists.", "Target Address Structure Already Exists.", "There is no IKE authentication information available.", "There is no tunnel mode outer address specified.", "Authentication or tunnel address cache is corrupted.", "The request or operation is not supported.", "The target does not have enough resources to process the given request.", "The initiator service did not respond to the request sent by the driver.", "The iSNS server was not found or is unavailable.", "The operation was successful but requires a driver reload or reboot to become effective.", "There is no target portal available to complete the login.", "Cannot remove the last connection for a session.", "The Microsoft iSCSI Initiator Service is not running. Please start the service and retry.", "The target has already been logged in via an iSCSI session.", "The session cannot be logged out since a device on that session is currently being used.", "Failed to save persistent login information.", "Failed to remove persistent login information.", "The specified initiator name was not found.", "The specified portal was not found.", "The specified discovery mechanism was not found.", "iSCSI does not support IPSEC for this version of the OS.", "The iSCSI service timed out waiting for all persistent logins to complete.", "The specified CHAP secret is less than 96 bits and will not be usable for authenticating over non ipsec connections.", "The evaluation period for the iSCSI initiator service has expired.", "CHAP secret given does not conform to the standard. Please see system event log for more information.", "Target CHAP secret given is invalid.", "Initiator CHAP secret given is invalid.", "CHAP Username given is invalid.", "Logon Authentication type given is invalid.", "Target Mapping information given is invalid.", "Target Id given in Target Mapping is invalid.", "The iSCSI name specified contains invalid characters or is too long.", "The iSNS version number returned from the iSNS server is not compatible with this version of the iSNS client.", "Initiator failed to configure IPSec for the given connection. This could be because of low resources.", "The buffer given for processing the request is too small.", "The given Load Balance policy is not recognized by iScsi initiator.", "One or more paramaters specified is not valid.", "Duplicate PathIds were specified in the call to set Load Balance Policy.", "Number of paths specified in Set Load Balance Policy does not match the number of paths to the target.", "Path Id specified in the call to set Load Balance Policy is not valid.", "Multiple primary paths specified when only one primary path is expected.", "No primary path specified when at least one is expected.", "Volume is already a persistently bound volume.", "Volume was not found.", "The volume specified does not originate from an iSCSI disk.", "The DNS name specified was not resolved.", "There is no connection available in the iSCSI session to process the request.", "The given Load Balance policy is not supported.", "A remove connection request is already in progress for this session.", "Given connection was not found in the session.", "The leading connection in the session cannot be removed." }, ValueMap { "0", "0xEFFF0001", "0xEFFF0002", "0xEFFF0003", "0xEFFF0004", "0xEFFF0005", "0xEFFF0006", "0xEFFF0007", "0xEFFF0008", "0xEFFF0009", "0xEFFF000A", "0xEFFF000B", "0xEFFF000C", "0xEFFF000D", "0xEFFF000E", "0xEFFF000F", "0xEFFF0010", "0xEFFF0011", "0xEFFF0012", "0xEFFF0013", "0xEFFF0014", "0xEFFF0015", "0xEFFF0016", "0xEFFF0017", "0xEFFF0018", "0xEFFF0019", "0xEFFF001A", "0xEFFF001B", "0xEFFF001C", "0xEFFF001D", "0xEFFF001E", "0xEFFF001F", "0xEFFF0020", "0xEFFF0021", "0xEFFF0022", "0xEFFF0023", "0xEFFF0024", "0xEFFF0025", "0xEFFF0026", "0xEFFF0027", "0xEFFF0028", "0xEFFF0029", "0xEFFF002A", "0xEFFF002B", "0xEFFF002C", "0xEFFF002D", "0xEFFF002E", "0xEFFF002F", "0xEFFF0030", "0xEFFF0031", "0xEFFF0032", "0xEFFF0033", "0xEFFF0034", "0xEFFF0035", "0xEFFF0036", "0xEFFF0037", "0xEFFF0038", "0xEFFF0039", "0xEFFF003A", "0xAFFF003B", "0xEFFF003C", "0xEFFF003D", "0xEFFF003E", "0xEFFF003F", "0xEFFF0040", "0xEFFF0041", "0xEFFF0042", "0xEFFF0043", "0xEFFF0044", "0xEFFF0045", "0xEFFF0046", "0xEFFF0047", "0xAFFF0048", "0xEFFF0049", "0xEFFF004A", "0xEFFF004B", "0xEFFF004C", "0xAFFF004D", "0xEFFF004E", "0xEFFF004F", "0xEFFF0050", "0xEFFF0051", "0xEFFF0052", "0xEFFF0053", "0xEFFF0054", "0xEFFF0055", "0xEFFF0056", "0xEFFF0057", "0xEFFF0058", "0xEFFF0059", "0xEFFF005A", "0xEFFF005B", "0xEFFF005C", "0xEFFF005D", "0xEFFF005E", "0xEFFF005F", "0xEFFF0060", "0xEFFF0061", "0xEFFF0062", "0xEFFF0063", "0xEFFF0064" }
+                     ] uint32 Status,
+ 
+                     [out,
+                      Description("Number of responses received") : amended
+                     ] uint32 ResponsesReceived
+
+                    );
+
+    
+};
+

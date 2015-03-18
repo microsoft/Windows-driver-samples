@@ -1,0 +1,105 @@
+;/*++
+;
+;Copyright (c) 1990-2000  Microsoft Corporation
+;
+;Module Name:
+;    SingleComponentFStateSample.INF
+;
+;Abstract:
+;    INF file for installing SingleComponentFStateSample Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install SingleComponentFStateSample.inf root\SingleComponentFStateDevice" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SingleComponentFStateDriver.sys  = 1,,
+
+;*****************************************
+; SingleComponentFStateDevice Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+; Decorated model section take precedence over undecorated 
+; ones on XP and later.
+[Standard.NT$ARCH$]
+%SingleComponentFStateDevice.DeviceDesc%=SingleComponentFStateDevice, root\SingleComponentFStateDevice
+
+[SingleComponentFStateDevice.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+SingleComponentFStateDriver.sys
+
+
+;-------------- Service installation
+[SingleComponentFStateDevice.NT.Services]
+AddService = SingleComponentFStateSvc,%SPSVCINST_ASSOCSERVICE%, SingleComponentFStateSvc_Service_Inst
+
+; -------------- SingleComponentFStateDevice driver install sections
+[SingleComponentFStateSvc_Service_Inst]
+DisplayName    = %SingleComponentFStateSvc.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\SingleComponentFStateDriver.sys
+
+;
+;--- SingleComponentFStateDevice Coinstaller installation ------
+;
+
+[DestinationDirs]
+SingleComponentFStateDevice_CoInstaller_CopyFiles = 11
+
+[SingleComponentFStateDevice.NT.CoInstallers]
+AddReg=SingleComponentFStateDevice_CoInstaller_AddReg
+CopyFiles=SingleComponentFStateDevice_CoInstaller_CopyFiles
+
+[SingleComponentFStateDevice_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[SingleComponentFStateDevice_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[SingleComponentFStateDevice.NT.Wdf]
+KmdfService =  SingleComponentFStateSvc, SingleComponentFStateDevice_wdfsect
+[SingleComponentFStateDevice_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "WDF Sample SingleComponentFStateDevice Installation Disk #1"
+SingleComponentFStateDevice.DeviceDesc = "Single comp F State Device"
+SingleComponentFStateSvc.SVCDESC = "Single comp F State Service"
+ClassName       = "Sample Device"

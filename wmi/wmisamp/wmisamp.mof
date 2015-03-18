@@ -1,0 +1,337 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+    EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Module Name:
+
+    WmiSamp.mof
+
+Abstract:
+
+    ---
+
+--*/
+
+#pragma autorecover
+
+//
+// Define EC1 and EC2 as embedded classes. Embedded classes are structures
+// that are used within other classes.
+//
+[WMI,
+ Locale("MS\\0x409"),
+ HeaderName("EC1"),
+ DisplayName("Embedded Class 1") : amended,
+ Description("Description of embedded class 1") : amended,
+ guid("{A1C15015-B069-11d1-9290-00A0C9062910}")]
+class Vendor_EC1
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("BOOLEAN") : amended,
+     Description("boolean data") : amended]
+    boolean Xboolean;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayName("UCHAR") : amended,
+     Description("unsigned character data") : amended]
+    uint8 Xuint8;
+
+    [WmiDataId(3),
+     read, write,
+     DisplayName("USHORT") : amended,
+     Description("unsigned short data") : amended]
+    uint16 Xuint16;
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("ULONG") : amended,
+     Description("unsigned long data") : amended]
+    uint32 Xuint32;
+
+    [WmiDataId(5),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("ULONGLONG") : amended,
+     Description("unsigned long long data") : amended]
+    uint64 Xuint64;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("CHAR") : amended,
+     Description("signed byte data") : amended]
+    sint8 Xint8;
+
+    [WmiDataId(7),
+     read, write,
+     DisplayName("SHORT") : amended,
+     Description("singed short data") : amended]
+    sint16 Xint16;
+
+    [WmiDataId(8),
+     read, write,
+     DisplayName("LONG") : amended,
+     Description("singed long data") : amended]
+    sint32 Xint32;
+
+    [WmiDataId(9),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("LONGLONG") : amended,
+     Description("signed long long data") : amended]
+    sint64 Xint64;
+};
+
+
+[WMI,
+ Locale("MS\\0x409"),
+ HeaderName("EC2"),
+ DisplayName("Embedded Class 2"),
+ Description("Description of embedeed class 2") : amended,
+ guid("{A1C15016-B069-11d1-9290-00A0C9062910}")]
+class Vendor_EC2
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Boolean Array") : amended,
+     Description("Fixed length array of 8 booleans") : amended]
+    boolean Xboolean[8];
+
+    [WmiDataId(2),
+     read, write,
+     DisplayName("UCHAR Array") : amended,
+     Description("Fixed length array of 8 unsigned characters") : amended]
+    uint8 Xuint8[8];
+
+    [WmiDataId(3),
+     read, write,
+     DisplayName("USHORT Array") : amended,
+     Description("Fixed length array of 4 unsigned shorts") : amended]
+    uint16 Xuint16[4];
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("ULONG Array") : amended,
+     Description("Fixed length array of 2 usingned long") : amended]
+    uint32 Xuint32[2];
+
+    [WmiDataId(5),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("ULONGLONG Array") : amended,
+     Description("Unsigned long long") : amended]
+    uint64 Xuint64;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("CHAR Array") : amended,
+     Description("Fixed length array of 8 signed characters") : amended]
+    sint8 Xint8[8];
+
+    [WmiDataId(7),
+     read, write,
+     DisplayName("SHORT Array") : amended,
+     Description("Fixed length array of 4 signed short") : amended]
+    sint16 Xint16[4];
+
+    [WmiDataId(8),
+     read, write,
+     DisplayName("LONG Array") : amended,
+     Description("Fixed length array of 2 signed long") : amended]
+    sint32 Xint32[2];
+
+    [WmiDataId(9),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("LONGLONG Array") : amended,
+     Description("Signed long long") : amended]
+    sint64 Xint64;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Description of sample class 1") : amended,
+ DisplayName("Sample Class 1") : amended,
+ Locale("MS\\0x409"),
+ guid("{15D851F1-6539-11d1-A529-00A0C9062910}")]
+class WmiSampleClass1
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     DisplayName("BOOLEAN") : amended,
+     Description("boolean data") : amended]
+    boolean Xboolean;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayName("UCHAR") : amended,
+     Description("unsigned character data") : amended]
+    uint8 Xuint8;
+
+    [WmiDataId(3),
+     read, write,
+     DisplayName("USHORT") : amended,
+     Description("unsigned short data") : amended]
+    uint16 Xuint16;
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("ULONG") : amended,
+     Description("unsigned long data") : amended]
+    uint32 Xuint32;
+
+    [WmiDataId(5),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("ULONGLONG") : amended,
+     Description("unsigned long long data") : amended]
+    uint64 Xuint64;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("CHAR") : amended,
+     Description("signed byte data") : amended]
+    sint8 Xint8;
+
+    [WmiDataId(7),
+     read, write,
+     DisplayName("SHORT") : amended,
+     Description("singed short data") : amended]
+    sint16 Xint16;
+
+    [WmiDataId(8),
+     read, write,
+     DisplayName("LONG") : amended,
+     Description("singed long data") : amended]
+    sint32 Xint32;
+
+    [WmiDataId(9),
+     read, write,
+     WmiDisplayInHex,
+     DisplayName("LONGLONG") : amended,
+     Description("signed long long data") : amended]
+    sint64 Xint64;
+
+    [Implemented,
+     Description("Change the contents of EC1") : amended,
+     WmiMethodId(1)]
+    void SetEC1([in] boolean Xboolean,
+                [in] uint8 Xuint8,
+                [in] uint16 Xuint16,
+                [in] uint32 Xuint32,
+                [in] uint64 Xuint64,
+                [in] sint8 Xint8,
+                [in] sint16 Xint16,
+                [in] sint32 Xint32,
+                [in] sint64 Xint64);
+
+    [Implemented,
+     Description("Dummy method") : amended,
+     WmiMethodId(2)]
+    void DummyMethod();
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Description of Sample Class 2") : amended,
+ DisplayName("Sample Class 2") : amended,
+ Locale("MS\\0x409"),
+ guid("{15D851F2-6539-11d1-A529-00A0C9062910}")]
+class WmiSampleClass2
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Data") : amended,
+     Description("Embedded class data") : amended]
+    Vendor_EC1 EmbeddedClass1;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Description of Sample Class 3") : amended,
+ DisplayName("Sample Class 3") : amended,
+ Locale("MS\\0x409"),
+ guid("{15D851F3-6539-11d1-A529-00A0C9062910}")]
+class WmiSampleClass3
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Data") : amended,
+     Description("Fixed length array of 4 embedded classes") : amended]
+    Vendor_EC1 EmbeddedClass1[4];
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ DisplayName("Sample Class 5") : amended,
+ Description("Description of Sample Class 5") : amended,
+ Locale("MS\\0x409"),
+ guid("{15D851F5-6539-11d1-A529-00A0C9062910}")]
+class WmiSampleClass5
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Data") : amended,
+     Description("Embedded class data") : amended]
+    Vendor_EC2 EmbeddedClass2;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Description of Sample Class 6") : amended,
+ DisplayName("Sample Class 6") : amended,
+ Locale("MS\\0x409"),
+ guid("{15D851F6-6539-11d1-A529-00A0C9062910}")]
+class WmiSampleClass6
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Data") : amended,
+     Description("Fixed length array of 4 embedded classes")]
+    Vendor_EC2 EmbeddedClass2[4];
+};

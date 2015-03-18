@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Eventdrv", "Eventdrv", "{622DAC05-C30E-4BEE-B268-690B1B0DA989}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Evntctrl", "Evntctrl", "{90152226-E1D1-482C-9AB8-701B24BA34A1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Eventdrv", "Eventdrv\Eventdrv.vcxproj", "{71F967BF-4410-49F0-A9D9-A0968791E7C3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evntctrl", "evntctrl\evntctrl.vcxproj", "{09705E95-23AF-44BE-AD49-703F2A469DB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Debug|Win32.Build.0 = Debug|Win32
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Release|Win32.ActiveCfg = Release|Win32
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Release|Win32.Build.0 = Release|Win32
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Debug|x64.ActiveCfg = Debug|x64
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Debug|x64.Build.0 = Debug|x64
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Release|x64.ActiveCfg = Release|x64
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3}.Release|x64.Build.0 = Release|x64
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Debug|Win32.Build.0 = Debug|Win32
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Release|Win32.ActiveCfg = Release|Win32
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Release|Win32.Build.0 = Release|Win32
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Debug|x64.ActiveCfg = Debug|x64
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Debug|x64.Build.0 = Debug|x64
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Release|x64.ActiveCfg = Release|x64
+		{09705E95-23AF-44BE-AD49-703F2A469DB0}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{71F967BF-4410-49F0-A9D9-A0968791E7C3} = {622DAC05-C30E-4BEE-B268-690B1B0DA989}
+		{09705E95-23AF-44BE-AD49-703F2A469DB0} = {90152226-E1D1-482C-9AB8-701B24BA34A1}
+	EndGlobalSection
+EndGlobal

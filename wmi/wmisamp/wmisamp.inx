@@ -1,0 +1,119 @@
+;;
+;; Copyright (c) Microsoft Corporation.  All rights reserved.
+;;
+;;     THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+;;     EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+;;     WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+;;
+;; Module Name:
+;;
+;;     WmiSamp.inf
+;;
+;; Abstract:
+;;
+;;     --
+;;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sample
+ClassGUID   = {78A1C341-4539-11D3-B88D-00C04FAD5171}
+Provider    = %MSFT%
+DriverVer   = 10/29/2005,1.0.0.1
+CatalogFile = KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir      = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+WmiSamp.sys = 1,,
+
+;;
+;; Class Install section for "Sample" class.
+;;
+
+[ClassInstall32]
+Addreg      = SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+;;
+;; WmiSamp Install Section.
+;;
+
+[Manufacturer]
+%StdMfg%    = Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%WmiSamp.DeviceDesc% = WmiSamp_Device, root\WmiSamp
+
+[WmiSamp_Device.NT]
+CopyFiles   = Drivers_Dir
+
+[WmiSamp_Device.NT.HW]
+AddReg      = WmiSamp_Device.NT.AddReg
+
+[WmiSamp_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100       ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"    ; Allow generic-all access to Built-in administrators and Local system
+
+[Drivers_Dir]
+WmiSamp.sys
+
+;;
+;; Service installation.
+;;
+
+[WmiSamp_Device.NT.Services]
+AddService  = WmiSamp,%SPSVCINST_ASSOCSERVICE%, WmiSamp_Service_Inst
+
+;;
+;; WmiSamp driver install sections.
+;;
+
+[WmiSamp_Service_Inst]
+DisplayName    = %WmiSamp.SVCDESC%
+ServiceType    = 1                              ; SERVICE_KERNEL_DRIVER
+StartType      = 3                              ; SERVICE_DEMAND_START
+ErrorControl   = 1                              ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\WmiSamp.sys
+
+;;
+;; WmiSamp_Device Coinstaller installation
+;;
+
+[DestinationDirs]
+WmiSamp_Device_CoInstaller_CopyFiles = 11
+
+[WmiSamp_Device.NT.CoInstallers]
+AddReg      = WmiSamp_Device_CoInstaller_AddReg
+CopyFiles   = WmiSamp_Device_CoInstaller_CopyFiles
+
+[WmiSamp_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[WmiSamp_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll = 1                     ; make sure the number matches with SourceDisksNames
+
+[WmiSamp_Device.NT.Wdf]
+KmdfService = WmiSamp, WmiSamp_wdfsect
+
+[WmiSamp_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE  = 0x00000002
+MSFT                    = "Microsoft"
+StdMfg                  = "(Standard system devices)"
+ClassName               = "Sample Device"
+DiskId1                 = "WMI Sample Installation Disk #1"
+WmiSamp.DeviceDesc      = "WMI Sample Driver"
+WmiSamp.SVCDESC         = "WMI Sample Driver"

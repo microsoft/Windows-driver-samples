@@ -1,0 +1,34 @@
+//+---------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//  Copyright (C) Microsoft Corporation, 1992-2001.
+//
+//  File:       NOTIFYN.IDL
+//
+//  Contents:   
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+#include <netcfgn.idl>
+
+[
+    uuid(58dbe723-da1a-484c-9f5b-113ba31869f2),
+    version(1.0),
+    helpstring("Sample Notify Object 1.0 Type Library")
+]
+library SampleNotifyLib
+{
+    [
+        uuid(ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a),
+        helpstring("Sample MUX Notify Class")
+    ]
+    coclass CMuxNotify
+    {
+        [restricted] interface INetCfgComponentControl;
+        [restricted] interface INetCfgComponentSetup;
+        [restricted] interface INetCfgComponentNotifyBinding;
+        [restricted] interface INetCfgComponentNotifyGlobal;
+        [restricted] interface INetCfgComponentPropertyUi;
+    };
+};

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{4A32006C-4D25-4879-A039-E17F5CBCC8E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sys", "Sys", "{82E8C888-5416-4EBA-A956-D127B2464614}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpbTestTool", "exe\SpbTestTool.vcxproj", "{9FC1A48C-5079-4B38-9775-C7623687EF41}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpbTestTool", "sys\SpbTestTool.vcxproj", "{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Debug|Win32.Build.0 = Debug|Win32
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Release|Win32.ActiveCfg = Release|Win32
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Release|Win32.Build.0 = Release|Win32
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Debug|x64.ActiveCfg = Debug|x64
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Debug|x64.Build.0 = Debug|x64
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Release|x64.ActiveCfg = Release|x64
+		{9FC1A48C-5079-4B38-9775-C7623687EF41}.Release|x64.Build.0 = Release|x64
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Debug|Win32.Build.0 = Debug|Win32
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Release|Win32.ActiveCfg = Release|Win32
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Release|Win32.Build.0 = Release|Win32
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Debug|x64.ActiveCfg = Debug|x64
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Debug|x64.Build.0 = Debug|x64
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Release|x64.ActiveCfg = Release|x64
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9FC1A48C-5079-4B38-9775-C7623687EF41} = {4A32006C-4D25-4879-A039-E17F5CBCC8E6}
+		{F7BF1596-9FD8-40AC-8F50-0B3E40DD2E1A} = {82E8C888-5416-4EBA-A956-D127B2464614}
+	EndGlobalSection
+EndGlobal

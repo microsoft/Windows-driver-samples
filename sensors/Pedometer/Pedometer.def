@@ -1,0 +1,6 @@
+; Pedometer.def : Declares the module parameters.
+
+LIBRARY Pedometer
+
+EXPORTS
+

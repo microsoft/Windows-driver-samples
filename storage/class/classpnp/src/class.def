@@ -1,0 +1,119 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+NAME CLASSPNP.SYS
+
+EXPORTS
+    ClassInitialize
+    ClassInitializeEx
+    ClassGetDescriptor
+    ClassReadDriveCapacity
+    ClassReleaseQueue
+    ClassAsynchronousCompletion
+    ClassSplitRequest
+    ClassDeviceControl
+    ClassIoComplete
+    ClassIoCompleteAssociated
+    ClassInterpretSenseInfo
+    ClassSendDeviceIoControlSynchronous
+    ClassSendIrpSynchronous
+    ClassForwardIrpSynchronous
+    ClassSendSrbSynchronous
+    ClassSendSrbAsynchronous
+    ClassBuildRequest
+    ClassModeSense    
+    ClassModeSenseEx
+    ClassModeSelect
+    ClassFindModePage
+    ClassClaimDevice
+    ClassInternalIoControl
+    ClassCreateDeviceObject
+    ClassRemoveDevice
+    ClassInitializeSrbLookasideList
+    ClassDeleteSrbLookasideList
+    ClassQueryTimeOutRegistryValue
+    ClassInvalidateBusRelations
+    ClassMarkChildrenMissing
+    ClassMarkChildMissing
+    ClassDebugPrint
+    ClassGetDriverExtension
+    ClassCompleteRequest
+    ClassReleaseRemoveLock
+    ClassAcquireRemoveLockEx
+    ClassUpdateInformationInRegistry
+    ClassWmiCompleteRequest
+    ClassWmiFireEvent
+    ClassGetVpb
+    ClassSetFailurePredictionPoll
+    ClassNotifyFailurePredicted
+    ClassInitializeTestUnitPolling
+    ClassSignalCompletion
+    ClassSendStartUnit
+
+
+
+
+    ClassSetMediaChangeState
+    ClassResetMediaChangeTimer
+    ClassCheckMediaState
+    ClassInitializeMediaChangeDetection
+    ClassCleanupMediaChangeDetection
+    ClassEnableMediaChangeDetection
+    ClassDisableMediaChangeDetection
+
+
+
+
+
+    ClassSpinDownPowerHandler
+    ClassStopUnitPowerHandler
+
+
+
+
+
+    ClassAcquireChildLock
+    ClassReleaseChildLock
+
+
+
+
+
+
+
+    ClassScanForSpecial
+
+
+
+
+
+    ClassSetDeviceParameter
+    ClassGetDeviceParameter
+
+
+
+
+
+
+    ClassGetFsContext
+
+
+
+
+    ClassSendNotification
+
+
+
+
+    DllUnload PRIVATE
+

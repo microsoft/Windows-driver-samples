@@ -1,0 +1,1413 @@
+//***************************************************************************
+//
+//  mgmt.mof
+//
+//  Module: iScsi Discovery api
+//
+//  Purpose:
+//
+//  Copyright (c) 2001 Microsoft Corporation
+//
+//***************************************************************************
+
+#define MODULE_HEADER \
+"\n" \
+"//***************************************************************************\n" \
+"//\n" \
+"//  iscsimgt.h\n" \
+"// \n" \
+"//  Module: iScsi Discovery api\n" \
+"//\n" \
+"//  Purpose: Internal header defining interface between user mode discovery\n" \
+"//           api dll and HBA driver miniport.\n" \
+"//\n" \
+"//  Copyright (c) 2001 Microsoft Corporation\n" \
+"//\n" \
+"//***************************************************************************\n\n"
+
+//
+// Do not cause headers to be generated from common.mof
+//
+#define GENERATE_HEADER FALSE
+
+//
+// Include common definitions
+//
+#include "common.mof"
+
+#pragma autorecover
+
+[
+ WMI,
+ cpp_quote(MODULE_HEADER
+          "#include <iscsidef.h>\n\n"
+"//\n"
+"//\n"
+"// This class is required.\n"
+"//\n"      
+"// Adapter Information class. The iSCSI initiator service relies upon this\n"
+"// class in order to interface with your adapter. Implement one instance\n"
+"// per adapter instance.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          ),
+ guid("{58515BF3-2F59-4f37-B74F-85AEEC652AD6}"),
+ Dynamic,
+ DisplayName("HBA Information") : amended,
+ Provider("wmiprov")
+]
+class MSiSCSI_HBAInformation
+{
+    //
+    // This class must be registered using PDO instance names
+    //
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique for all instances of iSCSI initiators. Use the address of the Adapter Extension or another address owned by the device driver.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     DisplayName("Integrated Networking") : amended,
+     description("TRUE if TCP/IP traffic is integrated with the Windows networking TCP/IP stack via a software only initiator. An adapter with its own TCP/IP stack would set this to FALSE.") : amended
+    ]
+    boolean IntegratedTCPIP;
+
+    [WmiDataId(3),
+     Displayname("Requires Binary Addresses") : amended,
+     description("If TRUE the iSCSI Initiator service will perform any DNS lookup and pass binary IP addresses to the adapter; the adapter must be on the same network as the Windows TCP/IP stack. If FALSE then DNS must be available on adapter.") : amended
+    ]
+    boolean RequiresBinaryIpAddresses;
+
+    [read,
+     WmiDataId(4),
+     DisplayName("Minimum iSCSI Version") : amended,
+     description("Minimum version number of the iScsi spec supported by adapter") : amended
+     ] uint8 VersionMin;
+
+    [read,
+     WmiDataId(5),
+    DisplayName("Maximum iSCSI Version") : amended,
+     description("Maximum version number of the iSCSI spec supported by adapter") : amended
+     ] uint8 VersionMax;
+
+    [read,
+     WmiDataId(6),
+     DisplayName("Multifunction Device") : amended,
+     description("TRUE if this adapter is a multifunction device, that is it also exposes a netcard interface") : amended
+    ] boolean MultifunctionDevice;
+
+    [read,
+     WmiDataId(7),
+     DisplayName("Valid Cache") : amended,
+     description("TRUE if the adapter caches are valid") : amended
+    ] boolean CacheValid;
+
+    [read,
+     WmiDataId(8),
+     Displayname("Number of ports") : amended,
+     description("Number of ports (or TCP/IP addresses) on the adapter") : amended
+    ] uint32 NumberOfPorts;
+
+
+    [read,
+     WmiDataId(9),
+     Displayname("Status") : amended,
+     description("**typedef** Current status of adapter") : amended,
+     Values{ "Working", "Degraded", "Critical", "Failed"},
+     ValueMap{ "0",     "1",        "2",        "3" },
+     cpp_quote(
+"#define ISCSI_HBA_STATUS_WORKING           0\n"            
+"#define ISCSI_HBA_STATUS_DEGRADED          1\n"            
+"#define ISCSI_HBA_STATUS_CRITICAL          2\n"            
+"#define ISCSI_HBA_STATUS_FAILED            3\n"
+)
+    ] uint32 Status;
+
+        [read,
+         WmiDataId(10),
+         DisplayName("Functionality Supported") : amended,
+         Description("**typedef** Bit flags that indicate various functionality supported") : amended,
+     BitValueMap{"0x00000001",
+                 "0x00000002",
+                 "0x00000004",
+                 "0x00000008",
+                 "0x00000010",
+                 "0x00000020"
+                    },
+         BitValues{"Preshared Key Cache",
+                   "iSCSI Authentication Cache",
+                   "Tunnel Mode",
+                   "CHAP authentication via RADIUS",
+                   "Discovery via iSNS",
+                   "Discovery via SLP"
+                  } : amended,
+     cpp_quote(
+"\n"
+"//\n"
+"// Flags that define the functionality supported by the HBA\n"
+"//\n"
+"#define ISCSI_HBA_PRESHARED_KEY_CACHE              0x00000001\n"
+"#define ISCSI_HBA_ISCSI_AUTHENTICATION_CACHE       0x00000002\n"
+"#define ISCSI_HBA_IPSEC_TUNNEL_MODE                0x00000004\n"
+"#define ISCSI_HBA_CHAP_VIA_RADIUS                  0x00000008\n"
+"#define ISCSI_HBA_ISNS_DISCOVERY                   0x00000010\n"
+"#define ISCSI_HBA_SLP_DISCOVERY                    0x00000020\n"
+"\n"
+)
+    ] uint32 FunctionalitySupported;
+
+    [read,
+     WmiDataId(11),
+     DisplayName("Generational Guid") : amended,
+     Description("This is the GUID value last set by the SetGenerationalGuid method in the MSiSCSI_Operations class.") : amended
+    ] uint8 GenerationalGuid[16];
+
+    [read,
+     WmiDataId(12),
+     DisplayName("Max CDB Length") : amended,
+     Description("Maxumum CDB length supported by the adapter") : amended
+    ] uint32 MaxCDBLength;
+
+    [read,
+     WmiDataId(13),
+     DisplayName("Bi-directionsal SCSI comamnd supported") : amended,
+     Description("TRUE if Bi-directionsal SCSI comamnd supported") : amended
+    ] boolean BiDiScsiCommands;
+
+    [read,
+     WmiDataId(14),
+     DisplayName("Manufacturer") : amended,
+     description("A text string describing the manufacturer of adapter") : amended,
+     MaxLen(255)] string VendorID;
+
+    [read,
+     WmiDataId(15),
+     Displayname("Model") : amended,
+     description("A text string set by the manufacturer describing the model of adapter") : amended,
+     MaxLen(255)] string VendorModel;
+
+    [read,
+     WmiDataId(16),
+     Displayname("Version") : amended,
+     description("A text string set by the manufacturer describing the version of adapter") : amended,
+     MaxLen(255)] string VendorVersion;
+
+    [read,
+     WmiDataId(17),
+     displayName("Firmware Version") : amended,
+     description("A text string set by the manufacturer describing the firmware version of adapter") : amended,
+     MaxLen(255)] string FirmwareVersion;
+
+    [read,
+     WmiDataId(18),
+     displayName("ASIC Version") : amended,
+     description("A text string set by the manufacturer describing the Asic version") : amended,
+     MaxLen(255)] string AsicVersion;
+
+    [read,
+     WmiDataId(19),
+     displayName("Option Rom Version") : amended,
+     description("A text string set by the manufacturer describing the option rom version of adapter") : amended,
+     MaxLen(255)] string OptionRomVersion;
+
+    [read,
+     WmiDataId(20),
+     Displayname("Serial Number") : amended,
+     description("A text string set by the manufacturer describing the serial number of adapter") : amended,
+     MaxLen(255)] string SerialNumber;
+
+    [read,
+     WmiDataId(21),
+     Displayname("Driver Name") : amended,
+     description("A text string specifying the name of the driver for the adapter") : amended,
+     MaxLen(255)] string DriverName;
+};
+
+
+[WMI, Dynamic, Provider("wmiprov"),
+ DisplayName("HBA Session Default Configuration") : amended,
+ guid("{B35694DE-D323-49d2-ABB2-8139209AD150}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is optional.\n"
+"//\n"      
+"// This class allows the default session configuration to be managed. It \n"
+"// contains the default values to use when establishing a session.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )     
+]
+class MSiSCSI_HBASessionConfig
+{
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("The InitialR2T key is used to turn off the default use of R2T, thus allowing an initiator to start sending data to a target as if it has received an initial R2T with Buffer Offset=0 and Desired Data Transfer Length=min (FirstBurstSize, Expected Data Transfer Length).") : amended
+    ]
+    boolean InitialR2T;
+
+    [WmiDataId(2),
+     read, write,
+     Description("The initiator and target negotiate support for immediate data. To turn immediate data off, the initiator or target must state its desire to do so.  ImmediateData can be turned on if both the initiator and target have ImmediateData=Yes.") : amended
+    ]
+    boolean ImmediateData;
+
+    [WmiDataId(3),
+     read, write,
+     Description("Maximum data segment length in bytes they can receive in an iSCSI PDU.") : amended
+    ]
+    uint32 MaxRecvDataSegmentLength;
+
+    [WmiDataId(4),
+     read, write,
+     Description("Maximum SCSI data payload in bytes in an Data-In or a solicited Data-Out iSCSI sequence.") : amended
+    ]
+    uint32 MaxBurstLength;
+
+    [WmiDataId(5),
+     read, write,
+     Description("maximum amount in bytes of unsolicited data an iSCSI initiator may send to the target, during the execution of a single SCSI command. This covers the immediate data (if any) and the sequence of unsolicited Data-Out PDUs (if any) that follow the command.") : amended
+    ]
+    uint32 FirstBurstLength;
+
+    [WmiDataId(6),
+     read, write,
+     Description("Initiator and target negotiate the maximum number of outstanding R2Ts per task, excluding any implied initial R2T that might be part of that task.  An R2T is considered outstanding until the last data PDU (with the F bit set to 1) is transferred, or a sequence reception timeout (section 6.12.1) is encountered for that data sequence.") : amended
+    ]
+    uint32 MaxOutstandingR2T;
+};
+
+
+#define ISCSI_DHCP_STATUS uint8
+//
+// Common qualifiers needed for WMIDHCPStatus values
+//
+#define ISCSI_DHCP_STATUS_QUALIFIERS \
+     Description("Enumeration of all the DHCP status") : amended, \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "DHCPEnabled", \
+             "DHCPDisabled" \
+     },\
+     DefineValues {"DHCPEnabled",  \
+                   "DHCPDisabled"}
+
+#define ISCSI_AUTO_METRIC_STATUS uint8
+//
+// Common qualifiers needed for ISCSI_AUTO_METRIC_STATUS values
+//
+#define ISCSI_AUTO_METRIC_STATUS_QUALIFIERS \
+     Description("Enumeration of all the Auto Metric status") : amended, \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "AutoMetricEnabled", \
+             "AutoMetricDisabled" \
+     },\
+     DefineValues {"AutoMetricEnabled",  \
+                   "AutoMetricDisabled"}
+
+#define ISCSI_LMHOSTLOOKUP_STATUS uint8
+//
+// Common qualifiers needed for ISCSI_LMHOSTLOOKUP_STATUS values
+//
+#define ISCSI_LMHOST_LOOKUP_QUALIFIERS \
+     Description("Enumeration of all the LM Host Lookup status") : amended, \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "LMHostLookupEnabled", \
+             "LMHostLookupDisabled" \
+     },\
+     DefineValues {"LMHostLookupEnabled",  \
+                   "LMHostLookupDisabled"}
+
+#define ISCSI_TCP_IP_FLITERING_STATUS uint8
+//
+// Common qualifiers needed for ISCSI_TCP_IP_FLITERING_STATUS values
+//
+#define ISCSI_TCP_IP_FLITERING_STATUS_QUALIFIER \
+     Description("Enumeration of all the ISCSI_TCP_IP_FLITERING status") : amended, \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "TcpIPFilteringEnabled", \
+             "TcpIPFilteringDisabled" \
+     },\
+     DefineValues {"TcpIPFilteringEnabled",  \
+                   "TcpIPFilteringDisabled"}
+
+#define ISCSI_CONNECTION_STATE_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_CONNECTION_STATE_TYPE values
+//
+#define ISCSI_CONNECTION_STATE_TYPE_QUALIFIERS \
+     ValueMap{"0", "1","2"},\
+     Values{ \
+             "login", \
+             "full", \
+             "logout" \
+     },\
+     DefineValues {"login",  \
+                   "full",\
+                   "logout"}
+
+#define ISCSI_CONNECTION_PROTOCOL_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_CONNECTION_PROTOCOL_TYPE values
+//
+#define ISCSI_CONNECTION_PROTOCOL_TYPE_QUALIFIERS \
+     ValueMap{"6"},\
+     Values{ \
+             "TCP" \
+     },\
+     DefineValues {"TCP"}
+
+#define ISCSI_SESSION_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_SESSION_TYPE values
+//
+#define ISCSI_SESSION_TYPE_QUALIFIERS \
+     ValueMap{"0", "1","2","3"},\
+     Values{ \
+             "discoverySession", \
+             "informationalSession", \
+             "dataSession", \
+             "bootSession" \
+     },\
+     DefineValues { \
+                   "discoverySession",\
+                   "informationalSession", \
+                   "dataSession", \
+                   "bootSession"  \
+                  }
+
+
+#define ISCSI_HEADER_INTEGRITY_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_HEADER_INTEGRITY_TYPE values
+//
+#define ISCSI_HEADER_INTEGRITY_TYPE_QUALIFIERS \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "None", \
+             "crc32c" \
+     },\
+     DefineValues {"None",  \
+                   "crc32c" }
+
+#define ISCSI_DATA_INTEGRITY_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_DATA_INTEGRITY_TYPE values
+//
+#define ISCSI_DATA_INTEGRITY_TYPE_QUALIFIERS \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "None", \
+             "crc32c" \
+     },\
+     DefineValues {"None",  \
+                   "crc32c" }
+
+
+#define ISCSI_PORTAL_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_PORTAL_TYPE values
+//
+#define ISCSI_PORTAL_TYPE_QUALIFIERS \
+     ValueMap{"0", "1"},\
+     Values{ \
+             "Initiator", \
+             "Target" \
+     },\
+     DefineValues {"InitiatorPortals",  \
+                   "TargetPortals"}
+
+#define ISCSI_INITIATOR_NODE_FAILURE_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_INITIATOR_NODE_FAILURE_TYPE values
+//
+#define ISCSI_INITIATOR_NODE_FAILURE_TYPE_QUALIFIERS \
+     ValueMap{"0", "1","2"},\
+     Values{ \
+             "SessionDigestError", \
+             "SessionCxnTimeoutError", \
+             "SessionFormatError" \
+     },\
+     DefineValues {"SessionDigestError",  \
+                   "SessionCxnTimeoutError", \
+                   "SessionFormatError"}
+
+
+#define ISCSI_INITIATOR_FAILURE_TYPE uint8
+//
+// Common qualifiers needed for ISCSI_INITIATOR_FAILURE_TYPE values
+//
+#define ISCSI_INITIATOR_FAILURE_TYPE_QUALIFIERS \
+     ValueMap{"0", "1","2","3","4"},\
+     Values{ \
+             "LoginOtherFail", \
+             "LoginAuthFail", \
+             "LoginAuthenticateFail", \
+             "LoginNegotiateFail", \
+             "LogoutOthers" \
+     },\
+     DefineValues {"LoginOtherFail",  \
+                   "LoginAuthFail", \
+                   "LoginAuthenticateFail", \
+                   "LoginNegotiateFail", \
+                   "LogoutOthers"}
+
+[
+    WMI,
+    Description ("iSCSI Static Connection Statistics Information") : amended,
+    guid ("{3CE2D6A0-7346-4826-972F-F2C19779D1D1}")
+]
+class ISCSI_ConnectionStaticInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated connection ID. Do not confuse this with CID."): amended
+     ] uint64 UniqueConnectionId;
+
+    [read,
+     WmiDataId(2),
+     Description("The iSCSI connection ID for this connection instance."): amended
+    ] uint16 CID; //session wide namespace
+
+    [read,
+     WmiDataId(3),
+     ISCSI_CONNECTION_STATE_TYPE_QUALIFIERS,
+     Description("**typedef** Indicates the current state of this connection"): amended,
+     cpp_quote("\n"
+                     "    //login          - The TCP connection has been established, but a valid iSCSI\n"
+                     "    //                    login response with the final bit set has not been sent or received.\n"
+                     "    //full            - A valid iSCSI login response with the final bit set \n"
+                     "    //                   has been sent or received.\n"
+                     "    //logout       - A valid iSCSI logout command has been sent or received, but\n"
+                     "    //                  the TCP connection has not yet been closed.\n"
+                     "\n"
+     )
+     ] ISCSI_CONNECTION_STATE_TYPE State;
+
+
+    [read,
+     WmiDataId(4),
+     ISCSI_CONNECTION_PROTOCOL_TYPE_QUALIFIERS,
+     Description("**typedef** The transport protocol over which this connection instance is running."): amended
+     ] ISCSI_CONNECTION_PROTOCOL_TYPE Protocol;
+
+    [read,
+     WmiDataId(5),
+     ISCSI_HEADER_INTEGRITY_TYPE_QUALIFIERS,
+     description("**typedef** The name of the iSCSI header digest scheme in use within this session."),
+     WmiVersion(1)
+     ] ISCSI_HEADER_INTEGRITY_TYPE HeaderIntegrity;
+
+    [read,
+     WmiDataId(6),
+     ISCSI_DATA_INTEGRITY_TYPE_QUALIFIERS,
+     description("**typedef** The name of the iSCSI data digest scheme in use within this session."),
+     WmiVersion(1)
+     ] ISCSI_DATA_INTEGRITY_TYPE DataIntegrity;
+
+    [read,
+     WmiDataId(7),
+     description("Must be zero")
+    ] uint16 Reserved;
+    
+    [read,
+     WmiDataId(8),
+     description("The maximum data payload size supported for command or data PDUs within this session."),
+     WmiVersion(1)] uint32 MaxRecvDataSegmentLength;
+
+    [read,
+     WmiDataId(9),
+     ISCSI_AUTH_TYPES_QUALIFIERS,
+     description("**typedef** Authentication type used when establishing the connection.")
+    ] ISCSI_AUTH_TYPES AuthType;
+
+    
+    [read,
+     WmiDataId(10),
+     Description("The local network address used for the connection"): amended
+     ] ISCSI_IP_Address LocalAddr;
+
+    [read,
+     WmiDataId(11),
+     Description("The local port used for the connection"): amended
+     ] uint32 LocalPort;
+
+    [read,
+     WmiDataId(12),
+     Description("The remote network address used for the connection"): amended
+     ] ISCSI_IP_Address RemoteAddr;
+
+    [read,
+     WmiDataId(13),
+     Description("The remote port used for the connection"): amended
+     ] uint32 RemotePort;
+
+    [read,
+     WmiDataId(14),
+     Description("Estimated throughput of the link in bytes per second"): amended
+     ] uint64 EstimatedThroughput;
+
+    [read,
+     WmiDataId(15),
+     Description("Maximum Datagram size supported by the transport in bytes"): amended
+     ] uint32 MaxDatagramSize;
+};
+
+
+[
+    WMI,
+    Description ("iSCSI Static Sessions Statistics Information") : amended,
+    guid ("{B71D2538-57E2-4228-888B-1AF9B3BD01CD}")
+]
+class ISCSI_SessionStaticInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated session ID, it is the same id returned by the LoginToTarget method.  Do not confuse this with ISID or SSID."): amended,
+     WmiVersion(1)] uint64 UniqueSessionId;
+
+    [read,
+     WmiDataId(2),
+     WmiVersion(1),
+     description("Initiator node name used to establish the session"),
+     MaxLen(MAX_ISCSI_NAME_LEN)] string InitiatoriSCSIName;
+    
+    [read,
+     WmiDataId(3),
+     WmiVersion(1),
+     Description("iSCSI node name of the target"): amended,
+     MaxLen(MAX_ISCSI_NAME_LEN)] String TargetiSCSIName;
+
+    [read,
+     WmiDataId(4),
+     Description("Target-defined portion of the iSCSI Session ID"): amended,
+     WmiVersion(1)] uint16 TSID;
+
+    [read,
+     WmiDataId(5),
+     Description("Initiator-defined portion of the iSCSI Session ID"): amended,
+     WmiVersion(1)] uint8 ISID[6];
+
+    [read,
+     WmiDataId(6),
+     description("If TRUE, the initiator must wait for an R2T before sending data to the target.  If FALSE, the initiator may send data immediately, within limits set by FirstBurstSize and the expected data transfer length of the request."),
+     WmiVersion(1)] boolean InitialR2t;
+
+    [read,
+     WmiDataId(7),
+     description("If TRUE indicates whether the initiator and target have agreed to support immediate commands on this session."),
+     WmiVersion(1)] boolean ImmediateData;
+
+    [read,
+     WmiDataId(8),
+     Description("**typedef** Type of iSCSI session") : amended, \
+     ISCSI_SESSION_TYPE_QUALIFIERS,
+     cpp_quote("\n"
+                     "    // Type of iSCSI session\n"
+                     "    // discoverySession      - session is being used only for discovery\n"
+                     "    // informationalSession  - session is used for a limited number of scsi commands\n"
+                     "    // dataSession           - session is being used as a full feature session\n"
+                     "    // bootSession           - session is being used to boot an initiator\n"
+                     "\n"
+     ),
+     WmiVersion(1)] ISCSI_SESSION_TYPE Type;
+
+    [read,
+     WmiDataId(9),
+     description("If FALSE indicates that data PDU Sequences may be transferred in any order.  If TRUE indicates that data PDU sequences must be transferred using continuously increasing offsets, except during error recovery."),
+     WmiVersion(1)] boolean DataSequenceInOrder;
+
+    [read,
+     WmiDataId(10),
+     description("If FALSE indicates that data PDUs within sequences may be in any order. If TRUE indicates that data PDUs within sequences must be at continuously increasing addresses, with no gaps or overlay between PDUs."),
+     WmiVersion(1)] boolean DataPduInOrder;
+
+    [read,
+     WmiDataId(11),
+     description("The level of error recovery negotiated between the initiator and the target."),
+     WmiVersion(1)] uint8 ErrorRecoveryLevel;
+
+    [read,
+     WmiDataId(12),
+     description("The maximum number of outstanding request-to-transmit (R2T) per task within this session"),
+     WmiVersion(1)] uint32 MaxOutstandingR2t;
+
+    [read,
+     WmiDataId(13),
+     description("The maximum length supported for unsolicited data sent within this session"),
+     WmiVersion(1)] uint32 FirstBurstLength;
+
+    [read,
+     WmiDataId(14),
+     description("The maximum number of bytes which can be sent within a single sequence of Data-In or Data-Out PDUs"),
+     WmiVersion(1)] uint32 MaxBurstLength;
+
+    [read,
+     WmiDataId(15),
+     description("The maximum number of connections that will be allowed within this session"),
+     WmiVersion(1)] uint32 MaxConnections;
+
+    [read,
+     WmiDataId(16),
+     description("The number of connections that currently belong to this session"),
+     WmiVersion(1)] uint16 ConnectionCount;
+
+    [WmiDataId(17),
+     read,
+     DisplayName("List of Connections") : amended,
+     Description("List of ISCSI_ConnectionStaticInfo.  ConnectionCount specifies the number of elements in the array. NOTE: This is a variable length array.") : amended,
+     WmiSizeIs("ConnectionCount")
+    ]  ISCSI_ConnectionStaticInfo ConnectionsList[];
+};
+
+
+[
+    WMI,
+    Description ("iSCSI Portal Info") : amended,
+    guid ("{4FB9130E-1FEF-4ae6-9E48-77839204D413}")
+]
+class ISCSI_PortalInfo
+{
+    [read,
+     WmiDataId(1),
+     description("An integer used to uniquely identify a paticular port"),
+     WmiVersion(1)] uint32 Index;
+
+    [read,
+     WmiDataId(2),
+     ISCSI_PORTAL_TYPE_QUALIFIERS,
+     description("**typedef** The type of portal (Initiator or Target) \n"),
+     WmiVersion(1)] ISCSI_PORTAL_TYPE PortalType;
+
+    [read,
+     WmiDataId(3),
+     ISCSI_CONNECTION_PROTOCOL_TYPE_QUALIFIERS,
+     //Description("The portal's transport protocol"): amended,
+     description("The portal's transport protocol"),
+     WmiVersion(1)] ISCSI_CONNECTION_PROTOCOL_TYPE Protocol;
+
+    [read,
+     WmiDataId(4),
+     WmiVersion(1)] uint8 Reserved1;
+
+    [read,
+     WmiDataId(5),
+     WmiVersion(1)] uint8 Reserved2;
+	
+    [read,
+     WmiDataId(6),
+     description("The portal's network address"),
+     WmiVersion(1)] ISCSI_IP_Address IPAddr;
+
+    [read,
+     WmiDataId(7),
+     description("The portal's socket number"),
+     WmiVersion(1)] uint32 Port;
+
+    [read,
+     WmiDataId(8),
+     description("The portal's aggregation tag"),
+     WmiVersion(1)] uint16 PortalTag;
+};
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iScsi Portal Information Class") : amended,
+    guid ("{84CA6FD6-B152-4e6a-8869-FDE5E37B6157}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class exposes portal information.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )     
+]
+class MSiSCSI_PortalInfoClass
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read,
+     DisplayName("Count of Elements in iScsiPortalInfo array") : amended,
+     Description("Number of elements in iScsiPortalInfo array") : amended
+    ] uint32 PortalInfoCount;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("List Of Portals") : amended,
+     Description("Variable length array of iScsiPortalInfo.  PortalInfoCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("PortalInfoCount")
+    ]  ISCSI_PortalInfo PortalInformation[];
+
+};
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Static Initiator Session Information") : amended,
+    guid ("{D7931411-0376-4869-A491-8D679BFC004A}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is required. \n"
+"//\n"      
+"// This class exposes session and connection information on the initiator.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorSessionInfo
+{
+    [read,key] String InstanceName;
+    
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique to each instance of each adapter. Using the address of the Adapter Extension is a good idea.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("Count of Elements in SessionList array") : amended,
+     Description("Number of elements in SessionList array") : amended
+    ] uint32 SessionCount;
+
+    [WmiDataId(3),
+     read,
+     DisplayName("List Of Sessions") : amended,
+     Description("Variable length array of sessions.  SessionCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("SessionCount")
+    ]  ISCSI_SessionStaticInfo SessionsList[];
+
+};
+
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Initiator Node Failure Event") : amended,
+    guid ("{1221948A-6332-4ac2-AA04-268AABCECE4F}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class fires an event when a node failure occurs.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorNodeFailureEvent : __ExtrinsicEvent
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     WmiTimeStamp,
+     Description("Timestamp denoting time failure occured"),
+     WmiVersion(1)] uint64 FailureTime;
+
+    [read,
+     WmiDataId(2),
+     Description("**typedef** Types of initiator node failure") : amended, \
+     ISCSI_INITIATOR_FAILURE_TYPE_QUALIFIERS,
+     WmiVersion(1)] ISCSI_INITIATOR_FAILURE_TYPE FailureType;
+
+    [read,
+     WmiDataId(3),
+     description("Name of target involved in failure"),
+     WmiVersion(1),
+     MaxLen(MAX_ISCSI_NAME_LEN)] string TargetFailureName;
+
+    [read,
+     WmiDataId(4),
+     description("Network address of target involved in failure"),
+     WmiVersion(1)] ISCSI_IP_Address TargetFailureAddr;
+};
+
+[
+    Dynamic, Provider("WMIProv"),
+    WMI,
+    Description ("iSCSI Initiator Instance Failure Event") : amended,
+    guid ("{E67E1BDB-D130-4143-9EB2-8BEE1899FD52}"),
+ cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"      
+"// This class fires an event when an initiator failure occurs.\n"
+"//\n"      
+"// This class should use PDO instance names with a single instance.\n"
+"//\n"
+          )     
+]
+class MSiSCSI_InitiatorInstanceFailureEvent : __ExtrinsicEvent
+{
+    [read,key] String InstanceName;
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     description("**typedef** Type of failure"),
+     ISCSI_INITIATOR_NODE_FAILURE_TYPE_QUALIFIERS,
+     WmiVersion(1)] ISCSI_INITIATOR_NODE_FAILURE_TYPE FailureType;
+
+    [read,
+     WmiDataId(2),
+     description("Name of target involved in failure"),
+     WmiVersion(1),
+     MaxLen(MAX_ISCSI_NAME_LEN)] string RemoteNodeName;
+};
+
+//
+// This class describes an iSCSI Path (A TCP Connection to the target)
+//
+
+[
+ WMI,
+ guid("{C8775641-5430-4220-BA25-7DA561CB64CE}"),
+ Description("This class describes an iSCSI Path (A TCP Connection to the target)") : amended
+]
+class ISCSI_Path
+{
+    [WmiDataId(1),
+     Description("iSCSI Unique connection id") : amended
+    ]
+    uint64 UniqueConnectionId;
+
+    [WmiDataId(2),
+     Description("Estimated speed of the connection in MegaBits Per Second") : amended
+    ]
+    uint64 EstimatedLinkSpeed;
+
+    [WmiDataId(3),
+     Description("Weight assigned to the path") : amended
+    ]
+    uint32 PathWeight;
+
+    [WmiDataId(4),
+     Description("Flag set to 1 if the path is a primary path, 0 otherwise.") : amended
+    ]
+    uint32 PrimaryPath;
+
+    [WmiDataId(5),
+     Description("Status of the path - connected, disconnected, reconnecting") : amended,
+     Values{"Connected",
+            "Disconnected",
+            "Reconnecting"} : amended,
+     DefineValues{"CONNECTION_STATE_CONNECTED",
+                  "CONNECTION_STATE_DISCONNECTED",
+                  "CONNECTION_STATE_RECONNECTING"
+                 },
+     ValueMap{"1", "2", "3"}
+    ]
+    uint32 ConnectionStatus;
+
+    [WmiDataId(6),
+     Description("Flag set to 1 if TCP offload is supported for this connection, 0 otherwise.") : amended
+    ]
+    uint32 TCPOffLoadAvailable;
+};
+
+[WMI,
+ guid("{749AFE4D-804D-4662-A68B-DC696655C79A}"),
+ Description("iSCSI Initiator Load Balance Policies supported") : amended
+]
+class ISCSI_Supported_LB_Policies {
+
+    [WmiDataId(1),
+     description("Id that is unique to this session within this adapter. ") : amended
+    ]
+    uint64 UniqueSessionId;
+
+    [WmiDataId(2),
+     Description("Load Balance policy supported by the iSCSI Initiator") : amended,
+     Values{"Fail Over Only",
+            "Round Robin",
+            "Round Robin with Subset",
+            "Dynamic Least Queue Depth",
+            "Weighted Paths",
+            "Vendor Specific"} : amended,
+     DefineValues{"MSiSCSI_LB_FAILOVER",
+                  "MSiSCSI_LB_ROUND_ROBIN",
+                  "MSiSCSI_LB_ROUND_ROBIN_WITH_SUBSET",
+                  "MSiSCSI_LB_DYN_LEAST_QUEUE_DEPTH",
+                  "MSiSCSI_LB_WEIGHTED_PATHS",
+                  "MSiSCSI_LB_VENDOR_SPECIFIC"},
+     ValueMap{"1", "2", "3", "4", "5", "6"}
+    ] 
+    uint32 LoadBalancePolicy;
+    
+    //
+    // If load balance policy is MSiSCSI_LB_VENDOR_SPECIFIC then 
+    // the following properties are not used. Instead the caller would 
+    // need to provide data for setting the vendor specific
+    // Load Balance policy.
+    //
+    [WmiDataId(3),
+     Description("Number of entries in MSiSCSI_Paths array") : amended
+    ]
+
+    uint32 iSCSI_PathCount;
+
+    [WmiDataId(4),
+     WmiSizeIs("iSCSI_PathCount"),
+     Description("Describes iSCSI Initiator Paths") : amended
+    ]
+    ISCSI_Path iSCSI_Paths[];
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Set iSCSI Initiator Load Balance Policies"),
+ guid("{A7DFE761-B6BC-4490-91B0-D9CF4A24D37C}")
+]
+class MSiSCSI_LB_Operations {
+
+    [key, read]
+    string InstanceName;
+
+    [read] 
+    boolean Active;
+
+    //
+    // Method to set load balance policy for the iSCSI Initiator
+    //
+    [WmiMethodId(10),
+     Implemented,
+     Description("Sets Load Balance Policy for the iSCSI Initiator") : amended,
+     cpp_quote(
+       "//\n"
+       "// SetLoadBalancePolicy instructs the iSCSI Initiator what Load Balance\n"
+       "// policy to use.\n"
+       "//\n"
+              )            
+    ]
+    void SetLoadBalancePolicy(
+        [in,
+         Description("New Load Balance policy to be set")
+        ] ISCSI_Supported_LB_Policies LoadBalancePolicies,
+
+        [out,
+         Description("Status of the operation")
+        ] uint32 Status
+    );
+};
+
+[
+ WMI,
+ guid("{E0AECAEE-B311-426f-B67A-18D5E55D0996}"),
+ Dynamic,
+ DisplayName("iSCSI Initiator Query LoadBalance Policy") : amended,
+ Provider("wmiprov"),
+ description("Query Load Balance policy used by iSCSI Initiator") : amended,
+ cpp_quote(
+"//\n"
+"// MSiSCSI_QueryLBPolicy class is used to query the Initiator about\n"
+"// the load balance policy that is currently used.\n"
+"//\n"
+          )
+]
+class MSiSCSI_QueryLBPolicy 
+{
+    [key]
+    string InstanceName;
+
+    boolean Active;
+
+    [WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     Description("Id that is globally unique to each instance of each adapter. Using the address of the Adapter Extension is a good idea.") : amended
+    ]
+    uint64 UniqueAdapterId;
+
+    [WmiDataId(2),
+     read,
+     DisplayName("Reserved field") : amended
+    ] uint32 Reserved;
+
+    [WmiDataId(3),
+     read,
+     DisplayName("Count of Elements in LoadBalancePolicies array") : amended,
+     cpp_quote("\n    // Number of elements in LoadBalancePolicies array\n"),
+     Description("Number of elements in LoadBalancePolicies array") : amended
+    ] uint32 SessionCount;
+
+    [WmiDataId(4),
+     DisplayName("Load Balance Policy for each session") : amended,
+     description("Load Balance Policy that is currently being used by iSCSI Initiator - one element for each session on the adapter") : amended,
+     WmiSizeIs("SessionCount")
+    ]
+    ISCSI_Supported_LB_Policies LoadBalancePolicies[];
+};
+
+//
+// Define the qualifiers used for the Type property of the
+// MSiSCSI_Eventlog class. The value of the property corresponds
+// to the eventlog type as specified in iscsilog.h
+//
+#define EVENTLOG_MESSAGE_QUALIFIERS \
+     Values{ \
+            "ISCSI_ERR_TDI_CONNECT_FAILED", \
+            "ISCSI_ERR_INSUFFICIENT_SESSION_RESOURCES", \
+            "ISCSI_ERR_INVALID_COMMAND_SEQUENCE_NUMBER", \
+            "ISCSI_ERR_INVALID_BURST_LENGTH", \
+            "ISCSI_ERR_SETUP_NETWORK_NODE", \
+            "ISCSI_ERR_INSUFFICIENT_CONNECTION_RESOURCES", \
+            "ISCSI_ERR_SEND_FAILED", \
+            "ISCSI_ERR_ISCSI_REQUEST_TIMEOUT", \
+            "ISCSI_ERR_SCSI_REQUEST_TIMEOUT", \
+            "ISCSI_ERR_LOGIN_FAILED", \
+            "ISCSI_ERR_LOGIN_PDU_ERROR", \
+            "ISCSI_ERR_INVALID_LOGIN_REDIRECT_DATA", \
+            "ISCSI_ERR_INVALID_AUTHMETHOD", \
+            "ISCSI_ERR_INVALID_CHAP_ALGORITHM", \
+            "ISCSI_ERR_INVALID_CHAP_CHALLENGE", \
+            "ISCSI_ERR_INVALID_KEY_DURING_CHAP", \
+            "ISCSI_ERR_INVALID_CHAP_RESPONSE", \
+            "ISCSI_ERR_HEADER_DIGEST_NEEDED", \
+            "ISCSI_ERR_HEADER_DATA_NEEDED", \
+            "ISCSI_ERR_CONNECTION_LOST", \
+            "ISCSI_ERR_INVALID_DATA_SEGMENT_LENGTH", \
+            "ISCSI_ERR_HEADER_DIGEST_ERROR", \
+            "ISCSI_ERR_ISCSI_PDU_ERROR", \
+            "ISCSI_ERR_UNKNOWN_ISCSI_OPCODE", \
+            "ISCSI_ERR_DATA_DIGEST_ERROR", \
+            "ISCSI_ERR_EXCESS_DATA_SENT", \
+            "ISCSI_ERR_UNEXPECTED_PDU", \
+            "ISCSI_ERR_INVALID_RTT_PDU", \
+            "ISCSI_ERR_ISCSI_PDU_REJECTED", \
+            "ISCSI_ERR_INSUFFICIENT_WORKITEM_RESOURCES", \
+            "ISCSI_ERR_INSUFFICIENT_REQ_PACKET_RESOURCES", \
+            "ISCSI_WRN_RECEIVED_ASYNC_LOGOUT", \
+            "ISCSI_ERR_INVALID_CHAP_CHALLENGE_SIZE", \
+            "ISCSI_INFO_RECONNECTED_TO_TARGET", \
+            "ISCSI_ERR_INVALID_TARGET_CHAP_SECRET", \
+            "ISCSI_ERR_INVALID_INITIATOR_CHAP_SECRET", \
+            "ISCSI_ERR_FIPS_NOT_AVAILABLE", \
+            "ISCSI_ERR_CHAP_NOT_OFFERED", \
+            "ISCSI_ERR_DEVICE_RESET", \
+            "ISCSI_ERR_CHAP_OFFERED", \
+            "ISCSI_ERR_AUTH_METHOD_NOT_OFFERED", \
+            "ISCSI_ERR_INVALID_STATUS_SEQ_NUM" \
+     }, \
+     ValueMap{ \
+            "0xC0000001", \
+            "0xC0000002", \
+            "0xC0000003", \
+            "0xC0000004", \
+            "0xC0000005", \
+            "0xC0000006", \
+            "0xC0000007", \
+            "0xC0000008", \
+            "0xC0000009", \
+            "0xC000000A", \
+            "0xC000000B", \
+            "0xC000000C", \
+            "0xC000000D", \
+            "0xC000000E", \
+            "0xC000000F", \
+            "0xC0000010", \
+            "0xC0000011", \
+            "0xC0000012", \
+            "0xC0000013", \
+            "0xC0000014", \
+            "0xC0000015", \
+            "0xC0000016", \
+            "0xC0000017", \
+            "0xC0000018", \
+            "0xC0000019", \
+            "0xC000001A", \
+            "0xC000001B", \
+            "0xC000001C", \
+            "0xC000001D", \
+            "0xC000001E", \
+            "0xC000001F", \
+            "0x80000020", \
+            "0xC0000021", \
+            "0x40000022", \
+            "0xC0000023", \
+            "0xC0000024", \
+            "0xC0000025", \
+            "0xC0000026", \
+            "0xC0000027", \
+            "0xC0000028", \
+            "0xC0000029", \
+            "0xC000002A" \
+     }, \
+     Description("Type of eventlog message") : amended
+
+#define ERROR_SEVERITY_QUALIFIERS \
+     Values{"Recoverable", "Fatal", "Correctable"}, \
+     ValueMap{ "0", "1", "2" }, \
+     Description("Severity of the error record") : amended
+
+[WMI,
+ guid("{E6B8552B-7C62-4c6e-99EB-67CE6087894C}"),
+ description("iSCSI Eventlog generation event") : amended,
+ Dynamic,
+ Provider("wmiprov"),
+ cpp_quote(
+"//\n"
+"// Miniports can fire this event to cause eventlog entries to be\n"
+"// included in the system eventlog. This is useful as the iscsilog.h\n"
+"// header has many iSCSI specific eventlog messages that are useful for\n"
+"// troubleshooting, but can't be fired directly by a miniport. By\n"
+"// firing this WMI event appropriately a miniport can cause a useful\n"
+"// eventlog entry to be included in the system eventlog\n"
+"//\n")
+]
+class MSiSCSI_Eventlog : __ExtrinsicEvent
+{
+    [key] 
+    string InstanceName;
+ 
+    boolean Active;
+    
+    [WmiDataId(1),
+     EVENTLOG_MESSAGE_QUALIFIERS
+    ]
+    uint32 Type;
+
+    [WmiDataId(2),
+     Description("If zero then this event is not logged to system eventlog") : amended
+    ]
+    uint32 LogToEventlog;
+
+    [WmiDataId(3),
+     Description("Size of Additional Data") : amended
+    ]
+    uint32 Size;
+
+    [WmiDataId(4),
+     WmiSizeIs("Size"),
+     Description("Additional data to include in eventlog message, typically iSCSI Header") : amended
+    ]
+    uint8 AdditionalData[];    
+};
+
+[
+    WMI,
+    Description ("iSCSI Redirect Portal Info") : amended,
+    guid ("{F6004CE6-9507-4d86-AE1E-E9D64F166F2F}")
+]
+class ISCSI_RedirectPortalInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated connection ID. Do not confuse this with CID."): amended,
+     WmiVersion(1)
+     ] uint64 UniqueConnectionId;
+
+    [read,
+     WmiDataId(2),
+     Description("Original Target IP Address given in the login"): amended,
+     WmiVersion(1)] ISCSI_IP_Address OriginalIPAddr;
+
+    [read,
+     WmiDataId(3),
+     Description("Original Target portal's socket number given in the login"): amended,
+     WmiVersion(1)] uint32 OriginalPort;
+
+    [read,
+     WmiDataId(4),
+     Description("Redirected Target IP Address"): amended,
+     WmiVersion(1)] ISCSI_IP_Address RedirectedIPAddr;
+
+    [read,
+     WmiDataId(5),
+     Description("Redirected Target portal's socket number"): amended,
+     WmiVersion(1)] uint32 RedirectedPort;
+
+    [read,
+     WmiDataId(6),
+     Description("TRUE if login was redirected. RedirectedIPAddr and RedirectedPort are valid then."): amended,
+     WmiVersion(1)] uint8 Redirected;
+
+    [read,
+     WmiDataId(7),
+     Description("TRUE if the redirection is temporary. FALSE otherwise"): amended,
+     WmiVersion(1)] uint8 TemporaryRedirect;
+};
+
+[
+    WMI,
+    Description ("iSCSI Redirect Session Info") : amended,
+    guid ("{ED60BC3F-3D56-42f0-B4D0-81DD16E28515}")
+]
+class ISCSI_RedirectSessionInfo
+{
+    [read,
+     WmiDataId(1),
+     Description("A uniquely generated session ID, it is the same id returned by the LoginToTarget method.  Do not confuse this with ISID or SSID."): amended,
+     WmiVersion(1)] uint64 UniqueSessionId;
+
+    [read,
+     WmiDataId(2),
+     Description("Target portal group tag for this Session "): amended,
+     WmiVersion(1)] uint32 TargetPortalGroupTag;
+
+    [read,
+     WmiDataId(3),
+     DisplayName("Number of elements in RedirectPortalList array") : amended,
+     cpp_quote("\n    // Number of elements in RedirectPortalList array\n"),
+     Description("Number of elements in RedirectPortalList array") : amended,
+     WmiVersion(1)
+    ] uint32 ConnectionCount;
+
+    [read,
+     WmiDataId(4),
+     DisplayName("Redirect Portal info for each connection") : amended,
+     Description("Redirect portal info - one element for each connection in the session") : amended,
+     WmiSizeIs("ConnectionCount"),
+     WmiVersion(1)
+    ] ISCSI_RedirectPortalInfo RedirectPortalList[];
+};
+
+[
+    WMI, Dynamic, Provider("WMIProv"),
+    Description ("iScsi Redirect Portal Information Class") : amended,
+    guid ("{DAF7F63A-F9EA-4869-87E1-AE8A7C2261E2}"),
+cpp_quote(
+"//\n"
+"//\n"
+"// This class is recommended. \n"
+"//\n"
+"// This class exposes portal information. It provides the original and \n"
+"// redirected target portal information for an iSCSI Connection.\n"
+"//\n"
+"// This class must be registered using PDO instance names with a single instance\n"
+"//\n"
+          )
+]
+class MSiSCSI_RedirectPortalInfoClass
+{
+    [read,key] String InstanceName;
+
+    [read] boolean Active;
+
+    [read,
+     WmiDataId(1),
+     DisplayName("Adapter Id") : amended,
+     DisplayInHex,
+     description("Id that is globally unique for all instances of iSCSI initiators.") : amended,
+     WmiVersion(1)
+    ]
+    uint64 UniqueAdapterId;
+
+    [read,
+     WmiDataId(2),
+     DisplayName("Number of session on the adapter : Number of elements in RedirectSessionInfo array") : amended,
+     Description("Number of elements in RedirectSessionInfo array") : amended,
+     WmiVersion(1)
+    ] uint32 SessionCount;
+
+    [read,
+     WmiDataId(3),
+     DisplayName("List Of ISCSI_RedirectSessionInfo ") : amended,
+     Description("Variable length array of ISCSI_RedirectSessionInfo. SessionCount specifies the number of elements in the array. NOTE: this is a variable length array.") : amended,
+     WmiSizeIs("SessionCount"),
+     WmiVersion(1)
+    ] ISCSI_RedirectSessionInfo RedirectSessionList[];
+};
+
+[
+ WMI,
+ guid("{B8D765F0-2D93-4da2-8186-A187622B4302}"),
+ Dynamic,
+ Provider("wmiprov"),
+ cpp_quote(
+"\n"           
+"//\n"
+"//\n"
+"// This class is recommended.\n"
+"//\n"         
+"// iSCSI management applications rely upon this\n"
+"// class in order to interface with the adapter. Implement one instance\n"
+"// per miniport instance (adapter). \n"
+"//\n"         
+"// This class must be registered using PDO instance names with a single instance.\n"
+"//\n"
+          )        
+]
+class MSiSCSI_ManagementOperations
+{
+    //
+    // This class must be registered using PDO instance names
+    //
+    [key]
+    string InstanceName;
+    
+    boolean Active;
+
+    [WmiMethodId(10),
+     Implemented,
+     Description("Perform an ICMP ping") : amended,
+     cpp_quote(
+"//\n"
+"// This method is recommended.\n"
+"//\n"             
+"// Ping will perform ICMP ping requests to the destination address \n"
+"// and return the number of ping responses received. This is only supported\n"
+"// by some HBA, use the ping command for the software initiator.\n"
+"//\n"
+              )            
+    ]
+    void PingIPAddress(
+                     [in,
+                      Description("Number of requests to send") : amended
+                     ] uint32 RequestCount,
+
+                     [in,
+                      Description("Number of bytes in each request") : amended
+                     ] uint32 RequestSize,
+
+                     [in,
+                      Description("Number of ms to wait for response") : amended
+                     ] uint32 Timeout,
+
+                     [in,
+                      description("IP address to ping") : amended
+                     ] ISCSI_IP_Address Address,
+            
+                     [out,
+                      ISCSI_STATUS_QUALIFIERS
+                     ] ISCSI_STATUS Status,
+ 
+                     [out,
+                      Description("Number of responses received") : amended
+                     ] uint32 ResponsesReceived
+
+                    );
+
+    
+};

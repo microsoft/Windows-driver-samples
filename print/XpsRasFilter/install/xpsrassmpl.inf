@@ -1,0 +1,87 @@
+;
+; Copyright (c) 2005  Microsoft Corporation
+;
+; All rights reserved.
+;
+; THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+; ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+; PARTICULAR PURPOSE.
+;
+; File Name:
+;
+;    xpsrassmpl.inf
+;
+; Abstract:
+;
+;    Xps Rasterization Service WDK sample driver install file
+;
+[Version]
+Signature="$Windows NT$"
+Provider=%MS%
+ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
+Class=Printer
+DriverVer=10/17/2008,6.1.6930.0
+
+[Manufacturer]
+%Microsoft%=Microsoft,NTx86.6.1,NTia64.6.1,NTamd64.6.1
+
+
+[Microsoft.NTx86.6.1]
+"XPSRas WDK Sample Driver" = INSTALL_FILTER
+
+[Microsoft.NTia64.6.1]
+"XPSRas WDK Sample Driver" = INSTALL_FILTER
+
+[Microsoft.NTamd64.6.1]
+"XPSRas WDK Sample Driver" = INSTALL_FILTER
+
+[INSTALL_FILTER]
+CopyFiles=XPSRasSample
+DriverFile=mxdwdrv.dll
+ConfigFile=UniDrvUI.dll
+HelpFile=UniDrv.HLP
+DataFile=xpsrassmpl.GPD
+CoreDriverSections="{D20EA372-DD35-4950-9ED8-A6335AFE79F0},UNIDRV.OEM", "{D20EA372-DD35-4950-9ED8-A6335AFE79F5},XPSDRV.OEM,XPSGPD.OEM"
+
+[PrinterPackageInstallation.x86]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[PrinterPackageInstallation.amd64]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[PrinterPackageInstallation.ia64]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[DestinationDirs]
+DefaultDestDir=66000
+
+[XPSRasSample]
+xpsrassmpl.gpd
+xpsrassmpl-pipelineconfig.xml
+xpsrasfilter.dll
+
+[SourceDisksNames.x86]
+1 = %Location%,,
+2 = %Location%,,,x86
+
+[SourceDisksNames.ia64]
+1 = %Location%,,
+2 = %Location%,,,ia64
+
+[SourceDisksNames.amd64]
+1 = %Location%,,
+2 = %Location%,,,amd64
+
+[SourceDisksFiles]
+xpsrassmpl.gpd			= 1
+xpsrassmpl-pipelineconfig.xml	= 1
+xpsrasfilter.dll		= 2
+
+[Strings]
+Location="XPSRas WDK Sample Driver"
+MS="Microsoft"
+Microsoft="Microsoft"

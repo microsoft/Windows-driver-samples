@@ -1,0 +1,104 @@
+;/*++
+;
+;Copyright (c) 1990-2000  Microsoft Corporation
+;
+;Module Name:
+;    ECHO.INF
+;
+;Abstract:
+;    INF file for installing the Driver Frameworks ECHO Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install ECHO.inf root\ECHO" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+ECHO.sys  = 1,,
+
+;*****************************************
+; ECHO  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ECHO.DeviceDesc%=ECHO_Device, root\ECHO
+
+[ECHO_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+ECHO.sys
+
+
+;-------------- Service installation
+[ECHO_Device.NT.Services]
+AddService = ECHO,%SPSVCINST_ASSOCSERVICE%, ECHO_Service_Inst
+
+; -------------- ECHO driver install sections
+[ECHO_Service_Inst]
+DisplayName    = %ECHO.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\ECHO.sys
+
+;
+;--- ECHO_Device Coinstaller installation ------
+;
+
+[DestinationDirs]
+ECHO_Device_CoInstaller_CopyFiles = 11
+
+[ECHO_Device.NT.CoInstallers]
+AddReg=ECHO_Device_CoInstaller_AddReg
+CopyFiles=ECHO_Device_CoInstaller_CopyFiles
+
+[ECHO_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ECHO_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[ECHO_Device.NT.Wdf]
+KmdfService =  ECHO, ECHO_wdfsect
+[ECHO_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "WDF Sample ECHO Installation Disk #1"
+ECHO.DeviceDesc = "Sample WDF ECHO Driver"
+ECHO.SVCDESC = "Sample WDF ECHO Service"
+ClassName       = "Sample Device"

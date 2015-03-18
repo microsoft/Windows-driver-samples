@@ -1,0 +1,88 @@
+;/*++
+;
+;Copyright (c) 2010 Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    SerialBusWdk.INF
+;
+;Abstract:
+;    INF file for installing a serial bus driver over UART transport
+;
+;Installation Notes:
+;    For testing purpose, use Devcon.exe to install
+;
+;        "devcon install SerialBusWdk.inf SerialBusWdk_RootEnum"
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFTSAMPLE%
+DriverVer=06/21/2006,6.2.7923.0
+CatalogFile=SerialBusWdk.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SerialBusWdk.sys  = 1,,
+
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%StdMfg%=VendorModels,NT$ARCH$
+
+;*****************************************
+; Serial bus driver install Section
+;*****************************************
+
+[VendorModels.NT$ARCH$]
+%Bus.DeviceDesc%=Bus_Vendor, SerialBusWdk_RootEnum
+
+[Bus_Vendor.NT]
+CopyFiles=Bus.CopyFiles
+
+[Bus.CopyFiles]
+SerialBusWdk.sys
+
+[Bus_Vendor.NT.HW]
+AddReg=Bus_Vendor.NT.AddReg
+
+[Bus_Vendor.NT.AddReg]
+; Reference: http://msdn.microsoft.com/en-us/library/ff546320.aspx
+HKR,,DeviceCharacteristics,0x10001,0x0100      ; Use same security checks on relative opens
+; Reference: http://msdn.microsoft.com/en-us/library/windows/hardware/ff563667(v=vs.85).aspx
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)(A;;GA;;;LS)"   ; DACL Protected to allow generic-all access to built-in Admin group, system, and Local Service. 
+
+;-------------- Service installation
+[Bus_Vendor.NT.Services]
+AddService = SerialBusWdk,%SPSVCINST_ASSOCSERVICE%, Bus_Service_Inst
+
+; -------------- statbus driver install sections
+[Bus_Service_Inst]
+DisplayName    = %Bus.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\SerialBusWdk.sys
+
+[Strings]
+;Non-Localizable
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+
+;Localizable
+MSFTSAMPLE = "Microsoft Sample"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Serial Bus Driver over UART Installation Disk #1"
+Bus.DeviceDesc = "Serial Bus Driver over UART Bus Enumerator"
+Bus.SVCDESC = "Serial Bus Driver over UART Bus Enumerator"

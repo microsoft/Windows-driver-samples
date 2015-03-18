@@ -1,0 +1,8 @@
+DriverCreate
+DeviceInitAPI
+CtlDeviceFinishInitDeviceAdd
+MdlAfterReqCompletedIoctl
+MemAfterReqCompletedIntIoctlA
+MdlAfterReqCompletedIntIoctlA
+MarkCancOnCancReqLocal
+StopAckWithinEvtIoStop

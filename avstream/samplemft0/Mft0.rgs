@@ -1,0 +1,15 @@
+HKCR
+{
+    NoRemove CLSID
+    {
+        ForceRemove {7BB640D9-33A4-4759-B290-F41A31DCF848} = s 'Mft0 Class'
+        {
+            InprocServer32 = s '%MODULE%'
+            {
+                val ThreadingModel = s 'Both'
+            }
+            TypeLib = s '{DE05674A-C564-4C0E-9B7C-E1519F7AA767}'
+            Version = s '1.0'
+        }
+    }
+}

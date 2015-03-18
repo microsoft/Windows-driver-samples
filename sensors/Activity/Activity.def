@@ -1,0 +1,6 @@
+; Activity.def : Declares the module parameters.
+
+LIBRARY Activity
+
+EXPORTS
+

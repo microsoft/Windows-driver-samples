@@ -1,0 +1,95 @@
+/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    CustomSensors.INF
+;
+;Abstract:
+;    INF file for installing the Sensors 2.0 Custom Sensor Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install CustomSensors.inf umdf2\CustomSensors" to install
+;
+;--*/
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sensor
+ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
+Provider    = %MSFT%
+CatalogFile = CustomSensors.cat
+DriverVer   = 08/14/2014,2.00.00.01
+
+[DestinationDirs]
+;12 == Windows\System32\Drivers\UMDF
+DefaultDestDir = 12,UMDF
+
+[SourceDisksNames]
+1 = %MediaDescription%,,,""
+
+[SourceDisksFiles]
+CustomSensors.dll   = 1,,
+
+[Manufacturer]
+%MSFT% = CustomSensors_Device, NT$ARCH$
+
+;*******************************
+; Custom Sensor Install Section
+;*******************************
+
+[CustomSensors_Device.NT$ARCH$]
+; DisplayName       Section          DeviceId
+; -----------       -------          --------
+%CustomSensors_DevDesc% = CustomSensors_Inst, umdf2\CustomSensors
+
+[CustomSensors_Inst.NT]
+CopyFiles = CustomSensorsDriverCopy
+
+[CustomSensorsDriverCopy]
+CustomSensors.dll
+
+[DestinationDirs]
+CustomSensorsDriverCopy = 12,UMDF
+
+;-------------- Service installation
+
+[CustomSensors_Inst.NT.Services]
+AddService = WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[CustomSensors_Inst.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+
+[WUDFRD_ServiceInstall]
+DisplayName   = %WudfRdDisplayName%
+ServiceType   = %SERVICE_KERNEL_DRIVER%
+StartType     = %SERVICE_DEMAND_START%
+ErrorControl  = %SERVICE_ERROR_NORMAL%
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section
+
+[CustomSensors_Inst.NT.Wdf]
+UmdfService              = CustomSensors, CustomSensors_Install
+UmdfServiceOrder         = CustomSensors
+UmdfDirectHardwareAccess = AllowDirectHardwareAccess
+UmdfFileObjectPolicy     = AllowNullAndUnknownFileObjects
+UmdfFsContextUsePolicy   = CannotUseFsContexts
+
+[CustomSensors_Install]
+UmdfLibraryVersion       = $UMDFVERSION$
+ServiceBinary            = %12%\UMDF\CustomSensors.dll
+UmdfExtensions           = SensorsCx0102
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
+
+[Strings]
+MediaDescription         = "Windows Custom Sensor sample Driver"
+MSFT                     = "Microsoft"
+CustomSensors_DevDesc    = "Custom Sensor sample"
+WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
+
+SERVICE_KERNEL_DRIVER    = 1
+SERVICE_DEMAND_START     = 3
+SERVICE_ERROR_NORMAL     = 1

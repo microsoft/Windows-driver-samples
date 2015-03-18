@@ -1,0 +1,83 @@
+;
+; NetNfpProvider.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Proximity
+ClassGuid={5630831C-06C9-4856-B327-F5D32586E060}
+Provider=%MSFT%
+CatalogFile=nfp.cat
+DriverVer=03/20/2003,5.00.3788
+
+[Manufacturer]
+%MSFTWUDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%NetNfpProviderName%=NetNfpProvider_Install,WUDF\NetNfpProvider
+
+[SourceDisksFiles]
+NetNfpProvider.dll=1
+
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== WUDF NetNfpProvider Test Driver ==================================
+
+[NetNfpProvider_Install]
+CopyFiles=UMDFDriverCopy
+
+[NetNfpProvider_Install.hw]
+AddReg=NetNfpProvider_AddReg
+
+[NetNfpProvider_Install.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[NetNfpProvider_Install.CoInstallers]
+AddReg = NetNfpProvider_Install.CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[NetNfpProvider_Install.CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WUDFCoinstaller.dll"
+
+
+
+[CoInstallers_CopyFiles]
+;WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[NetNfpProvider_Install.Wdf]
+UmdfService=NetNfpProvider, NetNfpProvider_Driver_Install
+UmdfServiceOrder=NetNfpProvider
+UmdfDispatcher=FileHandle
+
+[NetNfpProvider_AddReg]
+HKR,"NetNfpProvider","Server",0x00010001,1
+
+[WUDFRD_ServiceInstall]
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WUDFRd.sys
+
+[NetNfpProvider_Driver_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID="{278F44F0-FF5C-4FE3-BF20-F8AA158EA7BC}"
+ServiceBinary="%12%\UMDF\NetNfpProvider.dll"
+
+[DestinationDirs]
+UMDFDriverCopy=12,UMDF
+
+[UMDFDriverCopy]
+NetNfpProvider.dll
+
+; =================== Generic ==================================
+
+[Strings]
+MSFT="Microsoft"
+MSFTWUDF="Microsoft Windows Driver Kit Sample (Proximity)"
+MediaDescription="Microsoft Network NearFieldProximity Provider Installation Media"
+NetNfpProviderName="Network NearFieldProximity Provider"
+
+
+

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{D429EFC9-09E8-495C-81B0-32340C75C2BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{5DA38202-119A-41F8-B5A6-CB8D38191147}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTestCtrl", "control\ObCallbackTestCtrl.vcxproj", "{8B053BEE-EA21-4D12-984B-6C93FE6D4992}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTest", "driver\ObCallbackTest.vcxproj", "{C696D115-0970-4E9C-8FED-31A99E039ED5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Debug|Win32.Build.0 = Debug|Win32
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Release|Win32.ActiveCfg = Release|Win32
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Release|Win32.Build.0 = Release|Win32
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Debug|x64.ActiveCfg = Debug|x64
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Debug|x64.Build.0 = Debug|x64
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Release|x64.ActiveCfg = Release|x64
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992}.Release|x64.Build.0 = Release|x64
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Debug|Win32.Build.0 = Debug|Win32
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Release|Win32.ActiveCfg = Release|Win32
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Release|Win32.Build.0 = Release|Win32
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Debug|x64.ActiveCfg = Debug|x64
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Debug|x64.Build.0 = Debug|x64
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Release|x64.ActiveCfg = Release|x64
+		{C696D115-0970-4E9C-8FED-31A99E039ED5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8B053BEE-EA21-4D12-984B-6C93FE6D4992} = {D429EFC9-09E8-495C-81B0-32340C75C2BA}
+		{C696D115-0970-4E9C-8FED-31A99E039ED5} = {5DA38202-119A-41F8-B5A6-CB8D38191147}
+	EndGlobalSection
+EndGlobal

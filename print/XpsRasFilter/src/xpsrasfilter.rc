@@ -1,0 +1,28 @@
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// Copyright (c) Microsoft Corporation. All rights reserved
+//
+// File Name:
+//
+//    xpsrasfilter.rc
+//
+// Abstract:
+//
+//    Xps Rasterization Service filter resource file.
+//
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "XPS Rasterization Service WDK Sample Filter"
+#define VER_INTERNALNAME_STR            "xpsrasfilter.dll"
+#define VER_ORIGINALFILENAME_STR        "xpsrasfilter.dll"
+#define VER_FILEVERSION                 0, 3, VER_PRODUCTBUILD, VER_PRODUCTBUILD_QFE
+
+#include "common.ver"
+

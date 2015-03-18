@@ -1,0 +1,89 @@
+;
+; SocketEcho.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+CatalogFile=wudf.cat
+DriverVer=03/20/2003,5.00.3788
+
+[Manufacturer]
+%MSFTWUDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%SocketEchoName%=SocketEcho_Install,WUDF\SocketEcho
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+SocketEcho.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== WUDF SocketEcho Test Driver ==================================
+
+[SocketEcho_Install]
+CopyFiles=UMDFDriverCopy
+
+[SocketEcho_Install.hw]
+AddReg=SocketEcho_AddReg
+
+[SocketEcho_Install.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[SocketEcho_Install.CoInstallers]
+AddReg = SocketEcho_Install.CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[SocketEcho_Install.CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[SocketEcho_Install.Wdf]
+UmdfService=SocketEcho, SocketEcho_Driver_Install
+UmdfServiceOrder=SocketEcho
+UmdfDispatcher=FileHandle
+
+[SocketEcho_AddReg]
+HKR,"SocketEcho","Host",0x00000000,"localhost"
+HKR,"SocketEcho","Port",0x00000000,"6000"
+
+[WUDFRD_ServiceInstall]
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WUDFRd.sys
+
+[SocketEcho_Driver_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID="{83B87D35-76B8-4920-B43C-3BDE6B0EC5B8}"
+ServiceBinary="%12%\UMDF\SocketEcho.dll"
+
+[DestinationDirs]
+UMDFDriverCopy=12,UMDF
+
+[UMDFDriverCopy]
+SocketEcho.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
+
+; =================== Generic ==================================
+
+[Strings]
+MSFT="Microsoft"
+MSFTWUDF="Microsoft Internal (WUDF)"
+MediaDescription="Microsoft WUDF Sample Driver Installation Media"
+ClassName="Sample Device"
+SocketEchoName="Sample WUDF SocketEcho Driver"

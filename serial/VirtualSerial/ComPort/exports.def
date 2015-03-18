@@ -1,0 +1,6 @@
+; exports.def : Declares the module parameters.
+
+LIBRARY      "Virtualserial.DLL"
+
+EXPORTS
+    DllGetClassObject   PRIVATE

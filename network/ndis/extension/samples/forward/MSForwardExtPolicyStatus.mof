@@ -1,0 +1,31 @@
+//
+// Copyright (c) Microsoft Corporation. All Rights Reserved.
+//
+// Custom property status for MSForwardExt
+// MAC Address Allow Policy Status
+//
+#pragma namespace("\\\\.\\root\\virtualization\\v2")
+
+[ Dynamic, 
+ UUID("A3E2AFF5-E6FA-4E52-AB74-13250BF7E8CF"),
+ ExtensionId("37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4"), 
+ Provider("VmmsWmiInstanceAndMethodProvider"),
+ Applicability("2"),
+ Locale(0x409),
+ InterfaceVersion("1"),
+ InterfaceRevision("0"),
+DisplayName("MSForwardExt MAC Address Policy Status") : Amended,
+Description("The current array of PortIds with policy set to allow sends") : Amended]
+class MSForwardExt_MacAddressRuleStatus : Msvm_EthernetSwitchData {
+   
+    //
+    // Array of PortId's currently allowing sends.
+    //
+    [ Read,
+      WmiDataId(1),
+      InterfaceVersion(1),
+      InterfaceRevision(0),
+      Description (
+         "Currently Allowed Port Ids") : Amended]
+    uint32 AllowedPortIds[] = {};
+};     

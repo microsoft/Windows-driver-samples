@@ -1,0 +1,12 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "WDF UMDF2 Toaster Device Driver"
+#define VER_INTERNALNAME_STR        "wdftoaster.dll"
+#define VER_ORIGINALFILENAME_STR    "wdftoaster.dll"
+
+#include "common.ver"
+

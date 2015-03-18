@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{2B50099F-1EBF-480D-9136-448FBDF31F1F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{1001336B-4543-45F1-A020-C5E84A980E24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{9EEC1AF7-63F4-44AB-81FA-A0DAC270B821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{AE93F2E1-863E-4BAE-BC5D-09810656976E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Capture.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Context.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiAlt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Post.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pre.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="regfltr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TxR.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TxRUtil.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="regfltr.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,90 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    SingleComponentSingleStateSampleUm.INF
+;
+;Abstract:
+;    INF file for installing the SingleComponentSingleStateUm Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install SingleComponentSingleStateUm.inf root\SingleComponentSingleState" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=wudf.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SingleComponentSingleStateUm.dll = 1,,
+
+;*****************************************
+; SCSS  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%SCSS.DeviceDesc%=SCSS_Device, root\SingleComponentSingleState
+
+;---------------- copy files
+
+[SCSS_Device.NT]
+CopyFiles=UMDriverCopy
+
+[UMDriverCopy]
+SingleComponentSingleStateUm.dll
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\umdf
+
+;-------------- Service installation
+[SCSS_Device.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section -------------
+[SCSS_Device.NT.Wdf]
+UmdfService=SingleComponentSingleStateUm, SCSS_Install
+UmdfServiceOrder=SingleComponentSingleStateUm
+
+[SCSS_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\SingleComponentSingleStateUm.dll
+
+[Strings]
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "WDF Sample Single Component Single State Device Installation Disk #1"
+SCSS.DeviceDesc = "UMDF 2.0 Single Component Single State Device"
+ClassName = "Sample Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+

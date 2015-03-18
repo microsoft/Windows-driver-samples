@@ -1,0 +1,60 @@
+/* ------------------------------------------------------------------------- *
+ *                                                                           *
+ *  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF        *
+ *  ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO      *
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A           *
+ *  PARTICULAR PURPOSE.                                                      *
+ *                                                                           *
+ *  Copyright (c) Microsoft Corporation. All rights reserved                 *
+ *                                                                           *
+ *  Module Name :  lsi_u3.rc                                                 *
+ *                                                                           *
+ *  Abstract    :  Resource script for lsi_u3.sys                            *
+ *                                                                           *
+ * ------------------------------------------------------------------------- */
+
+/*
+*************************************************************************
+*                                                                       *
+*   Copyright 1994-2008 LSI Corporation. All rights reserved.           *
+*                                                                       *
+************************************************************************/
+
+#include <winver.h>
+
+#include <ntverp.h>
+
+#include "lsiver.h"
+
+#define VER_FILETYPE    VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "LSI Ultra160 SCSI Miniport Driver"
+
+
+#ifdef IA64
+#define VER_INTERNALNAME_STR        LSI_VERSION_LABEL " (Windows 7 IA64)"
+#elif defined AMD64
+#define VER_INTERNALNAME_STR        LSI_VERSION_LABEL " (Windows 7 x64)"
+#else
+#define VER_INTERNALNAME_STR        LSI_VERSION_LABEL " (Windows 7 x86)"
+#endif
+
+#define VER_ORIGINALFILENAME_STR    "LSI_U3.SYS"
+
+#undef VER_COMPANYNAME_STR
+#define VER_COMPANYNAME_STR         "LSI Corporation"
+#define VER_LEGALCOPYRIGHT_YEARS    "2008"
+#define VER_LEGALCOPYRIGHT_STR      "Copyright \251 LSI Corporation " VER_LEGALCOPYRIGHT_YEARS
+
+#define VER_FILEVERSION             LSI_VERSION_MAJOR,LSI_VERSION_MINOR,LSI_VERSION_BUILD,LSI_VERSION_REV
+#define VER_FILEVERSION_STR         LSI_CMN_VERSION_NUMBER
+
+// Comment out these next 4 lines for the source base delivered to Microsoft
+// for bundling our driver
+//#undef VER_PRODUCTNAME_STR
+//#define VER_PRODUCTNAME_STR         "LSI Ultra160 SCSI Miniport Driver"
+//#undef VER_PRODUCTVERSION_STR
+//#define VER_PRODUCTVERSION_STR      LSI_CMN_VERSION_NUMBER
+
+#include "common.ver"
+

@@ -1,0 +1,95 @@
+/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    Activity.INF
+;
+;Abstract:
+;    INF file for installing the Sensors 2.0 Activity sample driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install Activity.inf umdf2\Activity" to install
+;
+;--*/
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sensor
+ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
+Provider    = %MSFT%
+CatalogFile = Activity.cat
+DriverVer   = 10/27/2014,2.00.00.01
+
+[DestinationDirs]
+;12 == Windows\System32\Drivers\UMDF
+DefaultDestDir = 12,UMDF
+
+[SourceDisksNames]
+1 = %MediaDescription%,,,""
+
+[SourceDisksFiles]
+Activity.dll   = 1,,
+
+[Manufacturer]
+%MSFT% = Activity_Device, NT$ARCH$
+
+;*******************************
+; Activity Install Section
+;*******************************
+
+[Activity_Device.NT$ARCH$]
+; DisplayName       Section          DeviceId
+; -----------       -------          --------
+%Activity_DevDesc% = Activity_Inst, umdf2\Activity
+
+[Activity_Inst.NT]
+CopyFiles = ActivityDriverCopy
+
+[ActivityDriverCopy]
+Activity.dll
+
+[DestinationDirs]
+ActivityDriverCopy = 12,UMDF
+
+;-------------- Service installation
+
+[Activity_Inst.NT.Services]
+AddService = WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Activity_Inst.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+
+[WUDFRD_ServiceInstall]
+DisplayName   = %WudfRdDisplayName%
+ServiceType   = %SERVICE_KERNEL_DRIVER%
+StartType     = %SERVICE_DEMAND_START%
+ErrorControl  = %SERVICE_ERROR_NORMAL%
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section
+
+[Activity_Inst.NT.Wdf]
+UmdfService              = Activity, Activity_Install
+UmdfServiceOrder         = Activity
+UmdfDirectHardwareAccess = AllowDirectHardwareAccess
+UmdfFileObjectPolicy     = AllowNullAndUnknownFileObjects
+UmdfFsContextUsePolicy   = CannotUseFsContexts
+
+[Activity_Install]
+UmdfLibraryVersion       = $UMDFVERSION$
+ServiceBinary            = %12%\UMDF\Activity.dll
+UmdfExtensions           = SensorsCx0102
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
+
+[Strings]
+MediaDescription         = "Windows Activity Driver"
+MSFT                     = "Microsoft"
+Activity_DevDesc         = "Activity"
+WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
+
+SERVICE_KERNEL_DRIVER    = 1
+SERVICE_DEMAND_START     = 3
+SERVICE_ERROR_NORMAL     = 1

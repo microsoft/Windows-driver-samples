@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{8FC125AF-15BD-4DCD-9D5E-C7FE9A6ACD75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{938C7F7B-13A2-43D1-A1CF-4B02B581687C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{75E794A5-28E0-464A-A171-8AD7F2A1DEAA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{EDAC3101-0378-4793-BEA6-FC4E036C130B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\pcidrv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wmi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eeprom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="isrdpc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nic_init.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nic_pm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nic_recv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nic_req.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nic_send.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="precompsrc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="routines.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToPackage Include=".\Debug\\genpci.inf">
+      <Filter>Driver Files</Filter>
+    </FilesToPackage>
+    <Inf Include="..\genpci.inx">
+      <Filter>Driver Files</Filter>
+    </Inf>
+    <MofComp Include="..\pcidrv.mof">
+      <Filter>Driver Files</Filter>
+    </MofComp>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\pcidrv.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

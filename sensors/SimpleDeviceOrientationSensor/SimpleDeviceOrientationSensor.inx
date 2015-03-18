@@ -1,0 +1,96 @@
+/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    SimpleDeviceOrientationSensor.INF
+;
+;Abstract:
+;    INF file for installing the Sensors 2.0 Simple Device Orientation Sensor Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install SimpleDeviceOrientationSensor.inf umdf2\SDOSampleSensor" to install
+;
+;--*/
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sensor
+ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
+Provider    = %MSFT%
+CatalogFile = SimpleDeviceOrientationSensor.cat
+DriverVer   = 08/14/2014,2.00.00.01
+
+[DestinationDirs]
+;12 == Windows\System32\Drivers\UMDF
+DefaultDestDir = 12,UMDF
+
+[SourceDisksNames]
+1 = %MediaDescription%,,,""
+
+[SourceDisksFiles]
+SimpleDeviceOrientationSensor.dll   = 1,,
+
+[Manufacturer]
+%MSFT% = SimpleDeviceOrientationSensor_Device, NT$ARCH$
+
+;*******************************
+; Simple Device Orientation Sensor Install Section
+;*******************************
+
+[SimpleDeviceOrientationSensor_Device.NT$ARCH$]
+; DisplayName       Section          DeviceId
+; -----------       -------          --------
+%SimpleDeviceOrientationSensor_DevDesc% = SimpleDeviceOrientationSensor_Inst, umdf2\SDOSampleSensor
+
+[SimpleDeviceOrientationSensor_Inst.NT]
+CopyFiles = SimpleDeviceOrientationSensorDriverCopy
+
+[SimpleDeviceOrientationSensorDriverCopy]
+SimpleDeviceOrientationSensor.dll
+
+[DestinationDirs]
+SimpleDeviceOrientationSensorDriverCopy = 12,UMDF
+
+;-------------- Service installation
+
+[SimpleDeviceOrientationSensor_Inst.NT.Services]
+AddService = WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[SimpleDeviceOrientationSensor_Inst.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+
+[WUDFRD_ServiceInstall]
+DisplayName   = %WudfRdDisplayName%
+ServiceType   = %SERVICE_KERNEL_DRIVER%
+StartType     = %SERVICE_DEMAND_START%
+ErrorControl  = %SERVICE_ERROR_NORMAL%
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section
+
+[SimpleDeviceOrientationSensor_Inst.NT.Wdf]
+UmdfService              = SimpleDeviceOrientationSensor, SimpleDeviceOrientationSensor_Install
+UmdfServiceOrder         = SimpleDeviceOrientationSensor
+UmdfDirectHardwareAccess = AllowDirectHardwareAccess
+UmdfFileObjectPolicy     = AllowNullAndUnknownFileObjects
+UmdfFsContextUsePolicy   = CannotUseFsContexts
+
+[SimpleDeviceOrientationSensor_Install]
+UmdfLibraryVersion       = $UMDFVERSION$
+ServiceBinary            = %12%\UMDF\SimpleDeviceOrientationSensor.dll
+UmdfExtensions           = SensorsCx0102
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
+
+[Strings]
+MediaDescription                        = "Windows Simple Device Orientation Sensor sample Driver"
+MSFT                                    = "Microsoft"
+StdMfg                                  = "Microsoft"
+SimpleDeviceOrientationSensor_DevDesc   = "Simple Device Orientation Sensor sample"
+WudfRdDisplayName                       = "Windows Driver Foundation - User-mode Driver Framework Reflector"
+
+SERVICE_KERNEL_DRIVER    = 1
+SERVICE_DEMAND_START     = 3
+SERVICE_ERROR_NORMAL     = 1

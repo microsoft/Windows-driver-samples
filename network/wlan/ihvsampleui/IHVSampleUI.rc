@@ -1,0 +1,129 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "TODO: <Company name>"
+            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
+            VALUE "InternalName", "IHVSampleUI.dll"
+            VALUE "OriginalFilename", "IHVSampleUI.dll"
+            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_SMALL DIALOGEX 0, 0, 227, 244
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IHV Profile String"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "This is a sample IHV extended dialog.",IDC_TITLE_TXT,
+    				20,19,135,8
+    LTEXT           "Parameter 1",IDC_PARAM_TXT,20,49,80,8
+    EDITTEXT        IDC_PARAM_BOX,101,48,96,14
+    CONTROL         "Parameter 2",IDC_USE_FASTHANDOFF,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,72,178,10
+    PUSHBUTTON      "OK",ID_OK,96,210,49,14
+    PUSHBUTTON      "Cancel",ID_CANCEL,167,209,50,14
+END
+
+IDD_DIALOG_SHOWHELP DIALOGEX 0, 0, 317, 143
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Dialog"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_HELPER,8,7,171,81,ES_AUTOHSCROLL
+END
+
+IDD_DIALOG_GETKEY DIALOGEX 0, 0, 317, 143
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Dialog"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_KEY,23,46,142,14,ES_AUTOHSCROLL
+    LTEXT           "Please enter IHV keys:",IDC_STATIC,25,17,74,8
+END
+
+IDD_DIALOG_LASTPAGE DIALOGEX 0, 0, 317, 143
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Dialog"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DATETIMEPICKER1,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | WS_TABSTOP,7,7,172,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_PROJNAME                "SampleIHVExt"
+    IDS_TITLE_GETKEY            "IHV Get Key Page"
+    IDS_TITLE_SHOWHELP          "IHV Helper Page"
+    IDS_TITLE_LASTPAGE          "IHV Last Page"
+    IDS_IHV_DEFAULT_TITLE       "IHV Properties"
+    IDS_IHV_DEFAULT_CON_TITLE   "IHV Connection Properties"
+    IDS_IHV_DEFAULT_KEY_TITLE   "IHV Security Properties"
+    IDS_IHV_DEFAULT_SEC_TITLE   "IHV Security Properties"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+

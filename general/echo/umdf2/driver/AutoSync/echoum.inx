@@ -1,0 +1,89 @@
+;/*++
+;
+;Copyright (c) 1990-2000  Microsoft Corporation
+;
+;Module Name:
+;    EchoUm.INF
+;
+;Abstract:
+;    INF file for installing the Usermode Driver Frameworks Echo Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install EchoUm.inf root\ECHO" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=wudf.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+Echo.dll = 1,,
+
+;*****************************************
+; ECHO  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ECHO.DeviceDesc%=ECHO_Device, root\ECHO
+
+;---------------- copy files
+
+[ECHO_Device.NT]
+CopyFiles=UMDriverCopy
+
+[UMDriverCopy]
+ECHO.dll
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to driversMdf
+
+;-------------- Service installation
+[ECHO_Device.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section -------------
+[ECHO_Device.NT.Wdf]
+UmdfService=Echo, Echo_Install
+UmdfServiceOrder=Echo
+
+[Echo_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\echo.dll
+
+[Strings]
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "WDF Sample ECHO Installation Disk #1"
+ECHO.DeviceDesc = "Sample UMDF v2 ECHO Driver"
+ClassName       = "Sample Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

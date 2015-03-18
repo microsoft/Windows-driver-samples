@@ -1,0 +1,111 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    SERIAL.INF
+;
+;Abstract:
+;    INF file for the WDF serial driver sample
+;
+;--*/
+
+[version]
+signature="$CHICAGO$"
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFT%
+CatalogFile=KmdfSamples.cat
+
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%MSFT%=MSFT,NT$ARCH$
+
+[SourceDisksFiles]
+wdfserial.sys=1
+
+[SourceDisksNames]
+1=%DISK_NAME%,
+
+[DestinationDirs]
+DefaultDestDir  = 12
+
+; For XP and later
+[MSFT.NT$ARCH$]
+; DisplayName           Section           DeviceId
+; -----------           -------           --------
+%PNP0500.DevDesc%=       Serial_Inst,      *PNP0500, *PNP0501 ; Communications Port
+%PNP0501.DevDesc%=       Serial_Inst,      *PNP0501, *PNP0500 ; Communications Port
+
+
+[Serial_Inst.NT]
+CopyFiles=Serial.CopyFiles
+
+[Serial.CopyFiles]
+wdfserial.sys
+
+[Serial_Inst.NT.Services]
+AddService=Serial,0x00000002,Serial_Service 
+
+[Serial_Service]
+DisplayName    = %Serial.SVCDESC%                            
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\wdfserial.sys                            
+
+[Serial_Inst.NT.HW]
+Addreg=Serial_Inst.NT.HW.AddReg
+
+[Serial_Inst.NT.HW.AddReg]
+;
+; By default, WDF device is protected with SDDL_DEVOBJ_SYS_ALL_ADM_ALL which means
+; only operating system and administrators can access the COM1 device. Let's change
+; it to allow everyone to have read/write access to it. Please refer to WDK section 
+; "SDDL for Device Objects" for detailed description on this.
+; 
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GRGW;;;WD)"
+;
+; apply FILE_DEVICE_SECURE_OPEN to the whole devnode: Use same security checks on relative opens
+;
+HKR,,DeviceCharacteristics,0x10001,0x100
+
+;-------------- WDF Coinstaller installation
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[Serial_Inst.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[Serial_Inst.NT.Wdf]
+KmdfService = Serial, Serial_wdfsect
+[Serial_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+MSFT = "Microsoft"
+Serial.SVCDESC = "WDF Serial driver"
+PNP0500.DevDesc = "Communications Port"
+PNP0501.DevDesc = "Communications Port"
+DISK_NAME = "Serial Install Disk"

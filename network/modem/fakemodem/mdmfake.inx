@@ -1,0 +1,267 @@
+;
+; "Fakemodem" Controllerless driver illustrative example
+;
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+; *******************************************************************
+; *                                                                 *
+; * The following INF is used in order to load this sample driver.  *
+; * Further information about INF design can be found in the DDK    *
+; *                                                                 *
+; *******************************************************************
+
+; ------------------------------------------------------------------------------
+; Check final modem INF with CINF tool then test with 
+; NDIS Test prior to final distribution.
+;-------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------------------------------
+;This section must specify the following entries with the indicated values: 
+;Signature entry as the $Windows NT$ value. This value indicates that the INF is only valid for NT-based operating systems. 
+;Class entry as "MODEM". 
+;ClassGUID entry as {4D36E96D-E325-11CE-BFC1-08002BE10318}. 
+;Provider is the company responsible for the provision of the INF.
+;DriverVer must be in the following format = mm/dd/yyyy[,x.y.v.z]
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Modem
+ClassGUID={4D36E96D-E325-11CE-BFC1-08002BE10318}
+Provider=%Mfg%
+DriverVer=11/11/2002,5.1.3711
+
+;INF files that are not distributed with the OS should contain the following line:
+CatalogFile=KmdfSamples.cat
+
+;INF files that are to be distributed with the OS that load a service and or files on the CD, should contain the following line:
+;Layoutfile=layout.inf
+
+;----------------------------------------------------------------------------------------------------------------------------; Below is list of manufacturers that will appear in the 
+; Install New Modem wizard's list of manufacturers as well as define what sections to install ID's from
+; The vendor will be required to change the provider key before a
+; driver submission is made
+
+[Manufacturer]
+%Generic% = Generic,NT$ARCH$
+
+
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;This section references the INF-writer-defined DDInstall and DDInstall.Services sections for the Modem device, and specifies the hardware identifier for the Modem device. 
+
+[Generic.NT$ARCH$]
+%ModemX% = ModemX, {b85b7c50-6a01-11d2-b841-00c04fad5171}\fakemodem
+
+;-------------------------------------------------------------------------------------------------------
+; For detailed explanation of DDInstall.Services section, please reference DDK.
+; Installation section references other INF sections to be installed for a specific modem.
+; The AddReg line points to sections of the INF file that list registry entries to be added when 
+; installing this modem.  For example, the line below instructs the installer to add the registry 
+; entries listed in the following sections of this INF file:
+; [All], [MfgAddReg], [ExtraCRLFResponses], [ModemX.AddReg], [INTERNAL]
+; It is not necessary to break up the registry additions into different sections in the 
+; INF.  However, breaking out common entries into sections can help to reduce the size of
+; the INF if multiple modems are installed from the same INF and have common registry 
+; entries.
+
+[ModemX.NT]
+CopyFiles = CopyFileSection
+AddReg = All, MfgAddReg, ExtraCRLFResponses, ModemX.AddReg, INTERNAL
+
+[ModemX.NT.Services]
+AddService = fakemdm, 0x00000000, FakeModm_Service_Inst, FakeModm_Logging_Inst
+
+[ModemX.NT.HW]
+AddReg = LowerFilterAddReg
+
+[LowerFilterAddReg]
+HKR,,"LowerFilters",0x00010000,fakemdm
+
+[FakeModm_Service_Inst]
+DisplayName = %ModemX%
+ServiceType = 1
+StartType = 3
+ErrorControl = 0
+ServiceBinary = %12%\fakemodem.sys
+
+;--------------------------------------------------------------------------------------------------------------------
+; An event-log-install-section 
+
+[FakeModm_Logging_Inst]
+AddReg = FakeModm_Logging_Inst_AddReg
+
+[FakeModm_Logging_Inst_AddReg]
+HKR,,EventMessageFile,0x00020000,"%%SystemRoot%%\System32\IoLogMsg.dll;%%SystemRoot%%\System32\drivers\Fakemodem.sys"
+HKR,,TypesSupported,0x00010001,7
+
+[SourceDisksNames]
+99=%FakeDisk%, disk1,,""
+
+[SourceDisksFiles]
+fakemodem.sys = 99
+
+;-------------------------------------------------------------------------------------------------------------------
+; Section used to copy files required for device to function
+
+[CopyFileSection]
+fakemodem.sys
+
+;--------------------------------------------------------------------------------------------------------------------------
+; This section lists the Default location to copy the files listed in the copyfiles directive
+; 12 = %Windows%\System32\Drivers
+ 
+[DestinationDirs]
+CopyFileSection=12
+DefaultDestDir=12
+
+
+;
+;--- ModemX Coinstaller installation ------
+;
+[DestinationDirs]
+ModemX_CoInstaller_CopyFiles = 11
+
+[ModemX.NT.CoInstallers]
+AddReg=ModemX_CoInstaller_AddReg
+CopyFiles=ModemX_CoInstaller_CopyFiles
+
+[ModemX_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ModemX_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches with SourceDisksNames
+
+[ModemX.NT.Wdf]
+KmdfService = fakemdm, fakemdm_wdfsect
+[fakemdm_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+
+;-------------------------------------------------------------------------------------------------------
+; DDK procalc tool can be used to check properties settings which describes modem' properties.
+; Generally, customization entries are added here which override commands from the All section
+
+[ModemX.AddReg]
+HKR,,Properties, 1, 80,01,00,00, ff,00,00,00, ff,00,00,00, 07,00,00,00, 0f,00,00,00, f7,03,00,00, 00,c2,01,00, 40,38,00,00
+HKR,,InactivityScale, 1, 0a,00,00,00
+HKR, Settings, InactivityTimeout,, "S30=<#>"
+HKR, Settings, ErrorControl_On,, "\N3"
+HKR, Settings, ErrorControl_Forced,, "\N2"
+HKR, Settings, Compression_On,, "%%C3"
+HKR, Settings, SpeedNegotiation_Off,, "N0"
+HKR, Settings, SpeedNegotiation_On,, "N1"
+
+;--------------------------------------------------------------------------------------------------------------------------
+;This section will define the type of modem and thus present the appropriate icon in the Device manager
+
+[INTERNAL]
+HKR,, DeviceType, 1, 02
+
+;-------------------------------------------------------------------------------------------------------------------------
+; Responses section contains all of the appropriate and required responses in order for the O/S to understand the 
+; Modem responses to system queries.
+
+[All]
+HKR,,ConfigDialog,,modemui.dll
+HKR,,EnumPropPages,,"modemui.dll,EnumPropPages"
+HKR,,PortSubClass,1,02
+HKR,Init,1,,"AT<cr>"
+HKR,Init, 2,, "AT &F E0 V1 &D2 &C1 S0=0 W2 S95=47<cr>"
+
+[MfgAddReg]
+HKR,, InactivityScale, 1, 01,00,00,00
+HKR, Monitor, 1,, "ATS0=0<cr>"
+HKR, Monitor, 2,, "None"
+HKR, Hangup, 1,, "ATH<cr>"
+HKR, Answer, 1,, "ATA<cr>"
+HKR,, Reset,, "ATZ<cr>"
+HKR, Settings, Prefix,, "AT"
+HKR, Settings, Terminator,, "<cr>"
+HKR, Settings, DialPrefix,, "D"
+HKR, Settings, DialSuffix,, ";"
+HKR, Settings, SpeakerVolume_Low,, "L1"
+HKR, Settings, SpeakerVolume_Med,, "L2"
+HKR, Settings, SpeakerVolume_High,, "L3"
+HKR, Settings, SpeakerMode_Off,, "M0"
+HKR, Settings, SpeakerMode_Dial,, "M1"
+HKR, Settings, SpeakerMode_On,, "M2"
+HKR, Settings, SpeakerMode_Setup,, "M3"
+HKR, Settings, FlowControl_Off,, "&K0"
+HKR, Settings, FlowControl_Hard,, "&K3"
+HKR, Settings, FlowControl_Soft,, "&K4"
+HKR, Settings, ErrorControl_On,, "\N5"
+HKR, Settings, ErrorControl_Off,, "\N0"
+HKR, Settings, ErrorControl_Forced,, "\N4"
+HKR, Settings, Compression_On,, "%%C1"
+HKR, Settings, Compression_Off,, "%%C0"
+HKR, Settings, Modulation_CCITT,, "B0 "
+HKR, Settings, Modulation_Bell,, "B1 "
+HKR, Settings, SpeedNegotiation_Off,, "*S0"
+HKR, Settings, SpeedNegotiation_On,, "*S1"
+HKR, Settings, Pulse,, "P"
+HKR, Settings, Tone,, "T"
+HKR, Settings, Blind_Off,, "X4"
+HKR, Settings, Blind_On,, "X3"
+HKR, Settings, CallSetupFailTimer,, "S7=<#>"
+
+HKR, Responses, "<cr><lf>+FCERROR<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>BLACKLISTED<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>BUSY<cr><lf>", 1, 06, 00, 00,00,00,00, 00,00,00,00 
+
+HKR, Responses, "<cr><lf>CONNECT<cr><lf>", 1, 02, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>DATA<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>DELAYED<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>ERROR<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+
+HKR, Responses, "<cr><lf>FAX<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>NO ANSWER<cr><lf>", 1, 07, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NO CARRIER<cr><lf>", 1, 04, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NO DIALTONE<cr><lf>", 1, 05, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NOTUSED<cr><lf>", 1, 00, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>OK<cr><lf>", 1, 00, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>RING<cr><lf>", 1, 08, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>RINGING<cr><lf>", 1, 01, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "0<cr>", 1, 00, 00, 00,00,00,00, 00,00,00,00 ; OK
+HKR, Responses, "1<cr>", 1, 02, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "10<cr>", 1, 02, 00, 60,09,00,00, 00,00,00,00
+HKR, Responses, "11<cr>", 1, 02, 00, c0,12,00,00, 00,00,00,00
+HKR, Responses, "12<cr>", 1, 02, 00, 80,25,00,00, 00,00,00,00
+HKR, Responses, "13<cr>", 1, 02, 00, 20,1c,00,00, 00,00,00,00
+HKR, Responses, "14<cr>", 1, 02, 00, e0,2e,00,00, 00,00,00,00
+HKR, Responses, "15<cr>", 1, 02, 00, 40,38,00,00, 00,00,00,00 ; connect at 14400
+HKR, Responses, "2<cr>", 1, 08, 00, 00,00,00,00, 00,00,00,00 ; RING
+HKR, Responses, "3<cr>", 1, 04, 00, 00,00,00,00, 00,00,00,00 ; NO CARRIER
+HKR, Responses, "4<cr>", 1, 03, 00, 00,00,00,00, 00,00,00,00 ; ERROR
+HKR, Responses, "5<cr>", 1, 02, 00, b0,04,00,00, 00,00,00,00
+HKR, Responses, "6<cr>", 1, 05, 00, 00,00,00,00, 00,00,00,00 ; NO DIALTONE
+HKR, Responses, "69<cr>", 1, 01, 03, 00,00,00,00, 00,00,00,00
+HKR, Responses, "7<cr>", 1, 06, 00, 00,00,00,00, 00,00,00,00 ; BUSY
+HKR, Responses, "70<cr>", 1, 01, 01, 00,00,00,00, 00,00,00,00 ; Protocol:None
+HKR, Responses, "77<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00 ; Protocol:LAPM
+HKR, Responses, "78<cr>", 1, 01, 03, 00,00,00,00, 00,00,00,00 ; Connect V42BIS
+HKR, Responses, "8<cr>", 1, 07, 00, 00,00,00,00, 00,00,00,00 ; NO ANSWER
+HKR, Responses, "80<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00 ; Protocol:ALT
+HKR, Responses, "81<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00
+
+[ExtraCRLFResponses]
+HKR, Responses, "<cr><lf><cr><lf>OK<cr><lf>",          1, 00, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>ERROR<cr><lf>",       1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>BUSY<cr><lf>",        1, 06, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO ANSWER<cr><lf>",   1, 07, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO CARRIER<cr><lf>",  1, 04, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO DIALTONE<cr><lf>", 1, 05, 00, 00,00,00,00, 00,00,00,00
+
+;-------------------------------------------------------------------------------------------------------
+;This section defines each %strkey% token specified in the INF and lists strings that are used by the Modems 
+;control panel applet and the Install New Modem wizard.
+; For example, ModemX will appear as "FakeModem DDK Sample controllerless driver"
+
+[Strings]
+mfg = "Microsoft"
+FakeDisk = "Fake Modem Install Disk" 
+Generic = "(Standard Modem Types)"
+ModemX  = "FakeModem DDK Sample controllerless driver"
+ServiceName = "Fakemodem"

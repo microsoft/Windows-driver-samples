@@ -1,0 +1,19 @@
+#PRAGMA AUTORECOVER
+
+[Dynamic, Provider("WMIProv"),
+ WMI,
+ Description("PCIDRV Device Information"),
+ guid("{20E35E40-7179-4f89-A28C-12ED5A3CAAA5}"),
+ locale("MS\\0x409")]
+class PciDeviceInformation
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read,
+     write,
+     Description("Current Mac Address of the NIC.")]
+    uint64 MacAddress;
+};

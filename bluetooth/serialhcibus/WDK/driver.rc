@@ -1,0 +1,14 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_DLL
+#define VER_FILESUBTYPE VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "Serial bus driver over UART using a common HCI packet"
+#define VER_INTERNALNAME_STR        "SerialBusWdk.sys"
+#define VER_ORIGINALFILENAME_STR    "SerialBusWdk.sys"
+
+#include "common.ver"
+
+//MofResourceName MOFDATA driver.bmf
+

@@ -1,0 +1,87 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    simtc.inf
+;
+;Abstract:
+;
+;    INF file for installing simulated thermal client driver.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFT%
+DriverVer=07/22/2011, 6.02.8040
+CatalogFile=thermalclient.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+simtc.sys  = 1,,
+
+;********************************************
+; Simulated Thermal Client Install Section
+;********************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NTx86
+%StdMfg%=Standard,NTamd64
+%StdMfg%=Standard,NTarm
+%StdMfg%=Standard,NTarm64
+
+[Standard.NTx86]
+%SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
+
+[Standard.NTamd64]
+%SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
+
+[Standard.NTarm]
+%SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
+
+[Standard.NTarm64]
+%SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
+
+[SimTc_Device.NT]
+CopyFiles=SimTc_Device_Drivers
+
+[SimTc_Device.NT.HW]
+AddReg=SimTc_Device.NT.AddReg
+
+[SimTc_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[SimTc_Device_Drivers]
+simtc.sys
+
+;-------------- Service installation
+
+[SimTc_Device.NT.Services]
+AddService = simtc,%SPSVCINST_ASSOCSERVICE%,SimTc_Service_Inst
+
+; -------------- simtc driver install sections
+
+[SimTc_Service_Inst]
+DisplayName    = %SimTc.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\simtc.sys
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Simulate Thermal Client Installation Disk #1"
+SimTc.DeviceDesc = "Simulated Thermal Client"
+SimTc.SVCDESC = "Simulated Thermal Client"

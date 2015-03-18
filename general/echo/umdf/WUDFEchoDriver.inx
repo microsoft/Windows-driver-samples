@@ -1,0 +1,87 @@
+;
+; WUDFEchoDriver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFTWUDF%
+CatalogFile=WUDF.cat
+DriverVer=03/20/2003,5.00.3788
+
+[Manufacturer]
+%MSFTWUDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%EchoDeviceName%=Echo_Install,WUDF\Echo
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+WUDFEchoDriver.dll=1
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== WUDF Echo Test Driver ==================================
+
+[Echo_Install.NT]
+CopyFiles=UMDriverCopy
+
+[Echo_Install.NT.hw]
+
+[Echo_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Echo_Install.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[Echo_Install.NT.Wdf]
+UmdfService=WUDFEchoDriver,WUDFEchoDriver_Install
+UmdfServiceOrder=WUDFEchoDriver
+
+; if device can do either direct i/o or buffered transfer mode,
+; umdf defaults to direct i/o if devices is not pooled.
+UmdfHostProcessSharing=ProcessSharingDisabled
+
+[WUDFEchoDriver_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID={7AB7DCF5-D1D4-4085-9547-1DB968CCA720}
+ServiceBinary=%12%\UMDF\WUDFEchoDriver.dll
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\UMDF
+CoInstallers_CopyFiles=11
+
+[UMDriverCopy]
+WUDFEchoDriver.dll
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTWUDF="Microsoft Internal (WUDF)"
+MediaDescription="Microsoft WUDF Sample Driver Installation Media"
+ClassName="Sample Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+EchoDeviceName="Sample WUDF Echo Driver"

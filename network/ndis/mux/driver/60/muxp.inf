@@ -1,0 +1,100 @@
+; -- MUXP.INF --
+;
+; Sample MUX INF file
+;
+; Copyright (c) 1993-2004, Microsoft Corporation
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = NetTrans
+ClassGUID   = {4D36E975-E325-11CE-BFC1-08002BE10318}
+Provider    = %Msft%
+DriverVer   =10/01/2002,6.0.5019.0
+
+[Manufacturer]
+%Msft%     = MSFT,NTx86,NTia64,NTamd64
+
+[MSFT.NTx86]
+%MUXP_Desc% = MUXP.ndi, MS_MUXP
+
+[MSFT.NTia64]
+%MUXP_Desc% = MUXP.ndi, MS_MUXP
+
+[MSFT.NTamd64]
+%MUXP_Desc% = MUXP.ndi, MS_MUXP
+
+; Note:
+; 1. The NCF_* flags are defined in netcfgx.h
+; 2. NCF_HAS_UI (0x80) is required for custom property pages.
+;
+
+[MUXP.ndi]
+AddReg          = MUXP.ndi.AddReg
+Characteristics = 0x80 ; NCF_HAS_UI
+copyfiles       = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
+CopyInf	        = mux_mp.inf
+
+[SourceDisksNames]
+1=%DiskDescription%,"",,
+
+[SourceDisksFiles]
+mux.sys     = 1
+mux.dll     = 1
+
+
+[DestinationDirs]
+DefaultDestDir      = 12
+MUXP.CopyFiles.DLL  = 11   ; %windir%\System32
+MUXP.CopyFiles.Sys  = 12   ; %windir%\System32\drivers
+
+[MUXP.CopyFiles.Sys]
+mux.sys,,,2
+
+[MUXP.CopyFiles.DLL]
+mux.dll,,,2
+
+
+;-----------------------------------------------------------------------
+;  Install parameters
+;
+
+[MUXP.ndi.AddReg]
+HKR, Ndi,            ClsID,         0, {ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a}
+HKR, Ndi,            ComponentDll,   , mux.dll
+HKR, Ndi,            HelpText,      0,          "%MUXP_HELP%"
+HKR, Ndi,            Service,       0,          "MUXP"
+HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
+HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
+
+
+[MUXP.ndi.Services]
+AddService = MUXP, , MUXP.AddService, MUXP.AddEventLog
+
+[MUXP.AddService]
+DisplayName     = %MUXP_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\mux.sys
+Description     = %MUXP_Desc%
+
+[MUXP.AddEventLog]
+AddReg = MUXP.AddEventLog.AddReg
+
+[MUXP.AddEventLog.AddReg]
+HKR, , EventMessageFile, 0x20000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported,   0x10001, 7
+
+[MUXP.ndi.Remove.Services]
+DelService = MUXP
+
+[MUXP.ndi.Remove]
+DelFiles = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
+
+[Strings]
+Msft = "Your Company"
+MUXP_Desc = "Sample Mux-IM Protocol Driver"
+MUXP_HELP = "Sample Mux-IM Protocol"
+DiskDescription = "Microsoft MUX Sample Driver Disk"
+
+

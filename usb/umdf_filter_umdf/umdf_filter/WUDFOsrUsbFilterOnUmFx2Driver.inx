@@ -1,0 +1,114 @@
+;
+; WUDFOsrUsbFilterOnUmDriver.inf - Install a UM Filter driver on the OSR
+                                   USB Device.
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFTUMDF%
+DriverVer=03/25/2005,0.0.0.1
+CatalogFile=wudf.cat
+
+[Manufacturer]
+%MSFTUMDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%OsrUsbDeviceName%=OsrUsb_Install, USB\Vid_045e&Pid_94aa&mi_00
+%OsrUsbDeviceName%=OsrUsb_Install, USB\VID_0547&PID_1002
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+WudfOsrUsbFilter.dll=1
+WudfOsrUsbFx2.dll=1
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF OSR Filter Driver ==================================
+
+[OsrUsb_Install.NT]
+CopyFiles=UMDriverCopy
+Include=WINUSB.INF                      ; Import sections from WINUSB.INF
+Needs=WINUSB.NT                         ; Run the CopyFiles & AddReg directives for WinUsb.INF
+
+[OsrUsb_Install.NT.hw]
+AddReg=OsrUsb_AddReg
+
+[OsrUsb_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall  ; flag 0x2 sets this as the service for the device
+AddService=WinUsb,0x000001f8,WinUsb_ServiceInstall  ; this service is installed because its a filter.
+
+[OsrUsb_Install.NT.Wdf]
+KmdfService=WINUSB, WinUsb_Install
+UmdfService=WudfOsrUsbFx2, WudfOsrUsbFx2_Install
+UmdfService=WudfOsrUsbFilter, WudfOsrUsbFilter_Install
+UmdfServiceOrder=WudfOsrUsbFx2, WUDFOsrUsbFilter
+UmdfDispatcher=WinUsb
+
+[OsrUsb_Install.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[WinUsb_Install]
+KmdfLibraryVersion=$KMDFVERSION$
+
+[WudfOsrUsbFilter_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID = "{422d8dbc-520d-4d7e-8f53-920e5c867e6c}"
+ServiceBinary = "%12%\UMDF\WUDFOsrUsbFilter.dll"
+
+[WudfOsrUsbFx2_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID = "{0865b2b0-6b73-428f-a3ea-2172832d6bfc}"
+ServiceBinary = "%12%\UMDF\WUDFOsrUsbFx2.dll"
+
+[OsrUsb_AddReg]
+HKR,,"LowerFilters",0x00010008,"WinUsb" ; FLG_ADDREG_TYPE_MULTI_SZ | FLG_ADDREG_APPEND
+HKR,,"WinUsbPowerPolicyOwnershipDisabled",0x00010001,1  ; our driver takes ownership of power policy.  Tell WINUSB not to
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[WinUsb_ServiceInstall]
+DisplayName     = %WinUsb_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11   ; copy to system32
+UMDriverCopy=12,UMDF        ; copy to drivers\umdf
+
+[UMDriverCopy]
+WudfOsrUsbFilter.dll
+WudfOsrUsbFx2.dll
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTUMDF="Microsoft Internal (WDF:UMDF)"
+MediaDescription="Microsoft UMDF OSR USB Sample Device Installation Media"
+ClassName="Sample Device"
+OsrUsbDeviceName="Microsoft UMDF OSR Usb Sample Device With Filter on User-mode Driver"
+WinUsb_SvcDesc="WinUSB Driver"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

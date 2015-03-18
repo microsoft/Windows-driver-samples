@@ -1,0 +1,110 @@
+;;;
+;;; Simulate Reparse File System Filter Driver Sample
+;;;
+;;;
+;;; Copyright (c) 1999 - 2001, Microsoft Corporation
+;;;
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
+ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
+Provider    = %Msft%
+DriverVer   = 01/01/2004,1.0.0.1
+CatalogFile = simrep.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+SimRep.DriverFiles = 12                        ;%windir%\system32\drivers
+
+[SourceDisksNames]
+1 = %Disk1%
+
+[SourceDisksFiles]
+simrep.sys = 1
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall]
+OptionDesc          = %SimRepServiceDesc%
+CopyFiles           = SimRep.DriverFiles
+
+[DefaultInstall.Services]
+AddService          = %SimRepServiceName%,,SimRep.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall]
+DelFiles   = SimRep.DriverFiles
+DelReg     = SimRep.DelRegistry
+
+
+[DefaultUninstall.Services]
+DelService = SimRep,0x204
+
+;
+; Services Section
+;
+
+[SimRep.Service]
+DisplayName      = %SimRepServiceName%
+Description      = %SimRepServiceDesc%
+ServiceBinary    = %12%\simrep.sys              ;%windir%\system32\drivers\simrep.sys
+Dependencies     = %FltmgrServiceName%          ;FltMgr
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = SimRep.AddRegistry
+
+;
+; Registry Modifications
+;
+
+[SimRep.AddRegistry]
+HKR,,%SimRepDebugLevel%,0x00010001,0x1F
+HKR,,%SimRepRemapRenamesAndLinks%,0x00010001,0x00
+HKR,,"NewMapping",0x00000000,%NewMapping%
+HKR,,"OldMapping",0x00000000,%OldMapping%
+HKR,,"SupportedFeatures",0x00010001,0x3
+HKR,%RegInstancesSubkeyName%,%RegDefaultInstanceValueName%,0x00000000,%DefaultInstance%
+HKR,%RegInstancesSubkeyName%"\"%Instance1.Name%,%RegAltitudeValueName%,0x00000000,%Instance1.Altitude%
+HKR,%RegInstancesSubkeyName%"\"%Instance1.Name%,%RegFlagsValueName%,0x00010001,%Instance1.Flags%
+
+[SimRep.DelRegistry]
+
+;
+; Copy Files
+;
+
+[SimRep.DriverFiles]
+simrep.sys
+
+;;
+;; String Section
+;;
+
+[Strings]
+Msft                                = "Microsoft Corporation"
+SimRepServiceDesc                   = "Simulate Reparse File System Filter Driver Sample"
+SimRepServiceName                   = "SimRep"
+SimRepDebugLevel                    = "DebugLevel"
+SimRepRemapRenamesAndLinks          = "RemapRenamesAndLinks"
+FltmgrServiceName                   = "FltMgr"
+RegInstancesSubkeyName              = "Instances"
+RegDefaultInstanceValueName         = "DefaultInstance"
+RegAltitudeValueName                = "Altitude"
+RegFlagsValueName                   = "Flags"
+Disk1                               = "SimRep Source Media"
+NewMapping                          = "\a\b"
+OldMapping                          = "\x\y"
+
+;Instances specific information.
+DefaultInstance      = "SimRep"
+Instance1.Name       = "SimRep"
+Instance1.Altitude   = "371100"
+Instance1.Flags      = 0x0

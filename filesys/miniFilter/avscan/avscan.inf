@@ -1,0 +1,106 @@
+;;;
+;;; AvScan
+;;;
+;;;
+;;; Copyright (c) Microsoft Corporation
+;;;
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = "ContentScreener"                         ;This is determined by the work this filter driver does
+ClassGuid   = {3e3f0674-c83c-4558-bb26-9820e1eba5c5}    ;This value is determined by the Class
+Provider    = %Msft%
+DriverVer   = 06/16/2011,1.0.0.1
+CatalogFile = avscan.cat
+
+
+[DestinationDirs]
+DefaultDestDir          = 12
+AvScan.DriverFiles      = 12            ;%windir%\system32\drivers
+AvScan.UserFiles        = 10,FltMgr     ;%windir%\FltMgr
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = AvScan.DriverFiles, AvScan.UserFiles
+
+[DefaultInstall.Services]
+AddService          = %ServiceName%,,AvScan.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall]
+DelFiles   = AvScan.DriverFiles, AvScan.UserFiles
+
+[DefaultUninstall.Services]
+DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Services Section
+;
+
+[AvScan.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Content Screener"
+AddReg           = AvScan.AddRegistry
+
+;
+; Registry Modifications
+;
+
+[AvScan.AddRegistry]
+HKR,,"DebugFlags",0x00010001,0xc
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+HKR,,"LocalScanTimeout",0x00010001,%LocalScanTimeout%
+HKR,,"NetworkScanTimeout",0x00010001,%NetworkScanTimeout%
+HKR,,"SupportedFeatures",0x00010001,0x3
+
+;
+; Copy Files
+;
+
+[AvScan.DriverFiles]
+%DriverName%.sys
+
+[AvScan.UserFiles]
+%UserAppName%.exe
+
+[SourceDisksFiles]
+avscan.sys = 1,,
+avscan.exe = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+;;
+;; String Section
+;;
+
+[Strings]
+Msft                    = "Microsoft Corporation"
+ServiceDescription      = "Anti-virus Mini-Filter Driver"
+ServiceName             = "avscan"
+DriverName              = "avscan"
+UserAppName             = "avscan"
+DiskId1                 = "Anti-virus Device Installation Disk"
+LocalScanTimeout        = "30000"
+NetworkScanTimeout      = "60000"
+
+;Instances specific information.
+DefaultInstance         = "avscan Instance"
+Instance1.Name          = "avscan Instance"
+Instance1.Altitude      = "265010"
+Instance1.Flags         = 0x0              ; Allow all attachments

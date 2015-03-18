@@ -1,0 +1,4 @@
+NdisAllocateMemoryWithTagPriority
+Init_RegisterSG
+NdisStallExecution_Delay
+Irql_Synch_Function

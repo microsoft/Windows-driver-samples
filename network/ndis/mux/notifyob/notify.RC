@@ -1,0 +1,47 @@
+//Microsoft Developer Studio generated resource script.
+//
+
+#include "resource.h"
+
+#include "windows.h"
+
+1 TYPELIB "notifyn.tlb"
+IDR_REG_SAMPLE_NOTIFY     REGISTRY   "notify.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+IDD_NOTIFY_GENERAL DIALOG DISCARDABLE  0, 0, 232, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "General"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "Remove a Miniport",IDC_REMOVE,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,39,73,75,10
+    CONTROL         "Add a Miniport",IDC_ADD,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,39,36,61,10
+    LTEXT           "Removal of miniport happens in FIFO order",IDC_STATIC,
+                    39,93,135,8
+    CTEXT           "What do you want to do today?",IDC_STATIC,0,12,231,14
+END
+
+
+#include <ntverp.h>
+#include <winver.h>
+
+
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "Sample MUX Notify Object"
+#define VER_INTERNALNAME_STR            "notify.dll"
+
+#include <common.ver>
+
+
+
+
+
+
+
+

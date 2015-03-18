@@ -1,0 +1,240 @@
+//
+// Wmi internal classes
+
+
+class WMIEvent : __ExtrinsicEvent
+{
+};
+
+
+[WMI,
+ Locale("MS\\0x409"),
+ Description("This class contains the definition of the package used in other classes"),
+ guid("{ABBC0F60-8EA1-11d1-00A0-C90629100000}")
+]
+class Package
+{
+    [WmiDataId(1),
+     read, write,
+     Description("16 bytes of data")
+    ] uint8 Bytes[16];
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class to test Query/Set a package"),
+ guid("{ABBC0F6a-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_QSPackage
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("description")
+    ] Package Data;
+
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class to test Query/Set a string"),
+ guid("{ABBC0F6b-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_QSString
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("description")
+    ] string Text;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class to test Query/Set a ULONG"),
+ guid("{ABBC0F6C-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_QULong
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("description")
+    ] uint32 ULong;
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class used to operate methods on a package"),
+ guid("{ABBC0F6D-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_MPackage
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiMethodId(1),
+     Implemented,
+     read, write,
+     Description("Return the contents of a package")
+    ] void GetPackage([out, Description("Package Data")] Package Data);
+
+    [WmiMethodId(2),
+     Implemented,
+     read, write,
+     Description("Set the contents of a package")
+    ] void SetPackage([in, Description("Package Data")] Package Data);
+
+    [WmiMethodId(3),
+     Implemented,
+     read, write,
+     Description("Generate an event containing package data")
+    ] void FirePackage([in, Description("WMI requires a parameter")] uint32 Hack);
+
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class used to operate methods on a string"),
+ guid("{ABBC0F6E-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_MString
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiMethodId(1),
+     Implemented,
+     read, write,
+     Description("Return the contents of a string")
+    ] void GetString([out, Description("String Data")] string Data);
+
+    [WmiMethodId(2),
+     Implemented,
+     read, write,
+     Description("Set the contents of a string")
+    ] void SetString([in, Description("String Data")] string Data);
+
+    [WmiMethodId(3),
+     Implemented,
+     read, write,
+     Description("Generate an event containing string data")
+    ] void FireString([in, Description("WMI requires a parameter")] uint32 Hack);
+
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class used to operate methods on a ULong"),
+ guid("{ABBC0F6F-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_MULong
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiMethodId(1),
+     Implemented,
+     read, write,
+     Description("Return the contents of a ULong")
+    ] void GetULong([out, Description("Ulong Data")] uint32 Data);
+
+    [WmiMethodId(2),
+     Implemented,
+     read, write,
+     Description("Set the contents of a ULong")
+    ] void SetULong([in, Description("Ulong Data")] uint32 Data);
+
+    [WmiMethodId(3),
+     Implemented,
+     read, write,
+     Description("Generate an event containing ULong data")
+    ] void FireULong([in, Description("WMI requires a parameter")] uint32 Hack);
+
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class containing event generated package data"),
+ guid("{ABBC0F70-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_EventPackage : WmiEvent
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("Package Data")
+    ] Package Data;
+
+};
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("Class containing event generated string data"),
+ guid("{ABBC0F71-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_EventString : WmiEvent
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("String Data")
+    ] string Text;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Description("Class containing event generated ULong data"),
+ Locale("MS\\0x409"),
+ guid("{ABBC0F72-8EA1-11d1-00A0-C90629100000}")
+]
+class AcpiTest_EventULong : WmiEvent
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read, write,
+     Description("ULong Data")
+    ] uint32 ULong;
+};
+

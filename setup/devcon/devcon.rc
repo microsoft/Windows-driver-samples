@@ -1,0 +1,37 @@
+//
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+
+#include <windows.h>
+#include <commctrl.h>
+#include "rc_ids.h"
+
+STRINGTABLE DISCARDABLE
+{
+    IDS_ENABLED,          "Enabled"
+    IDS_ENABLED_REBOOT,   "Enabled on reboot"
+    IDS_ENABLE_FAILED,    "Enable failed"
+    IDS_DISABLED,         "Disabled"
+    IDS_DISABLED_REBOOT,  "Disabled on reboot"
+    IDS_DISABLE_FAILED,   "Disable failed"
+    IDS_RESTARTED,        "Restarted"
+    IDS_REQUIRES_REBOOT,  "Requires reboot"
+    IDS_RESTART_FAILED,   "Restart failed"
+    IDS_REMOVED,          "Removed"
+    IDS_REMOVED_REBOOT,   "Removed on reboot"
+    IDS_REMOVE_FAILED,    "Remove failed"
+}
+
+
+//
+// Version resources
+//
+#include <ntverp.h>
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "Windows Setup API"
+#define VER_INTERNALNAME_STR        "SETUPAPI.DLL"
+#define VER_ORIGINALFILENAME_STR    "SETUPAPI.DLL"
+#include <common.ver>
+
+#include "msg.rc"

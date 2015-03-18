@@ -1,0 +1,48 @@
+//// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+//// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+//// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+//// PARTICULAR PURPOSE.
+////
+//// Copyright (c) Microsoft Corporation. All rights reserved
+
+// SampleMft0.idl : IDL source for SampleMft0
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SampleMft0.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "Inspectable.idl";
+import "mftransform.idl";
+[
+    object,
+    uuid(F5208B72-A37A-457E-A309-AE3060780E21),
+    oleautomation,
+    nonextensible,
+    pointer_default(unique)
+]
+interface IMft0 : IUnknown{
+    [id(1)] HRESULT UpdateDsp([in] UINT32 uiPercentOfScreen);
+    [id(2)] HRESULT Enable(void);
+    [id(3)] HRESULT Disable(void);
+    [id(4)] HRESULT GetDspSetting([out] UINT* puiPercentOfScreen, [out] BOOL* pIsEnabled);
+};
+[
+    uuid(DE05674A-C564-4C0E-9B7C-E1519F7AA767),
+    version(1.0),
+]
+library SampleMft0Lib
+{
+    importlib("stdole2.tlb");
+    [
+        uuid(7BB640D9-33A4-4759-B290-F41A31DCF848)		
+    ]
+    coclass Mft0
+    {
+        [default] interface IMft0;
+        interface IInspectable;
+        interface IMFTransform;
+    };
+};
+

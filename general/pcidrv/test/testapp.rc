@@ -1,0 +1,37 @@
+#include <windows.h>
+#include "resource.h"
+
+GenericMenu MENU
+  {
+    POPUP    "&Menu"
+    {
+      MENUITEM "&Start Ping", IDM_PING
+      MENUITEM "&Stop", IDM_CLOSE
+      MENUITEM "&Re-enumerate All Devices" IDM_ENUMERATE
+      MENUITEM "Clear &Display",   IDM_CLEAR
+      MENUITEM "Verbose", IDM_VERBOSE
+      MENUITEM "E&xit",   IDM_EXIT
+    }
+  }
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG DIALOG DISCARDABLE 0, 0, 291, 118
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ping"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "OK",ID_OK,71,96,50,14,BS_NOTIFY
+    PUSHBUTTON      "CANCEL",ID_CANCEL,167,96,50,14,BS_NOTIFY
+    LTEXT           "Device Index :",IDC_STATIC,19,13,55,8
+    LTEXT           "Source IP :",IDC_STATIC,19,35,55,8
+    EDITTEXT        IDC_DEVICE_INDEX,75,11,24,14,ES_NUMBER
+    EDITTEXT        IDC_SOURCE_IP,76,32,103,14,ES_AUTOHSCROLL
+    LTEXT           "Destination IP :",IDC_STATIC,18,55,55,8
+    EDITTEXT        IDC_DESTINATION_IP,75,53,101,14,ES_AUTOHSCROLL
+    LTEXT           "Packet Size",IDC_STATIC,18,77,55,8
+    EDITTEXT        IDC_PACKET_SIZE,75,75,24,14,ES_NUMBER
+END

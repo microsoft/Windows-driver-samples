@@ -1,0 +1,221 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+    PURPOSE.
+
+Module Name:
+
+    toastva.rc
+
+Abstract:
+
+    Resources used by the TOASTVA sample.
+
+--*/
+
+#include <windows.h>
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS      VOS_NT_WINDOWS32
+ FILETYPE    VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Microsoft Corporation\0"
+            VALUE "FileDescription", "Toaster Value-Add Installer Sample\0"
+            VALUE "FileVersion", "1.00.0000.0\0"
+            VALUE "InternalName", "TOASTVA.EXE\0"
+            VALUE "LegalCopyright", "© Microsoft Corporation.  All rights reserved.\0"
+            VALUE "OriginalFilename", "TOASTVA.EXE\0"
+            VALUE "ProductName", "Toaster DDK Sample\0"
+            VALUE "ProductVersion", "1.0.0000.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_INTRO DIALOG DISCARDABLE  0, 0, 317, 193
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Toaster"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Welcome to Toasting Made Simple!",IDC_TITLE,115,9,189,
+                    31,NOT WS_GROUP
+    LTEXT           "This wizard will help you install supporting software for your toaster, and allow you to choose additional applications that will help you get the most from your new toaster.",
+                    IDC_INTRO_TEXT,115,40,189,53
+END
+
+IDD_INTERIOR1 DIALOG DISCARDABLE  0, 0, 317, 143
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",
+                    ACS_TRANSPARENT,148,50,20,20,WS_EX_TRANSPARENT
+END
+
+IDD_END DIALOG DISCARDABLE  0, 0, 317, 193
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Toaster"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Congratulations!  You've successfully installed your new toaster's software.",
+                    IDC_TITLE,115,8,195,37
+    LTEXT           "Enjoy the toast!",IDC_FINISH_TEXT,115,58,195,128
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_INTRO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 115
+        VERTGUIDE, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+        HORZGUIDE, 8
+        HORZGUIDE, 40
+    END
+
+    IDD_INTERIOR1, DIALOG
+    BEGIN
+        LEFTMARGIN, 28
+        RIGHTMARGIN, 310
+        VERTGUIDE, 28
+        BOTTOMMARGIN, 136
+    END
+
+    IDD_END, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BANNER              BITMAP  DISCARDABLE     "header.bmp"
+IDB_WATERMARK           BITMAP  DISCARDABLE     "watermrk.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AVIs
+//
+
+IDA_SEARCHING           AVI     "SEARCH.AVI"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    DISCARDABLE     "toastapp.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TITLE1              "Installing Toaster Support Software"
+    IDS_SUBTITLE1           "Please wait while we install the software that makes your toaster work."
+    IDS_TITLE2              "Choose Additional Applications"
+    IDS_SUBTITLE2           "These applications make it quick and easy to make great toast!"
+    IDS_PROMPT_FOR_HW       "You may now plug in your toaster.  It will automatically be discovered and configured for you.  Enjoy the toast!"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

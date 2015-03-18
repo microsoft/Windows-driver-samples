@@ -1,0 +1,21 @@
+//+-------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//
+//  Copyright (C) Microsoft Corporation, 2009
+//
+//  File:       storahci.rc
+//
+//--------------------------------------------------------------------------
+
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "MS AHCI Storport Miniport Driver"
+#define VER_INTERNALNAME_STR        "storahci.sys"
+#define VER_ORIGINALFILENAME_STR    "storahci.sys"
+
+#include "common.ver"

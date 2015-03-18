@@ -1,0 +1,97 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    Pci9x5x.INF
+;
+;Abstract:
+;    INF file for the PLx PCI9x5xRDK-Lite driver.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+HKR,,DeviceCharacteristics,0x10001,0x100     ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system and built-in Admin. 
+
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%MSFT%=MSFT,NT$ARCH$
+
+[SourceDisksFiles]
+Pci9x5x.sys=1
+
+[SourceDisksNames]
+1=%DISK_NAME%,
+
+; For Win2K
+[MSFT]
+; DisplayName           Section           DeviceId
+; -----------           -------           --------
+%Pci9056.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_5601
+%Pci9656.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_9601
+
+; For XP and later
+[MSFT.NT$ARCH$]
+; DisplayName           Section           DeviceId
+; -----------           -------           --------
+%Pci9056.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_5601
+%Pci9656.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_9601
+
+[Pci9x5x_Inst.NT]
+CopyFiles=Pci9x5x.CopyFiles
+
+[Pci9x5x.CopyFiles]
+Pci9x5x.sys
+
+[Pci9x5x_Inst.NT.Services]
+AddService=Pci9x5x,0x00000002,Pci9x5x_Service 
+
+[Pci9x5x_Service]
+DisplayName    = %Pci9x5x.SVCDESC%                            
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Pci9x5x.sys                            
+
+[Pci9x5x_Inst.NT.Wdf]
+KmdfService = Pci9x5x, Pci9x5x_wdfsect
+[Pci9x5x_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+MSFT = "Microsoft"
+ClassName = "Sample Device"
+Pci9x5x.SVCDESC = "Sample Driver Service for the PCI9x5xRDK-Lite adapter"
+Pci9056.DRVDESC = "Sample Driver for the PCI9056RDK-Lite adapter"
+Pci9656.DRVDESC = "Sample Driver for the PCI9656RDK-Lite adapter"
+DISK_NAME = "Pci9x5x Sample Install Disk"

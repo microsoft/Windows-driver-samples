@@ -1,0 +1,77 @@
+;
+; UMDFSkeleton_Root.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFTUMDF%
+CatalogFile=WUDF.cat
+DriverVer=03/25/2005,0.0.0.1
+
+[Manufacturer]
+%MSFTUMDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%SkeletonDeviceName%=Skeleton_Install,UMDFSamples\Skeleton
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+UMDFSkeleton.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF Skeleton Device ==================================
+
+[Skeleton_Install.NT]
+CopyFiles=UMDriverCopy
+
+[Skeleton_Install.NT.hw]
+
+[Skeleton_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Skeleton_Install.NT.CoInstallers]
+AddReg=CoInstallers_AddReg
+
+[Skeleton_Install.NT.Wdf]
+UmdfService=UMDFSkeleton,UMDFSkeleton_Install
+UmdfServiceOrder=UMDFSkeleton
+
+[UMDFSkeleton_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\UMDFSkeleton.dll
+DriverCLSID={d4112073-d09b-458f-a5aa-35ef21eef5de}
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WUDFCoinstaller.dll"
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to driversMdf
+
+[UMDriverCopy]
+UMDFSkeleton.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTUMDF="Microsoft Internal (WDF:UMDF)"
+MediaDescription="Microsoft Sample Driver Installation Media"
+ClassName="Sample Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+SkeletonDeviceName="Microsoft Skeleton User-Mode Device Sample"

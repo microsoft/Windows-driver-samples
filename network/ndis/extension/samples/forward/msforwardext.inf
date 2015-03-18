@@ -1,0 +1,85 @@
+;
+; Copyright (c) Microsoft Corporation. All Rights Reserved.
+;
+
+[version]
+Signature   = "$Windows NT$"
+Class       = NetService
+ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
+Provider    = %Msft%
+CatalogFile = msforwardext.cat
+DriverVer   = 07/29/2011,2.0
+
+[Manufacturer]
+%Msft%=MSFT,NTx86,NTia64,NTamd64
+
+[MSFT.NTx86]
+%MSForwardExt_Desc%=Install, MS_forwardext
+
+[MSFT.NTia64]
+%MSForwardExt_Desc%=Install, MS_forwardext
+
+[MSFT.NTamd64]
+%MSForwardExt_Desc%=Install, MS_forwardext
+
+;-------------------------------------------------------------------------
+; Installation Section
+;-------------------------------------------------------------------------
+[Install]
+AddReg=Inst_Ndi
+Characteristics=0x40000
+NetCfgInstanceId="{37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4}"
+Copyfiles = MSForwardExt.copyfiles.sys
+
+[SourceDisksNames]
+1=%MSForwardExt_Desc%,"",,
+
+[SourceDisksFiles]
+MSForwardExt.sys=1
+
+[DestinationDirs]
+DefaultDestDir=12
+MSForwardExt.copyfiles.sys=12
+
+[MSForwardExt.copyfiles.sys]
+MSForwardExt.sys,,,2
+
+
+;-------------------------------------------------------------------------
+; Ndi installation support
+;-------------------------------------------------------------------------
+[Inst_Ndi]
+HKR, Ndi,Service,,"MSForwardExt"
+HKR, Ndi,CoServices,0x00010000,"MSForwardExt"
+HKR, Ndi,HelpText,,%MSForwardExt_HelpText%
+HKR, Ndi,FilterClass,,"ms_switch_forward"
+HKR, Ndi,FilterType,0x00010001,0x00000002
+HKR, Ndi\Interfaces,UpperRange,,"noupper"
+HKR, Ndi\Interfaces,LowerRange,,"nolower"
+HKR, Ndi\Interfaces, FilterMediaTypes,,"vmnetextension"
+HKR, Ndi,FilterRunType, 0x00010001, 2 ; optional
+
+;-------------------------------------------------------------------------
+; Service installation support, common.EventLog here is to demonstrate how to
+; write an enent log 
+;-------------------------------------------------------------------------
+[Install.Services]
+AddService=MSForwardExt,,MSForwardExt_Service_Inst;, common.EventLog
+
+[MSForwardExt_Service_Inst]
+DisplayName     = %MSForwardExt_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 1 ;SERVICE_SYSTEM_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\MSForwardExt.sys
+LoadOrderGroup  = NDIS
+Description     = %MSForwardExt_Desc%
+AddReg          = Common.Params.reg
+
+[Install.Remove.Services]
+DelService=MSForwardExt,0x200
+
+[Strings]
+Msft = "Microsoft"
+MSForwardExt_Desc = "Microsoft Sample Forwarding Extension"
+MSForwardExt_HelpText = "Sample for forwarding switch extension"

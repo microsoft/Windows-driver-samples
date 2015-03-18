@@ -1,0 +1,82 @@
+;
+; WpdWudfSampleDriver.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=WPD
+ClassGuid={EEC5AD98-8080-425f-922A-DABF3DE3F69A}
+Provider=%Provider%
+CatalogFile=WpdWudfSampleDriver.cat
+DriverVer=01/24/2005,1.1.1.1
+
+[Manufacturer]
+%MSFTWUDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%BasicDeviceName%=Basic_Install,WUDF\Basic
+
+[SourceDisksFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+WpdWudfSampleDriver.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== WPD Sample Device ==================================
+
+[Basic_Install]
+CopyFiles=System32Copy
+
+[Basic_Install.hw]
+AddReg=Device_AddReg
+
+[Basic_Install.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Basic_Install.CoInstallers]
+AddReg=Basic_Install.CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[Basic_Install.CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[Basic_Install.Wdf]
+UmdfService=WpdWudfSampleDriver, WpdWudfSampleDriver_Install
+UmdfServiceOrder=WpdWudfSampleDriver
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[WpdWudfSampleDriver_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID="{4F2FDA86-31DD-4840-A391-7A0F29220208}"
+ServiceBinary=%12%\UMDF\WpdWudfSampleDriver.dll
+
+[Device_AddReg]
+; Enable support for legacy WIA and WMDM applications
+HKR,,"EnableLegacySupport",0x10001,3
+
+; Enable default AutoPlay support
+HKR,,"EnableDefaultAutoPlaySupport",0x10001,1
+
+[WUDFRD_ServiceInstall]
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WUDFRd.sys
+
+[DestinationDirs]
+System32Copy=12,UMDF ; copy to system32\drivers\umdf
+
+[System32Copy]
+WpdWudfSampleDriver.dll
+
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTWUDF="Microsoft Windows Portable Devices"
+Provider="Microsoft WPD"
+MediaDescription="Windows Portable Device Sample Driver Installation Media"
+BasicDeviceName="Windows Portable Device Comprehensive Sample Driver"

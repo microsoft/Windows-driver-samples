@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sys", "Sys", "{C3251AB4-8086-4862-985F-35302E40A027}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{954C16D2-23E1-4D8C-A040-5D4FB830D689}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pci9x5x", "sys\Pci9x5x.vcxproj", "{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plx", "test\plx.vcxproj", "{BF101CB1-B147-40AC-8F84-13AC122A2D37}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Debug|Win32.Build.0 = Debug|Win32
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Release|Win32.ActiveCfg = Release|Win32
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Release|Win32.Build.0 = Release|Win32
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Debug|x64.ActiveCfg = Debug|x64
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Debug|x64.Build.0 = Debug|x64
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Release|x64.ActiveCfg = Release|x64
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9}.Release|x64.Build.0 = Release|x64
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Debug|Win32.Build.0 = Debug|Win32
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Release|Win32.ActiveCfg = Release|Win32
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Release|Win32.Build.0 = Release|Win32
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Debug|x64.ActiveCfg = Debug|x64
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Debug|x64.Build.0 = Debug|x64
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Release|x64.ActiveCfg = Release|x64
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12A2C4C0-856A-49BE-9F54-30D4D040C3E9} = {C3251AB4-8086-4862-985F-35302E40A027}
+		{BF101CB1-B147-40AC-8F84-13AC122A2D37} = {954C16D2-23E1-4D8C-A040-5D4FB830D689}
+	EndGlobalSection
+EndGlobal

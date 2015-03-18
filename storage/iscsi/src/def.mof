@@ -1,0 +1,34 @@
+//***************************************************************************
+//
+//  def.mof
+// 
+//  Module: iScsi Discovery api
+//
+//  Purpose: 
+//
+//  Copyright (c) 2001 Microsoft Corporation
+//
+//***************************************************************************
+
+//
+// Cause headers to be generated from common.mof
+//
+#define GENERATE_HEADER TRUE
+
+#define MODULE_HEADER \
+"\n" \
+"//***************************************************************************\n" \
+"//\n" \
+"//  iscsidef.h\n" \
+"// \n" \
+"//  Module: iScsi Discovery api\n" \
+"//\n" \
+"//  Purpose: Internal header defining interface between user mode discovery\n" \
+"//           api dll and HBA driver miniport.\n" \
+"//\n" \
+"//  Copyright (c) 2001 Microsoft Corporation\n" \
+"//\n" \
+"//***************************************************************************\n\n" 
+
+#include "common.mof"
+

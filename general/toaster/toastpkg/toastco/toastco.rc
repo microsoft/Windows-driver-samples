@@ -1,0 +1,85 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+    PURPOSE.
+
+Module Name:
+
+    toastco.rc
+
+Abstract:
+
+    Resources used by the Toaster sample co-installer
+
+--*/
+
+#include "toastco.h"
+#include <windows.h>
+
+//
+// Version resources
+//
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,0,0,0
+ PRODUCTVERSION 2,0,0,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS      VOS_NT_WINDOWS32
+ FILETYPE    VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Microsoft Corporation\0"
+            VALUE "FileDescription", "Toaster CoInstaller Sample\0"
+            VALUE "FileVersion", "2.00.0000.0\0"
+            VALUE "InternalName", "TOSTRCO2.DLL\0"
+            VALUE "LegalCopyright", "© Microsoft Corporation.  All rights reserved.\0"
+            VALUE "OriginalFilename", "TOSTRCO2.DLL\0"
+            VALUE "ProductName", "Toaster DDK Sample\0"
+            VALUE "ProductVersion", "2.0.0000.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+//
+// Dialog resources
+//
+IDD_SAMPLE_INSTALLAPP DIALOG DISCARDABLE  0, 0, 317, 143
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION                                          
+FONT 8, "MS Shell Dlg"                                                         
+BEGIN                                                                          
+    LTEXT           "Please select the applications that you would like to install:",
+                    IDC_STATIC,11,0,304,8
+    CONTROL         "Toaster Device Interface Watcher",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,21,20,296,10
+    CONTROL         "Toaster Diagnostic Utility",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,21,34,296,10
+    CONTROL         "Toast-Made-Easy Recipe Program",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,21,48,296,10
+END                                                                            
+
+//
+// String Table resources
+//
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TITLE              "Choose Additional Applications"
+    IDS_SUBTITLE           "These applications make it quick and easy to make great toast!"
+    IDS_MEDIA_PROMPT_TITLE "Toaster"
+END
+

@@ -1,0 +1,12 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_DLL
+#define VER_FILESUBTYPE VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "OSRUSBFX2 Bulk & Isoch Read and Write test App"
+#define VER_INTERNALNAME_STR        "osrusbfx2.exe"
+#define VER_ORIGINALFILENAME_STR    "osrusbfx2.exe"
+
+#include <common.ver>
+

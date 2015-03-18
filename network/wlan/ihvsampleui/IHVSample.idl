@@ -1,0 +1,71 @@
+//
+// Copyright (C) Microsoft Corporation 2005
+// IHV UI Extension sample
+//
+
+import "unknwn.idl";
+import "wtypes.idl";
+import "ihvuiinc.idl"; // For wireless UI extensions
+
+interface IWizardExtension;
+interface IObjectWithSite;
+
+interface IDot11SampleExtUI;
+interface IDot11SampleExtUIConProperty;
+interface IDot11SampleExtUISecProperty;
+
+[
+    uuid(7ca89d4b-2c5b-4368-b53a-ffa14e031179),  
+    helpstring(" Dot11 IHV Extensibility UI Interface"),
+    dual
+]
+
+interface IDot11SampleExtUI: IDot11ExtUI
+{
+}
+
+
+
+[
+    uuid(61055513-2f27-4962-b29c-d6d7d1500fec),  
+    helpstring(" Dot11 IHV Extensibility UI Connection Properties Interface"),
+    dual
+]
+
+interface IDot11SampleExtUIConProperty: IDot11ExtUIProperty
+{
+    [id(1), hidden, helpstring("method Initialize")]
+    HRESULT 
+    Initialize([in] BSTR bstrPropertyName);
+}
+
+
+[
+    uuid(12c211ae-1b6d-471c-9c1b-698bcc9b9d97),  
+    helpstring(" Dot11 IHV Extensibility UI Security Properties Interface"),
+    dual
+]
+
+interface IDot11SampleExtUISecProperty: IDot11ExtUIProperty
+{
+    [id(1), hidden, helpstring("method Initialize")]
+    HRESULT 
+    Initialize([in] BSTR bstrPropertyName, [in] DWORD dwIhvSecurity);
+}
+
+
+[
+    uuid(a18bae3c-39c2-4b34-ba49-0130e431d2ca),  
+    helpstring(" Dot11 IHV Extensibility UI Key Properties Interface"),
+    dual
+]
+
+interface IDot11SampleExtUIKeyProperty: IDot11ExtUIProperty
+{
+    [id(1), hidden, helpstring("method Initialize")]
+    HRESULT 
+    Initialize([in] BYTE* pvData);
+}
+
+
+

@@ -1,0 +1,106 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    simsensor.inf
+;
+;Abstract:
+;
+;    INF file for installing simulated sensor driver.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFT%
+DriverVer=09/02/2011, 6.02.8105
+CatalogFile=simsensor.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+simsensor.sys  = 1,,
+
+;********************************************
+; Simulated Sensor Install Section
+;********************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NTx86
+%StdMfg%=Standard,NTamd64
+%StdMfg%=Standard,NTarm
+%StdMfg%=Standard,NTarm64
+
+[Standard.NTx86]
+%simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
+
+[Standard.NTamd64]
+%simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
+
+[Standard.NTarm]
+%simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
+
+[Standard.NTarm64]
+%simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
+
+[simsensor_Device.NT]
+CopyFiles=simsensor_Device_Drivers
+AddPowerSetting=Temperature_Power_Setting
+
+[simsensor_Device.NT.HW]
+AddReg=simsensor_Device.NT.AddReg
+
+[simsensor_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[simsensor_Device_Drivers]
+simsensor.sys
+
+;-------------- Service installation
+
+[simsensor_Device.NT.Services]
+AddService = simsensor,%SPSVCINST_ASSOCSERVICE%,simsensor_Service_Inst
+
+; -------------- simsensor driver install sections
+
+[simsensor_Service_Inst]
+DisplayName    = %simsensor.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\simsensor.sys
+
+[Temperature_Power_Setting]
+SubGroup = {7D54AE13-7A01-469d-8AF3-6FF4662C5371}
+Setting = {FCB15302-14A9-4bf8-8A0B-888E0D33BEDE}, "Simulated Machine Temperature", "Specify the simulated temperature of the system."
+ValueRange = 1, 10000, 1, "Tenths of degrees Kelvin"
+
+; Max Power savings, AC
+Default = {A1841308-3541-4FAB-BC81-F71556F20B4A}, 0, 1
+; Max Power savings, DC
+Default = {A1841308-3541-4FAB-BC81-F71556F20B4A}, 1, 1
+; No power savings, AC
+Default = {8C5E7FDA-E8BF-4A96-9A85-A6E23A8C635C}, 0, 1 
+; No power savings, DC
+Default = {8C5E7FDA-E8BF-4A96-9A85-A6E23A8C635C}, 1, 1
+; Balanced Laptop performance, AC
+Default = {381B4222-F694-41F0-9685-FF5BB260DF2E}, 0, 1
+; Balanced Laptop performance, DC
+Default = {381B4222-F694-41F0-9685-FF5BB260DF2E}, 1, 1
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFT = "Microsoft"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Simulate Sensor Installation Disk #1"
+simsensor.DeviceDesc = "Simulated Sensor"
+simsensor.SVCDESC = "Simulated Sensor"

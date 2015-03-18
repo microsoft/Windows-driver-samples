@@ -1,0 +1,112 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    OSRUSBFX2.INF
+;
+;Abstract:
+;    Installation inf for OSR USB-FX2 Learning Kit
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=KmdfSamples.cat
+
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+
+; ================= Device section =====================
+
+[Manufacturer]
+%MfgName%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%USB\VID_045E&PID_930A.DeviceDesc%=kmdf_enumswitches.Dev, USB\VID_0547&PID_1002
+%Switch.DeviceDesc%=Switch.Dev, {6FDE7521-1B65-48ae-B628-80BE62016026}\OsrUsbFxRawPdo
+
+
+[kmdf_enumswitches.Dev.NT]
+CopyFiles=kmdf_enumswitches.Files.Ext
+
+[Switch.Dev.NT]
+;dummy section
+
+[Switch.Dev.NT.Services]
+AddService = , %SPSVCINST_ASSOCSERVICE%, 
+
+[kmdf_enumswitches.Dev.NT.Services]
+AddService = kmdf_enumswitches, %SPSVCINST_ASSOCSERVICE%, kmdf_enumswitches.AddService
+
+[kmdf_enumswitches.AddService]
+DisplayName    = %kmdf_enumswitches.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\kmdf_enumswitches.sys
+
+[kmdf_enumswitches.Files.Ext]
+kmdf_enumswitches.sys
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+kmdf_enumswitches.sys = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+;-------------- WDF Coinstaller installation
+
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[kmdf_enumswitches.Dev.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[kmdf_enumswitches.Dev.NT.Wdf]
+KmdfService = kmdf_enumswitches, kmdf_enumswitches_wdfsect
+[kmdf_enumswitches_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;---------------------------------------------------------------;
+
+[Strings]
+MSFT="Microsoft"
+MfgName="OSR"
+Disk_Description="OSRUSBFX2 Installation Disk"
+USB\VID_045E&PID_930A.DeviceDesc="WDF Sample Bus Driver for OSR USB-FX2 Learning Kit"
+kmdf_enumswitches.SvcDesc="WDF Sample Bus Driver for OSR USB-FX2 Learning Kit"
+ClassName         = "Sample Device"
+Switch.DeviceDesc = "OsrUsbFX2 RawPdo For Switch"
+SPSVCINST_ASSOCSERVICE= 0x00000002

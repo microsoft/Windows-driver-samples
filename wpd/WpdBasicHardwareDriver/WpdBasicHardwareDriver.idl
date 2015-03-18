@@ -1,0 +1,24 @@
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+import "wudfddi.idl";
+
+[
+    uuid(69A9B934-73F0-45AF-B3C5-1D5BC7BC982B),
+    version(1.0),
+    helpstring("Windows Portable Device Basic Hardware Driver Type Library")
+]
+library WpdBasicHardwareDriverLib
+{
+    importlib("stdole2.tlb");
+    [
+        uuid(EC7445EE-BC00-4CED-AFE7-A52849F10239),
+        helpstring("WpdBasicHardwareDriver Class")
+    ]
+    coclass WpdBasicHardwareDriver
+    {
+        [default] interface IDriverEntry;
+    };
+};
+

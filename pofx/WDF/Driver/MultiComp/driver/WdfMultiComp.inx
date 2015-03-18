@@ -1,0 +1,79 @@
+;
+; WdfMultiComp.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+CatalogFile=KmdfSamples.cat
+DriverVer=03/27/2011,0.0.0.1
+
+[DestinationDirs]
+WdfMultiCompDriverCopy=12 ; copy to drivers
+CoInstaller_CopyFiles = 11; copy to system32
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+[SourceDisksFiles]
+WdfMultiComp.sys=1
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1
+
+; =================== Class install ==================================
+
+[ClassInstall32]
+AddReg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,,%ClassName%
+HKR,,Icon,,-5
+
+; =================== KMDF Multi-Component Device ==================================
+
+[Manufacturer]
+%MSFT%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%WdfMultiCompDeviceName%=WdfMultiComp_Install,WDF\WdfMultiComp
+
+[WdfMultiComp_Install.NT]
+CopyFiles=WdfMultiCompDriverCopy
+
+[WdfMultiCompDriverCopy]
+WdfMultiComp.sys
+
+[WdfMultiComp_Install.NT.Services]
+AddService=WdfMultiComp,0x000001fa,WdfMultiComp_ServiceInstall
+
+[WdfMultiComp_ServiceInstall]
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WdfMultiComp.sys
+
+[WdfMultiComp_Install.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[WdfMultiComp_Install.NT.Wdf]
+KmdfService = WdfMultiComp, WdfMultiComp_wdfsect
+
+[WdfMultiComp_wdfsect]
+KmdfLibraryVersion=$KMDFVERSION$
+
+; =================== Generic ==================================
+
+[Strings]
+MSFT="Microsoft"
+MediaDescription="KMDF Multi-Component Device Driver Installation Media"
+ClassName="Sample Device"
+WdfMultiCompDeviceName="KMDF Multi-Component Device"
+

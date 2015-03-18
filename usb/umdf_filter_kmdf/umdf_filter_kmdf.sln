@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{C5684CA0-69C7-44A5-9993-99687939133F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Umdf_filter", "Umdf_filter", "{EECFA720-E287-4CEE-A8AA-6BF3777F68B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kmdf_driver", "Kmdf_driver", "{A0A8D15D-A7A6-4170-AAFA-753B7E798AF4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "package", "Package\package.VcxProj", "{3EF9240F-7E95-49A7-8B0D-5F7061655764}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WUDFOsrUsbFilter", "umdf_filter\WUDFOsrUsbFilter.vcxproj", "{0149B701-5356-434C-AC8C-07CAA1D9A4AA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osrusbfx2", "kmdf_driver\osrusbfx2.vcxproj", "{23EAF474-B558-4457-B03C-164DA83B7575}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Debug|Win32.Build.0 = Debug|Win32
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Release|Win32.ActiveCfg = Release|Win32
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Release|Win32.Build.0 = Release|Win32
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Debug|x64.ActiveCfg = Debug|x64
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Debug|x64.Build.0 = Debug|x64
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Release|x64.ActiveCfg = Release|x64
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764}.Release|x64.Build.0 = Release|x64
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Debug|Win32.Build.0 = Debug|Win32
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Release|Win32.ActiveCfg = Release|Win32
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Release|Win32.Build.0 = Release|Win32
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Debug|x64.ActiveCfg = Debug|x64
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Debug|x64.Build.0 = Debug|x64
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Release|x64.ActiveCfg = Release|x64
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA}.Release|x64.Build.0 = Release|x64
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Debug|Win32.ActiveCfg = Debug|Win32
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Debug|Win32.Build.0 = Debug|Win32
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Release|Win32.ActiveCfg = Release|Win32
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Release|Win32.Build.0 = Release|Win32
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Debug|x64.ActiveCfg = Debug|x64
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Debug|x64.Build.0 = Debug|x64
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Release|x64.ActiveCfg = Release|x64
+		{23EAF474-B558-4457-B03C-164DA83B7575}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3EF9240F-7E95-49A7-8B0D-5F7061655764} = {C5684CA0-69C7-44A5-9993-99687939133F}
+		{0149B701-5356-434C-AC8C-07CAA1D9A4AA} = {EECFA720-E287-4CEE-A8AA-6BF3777F68B3}
+		{23EAF474-B558-4457-B03C-164DA83B7575} = {A0A8D15D-A7A6-4170-AAFA-753B7E798AF4}
+	EndGlobalSection
+EndGlobal

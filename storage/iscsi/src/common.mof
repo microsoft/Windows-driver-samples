@@ -1,0 +1,848 @@
+//***************************************************************************
+//
+//  common.mof
+// 
+//  Module: iScsi Discovery api
+//
+//  Purpose:  Common definitions used for iscsi mofs
+//
+//  Copyright (c) 2001 Microsoft Corporation
+//
+//***************************************************************************
+
+//
+// Include common definitions
+//
+#define MOFCOMP_PASS
+#include "iscsidsc.h"
+#include "iscsierr.h"
+
+//
+// ISCSI method execution status code
+//
+#define ISCSI_STATUS uint32
+
+#define ISCSI_STATUS_QUALIFIERS \
+    Description("Status code resulting from operation") : amended, \
+    Values { "Success",         \
+             "Non Specific Error",    \
+             "Login Failed",    \
+             "Connection Failed", \
+             "Initiator Node Already Exists", \
+             "Initiator Node Does Not Exist", \
+             "Target Moved Temporarily", \
+             "Target Moved Permamently", \
+             "Initiator Error", \
+             "Authentication Failure", \
+             "Authorization Failure", \
+             "Not Found", \
+             "Target Removed", \
+             "Unsupported Version", \
+             "Too many Connections", \
+             "Missing Parameter", \
+             "Can not include in session", \
+             "Session type not supported", \
+             "Target Error", \
+             "Service Unavailable", \
+             "Out of Resources", \
+             "Connections already exist on initiator node", \
+             "Session Already Exists", \
+             "Initiator Instance Does Not Exist", \
+             "Target Already Exists", \
+             "The iscsi driver implementation did not complete an operation correctly", \
+             "An invalid key text was encountered", \
+             "Invalid SendTargets response text was encountered", \
+             "Invalid Session Id", \
+             "The scsi request failed", \
+             "Exceeded max sessions for this initiator.", \
+             "Session is busy since a request is already in progress.", \
+             "The target mapping is not available", \
+             "The Target Address type given is not supported", \
+             "Logon Failed", \
+             "TCP Send Failed", \
+             "TCP Transport Error", \
+             "iSCSI Version Mismatch", \
+             "The Target Mapping Address passed is out of range for the adapter configuration", \
+             "The preshared key for the target or IKE identification payload is not available.", \
+             "The authentication information for the target is not available", \
+             "The target name is not found or is marked as hidden from login.", \
+             "One or more parameters specified in LoginTargetIN structure is invalid.", \
+             "Given target mapping already exists.", \
+             "The HBA security information cache is full.", \
+             "The port number passed is not valid for the initiator.", \
+             "Operation was not successful for all initiators.", \
+             "The HBA security information cache is not supported by this adapter.", \
+             "The IKE id payload type specified is not supported.", \
+             "The IKE id payload size specified is not correct.", \
+             "Target Portal Structure Already Exists.", \
+             "Target Address Structure Already Exists.", \
+             "There is no IKE authentication information available.", \
+             "There is no tunnel mode outer address specified.", \
+             "Authentication or tunnel address cache is corrupted.", \
+             "The request or operation is not supported.", \
+             "The target does not have enough resources to process the given request.", \
+             "The initiator service did not respond to the request sent by the driver.", \
+             "The iSNS server was not found or is unavailable.", \
+             "The operation was successful but requires a driver reload or reboot to become effective.", \
+             "There is no target portal available to complete the login.", \
+             "Cannot remove the last connection for a session.", \
+             "The Microsoft iSCSI Initiator Service is not running. Please start the service and retry.", \
+             "The target has already been logged in via an iSCSI session.", \
+             "The session cannot be logged out since a device on that session is currently being used.", \
+             "Failed to save persistent login information.", \
+             "Failed to remove persistent login information.", \
+             "The specified initiator name was not found.", \
+             "The specified portal was not found.", \
+             "The specified discovery mechanism was not found.", \
+             "iSCSI does not support IPSEC for this version of the OS.", \
+             "The iSCSI service timed out waiting for all persistent logins to complete.", \
+             "The specified CHAP secret is less than 96 bits and will not be usable for authenticating over non ipsec connections.", \
+             "The evaluation period for the iSCSI initiator service has expired.", \
+             "CHAP secret given does not conform to the standard. Please see system event log for more information.", \
+             "Target CHAP secret given is invalid.", \
+             "Initiator CHAP secret given is invalid.", \
+             "CHAP Username given is invalid.", \
+             "Logon Authentication type given is invalid.", \
+             "Target Mapping information given is invalid.", \
+             "Target Id given in Target Mapping is invalid.", \
+             "The iSCSI name specified contains invalid characters or is too long.", \
+             "The iSNS version number returned from the iSNS server is not compatible with this version of the iSNS client.", \
+             "Initiator failed to configure IPSec for the given connection. This could be because of low resources.", \
+             "The buffer given for processing the request is too small.", \
+             "The given Load Balance policy is not recognized by iScsi initiator.", \
+             "One or more paramaters specified is not valid.", \
+             "Duplicate PathIds were specified in the call to set Load Balance Policy.", \
+             "Number of paths specified in Set Load Balance Policy does not match the number of paths to the target.", \
+             "Path Id specified in the call to set Load Balance Policy is not valid.", \
+             "Multiple primary paths specified when only one primary path is expected.", \
+             "No primary path specified when at least one is expected.", \
+             "Volume is already a persistently bound volume.", \
+             "Volume was not found.", \
+             "The volume specified does not originate from an iSCSI disk.", \
+             "The DNS name specified was not resolved.", \
+             "There is no connection available in the iSCSI session to process the request.", \
+             "The given Load Balance policy is not supported.", \
+             "A remove connection request is already in progress for this session.", \
+             "Given connection was not found in the session.", \
+             "The leading connection in the session cannot be removed." \
+            }, \
+    ValueMap { "0", \
+               "0xEFFF0001", \
+               "0xEFFF0002", \
+               "0xEFFF0003", \
+               "0xEFFF0004", \
+               "0xEFFF0005", \
+               "0xEFFF0006", \
+               "0xEFFF0007", \
+               "0xEFFF0008", \
+               "0xEFFF0009", \
+               "0xEFFF000A", \
+               "0xEFFF000B", \
+               "0xEFFF000C", \
+               "0xEFFF000D", \
+               "0xEFFF000E", \
+               "0xEFFF000F", \
+               "0xEFFF0010", \
+               "0xEFFF0011", \
+               "0xEFFF0012", \
+               "0xEFFF0013", \
+               "0xEFFF0014", \
+               "0xEFFF0015", \
+               "0xEFFF0016", \
+               "0xEFFF0017", \
+               "0xEFFF0018", \
+               "0xEFFF0019", \
+               "0xEFFF001A", \
+               "0xEFFF001B", \
+               "0xEFFF001C", \
+               "0xEFFF001D", \
+               "0xEFFF001E", \
+               "0xEFFF001F", \
+               "0xEFFF0020", \
+               "0xEFFF0021", \
+               "0xEFFF0022", \
+               "0xEFFF0023", \
+               "0xEFFF0024", \
+               "0xEFFF0025", \
+               "0xEFFF0026", \
+               "0xEFFF0027", \
+               "0xEFFF0028", \
+               "0xEFFF0029", \
+               "0xEFFF002A", \
+               "0xEFFF002B", \
+               "0xEFFF002C", \
+               "0xEFFF002D", \
+               "0xEFFF002E", \
+               "0xEFFF002F", \
+               "0xEFFF0030", \
+               "0xEFFF0031", \
+               "0xEFFF0032", \
+               "0xEFFF0033", \
+               "0xEFFF0034", \
+               "0xEFFF0035", \
+               "0xEFFF0036", \
+               "0xEFFF0037", \
+               "0xEFFF0038", \
+               "0xEFFF0039", \
+               "0xEFFF003A", \
+               "0xAFFF003B", \
+               "0xEFFF003C", \
+               "0xEFFF003D", \
+               "0xEFFF003E", \
+               "0xEFFF003F", \
+               "0xEFFF0040", \
+               "0xEFFF0041", \
+               "0xEFFF0042", \
+               "0xEFFF0043", \
+               "0xEFFF0044", \
+               "0xEFFF0045", \
+               "0xEFFF0046", \
+               "0xEFFF0047", \
+               "0xAFFF0048", \
+               "0xEFFF0049", \
+               "0xEFFF004A", \
+               "0xEFFF004B", \
+               "0xEFFF004C", \
+               "0xAFFF004D", \
+               "0xEFFF004E", \
+               "0xEFFF004F", \
+               "0xEFFF0050", \
+               "0xEFFF0051", \
+               "0xEFFF0052", \
+               "0xEFFF0053", \
+               "0xEFFF0054", \
+               "0xEFFF0055", \
+               "0xEFFF0056", \
+               "0xEFFF0057", \
+               "0xEFFF0058", \
+               "0xEFFF0059", \
+               "0xEFFF005A", \
+               "0xEFFF005B", \
+               "0xEFFF005C", \
+               "0xEFFF005D", \
+               "0xEFFF005E", \
+               "0xEFFF005F", \
+               "0xEFFF0060", \
+               "0xEFFF0061", \
+               "0xEFFF0062", \
+               "0xEFFF0063", \
+               "0xEFFF0064"  \
+             }
+
+
+[
+ WmiGenerateHeader(GENERATE_HEADER),
+ WMI,
+ DisplayName("IP Address") : amended,
+ guid("{9AC5D4A1-1A1A-48ec-8E79-735806E9A1FA}"),
+ cpp_quote(MODULE_HEADER
+ISCSI_SECURITY_FLAGS_CPPQUOTE
+"\n"
+"//\n"                              
+"// Types of addresses that can be passed by management app to driver\n"
+"//\n"                              
+"typedef enum {\n"
+"           // Text based host name. This needs to be resolved to binary form\n"
+"    ISCSI_IP_ADDRESS_TEXT = 0,\n"
+"           // Binary IPv4 address\n"
+"    ISCSI_IP_ADDRESS_IPV4 = 1,\n"
+"           // Binary IPv6 address\n"
+"    ISCSI_IP_ADDRESS_IPV6 = 2,\n"                              
+"           // Empty address\n"
+"    ISCSI_IP_ADDRESS_EMPTY = 3\n"                              
+"} ISCSIIPADDRESSTYPE, *PISCSIIPADDRESSTYPE;\n"
+                               )
+]
+class ISCSI_IP_Address
+{
+    [WmiDataId(1),
+     read, write,
+     DisplayName("Address Format") : amended,
+     description("Type of address specified. It can be text: a DNS or dotted address or it can be a binary ipv4 or ipv6 address") : amended,
+     Values{ "Text Address",
+             "IpV4 Address",
+             "IpV6 Address",
+             "Empty Address"},
+     ValueMap{ "0",
+               "1",
+               "2",
+               "3"}
+    ]
+#define ISCSIIPADDRESSTYPE uint32
+        ISCSIIPADDRESSTYPE Type;
+
+    [WmiDataId(2),
+     read, write,
+     DisplayInHex,
+     DisplayName("IPV4 Address"): amended,
+     description("If IPV4 Address is specified as the Address Format then this conains the binary IPv4 ip address") : amended
+    ]
+    uint32 IpV4Address;
+
+    [WmiDataId(3),
+     DisplayName("IPV6 Address"): amended,
+     read, write,
+     description("If IPV6 Address is specified as the Address Format then this conains the binary IPv6 ip address") : amended
+    ]
+    uint8 IpV6Address[16];
+
+    [WmiDataId(4),
+     read, write,
+     DisplayName("IPV6 Flow Information") : amended,
+     description("IPV6 flow information") : amended
+    ]
+    uint32 IpV6FlowInfo;
+
+    [WmiDataId(5),
+     read, write,
+     DisplayName("IPV6 Scope Id") : amended,
+     description("IPV6 scope id") : amended
+    ]
+    uint32 IpV6ScopeId;
+
+    [WmiDataId(6),
+     read, write,
+     DisplayName("Text Address") : amended,
+     description("Text address, either a DNS address or dotted address") : amended,
+     MaxLen(MAX_ISCSI_TEXT_ADDRESS_LEN)
+    ]
+    string TextAddress;
+};
+
+             
+[
+ WmiGenerateHeader(GENERATE_HEADER),
+ WMI,
+ guid("{DE5051A7-BF27-48f1-BD12-07CADE92AEFD}"),
+ description("ISCSI target portal") : amended
+]
+class ISCSI_TargetPortal
+{
+    [WmiDataId(1),
+     Description("Network Address") : amended
+    ]
+    ISCSI_IP_Address Address;
+
+    [WmiDataId(2),
+     Description("Reserved") : amended
+    ]
+    uint32 Reserved;
+
+    [WmiDataId(3),
+     Description("Socket number") : amended
+    ]
+    uint16 Socket;
+};
+
+[WMI,
+ WmiGenerateHeader(GENERATE_HEADER),
+ guid("{3081F2A5-95F5-4d2a-813D-EE59864C6FC5}"),
+ description("iSCSI target portal group") : amended
+]
+class ISCSI_TargetPortalGroup
+{
+    [WmiDataId(1),
+     description("Number of portals in group") : amended
+    ]
+    uint32 PortalCount;
+
+    [WmiDataId(2),
+     WmiSizeIs("PortalCount"),
+     description("Target portals in group") : amended
+    ]
+    ISCSI_TargetPortal Portals[];
+};
+
+
+[WMI,
+ WmiGenerateHeader(GENERATE_HEADER),
+ guid("{3011A7BD-0491-478e-8C79-3C76424D05E2}"),
+ cpp_quote(ISCSI_DIGEST_CPPQUOTE),
+ Description("These are options that can be used for logging into a target")
+]
+class ISCSI_LoginOptions
+{
+    [WmiDataId(1),
+     description("Bit flags that specify which login option values are specified") : amended,
+     ISCSI_LOGIN_OPTIONS_INFO_QUALIFIERS,
+     cpp_quote(ISCSI_LOGIN_OPTIONS_INFO_CPPQUOTE)
+    ] ISCSI_LOGIN_OPTIONS_INFO_SPECIFIED InformationSpecified;
+    
+    [WmiDataId(2),
+     ValueMap{ ISCSI_DIGEST_TYPE_NONE,
+               ISCSI_DIGEST_TYPE_CRC32C },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 HeaderDigest;
+    
+    [WmiDataId(3),
+     ValueMap{ ISCSI_DIGEST_TYPE_NONE,
+               ISCSI_DIGEST_TYPE_CRC32C },
+     Values{ "None", "CRC32C" },
+     description("cyclic integrity checksums that can be negotiated for the header digests") : amended
+    ] uint32 DataDigest;
+
+    [WmiDataId(4),
+     Description("Maximum number of connections, 0 implies no limit") : amended
+    ]
+    uint32 MaximumConnections;
+
+    [WmiDataId(5),
+     Description("The initiator and target negotiate the minimum time, in seconds, to wait before attempting an explicit/implicit logout or active task reassignment after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Wait;
+
+    [WmiDataId(6),
+     Description(" The initiator and target negotiate the maximum time, in seconds after an initial wait (Time2Wait), before which an explicit/implicit connection Logout or active task reassignment is still possible after an unexpected connection termination or a connection reset.") : amended
+    ]
+    uint32 DefaultTime2Retain;
+
+    [WmiDataId(7),
+     Description("Flags that affect how login occurs") : amended,
+     cpp_quote(ISCSI_LOGIN_FLAGS_CPPQUOTE),
+     ISCSI_LOGIN_FLAGS_QUALIFIERS
+    ]
+    ISCSI_LOGIN_FLAGS LoginFlags;
+
+    [WmiDataId(8),
+     Description("Authentication method specified for login") : amended,
+     ISCSI_AUTH_TYPES_QUALIFIERS
+    ]
+    ISCSI_AUTH_TYPES AuthType;
+};
+
+
+[WMI,
+ WmiGenerateHeader(GENERATE_HEADER),
+ guid("{994FF278-3512-4d9b-A241-54CEF45F5A25}"),
+ description("This class describes a mapping from a an OS LUN to target device LUN") : amended
+]
+class ISCSI_LUNList
+{
+    [WmiDataId(1),
+     description("Target LUN") : amended
+    ]
+    uint64 TargetLUN;
+    
+    [WmiDataId(2),
+     description("OS Scsi bus number target is mapped to") : amended
+    ]
+    uint32 OSLUN;
+    
+    [WmiDataId(3),
+     description("Reserved") : amended
+    ]
+    uint32 Reserved;    
+};
+
+
+[WMI,
+ WmiGenerateHeader(GENERATE_HEADER),
+ guid("{21A28820-3C4C-4944-AC4F-DA7FEBA21168}"),
+ description("This class describes a mapping from a target LUN to a Windows port driver LUN") : amended
+]
+class ISCSI_TargetMapping
+{
+    [WmiDataId(1),
+     description("OS Scsi bus number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSBus;
+    
+    [WmiDataId(2),
+     description("OS Scsi Target number target is mapped to. If 0xffffffff then any value can be picked by the miniport.") : amended
+    ]
+    uint32 OSTarget;
+    
+    [WmiDataId(3),
+     Description("Unique Session ID for the target mapping") : amended
+    ] uint64 UniqueSessionId;
+    
+    [WmiDataId(4),
+     description("Count of LUNs mapped for this target") : amended
+    ]
+    uint32 LUNCount;
+
+    [WmiDataId(5),
+     MaxLen(MAX_ISCSI_NAME_LEN),
+     description("Target Name") : amended
+    ]
+    string TargetName;
+
+    [WmiDataId(6),
+     Description("TRUE if session created from a persistent login") : amended
+    ]
+    boolean FromPersistentLogin;
+    
+    [WmiDataId(7),
+     description("Reserved") : amended
+    ]
+    uint64 Reserved;
+        
+    [WmiDataId(8),
+     WmiSizeIs("LunCount"),
+     description("List of LUNs mapped for this target") : amended
+    ]
+    ISCSI_LUNList LUNList[];    
+};
+
+
+//
+// Perfmon counter types
+//
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//  PERF_COUNTER_DEFINITION.CounterType field values
+//
+//
+//        Counter ID Field Definition:
+//
+//   3      2        2    2    2        1        1    1
+//   1      8        4    2    0        6        2    0    8                0
+//  +--------+--------+----+----+--------+--------+----+----+----------------+
+//  |Display |Calculation  |Time|Counter |        |Ctr |Size|                |
+//  |Flags   |Modifiers    |Base|SubType |Reserved|Type|Fld |   Reserved     |
+//  +--------+--------+----+----+--------+--------+----+----+----------------+
+//
+//
+//  The counter type is the "or" of the following values as described below
+//
+//  select one of the following to indicate the counter's data size
+//
+#define PERF_SIZE_DWORD         0x00000000  // 32 bit field
+#define PERF_SIZE_LARGE         0x00000100  // 64 bit field
+#define PERF_SIZE_ZERO          0x00000200  // for Zero Length fields
+#define PERF_SIZE_VARIABLE_LEN  0x00000300  // length is in CounterLength field
+                                            //  of Counter Definition struct
+//
+//  select one of the following values to indicate the counter field usage
+//
+#define PERF_TYPE_NUMBER        0x00000000  // a number (not a counter)
+#define PERF_TYPE_COUNTER       0x00000400  // an increasing numeric value
+#define PERF_TYPE_TEXT          0x00000800  // a text field
+#define PERF_TYPE_ZERO          0x00000C00  // displays a zero
+//
+//  If the PERF_TYPE_NUMBER field was selected, then select one of the
+//  following to describe the Number
+//
+#define PERF_NUMBER_HEX         0x00000000  // display as HEX value
+#define PERF_NUMBER_DECIMAL     0x00010000  // display as a decimal integer
+#define PERF_NUMBER_DEC_1000    0x00020000  // display as a decimal/1000
+//
+//  If the PERF_TYPE_COUNTER value was selected then select one of the
+//  following to indicate the type of counter
+//
+#define PERF_COUNTER_VALUE      0x00000000  // display counter value
+#define PERF_COUNTER_RATE       0x00010000  // divide ctr / delta time
+#define PERF_COUNTER_FRACTION   0x00020000  // divide ctr / base
+#define PERF_COUNTER_BASE       0x00030000  // base value used in fractions
+#define PERF_COUNTER_ELAPSED    0x00040000  // subtract counter from current time
+#define PERF_COUNTER_QUEUELEN   0x00050000  // Use Queuelen processing func.
+#define PERF_COUNTER_HISTOGRAM  0x00060000  // Counter begins or ends a histogram
+#define PERF_COUNTER_PRECISION  0x00070000  // divide ctr / private clock
+//
+//  If the PERF_TYPE_TEXT value was selected, then select one of the
+//  following to indicate the type of TEXT data.
+//
+#define PERF_TEXT_UNICODE       0x00000000  // type of text in text field
+#define PERF_TEXT_ASCII         0x00010000  // ASCII using the CodePage field
+//
+//  Timer SubTypes
+//
+#define PERF_TIMER_TICK         0x00000000  // use system perf. freq for base
+#define PERF_TIMER_100NS        0x00100000  // use 100 NS timer time base units
+#define PERF_OBJECT_TIMER       0x00200000  // use the object timer freq
+//
+//  Any types that have calculations performed can use one or more of
+//  the following calculation modification flags listed here
+//
+#define PERF_DELTA_COUNTER      0x00400000  // compute difference first
+#define PERF_DELTA_BASE         0x00800000  // compute base diff as well
+#define PERF_INVERSE_COUNTER    0x01000000  // show as 1.00-value (assumes:
+#define PERF_MULTI_COUNTER      0x02000000  // sum of multiple instances
+//
+//  Select one of the following values to indicate the display suffix (if any)
+//
+#define PERF_DISPLAY_NO_SUFFIX  0x00000000  // no suffix
+#define PERF_DISPLAY_PER_SEC    0x10000000  // "/sec"
+#define PERF_DISPLAY_PERCENT    0x20000000  // "%"
+#define PERF_DISPLAY_SECONDS    0x30000000  // "secs"
+#define PERF_DISPLAY_NOSHOW     0x40000000  // value is not displayed
+//
+//  Predefined counter types
+//
+
+// 32-bit Counter.  Divide delta by delta time.  Display suffix: "/sec"
+#define PERF_COUNTER_COUNTER       0x10410400
+//            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+//            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_PER_SEC)
+
+
+// 64-bit Timer.  Divide delta by delta time.  Display suffix: "%"
+#define PERF_COUNTER_TIMER          \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_PERCENT)
+
+// Queue Length Space-Time Product. Divide delta by delta time. No Display Suffix.
+#define PERF_COUNTER_QUEUELEN_TYPE  \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_QUEUELEN |\
+            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+// Queue Length Space-Time Product. Divide delta by delta time. No Display Suffix.
+#define PERF_COUNTER_LARGE_QUEUELEN_TYPE  \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_QUEUELEN |\
+            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+// Queue Length Space-Time Product using 100 Ns timebase.
+// Divide delta by delta time. No Display Suffix.
+#define PERF_COUNTER_100NS_QUEUELEN_TYPE  \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_QUEUELEN |\
+            PERF_TIMER_100NS | PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+// Queue Length Space-Time Product using Object specific timebase.
+// Divide delta by delta time. No Display Suffix.
+#define PERF_COUNTER_OBJ_TIME_QUEUELEN_TYPE  \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_QUEUELEN |\
+            PERF_OBJECT_TIMER | PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+// 64-bit Counter.  Divide delta by delta time. Display Suffix: "/sec"
+#define PERF_COUNTER_BULK_COUNT     0x10410500
+//            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+//            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_PER_SEC)
+
+// Indicates the counter is not a  counter but rather Unicode text Display as text.
+#define PERF_COUNTER_TEXT           \
+            (PERF_SIZE_VARIABLE_LEN | PERF_TYPE_TEXT | PERF_TEXT_UNICODE |\
+            PERF_DISPLAY_NO_SUFFIX)
+
+// Indicates the data is a counter  which should not be
+// time averaged on display (such as an error counter on a serial line)
+// Display as is.  No Display Suffix.
+#define PERF_COUNTER_RAWCOUNT       0x00010000
+//            (PERF_SIZE_DWORD | PERF_TYPE_NUMBER | PERF_NUMBER_DECIMAL |\
+//            PERF_DISPLAY_NO_SUFFIX)
+
+// Same as PERF_COUNTER_RAWCOUNT except its size is a large integer
+#define PERF_COUNTER_LARGE_RAWCOUNT      0x00010100
+//            (PERF_SIZE_LARGE | PERF_TYPE_NUMBER | PERF_NUMBER_DECIMAL |\
+//            PERF_DISPLAY_NO_SUFFIX)
+
+// Special case for RAWCOUNT that want to be displayed in hex
+// Indicates the data is a counter  which should not be
+// time averaged on display (such as an error counter on a serial line)
+// Display as is.  No Display Suffix.
+#define PERF_COUNTER_RAWCOUNT_HEX       \
+            (PERF_SIZE_DWORD | PERF_TYPE_NUMBER | PERF_NUMBER_HEX |\
+            PERF_DISPLAY_NO_SUFFIX)
+
+// Same as PERF_COUNTER_RAWCOUNT_HEX except its size is a large integer
+#define PERF_COUNTER_LARGE_RAWCOUNT_HEX       \
+            (PERF_SIZE_LARGE | PERF_TYPE_NUMBER | PERF_NUMBER_HEX |\
+            PERF_DISPLAY_NO_SUFFIX)
+
+
+// A count which is either 1 or 0 on each sampling interrupt (% busy)
+// Divide delta by delta base. Display Suffix: "%"
+#define PERF_SAMPLE_FRACTION        \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_FRACTION |\
+            PERF_DELTA_COUNTER | PERF_DELTA_BASE | PERF_DISPLAY_PERCENT)
+
+// A count which is sampled on each sampling interrupt (queue length)
+// Divide delta by delta time. No Display Suffix.
+#define PERF_SAMPLE_COUNTER         \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+// A label: no data is associated with this counter (it has 0 length)
+// Do not display.
+#define PERF_COUNTER_NODATA         \
+            (PERF_SIZE_ZERO | PERF_DISPLAY_NOSHOW)
+
+// 64-bit Timer inverse (e.g., idle is measured, but display busy %)
+// Display 100 - delta divided by delta time.  Display suffix: "%"
+#define PERF_COUNTER_TIMER_INV      \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_TIMER_TICK | PERF_DELTA_COUNTER | PERF_INVERSE_COUNTER | \
+            PERF_DISPLAY_PERCENT)
+
+// The divisor for a sample, used with the previous counter to form a
+// sampled %.  You must check for >0 before dividing by this!  This
+// counter will directly follow the  numerator counter.  It should not
+// be displayed to the user.
+#define PERF_SAMPLE_BASE            \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_BASE |\
+            PERF_DISPLAY_NOSHOW |\
+            0x00000001)  // for compatibility with pre-beta versions
+
+// A timer which, when divided by an average base, produces a time
+// in seconds which is the average time of some operation.  This
+// timer times total operations, and  the base is the number of opera-
+// tions.  Display Suffix: "sec"
+#define PERF_AVERAGE_TIMER          \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_FRACTION |\
+            PERF_DISPLAY_SECONDS)
+
+// Used as the denominator in the computation of time or count
+// averages.  Must directly follow the numerator counter.  Not dis-
+// played to the user.
+#define PERF_AVERAGE_BASE           \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_BASE |\
+            PERF_DISPLAY_NOSHOW |\
+            0x00000002)  // for compatibility with pre-beta versions
+
+
+// A bulk count which, when divided (typically) by the number of
+// operations, gives (typically) the number of bytes per operation.
+// No Display Suffix.
+#define PERF_AVERAGE_BULK           \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_FRACTION  |\
+            PERF_DISPLAY_NOSHOW)
+
+// 64-bit Timer in object specific units. Display delta divided by
+// delta time as returned in the object type header structure.  Display suffix: "%"
+#define PERF_OBJ_TIME_TIMER \
+            (PERF_SIZE_LARGE   | PERF_TYPE_COUNTER  | PERF_COUNTER_RATE |\
+             PERF_OBJECT_TIMER | PERF_DELTA_COUNTER | PERF_DISPLAY_PERCENT)
+
+
+// 64-bit Timer in 100 nsec units. Display delta divided by
+// delta time.  Display suffix: "%"
+#define PERF_100NSEC_TIMER          \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_TIMER_100NS | PERF_DELTA_COUNTER | PERF_DISPLAY_PERCENT)
+
+// 64-bit Timer inverse (e.g., idle is measured, but display busy %)
+// Display 100 - delta divided by delta time.  Display suffix: "%"
+#define PERF_100NSEC_TIMER_INV      \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_TIMER_100NS | PERF_DELTA_COUNTER | PERF_INVERSE_COUNTER  |\
+            PERF_DISPLAY_PERCENT)
+
+// 64-bit Timer.  Divide delta by delta time.  Display suffix: "%"
+// Timer for multiple instances, so result can exceed 100%.
+#define PERF_COUNTER_MULTI_TIMER    \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_DELTA_COUNTER | PERF_TIMER_TICK | PERF_MULTI_COUNTER |\
+            PERF_DISPLAY_PERCENT)
+
+// 64-bit Timer inverse (e.g., idle is measured, but display busy %)
+// Display 100 * _MULTI_BASE - delta divided by delta time.
+// Display suffix: "%" Timer for multiple instances, so result
+// can exceed 100%.  Followed by a counter of type _MULTI_BASE.
+#define PERF_COUNTER_MULTI_TIMER_INV \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_RATE |\
+            PERF_DELTA_COUNTER | PERF_MULTI_COUNTER | PERF_TIMER_TICK |\
+            PERF_INVERSE_COUNTER | PERF_DISPLAY_PERCENT)
+
+// Number of instances to which the preceding _MULTI_..._INV counter
+// applies.  Used as a factor to get the percentage.
+#define PERF_COUNTER_MULTI_BASE     \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_BASE |\
+            PERF_MULTI_COUNTER | PERF_DISPLAY_NOSHOW)
+
+// 64-bit Timer in 100 nsec units. Display delta divided by delta time.
+// Display suffix: "%" Timer for multiple instances, so result can exceed 100%.
+#define PERF_100NSEC_MULTI_TIMER   \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_DELTA_COUNTER  |\
+            PERF_COUNTER_RATE | PERF_TIMER_100NS | PERF_MULTI_COUNTER |\
+            PERF_DISPLAY_PERCENT)
+
+// 64-bit Timer inverse (e.g., idle is measured, but display busy %)
+// Display 100 * _MULTI_BASE - delta divided by delta time.
+// Display suffix: "%" Timer for multiple instances, so result
+// can exceed 100%.  Followed by a counter of type _MULTI_BASE.
+#define PERF_100NSEC_MULTI_TIMER_INV \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_DELTA_COUNTER  |\
+            PERF_COUNTER_RATE | PERF_TIMER_100NS | PERF_MULTI_COUNTER |\
+            PERF_INVERSE_COUNTER | PERF_DISPLAY_PERCENT)
+
+// Indicates the data is a fraction of the following counter  which
+// should not be time averaged on display (such as free space over
+// total space.) Display as is.  Display the quotient as "%".
+#define PERF_RAW_FRACTION           \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_FRACTION |\
+            PERF_DISPLAY_PERCENT)
+
+#define PERF_LARGE_RAW_FRACTION           \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_FRACTION |\
+            PERF_DISPLAY_PERCENT)
+
+// Indicates the data is a base for the preceding counter which should
+// not be time averaged on display (such as free space over total space.)
+#define PERF_RAW_BASE               \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_BASE |\
+            PERF_DISPLAY_NOSHOW |\
+            0x00000003)  // for compatibility with pre-beta versions
+
+#define PERF_LARGE_RAW_BASE               \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_BASE |\
+            PERF_DISPLAY_NOSHOW )
+
+// The data collected in this counter is actually the start time of the
+// item being measured. For display, this data is subtracted from the
+// sample time to yield the elapsed time as the difference between the two.
+// In the definition below, the PerfTime field of the Object contains
+// the sample time as indicated by the PERF_OBJECT_TIMER bit and the
+// difference is scaled by the PerfFreq of the Object to convert the time
+// units into seconds.
+#define PERF_ELAPSED_TIME           \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_ELAPSED |\
+            PERF_OBJECT_TIMER | PERF_DISPLAY_SECONDS)
+//
+//  The following counter type can be used with the preceding types to
+//  define a range of values to be displayed in a histogram.
+//
+
+#define PERF_COUNTER_HISTOGRAM_TYPE   0x80000000
+                                        // Counter begins or ends a histogram
+//
+//  This counter is used to display the difference from one sample
+//  to the next. The counter value is a constantly increasing number
+//  and the value displayed is the difference between the current
+//  value and the previous value. Negative numbers are not allowed
+//  which shouldn't be a problem as long as the counter value is
+//  increasing or unchanged.
+//
+#define PERF_COUNTER_DELTA      \
+            (PERF_SIZE_DWORD | PERF_TYPE_COUNTER | PERF_COUNTER_VALUE |\
+            PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+
+#define PERF_COUNTER_LARGE_DELTA      \
+            (PERF_SIZE_LARGE | PERF_TYPE_COUNTER | PERF_COUNTER_VALUE |\
+            PERF_DELTA_COUNTER | PERF_DISPLAY_NO_SUFFIX)
+//
+//  The precision counters are timers that consist of two counter values:
+//      1) the count of elapsed time of the event being monitored
+//      2) the "clock" time in the same units
+//
+//  the precition timers are used where the standard system timers are not
+//  precise enough for accurate readings. It's assumed that the service
+//  providing the data is also providing a timestamp at the same time which
+//  will eliminate any error that may occur since some small and variable
+//  time elapses between the time the system timestamp is captured and when
+//  the data is collected from the performance DLL. Only in extreme cases
+//  has this been observed to be problematic.
+//
+//  when using this type of timer, the definition of the
+//      PERF_PRECISION_TIMESTAMP counter must immediately follow the
+//      definition of the PERF_PRECISION_*_TIMER in the Object header
+//
+// The timer used has the same frequency as the System Performance Timer
+#define PERF_PRECISION_SYSTEM_TIMER \
+        (PERF_SIZE_LARGE    | PERF_TYPE_COUNTER     | PERF_COUNTER_PRECISION    | \
+         PERF_TIMER_TICK    | PERF_DELTA_COUNTER    | PERF_DISPLAY_PERCENT   )
+//
+// The timer used has the same frequency as the 100 NanoSecond Timer
+#define PERF_PRECISION_100NS_TIMER  \
+        (PERF_SIZE_LARGE    | PERF_TYPE_COUNTER     | PERF_COUNTER_PRECISION    | \
+         PERF_TIMER_100NS   | PERF_DELTA_COUNTER    | PERF_DISPLAY_PERCENT   )
+//
+// The timer used is of the frequency specified in the Object header's
+//  PerfFreq field (PerfTime is ignored)
+#define PERF_PRECISION_OBJECT_TIMER \
+        (PERF_SIZE_LARGE    | PERF_TYPE_COUNTER     | PERF_COUNTER_PRECISION    | \
+         PERF_OBJECT_TIMER  | PERF_DELTA_COUNTER    | PERF_DISPLAY_PERCENT   )
+//
+// This is the timestamp to use in the computation of the timer specified
+// in the previous description block
+#define PERF_PRECISION_TIMESTAMP    PERF_LARGE_RAW_BASE

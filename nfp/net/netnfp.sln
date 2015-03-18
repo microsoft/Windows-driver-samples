@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{6133A073-0A35-45D3-BC68-BA16B0F829D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{4FD03920-D970-4A51-A2A1-A394DF683A03}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetNfpProvider", "driver\NetNfpProvider.vcxproj", "{756016BF-4187-4482-A0BE-CEE1698BD129}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetNfpControl", "exe\NetNfpControl.vcxproj", "{4ABF1B83-9726-45DE-B705-A8458BCB0915}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Debug|Win32.ActiveCfg = Debug|Win32
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Debug|Win32.Build.0 = Debug|Win32
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Release|Win32.ActiveCfg = Release|Win32
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Release|Win32.Build.0 = Release|Win32
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Debug|x64.ActiveCfg = Debug|x64
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Debug|x64.Build.0 = Debug|x64
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Release|x64.ActiveCfg = Release|x64
+		{756016BF-4187-4482-A0BE-CEE1698BD129}.Release|x64.Build.0 = Release|x64
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Debug|Win32.Build.0 = Debug|Win32
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Release|Win32.ActiveCfg = Release|Win32
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Release|Win32.Build.0 = Release|Win32
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Debug|x64.ActiveCfg = Debug|x64
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Debug|x64.Build.0 = Debug|x64
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Release|x64.ActiveCfg = Release|x64
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{756016BF-4187-4482-A0BE-CEE1698BD129} = {6133A073-0A35-45D3-BC68-BA16B0F829D8}
+		{4ABF1B83-9726-45DE-B705-A8458BCB0915} = {4FD03920-D970-4A51-A2A1-A394DF683A03}
+	EndGlobalSection
+EndGlobal

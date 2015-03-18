@@ -1,0 +1,28 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+    PURPOSE.
+
+
+Module Name:
+
+    tracedrv.rc
+
+--*/
+
+#include <windows.h>
+#include <ntverp.h>
+#define VER_FILETYPE    VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "Trace Kernel Mode Driver"
+#define VER_INTERNALNAME_STR        "tracedrv.sys"
+#define VER_ORIGINALFILENAME_STR    "tracedrv.sys"
+
+#include "common.ver"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
+
