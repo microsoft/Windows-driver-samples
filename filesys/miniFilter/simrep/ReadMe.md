@@ -3,8 +3,8 @@ SimRep File System Minifilter Driver
 
 SimRep is a sample filter that demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------

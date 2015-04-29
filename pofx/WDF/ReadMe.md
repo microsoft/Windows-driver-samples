@@ -3,8 +3,8 @@ KMDF Power Framework (PoFx) Sample
 
 This solution consists of two samples that demonstrate how a KMDF driver can implement F-state-based power management. The SingleComp sample demonstrates how a KMDF driver can implement F-state-based power management for a device that has only a single component. The MultiComp sample demonstrates how a KMDF driver can implement F-state-based power management for a device that has an arbitrary number of components that can be individually power-managed.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 **Note**
 Due to a known bug in the current Windows Driver Kit tools, when building this sample in Debug mode, the exe project may report some ApiValidator warnings. These can be safely ignored.

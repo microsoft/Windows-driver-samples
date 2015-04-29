@@ -3,8 +3,8 @@ Storage SDIO Driver
 
 This is a sample for a functional Secure Digital (SD) IO driver. The driver is written using the Kernel Mode Driver Framework. It is a driver for a generic mars development board that implements the SDIO protocol without additional functionality.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 The mars board driver exemplifies several different functions that are essential for writing an SDIO driver that leverages KDMF and the SDBUS API. It will show how to:
 

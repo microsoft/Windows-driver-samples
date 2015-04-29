@@ -3,8 +3,8 @@ Windows Filtering Platform Stream Edit Sample
 
 This sample driver demonstrates replacing a string pattern for a Transmission Control Protocol (TCP) connection using the Windows Filtering Platform (WFP).
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 The sample consists of a kernel-mode Windows Filtering Platform (WFP) callout driver (Stmedit.sys) that can operate in one of the following modes:
 

@@ -3,8 +3,8 @@ Scanner File System Minifilter Driver
 
 The Scanner minifilter is an example for developers who intend to write filters that examine data in files. Typically, antivirus products fall into this category.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------

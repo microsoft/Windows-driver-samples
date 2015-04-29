@@ -3,8 +3,8 @@ Super Floppy (sfloppy) Storage Class Driver
 
 The sfloppy sample is a super floppy driver. This driver is a class driver for Super Floppy disk drives.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Installation and Operation
 --------------------------

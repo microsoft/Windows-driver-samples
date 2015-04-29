@@ -12,6 +12,6 @@ The primary tasks of the filter for tracking a transacted file are the following
 3.  In the kernel transaction manager (KTM) notification callback, if the transaction is committed, then propagate the dirty information from the transacted dirty record to the non-transacted dirty record; if rollback, do not propagate.
 4.  Properly remove the context structure in the TransactionContextCleanup routine.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 

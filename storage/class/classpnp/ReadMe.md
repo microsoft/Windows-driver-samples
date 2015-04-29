@@ -3,8 +3,8 @@ ClassPnP Storage Class Driver Library
 
 This library is the library for all storage drivers. It simplifies writing a storage class driver by implementing 90 percent of the code that you need to support Plug and Play (PnP), power management, and so on. This library is used by disk, CDROM, and the tape class drivers.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Installation and Operation
 --------------------------

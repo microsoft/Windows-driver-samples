@@ -3,8 +3,8 @@ Ctx File System Minifilter Driver
 
 The Ctx minifilter is an example that demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------

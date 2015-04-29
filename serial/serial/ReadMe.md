@@ -3,8 +3,8 @@ Serial Port Driver
 
 The Serial (16550-based RS-232) sample driver is a WDF version of the inbox Serial.sys driver in %WINDIR%\\system32\\drivers.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 This sample driver is functionally equivalent to the inbox driver, with these two exceptions:
 

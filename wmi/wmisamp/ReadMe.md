@@ -3,8 +3,8 @@ Sample KMDF Driver Implementing a WMI Data Provider
 
 WmiSamp WMI Provider is a sample KMDF driver that implements a WMI data provider.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 The sample demonstrates how to register the WMI providers and create provider instances for the Framework device object. It also illustrates how to handle the WMI queries sent to the device.
 

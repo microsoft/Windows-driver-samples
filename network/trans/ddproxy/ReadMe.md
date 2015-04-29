@@ -3,8 +3,8 @@ Windows Filtering Platform Packet Modification Sample
 
 The sample driver demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Run the sample
 --------------

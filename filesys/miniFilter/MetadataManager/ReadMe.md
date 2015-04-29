@@ -3,8 +3,8 @@ Metadata Manager File System Minifilter Driver
 
 The Metadata Manager minifilter sample serves as an example if you want to use files for storing metadata that corresponds to your minifilters. The implementation of this sample depicts scenarios in which modifications to the file might have to be blocked or the minifilter might be required to close the file temporarily.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------

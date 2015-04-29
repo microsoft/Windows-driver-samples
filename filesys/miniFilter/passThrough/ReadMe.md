@@ -3,8 +3,8 @@ PassThrough File System Minifilter Driver
 
 The PassThrough minifilter demonstrates how to specify callback functions for different types of I/O requests.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------

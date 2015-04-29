@@ -3,8 +3,8 @@ Sample UMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
 
 The umdf\_fx2 sample is a User-Mode Driver Framework (UMDF) driver for the OSR USB-FX2 device. It includes a test app and sample device metadata, and supports impersonation and idle power down.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 The sample can also be used with the CustomDeviceAccess MSDK sample. The sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 

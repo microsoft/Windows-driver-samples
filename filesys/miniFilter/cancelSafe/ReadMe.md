@@ -3,8 +3,8 @@ CancelSafe File System Minifilter Driver
 
 The CancelSafe filter is a sample minifilter that you use if you want to use cancel-safe queues.
 
-## Universal Compliant
-This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
+## Universal Windows Driver Compliant
+This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation
 --------------------
