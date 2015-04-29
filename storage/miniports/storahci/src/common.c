@@ -7093,7 +7093,7 @@ Return Value:
 
     if (!FillClippedSGL(StorPortGetScatterGatherList(ChannelExtension->AdapterExtension, (PSCSI_REQUEST_BLOCK)Srb),
                         (PSTOR_SCATTER_GATHER_LIST) &srbExtension->LocalSgl,
-                        sizeof(SRB_IO_CONTROL) + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset,
+                        sizeof(SRB_IO_CONTROL) + FIELD_OFFSET(STORAGE_PROTOCOL_DATA_DESCRIPTOR, ProtocolSpecificData) + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset,
                         sizeof(IDENTIFY_DEVICE_DATA))) {
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         status = STOR_STATUS_BUFFER_TOO_SMALL;
@@ -7297,7 +7297,9 @@ Return Value:
     // Set up command to be sent to device.
     // Using NULL as physical address of buffer so that SGL won't be set in calling function.
     //
-    logPageBuffer = (PVOID)((PUCHAR)protocolDataRequest + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset);
+    logPageBuffer = (PVOID)((PUCHAR)protocolDataRequest +
+                            FIELD_OFFSET(STORAGE_PROTOCOL_DATA_DESCRIPTOR, ProtocolSpecificData) +
+                            protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset);
     logPageBlocks = protocolDataRequest->ProtocolSpecificData.ProtocolDataLength / IDE_GP_LOG_SECTOR_SIZE;
 
     if (smartLog) {
@@ -7327,7 +7329,7 @@ Return Value:
     //
     if (!FillClippedSGL(StorPortGetScatterGatherList(ChannelExtension->AdapterExtension, (PSCSI_REQUEST_BLOCK)Srb),
                         (PSTOR_SCATTER_GATHER_LIST) &srbExtension->LocalSgl,
-                        sizeof(SRB_IO_CONTROL) + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset,
+                        sizeof(SRB_IO_CONTROL) + FIELD_OFFSET(STORAGE_PROTOCOL_DATA_DESCRIPTOR, ProtocolSpecificData) + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset,
                         logPageBlocks * IDE_GP_LOG_SECTOR_SIZE)) {
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         status = STOR_STATUS_BUFFER_TOO_SMALL;
@@ -7366,6 +7368,7 @@ Return Value:
     PSRB_IO_CONTROL         srbControl = NULL;
     ULONG                   srbFlags = SrbGetSrbFlags(Srb);
     PSTORAGE_PROTOCOL_DATA_DESCRIPTOR protocolDataRequest = NULL;
+    ULONGLONG               protocolSpecificDataBufferOffset = 0;
 
     srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
     srbDataBufferLength = SrbGetDataTransferLength(Srb);
@@ -7389,9 +7392,11 @@ Return Value:
     }
 
     protocolDataRequest = (PSTORAGE_PROTOCOL_DATA_DESCRIPTOR)(srbControl + 1);
+    protocolSpecificDataBufferOffset = (ULONGLONG)sizeof(SRB_IO_CONTROL) +
+                                       FIELD_OFFSET(STORAGE_PROTOCOL_DATA_DESCRIPTOR, ProtocolSpecificData) +
+                                       protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset;
 
-    if ((ULONGLONG)srbDataBufferLength < ((ULONGLONG)sizeof(SRB_IO_CONTROL) +
-                                          protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset + 
+    if ((ULONGLONG)srbDataBufferLength < (protocolSpecificDataBufferOffset + 
                                           protocolDataRequest->ProtocolSpecificData.ProtocolDataLength)) {
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
         status = STOR_STATUS_INVALID_PARAMETER;
@@ -7401,7 +7406,7 @@ Return Value:
     //
     // Data buffer of Protocol Data should be pointer aligned.
     //
-    if ((((ULONGLONG)sizeof(SRB_IO_CONTROL) + protocolDataRequest->ProtocolSpecificData.ProtocolDataOffset) % sizeof(PVOID)) != 0) {
+    if ((protocolSpecificDataBufferOffset % sizeof(PVOID)) != 0) {
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         status = STOR_STATUS_INVALID_PARAMETER;
         goto exit;

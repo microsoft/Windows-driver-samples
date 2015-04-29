@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComPort", "ComPort", "{6C0EE406-586D-4B80-BB5D-DAF3113ECF24}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComPort", "ComPort", "{76B0904E-842B-44FB-B2E0-8BC932912E20}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FakeModem", "FakeModem", "{E25B6521-5167-4BB2-B779-8C56A9B9B980}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FakeModem", "FakeModem", "{388FA684-8FCF-417F-AB70-1E417037B715}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtualserial", "ComPort\virtualserial.vcxproj", "{EFB282A8-A881-44E7-964D-F068A4FD19C9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtualserial", "ComPort\virtualserial.vcxproj", "{24460F70-3AE4-4587-A9C7-095934572855}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fakemodem", "FakeModem\fakemodem.vcxproj", "{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fakemodem", "FakeModem\fakemodem.vcxproj", "{BCF39170-D785-4372-A97E-AAE0915630BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,28 +19,28 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Debug|Win32.Build.0 = Debug|Win32
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Release|Win32.ActiveCfg = Release|Win32
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Release|Win32.Build.0 = Release|Win32
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Debug|x64.ActiveCfg = Debug|x64
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Debug|x64.Build.0 = Debug|x64
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Release|x64.ActiveCfg = Release|x64
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9}.Release|x64.Build.0 = Release|x64
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Debug|Win32.ActiveCfg = Debug|Win32
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Debug|Win32.Build.0 = Debug|Win32
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Release|Win32.ActiveCfg = Release|Win32
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Release|Win32.Build.0 = Release|Win32
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Debug|x64.ActiveCfg = Debug|x64
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Debug|x64.Build.0 = Debug|x64
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Release|x64.ActiveCfg = Release|x64
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281}.Release|x64.Build.0 = Release|x64
+		{24460F70-3AE4-4587-A9C7-095934572855}.Debug|Win32.ActiveCfg = Debug|Win32
+		{24460F70-3AE4-4587-A9C7-095934572855}.Debug|Win32.Build.0 = Debug|Win32
+		{24460F70-3AE4-4587-A9C7-095934572855}.Release|Win32.ActiveCfg = Release|Win32
+		{24460F70-3AE4-4587-A9C7-095934572855}.Release|Win32.Build.0 = Release|Win32
+		{24460F70-3AE4-4587-A9C7-095934572855}.Debug|x64.ActiveCfg = Debug|x64
+		{24460F70-3AE4-4587-A9C7-095934572855}.Debug|x64.Build.0 = Debug|x64
+		{24460F70-3AE4-4587-A9C7-095934572855}.Release|x64.ActiveCfg = Release|x64
+		{24460F70-3AE4-4587-A9C7-095934572855}.Release|x64.Build.0 = Release|x64
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Debug|Win32.Build.0 = Debug|Win32
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Release|Win32.ActiveCfg = Release|Win32
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Release|Win32.Build.0 = Release|Win32
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Debug|x64.ActiveCfg = Debug|x64
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Debug|x64.Build.0 = Debug|x64
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Release|x64.ActiveCfg = Release|x64
+		{BCF39170-D785-4372-A97E-AAE0915630BE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{EFB282A8-A881-44E7-964D-F068A4FD19C9} = {6C0EE406-586D-4B80-BB5D-DAF3113ECF24}
-		{8C65DE8E-4978-4EC0-8C6B-3C8BEF8FE281} = {E25B6521-5167-4BB2-B779-8C56A9B9B980}
+		{24460F70-3AE4-4587-A9C7-095934572855} = {76B0904E-842B-44FB-B2E0-8BC932912E20}
+		{BCF39170-D785-4372-A97E-AAE0915630BE} = {388FA684-8FCF-417F-AB70-1E417037B715}
 	EndGlobalSection
 EndGlobal

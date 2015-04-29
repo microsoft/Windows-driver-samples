@@ -1,0 +1,114 @@
+[Version]
+Signature="$Windows NT$"
+Class=HIDClass
+ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider=%VENDOR%
+DriverVer=5/3/2011,1.0.0.0
+CatalogFile=HidRadioSwitchDrv.cat
+
+
+[SourceDisksFiles]
+RadioSwitchHidUsbFx2.sys = 99
+
+[SourceDisksNames]
+99 = %DISK_NAME%,,,""
+
+[DestinationDirs]  
+CopyFunctionDriver = 12      
+CopyFilterDriver = 12 
+
+[Manufacturer]
+%VENDOR%=Vendor, NT$ARCH$.6.1
+
+; For Win7 and later so that we can use inbox HID-KMDF mapper
+[Vendor.NT$ARCH$.6.1]
+%RadioSwitchHidUsbFx2%    = RadioSwitchHidUsbFx2.Inst.Win7, USB\VID_0547&PID_1002
+%customCollection%    = customCollection.Inst, HID_DEVICE_UP:FF00_U:0001
+
+;===============================================================
+;   RadioSwitchHidUsbFx2 for Win7
+;   Instead of using hidkmdf.sys as a filter, use the inbox 
+;   mshidkmdf.sys as a mapper filter
+;===============================================================
+[RadioSwitchHidUsbFx2.Inst.Win7.NT]
+; Just copy the driver. No neeed to copy other system binaries.
+CopyFiles = CopyFunctionDriver
+
+[RadioSwitchHidUsbFx2.Inst.Win7.NT.HW]
+AddReg = RadioSwitchHidUsbFx2_Win7_Parameters.AddReg 
+
+;
+; hidkmdf is the function driver and RadioSwitchHidUsbFx2 is the lower filter
+;
+[RadioSwitchHidUsbFx2.Inst.Win7.NT.Services]
+AddService = RadioSwitchHidUsbFx2,0x00000002, RadioSwitchHidUsbFx2_Service_Inst
+
+[RadioSwitchHidUsbFx2_Win7_Parameters.AddReg]
+HKR,,"UpperFilters",0x00010000,"mshidkmdf"
+
+;===============================================================
+;   Sections common to all OS versions
+;===============================================================
+
+[CopyFunctionDriver]
+RadioSwitchHidUsbFx2.sys
+
+[RadioSwitchHidUsbFx2_Service_Inst]
+DisplayName    = %RadioSwitchHidUsbFx2%
+ServiceType    = %SERVICE_KERNEL_DRIVER% 
+StartType      = %SERVICE_DEMAND_START% 
+ErrorControl   = %SERVICE_ERROR_IGNORE% 
+ServiceBinary  = %12%\RadioSwitchHidUsbFx2.sys 
+
+;===============================================================
+;   Custom Collection install section
+; - Only a Null service is installed.
+;===============================================================
+[customCollection.Inst.NT]
+; NULL section
+
+[customCollection.Inst.NT.HW]
+AddReg = customCollection.Inst.AddReg.NT.HW
+
+[customCollection.Inst.AddReg.NT.HW]
+HKR,,"SelectiveSuspendEnabled",0x00000001,0x1
+
+[customCollection.Inst.NT.Services]
+AddService = ,0x00000002,   ; NULL Service
+
+;================================================================
+;--- WDF Coinstaller installation ------
+;
+[DestinationDirs]
+RadioSwitchHidUsbFx2.Inst_CoInstaller_CopyFiles = 11
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches with SourceDisksNames
+
+[Strings] 
+;  *******Localizable Strings******* 
+VENDOR         = "Vendor Name" 
+RadioSwitchHidUsbFx2       = "Radio Switch HID Mini-driver for OSR USB-FX-2 Device" 
+customCollection = "Radio Switch Collection for OSR USB-FX-2"
+DISK_NAME      = "HID Radio Switch USB FX-2  Install Disk"
+
+;  *******Non Localizable Strings******* 
+
+SERVICE_BOOT_START     = 0x0 
+SERVICE_SYSTEM_START   = 0x1 
+SERVICE_AUTO_START     = 0x2 
+SERVICE_DEMAND_START   = 0x3 
+SERVICE_DISABLED       = 0x4 
+
+SERVICE_KERNEL_DRIVER  = 0x1 
+SERVICE_ERROR_IGNORE   = 0x0 
+SERVICE_ERROR_NORMAL   = 0x1 
+SERVICE_ERROR_SEVERE   = 0x2 
+SERVICE_ERROR_CRITICAL = 0x3 
+
+REG_EXPAND_SZ          = 0x00020000 
+REG_DWORD              = 0x00010001 
+REG_MULTI_SZ           = 0x00010000
+REG_BINARY             = 0x00000001
+REG_SZ                 = 0x00000000
+

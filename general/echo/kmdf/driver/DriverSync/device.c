@@ -59,7 +59,11 @@ Return Value:
     //
     pnpPowerCallbacks.EvtDeviceSelfManagedIoInit    = EchoEvtDeviceSelfManagedIoStart;
     pnpPowerCallbacks.EvtDeviceSelfManagedIoSuspend = EchoEvtDeviceSelfManagedIoSuspend;
-    #pragma prefast(suppress: 28024, "Function used for both Init and Restart Callbacks")
+
+    //
+    // Function used for both Init and Restart Callbacks
+    //
+    #pragma warning(suppress: 28024)
     pnpPowerCallbacks.EvtDeviceSelfManagedIoRestart = EchoEvtDeviceSelfManagedIoStart;
 
     //

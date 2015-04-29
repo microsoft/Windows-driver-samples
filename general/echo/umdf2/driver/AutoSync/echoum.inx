@@ -55,7 +55,7 @@ Echo.dll = 1,,
 CopyFiles=UMDriverCopy
 
 [UMDriverCopy]
-ECHO.dll
+ECHO.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 
 [DestinationDirs]
 UMDriverCopy=12,UMDF ; copy to driversMdf

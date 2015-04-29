@@ -1236,6 +1236,20 @@ Return Value:
         if (!NT_SUCCESS( Status )) {
 
             //
+            //  If we failed to queue a workitem we need to
+            //  decrement the worker thread flag. If we did
+            //  not decrement it future queue insertions would
+            //  not trigger a workitem and requests added to
+            //  the queue would be orphaned. We can safely
+            //  decrement the flag here because we are
+            //  guaranteed that no worker routine is currently
+            //  running and that the queue is currently locked.
+            //
+
+            InterlockedDecrement( &InstCtx->WorkerThreadFlag );
+            NT_ASSERT( InstCtx->WorkerThreadFlag == 0 );
+
+            //
             //  Remove the callback data that was inserted into the queue.
             //
 

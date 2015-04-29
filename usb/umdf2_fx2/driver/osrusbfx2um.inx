@@ -48,18 +48,12 @@ osrusbfx2um.dll=1
 
 [OsrUsb_Install.NT]
 CopyFiles=UMDriverCopy
-Include=WINUSB.INF                      ; Import sections from WINUSB.INF
-Needs=WINUSB.NT                         ; Run the CopyFiles & AddReg directives for WinUsb.INF
-
-[OsrUsb_Install.NT.hw]
-AddReg=OsrUsb_Device_AddReg
 
 [OsrUsb_Install.NT.Services]
 AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall  ; flag 0x2 sets this as the service for the device
-AddService=WinUsb,0x000001f8,WinUsb_ServiceInstall  ; this service is installed because its a filter.
 
 [OsrUsb_Install.NT.Wdf]
-UmdfDispatcher=WinUsb
+UmdfDispatcher=NativeUSB
 UmdfService=WUDFOsrUsbFx2, WUDFOsrUsbFx2_Install
 UmdfServiceOrder=WUDFOsrUsbFx2
 
@@ -67,23 +61,12 @@ UmdfServiceOrder=WUDFOsrUsbFx2
 UmdfLibraryVersion=$UMDFVERSION$
 ServiceBinary="%12%\UMDF\osrusbfx2um.dll"
 
-[OsrUsb_Device_AddReg]
-HKR,,"LowerFilters",0x00010008,"WinUsb" ; FLG_ADDREG_TYPE_MULTI_SZ | FLG_ADDREG_APPEND
-HKR,,"WinUsbPowerPolicyOwnershipDisabled",0x00010001,1  ; our driver takes ownership of power policy.  Tell WINUSB not to
-
 [WUDFRD_ServiceInstall]
 DisplayName     = %WudfRdDisplayName%
 ServiceType     = 1
 StartType       = 3
 ErrorControl    = 1
 ServiceBinary   = %12%\WUDFRd.sys
-
-[WinUsb_ServiceInstall]
-DisplayName     = %WinUsb_SvcDesc%
-ServiceType     = 1
-StartType       = 3
-ErrorControl    = 1
-ServiceBinary   = %12%\WinUSB.sys
 
 [DestinationDirs]
 UMDriverCopy=12,UMDF ; copy to driversMdf
@@ -99,5 +82,4 @@ MSFTUMDF="Microsoft Internal (WDF:UMDF)"
 MediaDescription="Microsoft Sample Driver Installation Media"
 ClassName="Sample Device"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
-OsrUsbDeviceName="UMDF 2.0 Sample Driver for OSR USB Fx2 Learning Kit" 
-WinUsb_SvcDesc="WinUSB Driver"
+OsrUsbDeviceName="UMDF v2 Sample Driver for OSR USB Fx2 Learning Kit with NativeUSB" 

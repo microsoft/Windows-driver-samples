@@ -107,11 +107,12 @@ typedef struct _CHANNEL_STATE_FLAGS {
     ULONG PoFxActive : 1;
     ULONG D3ColdEnabled : 1;
 
+    ULONG D3ColdSupported : 1;
     ULONG CallAhciNcqErrorRecovery : 1;
     ULONG NcqErrorRecoveryInProcess : 1;
     ULONG PuisEnabled : 1;
 
-    ULONG Reserved0 : 13;
+    ULONG Reserved0 : 12;
 
     ULONG Reserved1;
 } CHANNEL_STATE_FLAGS, *PCHANNEL_STATE_FLAGS;
@@ -504,7 +505,11 @@ typedef struct _ADAPTER_STATE_FLAGS {
     ULONG Removed : 1;
     ULONG InterruptMessagePerPort : 1;
 
-    ULONG Reserved : 24;
+    ULONG D3ColdSupported : 1;
+    ULONG D3ColdEnabled : 1;
+    ULONG UseAdapterF1InsteadOfD3 : 1;
+
+    ULONG Reserved : 21;
 
 } ADAPTER_STATE_FLAGS, *PADAPTER_STATE_FLAGS;
 

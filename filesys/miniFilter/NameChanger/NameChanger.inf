@@ -1,0 +1,105 @@
+;;;
+;;; NameChanger
+;;;
+;;;
+;;; Copyright (c) 1999 - 2001, Microsoft Corporation
+;;;
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
+ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determined by the Class
+Provider    = %Msft%
+DriverVer   = 06/05/2009,1.0.0.1
+CatalogFile = NameChanger.cat
+
+[SourceDisksNames]
+12=%ServiceDescription%,,,
+
+[SourceDisksFiles]
+NameChanger.sys = 12
+
+
+[DestinationDirs]
+DefaultDestDir          = 12
+NameChanger.DriverFiles = 12            ;%windir%\system32\drivers
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = NameChanger.DriverFiles
+
+[DefaultInstall.Services]
+AddService          = %ServiceName%,,NameChanger.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall]
+DelFiles   = NameChanger.DriverFiles
+
+[DefaultUninstall.Services]
+DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Services Section
+;
+
+[NameChanger.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = NameChanger.AddRegistry
+
+;
+; Registry Modifications
+;
+
+[NameChanger.AddRegistry]
+HKR,,"DebugFlags",0x00010001 ,0x0
+HKR,,"SupportedFeatures",0x00010001,0x3
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+HKR,,"UserMapping",0x00000000,%UserMapping%
+HKR,,"UserMappingFinalComponentShort",0x00000000,%UserMappingFinalComponentShort%
+HKR,,"RealMapping",0x00000000,%RealMapping%
+
+;
+; Copy Files
+;
+
+[NameChanger.DriverFiles]
+%DriverName%.sys
+
+
+;;
+;; String Section
+;;
+
+[Strings]
+Msft                    = "Microsoft Corporation"
+ServiceDescription      = "NameChanger Mini-Filter Driver Sample"
+ServiceName             = "NameChanger"
+DriverName              = "NameChanger"
+
+;Instances specific information.
+DefaultInstance         = "NameChanger Instance"
+Instance1.Name          = "NameChanger Instance"
+Instance1.Altitude      = "370120"
+Instance1.Flags         = 0x0              ; Allow all attachments
+
+;Default settings
+UserMapping                    = "\X\Y"
+UserMappingFinalComponentShort = "Y"
+RealMapping                    = "\A\B"
+

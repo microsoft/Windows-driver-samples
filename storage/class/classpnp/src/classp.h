@@ -355,7 +355,7 @@ typedef struct _MEDIA_CHANGE_DETECTION_INFO {
     //
     UCHAR SenseBufferLength;
 
-};
+} MEDIA_CHANGE_DETECTION_INFO, *PMEDIA_CHANGE_DETECTION_INFO;
 
 typedef enum {
     SimpleMediaLock,

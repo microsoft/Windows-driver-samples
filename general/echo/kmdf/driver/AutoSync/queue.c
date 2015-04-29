@@ -301,7 +301,7 @@ Return Value:
 
     _Analysis_assume_(Length > 0);
 
-    KdPrint(("EchoEvtIoRead Called! Queue 0x%p, Request 0x%p Length %d\n",
+    KdPrint(("EchoEvtIoRead Called! Queue 0x%p, Request 0x%p Length %Iu\n",
              Queue,Request,Length));
     //
     // No data to read
@@ -396,11 +396,11 @@ Return Value:
 
     _Analysis_assume_(Length > 0);
 
-    KdPrint(("EchoEvtIoWrite Called! Queue 0x%p, Request 0x%p Length %d\n",
+    KdPrint(("EchoEvtIoWrite Called! Queue 0x%p, Request 0x%p Length %Iu\n",
              Queue,Request,Length));
 
     if( Length > MAX_WRITE_LENGTH ) {
-        KdPrint(("EchoEvtIoWrite Buffer Length to big %d, Max is %d\n",
+        KdPrint(("EchoEvtIoWrite Buffer Length to big %Iu, Max is %d\n",
                  Length,MAX_WRITE_LENGTH));
         WdfRequestCompleteWithInformation(Request, STATUS_BUFFER_OVERFLOW, 0L);
         return;
@@ -425,7 +425,7 @@ Return Value:
 
     queueContext->Buffer = ExAllocatePoolWithTag(NonPagedPool, Length, 'sam1');
     if( queueContext->Buffer == NULL ) {
-        KdPrint(("EchoEvtIoWrite: Could not allocate %d byte buffer\n", Length));
+        KdPrint(("EchoEvtIoWrite: Could not allocate %Iu byte buffer\n", Length));
         WdfRequestComplete(Request, STATUS_INSUFFICIENT_RESOURCES);
         return;
     }

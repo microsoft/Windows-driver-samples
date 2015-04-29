@@ -1,0 +1,48 @@
+//+-------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//
+//  Copyright (C) SCM Microsystems, 1998 - 1999
+//
+//  File:       pscr.rc
+//
+//  Notes:
+//
+//    The file pscr.rc was reviewed by LCA in June 2011 and per license is
+//    acceptable for Microsoft use under Dealpoint ID 178449.
+//
+//--------------------------------------------------------------------------
+
+#include <windows.h>
+#include <ntverp.h>
+
+/* These need to be defined before including common.ver:           */
+/*-----------------------------------------------------------------*/
+/*       String Equate           Default Value (if not defined)    */
+/* ------------------------     --------------------------------   */
+/* VER_LEGALCOPYRIGHT_STR        VER_LEGALCOPYRIGHT_YEARS          */
+/* VER_FILETYPE                                                    */
+/* VER_FILESUBTYPE                                                 */
+/* VER_FILEDESCRIPTION_STR                                         */
+/* VER_INTERNALNAME_STR                                            */
+/* VER_FILEVERSION               VER_PRODUCTVERSION                */
+/* VER_FILEVERSION_STR           VER_PRODUCTVERSION_STR            */
+/* VER_ORIGINALFILENAME_STR      VER_INTERNALNAME_STR              */
+/*-----------------------------------------------------------------*/
+
+
+#define VER_LEGALCOPYRIGHT_YEARS    "1997-1999"
+#define VER_LEGALCOPYRIGHT_STR      "Copyright (C) SCM Microsystems, Inc. " VER_LEGALCOPYRIGHT_YEARS
+
+#define VER_FILETYPE    VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "SCM PCMCIA Smart Card Reader"
+#define VER_INTERNALNAME_STR        "pscr.sys"
+#define VER_ORIGINALFILENAME_STR    "pscr.sys"
+
+#undef  VER_COMPANYNAME_STR
+#define VER_COMPANYNAME_STR         "SCM Microsystems, Inc."
+
+#include "common.ver"
+#include "pscrlog.rc"
+

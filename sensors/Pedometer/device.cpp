@@ -248,7 +248,7 @@ PedometerDevice::Initialize(
 
     m_pEnumerationProperties->List[SENSOR_SUPPORTED_STEPTYPES].Key = PKEY_SensorData_SupportedStepTypes;
     InitPropVariantFromUInt32(PedometerStepType_Unknown | PedometerStepType_Walking | PedometerStepType_Running,
-        &(m_pEnumerationProperties->List[SENSOR_PROPERTY_SUPPORTED_STEPTYPES].Value));
+        &(m_pEnumerationProperties->List[SENSOR_SUPPORTED_STEPTYPES].Value));
 
     // Sensor Properties
     m_Interval = Pedometer_Default_MinDataInterval_Ms;

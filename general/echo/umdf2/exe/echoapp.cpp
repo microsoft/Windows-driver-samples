@@ -4,11 +4,11 @@ Copyright (c) Microsoft Corporation
 
 Module Name:
 
-    ioctl.cpp
+    EchoApp.cpp
 
 Abstract:
 
-    A simple asynch test for usb driver.
+    An application to exercise the WDF "echo" sample driver.
 
 
 Environment:
@@ -25,7 +25,7 @@ _Analysis_mode_(_Analysis_code_type_user_code_)
 
 #include <windows.h>
 #include <strsafe.h>
-#include <setupapi.h>
+#include <cfgmgr32.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "public.h"
@@ -41,7 +41,7 @@ _Analysis_mode_(_Analysis_code_type_user_code_)
 BOOLEAN G_PerformAsyncIo;
 BOOLEAN G_LimitedLoops;
 ULONG G_AsyncIoLoopsNum;
-CHAR G_DevicePath[MAX_DEVPATH_LENGTH];
+WCHAR G_DevicePath[MAX_DEVPATH_LENGTH];
 
 
 ULONG
@@ -58,7 +58,7 @@ PerformWriteReadTest(
 BOOL
 GetDevicePath(
     IN  LPGUID InterfaceGuid,
-    _Out_writes_(BufLen) PCHAR DevicePath,
+    _Out_writes_(BufLen) PWCHAR DevicePath,
     _In_ size_t BufLen
     );
 
@@ -105,7 +105,7 @@ main(
         goto exit;
     }
 
-    printf("DevicePath: %s\n", G_DevicePath);
+    printf("DevicePath: %ws\n", G_DevicePath);
 
     hDevice = CreateFile(G_DevicePath,
                          GENERIC_READ|GENERIC_WRITE,
@@ -352,8 +352,6 @@ Cleanup:
     return result;
 }
 
-
-
 ULONG
 AsyncIo(
     PVOID  ThreadParameter
@@ -384,7 +382,7 @@ AsyncIo(
 
 
     if (hDevice == INVALID_HANDLE_VALUE) {
-        printf("Cannot open %s error %d\n", G_DevicePath, GetLastError());
+        printf("Cannot open %ws error %d\n", G_DevicePath, GetLastError());
         result = FALSE;
         goto Error;
     }
@@ -579,122 +577,76 @@ Error:
 
 }
 
-
 BOOL
 GetDevicePath(
-    IN  LPGUID InterfaceGuid,
-    _Out_writes_(BufLen) PCHAR DevicePath,
+    _In_ LPGUID InterfaceGuid,
+    _Out_writes_(BufLen) PWCHAR DevicePath,
     _In_ size_t BufLen
     )
 {
-    HDEVINFO HardwareDeviceInfo;
-    SP_DEVICE_INTERFACE_DATA DeviceInterfaceData;
-    PSP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData = NULL;
-    ULONG Length, RequiredLength = 0;
-    BOOL bResult;
-    HRESULT hr;
+    CONFIGRET cr = CR_SUCCESS;
+    PWSTR deviceInterfaceList = NULL;
+    ULONG deviceInterfaceListLength = 0;
+    PWSTR nextInterface;
+    HRESULT hr = E_FAIL;
+    BOOL bRet = TRUE;
 
-    HardwareDeviceInfo = SetupDiGetClassDevs(
-                             InterfaceGuid,
-                             NULL,
-                             NULL,
-                             (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE));
-
-    if (HardwareDeviceInfo == INVALID_HANDLE_VALUE) {
-        printf("SetupDiGetClassDevs failed!\n");
-        return FALSE;
+    cr = CM_Get_Device_Interface_List_Size(
+                &deviceInterfaceListLength,
+                InterfaceGuid,
+                NULL,
+                CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
+    if (cr != CR_SUCCESS) {
+        printf("Error 0x%x retrieving device interface list size.\n", cr);
+        goto clean0;
     }
 
-    DeviceInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
-
-    bResult = SetupDiEnumDeviceInterfaces(HardwareDeviceInfo,
-                                              0,
-                                              InterfaceGuid,
-                                              0,
-                                              &DeviceInterfaceData);
-
-    if (bResult == FALSE) {
-
-        LPVOID lpMsgBuf;
-
-        if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                          FORMAT_MESSAGE_FROM_SYSTEM |
-                          FORMAT_MESSAGE_IGNORE_INSERTS,
-                          NULL,
-                          GetLastError(),
-                          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                          (LPSTR) &lpMsgBuf,
-                          0,
-                          NULL
-                          )) {
-
-            printf("SetupDiEnumDeviceInterfaces failed: %s", (LPTSTR)lpMsgBuf);
-            LocalFree(lpMsgBuf);
-        }
-
-        printf("SetupDiEnumDeviceInterfaces failed.\n");
-        SetupDiDestroyDeviceInfoList(HardwareDeviceInfo);
-        return FALSE;
+    if (deviceInterfaceListLength <= 1) {
+        bRet = FALSE;
+        printf("Error: No active device interfaces found.\n"
+            " Is the sample driver loaded?");
+        goto clean0;
     }
 
-    SetupDiGetDeviceInterfaceDetail(
-        HardwareDeviceInfo,
-        &DeviceInterfaceData,
-        NULL,
-        0,
-        &RequiredLength,
-        NULL
-        );
+    deviceInterfaceList = (PWSTR)malloc(deviceInterfaceListLength * sizeof(WCHAR));
+    if (deviceInterfaceList == NULL) {
+        printf("Error allocating memory for device interface list.\n");
+        goto clean0;
+    }
+    ZeroMemory(deviceInterfaceList, deviceInterfaceListLength * sizeof(WCHAR));
 
-    DeviceInterfaceDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)LocalAlloc(LMEM_FIXED, RequiredLength);
-
-    if (DeviceInterfaceDetailData == NULL) {
-        SetupDiDestroyDeviceInfoList(HardwareDeviceInfo);
-        printf("Failed to allocate memory.\n");
-        return FALSE;
+    cr = CM_Get_Device_Interface_List(
+                InterfaceGuid,
+                NULL,
+                deviceInterfaceList,
+                deviceInterfaceListLength,
+                CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
+    if (cr != CR_SUCCESS) {
+        printf("Error 0x%x retrieving device interface list.\n", cr);
+        goto clean0;
     }
 
-    DeviceInterfaceDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
-
-    Length = RequiredLength;
-
-    bResult = SetupDiGetDeviceInterfaceDetail(
-                  HardwareDeviceInfo,
-                  &DeviceInterfaceData,
-                  DeviceInterfaceDetailData,
-                  Length,
-                  &RequiredLength,
-                  NULL);
-
-    if (bResult == FALSE) {
-
-        LPVOID lpMsgBuf;
-
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                      FORMAT_MESSAGE_FROM_SYSTEM |
-                      FORMAT_MESSAGE_IGNORE_INSERTS,
-                      NULL,
-                      GetLastError(),
-                      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                      (LPSTR) &lpMsgBuf,
-                      0,
-                      NULL
-                      );
-
-        SetupDiDestroyDeviceInfoList(HardwareDeviceInfo);
-        printf("Error in SetupDiGetDeviceInterfaceDetail: %s\n", (LPTSTR)lpMsgBuf);
-        LocalFree(DeviceInterfaceDetailData);
-        LocalFree(lpMsgBuf);
-        return FALSE;
+    nextInterface = deviceInterfaceList + wcslen(deviceInterfaceList) + 1;
+    if (*nextInterface != UNICODE_NULL) {
+        printf("Warning: More than one device interface instance found. \n"
+            "Selecting first matching device.\n\n");
     }
 
-    hr = StringCchCopy(DevicePath,
-                    BufLen,
-                    DeviceInterfaceDetailData->DevicePath) ;
+    hr = StringCchCopy(DevicePath, BufLen, deviceInterfaceList);
+    if (FAILED(hr)) {
+        bRet = FALSE;
+        printf("Error: StringCchCopy failed with HRESULT 0x%x", hr);
+        goto clean0;
+    }
 
-    SetupDiDestroyDeviceInfoList(HardwareDeviceInfo); // It must be executed in both success and failure traces
-    LocalFree(DeviceInterfaceDetailData);
+clean0:
+    if (deviceInterfaceList != NULL) {
+        free(deviceInterfaceList);
+    }
+    if (CR_SUCCESS != cr) {
+        bRet = FALSE;
+    }
 
-    return ( !FAILED(hr) ); // Result depends on StringCchCopy()
+    return bRet;
 }
 

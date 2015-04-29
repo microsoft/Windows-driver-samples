@@ -1668,7 +1668,7 @@ AhciDeviceInitialize (
             UpdateSetFeatureCommands(ChannelExtension, IDE_FEATURE_INVALID, IDE_FEATURE_SET_TRANSFER_MODE, 0, 0x44);
         }
 
-      //1.2 Persist Write Cache
+        //1.2 Persist Write Cache
         UpdateSetFeatureCommands(ChannelExtension, IDE_FEATURE_INVALID, IDE_FEATURE_ENABLE_WRITE_CACHE, 0, 0);
 
     } else if (IsAtapiDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {

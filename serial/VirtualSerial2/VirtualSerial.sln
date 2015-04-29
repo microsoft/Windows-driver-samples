@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComPort", "ComPort", "{69B24279-DAE7-4F6B-AB01-D5399C616D6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FakeModem", "FakeModem", "{231410A2-76BA-4213-95C7-523B902B21E1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualSerial2um", "ComPort\VirtualSerial2um.vcxproj", "{9C376D98-E44B-44C6-BA97-C41F501548E6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fakemodem2um", "FakeModem\fakemodem2um.vcxproj", "{6F515009-0F48-480C-8EDC-4423269D1076}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Debug|Win32.Build.0 = Debug|Win32
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Release|Win32.ActiveCfg = Release|Win32
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Release|Win32.Build.0 = Release|Win32
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Debug|x64.ActiveCfg = Debug|x64
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Debug|x64.Build.0 = Debug|x64
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Release|x64.ActiveCfg = Release|x64
+		{9C376D98-E44B-44C6-BA97-C41F501548E6}.Release|x64.Build.0 = Release|x64
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Debug|Win32.Build.0 = Debug|Win32
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Release|Win32.ActiveCfg = Release|Win32
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Release|Win32.Build.0 = Release|Win32
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Debug|x64.ActiveCfg = Debug|x64
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Debug|x64.Build.0 = Debug|x64
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Release|x64.ActiveCfg = Release|x64
+		{6F515009-0F48-480C-8EDC-4423269D1076}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9C376D98-E44B-44C6-BA97-C41F501548E6} = {69B24279-DAE7-4F6B-AB01-D5399C616D6F}
+		{6F515009-0F48-480C-8EDC-4423269D1076} = {231410A2-76BA-4213-95C7-523B902B21E1}
+	EndGlobalSection
+EndGlobal

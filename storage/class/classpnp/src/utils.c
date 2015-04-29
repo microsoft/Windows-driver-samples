@@ -8128,8 +8128,6 @@ retry:
     if ((firmwareInfo->Version < sizeof(STORAGE_HW_FIRMWARE_INFO)) ||
         (firmwareInfo->Size < sizeof(STORAGE_HW_FIRMWARE_INFO)) ||
         (firmwareInfo->SlotCount == 0) ||
-        (firmwareInfo->ActiveSlot >= firmwareInfo->SlotCount) ||
-        ((firmwareInfo->PendingActivateSlot >= firmwareInfo->SlotCount) && (firmwareInfo->PendingActivateSlot != STORAGE_HW_FIRMWARE_INVALID_SLOT)) ||
         (firmwareInfo->ImagePayloadMaxSize > fdoExtension->AdapterDescriptor->MaximumTransferLength)) {
 
         oldState = InterlockedCompareExchange((PLONG)(&fdoExtension->FunctionSupportInfo->HwFirmwareGetInfoSupport), (LONG)NotSupported, (ULONG)SupportUnknown);
@@ -8493,7 +8491,8 @@ ClassDeviceHwFirmwareDownloadProcess(
     //
     // Validate the device support
     //
-    if (fdoExtension->FunctionSupportInfo->HwFirmwareInfo->SupportUpgrade == FALSE) {
+    if ((fdoExtension->FunctionSupportInfo->HwFirmwareInfo->SupportUpgrade == FALSE) ||
+        (fdoExtension->FunctionSupportInfo->HwFirmwareInfo->ImagePayloadAlignment == 0)) {
         status = STATUS_NOT_SUPPORTED;
         goto Exit_Firmware_Download;
     }
@@ -8538,9 +8537,9 @@ ClassDeviceHwFirmwareDownloadProcess(
     //
     if (((ULONG_PTR)firmwareDownload->ImageBuffer % fdoExtension->FunctionSupportInfo->HwFirmwareInfo->ImagePayloadAlignment) != 0) {
         //
-        // Allocate buffer aligns to PAGE_SIZE to accommodate any alignment requirement.
+        // Allocate buffer aligns to ImagePayloadAlignment to accommodate the alignment requirement.
         //
-        bufferSize = ALIGN_UP_BY(firmwareDownload->BufferSize, PAGE_SIZE);
+        bufferSize = ALIGN_UP_BY(firmwareDownload->BufferSize, fdoExtension->FunctionSupportInfo->HwFirmwareInfo->ImagePayloadAlignment);
 
 #pragma prefast(suppress:6014, "The allocated memory that firmwareImageBuffer points to will be freed in ClassHwFirmwareDownloadComplete().")
         firmwareImageBuffer = ExAllocatePoolWithTag(NonPagedPoolNx, bufferSize, CLASSPNP_POOL_TAG_FIRMWARE);
@@ -8631,9 +8630,9 @@ ClassDeviceHwFirmwareDownloadProcess(
     cdb->WRITE_BUFFER.BufferOffset[1] = *((PCHAR)&firmwareDownload->Offset + 1);
     cdb->WRITE_BUFFER.BufferOffset[2] = *((PCHAR)&firmwareDownload->Offset);
 
-    cdb->WRITE_BUFFER.ParameterListLength[0] = *((PCHAR)&firmwareDownload->BufferSize + 2);
-    cdb->WRITE_BUFFER.ParameterListLength[1] = *((PCHAR)&firmwareDownload->BufferSize + 1);
-    cdb->WRITE_BUFFER.ParameterListLength[2] = *((PCHAR)&firmwareDownload->BufferSize);
+    cdb->WRITE_BUFFER.ParameterListLength[0] = *((PCHAR)&bufferSize + 2);
+    cdb->WRITE_BUFFER.ParameterListLength[1] = *((PCHAR)&bufferSize + 1);
+    cdb->WRITE_BUFFER.ParameterListLength[2] = *((PCHAR)&bufferSize);
 
     //
     // Send as a tagged command.
@@ -8902,5 +8901,3 @@ Exit_Firmware_Activate:
     FREE_POOL(Srb);
     return status;
 }
-
-

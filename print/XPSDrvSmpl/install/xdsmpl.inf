@@ -1,0 +1,139 @@
+;
+; Copyright (c) 2005  Microsoft Corporation
+;
+; All rights reserved.
+;
+; THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+; ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+; PARTICULAR PURPOSE.
+;
+; File Name:
+;
+;    xdsmpl.inf
+;
+; Abstract:
+;
+;    XPSDrv sample driver install file
+;
+[Version]
+Signature="$Windows NT$"
+Provider=%MS%
+ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
+Class=Printer
+DriverVer=10/17/2008,6.1.6930.0
+
+[Manufacturer]
+%Microsoft%=Microsoft,NTx86,NTia64,NTamd64,NTx86.6.0,NTia64.6.0,NTamd64.6.0
+
+[Microsoft.NTx86]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
+
+[Microsoft.NTia64]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
+
+[Microsoft.NTamd64]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
+
+[Microsoft.NTx86.6.0]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
+
+[Microsoft.NTia64.6.0]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
+
+[Microsoft.NTamd64.6.0]
+"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
+
+[INSTALL_XDSMPL_FILTERS_PRE_VISTA]
+CopyFiles=XPSDrvSample,ConfigPlugin,COLORPROFILES
+DriverFile=mxdwdrv.dll
+PrintProcessor="MS_XPS,filterpipelineprintproc.dll"
+ConfigFile=UniDrvUI.dll
+HelpFile=UniDrv.HLP
+DataFile=XDSmpl.GPD
+Include=NTPRINT.INF, MSXPSDRV.INF
+Needs=UNIDRV.OEM, XPSGPD.OEM, XPSDRV.OEM
+
+[INSTALL_XDSMPL_FILTERS_VISTA]
+CopyFiles=XPSDrvSample,ConfigPlugin,COLORPROFILES
+DriverFile=mxdwdrv.dll
+ConfigFile=UniDrvUI.dll
+HelpFile=UniDrv.HLP
+DataFile=XDSmpl.GPD
+ICMProfiles=xdwscRGB.icc
+CoreDriverSections="{D20EA372-DD35-4950-9ED8-A6335AFE79F0},UNIDRV.OEM", "{D20EA372-DD35-4950-9ED8-A6335AFE79F5},XPSDRV.OEM,XPSGPD.OEM"
+
+[PrinterPackageInstallation.x86]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[PrinterPackageInstallation.amd64]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[PrinterPackageInstallation.ia64]
+PackageAware=TRUE
+CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
+
+[DestinationDirs]
+DefaultDestDir=66000
+COLORPROFILES=66003
+
+[COLORPROFILES]
+xdwscRGB.icc
+xdCMYKPrinter.icc
+
+[ConfigPlugin]
+XDSmpl.ini
+XDSmplUI.dll
+
+[XPSDrvSample]
+xdsmpl.gpd
+xdnames.gpd
+xdwmark.gpd
+xdbook.gpd
+xdcolman.gpd
+xdnup.gpd
+xdpgscl.gpd
+xdwmark.dll
+xdcolman.dll
+xdbook.dll
+xdnup.dll
+xdscale.dll
+xdsmpl-pipelineconfig.xml
+
+[SourceDisksNames.x86]
+1 = %Location%,,
+2 = %Location%,,,x86
+
+[SourceDisksNames.ia64]
+1 = %Location%,,
+2 = %Location%,,,ia64
+
+[SourceDisksNames.amd64]
+1 = %Location%,,
+2 = %Location%,,,amd64
+
+[SourceDisksFiles]
+xdsmpl.gpd                    = 1
+xdnames.gpd                   = 1
+xdwmark.gpd                   = 1
+xdbook.gpd                    = 1
+xdcolman.gpd                  = 1
+xdnup.gpd                     = 1
+xdpgscl.gpd                   = 1
+xdsmpl-pipelineconfig.xml     = 1
+xdsmpl.ini                    = 1
+xdwscRGB.icc                  = 1
+xdCMYKPrinter.icc             = 1
+xdwmark.dll                   = 2
+xdcolman.dll                  = 2
+xdbook.dll                    = 2
+xdnup.dll                     = 2
+xdsmplui.dll                  = 2
+xdscale.dll                   = 2
+
+[Strings]
+Location="XPSDrv Sample Driver Location"
+MS="Microsoft"
+Microsoft="Microsoft"

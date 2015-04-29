@@ -3544,7 +3544,9 @@ Return Value:
     PCD_IO_CONTEXT IoContext = Context;
     _Analysis_assume_(Context != NULL);
     AssertVerifyDeviceIrp( Irp );
-    
+
+    UNREFERENCED_PARAMETER( DeviceObject );
+
     //
     //  If we got an error (or verify required), remember it in the Irp
     //
@@ -3614,7 +3616,6 @@ Return Value:
         return STATUS_MORE_PROCESSING_REQUIRED;
     }
 
-    UNREFERENCED_PARAMETER( DeviceObject );
 }
 
 
@@ -3718,6 +3719,8 @@ Return Value:
 {
     PCD_IO_CONTEXT IoContext = Context;
 
+    UNREFERENCED_PARAMETER( DeviceObject );
+
     _Analysis_assume_(IoContext != NULL);
     AssertVerifyDeviceIrp( Irp );
     
@@ -3742,6 +3745,7 @@ Return Value:
     //  Now release the resource
     //
 
+    _Analysis_assume_lock_held_(*IoContext->Resource);
     ExReleaseResourceForThreadLite( IoContext->Resource, IoContext->ResourceThreadId );
 
     //
@@ -3751,7 +3755,6 @@ Return Value:
     CdFreeIoContext( IoContext );
     return STATUS_SUCCESS;
 
-    UNREFERENCED_PARAMETER( DeviceObject );
 }
 
 

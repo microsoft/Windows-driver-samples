@@ -54,15 +54,6 @@ pcidrv.sys     = 1
 [SourceDisksNames]
 1=%DISK_NAME%,
 
-; For Win2K
-[MSFT]
-; DisplayName            Section           DeviceId
-; -----------            -------           --------
-%GenPCI.DRVDESC%=GenPCI_Inst, PCI\VEN_8086&DEV_1229
-%GenPCI.DRVDESC%=GenPCI_Inst, PCI\VEN_8086&DEV_103D
-%GenPCI.DRVDESC%=GenPCI_Inst, PCI\VEN_8086&DEV_1031
-%GenPCI.DRVDESC%=GenPCI_Inst, PCI\VEN_8086&DEV_1038
-
 ; For XP and later
 [MSFT.NT$ARCH$]
 ; DisplayName            Section           DeviceId

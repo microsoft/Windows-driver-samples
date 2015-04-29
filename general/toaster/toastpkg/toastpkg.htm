@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-
+1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>Toaster Installation Package</TITLE>
+</HEAD>
+<BODY LINK="#0000ff">
+
+<FONT FACE="Verdana" SIZE=5><H2>Toaster Installation Package</H2>
+</FONT><FONT FACE="Verdana" SIZE=2>
+
+
+<H3>SUMMARY</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+This document discusses the different approaches that end users take when adding new hardware to their computer, and describes an approach that addresses these scenarios in a consistent, robust manner that works cooperatively with Plug and Play in Windows 2000 and Windows XP. It also outlines the mechanisms provided to facilitate additional vendor requirements such as the installation of value-added software.
+
+<H3>INTRODUCTION</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+The installation of software to support an instance of a given device (known as "device installation" or "driver installation") is done in a device-centric fashion in Windows operating systems. A device INF that matches up with one of the device's hardware or compatible IDs is used to identify the required driver file(s), registry modifications, etc., that are needed to make the device fully operational. This INF, along with the files copied thereby and a catalog that contains the digital signatures of the INF and these other files, constitute what is known as a "driver package".
+
+<p>
+Because device installation is done for a specific instance of a device, the "natural" method of adding devices to a computer running a Plug and Play operating system is by plugging in the device first, letting Plug and Play find the device and automatically initiate an installation for that device. The device installation may then proceed using a driver package supplied with the OS, or a "3rd-party" driver package (supplied via CD-ROM, the Internet, or some other distribution mechanism). When the device installation is initiated by the addition of hardware, this is termed a "hardware-first" device 
+installation.
+
+<p>
+Users may, however, take an alternate approach to adding hardware to their computer. In this scenario, they first run a setup program (perhaps launched as an autorun application when the vendor-supplied CD-ROM is inserted). This setup program may perform installation activities, and then prompt the user to insert their hardware. Upon the hardware's insertion, the vendor-supplied driver package (which was "pre-installed" by the setup program) is then found by Plug and Play, and the installation proceeds as in the hardware-first scenario. When the device installation is initiated by running a setup program, this is termed a "software-first" device installation. This approach to adding new hardware is just as valid as the hardware-first scenario, and some vendors may even instruct their users (via documentation that ships with the hardware) that this is the preferred method. 
+
+<p>
+Vendors must support the hardware-first scenario (by providing a driver package that may be supplied to the "Found New Hardware" wizard with no 
+"pre-configuration" performed by a setup program or other mechanism). Vendors may optionally support the software-first scenario as well, but the 
+actual installation of the device instance is done by Plug and Play upon the device's arrival, as described above.
+
+<p>
+Vendors may also wish to perform additional activities as part of the device installation. For example, the vendor may want to allow the user to optionally install one or more applications that ship with the device (e.g., a scanner that ships with an image processing application). Such software is termed "value-added software". Value-added software is distinct from the files that comprise the driver package because, unlike the core driver files, the device does not require value-added software to function properly. In the previous example of a scanner, for instance, perhaps the user already has an image processing application that they prefer. The user should be given the option of whether or not they want to install any value-added software. Additional activities (such as allowing the user to select value-added software offerings) may be accomplished by using a vendor-supplied 
+device-specific co-installer.
+
+
+<H3>INTRODUCTION TO THE TOASTER INSTALLATION SAMPLE</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+This sample contains <B>inf, toastapp, toastcd, toastco, </B> and<B> toastva</B> directories. The following summary describes the directories and key files.
+<P>
+
+<I>inf</I>
+<BLOCKQUOTE>
+This directory contains the device INF (<B>toastpkg.inf</B>) that is used in device installation of toaster devices enumerated by the toaster bus enumerator. It registers a device-specific co-installer (<B>tostrco2.dll</B>) that provides additional functionality during the installation.
+
+<p>
+Also contained in this directory is the <B>autorun.inf</B> file that would be placed in the root of the vendor's setup media (e.g., CD-ROM). This INF will launch the <B>toastva.exe</B> application (described below) when the media is inserted in an autorun-capable drive, or when the user double-clicks on the drive icon in Explorer. Additionally, this INF illustrates the [DeviceInstall] section that is a new feature introduced in Windows XP for
+autorun INF files:
+
+<BLOCKQUOTE>
+<p>
+[DeviceInstall]
+<p>
+DriverPath=\
+</BLOCKQUOTE>
+
+<p>
+The DriverPath entry in a [DeviceInstall] section indicates to the Found New Hardware and Update Driver wizards that Plug and Play should search for 
+device INFs in the specified directory only. This provides a performance improvement for media layouts that contain many subdirectories, since the default
+behavior is for Plug and Play to recursively search the entire CD. Additionally, specifying no DriverPath entry in this section indicates that the CD contains no drivers, thus Plug and Play can quickly determine that it can ignore this media. Absence of the [DeviceInstall] section will cause the media to be treated as it was in previous versions of Windows (e.g., as in Windows Me and Windows 2000, the entire media will be searched recursively for applicable INFs).
+</BLOCKQUOTE>
+
+<I>toastapp</I> <BLOCKQUOTE>
+This directory contains the source code for the <B>toastapp.exe</B> program that is used as value-added software that may optionally be installed by the user as part of device installation. This program is installed via the InstallShield(tm) (Microsoft Installer-based) setup program in the <I>toastcd\ToastApp</I> directory.
+</BLOCKQUOTE>
+
+<I>toastcd</I> <BLOCKQUOTE>
+This directory contains the CD image that would be used by the vendor to distribute the toaster package. In the root of the image, we have the 
+<B>autorun.inf</B> which launches either the x86 or ia64 version of <B>toastva.exe</B> (depending on platform). Also in the root we have the device INF,
+<B>toastpkg.inf</B>, and the two associated catalogs, <B>tostx86.cat</B> and <B>tostia64.cat</B>, for the x86 and ia64 platforms respectively. Finally,
+in the root we also have the zero-length tag file <B>toastpkg.tag</B>, which is used to identify the media in case it must be prompted for. This tagfile is 
+referenced in the <I>SourceDisksNames</I> sections of <B>toastpkg.inf</B>:
+
+<BLOCKQUOTE>
+<p>
+[SourceDisksNames.x86]
+<p>
+1 = %DiskId1%, toastpkg.tag,,\i386
+<p>
+[SourceDisksNames.ia64]
+<p>
+1 = %DiskId1%, toastpkg.tag,,\ia64
+</BLOCKQUOTE>
+
+<p>
+The i386 and ia64 subdirectories contain the driver files that, along with the INF and CAT, constitute the driver package. These files are
+<B>toaster.sys</B>, <B>tostrcls.dll</B>, and <B>tostrco2.dll</B>. Their corresponding debug (.PDB) files are located there as well, although 
+these aren’t installed. Additionally, as mentioned above, the <B>toastva.exe</B> program (and its .PDB file) is located here. Note that this 
+is not part of the driver package—it is merely used to facilitate software-first installation. Since this executable is not part of the driver 
+package, it may be modified without affecting the digital signature of the package.
+
+<p>
+Finally, the <I>ToastApp</I> subdirectory contains the <B>setup.exe</B> program that installs the value-added software package, <B>toastapp.exe</B>. This
+<B>setup.exe</B> is a standalone package that contains the files it installs within this single binary. This is meant to represent an example of the kind
+of software that might be supplied to a vendor by an ISV for distribution with that vendor's hardware. While this particular setup program was authored 
+with InstallShield(tm), other installation methods are equally valid. For example, the setup program could have been written using C/C++, directly 
+leveraging the Microsoft Installer (MSI) application programming interfaces (API).
+
+<p>
+The <B>tostrco2.dll</B> module is constructed so that there is no requirement on how the value-added software is installed--it simply creates a process to initiate the setup program, then waits for that process to terminate before continuing. For the sample, the description of the value-added software offerings and details of launching the value-added setup application are hard-coded, but in a real-world scenario, the value-added software supplied might be listed in some sort of data file (perhaps an INF file) and the value-added software selection page would be completely data driven, using the information contained in that data file. This would be advantageous, for example, because a vendor could submit just their core driver package for Windows Logo testing without any value-added software (and without this data file). The vendor could then construct setup media containing the core driver package plus value-added software as they see fit. The contents of their setup media could be modified at any time by adding or removing value-added software, and no changes to the core driver package would be required (hence, no need to re-submit for Windows Logo testing). This works because the data file containing details about the
+value-added software offerings isn't a part of the driver package, and thus can be changed without affecting that package. A co-installer DLL written 
+to accommodate such a scheme could have default behavior that would not display the value-added software selection page in the absence of this data file.
+</BLOCKQUOTE>
+
+<I>toastco</I> <BLOCKQUOTE>
+This directory contains the co-installer, <B>tostrco2.dll</B>, which is used during device installation of toaster devices enumerated by the toaster bus enumerator. This co-installer supplies a finish-install wizard page that allows the user to select the value-added software, if any, that they wish to install. It does not supply a finish-install wizard page if the user has previously responded to the wizard page (whether or not they opted to install value-added software) so that the user isn't prompted multiple times in the case where they plug in multiple toasters (or the same toaster is plugged into multiple ports, which will appear to Plug and Play as different instances of that device).
+
+<p>
+This DLL also supplies the same value-added software selection page for use by the <B>toastva.exe</B> setup program. This avoids code duplication and ensures a consistent user experience for the hardware-first and software-first scenarios.
+
+<p>
+Finally, this co-installer performs the same function as its version 1 counterpart (in the <I>coinstaller</I> directory under the main toaster directory). It provides a friendly name for the device that incorporates its serial number. However, this version retrieves the friendly name template from the INF, and since the template is stored in the [Strings] section, it may be localized for other languages.
+
+<p>
+The reason this co-installer’s filename includes version number is to illustrate the technique that must be used when updating the driver for a device that may already have a previous version of the co-installer installed. If the name is not changed, then the old co-installer will be loaded early-on during the processing of DIF codes, and the updated version won’t be able to “get in the loop” to perform its new actions when installing the device. Thus, co-installers should include a version number in their filename, so that the new version can be copied and can participate in the device installation.
+ </BLOCKQUOTE>
+
+<I>toastva</I> <BLOCKQUOTE>
+This directory contains the autorun installation application, <B>toastva.exe</B>, which is launched when the user inserts the vendor-provided CD-ROM. This application is used to "pre-install" the necessary INF and catalog, along with any value-added software the user chooses. In addition, it uses the <B>UpdateDriverForPlugAndPlayDevices</B> API to update the existing installed drivers for any toasters that may already be present. Examples of scenarios where this would apply are:
+<OL>
+<LI>
+The user previously plugged in a toaster, and there was no in-box support (i.e., no supporting driver was included with Windows) for it. The user didn't supply a vendor provided driver package at that time (perhaps because they didn't have the media), so no driver was installed for the device (this is sometimes referred to as a "null driver install").
+<LI>
+The user previously plugged in a toaster, and there was in-box support for it (perhaps using an older or reduced-functionality driver).
+<LI>
+The user previously plugged in a toaster, and at that time supplied an older version of the driver provided by the vendor.
+</UL>
+<P>
+In all the above cases, the <B>UpdateDriverForPlugAndPlayDevices</B> API will seek out any toaster device instances matching the specified hardware or compatible ID, and determine whether the specified driver package is "better" (i.e., lower rank or newer). If so, the device instance will be updated with the specified driver package.
+</BLOCKQUOTE>
+
+<H3>BUILDING THE SAMPLE</H3></FONT><FONT FACE="Verdana" 
+SIZE=2><P>
+To build the Toaster Installation Sample components, you must first set up the DDK environment on your host machine. The “Installation and Release Notes”
+topic in the Windows XP DDK has a complete description on how to do this. 
+
+<P>
+Run the build –cZ command in the <I>toastpkg</I> directory to build <B>tostrco2.dll</B>, <B>toastapp.exe</B>, and <B>toastva.exe</B>. Run the build –cZ 
+command in the <I>classinstaller</I> and <I>func</I> subdirectories of the main <I>Toaster</I> directory (parent of the <I>toastpkg</I> directory) to build 
+<B>tostrcls.dll</B> and <B>toaster.sys</B>. The <I>toastcd</I> directory contains all these components already built with full debugging information. The 
+reason is so that the sample could be digitally signed (thus exactly reproducing the ideal user experience).
+
+<P>
+To experiment with certain behaviors of this package (e.g., <B>toastva.exe</B> launched via CD autorun), it is necessary to copy the entire contents of the <I>toastcd</I> tree onto a writeable CD.
+<P>
+
+<H3>RUNNING THE SAMPLE</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+The sample can be run in two different ways, corresponding to the hardware-first and software-first scenarios.
+<P>
+<B>Hardware-First Device Installation Walk-Through</B>
+<P>
+Simulate the plugging in of a toaster by typing the following at a command prompt (see the documentation for the toaster sample driver for more information on setting up the toaster bus enumerator and using the "enum" application to simulate plugging and unplugging of toaster devices):
+
+<BLOCKQUOTE>
+<P>
+C:\>enum -p 1 
+</BLOCKQUOTE>
+
+<P>
+Since there is no in-box driver for this device, the Found New Hardware wizard will appear, prompting for a driver package. If you constructed the setup image on autorun-capable media (e.g., writeable CD or DVD), you may insert that media in the drive, and Windows XP will automatically initiate a driver search on that media. On Windows 2000, you must click "Next" to initiate the driver search on that media. If you constructed the setup image in a directory on your hard disk, then you must click the "Install from a list or specific location (Advanced)" radio button, then click "Next". On the next page, click the "Include this location in the search:" checkbox, and type the path to the directory. Clicking "Next" will then initiate a driver search in the directory you specified.
+
+<P>
+The install will proceed using the <B>toastpkg.inf </B>file in the root of the install location. The co-installer, <B>tostrco2.dll</B>, will assign the device a friendly name during <B>DIF_INSTALLDEVICE</B>, and will supply a value-add software selection wizard page in response to <B>DIF_NEWDEVICEWIZARD_FINISHINSTALL</B>. This page will only be supplied if the user hasn’t been given the option previously of selecting value-added software (of if they’ve since uninstalled said software). This allows subsequent toasters to be installed server-side, without any user interaction whatsoever (even if a non-admin user or no user is logged in).
+
+<P>
+<B>Software-First Device Installation Walk-Through</B>
+<P>
+If you constructed the setup image on auto-run capable media (e.g., writeable CD or DVD), you can simply insert the media, and the <B>toastva.exe</B> program will automatically launch. Note that <B>toastva.exe</B> suppresses itself when invoked while a device installation is in progress, which is why this application doesn’t appear during the hardware-first scenario described above. 
+
+<P>
+After the Welcome page, the wizard will attempt to update the driver for any existing toaster devices (via the <B>UpdateDriverForPlugAndPlayDevices</B>) API. 
+If there aren’t any, it will instead “pre-install” the INF using the <B>SetupCopyOEMInf</B> API so that Plug and Play will automatically find a match when
+the hardware is subsequently inserted. <B>SetupCopyOEMInf</B> also stores away information that allows Plug and Play to know where the INF came from, thus allowing the Found New Hardware wizard to prompt for media in the correct location if it ever needs to. In this scenario, it is presumed that the user will plug in their toaster upon completion of the wizard, when they’re instructed to do so. As such, they should never actually be prompted to reinsert the CD, since they wouldn’t have removed it. However, if they had removed it, Plug and Play would prompt them to reinsert it. It is possible to “pre-install” all the driver files as well so that the user would never be prompted, even if they did remove the CD. The Windows XP DDK has a discussion of this technique in the section titled “Writing a Device Installation Application” in the Device Installation chapter.
+
+<P>
+Next, the wizard displays the same value-add software selection page as the user would receive if they’d performed a hardware-first install, as described above. After clicking “Next” on this page, any selected applications are installed (the wizard is hidden while these setup processes run), then the Finish wizard page appears. If the wizard didn’t find any devices during its call to <B>UpdateDriverForPlugAndPlayDevices</B>, it prompts the user to plug in their hardware now. When the user does plug in the hardware (i.e., by typing “enum –p 1” as described above), then the install will proceed without requiring any user interaction.
+
+<H3>FEEDBACK</H3>
+  <P>We welcome your comments, problem reports and wish-list requests. Please 
+  submit them by pointing your Internet browser to <A 
+  href="http://www.microsoft.com/whdc/default.mspx">http://www.microsoft.com/whdc/default.mspx</A>. 
+</P>
+
+
+<P>
+<FONT FACE="MS Sans Serif" SIZE=1><P>&copy; 2005 Microsoft Corporation</FONT><FONT FACE="Verdana" SIZE=2> </P></FONT></BODY>
+</HTML>

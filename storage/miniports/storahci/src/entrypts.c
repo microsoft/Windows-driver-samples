@@ -572,7 +572,7 @@ Note:
 
   //3.4 Initializing the rest of PORT_CONFIGURATION_INFORMATION
     ConfigInfo->MaximumTransferLength = AHCI_MAX_TRANSFER_LENGTH;
-    ConfigInfo->NumberOfPhysicalBreaks = 0x20;
+    ConfigInfo->NumberOfPhysicalBreaks = 0x21;  // Since "NumberOfPhysicalBreaks" has been used in storage stack as the count of entries, use value of physical breaks plus one.
     ConfigInfo->AlignmentMask = 1;              // ATA devices need WORD alignment
     ConfigInfo->ScatterGather = TRUE;
     ConfigInfo->ResetTargetSupported = TRUE;
@@ -858,6 +858,9 @@ AhciHwPassiveInitialize (
     UCHAR i;
     ULONG status = STOR_STATUS_SUCCESS;
     BOOLEAN enableD3Cold = FALSE;
+    BOOLEAN d3ColdSupported = FALSE;
+    BOOLEAN reportF1State = FALSE;
+    ULONG bufferSize = sizeof(STOR_POFX_DEVICE_V2);
 
     PAHCI_ADAPTER_EXTENSION adapterExtension = (PAHCI_ADAPTER_EXTENSION)AdapterExtension;
 
@@ -873,9 +876,24 @@ AhciHwPassiveInitialize (
     AhciAdapterEvaluateDSMMethod(adapterExtension);
 
 
+    //
+    // Get and cache D3Cold support.  
+    //
+    status = StorPortGetD3ColdSupport(AdapterExtension,
+                                        NULL,
+                                        &d3ColdSupported);
+    if (status == STOR_STATUS_SUCCESS) {
+        adapterExtension->StateFlags.D3ColdSupported = d3ColdSupported;
+    }
+
+
+    if (reportF1State) {
+        bufferSize += STOR_POFX_COMPONENT_IDLE_STATE_SIZE;
+    }
+
     // 3. allocate STOR_POFX_DEVICE data structure for adapter, initialize the structure and register for runtime power management.
     status = StorPortAllocatePool(AdapterExtension,
-                                  sizeof(STOR_POFX_DEVICE_V2),
+                                  bufferSize,
                                   AHCI_POOL_TAG,
                                   (PVOID*)&adapterExtension->PoFxDevice);
 
@@ -892,14 +910,14 @@ AhciHwPassiveInitialize (
     if (IsD3ColdAllowed(adapterExtension)) {
         adapterExtension->PoFxDevice->Flags = STOR_POFX_DEVICE_FLAG_ENABLE_D3_COLD;
     }
-
+    
     // indicate dump miniport can't bring adapter to active
     adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_DUMP_ACTIVE;
 
     adapterExtension->PoFxDevice->Components[0].Version = STOR_POFX_COMPONENT_VERSION_V1;
     adapterExtension->PoFxDevice->Components[0].Size = STOR_POFX_COMPONENT_SIZE;
-    adapterExtension->PoFxDevice->Components[0].FStateCount = 1;
-    adapterExtension->PoFxDevice->Components[0].DeepestWakeableFState = 0;
+    adapterExtension->PoFxDevice->Components[0].FStateCount = reportF1State ? 2 : 1;
+    adapterExtension->PoFxDevice->Components[0].DeepestWakeableFState = reportF1State ? 1 : 0;
     adapterExtension->PoFxDevice->Components[0].Id = STORPORT_POFX_ADAPTER_GUID;
 
     adapterExtension->PoFxDevice->Components[0].FStates[0].Version = STOR_POFX_COMPONENT_IDLE_STATE_VERSION_V1;
@@ -907,6 +925,15 @@ AhciHwPassiveInitialize (
     adapterExtension->PoFxDevice->Components[0].FStates[0].TransitionLatency = 0;
     adapterExtension->PoFxDevice->Components[0].FStates[0].ResidencyRequirement = 0;
     adapterExtension->PoFxDevice->Components[0].FStates[0].NominalPower = STOR_POFX_UNKNOWN_POWER;
+
+    if (reportF1State) {
+        adapterExtension->StateFlags.UseAdapterF1InsteadOfD3 = FALSE;
+        adapterExtension->PoFxDevice->Components[0].FStates[1].Version = STOR_POFX_COMPONENT_IDLE_STATE_VERSION_V1;
+        adapterExtension->PoFxDevice->Components[0].FStates[1].Size = STOR_POFX_COMPONENT_IDLE_STATE_SIZE;
+        adapterExtension->PoFxDevice->Components[0].FStates[1].TransitionLatency = 1;
+        adapterExtension->PoFxDevice->Components[0].FStates[1].ResidencyRequirement = 0;
+        adapterExtension->PoFxDevice->Components[0].FStates[1].NominalPower = STOR_POFX_UNKNOWN_POWER;
+    }
 
     // registry runtime power management for Adapter
     status = StorPortInitializePoFxPower(AdapterExtension, NULL, (PSTOR_POFX_DEVICE)adapterExtension->PoFxDevice, &enableD3Cold);
@@ -920,10 +947,10 @@ AhciHwPassiveInitialize (
         goto Exit;
     }
 
+
     // register success
     adapterExtension->StateFlags.PoFxEnabled = TRUE;
     adapterExtension->StateFlags.PoFxActive = TRUE;
-
 
 Exit:
     return TRUE;
@@ -1170,6 +1197,9 @@ Return Value:
             if (ScsiAdapterPoFxPowerActive < controlTypeList->MaxControlType) {
                 controlTypeList->SupportedTypeList[ScsiAdapterPoFxPowerActive] = TRUE;
             }
+            if (ScsiAdapterPoFxPowerSetFState < controlTypeList->MaxControlType) {
+                controlTypeList->SupportedTypeList[ScsiAdapterPoFxPowerSetFState] = TRUE;
+            }
             if (ScsiAdapterPower < controlTypeList->MaxControlType) {
                 controlTypeList->SupportedTypeList[ScsiAdapterPower] = TRUE;
             }
@@ -1179,6 +1209,10 @@ Return Value:
             if (ScsiAdapterSystemPowerHints < controlTypeList->MaxControlType) {
                 controlTypeList->SupportedTypeList[ScsiAdapterSystemPowerHints] = TRUE;
             }
+            if (ScsiAdapterSurpriseRemoval < controlTypeList->MaxControlType) {
+                controlTypeList->SupportedTypeList[ScsiAdapterSurpriseRemoval] = TRUE;
+            }
+
             break;
 
         // ScsiStopAdapter maybe called with PnP or Power activities.
@@ -1227,6 +1261,10 @@ Return Value:
                     }
                 }
             }
+            break;
+        }
+
+        case ScsiAdapterPoFxPowerSetFState: {
             break;
         }
 
@@ -1281,6 +1319,16 @@ Return Value:
             } else {
                 status = ScsiAdapterControlUnsuccessful;
             }
+            break;
+        }
+
+        case ScsiAdapterSurpriseRemoval: {
+            //
+            // For AHCI, all the cleanup that needs to happen for adapter surprise removals is done in
+            // the several ScsiUnitSurpriseRemovals that will be sent down for each LUN. There is no
+            // extra work needed to handle adapter surprise removals.
+            //
+            status = ScsiAdapterControlSuccess;
             break;
         }
 
@@ -1853,7 +1901,10 @@ Return Values:
         sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
 
 
-        if(sact != 0) {
+        if ((sact == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+            // controller has been surprise removed
+            return;
+        } else if (sact != 0) {
           //5.1 NCQ, Handle error processing
             ChannelExtension->StateFlags.CallAhciNcqErrorRecovery = 1;
 
@@ -1861,8 +1912,7 @@ Return Values:
             if (ChannelExtension->StateFlags.NCQ_Succeeded == 0) {
                 ChannelExtension->StateFlags.NCQ_Activated = 0;
             }
-        }
-        else {
+        } else {
             //5.1 Non-NCQ, Handle error processing
             ChannelExtension->StateFlags.CallAhciNonQueuedErrorRecovery = 1;
         }
@@ -1880,6 +1930,10 @@ Return Values:
 
     if (pxis.DMPS || pxis.PCS) {
         cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
+
+        if ((cmd.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+            return;
+        }
 
         // Device Mechanical Presence Status
         if (pxis.DMPS) {
@@ -1917,6 +1971,11 @@ Return Values:
 
         ssts.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SSTS.AsUlong);
 
+        if ((ssts.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+            // controller has been surprise removed
+            return;
+        }
+
         if (!IgnoreHotPlug(ChannelExtension)) {
             //If a ZPODD drive has already been found and it is a ZPODD system
             if ((ChannelExtension->AdapterExtension->StateFlags.SupportsAcpiDSM == 1) &&
@@ -1935,18 +1994,15 @@ Return Values:
                         ChannelExtension->SlotManager.NormalQueueSlice = 0;
                         ChannelExtension->SlotManager.SingleIoSlice = 0;
                         ChannelExtension->SlotManager.HighPriorityAttribute = 0;
-                    }
-                    else {
+                    } else {
                         NT_ASSERT(FALSE);     // Looks like a hardware issue, will recover in P_Running_StartAttempt() when ZPODD is powered on again.
                     }
-                }
-                else if (ssts.DET == 3) {
+                } else if (ssts.DET == 3) {
                     // ... (*) and there is presence on the wire ...
                     // ... try to get the channel started.
                     P_Running_StartAttempt(ChannelExtension, TRUE);
                 }
-            }
-            else if ((ssts.DET == 0) && (ssts.IPM == 0)) {
+            } else if ((ssts.DET == 0) && (ssts.IPM == 0)) {
                 // Handle bus rescan processing processing
                 ChannelExtension->StateFlags.CallAhciReportBusChange = 1;
             }
@@ -2032,6 +2088,11 @@ Return Values:
     // preserve taskfile for using in command completion process
     ChannelExtension->TaskFileData.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->TFD.AsUlong);
 
+    if ((ChannelExtension->TaskFileData.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        // controller has been surprise removed
+        return;
+    }
+
     //2.4 error process
     if (ErrorRecoveryIsPending(ChannelExtension)) {
         AhciPortErrorRecovery(ChannelExtension);
@@ -2046,9 +2107,14 @@ Return Values:
     ci = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CI);
     sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
 
+    if (((ci == MAXULONG) || (sact == MAXULONG)) && IsAdapterRemoved(ChannelExtension)) {
+        // controller has been surprise removed
+        return;
+    }
+
     outstanding = ci | sact;
 
-    if ((ChannelExtension->SlotManager.CommandsIssued & ~outstanding) > 0) {
+    if ((ChannelExtension->SlotManager.CommandsIssued & (~outstanding)) > 0) {
         // all completed commands by hardware will be marked completed
         ChannelExtension->SlotManager.CommandsToComplete |= (ChannelExtension->SlotManager.CommandsIssued & ~outstanding);
         ChannelExtension->SlotManager.CommandsIssued &= outstanding;
@@ -2064,6 +2130,11 @@ Return Values:
 
     //6.1 Partial to Slumber auto transit
     cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
+
+    if ((cmd.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        // controller has been surprise removed
+        return;
+    }
 
     if (PartialToSlumberTransitionIsAllowed(ChannelExtension, cmd, ci, sact)) {
         ULONG status;
@@ -2115,6 +2186,11 @@ Return Values:
     PAHCI_ADAPTER_EXTENSION adapterExtension = (PAHCI_ADAPTER_EXTENSION)AdapterExtension;
 
     is = StorPortReadRegisterUlong(AdapterExtension, adapterExtension->IS);
+        
+    if (adapterExtension->StateFlags.Removed) {
+        return FALSE;
+    }
+
     interruptPorts = (is & adapterExtension->PortImplemented);
 
     //
@@ -2265,6 +2341,9 @@ Return Value:
             if (ScsiUnitPoFxPowerSetFState < controlTypeList->MaxControlType) {
                 controlTypeList->SupportedTypeList[ScsiUnitPoFxPowerSetFState] = TRUE;
             }
+            if (ScsiUnitSurpriseRemoval < controlTypeList->MaxControlType) {
+                controlTypeList->SupportedTypeList[ScsiUnitSurpriseRemoval] = TRUE;
+            }
             status = ScsiUnitControlSuccess;
             break;
         }
@@ -2361,7 +2440,7 @@ Return Value:
 
                         channelExtension->PoFxDevice->Version = STOR_POFX_DEVICE_VERSION_V3;
                         channelExtension->PoFxDevice->Size = STOR_POFX_DEVICE_V3_SIZE;
-                        channelExtension->PoFxDevice->ComponentCount = 1;    
+                        channelExtension->PoFxDevice->ComponentCount = 1;
 
                         //
                         // The dump version of StorAHCI is not able to bring the
@@ -2506,6 +2585,38 @@ Return Value:
 
             } else {
                 status = ScsiUnitControlUnsuccessful;
+            }
+
+            break;
+        }
+
+        //
+        // ScsiUnitSurpriseRemoval is called when Storport processes the surprise removal IRP for the unit.
+        //
+        case ScsiUnitSurpriseRemoval: {
+            PSTOR_ADDR_BTL8 storAddrBtl8 = (PSTOR_ADDR_BTL8)Parameters;
+            STOR_LOCK_HANDLE lockhandle = {0};
+
+            if (IsPortValid(adapterExtension, storAddrBtl8->Path)) {
+
+                PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
+                AhciInterruptSpinlockAcquire(adapterExtension, channelExtension->PortNumber, &lockhandle);
+
+                //
+                // Complete all issued commands.
+                //
+                channelExtension->SlotManager.CommandsToComplete = channelExtension->SlotManager.CommandsIssued;
+                channelExtension->SlotManager.CommandsIssued = 0;
+                channelExtension->SlotManager.HighPriorityAttribute &= ~channelExtension->SlotManager.CommandsToComplete;
+                
+                AhciCompleteIssuedSRBs(channelExtension, SRB_STATUS_NO_DEVICE, TRUE); 
+
+                //
+                // Complete all other commands miniport owns for this device.
+                //
+                AhciPortFailAllIos(channelExtension, SRB_STATUS_NO_DEVICE, TRUE);
+
+                AhciInterruptSpinlockRelease(adapterExtension, channelExtension->PortNumber, &lockhandle);
             }
 
             break;

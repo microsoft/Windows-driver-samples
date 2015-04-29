@@ -428,8 +428,7 @@ Return Value:
             //  an allocated name buffer.  If not, it will be NULL
             //
 
-#pragma prefast(suppress:__WARNING_USE_OTHER_FUNCTION, "Used to maintain compatability with Win 2k")
-            status = RtlVolumeDeviceToDosName( devObj, &ctx->Name );
+            status = IoVolumeDeviceToDosName( devObj, &ctx->Name );
         }
 
         //

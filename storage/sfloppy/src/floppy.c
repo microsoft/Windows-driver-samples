@@ -1907,7 +1907,7 @@ Return Value:
 
     if ((pageData != NULL) &&
         (pageData->PageLength + 2 >=
-         offsetof(MODE_FLEXIBLE_DISK_PAGE, StartWritePrecom))) {
+         (UCHAR)offsetof(MODE_FLEXIBLE_DISK_PAGE, StartWritePrecom))) {
 
        //
        // Pull out the heads, cylinders, and sectors.
@@ -2152,7 +2152,7 @@ Return Value:
 
     if ((pageData == NULL) ||
         (pageData->PageLength + 2 <
-         offsetof(MODE_FLEXIBLE_DISK_PAGE, StartWritePrecom))) {
+         (UCHAR)offsetof(MODE_FLEXIBLE_DISK_PAGE, StartWritePrecom))) {
 
         ExFreePool(modeData);
         return(STATUS_INVALID_DEVICE_REQUEST);

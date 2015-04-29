@@ -53,13 +53,6 @@ Pci9x5x.sys=1
 [SourceDisksNames]
 1=%DISK_NAME%,
 
-; For Win2K
-[MSFT]
-; DisplayName           Section           DeviceId
-; -----------           -------           --------
-%Pci9056.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_5601
-%Pci9656.DRVDESC%=      Pci9x5x_Inst,     PCI\VEN_10b5&DEV_9601
-
 ; For XP and later
 [MSFT.NT$ARCH$]
 ; DisplayName           Section           DeviceId

@@ -75,7 +75,7 @@ UMDriverCopy=12,UMDF ; copy to drivers\UMDF
 CoInstallers_CopyFiles=11
 
 [UMDriverCopy]
-WUDFEchoDriver.dll
+WUDFEchoDriver.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 
 ; =================== Generic ==================================
 

@@ -8,6 +8,9 @@ It also shows how to synchronize execution of these events with other asynchrono
 ## Universal Compliant
 This sample builds a Windows Universal driver. It uses only APIs and DDIs that are included in Windows Core.
 
+**Note**
+Due to a known bug in the current Windows Driver Kit tools, when building this sample in Debug mode, the exe project may report some ApiValidator warnings. These can be safely ignored.
+
 
 Related technologies
 --------------------

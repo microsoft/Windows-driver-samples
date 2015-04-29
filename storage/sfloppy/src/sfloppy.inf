@@ -32,13 +32,6 @@ DefaultDestDir=12
 [Manufacturer]
 %GenManufacturer%=floppy_device,NTx86,NTia64,NTamd64
 
-[floppy_device]
-%sfloppy_devdesc%=sfloppy_install,GenSFloppy
-%sfloppy_devdesc%=sfloppy_install,SCSI\DiskMATSHITALS-120_COSM___04
-%sfloppy_devdesc%=sfloppy_install,SCSI\DiskCOMPAQ__LS-120_VER5___AB
-%sfloppy_devdesc%=sfloppy_install,SCSI\DiskCOMPAQ__LS-120_HIMA___01
-%sfloppy_devdesc%=sfloppy_install,SCSI\DiskMATSHITALS-120_VER5___00
-
 [floppy_device.NTx86]
 %sfloppy_devdesc%=sfloppy_install,GenSFloppy
 %sfloppy_devdesc%=sfloppy_install,SCSI\DiskMATSHITALS-120_COSM___04

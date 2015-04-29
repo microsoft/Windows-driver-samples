@@ -1,0 +1,21 @@
+import "oaidl.idl";
+import "RadioMgr.idl";
+
+[
+    uuid(4BE52AA0-EF10-420F-9341-681FBCCD772C),
+    version(1.0),
+    helpstring("Sample Radio Manager library")
+]
+library SampleRadioManagerLib
+{
+	importlib("stdole2.tlb");
+
+	[
+	    uuid(41DC5063-AFAF-47DF-86B3-4B2ED82A82CF),
+	    helpstring("Sample Media Radio Manager")
+	]
+	coclass SampleRadioManager
+	{
+	    [default] interface IMediaRadioManager;
+	}
+}

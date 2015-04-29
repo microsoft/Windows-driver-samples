@@ -182,6 +182,8 @@ Input Parameters:
     PVOID tempTail, foundSrb;
     ULONG srbsFound;
 
+    UNREFERENCED_PARAMETER(ChannelExtension);
+
     if (Queue->Tail == NULL) {
         Queue->Tail = (PVOID) Srb;
         Queue->Head = (PVOID) Srb;
@@ -189,23 +191,11 @@ Input Parameters:
         tempTail = Queue->Tail;
         if (SrbGetNextSrb(tempTail) == NULL) {    //Verify SRBs are not about to be severed from the Queue
             SrbSetNextSrb(tempTail, (PVOID)Srb);
-        } else {
-            //intentional bugcheck to check queuing errors. Suppress null pointer dereferencing warnings
-            #pragma warning (suppress: 6011)
-            NT_ASSERT(FALSE); ChannelExtension = NULL; ChannelExtension->PortNumber++;
         }
         Queue->Tail = (PVOID)Srb;
-        if (SrbGetNextSrb(Srb) != NULL) {         //Verify NextSrb is not in use by anyone
-            //intentional bugcheck to check queuing errors. Suppress null pointer dereferencing warnings
-            #pragma warning (suppress: 6011)
-            NT_ASSERT(FALSE); ChannelExtension = NULL; ChannelExtension->PortNumber++;
-        }
     }
     Queue->CurrentDepth++;
     if (Queue->Head == NULL) {              //It is impossible for Head to be NULL here
-        //intentional bugcheck to check queuing errors. Suppress null pointer dereferencing warnings
-        #pragma warning (suppress: 6011)
-        NT_ASSERT(FALSE); ChannelExtension = NULL; ChannelExtension->PortNumber++;
         srbsFound = 0;
     } else {
         foundSrb = Queue->Head;
@@ -220,11 +210,6 @@ Input Parameters:
     Queue->DepthHistoryIndex++;
     Queue->DepthHistoryIndex %= 100;
     Queue->DepthHistory[Queue->DepthHistoryIndex] = Signature;
-    if (Queue->CurrentDepth != srbsFound ) {
-        //intentional bugcheck to check queuing errors. Suppress null pointer dereferencing warnings
-        #pragma warning (suppress: 6011)
-        NT_ASSERT(FALSE); ChannelExtension = NULL; ChannelExtension->PortNumber++;
-    }
     if (Queue->CurrentDepth > Queue->DeepestDepth) {
         Queue->DeepestDepth = Queue->CurrentDepth;
     }
@@ -240,6 +225,8 @@ RemoveQueue (
 {
     PVOID nextSrb, foundSrb;
     ULONG srbsFound;
+
+    UNREFERENCED_PARAMETER(ChannelExtension);
 
     //Check to see if the queue is empty
     if (Queue->Head == NULL) {
@@ -270,11 +257,6 @@ RemoveQueue (
     Queue->DepthHistoryIndex++;
     Queue->DepthHistoryIndex %= 100;
     Queue->DepthHistory[Queue->DepthHistoryIndex] = Signature;
-    if (Queue->CurrentDepth != srbsFound ) {
-        //intentional bugcheck to check queuing errors. Suppress null pointer dereferencing warnings
-        #pragma warning (suppress: 6011)
-        NT_ASSERT(FALSE); ChannelExtension = NULL; ChannelExtension->PortNumber++;
-    }
     if (Queue->CurrentDepth > Queue->DeepestDepth) {
         Queue->DeepestDepth = Queue->CurrentDepth;
     }
@@ -1143,13 +1125,19 @@ Note: This routine can be called even the Port is stopped.
         sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
         // 3.2 if the tag returned can't be used, something is seriously wrong. Reject the command to be retried later
         if( ( ( (1 << srbExtension->QueueTag) & ci) > 0) || ( ( (1 << srbExtension->QueueTag) & sact) > 0) ) {
-            NT_ASSERT(FALSE); //can this happen? catch it.
-
             if (!IsMiniportInternalSrb(ChannelExtension, Srb)) {
                 // pause device only for IOs from Storport
                 StorPortPauseDevice(ChannelExtension->AdapterExtension, pathId, targetId, lun, 1);   //pause for 1 seconds.
             }
-            Srb->SrbStatus = SRB_STATUS_BUSY;
+
+            // One reason why this can happen is if the adapter was removed.
+            if (IsAdapterRemoved(ChannelExtension)) {
+                Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
+            } else {
+                NT_ASSERT(FALSE); //can this happen? catch it.
+                Srb->SrbStatus = SRB_STATUS_BUSY;
+            }
+
             MarkSrbToBeCompleted(Srb);
             AhciCompleteRequest(ChannelExtension, Srb, AtDIRQL);
             RecordExecutionHistory(ChannelExtension, 0x10040020);//Tag given for slot in use

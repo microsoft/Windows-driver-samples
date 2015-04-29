@@ -55,7 +55,7 @@ SingleComponentSingleStateUm.dll = 1,,
 CopyFiles=UMDriverCopy
 
 [UMDriverCopy]
-SingleComponentSingleStateUm.dll
+SingleComponentSingleStateUm.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 
 [DestinationDirs]
 UMDriverCopy=12,UMDF ; copy to drivers\umdf

@@ -58,8 +58,9 @@ UmdfDispatcher=WinUsb
 AddReg = CoInstallers_AddReg
 CopyFiles = CoInstallers_CopyFiles
 
+; Needed for Win7 support
 [WinUsb_Install]
-KmdfLibraryVersion=$KMDFVERSION$
+KmdfLibraryVersion=1.9
 
 [WudfOsrUsbFilter_Install]
 UmdfLibraryVersion=$UMDFVERSION$

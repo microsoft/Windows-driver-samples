@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{00DD8EE3-FDCD-4456-BC4F-E74036AB1AC1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{ED90C8BD-839B-498E-801C-9D36D5AE7AA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{4FF8F695-EF19-47F0-B961-AA636092E365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{AB325463-69C0-4899-82FF-C8D632CBE6C9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aacs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="autorun.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdrom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="init.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ioctl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mmc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pnppower.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scratch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sense.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zpodd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToPackage Include=".\Debug\\cdrom.inf">
+      <Filter>Driver Files</Filter>
+    </FilesToPackage>
+    <Inf Include="cdrom.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="cdrom.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

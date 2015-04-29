@@ -1,0 +1,15 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "SD Host Controller Standard Driver"
+#define VER_INTERNALNAME_STR        "sdhc.sys"
+#define VER_ORIGINALFILENAME_STR    "sdhc.sys"
+
+#include "common.ver"
+

@@ -616,16 +616,37 @@ DeviceIncursSeekPenalty(
 _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
 )
 {
-    if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters) &&
-        ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate >= 0x0401 &&
-        ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate <= 0xFFFE) {
-        //
-        // NominalMediaRotationRate = 0 means no rate is reported.
-        // NominalMediaRotationRate = 1 means there is no seek penalty (e.g. pure SSD).
-        // NominalMediaRotationRate = 0x0401-0xFFFE is the rotation rate (i.e. incurs seek penalty).
-        // All other values are reserved.
-        //
-        return TRUE;
+    if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        if (ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate >= 0x0401 &&
+            ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate <= 0xFFFE) {
+            //
+            // NominalMediaRotationRate = 0 means no rate is reported.
+            // NominalMediaRotationRate = 1 means there is no seek penalty (e.g. pure SSD).
+            // NominalMediaRotationRate = 0x0401-0xFFFE is the rotation rate (i.e. incurs seek penalty).
+            // All other values are reserved.
+            //
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+__inline
+BOOLEAN
+DeviceIncursNoSeekPenalty(
+_In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+)
+{
+    if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        if (ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate == 1) {
+            //
+            // NominalMediaRotationRate = 0 means no rate is reported.
+            // NominalMediaRotationRate = 1 means there is no seek penalty (e.g. pure SSD).
+            // NominalMediaRotationRate = 0x0401-0xFFFE is the rotation rate (i.e. incurs seek penalty).
+            // All other values are reserved.
+            //
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -1481,6 +1502,23 @@ AtaFormFactorToStorageFormFactor(
 
     return formFactor;
 }
+
+__inline
+BOOLEAN
+IsAdapterRemoved(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+    )
+{
+    //
+    // When the adapter is removed, its registers are read as
+    // all 0xF's by the PCI bus. We use the PxSSTS register because
+    // it has several reserved bits which will unlikely be defined
+    // in the lifetime of the spec.
+    //
+    ULONG ssts = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SSTS.AsUlong);
+    return (ssts == MAXULONG);
+}
+
 
 VOID
 PortBusChangeProcess (

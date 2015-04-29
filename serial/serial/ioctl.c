@@ -1296,24 +1296,16 @@ Return Value:
 
             }
 
-            try {
-
-                reqContext->Type3InputBuffer =
+            reqContext->Type3InputBuffer =
                     ExAllocatePoolWithQuotaTag(
-                        NonPagedPool,
+                        NonPagedPool | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
                         Rs->InSize,
                         POOL_TAG
                         );
 
-            } except (EXCEPTION_EXECUTE_HANDLER) {
-
-                reqContext->Type3InputBuffer = NULL;
-                Status = GetExceptionCode();
-
-            }
-
             if (!reqContext->Type3InputBuffer) {
 
+                Status = STATUS_INSUFFICIENT_RESOURCES;
                 break;
 
             }

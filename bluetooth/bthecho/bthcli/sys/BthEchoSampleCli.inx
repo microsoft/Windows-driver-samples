@@ -1,0 +1,101 @@
+;/*++
+;
+;Copyright (c) 1990-2000  Microsoft Corporation
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;    BthEchoSampleCli.inx
+;
+;Abstract:
+;    INF file for installing the Bluetooth Echo Sample Client
+;
+;    devcon.exe BthEchoSampleCli.inf BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={e0cbf06c-cd8b-4647-bb8a-263b43f0f974}
+Provider=%MSFTSAMPLE%
+DriverVer=06/21/2006,6.0.5841.
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+BthEchoSampleCli.sys  = 1,,
+
+;*****************************************
+; BthEchoSampleCli  Install Section
+;*****************************************
+
+[Manufacturer]
+%MSFTSAMPLE%=Microsoft,NTamd64...1
+%MSFTSAMPLE%=Microsoft,NTx86...1
+
+[Microsoft.NTamd64...1]
+%BthEchoSampleCli.DeviceDesc% = BthEchoSampleCli_Inst,BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
+
+[Microsoft.NTx86...1]
+%BthEchoSampleCli.DeviceDesc% = BthEchoSampleCli_Inst,BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
+[BthEchoSampleCli_Inst.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+BthEchoSampleCli.sys
+
+
+;-------------- Service installation
+[BthEchoSampleCli_Inst.NT.Services]
+AddService = BthEchoSampleCli,%SPSVCINST_ASSOCSERVICE%, BthEchoSampleCli_Service_Inst
+
+; -------------- BthEchoSampleCli driver install sections
+[BthEchoSampleCli_Service_Inst]
+DisplayName    = %BthEchoSampleCli.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\BthEchoSampleCli.sys
+
+;
+;--- BthEchoSampleCli_Inst Coinstaller installation ------
+;
+
+[DestinationDirs]
+BthEchoSampleCli_Inst_CoInstaller_CopyFiles = 11
+
+[BthEchoSampleCli_Inst.NT.CoInstallers]
+AddReg=BthEchoSampleCli_Inst_CoInstaller_AddReg
+CopyFiles=BthEchoSampleCli_Inst_CoInstaller_CopyFiles
+
+[BthEchoSampleCli_Inst_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[BthEchoSampleCli_Inst_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[BthEchoSampleCli_Inst.NT.Wdf]
+KmdfService =  BthEchoSampleCli, BthEchoSampleCli_Inst_wdfsect
+[BthEchoSampleCli_Inst_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFTSAMPLE = "Microsoft Sample"
+StdMfg = "(Standard system devices)"
+DiskId1 = "BthEchoSampleCli installation disk"
+BthEchoSampleCli.DeviceDesc = "Bluetooth Echo Sample Client"
+BthEchoSampleCli.SVCDESC = "BthEchoSampleCli"

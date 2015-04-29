@@ -27,8 +27,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{92A41A0C-EC0F-4D98-B4DE-4899B375FD49}</ProjectGuid>
-    <SampleGuid>{ECED2BAF-D334-46B0-A7A9-734224614A21}</SampleGuid>
+    <ProjectGuid>{8D2391A3-43B4-4B9F-89E2-A4024B35FBAD}</ProjectGuid>
+    <SampleGuid>{41DDE172-7368-4C23-A7CC-B858DDD69598}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,10 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\umdf_driver\WUDFOsrUsbFx2.vcxproj">
-      <Project>{0D3781C2-2236-46B0-806D-387999E500AB}</Project>
+      <Project>{81B31960-3EA8-4F43-B79A-5A851EC49CE8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\umdf_filter\WUDFOsrUsbFilter.vcxproj">
-      <Project>{E62A4AAA-870E-4D58-AA10-D9604A2E52E8}</Project>
+      <Project>{F7387F7F-59AF-4963-9D6E-8626E9E4D2EF}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,0 +1,101 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    VhidminiUm.inf
+;
+;Abstract:
+;    INF file for installing HID minidriver (UMDF 2 version)
+;
+;Installation Notes:
+;    Using Devcon: Type "devcon install VhidminiUm.inf root\VhidminiUm" to install
+;
+;--*/
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=10/01/2002,6.0.5058.0
+CatalogFile=wudf.cat
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+; ================= Device section =====================
+
+[Manufacturer]
+%MfgName%=Microsoft, NT$ARCH$.6.3
+
+[Microsoft.NT$ARCH$.6.3]
+%DeviceDesc%=VhidminiUm, root\VhidminiUm
+
+[VhidminiUm.NT]
+CopyFiles=UMDriverCopy
+
+[VhidminiUm.NT.hw]
+AddReg=VhidminiUm_AddReg
+
+[VhidminiUm.NT.Services]
+AddService=WUDFRd,0x000001f8,WUDFRD_ServiceInstall
+AddService=mshidumdf, 0x000001fa, mshidumdf.AddService ;flag 0x2 sets this as the service for the device
+
+[VhidminiUm_AddReg]
+HKR,,"LowerFilters",0x00010008,"WUDFRd" ; FLG_ADDREG_TYPE_MULTI_SZ | FLG_ADDREG_APPEND
+
+[mshidumdf.AddService]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\mshidumdf.sys
+
+[WUDFRD_ServiceInstall]
+DisplayName    = %WudfRdDisplayName%
+ServiceType    = 1
+StartType      = 3
+ErrorControl   = 1
+ServiceBinary  = %12%\WUDFRd.sys
+
+[VhidminiUm.NT.Wdf]
+UmdfService="VhidminiUm", VhidminiUm_Install
+UmdfServiceOrder=VhidminiUm
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfFileObjectPolicy=AllowNullAndUnknownFileObjects
+UmdfMethodNeitherAction=Copy
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[VhidminiUm_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary="%12%\UMDF\VhidminiUm.dll"
+
+; ================= copy files =====================
+
+[UMDriverCopy]
+VhidminiUm.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+VhidminiUm.dll=1
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\umdf
+
+;---------------------------------------------------------------;
+
+[Strings]
+MSFT="Microsoft"
+MfgName="Microsoft"
+ClassName="Sample Device"
+Disk_Description ="HID minidriver (UMDF v2) Installation Disk"
+DeviceDesc       ="HID minidriver (UMDF v2) Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

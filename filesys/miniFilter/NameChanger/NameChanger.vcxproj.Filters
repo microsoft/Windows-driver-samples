@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{817F7394-22D9-49B6-A7EE-2CC524F1CBF2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{DF2CCD0F-541A-4EFC-AA37-579066F38CD0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{86478AE0-8DEC-4E96-924F-3D6DA78E254F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{D01D724E-D3A3-464D-8307-CE7E057FA327}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="nc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nccompat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nccontext.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nccreate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncdirenum.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncdirnotify.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncfileinfo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncfsctrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nchelper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncmapping.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncnameprov.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncoffsets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ncpath.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nc.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

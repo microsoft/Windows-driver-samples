@@ -84,10 +84,10 @@ OnPrepareHardware(
             if (res->Type == CmResourceTypeMemory)
             {
                 pDevice->pRegisters = 
-                    (PSKELETONI2C_REGISTERS) MmMapIoSpace(
+                    (PSKELETONI2C_REGISTERS) MmMapIoSpaceEx(
                         res->u.Memory.Start,
                         res->u.Memory.Length,
-                        MmNonCached);
+                        PAGE_NOCACHE | PAGE_READWRITE);
 
                 pDevice->RegistersCb = res->u.Memory.Length;
 

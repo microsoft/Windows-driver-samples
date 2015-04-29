@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracectl", "Tracectl", "{F3C08B55-33D7-458F-BE79-6878512FF1B1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracectl", "Tracectl", "{6924D03F-364D-445C-975D-882FB14B0058}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracedrv", "Tracedrv", "{93C02447-AFF7-40E8-AED1-849588063150}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracedrv", "Tracedrv", "{C8CBD4D8-1015-4418-87FD-AC97AFF374CA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracectl", "tracectl\tracectl.vcxproj", "{72739B3A-9B9B-41EE-9B0E-E73482470A03}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracectl", "tracectl\tracectl.vcxproj", "{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracedrv", "tracedrv\tracedrv.vcxproj", "{959FDB65-EF62-4ED3-8856-326B5AD4BB41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tracedrv", "tracedrv\tracedrv.vcxproj", "{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,28 +19,28 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|Win32.ActiveCfg = Debug|Win32
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|Win32.Build.0 = Debug|Win32
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|Win32.ActiveCfg = Release|Win32
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|Win32.Build.0 = Release|Win32
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|x64.ActiveCfg = Debug|x64
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Debug|x64.Build.0 = Debug|x64
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|x64.ActiveCfg = Release|x64
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03}.Release|x64.Build.0 = Release|x64
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|Win32.ActiveCfg = Debug|Win32
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|Win32.Build.0 = Debug|Win32
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|Win32.ActiveCfg = Release|Win32
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|Win32.Build.0 = Release|Win32
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|x64.ActiveCfg = Debug|x64
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Debug|x64.Build.0 = Debug|x64
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|x64.ActiveCfg = Release|x64
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41}.Release|x64.Build.0 = Release|x64
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Debug|Win32.Build.0 = Debug|Win32
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Release|Win32.ActiveCfg = Release|Win32
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Release|Win32.Build.0 = Release|Win32
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Debug|x64.ActiveCfg = Debug|x64
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Debug|x64.Build.0 = Debug|x64
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Release|x64.ActiveCfg = Release|x64
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6}.Release|x64.Build.0 = Release|x64
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Debug|Win32.Build.0 = Debug|Win32
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Release|Win32.ActiveCfg = Release|Win32
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Release|Win32.Build.0 = Release|Win32
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Debug|x64.ActiveCfg = Debug|x64
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Debug|x64.Build.0 = Debug|x64
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Release|x64.ActiveCfg = Release|x64
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{72739B3A-9B9B-41EE-9B0E-E73482470A03} = {F3C08B55-33D7-458F-BE79-6878512FF1B1}
-		{959FDB65-EF62-4ED3-8856-326B5AD4BB41} = {93C02447-AFF7-40E8-AED1-849588063150}
+		{3A8F1F69-AD42-492B-9F57-5F95EFCD75C6} = {6924D03F-364D-445C-975D-882FB14B0058}
+		{19455661-BB6E-4AB3-A48C-33ABBB7BAF8B} = {C8CBD4D8-1015-4418-87FD-AC97AFF374CA}
 	EndGlobalSection
 EndGlobal

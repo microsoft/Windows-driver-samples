@@ -1,0 +1,193 @@
+;
+; Copyright (C) Microsoft Corporation, All Rights Reserved.
+;
+; FakeModem.inf
+; "Fakemodem" Controllerless driver illustrative example
+;
+; Installation Notes:
+;    Use toaster dynambus.sys and notify.exe to plug in a fake modem device
+
+[Version]
+Signature="$Windows NT$"
+Class=Modem
+ClassGuid={4D36E96D-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFTUMDF%
+CatalogFile=WUDF.cat
+DriverVer=12/30/2010,0.0.0.1
+
+[Manufacturer]
+%MSFTUMDF%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%FakeModemDeviceName%=FakeModem_Install,{b85b7c50-6a01-11d2-b841-00c04fad5171}\fakemodem
+
+[SourceDisksFiles]
+FakeModem2um.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF FakeModem Device ==================================
+
+; The AddReg line below instructs the installer to add the registry 
+; entries listed in the following sections of this INF file:
+; [All], [MfgAddReg], [ExtraCRLFResponses], [ModemX.AddReg], [INTERNAL]
+
+[FakeModem_Install.NT]
+CopyFiles=UMDriverCopy
+AddReg = All, MfgAddReg, ExtraCRLFResponses, ModemX.AddReg, INTERNAL
+
+[FakeModem_Install.NT.hw]
+AddReg = LowerFilterAddReg
+
+[LowerFilterAddReg]
+HKR,,"LowerFilters",0x00010000,WUDFRd
+
+[FakeModem_Install.NT.Services]
+AddService=WUDFRd,0x00000000,WUDFRD_ServiceInstall
+
+[WUDFRD_ServiceInstall]
+DisplayName     = %WudfRdDisplayName%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WUDFRd.sys
+
+[FakeModem_Install.NT.Wdf]
+UmdfService                 = FakeModem, FakeModem_Install
+UmdfServiceOrder            = FakeModem
+UmdfKernelModeClientPolicy  = AllowKernelModeClients
+UmdfFsContextUsePolicy      = CannotUseFsContexts
+
+[FakeModem_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\FakeModem2um.dll
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\UMDF
+
+[UMDriverCopy]
+FakeModem2um.dll
+
+;-------------------------------------------------------------------------------------------------------
+; DDK procalc tool can be used to check properties settings which describes modem' properties.
+; Generally, customization entries are added here which override commands from the All section
+
+[ModemX.AddReg]
+HKR,,Properties, 1, 80,01,00,00, ff,00,00,00, ff,00,00,00, 07,00,00,00, 0f,00,00,00, f7,03,00,00, 00,c2,01,00, 40,38,00,00
+HKR,,InactivityScale, 1, 0a,00,00,00
+HKR, Settings, InactivityTimeout,, "S30=<#>"
+HKR, Settings, ErrorControl_On,, "\N3"
+HKR, Settings, ErrorControl_Forced,, "\N2"
+HKR, Settings, Compression_On,, "%%C3"
+HKR, Settings, SpeedNegotiation_Off,, "N0"
+HKR, Settings, SpeedNegotiation_On,, "N1"
+
+;--------------------------------------------------------------------------------------------------------------------------
+;This section will define the type of modem and thus present the appropriate icon in the Device manager
+
+[INTERNAL]
+HKR,, DeviceType, 1, 02
+
+;-------------------------------------------------------------------------------------------------------------------------
+; Responses section contains all of the appropriate and required responses in order for the O/S to understand the 
+; Modem responses to system queries.
+
+[All]
+HKR,,ConfigDialog,,modemui.dll
+HKR,,EnumPropPages,,"modemui.dll,EnumPropPages"
+HKR,,PortSubClass,1,02
+HKR,Init,1,,"AT<cr>"
+HKR,Init, 2,, "AT &F E0 V1 &D2 &C1 S0=0 W2 S95=47<cr>"
+
+[MfgAddReg]
+HKR,, InactivityScale, 1, 01,00,00,00
+HKR, Monitor, 1,, "ATS0=0<cr>"
+HKR, Monitor, 2,, "None"
+HKR, Hangup, 1,, "ATH<cr>"
+HKR, Answer, 1,, "ATA<cr>"
+HKR,, Reset,, "ATZ<cr>"
+HKR, Settings, Prefix,, "AT"
+HKR, Settings, Terminator,, "<cr>"
+HKR, Settings, DialPrefix,, "D"
+HKR, Settings, DialSuffix,, ";"
+HKR, Settings, SpeakerVolume_Low,, "L1"
+HKR, Settings, SpeakerVolume_Med,, "L2"
+HKR, Settings, SpeakerVolume_High,, "L3"
+HKR, Settings, SpeakerMode_Off,, "M0"
+HKR, Settings, SpeakerMode_Dial,, "M1"
+HKR, Settings, SpeakerMode_On,, "M2"
+HKR, Settings, SpeakerMode_Setup,, "M3"
+HKR, Settings, FlowControl_Off,, "&K0"
+HKR, Settings, FlowControl_Hard,, "&K3"
+HKR, Settings, FlowControl_Soft,, "&K4"
+HKR, Settings, ErrorControl_On,, "\N5"
+HKR, Settings, ErrorControl_Off,, "\N0"
+HKR, Settings, ErrorControl_Forced,, "\N4"
+HKR, Settings, Compression_On,, "%%C1"
+HKR, Settings, Compression_Off,, "%%C0"
+HKR, Settings, Modulation_CCITT,, "B0 "
+HKR, Settings, Modulation_Bell,, "B1 "
+HKR, Settings, SpeedNegotiation_Off,, "*S0"
+HKR, Settings, SpeedNegotiation_On,, "*S1"
+HKR, Settings, Pulse,, "P"
+HKR, Settings, Tone,, "T"
+HKR, Settings, Blind_Off,, "X4"
+HKR, Settings, Blind_On,, "X3"
+HKR, Settings, CallSetupFailTimer,, "S7=<#>"
+
+HKR, Responses, "<cr><lf>+FCERROR<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>BLACKLISTED<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>BUSY<cr><lf>", 1, 06, 00, 00,00,00,00, 00,00,00,00 
+
+HKR, Responses, "<cr><lf>CONNECT<cr><lf>", 1, 02, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>DATA<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>DELAYED<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>ERROR<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+
+HKR, Responses, "<cr><lf>FAX<cr><lf>", 1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>NO ANSWER<cr><lf>", 1, 07, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NO CARRIER<cr><lf>", 1, 04, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NO DIALTONE<cr><lf>", 1, 05, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>NOTUSED<cr><lf>", 1, 00, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>OK<cr><lf>", 1, 00, 00, 00,00,00,00, 00,00,00,00 
+HKR, Responses, "<cr><lf>RING<cr><lf>", 1, 08, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf>RINGING<cr><lf>", 1, 01, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "0<cr>", 1, 00, 00, 00,00,00,00, 00,00,00,00 ; OK
+HKR, Responses, "1<cr>", 1, 02, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "10<cr>", 1, 02, 00, 60,09,00,00, 00,00,00,00
+HKR, Responses, "11<cr>", 1, 02, 00, c0,12,00,00, 00,00,00,00
+HKR, Responses, "12<cr>", 1, 02, 00, 80,25,00,00, 00,00,00,00
+HKR, Responses, "13<cr>", 1, 02, 00, 20,1c,00,00, 00,00,00,00
+HKR, Responses, "14<cr>", 1, 02, 00, e0,2e,00,00, 00,00,00,00
+HKR, Responses, "15<cr>", 1, 02, 00, 40,38,00,00, 00,00,00,00 ; connect at 14400
+HKR, Responses, "2<cr>", 1, 08, 00, 00,00,00,00, 00,00,00,00 ; RING
+HKR, Responses, "3<cr>", 1, 04, 00, 00,00,00,00, 00,00,00,00 ; NO CARRIER
+HKR, Responses, "4<cr>", 1, 03, 00, 00,00,00,00, 00,00,00,00 ; ERROR
+HKR, Responses, "5<cr>", 1, 02, 00, b0,04,00,00, 00,00,00,00
+HKR, Responses, "6<cr>", 1, 05, 00, 00,00,00,00, 00,00,00,00 ; NO DIALTONE
+HKR, Responses, "69<cr>", 1, 01, 03, 00,00,00,00, 00,00,00,00
+HKR, Responses, "7<cr>", 1, 06, 00, 00,00,00,00, 00,00,00,00 ; BUSY
+HKR, Responses, "70<cr>", 1, 01, 01, 00,00,00,00, 00,00,00,00 ; Protocol:None
+HKR, Responses, "77<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00 ; Protocol:LAPM
+HKR, Responses, "78<cr>", 1, 01, 03, 00,00,00,00, 00,00,00,00 ; Connect V42BIS
+HKR, Responses, "8<cr>", 1, 07, 00, 00,00,00,00, 00,00,00,00 ; NO ANSWER
+HKR, Responses, "80<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00 ; Protocol:ALT
+HKR, Responses, "81<cr>", 1, 01, 02, 00,00,00,00, 00,00,00,00
+
+[ExtraCRLFResponses]
+HKR, Responses, "<cr><lf><cr><lf>OK<cr><lf>",          1, 00, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>ERROR<cr><lf>",       1, 03, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>BUSY<cr><lf>",        1, 06, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO ANSWER<cr><lf>",   1, 07, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO CARRIER<cr><lf>",  1, 04, 00, 00,00,00,00, 00,00,00,00
+HKR, Responses, "<cr><lf><cr><lf>NO DIALTONE<cr><lf>", 1, 05, 00, 00,00,00,00, 00,00,00,00
+
+
+; =================== Generic ==================================
+
+[Strings]
+MSFTUMDF="Microsoft"
+MediaDescription="Microsoft Sample Driver Installation Media"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+FakeModemDeviceName="Microsoft Fake Modem User-Mode Device Sample"

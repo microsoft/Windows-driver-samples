@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{805C7C5E-A9EF-42CA-8F3A-175C6CCDFD53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{A2CB3D9E-1732-4426-8E35-7341BE09E5BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{71B188DF-173E-402E-9FB3-D936E33C3F93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{7A9313F9-BD09-46CB-8B04-D289D34FFDE0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToPackage Include="usb_host_based_sample-pipelineconfig.xml">
+      <Filter>Resource Files</Filter>
+    </FilesToPackage>
+    <FilesToPackage Include="usb_host_based_sample_events.xml">
+      <Filter>Resource Files</Filter>
+    </FilesToPackage>
+    <FilesToPackage Include="usb_host_based_sample_extension.xml">
+      <Filter>Resource Files</Filter>
+    </FilesToPackage>
+    <None Include="usb_host_based_sample-pipelineconfig.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="usb_host_based_sample_events.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="usb_host_based_sample_extension.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

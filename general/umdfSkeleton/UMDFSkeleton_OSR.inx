@@ -51,8 +51,9 @@ KmdfService = WINUSB, WinUsb_Install
 UmdfService = UMDFSkeleton, UMDFSkeleton_Install
 UmdfServiceOrder = UMDFSkeleton
 
+; Needed for Win7 support
 [WinUsb_Install]
-KmdfLibraryVersion = $KMDFVERSION$
+KmdfLibraryVersion = 1.9
 
 [UMDFSkeleton_Install]
 UmdfLibraryVersion=$UMDFVERSION$

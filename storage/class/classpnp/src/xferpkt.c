@@ -144,12 +144,12 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
 
             minWorkingSetTransferPackets = MIN_WORKINGSET_TRANSFER_PACKETS_Client;
 
-        // Note: the reason we use max here is to guarantee a reasonable large max number 
+        // Note: the reason we use max here is to guarantee a reasonable large max number
         // in the case where the port driver may return a very small supported outstanding
         // IOs. For example, even EMMC drive only reports 1 outstanding IO supported, we
-        // may still want to set this value to be at least 
+        // may still want to set this value to be at least
         // MAX_WORKINGSET_TRANSFER_PACKETS_Client.
-        maxWorkingSetTransferPackets = max(MAX_WORKINGSET_TRANSFER_PACKETS_Client, 
+        maxWorkingSetTransferPackets = max(MAX_WORKINGSET_TRANSFER_PACKETS_Client,
                                            2 * maxOutstandingIOPerLUN);
 
     } else {
@@ -161,12 +161,12 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
         // In other words, the minWorkingSetTransferPackets for server will always between 
         // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound and MIN_WORKINGSET_TRANSFER_PACKETS_Server_UpperBound
 
-        minWorkingSetTransferPackets = 
-            max(MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound, 
-                min(MIN_WORKINGSET_TRANSFER_PACKETS_Server_UpperBound, 
+        minWorkingSetTransferPackets =
+            max(MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound,
+                min(MIN_WORKINGSET_TRANSFER_PACKETS_Server_UpperBound,
                     maxOutstandingIOPerLUN));
 
-        maxWorkingSetTransferPackets = max(MAX_WORKINGSET_TRANSFER_PACKETS_Server, 
+        maxWorkingSetTransferPackets = max(MAX_WORKINGSET_TRANSFER_PACKETS_Server,
                                            2 * maxOutstandingIOPerLUN);
     }
 

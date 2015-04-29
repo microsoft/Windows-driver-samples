@@ -147,7 +147,7 @@ Return Value:
 
     SerialDbgPrintEx(TRACE_LEVEL_INFORMATION, DBG_PNP, "-->SerialEvtDeviceAdd\n");
 
-    status = RtlUnicodeStringPrintf(&deviceName, L"%ws%d",
+    status = RtlUnicodeStringPrintf(&deviceName, L"%ws%u",
                                 L"\\Device\\Serial",
                                 currentInstance++);
 
@@ -1454,20 +1454,18 @@ Return Value:
     // so that it will show up if the user boots to dos.
     //
 
-#pragma prefast(suppress: __WARNING_IRQ_SET_TOO_HIGH, "This warning is because we are calling interrupt synchronize routine directly. Suppress it because interrupt is not connected yet.")
-#pragma prefast(suppress:6387, "Interrupt is UNREFERENCED_PARAMETER, so it can be NULL")
+    // __WARNING_IRQ_SET_TOO_HIGH:  we are calling interrupt synchronize routine directly. Suppress it because interrupt is not connected yet.
+    // __WARNING_INVALID_PARAM_VALUE_1: Interrupt is UNREFERENCED_PARAMETER, so it can be NULL
+#pragma warning(suppress: __WARNING_IRQ_SET_TOO_HIGH; suppress: __WARNING_INVALID_PARAM_VALUE_1) 
     SerialReset(NULL, pDevExt);
 
-#pragma prefast(suppress: __WARNING_IRQ_SET_TOO_HIGH, "This warning is because we are calling interrupt synchronize routine directly. Suppress it because interrupt is not connected yet.")
-#pragma prefast(suppress:6387, "Interrupt is UNREFERENCED_PARAMETER, so it can be NULL")
+#pragma warning(suppress: __WARNING_IRQ_SET_TOO_HIGH; suppress: __WARNING_INVALID_PARAM_VALUE_1) 
     SerialMarkClose(NULL, pDevExt);
 
-#pragma prefast(suppress: __WARNING_IRQ_SET_TOO_HIGH, "This warning is because we are calling interrupt synchronize routine directly. Suppress it because interrupt is not connected yet.")
-#pragma prefast(suppress:6387, "Interrupt is UNREFERENCED_PARAMETER, so it can be NULL")
+#pragma warning(suppress: __WARNING_IRQ_SET_TOO_HIGH; suppress: __WARNING_INVALID_PARAM_VALUE_1) 
     SerialClrRTS(NULL, pDevExt);
 
-#pragma prefast(suppress: __WARNING_IRQ_SET_TOO_HIGH, "This warning is because we are calling interrupt synchronize routine directly. Suppress it because interrupt is not connected yet.")
-#pragma prefast(suppress:6387, "Interrupt is UNREFERENCED_PARAMETER, so it can be NULL")
+#pragma warning(suppress: __WARNING_IRQ_SET_TOO_HIGH; suppress: __WARNING_INVALID_PARAM_VALUE_1) 
     SerialClrDTR(NULL, pDevExt);
 
     //
