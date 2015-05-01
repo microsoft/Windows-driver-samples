@@ -1,8 +1,8 @@
 # Driver samples for Windows 10
-These are the official Microsoft Windows Driver Kit (WDK) team driver code samples for Windows 10. They provide a foundation for Universal Windows driver support of all hardware form factors, from phones to desktop PCs. Use these samples with Visual Studio Community 2015 RC, Standalone Windows SDK for Windows 10, and Windows Driver Kit (WDK) 10.
+These are the official Microsoft Windows Driver Kit (WDK) team driver code samples for Windows 10. They provide a foundation for Universal Windows driver support of all hardware form factors, from phones to desktop PCs. Use these samples with Visual Studio 2015 RC, Standalone Windows SDK for Windows 10, and Windows Driver Kit (WDK) 10.
 
 ## Windows 10 driver development
-Use Visual Studio Community 2015 RC and the the Windows Driver Kit (WDK) 10 to build, test, and deploy your drivers. With Windows 10 Insider Preview, the driver development environment is integrated into Visual Studio. To get Windows 10 Insider Preview and the driver development kits and tools, join the Windows Insider Program.
+Use Visual Studio 2015 RC and the the Windows Driver Kit (WDK) 10 to build, test, and deploy your drivers. With Windows 10 Insider Preview, the driver development environment is integrated into Visual Studio. To get Windows 10 Insider Preview and the driver development kits and tools, join the Windows Insider Program.
 
 [Become a Windows Insider](https://insider.windows.com/ "Become a Windows Insider")
 
