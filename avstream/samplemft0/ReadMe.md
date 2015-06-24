@@ -21,6 +21,8 @@ Related topics
 
 [Roadmap for Developing Streaming Media Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff568130)
 
+[Universal camera driver design guide for Windows 10](https://msdn.microsoft.com/en-us/Library/Windows/Hardware/dn937080)
+
 **Samples**
 
 [Windows Store device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
