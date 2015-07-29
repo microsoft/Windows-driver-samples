@@ -436,37 +436,40 @@ ClasspPerfIncrementErrorCount(
     fdoData->Perf.SuccessfulIO = 0; // implicit interlock
     errors = InterlockedIncrement((volatile LONG *)&FdoExtension->ErrorCount);
 
-    if (errors >= CLASS_ERROR_LEVEL_1) {
+    if (!fdoData->DisableThrottling) {
 
-        //
-        // If the error count has exceeded the error limit, then disable
-        // any tagged queuing, multiple requests per lu queueing
-        // and sychronous data transfers.
-        //
-        // Clearing the no queue freeze flag prevents the port driver
-        // from sending multiple requests per logical unit.
-        //
+        if (errors >= CLASS_ERROR_LEVEL_1) {
 
-        CLEAR_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_NO_QUEUE_FREEZE);
-        CLEAR_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_QUEUE_ACTION_ENABLE);
+            //
+            // If the error count has exceeded the error limit, then disable
+            // any tagged queuing, multiple requests per lu queueing
+            // and sychronous data transfers.
+            //
+            // Clearing the no queue freeze flag prevents the port driver
+            // from sending multiple requests per logical unit.
+            //
 
-        SET_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_DISABLE_SYNCH_TRANSFER);
+            CLEAR_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_NO_QUEUE_FREEZE);
+            CLEAR_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_QUEUE_ACTION_ENABLE);
 
-        TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_GENERAL, "ClasspPerfIncrementErrorCount: "
-                    "Too many errors; disabling tagged queuing and "
-                    "synchronous data tranfers.\n"));
+            SET_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_DISABLE_SYNCH_TRANSFER);
 
-    }
+            TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_GENERAL, "ClasspPerfIncrementErrorCount: "
+                        "Too many errors; disabling tagged queuing and "
+                        "synchronous data tranfers.\n"));
 
-    if (errors >= CLASS_ERROR_LEVEL_2) {
+        }
 
-        //
-        // If a second threshold is reached, disable disconnects.
-        //
+        if (errors >= CLASS_ERROR_LEVEL_2) {
 
-        SET_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_DISABLE_DISCONNECT);
-        TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_GENERAL, "ClasspPerfIncrementErrorCount: "
-                    "Too many errors; disabling disconnects.\n"));
+            //
+            // If a second threshold is reached, disable disconnects.
+            //
+
+            SET_FLAG(FdoExtension->SrbFlags, SRB_FLAGS_DISABLE_DISCONNECT);
+            TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_GENERAL, "ClasspPerfIncrementErrorCount: "
+                        "Too many errors; disabling disconnects.\n"));
+        }
     }
 
     KeReleaseSpinLock(&fdoData->SpinLock, oldIrql);
@@ -1635,6 +1638,7 @@ ClassReadCapacity16 (
     //prepare the Srb
     if (NT_SUCCESS(status))
     {
+    
         SrbSetTimeOutValue(Srb, FdoExtension->TimeOutValue);
         SrbSetRequestTag(Srb, SP_UNTAGGED);
         SrbSetRequestAttribute(Srb, SRB_SIMPLE_TAG_REQUEST);
@@ -8193,6 +8197,42 @@ retry:
 
 #endif // #if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 
+__inline
+BOOLEAN
+ClassDeviceHwFirmwareIsPortDriverSupported(
+    _In_  PDEVICE_OBJECT DeviceObject
+    )
+/*
+Routine Description:
+
+    This function informs the caller whether the port driver supports hardware firmware requests. 
+
+Arguments:
+    DeviceObject: The target object.
+
+Return Value:
+
+    TRUE if the port driver is supported.
+
+--*/
+{
+    //
+    // If the request is for a FDO, process the request for Storport, SDstor and Spaceport only.
+    // Don't process it if we don't have a miniport descriptor.
+    //
+    PCOMMON_DEVICE_EXTENSION commonExtension = DeviceObject->DeviceExtension;
+    PFUNCTIONAL_DEVICE_EXTENSION fdoExtension = DeviceObject->DeviceExtension;
+
+    BOOLEAN isSupported = FALSE;
+    if (commonExtension->IsFdo && (fdoExtension->MiniportDescriptor != NULL)) {
+        isSupported = ((fdoExtension->MiniportDescriptor->Portdriver == StoragePortCodeSetStorport) ||
+                       (fdoExtension->MiniportDescriptor->Portdriver == StoragePortCodeSetSpaceport) ||
+                       (fdoExtension->MiniportDescriptor->Portdriver == StoragePortCodeSetSDport   ));
+    }
+
+    return isSupported;
+}
+
 NTSTATUS
 ClassDeviceHwFirmwareGetInfoProcess(
     _In_ PDEVICE_OBJECT DeviceObject,
@@ -8245,20 +8285,16 @@ Return Value:
     }
 
     //
-    // If the request is for a FDO, process the request for Storport, SDstor and Spaceport only.
+    // Only process the request for a supported port driver.
     //
-    if (commonExtension->IsFdo &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetStorport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSpaceport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSDport)) {
-
+    if (!ClassDeviceHwFirmwareIsPortDriverSupported(DeviceObject)) {
         status = STATUS_NOT_IMPLEMENTED;
         goto Exit_Firmware_Get_Info;
     }
 
     //
-    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defenses the situation
-    // of receiving this IOCTL when the device is created but not started, or device start failed but not get removed yet.
+    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defends against the situation
+    // of receiving this IOCTL when the device is created but not started, or device start failed but did not get removed yet.
     //
     if (commonExtension->IsFdo && (fdoExtension->FunctionSupportInfo == NULL)) {
 
@@ -8413,20 +8449,16 @@ ClassDeviceHwFirmwareDownloadProcess(
     }
 
     //
-    // If the request is for a FDO, process the request for Storport, SDstor and Spaceport only.
+    // Only process the request for a supported port driver.
     //
-    if (commonExtension->IsFdo &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetStorport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSpaceport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSDport)) {
-
+    if (!ClassDeviceHwFirmwareIsPortDriverSupported(DeviceObject)) {
         status = STATUS_NOT_IMPLEMENTED;
         goto Exit_Firmware_Download;
     }
 
     //
-    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defenses the situation
-    // of receiving this IOCTL when the device is created but not started, or device start failed but not get removed yet.
+    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defends against the situation
+    // of receiving this IOCTL when the device is created but not started, or device start failed but did not get removed yet.
     //
     if (commonExtension->IsFdo && (fdoExtension->FunctionSupportInfo == NULL)) {
 
@@ -8741,20 +8773,16 @@ ClassDeviceHwFirmwareActivateProcess(
     }
 
     //
-    // If the request is for a FDO, process the request for Storport, SDstor and Spaceport only.
+    // Only process the request for a supported port driver.
     //
-    if (commonExtension->IsFdo &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetStorport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSpaceport) &&
-        (fdoExtension->MiniportDescriptor->Portdriver != StoragePortCodeSetSDport)) {
-
+    if (!ClassDeviceHwFirmwareIsPortDriverSupported(DeviceObject)) {
         status = STATUS_NOT_IMPLEMENTED;
         goto Exit_Firmware_Activate;
     }
 
     //
-    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defenses the situation
-    // of receiving this IOCTL when the device is created but not started, or device start failed but not get removed yet.
+    // Buffer "FunctionSupportInfo" is allocated during start device process. Following check defends against the situation
+    // of receiving this IOCTL when the device is created but not started, or device start failed but did not get removed yet.
     //
     if (commonExtension->IsFdo && (fdoExtension->FunctionSupportInfo == NULL)) {
 
@@ -8901,3 +8929,4 @@ Exit_Firmware_Activate:
     FREE_POOL(Srb);
     return status;
 }
+

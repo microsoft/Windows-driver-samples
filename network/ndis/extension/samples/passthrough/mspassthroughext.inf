@@ -6,20 +6,20 @@
 Signature   = "$Windows NT$"
 Class       = NetService
 ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
-Provider    = %Msft%
+Provider    = %ProviderString%
 CatalogFile = mspassthroughext.cat
 DriverVer   = 08/29/2011,1.0
 
 [Manufacturer]
-%Msft%=MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
 
-[MSFT.NTx86]
+[Standard.NTx86]
 %MSPassthroughExt_Desc%=Install, MS_passthroughext
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %MSPassthroughExt_Desc%=Install, MS_passthroughext
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %MSPassthroughExt_Desc%=Install, MS_passthroughext
 
 ;-------------------------------------------------------------------------
@@ -74,16 +74,12 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %12%\MSPassthroughExt.sys
 LoadOrderGroup  = NDIS
 Description     = %MSPassthroughExt_Desc%
-AddReg          = Common.Params.reg
 
 [Install.Remove.Services]
 DelService=MSPassthroughExt,0x200
 
 [Strings]
-Msft = "Microsoft"
-MSPassthroughExt_Desc = "Microsoft Sample Passthrough Extension"
+ManufacturerName="TODO-Set-Manufacturer"
+ProviderString = "TODO-Set-Provider"
+MSPassthroughExt_Desc = "Sample Passthrough Extension"
 MSPassthroughExt_HelpText = "Sample for filtering extension using SxBase"
-
-
-
-

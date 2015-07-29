@@ -18,8 +18,8 @@ const ActivitySample c_SimulatorData[][MAX_ACTIVITY_STATE_PER_SAMPLE] = {
     // state and confidence pair.
     { { {}, ActivityState_InVehicle, 40 }, { {}, ActivityState_Biking,    30 }, { {}, ActivityState_Walking,   20 }, {                               } }, // InVehicle 40%, Biking 30%, Walking 20%
     { { {}, ActivityState_Biking,    45 }, { {}, ActivityState_InVehicle, 40 }, { {}, ActivityState_Fidgeting, 30 }, { {}, ActivityState_Walking, 20 } }, // Biking 45%, InVehicle 40% Fidgeting 30%, Walking 20%
-    { { {}, ActivityState_Fidgeting, 80 }, { {}, ActivityState_InVehicle, 60 }, { {}, ActivityState_Biking,    35 }, { {}, ActivityState_Walking, 20 } }, // Fidgeting 80%, InVehicle 60%, Biking 35%, Walking 20%
-    { { {}, ActivityState_InVehicle, 75 }, { {}, ActivityState_Biking,    55 }, { {}, ActivityState_Walking,   18 }, {                               } }, // InVehicle 75%, Biking 55%, Walking 18%
+    { { {}, ActivityState_Idle,      80 }, { {}, ActivityState_InVehicle, 60 }, { {}, ActivityState_Biking,    35 }, { {}, ActivityState_Walking, 20 } }, // Idle 80%, InVehicle 60%, Biking 35%, Walking 20%
+    { { {}, ActivityState_InVehicle, 75 }, { {}, ActivityState_Idle,      55 }, { {}, ActivityState_Walking,   18 }, {                               } }, // InVehicle 75%, Idle 55%, Walking 18%
     { { {}, ActivityState_Biking,    90 }, {                                 }, {                                 }, {                               } }, // Biking 90%
 };
 

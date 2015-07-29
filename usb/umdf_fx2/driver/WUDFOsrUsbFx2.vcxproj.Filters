@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{23E0CA5E-560F-46BF-8A5D-0C9892A60610}</UniqueIdentifier>
+      <UniqueIdentifier>{E1664368-3424-45A1-AF32-AAACC488825D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{DE2D9516-18E4-493F-8E49-245A3A552F1A}</UniqueIdentifier>
+      <UniqueIdentifier>{137984AA-C7C2-452A-9DA3-3FCF41A038C9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{0D7905F4-200D-4439-A264-543F6CC50803}</UniqueIdentifier>
+      <UniqueIdentifier>{B2A97895-8C0E-4645-AF01-3C7522D5A567}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{622540FC-F451-4D00-B0A6-DED0A2B5BDBA}</UniqueIdentifier>
+      <UniqueIdentifier>{9B29C0A6-BE4B-4116-8FF9-8E8894F2055D}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,9 +45,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\WUDFOsrUsbFx2.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="WUDFOsrUsbFx2.inx">
       <Filter>Driver Files</Filter>
     </Inf>

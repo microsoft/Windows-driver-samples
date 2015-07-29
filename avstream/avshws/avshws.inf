@@ -1,0 +1,173 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;    PURPOSE.
+;
+;Module Name:
+;
+;    AVSHWS.INF
+;
+;Abstract:
+;
+;
+;AVStream pin centric sample mini driver (AVSHWS.sys) installation file. 
+;Supports x86, amd64, arm and arm64 platforms
+;
+;--*/
+
+[Version]
+signature="$WINDOWS NT$"
+Class=Media
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+Catalogfile=avshws.cat
+DriverVer=08/31/2006,6.0.5600.0
+
+[SourceDisksNames]
+1000=%cdname%,,,
+
+[SourceDisksFiles]
+avshws.sys=1000
+
+[DestinationDirs]
+DefaultDestDir=12
+avshws.CopyFiles=12
+
+[avshws.CopyFiles]
+avshws.sys
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTx86,NTamd64,ntarm,ntarm64
+
+[Standard.NTx86]
+%avshws.DeviceDesc%=avshws.NTx86,AVSHWS
+
+[Standard.NTamd64]
+%avshws.DeviceDesc%=avshws.NTamd64,AVSHWS
+
+[Standard.NTarm]
+%avshws.DeviceDesc%=avshws.NTarm,AVSHWS
+
+[Standard.NTarm64]
+%avshws.DeviceDesc%=avshws.NTarm64,AVSHWS
+
+;---------------------------------------------------------------
+;                x 86  D D I n s t a l l
+;---------------------------------------------------------------
+
+[avshws.NTx86]
+Include=ks.inf, KSCAPTUR.inf
+Needs=KS.Registration,KSCAPTUR.Registration.NT
+CopyFiles=avshws.CopyFiles
+
+;---------------------------------------------------------------
+;                A M D 64  D D I n s t a l l
+;---------------------------------------------------------------
+
+[avshws.NTamd64]
+Include=ks.inf,KSCAPTUR.inf
+Needs=KS.Registration,KSCAPTUR.Registration.NT
+CopyFiles=avshws.CopyFiles
+
+;---------------------------------------------------------------
+;                A R M  D D I n s t a l l
+;---------------------------------------------------------------
+
+[avshws.NTarm]
+Include=ks.inf,KSCAPTUR.inf
+Needs=KS.Registration,KSCAPTUR.Registration.NT
+CopyFiles=avshws.CopyFiles
+
+;---------------------------------------------------------------
+;                A R M 64  D D I n s t a l l
+;---------------------------------------------------------------
+
+[avshws.NTarm64]
+Include=ks.inf,KSCAPTUR.inf
+Needs=KS.Registration,KSCAPTUR.Registration.NT
+CopyFiles=avshws.CopyFiles
+
+;---------------------------------------------------------------
+;                I n t e r f a c e s
+;---------------------------------------------------------------
+
+[avshws.NTx86.Interfaces]
+AddInterface=%KSCATEGORY_CAPTURE%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,"GLOBAL",CaptureInterface.NT,0
+
+[avshws.NTamd64.Interfaces]
+AddInterface=%KSCATEGORY_CAPTURE%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,"GLOBAL",CaptureInterface.NT,0
+
+[avshws.NTarm.Interfaces]
+AddInterface=%KSCATEGORY_CAPTURE%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,"GLOBAL",CaptureInterface.NT,0
+
+[avshws.NTarm64.Interfaces]
+AddInterface=%KSCATEGORY_CAPTURE%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO%,"GLOBAL",CaptureInterface.NT,0
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,"GLOBAL",CaptureInterface.NT,0
+
+[CaptureInterface.NT]
+AddReg=avshws.Reader.AddReg
+
+;---------------------------------------------------------------
+;                A d d R e g
+;---------------------------------------------------------------
+
+[avshws.Reader.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%avshws.Reader.FriendlyName%
+
+;---------------------------------------------------------------
+;                S e r v i c e s  
+;---------------------------------------------------------------
+
+[avshws.NTx86.Services]
+AddService=avshws, 0x00000002, avshws.ServiceInstall
+
+[avshws.NTamd64.Services]
+AddService=avshws, 0x00000002, avshws.ServiceInstall
+
+[avshws.NTarm.Services]
+AddService=avshws, 0x00000002, avshws.ServiceInstall
+
+[avshws.NTarm64.Services]
+AddService=avshws, 0x00000002, avshws.ServiceInstall
+
+[avshws.ServiceInstall]
+DisplayName=%avshws.DeviceDesc%
+ServiceType=%SERVICE_KERNEL_DRIVER%
+StartType=%SERVICE_DEMAND_START%
+ErrorControl=%SERVICE_ERROR_NORMAL%
+ServiceBinary=%12%\avshws.sys
+
+;---------------------------------------------------------------
+;                S t r i n g s
+;---------------------------------------------------------------
+
+[Strings]
+; non-localizable
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_VIDEO="{6994AD05-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_VIDEO_CAMERA="{E5323777-F976-4f5b-9B55-B94699C46E44}"
+
+SERVICE_KERNEL_DRIVER=1
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
+REG_DWORD=0x00010001
+
+;localizable
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+avshws.DeviceDesc="AVStream Simulated Hardware Sample"
+avshws.Reader.FriendlyName="avshws Source"
+cdname="AVSHWS Installation Disk"

@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{4069EBC4-432A-48E0-AD1E-9EDEAB260F0E}</UniqueIdentifier>
+      <UniqueIdentifier>{C8EAE043-CA7E-41A8-821D-EFCA0B010195}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{6DA94DA3-51F2-4464-BDF8-6F25FA6ABEC6}</UniqueIdentifier>
+      <UniqueIdentifier>{2FE25726-3DE9-439A-BE0F-0004BF801CE9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{440472A3-6A34-466D-AEF0-81507558AE46}</UniqueIdentifier>
+      <UniqueIdentifier>{1C6ED801-206E-4535-B7D3-56331A35A769}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{DB1109AA-F1A5-43B8-B112-1CA70243A5AB}</UniqueIdentifier>
+      <UniqueIdentifier>{385CA6C0-4DDF-4651-AF87-3A05BB9DD45D}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +36,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\Pedometer.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="Pedometer.inx">
       <Filter>Driver Files</Filter>
     </Inf>

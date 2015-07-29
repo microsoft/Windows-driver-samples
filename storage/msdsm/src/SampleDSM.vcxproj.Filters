@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{5467502E-BE53-48E3-9B4D-2727B895913F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{E67880DC-0E2B-4629-9BC4-6DE655C52134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{77134D09-E871-4C7B-8EBB-BC35E319ABF8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{029DDD29-646E-4A6D-AF49-A8F30315A59D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dsmmain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="intrface.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="precompsrc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wmi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <MofComp Include="msdsm.mof">
+      <Filter>Driver Files</Filter>
+    </MofComp>
+    <MofComp Include="msdsmdsm.mof">
+      <Filter>Driver Files</Filter>
+    </MofComp>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="msdsm.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

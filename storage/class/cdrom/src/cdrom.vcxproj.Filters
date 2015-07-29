@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{00DD8EE3-FDCD-4456-BC4F-E74036AB1AC1}</UniqueIdentifier>
+      <UniqueIdentifier>{F4624455-84A0-4D68-9FDA-5A45BDDF16E9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{ED90C8BD-839B-498E-801C-9D36D5AE7AA7}</UniqueIdentifier>
+      <UniqueIdentifier>{59782596-7387-4C2F-8B3F-14DD7DBBE39E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{4FF8F695-EF19-47F0-B961-AA636092E365}</UniqueIdentifier>
+      <UniqueIdentifier>{F55549B9-4C00-441C-8960-79D8E04B2640}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{AB325463-69C0-4899-82FF-C8D632CBE6C9}</UniqueIdentifier>
+      <UniqueIdentifier>{BE2B60C1-58DD-4635-A2B4-E75CEC446355}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +60,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\cdrom.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="cdrom.inf">
       <Filter>Driver Files</Filter>
     </Inf>

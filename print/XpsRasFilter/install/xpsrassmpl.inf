@@ -18,22 +18,22 @@
 ;
 [Version]
 Signature="$Windows NT$"
-Provider=%MS%
+Provider=%ProviderString%
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=10/17/2008,6.1.6930.0
 
 [Manufacturer]
-%Microsoft%=Microsoft,NTx86.6.1,NTia64.6.1,NTamd64.6.1
+%ManufacturerName%=Standard,NTx86.6.1,NTia64.6.1,NTamd64.6.1
 
 
-[Microsoft.NTx86.6.1]
+[Standard.NTx86.6.1]
 "XPSRas WDK Sample Driver" = INSTALL_FILTER
 
-[Microsoft.NTia64.6.1]
+[Standard.NTia64.6.1]
 "XPSRas WDK Sample Driver" = INSTALL_FILTER
 
-[Microsoft.NTamd64.6.1]
+[Standard.NTamd64.6.1]
 "XPSRas WDK Sample Driver" = INSTALL_FILTER
 
 [INSTALL_FILTER]
@@ -83,5 +83,5 @@ xpsrasfilter.dll		= 2
 
 [Strings]
 Location="XPSRas WDK Sample Driver"
-MS="Microsoft"
-Microsoft="Microsoft"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"

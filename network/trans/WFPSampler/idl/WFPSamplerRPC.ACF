@@ -1,0 +1,55 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   Copyright (c) 2014 Microsoft Corporation.  All Rights Reserved.
+//
+//   Module Name:
+//      WFPSamplerRPC.acf
+//
+//   Abstract:
+//      This module contains application configuration information for WFPSampler's RPC interface.
+//
+//   Author:
+//      Dusty Harper      (DHarper)
+//
+//   Revision History:
+//
+//      [ Month ][Day] [Year] - [Revision]-[ Comments ]
+//      May       01,   2010  -     1.0   -  Creation
+//      December  13,   2013  -     1.1   -  Add ADVANCED_PACKET_INJECTION, FLOW_ASSOCIATION, and
+//                                              PEND_ENDPOINT_CLOSURE scenarios
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[
+   type_strict_context_handle,
+   implicit_handle(handle_t wfpSamplerBindingHandle)
+]
+
+interface IWFPSampler
+{
+   [comm_status, fault_status] RPCInvokeScenarioAdvancedPacketInjection();
+
+   [comm_status, fault_status] RPCInvokeScenarioAppContainer();
+
+   [comm_status, fault_status] RPCInvokeScenarioBasicAction();
+
+   [comm_status, fault_status] RPCInvokeScenarioBasicPacketExamination();
+
+   [comm_status, fault_status] RPCInvokeScenarioBasicPacketInjection();
+
+   [comm_status, fault_status] RPCInvokeScenarioBasicPacketModification();
+
+   [comm_status, fault_status] RPCInvokeScenarioBasicStreamInjection();
+
+   [comm_status, fault_status] RPCInvokeScenarioFastPacketInjection();
+
+   [comm_status, fault_status] RPCInvokeScenarioFastStreamInjection();
+
+   [comm_status, fault_status] RPCInvokeScenarioFlowAssociation();
+
+   [comm_status, fault_status] RPCInvokeScenarioPendAuthorization();
+
+   [comm_status, fault_status] RPCInvokeScenarioPendEndpointClosure();
+
+   [comm_status, fault_status] RPCInvokeScenarioProxy();
+}

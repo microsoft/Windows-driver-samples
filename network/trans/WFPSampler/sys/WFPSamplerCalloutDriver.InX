@@ -1,0 +1,93 @@
+;///////////////////////////////////////////////////////////////////////////////////////////////////
+;//
+;//   Copyright (c) 2012 Microsoft Corporation. All Rights Reserved.
+;//
+;//   Module Name:
+;//      WFPSamplerCalloutDriver.Inf
+;//
+;//   Abstract:
+;//      INF file for installing the WFPSampler callout driver.
+;//
+;//   Author:
+;//      Dusty Harper      (DHarper)
+;//
+;//   Revision History:
+;//
+;//      [ Month ][Day] [Year] - [Revision]-[ Comments ]
+;//      April     01,   2010  -   0.0.0.1 -  Creation
+;//
+;///////////////////////////////////////////////////////////////////////////////////////////////////
+
+[Version]
+   Signature   = "$Windows NT$"
+   Class       = WFPCALLOUTS
+   ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
+   Provider    = %ProviderString%
+   CatalogFile = WFPSamplerCalloutDriver.Cat
+   DriverVer   = 
+
+[SourceDisksNames.$ARCH$]
+   1 = %WFPSamplerCalloutDriverDiskId%,,,""
+
+[SourceDisksFiles.$ARCH$]
+   WFPSamplerCalloutDriver.sys = 1,,
+
+[ClassInstall32.nt$ARCH$]
+   AddReg = WFPCalloutsClassReg
+
+[DestinationDirs]
+   DefaultDestDir                      = 12                                                        ;/// %WinDir%\System32\Drivers
+   WFPSamplerCalloutDriver.DriverFiles = 12                                                        ;/// %WinDir%\System32\Drivers
+
+[DefaultInstall.nt$ARCH$]
+   OptionDesc = %WFPSamplerCalloutDriverDescription%
+   CopyFiles  = WFPSamplerCalloutDriver.DriverFiles
+
+[DefaultInstall.nt$ARCH$.Services]
+   AddService = %WFPSamplerCalloutDriverServiceName%,,WFPSamplerCalloutDriver.Service
+
+[DefaultUninstall.nt$ARCH$]
+   DelFiles = WFPSamplerCalloutDriver.DriverFiles
+   DelReg   = WFPCalloutsClassReg
+
+[DefaultUninstall.nt$ARCH$.Services]
+   DelService = %WFPSamplerCalloutDriverServiceName%,0x200                                         ;/// SPSVCINST_STOPSERVICE
+
+[WFPCalloutClassReg]
+   HKR,,,0,%WFPCalloutClassName%
+   HKR,,Icon,,-5
+   HKR,,SilentInstall,,1
+   HKR,,DeviceCharacteristics,0x10001,0x100                                                        ;/// FLG_ADDREG_BINVALUETYPE | FLG_ADDREG_TYPE_MULTI_SZ, FILE_DEVICE_SECURE_OPEN
+   HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)"                                        ;/// Permit Generic All access to SYstem, Built-in Admin, and Local System.
+
+[WFPSamplerCalloutDriver.DriverFiles]
+   WFPSamplerCalloutDriver.sys,,,0x00000040                                                        ;/// COPYFLG_OVERWRITE_OLDER_ONLY
+
+[WFPSamplerCalloutDriver.NT.CoInstallers]
+   AddReg    = WFPSamplerCalloutDriver.CoInstaller.AddReg
+   CopyFiles = WFPSamplerCalloutDriver.CoInstaller.CopyFiles
+
+[WFPSamplerCalloutDriver.CoInstaller.AddReg]
+   HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[WFPSamplerCalloutDriver.CoInstaller.CopyFiles]
+   WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[WFPSamplerCalloutDriver.Service]
+   DisplayName    = %WFPSamplerCalloutDriverServiceName%
+   Description    = %WFPSamplerCalloutDriverServiceDescription%
+   ServiceType    = 1                                                                              ;/// SERVICE_KERNEL_DRIVER
+   StartType      = 0                                                                              ;/// SERVICE_BOOT_START
+   ErrorControl   = 1                                                                              ;/// SERVICE_ERROR_NORMAL
+   ServiceBinary  = %12%\WFPSamplerCalloutDriver.sys                                               ;/// %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.sys
+   LoadOrderGroup = NDIS                                                                           ;/// Load immediately after TCPIP.sys
+   Dependencies   = TCPIP
+
+[Strings]
+   ProviderString                            = "TODO-Set-Provider"
+   WFPCalloutClassName                       = "WFP Callout"
+   WFPSamplerCalloutDriverDeviceDescription  = "WFP Sampler Callout Device"
+   WFPSamplerCalloutDriverDescription        = "WFP Sampler Callout Driver"
+   WFPSamplerCalloutDriverServiceName        = "WFPSamplerCallouts"
+   WFPSamplerCalloutDriverServiceDescription = "WFP Sampler Service - Callouts"
+   WFPSamplerCalloutDriverDiskId             = "WFPSampler Installation Disk"

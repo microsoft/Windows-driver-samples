@@ -1,0 +1,115 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    USBSamp.INF
+;
+;Abstract:
+;    Installation inf for the Intel 82930 USB Test Board, OSR USB-FX device,
+;    FX2 MUTT and FX3 MUTT device
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ProviderName%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=KmdfSamples.cat
+
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Device section =====================
+
+[Manufacturer]
+%MfgName%=IntelOSR,NT$ARCH$
+
+[IntelOSR.NT$ARCH$]
+%USB\VID_0547&PID_1002.DeviceDesc%=usbsamp.Dev, USB\VID_0547&PID_1002   ; OSR USB-FX
+%USB\VID_045E&PID_930A.DeviceDesc%=usbsamp.Dev, USB\VID_045E&PID_930A   ; Intel 82930
+%USB\VID_045E&PID_078E.DeviceDesc%=usbsamp.Dev, USB\VID_045E&PID_078E   ; FX2 MUTT
+%USB\VID_045E&PID_078F.DeviceDesc%=usbsamp.Dev, USB\VID_045E&PID_078F   ; FX3 MUTT
+
+
+[usbsamp.Dev.NT]
+CopyFiles=usbsamp.Files.Ext
+
+[usbsamp.Dev.NT.Services]
+Addservice = usbsamp, 0x00000002, usbsamp.AddService
+
+[usbsamp.AddService]
+DisplayName    = %usbsamp.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\usbsamp.sys
+AddReg         = usbsamp.AddReg
+
+[usbsamp.AddReg]
+HKR,"Parameters","MaximumTransferSize",0x10001,65536
+HKR,"Parameters","DebugLevel",0x10001,2
+
+[usbsamp.Files.Ext]
+usbsamp.sys
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+usbsamp.sys = 1
+
+;-------------- WDF Coinstaller installation
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[usbsamp.Dev.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[usbsamp.Dev.NT.Wdf]
+KmdfService = usbsamp, usbsamp_wdfsect
+
+[usbsamp_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;---------------------------------------------------------------;
+
+[Strings]
+ProviderName    = "TODO-Set-Provider"
+MfgName         = "Intel/OSR"
+Disk_Description= "usbsamp Installation Disk"
+usbsamp.SvcDesc = "WDF Sample Driver for Intel 82930 USB Test Board"
+ClassName       = "Sample Device"
+USB\VID_0547&PID_1002.DeviceDesc="WDF Sample for OSR USB-FX2 Learning Kit"
+USB\VID_045E&PID_930A.DeviceDesc="WDF Sample for Intel 82930 USB Test Board"
+USB\VID_045E&PID_078E.DeviceDesc="WDF Sample for FX2 MUTT device"
+USB\VID_045E&PID_078F.DeviceDesc="WDF Sample for FX3 MUTT device"
+

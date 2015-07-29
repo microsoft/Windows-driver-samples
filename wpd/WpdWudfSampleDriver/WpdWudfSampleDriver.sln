@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WpdWudfSampleDriver", "WpdWudfSampleDriver.vcxproj", "{5FE7B5AC-67C9-42B7-B687-D775D7721761}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WpdWudfSampleDriver", "WpdWudfSampleDriver.vcxproj", "{8D70B287-260F-4322-B120-97419D64A487}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Debug|Win32.Build.0 = Debug|Win32
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Release|Win32.ActiveCfg = Release|Win32
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Release|Win32.Build.0 = Release|Win32
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Debug|x64.ActiveCfg = Debug|x64
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Debug|x64.Build.0 = Debug|x64
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Release|x64.ActiveCfg = Release|x64
-		{5FE7B5AC-67C9-42B7-B687-D775D7721761}.Release|x64.Build.0 = Release|x64
+		{8D70B287-260F-4322-B120-97419D64A487}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8D70B287-260F-4322-B120-97419D64A487}.Debug|Win32.Build.0 = Debug|Win32
+		{8D70B287-260F-4322-B120-97419D64A487}.Release|Win32.ActiveCfg = Release|Win32
+		{8D70B287-260F-4322-B120-97419D64A487}.Release|Win32.Build.0 = Release|Win32
+		{8D70B287-260F-4322-B120-97419D64A487}.Debug|x64.ActiveCfg = Debug|x64
+		{8D70B287-260F-4322-B120-97419D64A487}.Debug|x64.Build.0 = Debug|x64
+		{8D70B287-260F-4322-B120-97419D64A487}.Release|x64.ActiveCfg = Release|x64
+		{8D70B287-260F-4322-B120-97419D64A487}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

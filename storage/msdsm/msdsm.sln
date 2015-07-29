@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleDSM", "src\SampleDSM.vcxproj", "{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Debug|Win32.Build.0 = Debug|Win32
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Release|Win32.ActiveCfg = Release|Win32
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Release|Win32.Build.0 = Release|Win32
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Debug|x64.ActiveCfg = Debug|x64
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Debug|x64.Build.0 = Debug|x64
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Release|x64.ActiveCfg = Release|x64
+		{D093D3C3-53D2-4E2A-A634-CFBE482CC29D}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

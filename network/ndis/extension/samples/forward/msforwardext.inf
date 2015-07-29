@@ -6,20 +6,20 @@
 Signature   = "$Windows NT$"
 Class       = NetService
 ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
-Provider    = %Msft%
+Provider    = %ProviderString%
 CatalogFile = msforwardext.cat
 DriverVer   = 07/29/2011,2.0
 
 [Manufacturer]
-%Msft%=MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
 
-[MSFT.NTx86]
+[Standard.NTx86]
 %MSForwardExt_Desc%=Install, MS_forwardext
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %MSForwardExt_Desc%=Install, MS_forwardext
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %MSForwardExt_Desc%=Install, MS_forwardext
 
 ;-------------------------------------------------------------------------
@@ -74,12 +74,12 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %12%\MSForwardExt.sys
 LoadOrderGroup  = NDIS
 Description     = %MSForwardExt_Desc%
-AddReg          = Common.Params.reg
 
 [Install.Remove.Services]
 DelService=MSForwardExt,0x200
 
 [Strings]
-Msft = "Microsoft"
-MSForwardExt_Desc = "Microsoft Sample Forwarding Extension"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+MSForwardExt_Desc = "Sample Forwarding Extension"
 MSForwardExt_HelpText = "Sample for forwarding switch extension"

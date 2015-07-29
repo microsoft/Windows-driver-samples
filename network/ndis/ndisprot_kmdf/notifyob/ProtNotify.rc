@@ -1,0 +1,14 @@
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE              VFT_DLL
+#define VER_FILESUBTYPE           VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR   "WDF NDISPROT driver install Notify Object"
+#define VER_INTERNALNAME_STR      "ProtNotify.dll"
+
+#include <common.ver>
+
+#include "Resource.h"
+
+NDIS_NOTIFY_RESOURCE_ID1    TYPELIB    "ProtNotify.tlb"
+NDIS_NOTIFY_RESOURCE_ID2    REGISTRY   "ProtNotify.rgs"

@@ -27,14 +27,11 @@
 Signature="$WINDOWS NT$"
 Class=Modem
 ClassGUID={4D36E96D-E325-11CE-BFC1-08002BE10318}
-Provider=%Mfg%
+Provider=%ProviderString%
 DriverVer=11/11/2002,5.1.3711
 
 ;INF files that are not distributed with the OS should contain the following line:
 CatalogFile=KmdfSamples.cat
-
-;INF files that are to be distributed with the OS that load a service and or files on the CD, should contain the following line:
-;Layoutfile=layout.inf
 
 ;----------------------------------------------------------------------------------------------------------------------------; Below is list of manufacturers that will appear in the 
 ; Install New Modem wizard's list of manufacturers as well as define what sections to install ID's from
@@ -42,13 +39,13 @@ CatalogFile=KmdfSamples.cat
 ; driver submission is made
 
 [Manufacturer]
-%Generic% = Generic,NT$ARCH$
+%ManufacturerName% = Standard,NT$ARCH$
 
 
 ;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;This section references the INF-writer-defined DDInstall and DDInstall.Services sections for the Modem device, and specifies the hardware identifier for the Modem device. 
 
-[Generic.NT$ARCH$]
+[Standard.NT$ARCH$]
 %ModemX% = ModemX, {b85b7c50-6a01-11d2-b841-00c04fad5171}\fakemodem
 
 ;-------------------------------------------------------------------------------------------------------
@@ -260,8 +257,8 @@ HKR, Responses, "<cr><lf><cr><lf>NO DIALTONE<cr><lf>", 1, 05, 00, 00,00,00,00, 0
 ; For example, ModemX will appear as "FakeModem DDK Sample controllerless driver"
 
 [Strings]
-mfg = "Microsoft"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName = "TODO-Set-Manufacturer"
 FakeDisk = "Fake Modem Install Disk" 
-Generic = "(Standard Modem Types)"
 ModemX  = "FakeModem DDK Sample controllerless driver"
 ServiceName = "Fakemodem"

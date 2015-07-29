@@ -73,6 +73,12 @@ PVOID LocalMmMapIoSpace(
                                PAGE_READWRITE | PAGE_NOCACHE); 
     }
 
+    //
+    // Supress warning that MmMapIoSpace allocates executable memory.
+    // This function is only used if the preferred API, MmMapIoSpaceEx
+    // is not present. MmMapIoSpaceEx is available starting in WIN10.
+    //
+    #pragma warning(suppress: 30029)
     return MmMapIoSpace(PhysicalAddress, NumberOfBytes, MmNonCached); 
 }
 

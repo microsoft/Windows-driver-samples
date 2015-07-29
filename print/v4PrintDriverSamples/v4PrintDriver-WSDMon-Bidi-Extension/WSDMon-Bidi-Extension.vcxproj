@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9629A925-8512-41CB-AD2E-F730F7D457AB}</ProjectGuid>
+    <ProjectGuid>{80A97640-584A-4DFC-AD66-0DD33D1D3853}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <SupportsPackaging>false</SupportsPackaging>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{6B788CC8-550C-41A8-8182-DDD6FF0808F5}</SampleGuid>
+    <SampleGuid>{DC30E67C-A2CC-41B7-BF2B-5DBF568AF468}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -118,7 +118,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Include="*.txt" Exclude="@(None)" />

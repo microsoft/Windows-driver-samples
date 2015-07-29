@@ -1,0 +1,128 @@
+[Version]
+Signature="$Windows NT$"
+Class=Mouse
+ClassGUID={4D36E96F-E325-11CE-BFC1-08002BE10318}
+Provider=%Provider%
+DriverVer=03/17/2001,1.0.0.1
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12 ; DIRID_DRIVERS
+
+[ControlFlags]
+; We don't want our device to be installable via the non-PnP hardware dialogs
+ExcludeFromSelect = *
+
+; Manufacturer Section
+; ---------------------------------------------------------
+[Manufacturer]
+%ShinyThings%=ShinyThingsMfg,NT$ARCH$
+
+; Devices Section
+; ---------------------------------------------------------
+[ShinyThingsMfg.NT$ARCH$]
+%HID\Vid_045E&Pid_001E.DeviceDesc%=Firefly_Inst, HID\Vid_045E&Pid_001E
+%HID\Vid_045E&Pid_0029.DeviceDesc%=Firefly_Inst, HID\Vid_045E&Pid_0029
+%HID\Vid_045E&Pid_0039.DeviceDesc%=Firefly_Inst, HID\Vid_045E&Pid_0039
+%HID\Vid_045E&Pid_0040.DeviceDesc%=Firefly_Inst, HID\Vid_045E&Pid_0040
+%HID\Vid_045E&Pid_0047.DeviceDesc%=Firefly_Inst, HID\Vid_045E&Pid_0047
+
+; Install Section
+; ---------------------------------------------------------
+[Firefly_Inst.NT]
+Include = MSMOUSE.INF
+Needs = HID_Mouse_Inst.NT
+CopyFiles = Firefly_Inst_CopyFiles.NT
+
+[Firefly_Inst.NT.HW]
+Include = MSMOUSE.INF
+Needs = HID_Mouse_Inst.NT.Hw
+AddReg = Firefly_Inst_HWAddReg.NT
+
+[Firefly_Inst_HWAddReg.NT]
+HKR,,"UpperFilters",0x00010000,"Firefly"
+
+[Firefly_Inst_CopyFiles.NT]
+Firefly.sys
+
+[Firefly_Inst.NT.Services]
+Include = MSMOUSE.INF
+Needs = HID_Mouse_Inst.NT.Services
+AddService = Firefly, , Firefly_Service_Inst
+
+[Firefly_Service_Inst]
+DisplayName    = %Firefly.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Firefly.sys
+
+; Source Media Section
+; ---------------------------------------------------------
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+Firefly.sys = 1
+
+;
+;--- Firefly_Inst WDF Coinstaller installation ------
+;
+
+[DestinationDirs]
+Firefly_Inst_CoInstaller_CopyFiles = 11
+
+[Firefly_Inst.NT.CoInstallers]
+AddReg=Firefly_Inst_CoInstaller_AddReg
+CopyFiles=Firefly_Inst_CoInstaller_CopyFiles
+
+[Firefly_Inst_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[Firefly_Inst_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[Firefly_Inst.NT.Wdf]
+KmdfService = Firefly, Firefly_wdfsect
+[Firefly_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+; Strings Section
+; ---------------------------------------------------------
+[Strings]
+; Provider names
+Provider = "TODO-Set-Provider"
+
+; Mfg names
+ShinyThings = "Shiny Things"
+
+; Service names
+Firefly.SvcDesc = "Firefly Service"
+
+; Media names
+DiskName = "Firefly Driver Disk"
+
+; HID device IDs
+HID\VID_045E&PID_001E.DeviceDesc = "Shiny Things Firefly Mouse"
+HID\VID_045E&PID_0029.DeviceDesc = "Shiny Things Firefly Mouse"
+HID\VID_045E&PID_0039.DeviceDesc = "Shiny Things Firefly Mouse"
+HID\VID_045E&PID_0040.DeviceDesc = "Shiny Things Firefly Mouse"
+HID\VID_045E&PID_0047.DeviceDesc = "Shiny Things Firefly Mouse"
+
+; Standard defs
+SPSVCINST_TAGTOFRONT  = 0x00000001
+SPSVCINST_ASSOCSERVICE= 0x00000002
+SERVICE_KERNEL_DRIVER = 1
+SERVICE_BOOT_START    = 0
+SERVICE_SYSTEM_START  = 1
+SERVICE_AUTO_START    = 2
+SERVICE_ERROR_NORMAL  = 1
+SERVICE_ERROR_IGNORE  = 0
+REG_EXPAND_SZ         = 0x00020000
+REG_DWORD             = 0x00010001
+REG_SZ                = 0x00000000
+

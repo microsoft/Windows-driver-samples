@@ -1,0 +1,120 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;
+;    TOASTER.INF
+;
+;Abstract:
+;    INF file for installing toaster device drivers
+;    NOTE: ClassInstall32 section gets executed only if the Toaster
+;    doesn't exist in the registry -
+;    HKLM\System\CurrentControlSet\Control\Class\{B85B7C50-6A01-11d2-B841-00C04FAD5171}
+;
+;--*/
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = TOASTER
+ClassGuid   = {B85B7C50-6A01-11d2-B841-00C04FAD5171}
+Provider    = %ProviderName%
+DriverVer   = 06/16/1999,5.00.2064
+CatalogFile = KmdfSamples.cat
+
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=ToasterClassReg
+CopyFiles=ToasterClassInstallerCopyFiles
+
+[ToasterClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,100
+HKR,,Installer32,,"tostrcls.dll,ToasterClassInstaller"
+HKR,,DeviceCharacteristics,0x10001,0x100                 ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)" ;Allow generic all access to system, built-in Admin, and Local System.
+                                                         ;This one overrides the security set by the driver
+
+[ToasterClassInstallerCopyFiles]
+tostrcls.dll
+
+;*****************************************
+; Toaster Device  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ToasterDevice.DeviceDesc%=Toaster_Device, {b85b7c50-6a01-11d2-b841-00c04fad5171}\MsToaster
+
+[Toaster_Device.NT]
+CopyFiles=Toaster_Device.NT.Copy
+
+[Toaster_Device.NT.Copy]
+wdffeatured.sys
+
+[Toaster_Device.NT.HW]
+AddReg=Toaster_Device.NT.HW.AddReg
+
+[Toaster_Device.NT.HW.AddReg]
+HKR,,"BeepCount",0x00010003,4
+
+;-------------- Service installation
+
+[Toaster_Device.NT.Services]
+AddService = wdffeatured, %SPSVCINST_ASSOCSERVICE%, wdffeatured_Service_Inst
+
+[wdffeatured_Service_Inst]
+DisplayName     = %Toaster.SVCDESC%
+ServiceType     = 1               ; SERVICE_KERNEL_DRIVER
+StartType       = 3               ; SERVICE_DEMAND_START
+ErrorControl    = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\wdffeatured.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+wdffeatured.sys = 1,,
+tostrcls.dll    = 1,,
+
+
+;
+;--- Toaster_Device Coinstaller installation ------
+;
+[DestinationDirs]
+ToasterClassInstallerCopyFiles       = 11
+Toaster_Device_CoInstaller_CopyFiles = 11
+
+[Toaster_Device.NT.CoInstallers]
+AddReg          = Toaster_Device_CoInstaller_AddReg
+CopyFiles       = Toaster_Device_CoInstaller_CopyFiles
+
+[Toaster_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[Toaster_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[Toaster_Device.NT.Wdf]
+KmdfService              = wdffeatured, wdffeatured_wdfsect
+
+[wdffeatured_wdfsect]
+KmdfLibraryVersion       = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE   = 0x00000002
+ProviderName             = "TODO-Set-Provider"
+StdMfg                   = "(Standard system devices)"
+ClassName                = "Toaster"
+DiskId1                  = "Toaster Device Installation Disk #1"
+ToasterDevice.DeviceDesc = "WDF Featured Toaster"
+Toaster.SVCDESC          = "WDF Toaster Featured Device Driver"

@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{D130D47E-6427-4218-8931-B9A76438E407}</UniqueIdentifier>
+      <UniqueIdentifier>{104D8976-CCCB-4B0C-82E9-0BA38F5B1372}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{37543692-66C2-483A-B887-DCCCF1E54940}</UniqueIdentifier>
+      <UniqueIdentifier>{41B5421D-A51D-475D-8470-88324065958A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{7BA26A24-C6A3-4FFC-AD61-E52574E57C45}</UniqueIdentifier>
+      <UniqueIdentifier>{C07CAF8B-2324-407E-A1DA-94157E08A433}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{9D6CD385-5C3A-4727-AB21-03D755F75101}</UniqueIdentifier>
+      <UniqueIdentifier>{5735523F-568C-441B-84CD-042EAEB8F9AA}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +57,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\WpdHelloWorldDriver.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="WpdHelloWorldDriver.inx">
       <Filter>Driver Files</Filter>
     </Inf>

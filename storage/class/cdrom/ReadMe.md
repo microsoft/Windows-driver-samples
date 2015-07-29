@@ -7,6 +7,7 @@ Build the sample
 ----------------
 
 You can build the sample in two ways: using Microsoft Visual Studio or the command line (*MSBuild*).
+*Note:* When building in Visual Studio, INFVerifer will throw errors. This is intended. Fix those errors with your custom values to build successfully.
 
 Building a Driver Using Visual Studio
 -------------------------------------

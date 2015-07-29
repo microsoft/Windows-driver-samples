@@ -1,0 +1,102 @@
+;/*++
+;
+;Copyright (c) 1990-1999 Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    STATBUS.INF
+;
+;Abstract:
+;    INF file for installing toaster bus enumerator driver
+;
+;Installation Notes:
+;    Using Devcon: Type "devcon install statbus.inf root\statbus" to install
+;
+;--*/
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+DriverVer=06/17/1999, 5.00.2064
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+statbus.sys  = 1,,
+
+;*****************************************
+; ToasterStatBus  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+; For XP and later
+[Standard.NT$ARCH$]
+%ToasterStatBus.DeviceDesc%=ToasterStatBus_Device, root\statbus
+
+[ToasterStatBus_Device.NT]
+CopyFiles=Drivers_Dir
+
+[ToasterStatBus_Device.NT.HW]
+AddReg=ToasterStatBus_Device.NT.AddReg
+
+[ToasterStatBus_Device.NT.AddReg]                            
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system 
+
+[Drivers_Dir]
+statbus.sys
+
+
+;-------------- Service installation
+[ToasterStatBus_Device.NT.Services]
+AddService = statbus,%SPSVCINST_ASSOCSERVICE%, Statbus_Service_Inst
+
+; -------------- statbus driver install sections
+[Statbus_Service_Inst]
+DisplayName    = %statbus.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\statbus.sys
+
+;
+;--- ToasterStatBus_Device WDF Coinstaller installation ------
+;
+[DestinationDirs]
+ToasterStatBus_Device_CoInstaller_CopyFiles = 11
+
+[ToasterStatBus_Device.NT.CoInstallers]
+AddReg=ToasterStatBus_Device_CoInstaller_AddReg
+CopyFiles=ToasterStatBus_Device_CoInstaller_CopyFiles
+
+[ToasterStatBus_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ToasterStatBus_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[ToasterStatBus_Device.NT.Wdf]
+KmdfService = statbus, statbus_wdfsect
+[statbus_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderName = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Toaster Static Bus Installation Disk #1"
+ToasterStatBus.DeviceDesc = "Toaster Static Bus Enumerator"
+statbus.SVCDESC = "Toaster Static Bus Enumerator"

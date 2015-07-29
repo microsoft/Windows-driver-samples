@@ -18,30 +18,30 @@
 ;
 [Version]
 Signature="$Windows NT$"
-Provider=%MS%
+Provider=%ProviderString%
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=10/17/2008,6.1.6930.0
 
 [Manufacturer]
-%Microsoft%=Microsoft,NTx86,NTia64,NTamd64,NTx86.6.0,NTia64.6.0,NTamd64.6.0
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64,NTx86.6.0,NTia64.6.0,NTamd64.6.0
 
-[Microsoft.NTx86]
+[Standard.NTx86]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
 
-[Microsoft.NTia64]
+[Standard.NTia64]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
 
-[Microsoft.NTamd64]
+[Standard.NTamd64]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
 
-[Microsoft.NTx86.6.0]
+[Standard.NTx86.6.0]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
 
-[Microsoft.NTia64.6.0]
+[Standard.NTia64.6.0]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
 
-[Microsoft.NTamd64.6.0]
+[Standard.NTamd64.6.0]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
 
 [INSTALL_XDSMPL_FILTERS_PRE_VISTA]
@@ -135,5 +135,5 @@ xdscale.dll                   = 2
 
 [Strings]
 Location="XPSDrv Sample Driver Location"
-MS="Microsoft"
-Microsoft="Microsoft"
+ManufacturerName="TODO-Set-Manufacturer"
+ProviderString = "TODO-Set-Provider"

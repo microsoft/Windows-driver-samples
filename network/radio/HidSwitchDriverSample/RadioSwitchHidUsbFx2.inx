@@ -2,7 +2,7 @@
 Signature="$Windows NT$"
 Class=HIDClass
 ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
-Provider=%VENDOR%
+Provider=%ProviderString%
 DriverVer=5/3/2011,1.0.0.0
 CatalogFile=HidRadioSwitchDrv.cat
 
@@ -18,10 +18,10 @@ CopyFunctionDriver = 12
 CopyFilterDriver = 12 
 
 [Manufacturer]
-%VENDOR%=Vendor, NT$ARCH$.6.1
+%ManufacturerName%=Standard, NT$ARCH$.6.1
 
 ; For Win7 and later so that we can use inbox HID-KMDF mapper
-[Vendor.NT$ARCH$.6.1]
+[Standard.NT$ARCH$.6.1]
 %RadioSwitchHidUsbFx2%    = RadioSwitchHidUsbFx2.Inst.Win7, USB\VID_0547&PID_1002
 %customCollection%    = customCollection.Inst, HID_DEVICE_UP:FF00_U:0001
 
@@ -87,10 +87,11 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches wit
 
 [Strings] 
 ;  *******Localizable Strings******* 
-VENDOR         = "Vendor Name" 
-RadioSwitchHidUsbFx2       = "Radio Switch HID Mini-driver for OSR USB-FX-2 Device" 
-customCollection = "Radio Switch Collection for OSR USB-FX-2"
-DISK_NAME      = "HID Radio Switch USB FX-2  Install Disk"
+ProviderString         = "TODO-Set-Provider"
+ManufacturerName       = "TODO-Set-Manufacturer" 
+RadioSwitchHidUsbFx2   = "Radio Switch HID Mini-driver for OSR USB-FX-2 Device" 
+customCollection       = "Radio Switch Collection for OSR USB-FX-2"
+DISK_NAME              = "HID Radio Switch USB FX-2  Install Disk"
 
 ;  *******Non Localizable Strings******* 
 
@@ -111,4 +112,3 @@ REG_DWORD              = 0x00010001
 REG_MULTI_SZ           = 0x00010000
 REG_BINARY             = 0x00000001
 REG_SZ                 = 0x00000000
-

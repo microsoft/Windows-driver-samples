@@ -9,7 +9,7 @@
     Signature   = "$Windows NT$"
     Class       = WFPCALLOUTS
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
-    Provider    = %Contoso%
+    Provider    = %ProviderString%
     CatalogFile = MSNMntr.cat
     DriverVer   = 11/24/2014,14.24.55.836
 
@@ -48,7 +48,7 @@
     ServiceBinary = %12%\MSNMntr.sys                      ; %WinDir%\System32\Drivers\MSNMntr.sys
 
 [Strings]
-    Contoso            = "Contoso Ltd."
+    ProviderString     = "TODO-Set-Provider"
     MSNMntrDisk        = "Monitor Installation Disk"
     MSNMntrServiceDesc = "Monitor Callout Driver"
     MSNMntrServiceName = "MSNMntr"

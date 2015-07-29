@@ -9,7 +9,7 @@
     Signature   = "$Windows NT$"
     Class       = WFPCALLOUTS
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
-    Provider    = %Contoso%
+    Provider    = %ProviderString%
     CatalogFile = Inspect.cat
     DriverVer   = 11/24/2014,14.24.55.836
 
@@ -57,7 +57,7 @@
     HKR,"Parameters",,,
 
 [Strings]
-    Contoso            = "Contoso Ltd."
-    InspectDisk        = "Traffic Inspect Installation Disk"
+    ProviderString     = "TODO-Set-Provider"
+	InspectDisk        = "Traffic Inspect Installation Disk"
     InspectServiceDesc = "Traffic Inspect Callout Driver"
     InspectServiceName = "Inspect"

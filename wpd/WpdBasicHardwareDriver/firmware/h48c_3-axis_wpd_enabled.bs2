@@ -1,0 +1,175 @@
+' h48c_3-axis_wpd_enabled.bs2
+'
+' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+' ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+' THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+' PARTICULAR PURPOSE.
+'
+' Copyright (c) Microsoft Corporation. All rights reserved
+'
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+'
+' =========================================================================
+
+' -----[ Program Description ]---------------------------------------------
+'
+' Test program for the H48C 3-Axis Accelerometer module.
+'
+' Connections:
+'
+'       +------------+
+'       |  *         |
+'   CLK | o        o | Vdd (+5v)
+'       |    +--+    |
+'   DIO [ o  |  |  o | CS\
+'       |    +--+    |
+'   Vss | o        o | 0G (free-fall indication)
+'       |            |
+'       +------------+
+'
+' How it Works:
+'
+' An onboard MCP3204 12-bit ADC is used to read the VRef, X-, Y-, and
+' Z-axis outputs from the Hitachi H48C accelerometer.  The reference
+' voltage output from H48C is 1.65 volts (3.3 / 2).
+'
+' After reading the reference voltage and an output channel the g-force
+' for the channel is calculated with this formula:
+'
+'        axis - vref    3.3
+'    G = ----------- x ------
+'            4095      0.3663
+'
+' For use in the program the forumla can be simplified to:
+'
+'    G = (axis - vref) x 0.0022
+'
+' To allow the display of fractional g-force in the integer system of the
+' BASIC Stamp we multiply 0.0022 by 100 -- this will allow us to display
+' g-force in 0.01g units.
+
+
+
+' -----[ I/O Definitions ]-------------------------------------------------
+
+Dio             PIN     15                      ' data to/from module
+Clk             PIN     14                      ' clock output
+CS              PIN     13                      ' active-low chip select
+
+
+' -----[ Constants ]-------------------------------------------------------
+
+XAxis           CON     0                       ' adc channels
+YAxis           CON     1
+ZAxis           CON     2
+VRef            CON     3
+
+Cnt2Mv          CON     $CE4C                   ' counts to millivolts
+                                                '   0.80586 with **
+GfCnv           CON     $3852                   ' g-force conversion
+                                                '   0.22 with **
+
+' -----[ Variables ]-------------------------------------------------------
+
+axis            VAR     Nib                     ' axis selection
+rvCount         VAR     Word                    ' ref voltage adc counts
+axCount         VAR     Word                    ' axis voltage adc counts
+mVolts          VAR     Word                    ' millivolts
+Gforce          VAR     Word                    ' axis g-force
+
+xGforce        VAR     Word                      ' x-axis force
+yGforce        VAR     Word                      ' y-axis force
+zGforce        VAR     Word                      ' z-axis force
+
+dValue          VAR     Word                    ' display value
+dPad            VAR     Nib                     ' display pad
+
+' Below lines are WPD additions
+
+SensorID  VAR   Byte  'Sensor identifier = 9 for Hitachi
+ElementCount  VAR   Byte  'Count of elements in packet
+ElementSize VAR Byte  'Size (in bytes) of each element
+
+
+NewInterval VAR  Word  'New interval requested by user
+Interval  VAR   Word  'Interval value utlized by firmware
+
+SensorID = 9
+ElementSize = 4       'Each element contains a sign byte, followed by a G-force integer value, followed by a G-force fraction (in hundredths).
+ElementCount = 3      'Each element corresponds to one of the three axis (X, Y, and Z)
+
+Interval = 2000
+NewInterval = 2000
+
+
+' -----[ EEPROM Data ]-----------------------------------------------------
+
+
+' -----[ Initialization ]--------------------------------------------------
+
+Reset:
+  HIGH CS                                       ' deselect module
+
+' -----[ Program Code ]----------------------------------------------------
+
+Main:
+  GOSUB GetGforces        'Retrieves G-forces along 3 axis
+  GOSUB RetrieveInterval  'Retrieves event-interval data
+
+  Timeout:
+    SEROUT 16, 16780, [DEC1 SensorID, DEC1 ElementSize, DEC1 ElementCount, DEC1(xGforce.BIT15), DEC1(ABS xGforce/100),DEC2(ABS xGforce),DEC1(yGforce.BIT15),DEC1(ABS yGforce/100),DEC2(ABS yGforce),DEC1(zGforce.BIT15),DEC1(ABS zGforce/100),DEC2(ABS zGforce),DEC5 Interval ]
+    GOTO Main
+
+  GOTO Main
+
+
+' -----[ Subroutines ]-----------------------------------------------------
+
+' Retrieves the event-interval property from the WPD driver
+RetrieveInterval:
+ SERIN 16, 16780, Interval, Timeout, [DEC NewInterval]   'Retrieve interval
+ IF NewInterval >= 10 AND NewInterval <= 60000 THEN
+   Interval = NewInterval
+ ENDIF
+
+' Retrieves G forces along all three axis
+GetGforces:
+  FOR axis = XAxis TO ZAxis                     ' loop through each axis
+    GOSUB Get_H48C                              ' read vRef & axis counts
+    ' calculate g-force
+    ' -- "Gforce" is signed word
+    IF (axCount >= rvCount) THEN
+      Gforce = (axCount - rvCount) ** GfCnv     ' positive g-force
+    ELSE
+      Gforce = -((rvCount - axCount) ** GfCnv)  ' negative g-force
+    ENDIF
+    IF (axis = XAxis) THEN
+          xGforce = Gforce
+    ENDIF
+    IF (axis = YAxis) THEN
+          yGforce = Gforce
+    ENDIF
+    IF (axis = ZAxis) THEN
+          zGforce = Gforce
+     ENDIF
+  NEXT
+  RETURN
+
+' Reads VRef and selected H48C axis through an MCP3204 ADC
+' -- pass axis (0 - 2) in "axis"
+' -- returns reference voltage counts in "rvCount"
+' -- returns axis voltage counts in "axCounts"
+
+Get_H48C:
+  LOW CS
+  SHIFTOUT Dio, Clk, MSBFIRST, [%11\2, VRef\3]  ' select vref register
+  SHIFTIN  Dio, Clk, MSBPOST, [rvCount\13]      ' read ref voltage counts
+  HIGH CS
+  PAUSE 1
+  LOW CS
+  SHIFTOUT Dio, Clk, MSBFIRST, [%11\2, axis\3]  ' select axis
+  SHIFTIN  Dio, Clk, MSBPOST, [axCount\13]      ' read axis voltage counts
+  HIGH CS
+  RETURN
+

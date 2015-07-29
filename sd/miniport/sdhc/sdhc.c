@@ -86,6 +86,7 @@ Return Value:
     InitializationData.RequestDpc = SdhcRequestDpc;
     InitializationData.SaveContext = SdhcSaveContext;
     InitializationData.RestoreContext = SdhcRestoreContext;
+    InitializationData.PowerControlCallback = SdhcPoFxPowerControlCallback;
 
     //
     // Provide the number of slots and their size.
@@ -295,6 +296,15 @@ Return value:
         (CapabilitiesReg.SystemBus64Support ? 
             sizeof(ULONGLONG) : sizeof(ULONG)) - 1;
 
+    //
+    // For small transfers (SDIO) we want to use PIO for performance,
+    // for both reads and writes <= 64 bytes.
+    //
+
+    Capabilities->PioTransferMaxThreshold = 64;
+    Capabilities->Flags.UsePioForRead = TRUE;
+    Capabilities->Flags.UsePioForWrite = TRUE;
+
     if (CapabilitiesReg.Adma2Support) {
         Capabilities->Supported.ScatterGatherDma = 1;
     }
@@ -356,6 +366,7 @@ Return value:
         Capabilities->Supported.SoftwareTuning = 1;
     }
 
+    Capabilities->Supported.AutoCmd12 = 1;
     if (SpecVersion >= SDHC_SPEC_VERSION_3) {
         Capabilities->Supported.AutoCmd23 = 1;
     }
@@ -508,6 +519,13 @@ Return value:
         Status = SdhcSetPresetValue(
                     SdhcExtension,
                     BusOperation->Parameters.PresetValueEnabled);
+
+        break;
+
+    case SdSetBlockGapInterrupt:
+        Status = SdhcEnableBlockGapInterrupt(
+                    SdhcExtension,
+                    BusOperation->Parameters.BlockGapIntEnabled);
 
         break;
 
@@ -958,6 +976,60 @@ Return value:
 {
     UNREFERENCED_PARAMETER(PrivateExtension);
 }
+
+NTSTATUS
+SdhcPoFxPowerControlCallback(
+    _In_ PSD_MINIPORT Miniport,
+    _In_ LPCGUID PowerControlCode,
+    _In_reads_bytes_opt_(InputBufferSize) PVOID InputBuffer,
+    _In_ SIZE_T InputBufferSize,
+    _Out_writes_bytes_opt_(OutputBufferSize) PVOID OutputBuffer,
+    _In_ SIZE_T OutputBufferSize,
+    _Out_opt_ PSIZE_T BytesReturned
+    )
+
+/*++
+
+Routine Description:
+
+    Handle any PoFxPowerControl callbacks.
+
+Arguments:
+
+    Miniport - Miniport interface for the controller.
+
+    PowerControlCode - GUID defining a platform-specific PoFxPowerControl
+                       method.
+
+    InputBuffer - Buffer containing any input arguments.
+
+    InputBufferSize - Size of InputBuffer in bytes.
+
+    OutputBuffer - Buffer containing any output results.
+
+    OutputBufferSize - Size of OutputBuffer in bytes.
+
+    BytesReturned - Number of bytes returned.
+
+Return value:
+
+    NTSTATUS
+
+--*/
+
+{
+
+    UNREFERENCED_PARAMETER(Miniport);
+    UNREFERENCED_PARAMETER(PowerControlCode);
+    UNREFERENCED_PARAMETER(InputBuffer);
+    UNREFERENCED_PARAMETER(InputBufferSize);
+    UNREFERENCED_PARAMETER(OutputBuffer);
+    UNREFERENCED_PARAMETER(OutputBufferSize);
+    UNREFERENCED_PARAMETER(BytesReturned);
+
+    return STATUS_NOT_IMPLEMENTED;
+}
+    
 
 //-----------------------------------------------------------------------------
 // Host routine implementations.
@@ -1750,6 +1822,48 @@ Return value:
     }
 
     SdhcWriteRegisterUshort(SdhcExtension, SDHC_HOST_CONTROL2, HostControl2);
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS
+SdhcEnableBlockGapInterrupt(
+    _In_ PSDHC_EXTENSION SdhcExtension,
+    _In_ BOOLEAN Enable
+    )
+
+/*++
+
+Routine Description:
+
+    Enables block gap interrupts for SDIO cards in 4-bit mode.
+    Caller has responsibility to make sure this is only called for
+    appropriate devices.
+
+Arguments:
+
+    SdhcExtension - Host controller specific driver context.
+
+    Enable - Enable or disable block gap interrupts.
+
+Return value:
+
+    None.
+
+--*/
+
+{
+
+    UCHAR Control;
+
+    Control = SdhcReadRegisterUchar(SdhcExtension, SDHC_BLOCKGAP_CONTROL);
+    if (Enable) {
+        Control |= SDHC_BGC_INTERRUPT_ENABLE;
+
+    } else {
+        Control &= ~SDHC_BGC_INTERRUPT_ENABLE;
+    }
+
+    SdhcWriteRegisterUchar(SdhcExtension, SDHC_BLOCKGAP_CONTROL, Control);
     return STATUS_SUCCESS;
 }
 

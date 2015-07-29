@@ -6,14 +6,14 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFTWUDF%
+Provider=%ProviderName%
 CatalogFile=WUDF.cat
 DriverVer=03/20/2003,5.00.3788
 
 [Manufacturer]
-%MSFTWUDF%=Microsoft,NT$ARCH$
+%ManufacturerName%=Standard,NT$ARCH$
 
-[Microsoft.NT$ARCH$]
+[Standard.NT$ARCH$]
 %EchoDeviceName%=Echo_Install,WUDF\Echo
 
 [ClassInstall32]
@@ -80,8 +80,9 @@ WUDFEchoDriver.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 ; =================== Generic ==================================
 
 [Strings]
-MSFTWUDF="Microsoft Internal (WUDF)"
-MediaDescription="Microsoft WUDF Sample Driver Installation Media"
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+MediaDescription="WUDF Sample Driver Installation Media"
 ClassName="Sample Device"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
 EchoDeviceName="Sample WUDF Echo Driver"

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pedometer", "Pedometer.vcxproj", "{E4AB8CAA-0898-4F87-B6DB-273E1D661550}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pedometer", "Pedometer.vcxproj", "{7F064CE7-8D48-416A-9F3A-9E13074576F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Debug|Win32.Build.0 = Debug|Win32
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Release|Win32.ActiveCfg = Release|Win32
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Release|Win32.Build.0 = Release|Win32
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Debug|x64.ActiveCfg = Debug|x64
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Debug|x64.Build.0 = Debug|x64
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Release|x64.ActiveCfg = Release|x64
-		{E4AB8CAA-0898-4F87-B6DB-273E1D661550}.Release|x64.Build.0 = Release|x64
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Debug|Win32.Build.0 = Debug|Win32
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Release|Win32.ActiveCfg = Release|Win32
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Release|Win32.Build.0 = Release|Win32
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Debug|x64.ActiveCfg = Debug|x64
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Debug|x64.Build.0 = Debug|x64
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Release|x64.ActiveCfg = Release|x64
+		{7F064CE7-8D48-416A-9F3A-9E13074576F2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

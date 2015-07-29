@@ -7,14 +7,14 @@
 Signature="$Windows NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFTUMDF%
+Provider=%ProviderName%
 DriverVer=03/25/2005,0.0.0.1
 CatalogFile=wudf.cat
 
 [Manufacturer]
-%MSFTUMDF%=Microsoft,NT$ARCH$
+%ManufacturerName%=Standard,NT$ARCH$
 
-[Microsoft.NT$ARCH$]
+[Standard.NT$ARCH$]
 %OsrUsbDeviceName%=OsrUsb_Install, USB\Vid_045e&Pid_94aa&mi_00
 %OsrUsbDeviceName%=OsrUsb_Install, USB\VID_0547&PID_1002
 
@@ -107,9 +107,10 @@ WudfOsrUsbFx2.dll
 ; =================== Generic ==================================
 
 [Strings]
-MSFTUMDF="Microsoft Internal (WDF:UMDF)"
-MediaDescription="Microsoft UMDF OSR USB Sample Device Installation Media"
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+MediaDescription="UMDF OSR USB Sample Device Installation Media"
 ClassName="Sample Device"
-OsrUsbDeviceName="Microsoft UMDF OSR Usb Sample Device With Filter on User-mode Driver"
+OsrUsbDeviceName="UMDF OSR Usb Sample Device With Filter on User-mode Driver"
 WinUsb_SvcDesc="WinUSB Driver"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

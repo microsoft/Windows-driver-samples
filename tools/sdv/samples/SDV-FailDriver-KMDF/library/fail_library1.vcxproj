@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{94A7D7B0-5847-4D82-AEF8-DEBB9791264D}</ProjectGuid>
+    <ProjectGuid>{461FB63C-938B-43CE-9796-2505F37E8724}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <SupportsPackaging>false</SupportsPackaging>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{931CA2A4-0AE4-4271-8F6F-3A1F1621CBAA}</SampleGuid>
+    <SampleGuid>{CBE71F3B-63FA-4DE1-9FAC-0F7C113325EC}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,7 +127,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

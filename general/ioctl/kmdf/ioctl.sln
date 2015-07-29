@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{B028EBDA-6423-4F60-AA5E-FA6D82D7724A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sys", "Sys", "{4DA95BFC-3253-4E4A-92C3-7C8BAE993A05}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nonpnpapp", "exe\nonpnpapp.vcxproj", "{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nonpnp", "sys\nonpnp.vcxproj", "{B622D542-4942-46A1-B976-F530446DD6A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Debug|Win32.Build.0 = Debug|Win32
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Release|Win32.ActiveCfg = Release|Win32
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Release|Win32.Build.0 = Release|Win32
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Debug|x64.ActiveCfg = Debug|x64
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Debug|x64.Build.0 = Debug|x64
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Release|x64.ActiveCfg = Release|x64
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB}.Release|x64.Build.0 = Release|x64
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Debug|Win32.Build.0 = Debug|Win32
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Release|Win32.ActiveCfg = Release|Win32
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Release|Win32.Build.0 = Release|Win32
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Debug|x64.ActiveCfg = Debug|x64
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Debug|x64.Build.0 = Debug|x64
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Release|x64.ActiveCfg = Release|x64
+		{B622D542-4942-46A1-B976-F530446DD6A5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75AE3580-0818-45CF-B6F0-FBA6FA7BE8EB} = {B028EBDA-6423-4F60-AA5E-FA6D82D7724A}
+		{B622D542-4942-46A1-B976-F530446DD6A5} = {4DA95BFC-3253-4E4A-92C3-7C8BAE993A05}
+	EndGlobalSection
+EndGlobal

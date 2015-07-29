@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{AD6BD7F9-8AA3-4C43-80E5-43FAB4855E99}</UniqueIdentifier>
+      <UniqueIdentifier>{DB9631DF-48DF-461B-AE7F-506167663FDB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{C9966B02-9CF0-4709-81DB-6C07A8C61EA2}</UniqueIdentifier>
+      <UniqueIdentifier>{80DE4EC6-38A5-4477-89E7-7474A47F2AB9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{3EB93E42-3C57-45BD-B13C-3BFBBE7327C8}</UniqueIdentifier>
+      <UniqueIdentifier>{9A504811-A75F-4216-9CF0-308AA242BA42}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{1AD1BB40-C641-417E-BEEB-6D99F9B5AF3A}</UniqueIdentifier>
+      <UniqueIdentifier>{D808070A-9612-4A62-842D-141D1C7A3100}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +36,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\BthEchoSampleSrv.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\BthEchoSampleSrv.inx">
       <Filter>Driver Files</Filter>
     </Inf>

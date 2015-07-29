@@ -47,7 +47,7 @@ Notes:
 extern NDIS_HANDLE         FilterDriverHandle; // NDIS handle for filter driver
 extern NDIS_HANDLE         FilterDriverObject;
 extern NDIS_HANDLE         NdisFilterDeviceHandle;
-extern PDEVICE_OBJECT      DeviceObject;
+extern PDEVICE_OBJECT      NdisDeviceObject;
 
 extern FILTER_LOCK         FilterListLock;
 extern LIST_ENTRY          FilterModuleList;

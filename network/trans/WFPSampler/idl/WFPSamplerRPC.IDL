@@ -1,0 +1,475 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   Copyright (c) 2014 Microsoft Corporation.  All Rights Reserved.
+//
+//   Module Name:
+//      WFPSamplerRPC.idl
+//
+//   Abstract:
+//      This module contains interface declarations used in implementing WFPSampler's RPC interface.
+//
+//   Author:
+//      Dusty Harper      (DHarper)
+//
+//   Revision History:
+//
+//      [ Month ][Day] [Year] - [Revision]-[ Comments ]
+//      May       01,   2010  -     1.0   -  Creation
+//      December  13,   2013  -     1.1   -  Add ADVANCED_PACKET_INJECTION, FLOW_ASSOCIATION, and
+//                                              PEND_ENDPOINT_CLOSURE scenarios.   Enhancements for
+//                                              BASIC_PACKET_EXAMINATION, BASIC_PACKET_MODIFICATION,
+//                                              and PROXY providerContexts.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+import "wtypes.idl";    /// Include\Shared
+import "fwpmtypes.idl"; /// Include\Shared
+
+[
+   helpstring("WFP Sampler Service 1.0"),
+   uuid(53504657-6D61-6C70-6572-5F496E746572),
+   version(1.0),
+   endpoint("ncalrpc:[WFPSampler]"),
+   pointer_default(ref)
+]
+
+interface IWFPSampler
+{
+   cpp_quote("#ifdef __midl")
+
+      typedef enum
+      {
+         IPV4 = 4,
+         IPV6 = 6,
+      }IPVERSION;
+
+      typedef enum
+      {
+         IPPROTO_HOPOPTS       =   0, 
+         IPPROTO_ICMP          =   1,
+         IPPROTO_IGMP          =   2,
+         IPPROTO_GGP           =   3,
+         IPPROTO_IPV4          =   4,
+         IPPROTO_ST            =   5,
+         IPPROTO_TCP           =   6,
+         IPPROTO_CBT           =   7,
+         IPPROTO_EGP           =   8,
+         IPPROTO_IGP           =   9,
+         IPPROTO_PUP           =  12,
+         IPPROTO_UDP           =  17,
+         IPPROTO_IDP           =  22,
+         IPPROTO_RDP           =  27,
+         IPPROTO_IPV6          =  41,
+         IPPROTO_ROUTING       =  43,
+         IPPROTO_FRAGMENT      =  44,
+         IPPROTO_ESP           =  50,
+         IPPROTO_AH            =  51,
+         IPPROTO_ICMPV6        =  58,
+         IPPROTO_NONE          =  59,
+         IPPROTO_DSTOPTS       =  60,
+         IPPROTO_ND            =  77,
+         IPPROTO_ICLFXBM       =  78,
+         IPPROTO_PIM           = 103,
+         IPPROTO_PGM           = 113,
+         IPPROTO_L2TP          = 115,
+         IPPROTO_SCTP          = 132,
+         IPPROTO_RAW           = 255,
+         IPPROTO_MAX           = 256,
+      }IPPROTO;
+
+   cpp_quote("#endif")
+
+   typedef enum WFPSAMPLER_SCENARIO_
+   {
+      SCENARIO_UNDEFINED                 =  0,
+      SCENARIO_ADVANCED_PACKET_INJECTION =  1,
+      SCENARIO_APP_CONTAINER             =  2,
+      SCENARIO_BASIC_ACTION_BLOCK        =  3,
+      SCENARIO_BASIC_ACTION_CONTINUE     =  4,
+      SCENARIO_BASIC_ACTION_PERMIT       =  5,
+      SCENARIO_BASIC_ACTION_RANDOM       =  6,
+      SCENARIO_BASIC_PACKET_EXAMINATION  =  7,
+      SCENARIO_BASIC_PACKET_INJECTION    =  8,
+      SCENARIO_BASIC_PACKET_MODIFICATION =  9,
+      SCENARIO_BASIC_STREAM_INJECTION    = 10,
+      SCENARIO_FAST_PACKET_INJECTION     = 11,
+      SCENARIO_FAST_STREAM_INJECTION     = 12,
+      SCENARIO_FLOW_ASSOCIATION          = 13,
+      SCENARIO_PEND_AUTHORIZATION        = 14,
+      SCENARIO_PEND_ENDPOINT_CLOSURE     = 15,
+      SCENARIO_PROXY                     = 16,
+      SCENARIO_MAX
+   }WFPSAMPLER_SCENARIO;
+
+   typedef struct MAC_DATA_
+   {
+      UINT32 flags;
+
+      BYTE   pReserved[4];
+
+      BYTE   pSourceMACAddress[8];
+
+      BYTE   pDestinationMACAddress[8];
+   }MAC_DATA;
+   
+   typedef struct IP_DATA_
+   {
+      UINT32 flags;
+
+      BYTE   pReserved[3];
+
+      UINT8  ipVersion;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }sourceAddress;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }destinationAddress;
+
+      UINT32 interfaceIndex;
+   }IP_DATA;
+
+   typedef struct TRANSPORT_DATA_
+   {
+      UINT32 flags;
+
+      BYTE   pReserved[3];
+
+      UINT8  protocol;
+
+      [switch_type(UINT8), switch_is(protocol)]
+      union
+      {
+         [case(IPPROTO_ICMP,
+               IPPROTO_ICMPV6)]
+         UINT8  type;
+         [case(IPPROTO_TCP,
+               IPPROTO_UDP)]
+         UINT16 port;                                              /// Network Byte Order
+         [case(IPPROTO_RAW)]
+         UINT16 data;
+      }source;
+
+      [switch_type(UINT8), switch_is(protocol)]
+      union
+      {
+         [case(IPPROTO_ICMP,
+               IPPROTO_ICMPV6)]
+         UINT8  code;
+         [case(IPPROTO_TCP,
+               IPPROTO_UDP)]
+         UINT16 port;                                              /// Network Byte Order
+         [case(IPPROTO_RAW)]
+         UINT16 data;
+      }destination;
+      BYTE   pPadding[4];
+   } TRANSPORT_DATA;
+
+   typedef struct PC_ADVANCED_PACKET_INJECTION_DATA_
+   {
+      BOOLEAN performInline;                                       /// Inline vs. Out of Band
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      UINT32  additionalBytes;
+
+      BYTE    pReserved[1];
+   } PC_ADVANCED_PACKET_INJECTION_DATA;
+
+   typedef struct PC_BASIC_ACTION_DATA_
+   {
+      UINT8 percentBlock;
+
+      UINT8 percentPermit;
+
+      UINT8 percentContinue;
+
+      BYTE  pReserved[5];
+   } PC_BASIC_ACTION_DATA;
+
+   typedef struct PC_BASIC_PACKET_INJECTION_DATA_
+   {
+      BOOLEAN performInline;                                       /// Inline vs. Out of Band
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      BYTE    pReserved[5];
+   } PC_BASIC_PACKET_INJECTION_DATA;
+
+   typedef struct PC_BASIC_PACKET_MODIFICATION_DATA_
+   {
+      UINT32         flags;
+
+      BOOLEAN        performInline;                                /// Inline vs. Out of Band
+
+      BOOLEAN        useWorkItems;                                 /// DPCs vs. WorkItems
+
+      BOOLEAN        useThreadedDPC;                               /// DPCs vs Threaded DPCs
+
+      BYTE           pReserved[1];
+
+      MAC_DATA       macData;
+
+      IP_DATA        ipData;
+
+      TRANSPORT_DATA transportData;
+
+      MAC_DATA       originalMACData;
+
+      IP_DATA        originalIPData;
+
+      TRANSPORT_DATA originalTransportData;                        /// Used to uniquely identify traffic at the Network layers
+   }PC_BASIC_PACKET_MODIFICATION_DATA;
+
+   typedef struct PC_BASIC_STREAM_INJECTION_DATA_
+   {
+      BOOLEAN performInline;                                       /// Inline vs. Out of Band
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      BYTE    pReserved[5];
+   } PC_BASIC_STREAM_INJECTION_DATA;
+
+   typedef struct PC_FLOW_ASSOCIATION_DATA_
+   {
+      UINT16 itemCount;
+
+      UINT16 pLayerIDs[7];
+
+      UINT32 pCalloutIDs[7];
+   }PC_FLOW_ASSOCIATION_DATA;
+
+   typedef struct PC_PEND_AUTHORIZATION_DATA_
+   {
+      UINT32  flags;
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      BYTE    pReserved[2];
+
+      UINT32  finalAction;
+
+      UINT32  delay;
+
+   }PC_PEND_AUTHORIZATION_DATA;
+
+   typedef struct PC_PEND_ENDPOINT_CLOSURE_DATA_
+   {
+      UINT32  flags;
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      BYTE    pReserved[2];
+
+      UINT32  delay;
+
+   }PC_PEND_ENDPOINT_CLOSURE_DATA;
+
+   typedef struct PC_PROXY_DATA_
+   {
+      UINT32  flags;
+
+      BOOLEAN performInline;                                       /// Inline vs. Out of Band
+
+      BOOLEAN useWorkItems;                                        /// DPCs vs. WorkItems
+
+      BOOLEAN useThreadedDPC;                                      /// DPCs vs Threaded DPCs
+
+      BOOLEAN proxyToRemoteService;                                /// Local vs. Remote Service
+
+      BYTE    pReserved[6];
+
+      UINT8   ipVersion;
+
+      UINT8   ipProtocol;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }proxyLocalAddress;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }proxyRemoteAddress;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }originalLocalAddress;
+
+      [switch_type(IPVERSION), switch_is(ipVersion)]
+      union
+      {
+         [case(IPV4)]
+         BYTE pIPv4[4];                                            /// Network Byte Order
+         [case(IPV6)]
+         BYTE pIPv6[16];
+      }originalRemoteAddress;
+
+      UINT32  localScopeId;
+
+      UINT32  remoteScopeId;
+
+      UINT16  proxyLocalPort;                                      /// Network Byte Order
+
+      UINT16  proxyRemotePort;                                     /// Network Byte Order
+
+      UINT16  originalLocalPort;                                   /// Network Byte Order
+
+      UINT16  originalRemotePort;                                  /// Network Byte Order
+
+      UINT32  targetProcessID;
+
+      UINT64  tcpPortReservationToken;
+
+      UINT64  udpPortReservationToken;
+   } PC_PROXY_DATA;
+
+   /// ProviderContext ProxyData Flags
+   cpp_quote("#define PCPDF_PROXY_LOCAL_ADDRESS  0x01")
+   cpp_quote("#define PCPDF_PROXY_LOCAL_PORT     0x02")
+   cpp_quote("#define PCPDF_PROXY_REMOTE_ADDRESS 0x04")
+   cpp_quote("#define PCPDF_PROXY_REMOTE_PORT    0x08")
+
+   ///ProviderContext PacketExamination Flags
+   cpp_quote("#define PCPEF_EXAMINE_UNDER_LOCK               0x00000001")
+   cpp_quote("#define PCPEF_EXAMINE_INCOMING_VALUES          0x00000010")
+   cpp_quote("#define PCPEF_EXAMINE_INCOMING_METADATA_VALUES 0x00000100")
+   cpp_quote("#define PCPEF_EXAMINE_LAYER_DATA               0x00001000")
+   cpp_quote("#define PCPEF_EXAMINE_CLASSIFY_CONTEXT         0x00010000")
+   cpp_quote("#define PCPEF_EXAMINE_FILTER                   0x00100000")
+   cpp_quote("#define PCPEF_EXAMINE_FLOW_CONTEXT             0x01000000")
+   cpp_quote("#define PCPEF_EXAMINE_CLASSIFY_OUT             0x10000000")
+
+   ///ProviderContext PacketModificationData Flags
+   cpp_quote("#define PCPMDF_MODIFY_MAC_HEADER                     0x10")
+   cpp_quote("#define PCPMDF_MODIFY_MAC_HEADER_SOURCE_ADDRESS      0x01")
+   cpp_quote("#define PCPMDF_MODIFY_MAC_HEADER_DESTINATION_ADDRESS 0x02")
+
+   cpp_quote("#define PCPMDF_MODIFY_IP_HEADER                     0x20")
+   cpp_quote("#define PCPMDF_MODIFY_IP_HEADER_SOURCE_ADDRESS      0x01")
+   cpp_quote("#define PCPMDF_MODIFY_IP_HEADER_DESTINATION_ADDRESS 0x02")
+   cpp_quote("#define PCPMDF_MODIFY_IP_HEADER_INTERFACE_INDEX     0x04")
+
+   cpp_quote("#define PCPMDF_MODIFY_TRANSPORT_HEADER                  0x40")
+   cpp_quote("#define PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT      0x01")
+   cpp_quote("#define PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT 0x02")
+
+   cpp_quote("#define PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT")
+   cpp_quote("#define PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT")
+
+   cpp_quote("#define PCFA_MAX_COUNT 7")
+
+   extern handle_t wfpSamplerBindingHandle;
+
+   error_status_t RPCInvokeScenarioAdvancedPacketInjection([in] handle_t rpcBindingHandle,
+                                                           [in] WFPSAMPLER_SCENARIO scenario,
+                                                           [in] FWPM_CHANGE_TYPE changeType,
+                                                           [in, ref] const FWPM_FILTER0* pFilter,
+                                                           [in, unique] const PC_ADVANCED_PACKET_INJECTION_DATA* pPCAdvancedPacketInjectionData);
+
+   error_status_t RPCInvokeScenarioAppContainer([in] handle_t rpcBindingHandle,
+                                                [in] WFPSAMPLER_SCENARIO scenario,
+                                                [in] FWPM_CHANGE_TYPE changeType,
+                                                [in] BOOLEAN trustWSH,
+                                                [in] BOOLEAN persistent,
+                                                [in] BOOLEAN bootTime);
+
+   error_status_t RPCInvokeScenarioBasicAction([in] handle_t rpcBindingHandle,
+                                               [in] WFPSAMPLER_SCENARIO scenario,
+                                               [in] FWPM_CHANGE_TYPE changeType,
+                                               [in, ref] const FWPM_FILTER0* pFilter,
+                                               [in, unique] const PC_BASIC_ACTION_DATA* pPCBasicActionData);
+
+   error_status_t RPCInvokeScenarioBasicPacketExamination([in] handle_t rpcBindingHandle,
+                                                          [in] WFPSAMPLER_SCENARIO scenario,
+                                                          [in] FWPM_CHANGE_TYPE changeType,
+                                                          [in, ref] const FWPM_FILTER0* pFilter);
+
+   error_status_t RPCInvokeScenarioBasicPacketInjection([in] handle_t rpcBindingHandle,
+                                                        [in] WFPSAMPLER_SCENARIO scenario,
+                                                        [in] FWPM_CHANGE_TYPE changeType,
+                                                        [in, ref] const FWPM_FILTER0* pFilter,
+                                                        [in, unique] const PC_BASIC_PACKET_INJECTION_DATA* pPCBasicPacketInjectionData);
+
+   error_status_t RPCInvokeScenarioBasicPacketModification([in] handle_t rpcBindingHandle,
+                                                           [in] WFPSAMPLER_SCENARIO scenario,
+                                                           [in] FWPM_CHANGE_TYPE changeType,
+                                                           [in, ref] const FWPM_FILTER0* pFilter,
+                                                           [in, unique] const PC_BASIC_PACKET_MODIFICATION_DATA* pPCBasicPacketModificationData);
+
+   error_status_t RPCInvokeScenarioBasicStreamInjection([in] handle_t rpcBindingHandle,
+                                                        [in] WFPSAMPLER_SCENARIO scenario,
+                                                        [in] FWPM_CHANGE_TYPE changeType,
+                                                        [in, ref] const FWPM_FILTER0* pFilter,
+                                                        [in, unique] const PC_BASIC_STREAM_INJECTION_DATA* pPCBasicStreamInjectionData);
+
+   error_status_t RPCInvokeScenarioFastPacketInjection([in] handle_t rpcBindingHandle,
+                                                       [in] WFPSAMPLER_SCENARIO scenario,
+                                                       [in] FWPM_CHANGE_TYPE changeType,
+                                                       [in, ref] const FWPM_FILTER0* pFilter);
+
+   error_status_t RPCInvokeScenarioFastStreamInjection([in] handle_t rpcBindingHandle,
+                                                       [in] WFPSAMPLER_SCENARIO scenario,
+                                                       [in] FWPM_CHANGE_TYPE changeType,
+                                                       [in, ref] const FWPM_FILTER0* pFilter);
+
+   error_status_t RPCInvokeScenarioFlowAssociation([in] handle_t rpcBindingHandle,
+                                                   [in] WFPSAMPLER_SCENARIO scenario,
+                                                   [in] FWPM_CHANGE_TYPE changeType,
+                                                   [in, ref] const FWPM_FILTER0* pFilter,
+                                                   [in, unique] const PC_FLOW_ASSOCIATION_DATA* pPCFlowAssociationData);
+
+   error_status_t RPCInvokeScenarioPendAuthorization([in] handle_t rpcBindingHandle,
+                                                     [in] WFPSAMPLER_SCENARIO scenario,
+                                                     [in] FWPM_CHANGE_TYPE changeType,
+                                                     [in, ref] const FWPM_FILTER0* pFilter,
+                                                     [in, unique] const PC_PEND_AUTHORIZATION_DATA* pPCPendAuthorizationData);
+
+   error_status_t RPCInvokeScenarioPendEndpointClosure([in] handle_t rpcBindingHandle,
+                                                       [in] WFPSAMPLER_SCENARIO scenario,
+                                                       [in] FWPM_CHANGE_TYPE changeType,
+                                                       [in, ref] const FWPM_FILTER0* pFilter,
+                                                       [in, unique] const PC_PEND_ENDPOINT_CLOSURE_DATA* pPCPendEndpointClosureData);
+
+   error_status_t RPCInvokeScenarioProxy([in] handle_t rpcBindingHandle,
+                                         [in] WFPSAMPLER_SCENARIO scenario,
+                                         [in] FWPM_CHANGE_TYPE changeType,
+                                         [in, ref] const FWPM_FILTER0* pFilter,
+                                         [in, ref] const PC_PROXY_DATA* pPCProxyData);
+}

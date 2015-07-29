@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{21B700F3-2B7F-4332-A55B-C436016AC536}</UniqueIdentifier>
+      <UniqueIdentifier>{043629B9-E054-4FF3-874E-548E7D4FFBB7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{B93FCB80-AF61-4C1D-9534-6B6EB29B526A}</UniqueIdentifier>
+      <UniqueIdentifier>{C31DA020-0B3B-4F1A-919E-C366757C9957}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{4C88E4BA-E0F4-45C9-852B-F96E9C9E5883}</UniqueIdentifier>
+      <UniqueIdentifier>{0D5B6280-46CF-448E-ACA9-DF9F20586F0A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{3893D068-C2BA-4785-B0AE-9EF13A8DE5BB}</UniqueIdentifier>
+      <UniqueIdentifier>{B23BCA35-0435-4D67-8FEB-818995B8239C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +36,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\osrusbfx2um.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\osrusbfx2um.inx">
       <Filter>Driver Files</Filter>
     </Inf>

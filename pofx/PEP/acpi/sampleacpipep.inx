@@ -1,0 +1,85 @@
+;/*++
+;
+;Copyright (c) 1990-1999 Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    SAMPLEACPIPEP.INF
+;
+;Abstract:
+;    INF file for installing the sample Platform Extension (ACPI PEP).
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderString%
+DriverVer=11/14/2014,1.00.0000
+CatalogFile=sampleacpipep.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+sampleacpipep.sys  = 1,,
+
+;*****************************************
+; Pep Device  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%PepDevice.DeviceDesc%=Pep_Device,ACPI\SAMPLEACPIPEP
+
+[Pep_Device.NT]
+CopyFiles=Pep_Device.NT.Copy
+
+[Pep_Device.NT.HW]
+AddReg=Pep_Device.NT.AddReg
+
+[Pep_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[Pep_Device.NT.Copy]
+sampleacpipep.sys
+
+;-------------- Service installation
+
+[Pep_Device.NT.Services]
+AddService = sampleacpipep,%SPSVCINST_ASSOCSERVICE%,pep_Service_Inst
+
+[pep_Service_Inst]
+DisplayName    = %sampleacpipep.SVCDESC%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_BOOT_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %12%\sampleacpipep.sys
+LoadOrderGroup = Core Platform Extensions
+;ensure the test PEP loads at same time as ACPI (before real PEPs)
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderString = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+ClassName = "System devices"
+DiskId1 = "Dummy Power Engine Plugin Disk 1"
+PepDevice.DeviceDesc = "Sample Platform Extension 01"
+sampleacpipep.SVCDESC = "Sample Platform Extension 01"
+
+;Non-Localizable Strings
+SERVICE_KERNEL_DRIVER = 1
+SERVICE_BOOT_START = 0
+SERVICE_DEMAND_START  = 3
+SERVICE_ERROR_NORMAL  = 1
+
+
+
+

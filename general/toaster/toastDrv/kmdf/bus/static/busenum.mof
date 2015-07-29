@@ -1,0 +1,26 @@
+#PRAGMA AUTORECOVER
+
+[Dynamic, Provider("WMIProv"),
+ WMI,
+ Description("Toaster Bus driver information"),
+ guid("{0006A660-8F12-11d2-B854-00C04FAD5171}"),
+ locale("MS\\0x409")]
+class ToasterBusInformation
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read,
+     Description("Number of errors that occurred on this device")]
+    uint32   ErrorCount;
+
+    [WmiDataId(2),
+     read,
+     write,
+     Description("The DebugPrintLevel property indicates the debug output level of toaster bus device.")]
+    uint32 DebugPrintLevel;
+
+};
+

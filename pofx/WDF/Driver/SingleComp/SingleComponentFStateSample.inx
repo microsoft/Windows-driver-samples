@@ -17,7 +17,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 CatalogFile=KmdfSamples.cat
 
 [DestinationDirs]
@@ -97,7 +97,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-MSFT = "Microsoft"
+ProviderString = "TODO-Set-Provider"
 StdMfg = "(Standard system devices)"
 DiskId1 = "WDF Sample SingleComponentFStateDevice Installation Disk #1"
 SingleComponentFStateDevice.DeviceDesc = "Single comp F State Device"

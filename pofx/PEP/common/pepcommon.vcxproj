@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AD3FF770-602D-4C51-B349-5A04033971EB}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <SampleGuid>{D443CDF0-F81C-4D0A-A117-63ADBD6AC9C8}</SampleGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>KMDF</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>KMDF</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>KMDF</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>KMDF</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(IntDir)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ItemGroup Label="WrappedTaskItems">
+    <ClCompile Include="acpinotify.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1</WppPreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="driver.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1</WppPreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="pep.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1</WppPreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="util.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1</WppPreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="work.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1</WppPreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>pepcommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>pepcommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>pepcommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>pepcommon</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;_UNICODE;EVENT_TRACING</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ksguid.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\hal.lib;$(DDK_LIB_PATH)\ntoskrnl.lib;$(DDK_LIB_PATH)\wdmsec.lib;$(DDK_LIB_PATH)\wpprecorder.lib</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ksguid.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\hal.lib;$(DDK_LIB_PATH)\ntoskrnl.lib;$(DDK_LIB_PATH)\wdmsec.lib;$(DDK_LIB_PATH)\wpprecorder.lib</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ksguid.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\hal.lib;$(DDK_LIB_PATH)\ntoskrnl.lib;$(DDK_LIB_PATH)\wdmsec.lib;$(DDK_LIB_PATH)\wpprecorder.lib</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ksguid.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\hal.lib;$(DDK_LIB_PATH)\ntoskrnl.lib;$(DDK_LIB_PATH)\wdmsec.lib;$(DDK_LIB_PATH)\wpprecorder.lib</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="pchsrc.c">
+      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>pch.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Create</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\pch.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

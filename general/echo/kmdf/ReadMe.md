@@ -8,9 +8,6 @@ It also shows how to synchronize execution of these events with other asynchrono
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-**Note**
-Due to a known bug in the current Windows Driver Kit tools, when building this sample in Debug mode, the exe project may report some ApiValidator warnings. These can be safely ignored.
-
 Related technologies
 --------------------
 

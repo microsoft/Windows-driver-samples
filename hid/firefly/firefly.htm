@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 5.0">
+<TITLE>Firefly</TITLE>
+</HEAD>
+<BODY LINK="#0000ff">
+
+<FONT FACE="Verdana" SIZE=5><H2>Firefly</H2>
+</FONT><FONT FACE="Verdana" SIZE=2>
+
+
+<H3>SUMMARY</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+Firefly is a filter driver for an HID device. Along with illustrating how to write a filter driver, this sample shows how to use remote I/O target interfaces to open a HID collection in kernel-mode and send IOCTL requests to set and get feature reports, how an application can use WMI interfaces to send commands to a filter driver.
+
+<H3>Introduction to firefly sample</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+
+Firefly sample is installed as an upper filter driver of Microsoft USB Intellimouse Optical. An application provided with the sample can cause the light of the optical mouse to blink by sending commands to the filter driver using WMI interface.  The sample consists of:
+<p>
+<B>Driver </B>(firefly.sys): It's an upper device filter driver of mouse (mouhid.sys). This is a generic filter driver based on toaster filter driver sample available in this DDK. During start device, the driver registers a WMI class (FireflyDeviceInformation). The usermode application connects to WMI namespace (root\wmi) and opens this class using COM interfaces and makes call to set or get dataitem value (TailLit) of this class. In response to set WMI request, driver opens the HID collection using IoTarget and sends IOCTL_HID_GET_COLLECTION_INFORMATION & IOCTL_HID_GET_COLLECTION_DESCRIPTOR ioctls to get the preparsed data. It then calls HidP_GetCaps using the preparsed data to get the capabilities of the device. After getting the capabilities of the device, the driver creates a feature report to set or clear the feature that causes the light to toggle.
+<p>
+<B>Library</B> (luminous.lib): The sources for this file is located in the WINDDK\<ddk ver. #>\src\wdm\hid\firefly\lib folder. You will need to build it before using it. This is shared by the WDM and WDF sample. All the interfaces required to access the WMI is defined in this library and exposed as CLuminous class.
+<p>
+<B>Application </B>(flicker.exe):  The sources for this file is located in the WINDDK\<ddk ver. #>\src\wdm\hid\firefly\app folder. You will need to build it before using it. This is shared by the WDM and WDF sample. The application links to luminous lib to open the WMI interfaces and send set request to toggle the light.
+<p>
+<B>Sauron </B>(sauron.dll): The sources for this file is located in the WINDDK\<ddk ver. #>\src\wdm\hid\firefly\sauron folder. You will need to build it before using it. This is shared by the WDM and WDF sample. This is a windows media player visualization DLL. This DLL is created based on a sample from the Windows Media player SDK kit. By using this DLL, you can cause the mouse lights to blink to the beats of the music. Fun stuff to try out.
+<p>
+
+
+<H3>BUILDING THE SAMPLE</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+To build the sample driver and test applications, you must first set up the DDK environment on your host machine. The WDK documentation has complete description on how to do this. 
+<OL>
+<LI>
+Once the build environment is set up, run the build –ceZ command in the firefly directory. This will build the luminous.lib, firefly.sys, flicker.exe, and sauron.dll and place all these bits under the appropriate target build and platform specific sub directories of firefly/disk directory.<p>
+<LI>
+Copy the KMDF coinstaller (wdfcoinstallerMMmmm.dll), .sys, .exe and the INF file (firefly.inf) to a floppy disk or a temporary directory on the target system. 
+</OL>
+<P>
+
+
+<H3>INSTALLING THE SAMPLE</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+To install the driver on Windows XP and later operating systems: <p>
+<OL>
+<LI>Get Microsoft's USB Optical mouse and plug that into your target machine and make sure the mouse works. The drivers for this mouse comes with the operating system so the device will start working automatically when you plug in.
+<LI>Copy the firefly.sys and the INF file (firefly.inf) to a floppy disk or a temporary directory on the target system. 
+<LI>Bring up the device manager (type devmgmt.msc in the Start/Run window and press enter).
+<LI>Find the Microsoft Optical mouse under "Mice and other pointing devices"
+<LI>Right click on the device and choose "Update Driver..."
+<LI>Select the "Install from a list of specific location (Advanced)", and click Next.
+<LI>Select "Don't search. I will choose the driver to Install" and click Next.
+<LI>Click on "Have Disk..." and specify the floppy or temporary directory where the INF and the sys files are present.
+<LI>The system will show "Shiny Things Firefly mouse" in the list of compatible hardware. Choose that and click Next.
+<LI>You will get a warning about installing a driver that the system cannot verify whether it's compatible with your hardware. Ignore that and say Yes to installing the driver.
+<LI>The system will go ahead and install the driver. At this point, you will get a warning dialog about installing an unsigned driver. Ignore that and click on "Continue Anyway" button.
+<LI>The system will copy all the files and restart the mouse device to install the upper filter. Click on Finish button and you are ready to run the test app.
+</OL>
+
+
+To install the driver on Windows 2000: <p>
+
+<OL>
+<LI>Find the mouse device in the Device manager. On Windows 2000, this device might come up as a "HID compliant mouse" under "Mice and other pointing devices".
+<LI>Double click on the device to bring up the properties dialog.
+<LI>Go to the Driver Tab and click on "Update Driver..." button. Click Next.
+<LI>Select "Display a list of the known driver..." option and click Next.
+<LI>Click on "Have Disk..." and specify the floppy or temporary directory where the INF and the sys files are present.
+<LI>Click Next. You will get warning about installing an unsigned driver. Click on Yes to continue the driver installation.
+<LI>The system will copy all the files and restart the mouse device to install the upper filter. Click on Finish and close the Device manager property dialog. You are ready to run the test app.
+</OL>
+
+<H3>TESTING THE SAMPLE</H3></FONT><FONT FACE="Verdana" SIZE=2><P>
+
+Copy the flicker.exe to the target machine and run it from command line. The usage is:
+<BLOCKQUOTE>
+Usage: Flicker <-0 | -1 | -2> <br>
+                -0 turns off light <br>
+                -1 turns on light <br>
+                -2 flashes light
+</BLOCKQUOTE>
+<p>
+<B>Testing the DLL:</B>
+<OL>
+<LI>Copy the sauron.dll to the Windows Media player Visualization directory (C:\Program Files\Windows Media Player\Visualizations).
+<LI>Register the DLL with COM by calling "regsvr32 sauron.dll" in command shell.
+<LI>Start the Windows Media player and click on "Now Playing". 
+<LI>Right click on the Visualization window and you will see a menu item called "Sauron".
+<LI>Choose either Firefly Bars or Firefly Flash and play some music.
+<LI>You will see the mouse light dancing to the tune of the music.
+<LI>You can unregister the DLL by calling "regsvr32 -u sauron.dll".
+</OL>
+
+<P>
+</FONT><P ALIGN="CENTER"><A HREF="#top"><FONT FACE="Verdana" SIZE=2>Top of page</FONT></A><FONT FACE="Verdana" SIZE=2> </P></FONT>
+<TABLE CELLSPACING=0 BORDER=0 WIDTH=624>
+<TR><TD VALIGN="MIDDLE" BGCOLOR="#00ffff" HEIGHT=2>
+<P></TD>
+</TR>
+</TABLE>
+
+<FONT FACE="MS Sans Serif" SIZE=1><P>&copy; Microsoft Corporation 2007</FONT><FONT FACE="Verdana" SIZE=2> </P></FONT></BODY>
+</HTML>

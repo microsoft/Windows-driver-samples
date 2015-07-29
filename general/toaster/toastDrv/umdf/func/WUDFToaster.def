@@ -1,0 +1,6 @@
+; WUDFToaster.def : Declares the module parameters.
+
+LIBRARY      "WUDFToaster.DLL"
+
+EXPORTS
+    DllGetClassObject   PRIVATE

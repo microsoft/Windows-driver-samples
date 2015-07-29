@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WpdMultiTransportDriver", "WpdMultiTransportDriver.vcxproj", "{0431FFA9-4A12-4072-914A-F46F86F9EC99}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WpdMultiTransportDriver", "WpdMultiTransportDriver.vcxproj", "{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Debug|Win32.Build.0 = Debug|Win32
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Release|Win32.ActiveCfg = Release|Win32
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Release|Win32.Build.0 = Release|Win32
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Debug|x64.ActiveCfg = Debug|x64
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Debug|x64.Build.0 = Debug|x64
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Release|x64.ActiveCfg = Release|x64
-		{0431FFA9-4A12-4072-914A-F46F86F9EC99}.Release|x64.Build.0 = Release|x64
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Debug|Win32.Build.0 = Debug|Win32
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Release|Win32.ActiveCfg = Release|Win32
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Release|Win32.Build.0 = Release|Win32
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Debug|x64.ActiveCfg = Debug|x64
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Debug|x64.Build.0 = Debug|x64
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Release|x64.ActiveCfg = Release|x64
+		{C0EE76FA-9D31-4B86-80D6-25C9FAEAE0A6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CD76DACF-18E8-4625-9A09-19B020579A56}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <SupportsPackaging>false</SupportsPackaging>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <SampleGuid>{6DBDE413-6AD0-40FA-ABE2-273BA6176E9E}</SampleGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(IntDir)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ItemGroup Label="WrappedTaskItems">
+    <ClCompile Include="mftpeventgenerator.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="multipinmft.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="basepin.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="multipinmfthelpers.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="multipinmftutils.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="custompin.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppTraceFunction>DMFTRACE(FLAG,LEVEL,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>multipinmft</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>multipinmft</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>multipinmft</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>multipinmft</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafxsrc.cpp">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Create</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

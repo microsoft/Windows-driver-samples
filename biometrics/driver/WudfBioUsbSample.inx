@@ -1,0 +1,145 @@
+;
+; Copyright (C) Microsoft. All rights reserved.
+;
+; WudfBioUsbSample.inf - Install the WBDI USB user-mode driver - WBDI sample
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Biometric
+ClassGuid={53D29EF7-377C-4D14-864B-EB3A85769359}
+Provider=%ProviderString%
+CatalogFile=biometrics.cat
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+; TODO: Change the VendorID (VID) and ProductID (PID) to match your device
+%WBDIUsbDeviceName%=Biometric_Install, USB\VID_0547&PID_1002
+
+[ClassInstall32]
+AddReg=BiometricClass_RegistryAdd
+
+[BiometricClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-201"
+HKR,,IconPath,0x00020000,"%%SYSTEMROOT%%\system32\SysClass.dll,-201"
+
+[SourceDisksFiles]
+WudfBioUsbSample.dll=1
+EngineAdapter.dll=1 ; Vendor engine adapter
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF WBDI Usb Device - WBDI IOCTL interface ==================================
+
+[Biometric_Install.NT]
+CopyFiles=UMDriverCopy, WinBioEngineAdapterCopy
+AddProperty=Device_Properties
+Include=WINUSB.INF                      ; Import sections from WINUSB.INF
+Needs=WINUSB.NT                         ; Run the CopyFiles & AddReg directives for WinUsb.INF
+
+[Biometric_Install.NT.hw]
+AddReg=Biometric_Device_AddReg
+AddReg=DriverPlugInAddReg, DatabaseAddReg
+
+[Device_Properties]
+DeviceIcon,,,,"%%SYSTEMROOT%%\system32\SysClass.dll,-201" ; This is where a device specific icon can be specified.
+
+[Biometric_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall  ; flag 0x2 sets this as the service for the device
+AddService=WinUsb,0x000001f8,WinUsb_ServiceInstall  ; this service is installed because its a filter.
+
+[Biometric_Install.NT.Wdf]
+KmdfService=WINUSB, WinUsb_Install
+UmdfDispatcher=WinUsb
+UmdfService=WudfBioUsbSample, WudfBioUsbSample_Install
+UmdfServiceOrder=WudfBioUsbSample
+
+[Biometric_Install.NT.CoInstallers]
+AddReg=CoInstallers_AddReg
+CopyFiles=CoInstallers_CopyFiles
+
+[WinUsb_Install]
+KmdfLibraryVersion = 1.9
+
+[WudfBioUsbSample_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID = "{F1CB3C15-A916-47bc-BEA1-D5D4163BC6AE}"
+ServiceBinary = "%12%\UMDF\WudfBioUsbSample.dll"
+
+[Biometric_Device_AddReg]
+HKR,,"DeviceCharacteristics",0x10001,0x0100     ; Use same security checks on relative opens
+HKR,,"Security",,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"  ; Allow generic-all access to Built-in administrators and Local system
+HKR,,"LowerFilters",0x00010008,"WinUsb"         ; FLG_ADDREG_TYPE_MULTI_SZ | FLG_ADDREG_APPEND
+HKR,,"Exclusive",0x10001,1
+HKR,,"SystemWakeEnabled",0x00010001,1
+HKR,,"DeviceIdleEnabled",0x00010001,1
+HKR,,"UserSetDeviceIdleEnabled",0x00010001,1
+HKR,,"DefaultIdleState",0x00010001,1
+HKR,,"DefaultIdleTimeout",0x00010001,5000
+
+[DriverPlugInAddReg]
+HKR,WinBio\Configurations,DefaultConfiguration,,"0"
+HKR,WinBio\Configurations\0,SensorMode,0x10001,1                                ; Basic - 1, Advanced - 2
+HKR,WinBio\Configurations\0,SystemSensor,0x10001,1                              ; UAC/Winlogon - 1
+HKR,WinBio\Configurations\0,SensorAdapterBinary,,"WinBioSensorAdapter.DLL"      ; Windows built-in WBDI sensor adapter - see SensorAdapter.dll for sample vendor adapter
+HKR,WinBio\Configurations\0,EngineAdapterBinary,,"EngineAdapter.DLL"            ; Vendor engine
+HKR,WinBio\Configurations\0,StorageAdapterBinary,,"WinBioStorageAdapter.DLL"    ; Windows built-in storage adapter - see StorageAdapter.dll for sample vendor adapter
+HKR,WinBio\Configurations\0,DatabaseId,,"6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50"  ; Unique database GUID
+
+[DatabaseAddReg]
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},BiometricType,0x00010001,0x00000008
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},Attributes,0x00010001,0x00000001
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},Format,,"00000000-0000-0000-0000-000000000000"
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},InitialSize,0x00010001,0x00000020
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},AutoCreate,0x00010001,0x00000001
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},AutoName,0x00010001,0x00000001
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},FilePath,,""
+HKLM,System\CurrentControlSet\Services\WbioSrvc\Databases\{6E9D4C5A-55B4-4c52-90B7-DDDC75CA4D50},ConnectionString,,""
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[WinUsb_ServiceInstall]
+DisplayName     = %WinUsb_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to \Windows\System32\drivers\UMDF
+WinBioEngineAdapterCopy=11,WinBioPlugins ; copy to \Windows\System32\WinBioPlugins
+CoInstallers_CopyFiles=11
+
+[UMDriverCopy]
+WudfBioUsbSample.dll
+
+[WinBioEngineAdapterCopy]
+EngineAdapter.dll
+
+; =================== Generic ==================================
+
+[Strings]
+ManufacturerName="TODO-Set-Manufacturer"
+ProviderString="TODO-Set-Provider"
+MediaDescription="Sample Driver Installation Media"
+ClassName="Biometric Devices"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+WBDIUsbDeviceName="WUDF WBDI sample" 
+WinUsb_SvcDesc="WinUSB Driver"

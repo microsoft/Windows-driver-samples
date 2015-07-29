@@ -1,0 +1,63 @@
+' Qti_wpd_enabled.bs2
+'
+' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+' ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+' THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+' PARTICULAR PURPOSE.
+'
+' Copyright (c) Microsoft Corporation. All rights reserved
+'
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+' =========================================================================
+
+' -----[ I/O Definitions ]------------------------------------------------------
+LineSnsrPwr CON 10 ' line sensor power
+LineSnsrIn CON 9 ' line sensor input
+
+' -----[ Constants ]------------------------------------------------------------
+'CLREOL CON 11 ' clear to end of line (DEBUG)
+
+' -----[ Variables ]------------------------------------------------------------
+Sense VAR Word ' sensor raw reading
+
+SensorID  VAR   Byte  'Sensor identifier = 5 for PIR
+ElementSize VAR Byte  'Size (in bytes) of each element
+ElementCount  VAR   Byte  'Count of elements in packet
+Padding VAR Byte      'Padding for the 8-byte element
+NewInterval VAR  Word  'New interval requested by user
+Interval  VAR   Word  'Interval value utlized by firmware
+
+SensorID = 7
+ElementSize = 1
+ElementCount = 4      '4-bytes for sensor data
+Interval = 200
+NewInterval = 200
+
+LFD     CON $10        'Linefeed character
+
+' -----[ Main Code ]------------------------------------------------------------
+Main:
+
+  GOSUB PollSensor                  'Retrieve sensor value
+  GOSUB RetrieveInterval            'Retrieve units data
+
+Timeout:
+  SEROUT 16, 16468, [DEC1 SensorID, DEC1 ElementSize, DEC1 ElementCount, DEC4 Sense, DEC5 Interval, LFD]
+ GOTO Main
+
+PollSensor:
+  HIGH LineSnsrPwr ' activate sensor
+  HIGH LineSnsrIn ' discharge QTI cap
+  PAUSE 1
+  RCTIME LineSnsrIn, 1, Sense ' read sensor value
+  LOW LineSnsrPwr ' deactivate sensor
+RETURN
+
+RetrieveInterval:
+    SERIN 16, 16468, Interval, Timeout, [DEC NewInterval]   'Retrieve interval
+    IF NewInterval >= 10 AND NewInterval <= 60000 THEN
+      Interval = NewInterval
+    ENDIF
+  RETURN
+

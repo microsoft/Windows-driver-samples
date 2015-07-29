@@ -1,0 +1,260 @@
+###################################
+#   Timer sufficient enough to    #
+#   allow execution of command    #
+#    and return (in seconds)      #
+###################################
+   configurationTimer = 10;
+
+
+###################################
+# ArchitecturalDesign.StreamInjection.NoStreamStarvation.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_STREAM_INJECTION -l FWPM_LAYER_STREAM_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_STREAM_INJECTION -l FWPM_LAYER_STREAM_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -v -r ;
+
+# ArchitecturalDesign.StreamInjection.NoStreamStarvation.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_STREAM_INJECTION -l FWPM_LAYER_STREAM_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_STREAM_INJECTION -l FWPM_LAYER_STREAM_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -v -r ;
+
+###################################
+# ArchitecturalDesign.PacketInjection.NoDeadlocks
+   numPacketInjectionCommands = 2;
+
+# ArchitecturalDesign.PacketInjection.NoDeadlocks.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_PACKET_INJECTION -l FWPM_LAYER_%DIRECTION%BOUND_IPPACKET_V%IP_VERSION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_PACKET_INJECTION -l FWPM_LAYER_%DIRECTION%BOUND_IPPACKET_V%IP_VERSION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -v -r ;
+
+# ArchitecturalDesign.PacketInjection.NoDeadlocks.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_PACKET_INJECTION -l FWPM_LAYER_%DIRECTION%BOUND_TRANSPORT_V%IP_VERSION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_PACKET_INJECTION -l FWPM_LAYER_%DIRECTION%BOUND_TRANSPORT_V%IP_VERSION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -v -r ;
+
+###################################
+# ArchitecturalDesign.SupportPowerManagedStates.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# ArchitecturalDesign.SupportPowerManagedStates.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -ipla %LOCAL_IP% -ipra %REMOTE_IP% -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+###################################
+# Firewall.SupportMACAddressExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+# Firewall.SupportMACAddressExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET -mla %LOCAL_MAC% -mra %REMOTE_MAC% -c -v -r ;
+
+###################################
+# Firewall.Support5TupleExceptions.IPAddressExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.IPAddressExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipla %LOCAL_IP% -ipra %REMOTE_IP% -c -v -r ;
+
+###################################
+# Firewall.Support5TupleExceptions.PortExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.PortExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -iplp %LOCAL_PORT% -iprp %REMOTE_PORT% -c -v -r ;
+
+###################################
+# Firewall.Support5TupleExceptions.ProtocolExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -c -v -r ;
+
+# Firewall.Support5TupleExceptions.ProtocolExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -ipp %PROTOCOL% -c -v -r ;
+
+###################################
+# Firewall.Support5TupleExceptions.ICMPExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_TRANSPORT_V4 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_OUTBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_OUTBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_INBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+# Firewall.Support5TupleExceptions.ICMPExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_INBOUND_TRANSPORT_V6 -ipp %PROTOCOL% -icmpt %ICMP_TYPE% -icmpc %ICMP_CODE% -v -r ;
+
+###################################
+# Firewall.SupportApplicationExceptions.1
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.2
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V4 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.3
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.4
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.5
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.6
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_CONNECT_V6 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.7
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_PERMIT -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -c -v -r ;
+
+# Firewall.SupportApplicationExceptions.8
+   LOGO_ADD    = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -c -v ;
+   LOGO_DELETE = %WinDir%\System32\WFPSampler.exe -s BASIC_ACTION_BLOCK -l FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 -aaid %APPLICATION% -c -v -r ;
+

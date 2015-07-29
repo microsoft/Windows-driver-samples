@@ -1,0 +1,112 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    OSRUSBFX2.INF
+;
+;Abstract:
+;    Installation inf for OSR USB-FX2 Learning Kit
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ProviderName%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=KmdfSamples.cat
+
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+
+; ================= Device section =====================
+
+[Manufacturer]
+%MfgName%=OSR,NT$ARCH$
+
+[OSR.NT$ARCH$]
+%USB\VID_045E&PID_930A.DeviceDesc%=osrusbfx2.Dev, USB\VID_0547&PID_1002
+%Switch.DeviceDesc%=Switch.Dev, {6FDE7521-1B65-48ae-B628-80BE62016026}\OsrUsbFxRawPdo
+
+
+[osrusbfx2.Dev.NT]
+CopyFiles=osrusbfx2.Files.Ext
+
+[Switch.Dev.NT]
+;dummy section
+
+[Switch.Dev.NT.Services]
+AddService = , %SPSVCINST_ASSOCSERVICE%, 
+
+[osrusbfx2.Dev.NT.Services]
+AddService = osrusbfx2, %SPSVCINST_ASSOCSERVICE%, osrusbfx2.AddService
+
+[osrusbfx2.AddService]
+DisplayName    = %osrusbfx2.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\osrusbfx2.sys
+
+[osrusbfx2.Files.Ext]
+osrusbfx2.sys
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+osrusbfx2.sys = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+;-------------- WDF Coinstaller installation
+
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[osrusbfx2.Dev.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[osrusbfx2.Dev.NT.Wdf]
+KmdfService = osrusbfx2, osrusbfx2_wdfsect
+[osrusbfx2_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;---------------------------------------------------------------;
+
+[Strings]
+ProviderName="TODO-Set-Provider"
+MfgName="OSR"
+Disk_Description="OSRUSBFX2 Installation Disk"
+USB\VID_045E&PID_930A.DeviceDesc="WDF Sample Driver for OSR USB-FX2 Learning Kit"
+osrusbfx2.SvcDesc="WDF Sample Driver for OSR USB-FX2 Learning Kit"
+ClassName       = "Sample Device"
+Switch.DeviceDesc = "OsrUsbFX2 RawPdo For Switch"
+SPSVCINST_ASSOCSERVICE= 0x00000002

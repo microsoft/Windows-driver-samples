@@ -20,7 +20,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 DriverVer=03/20/2003,5.00.3788
 CatalogFile=KmdfSamples.cat
 
@@ -45,7 +45,7 @@ HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system
 ExcludeFromSelect=*
 
 [Manufacturer]
-%MSFT%=MSFT,NT$ARCH$
+%ManufacturerString%=MSFT,NT$ARCH$
 
 [SourceDisksFiles]
 Pci9x5x.sys=1
@@ -82,7 +82,8 @@ KmdfService = Pci9x5x, Pci9x5x_wdfsect
 KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
-MSFT = "Microsoft"
+ProviderString     = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
 ClassName = "Sample Device"
 Pci9x5x.SVCDESC = "Sample Driver Service for the PCI9x5xRDK-Lite adapter"
 Pci9056.DRVDESC = "Sample Driver for the PCI9056RDK-Lite adapter"

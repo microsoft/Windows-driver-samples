@@ -5,12 +5,12 @@
 Signature="$Windows NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFTUMDF%
+Provider=%ProviderString%
 DriverVer=03/25/2005,0.0.0.1
 CatalogFile=wudf.cat
 
 [Manufacturer]
-%MSFTUMDF%=Microsoft,NT$ARCH$
+%ManufacturerString%=Microsoft,NT$ARCH$
 
 [Microsoft.NT$ARCH$]
 %SkeletonDeviceName%=Skeleton_Install, USB\Vid_045e&Pid_94aa&mi_00
@@ -89,7 +89,8 @@ UMDFSkeleton.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 ; =================== Generic ==================================
 
 [Strings]
-MSFTUMDF="Microsoft Internal (WDF:UMDF)"
+ProviderString="TODO-Set-Provider"
+ManufacturerString="TODO-Set-Manufacturer"
 MediaDescription="Microsoft Sample Driver Installation Media"
 ClassName="Sample Device"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{4071D9FA-8523-40C2-AD37-B96CB8438837}</UniqueIdentifier>
+      <UniqueIdentifier>{74888656-E3AB-4255-BBFE-4122D66F5FEB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{FA619144-425B-4A1D-BE9D-C67C3DF67348}</UniqueIdentifier>
+      <UniqueIdentifier>{BB9F8E9F-F645-4AC6-92EC-13CBBF59E4DF}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{A3F17163-2904-4021-9EF6-73D05E31169D}</UniqueIdentifier>
+      <UniqueIdentifier>{D7FA8D20-66EC-4F15-B0EA-0E7435261BE2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{0EE7AE28-07A8-4B93-8708-F261564A77B5}</UniqueIdentifier>
+      <UniqueIdentifier>{752766FE-0F66-4394-B24F-D1A229EC5B85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,12 +36,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\UMDFSkeleton_OSR.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
-    <FilesToPackage Include=".\Debug\\UMDFSkeleton_Root.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="UMDFSkeleton_OSR.inx">
       <Filter>Driver Files</Filter>
     </Inf>

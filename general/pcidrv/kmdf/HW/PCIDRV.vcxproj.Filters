@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{6D6B3E6C-B12D-41CD-B77E-CFE7772C651E}</UniqueIdentifier>
+      <UniqueIdentifier>{0952D163-791F-4123-BCD0-F58AFDBD257F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{C3F0DB26-8DB1-4AC1-BAAF-D84FAA82A17A}</UniqueIdentifier>
+      <UniqueIdentifier>{AF230497-BE0C-4FA2-95A2-9BD4EFC3EB49}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{2BDDF51F-F342-422D-8E77-6D18E65A4FE3}</UniqueIdentifier>
+      <UniqueIdentifier>{38573357-97D6-4F88-9261-F38ABE26C075}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{9B95345C-42E1-4A98-8A1F-71F76466D9AF}</UniqueIdentifier>
+      <UniqueIdentifier>{8DB6212C-6D77-4437-87CE-60D7E13C7314}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +57,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\genpci.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="..\genpci.inx">
       <Filter>Driver Files</Filter>
     </Inf>

@@ -3,39 +3,14 @@ Bluetooth Echo L2CAP Profile Driver
 
 This sample demonstrates developing [Bluetooth L2CAP profile drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536598) using [Bluetooth L2CAP DDIs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536585).The sample includes two drivers. One for a device that acts as an L2CAP server and another for a device that acts as an L2CAP client. The server simply echoes back any data that it receives from client on the same L2CA channel. These drivers can be used with devices that can be installed with bth.inf. Such devices get installed as ‘Generic Bluetooth Radio’. Examples of such devices are Bluetooth USB dongles such as (but not limited to):
 
-``` {.syntax xml:space="preserve"}
-Generic Bluetooth Radio=\
-                         BthUsb, USB\Vid_0a12&Pid_0001
-CSR Nanosira=\
-                         BthUsb, USB\Vid_0a12&Pid_0003
-CSR Nanosira WHQL Reference Radio=\
-                         BthUsb, USB\Vid_0a12&Pid_0004
-CSR Nanosira-Multimedia=\
-                         BthUsb, USB\Vid_0a12&Pid_0005
-CSR Nanosira-Multimedia WHQL Reference Radio=\
-                         BthUsb, USB\Vid_0a12&Pid_0006
-```
+    Generic Bluetooth Radio = BthUsb, USB\Vid_0a12&Pid_0001
+    CSR Nanosira = BthUsb, USB\Vid_0a12&Pid_0003
+    CSR Nanosira WHQL Reference Radi o= BthUsb, USB\Vid_0a12&Pid_0004
+    CSR Nanosira-Multimedia = BthUsb, USB\Vid_0a12&Pid_0005
+    CSR Nanosira-Multimedia WHQL Reference Radio = BthUsb, USB\Vid_0a12&Pid_0006
 
 Please refer to bth.inf for the complete list of devices. The installation steps below describe how to install echo server and client with such a device. Please note that RFCOMM based profiles must be developed and accessed using user-mode socket APIs. This sample is applicable to Windows® Vista, Windows® 7 and Windows® 8 operating systems.
 
-**Note**  
-
-To build this sample, you can use Microsoft Visual Studio 2013 (Express, Professional, or Ultimate) and Windows Driver Kit (WDK) 8.1 Update. You can get Visual Studio 2013 and WDK 8.1 Update [here](http://go.microsoft.com/fwlink/p/?LInkID=239721).
-
-You can also build this sample with Visual Studio 2013 (Professional or Ultimate) and [Windows Driver Kit (WDK) 8.1](http://go.microsoft.com/fwlink/p/?LInkID=391348).
-
-For Windows Driver Kit (WDK) 8 samples, download the [WDK 8 samples pack](%20http://go.microsoft.com/fwlink/?LinkId=317090). The samples in the WDK 8 samples pack will build only with Microsoft Visual Studio Professional 2012 (Professional or Ultimate) and WDK 8.
-
-Operating system requirements
------------------------------
-
-Client
-
-Windows 7
-
-Server
-
-Windows Server 2008 R2
 
 Build the sample
 ----------------

@@ -1,0 +1,94 @@
+;/*++
+;
+;Copyright (c) 1990-2000 Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    ToastMon.INF
+;
+;Abstract:
+;    INF file for installing sample WDF toastmon driver
+;
+;Installation Notes:
+;    Using Devcon: Type "devcon install wdftoastmon.inf root\toastmon" to install
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ProviderName%
+DriverVer=06/16/1999,5.00.2072
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+ToastMon_Inst_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+; ================= Device Install section =====================
+
+[Manufacturer]
+%MfgName%=Toast,NT$ARCH$
+
+[SourceDisksFiles]
+wdftoastmon.sys=1
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1=%DISK_NAME%,
+
+[Toast.NT$ARCH$]
+%WdfToastMon.DRVDESC%=ToastMon_Inst,root\toastmon
+
+[ToastMon_Inst.NT]
+CopyFiles=ToastMon.CopyFiles
+
+[ToastMon.CopyFiles]
+wdftoastmon.sys
+
+[ToastMon_Inst.NT.Services]
+AddService=wdfToastMon,0x00000002,wdfToastMon_Service
+
+[wdfToastMon_Service]
+DisplayName    = %wdfToastMon.SVCDESC%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\wdftoastmon.sys
+
+;
+;--- ToastMon_Inst Coinstaller installation ------
+;
+
+[ToastMon_Inst.NT.CoInstallers]
+AddReg=ToastMon_Inst_CoInstaller_AddReg
+CopyFiles=ToastMon_Inst_CoInstaller_CopyFiles
+
+[ToastMon_Inst_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ToastMon_Inst_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[ToastMon_Inst.NT.Wdf]
+KmdfService =  wdfToastMon, wdfToastMon_wdfsect
+
+[wdfToastMon_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName = "TODO-Set-Provider"
+MfgName = "TODO-Set-Manufacturer"
+ClassName = "Sample Device"
+WdfToastMon.SVCDESC = "Sample WDF ToastMon Service"
+WdfToastMon.DRVDESC = "Sample WDF ToastMon Driver"
+DISK_NAME = "Toastmon Install Disk"

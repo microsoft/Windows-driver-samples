@@ -1,0 +1,13 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_DLL
+#define VER_FILESUBTYPE VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "Framework Version of Toaster Static Bus Enumerator"
+#define VER_INTERNALNAME_STR        "statbus.sys"
+#define VER_ORIGINALFILENAME_STR    "statbus.sys"
+
+#include "common.ver"
+
+MofResourceName MOFDATA busenum.bmf

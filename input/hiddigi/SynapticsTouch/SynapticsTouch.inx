@@ -1,0 +1,199 @@
+; SynapticsTouch.INF
+; Copyright (c) 2000,2011 Microsoft Corporation
+;
+; Sample code. Dealpoint ID #843729.
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = HIDClass
+ClassGUID   = {745A17A0-74D3-11D0-B6FE-00A0C90F57DA}
+Provider    = %Provider_Name%
+DriverVer   = 08/01/2011,1.0
+; Uncomment the following line when you have a valid catalog file.
+;         If you use bogus catalog file installation will fail.
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %Installation_Disk%,,,""
+
+[SourceDisksFiles]
+SynapticsTouch.sys  = 1,,
+
+[Manufacturer]
+%Manufacturer_Name% = Standard,NTARM
+
+[Standard.NTARM]
+%TchDriver_Device_Desc% = TchDriver_Device.NT, ACPI\OEM_TOUCH
+
+;*****************************************
+; TchDriver client driver Install Section
+;*****************************************
+
+[TchDriver_Device.NT]
+CopyFiles = TchDriver_Device.NT.CopyFiles
+
+[TchDriver_Device.NT.CopyFiles]
+SynapticsTouch.sys
+
+[TchDriver_Device.NT.HW]
+AddReg = FilterInst.NT.HW.AddReg
+AddReg = CapButtons.NT.HW.AddReg
+AddReg = PowerConfig.NT.HW.AddReg
+AddReg = Configuration.NT.HW.AddReg
+AddReg = Resolutions.NT.HW.AddReg
+AddReg = DisplaySize.NT.HW.AddReg
+AddReg = ButtonBacklights.NT.HW.AddReg
+AddReg = LegacyTouchScaling.NT.HW.AddReg
+
+[FilterInst.NT.HW.AddReg]
+HKR,,"UpperFilters",    %REG_MULTI_SZ%, mshidkmdf
+HKR,,"MultiportDevice", %REG_DWORD%,    0
+
+[CapButtons.NT.HW.AddReg]
+HKLM,"SYSTEM\TOUCH\BUTTONS",   "Area",     %REG_SZ%,    "0,1280 768,1390"
+HKLM,"SYSTEM\TOUCH\BUTTONS",   "Count",    %REG_DWORD%, 0x3
+HKLM,"SYSTEM\TOUCH\BUTTONS",   "Vibrate",  %REG_DWORD%, 0x1
+HKLM,"SYSTEM\TOUCH\BUTTONS",   "Duration", %REG_DWORD%, 0x19
+HKLM,"SYSTEM\TOUCH\BUTTONS",   "Intensity",%REG_DWORD%, 0x32
+HKLM,"SYSTEM\TOUCH\BUTTONS\0", "Area",     %REG_SZ%,    "0,1295 236,1390"
+HKLM,"SYSTEM\TOUCH\BUTTONS\0", "Name",     %REG_SZ%     "Back"
+HKLM,"SYSTEM\TOUCH\BUTTONS\0", "VKey",     %REG_DWORD%, 0x1B
+HKLM,"SYSTEM\TOUCH\BUTTONS\1", "Area",     %REG_SZ%,    "277,1295 492,1390"
+HKLM,"SYSTEM\TOUCH\BUTTONS\1", "Name",     %REG_SZ%,    "Start"
+HKLM,"SYSTEM\TOUCH\BUTTONS\1", "VKey",     %REG_DWORD%, 0x71
+HKLM,"SYSTEM\TOUCH\BUTTONS\2", "Area",     %REG_SZ%,    "533,1295 768,1390"
+HKLM,"SYSTEM\TOUCH\BUTTONS\2", "Name",     %REG_SZ%,    "Search"
+HKLM,"SYSTEM\TOUCH\BUTTONS\2", "VKey",     %REG_DWORD%, 0x72
+
+[PowerConfig.NT.HW.AddReg]
+HKR,,"EnhancedPowerManagementEnabled",    %REG_DWORD%, 1
+HKR,,"EnhancedPowerManagementUseMonitor", %REG_DWORD%, 1
+
+[Configuration.NT.HW.AddReg]
+HKR,%Configuration%, "PepRemovesVoltageInD3",   %REG_DWORD%, 0x0 
+HKR,%Configuration%, "SleepMode",               %REG_DWORD%, 0x0
+HKR,%Configuration%, "NoSleep",                 %REG_DWORD%, 0x1
+HKR,%Configuration%, "ReportRate",              %REG_DWORD%, 0x0
+HKR,%Configuration%, "Configured",              %REG_DWORD%, 0x1
+HKR,%Configuration%, "InterruptEnable",         %REG_DWORD%, 0xf
+HKR,%Configuration%, "DozeInterval",            %REG_DWORD%, 0x3
+HKR,%Configuration%, "DozeThreshold",           %REG_DWORD%, 0x1e
+HKR,%Configuration%, "DozeHoldoff",             %REG_DWORD%, 0x5
+HKR,%Configuration%, "ReportingMode",           %REG_DWORD%, 0x1
+HKR,%Configuration%, "AbsPosFilt",              %REG_DWORD%, 0x1
+HKR,%Configuration%, "RelPosFilt",              %REG_DWORD%, 0x0
+HKR,%Configuration%, "RelBallistics",           %REG_DWORD%, 0x0
+HKR,%Configuration%, "Dribble",                 %REG_DWORD%, 0x0
+HKR,%Configuration%, "PalmDetectThreshold",     %REG_DWORD%, 0xb
+HKR,%Configuration%, "MotionSensitivity",       %REG_DWORD%, 0x0
+HKR,%Configuration%, "ManTrackEn",              %REG_DWORD%, 0x0
+HKR,%Configuration%, "ManTrackedFinger",        %REG_DWORD%, 0x0
+HKR,%Configuration%, "DeltaXPosThreshold",      %REG_DWORD%, 0x0
+HKR,%Configuration%, "DeltaYPosThreshold",      %REG_DWORD%, 0x0
+HKR,%Configuration%, "Velocity",                %REG_DWORD%, 0x0
+HKR,%Configuration%, "Acceleration",            %REG_DWORD%, 0x0
+HKR,%Configuration%, "SensorMaxXPos",           %REG_DWORD%, 0x330
+HKR,%Configuration%, "SensorMaxYPos",           %REG_DWORD%, 0x572
+HKR,%Configuration%, "ZTouchThreshold",         %REG_DWORD%, 0x1e
+HKR,%Configuration%, "ZHysteresis",             %REG_DWORD%, 0x5
+HKR,%Configuration%, "SmallZThreshold",         %REG_DWORD%, 0x28
+HKR,%Configuration%, "SmallZScaleFactor",       %REG_DWORD%, 0x28f5
+HKR,%Configuration%, "LargeZScaleFactor",       %REG_DWORD%, 0x051e
+HKR,%Configuration%, "AlgorithmSelection",      %REG_DWORD%, 0x1
+HKR,%Configuration%, "WxScaleFactor",           %REG_DWORD%, 0x30
+HKR,%Configuration%, "WxOffset",                %REG_DWORD%, 0x0
+HKR,%Configuration%, "WyScaleFactor",           %REG_DWORD%, 0x30
+HKR,%Configuration%, "WyOffset",                %REG_DWORD%, 0x0
+HKR,%Configuration%, "XPitch",                  %REG_DWORD%, 0x4800
+HKR,%Configuration%, "YPitch",                  %REG_DWORD%, 0x4800
+HKR,%Configuration%, "FingerWidthX",            %REG_DWORD%, 0xea4f
+HKR,%Configuration%, "FingerWidthY",            %REG_DWORD%, 0xdf6c
+HKR,%Configuration%, "ReportMeasuredSize",      %REG_DWORD%, 0x0
+HKR,%Configuration%, "SegmentationSensitivity", %REG_DWORD%, 0x70
+HKR,%Configuration%, "XClipLo",                 %REG_DWORD%, 0x0
+HKR,%Configuration%, "XClipHi",                 %REG_DWORD%, 0x0
+HKR,%Configuration%, "YClipLo",                 %REG_DWORD%, 0x0
+HKR,%Configuration%, "YClipHi",                 %REG_DWORD%, 0x0
+HKR,%Configuration%, "MinFingerSeparation",     %REG_DWORD%, 0xa
+HKR,%Configuration%, "MaxFingerMovement",       %REG_DWORD%, 0x4
+
+[Resolutions.NT.HW.AddReg]
+HKLM,%ScreenProps%,"TouchSwapAxes",                 %REG_DWORD%, 0x0
+HKLM,%ScreenProps%,"TouchInvertXAxis",              %REG_DWORD%, 0x0
+HKLM,%ScreenProps%,"TouchInvertYAxis",              %REG_DWORD%, 0x1
+HKLM,%ScreenProps%,"TouchPhysicalWidth",            %REG_DWORD%, 0x330
+HKLM,%ScreenProps%,"TouchPhysicalHeight",           %REG_DWORD%, 0x572
+HKLM,%ScreenProps%,"TouchPhysicalButtonHeight",     %REG_DWORD%, 0x6E
+HKLM,%ScreenProps%,"TouchPillarBoxWidthLeft",       %REG_DWORD%, 0x8
+HKLM,%ScreenProps%,"TouchPillarBoxWidthRight",      %REG_DWORD%, 0x8
+HKLM,%ScreenProps%,"TouchLetterBoxHeightTop",       %REG_DWORD%, 0x4
+HKLM,%ScreenProps%,"TouchLetterBoxHeightBottom",    %REG_DWORD%, 0x0
+HKLM,%ScreenProps%,"DisplayPhysicalWidth",          %REG_DWORD%, 0x320
+HKLM,%ScreenProps%,"DisplayPhysicalHeight",         %REG_DWORD%, 0x500
+HKLM,%ScreenProps%,"DisplayPillarBoxWidthLeft",     %REG_DWORD%, 0x10
+HKLM,%ScreenProps%,"DisplayPillarBoxWidthRight",    %REG_DWORD%, 0x10
+HKLM,%ScreenProps%,"DisplayLetterBoxHeightTop",     %REG_DWORD%, 0x0
+HKLM,%ScreenProps%,"DisplayLetterBoxHeightBottom",  %REG_DWORD%, 0x0
+HKLM,%ScreenProps%,"DisplayViewableWidth",          %REG_DWORD%, 0x1e0
+HKLM,%ScreenProps%,"DisplayViewableHeight",         %REG_DWORD%, 0x320
+
+[DisplaySize.NT.HW.AddReg]
+; The following values will be used to convert mm to display pixels.
+; These are the dimensions of the Lumia 920, please remove this line 
+; when you've updated the dimensions to match your windows phone.
+HKLM,%DisplaySize%,"DisplayHeight10um", %REG_DWORD%, 0x25E4  ; 97 mm
+HKLM,%DisplaySize%,"DisplayWidth10um",  %REG_DWORD%, 0x1702  ; 58.9 mm
+
+[ButtonBacklights.NT.HW.AddReg]
+HKLM,"SYSTEM\TOUCH\BUTTONS\BACKLIGHT", "LedCount",          %REG_DWORD%,    0x3
+HKLM,"SYSTEM\TOUCH\BUTTONS\BACKLIGHT", "LedIndexList",      %REG_MULTI_SZ%, "0","1","2"
+HKLM,"SYSTEM\TOUCH\BUTTONS\BACKLIGHT", "InactivityTimeout", %REG_DWORD%,    0 ; No timeout (msec)
+
+[LegacyTouchScaling.NT.HW.AddReg]
+; This implies that the correct physical/logical min/max/unit/exp 
+; values for X/Y in the HID descriptor are being used -- don't just 
+; report pixels
+HKR,,"LegacyTouchScaling", %REG_DWORD%, 0x0
+
+;-------------- Service installation
+[TchDriver_Device.NT.Services]
+AddService = SynapticsTouch, %SPSVCINST_ASSOCSERVICE%, TchDriver_Service_Inst
+
+; ------------- TchDriver driver install section
+[TchDriver_Service_Inst]
+DisplayName    = %TchDriver_Service_Desc%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_DEMAND_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %12%\SynapticsTouch.sys
+LoadOrderGroup = Base
+
+; ------------- Strings section
+[Strings]
+Provider_Name           = "TODO-Set-Provider"
+Manufacturer_Name       = "Synaptics"
+Installation_Disk       = "Touch Driver Installation Disk"
+TchDriver_Device_Desc   = "Touch Driver"
+TchDriver_Service_Desc  = "Synaptics Touch Driver Service"
+
+; ------------- non-localizable strings
+Configuration           = "Settings"
+ScreenProps             = "SYSTEM\TOUCH\SCREENPROPERTIES"
+DisplaySize             = "SYSTEM\TOUCH\DISPLAYPROPERTIES"
+SPSVCINST_ASSOCSERVICE  = 0x00000002
+SERVICE_KERNEL_DRIVER   = 1
+SERVICE_BOOT_START      = 0
+SERVICE_SYSTEM_START    = 1
+SERVICE_DEMAND_START    = 3
+SERVICE_ERROR_NORMAL    = 1
+SERVICE_ERROR_IGNORE    = 0
+SERVICE_ERROR_CRITICAL  = 3
+REG_EXPAND_SZ           = 0x00020000
+REG_MULTI_SZ            = 0x00010000
+REG_DWORD               = 0x00010001
+REG_SZ                  = 0x00000000
+

@@ -1,0 +1,301 @@
+#######################################
+#                                     #
+#        Provider Information         #
+#                                     #
+#######################################
+
+   CompanyName = "Microsoft Corporation";
+   ProductName = "WFPSampler";
+   DriverName  = "C:\Windows\System32\Drivers\WFPSamplerCalloutDriver.sys";
+
+#######################################
+#                                     #
+#        Enable Driver Verifier       #
+#                                     #
+#       0 to not attach verifier      #
+#       1 to attach verifier          #
+#                                     #
+#######################################
+
+   EnableDriverVerifier = 1;
+
+#######################################
+#                                     #
+#  Use the answer file to script the  #
+# addition and removal of the filters #
+#                                     #
+#   Use only if the answer file has   #
+#    been modified for your needs.    #
+#                                     #
+#        0 if not implemented         #
+#        1 if implemented             #
+#                                     #
+#######################################
+
+   UseAnswerFile = 1;
+
+#######################################
+#                                     #
+#       Requirement Information       #
+#                                     #
+#        0 if not implemented         #
+#        1 if implemented             #
+#                                     #
+#######################################
+
+   CalloutDriver = 1;
+
+   IsAFirewall = 1;
+
+   LayeredOnMicrosoftWindowsFirewall = 0;
+
+   DoesMACFiltering = 1;
+
+   DoesVSwitchFiltering = 1;
+
+   DoesPacketInjection = 1;
+
+   DoesStreamInjection = 1;
+
+   DoesConnectionProxying = 1;
+
+#######################################
+#                                     #
+#            Attestations             #
+#                                     #
+#             0 if FALSE              #
+#             1 if TRUE               #
+#                                     #
+#######################################
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.AppContainers.SupportModernApplications
+#    WFP-based products must not block App Container apps operating within their declared network intentions by default, and should only do so when following specific user/admin intention or protecting the system against a specific threat.
+
+   SupportModernApplications = 1;
+
+# NETWORK-0270 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.CleanUninstall
+#    WFP-based products stop cleanly and clean up all running state upon uninstall.
+
+   CleanUninstall = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.ConnectionProxying.NoDeadlocks
+#    WFP-based products which redirect or proxy at redirect layers (connect redirect), must use the new proxying API so that other WFP-based products can determine that the connection has been proxied.
+
+   NoProxyDeadlocks = 1;
+
+# NETWORK-0262 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.FwpmProviders.MaintainIdentifying
+#    WFP-based products must create and maintain at least 1 identifying FWPM_PROVIDER provider object.
+
+   IdentifyingProvider = 1;
+
+# NETWORK-0265 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.FwpmProviders.AssociateWithObjects
+#    WFP-based products must associate all of their Provider Contexts, Filters, Sublayers, and Callouts with their corresponding identifying provider object.
+
+   AssociateProvider = 1;
+
+# NETWORK-0263 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.FwpmFilters.MaintainOneTerminating
+#    WFP-based products must create and maintain at least 1 terminating FWPM_FILTER object.
+
+   TerminatingFilter = 1;
+
+# NETWORK-0264 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.FwpmSublayers.UseOwnOrBuiltIn
+#    WFP-based products must use only their own sublayer or one of the built-in sublayers
+
+   UseOwnSubLayer = 1;
+
+# NETWORK-0288 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.NetworkDiagnosticsFramework.HelperClass
+#    WFP-based products must include a Network Diagnostics Framework (NDF) helper class that extends the Filtering Platform helper class (FPHC)
+
+   MaintainHelperClass = 1;
+
+# NETWORK-0269 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.NoAccessViolations
+#    WFP-based products must not be the resulting cause of any Access Violation under high load or during driver load/unload.
+
+   NoAVs = 1;
+
+# NETWORK-0261 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.NoTamperingWith3rdPartyObjects
+#    WFP-based products must not attempt to remove or alter another WFP-based product’s WFP objects and built-in objects.
+
+   NonTampered3rdPartyObjects = 1;
+
+# NETWORK-0287 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.PacketInjection.NoDeadlocks
+#    WFP-based products must not continually modify network packets that have already been modified and re-injected, so as to create potential deadlocks.
+
+   NoPacketInjectionDeadlocks = 1;
+
+# NETWORK-0267 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.StreamInjection.NoStreamStarvation
+#    WFP-based product callouts at FWPM_LAYER_STREAM must not starve the data throughput.
+
+   NoStreamStarvation = 1;
+
+# NETWORK-0268 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.SupportPowerManagedStates
+#    WFP-based products must ensure network connectivity upon recovering from power managed states.
+
+   SupportPowerManagement = 1;
+
+# NETWORK-0260 Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.WFPObjectACLs
+#    WFP-based products must ACL all of their objects in a way that any other WFP-based product can at least enumerate those objects using the corresponding WFP enumeration APIs.
+
+   WFPObjectEnumAndACLs = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.ArchitecturalDesign.WinSock
+#    Kernel Mode Filter Drivers are architected to maximize the reliability and functionality of Windows Sockets, as well as interact accurately with the core components of the operating system.
+
+   MaxWinSock = 1;
+
+# NETWORK-0271 Filter.Driver.WindowsFilteringPlatform.Firewall.DisableWindowsFirewallProperly
+#    Host firewalls must disable Windows Firewall using only the supported method.
+
+   ProperlyDisableWindowsFirewall = 1;
+
+# NETWORK-0266 Filter.Driver.WindowsFilteringPlatform.Firewall.NotOnlyPermitAllFilters
+#    Host firewalls must not have only “permit_all” filters.
+
+   NoPermitBlockAll = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Firewall.Support5TupleExceptions
+#    All host based firewalls must be able to Block/Allow by 5-Tuple Parts (including Port (ICMP Type and Code, UDP and TCP) IP Address, Protocol (e.g. UDP/TCP/ICMP)
+
+   SupportTupleExceptions = 1;
+
+# NETWORK-0253 Filter.Driver.WindowsFilteringPlatform.Firewall.SupportApplicationExceptions
+#    WFP-based products must support exceptions from corresponding applications.
+
+   SupportAppExceptions = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Firewall.SupportMACAddressExceptions
+#    All host based firewalls which have filters in L2 (Native/Mac) layers must be able to Block or Allow by Mac Address.
+
+   SupportMACAddressExceptions = 1;
+
+# NETWORK-0259 Filter.Driver.WindowsFilteringPlatform.Firewall.UseWindowsFilteringPlatform
+#    Firewalls must comply with Windows Filtering Platform based APIs for filtering network traffic on home user solutions.
+
+   UseWFP = 1;
+
+# NETWORK-0247 Filter.Driver.WindowsFilteringPlatform.NetworkingFundamentals.SupportARP
+#    WFP-based products must support support allowing for successful ARP exchanges.
+
+   SupportARP = 1;
+
+   SupportNeighborDiscovery = 1;
+
+# NETWORK-0245 Filter.Driver.WindowsFilteringPlatform.NetworkingFundamentals.SupportDynamicAddressing
+#    WFP-based products support allowing for successful DHCP exchanges over both IPv4 and IPv6.
+
+   SupportDHCP = 1;
+
+# NETWORK-0243 Filter.Driver.WindowsFilteringPlatform.NetworkingFundamentals.SupportIPv4
+#    WFP-based products must support IPv4 traffic.
+
+   SupportIPv4 = 1;
+
+# NETWORK-0244 Filter.Driver.WindowsFilteringPlatform.NetworkingFundamentals.SupportIPv6
+#    WFP-based products must support IPv6 traffic.
+
+   SupportIPv6 = 1;
+
+# NETWORK-0246 Filter.Driver.WindowsFilteringPlatform.NetworkingFundamentals.SupportNameResolution
+#    WFP-based products must support allowing for successful DNS client queries.
+
+   SupportDNS = 1;
+
+# NETWORK-0249 Filter.Driver.WindowsFilteringPlatform.Scenarios.Support6To4
+#    WFP-based products must support 6to4.
+
+   Support6To4 = 1;
+
+# NETWORK-0257 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportAutomaticUpdates
+#    WFP-based products must support Automatic Updates in Windows.
+
+   SupportAutomaticUpdates = 1;
+
+# NETWORK-0251 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportBasicWebsiteBrowsing
+#    WFP-based products must support basic internet browsing experiences.
+
+   SupportBasicWebsiteBrowsing = 1;
+
+# NETWORK-0252 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportFileAndPrinterSharing
+#    WFP-based products must support file and printer sharing.
+
+   SupportFileAndPrinterSharing = 1;
+
+# NETWORK-0250 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportICMPErrorMesages
+#    WFP-based products must support ICMP error messages and discovery functions.
+
+   SupportICMPErrorMesages = 1;
+
+# NETWORK-0256 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportInternetStreaming
+#    WFP-based products must support Internet streaming and Media sharing for media player network sharing services.
+
+   SupportInternetStreaming = 1;
+
+# NETWORK-0285 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportMediaExtenderStreaming
+#    WFP_based products must support media streaming scenarios based on extender technologies.
+
+   SupportMediaExtenderStreaming = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportMobileBroadBand
+#    WFP-based products must allow mobile broadband devices that are compliant with Windows mobile broadband driver model to function correctly.
+
+   SupportMobileBroadBand = 1;
+
+# NETWORK-0284 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportPeerNameResolution
+#    WFP-based products must support Peer Name Resolution Protocol and the Peer-to-Peer Grouping Protocol.
+
+   SupportPeerNameResolution = 1;
+
+# NETWORK-255 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportRemoteAssistance
+#    WFP-based products must support Remote Assistance scenarios.
+
+   SupportRemoteAssistance = 1;
+
+# NETWORK-0254 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportRemoteDesktop
+#    WFP-based products must support Remote Desktop.
+
+   SupportRemoteDesktop = 1;
+
+# NETWORK-0248 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportTeredo
+#    WFP-based products must support Teredo.
+
+   SupportTeredo = 1;
+
+# NETWORK-0258 Filter.Driver.WindowsFilteringPlatform.Scenarios.SupportVirtualPrivateNetworking
+#    WFP-based products must support VPN scenarios in Windows.
+
+   SupportVirtualPrivateNetworking = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.vSwitch.InteropWithOtherExtensions
+#    WFP-based products must not block traffic from another vSwitch extension (WFP or LWF) by default, and should only do so when following specific user/admin intention or protecting the system against a specific threat.
+
+   InteropWithOtherExtensions = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.vSwitch.NoEgressModification
+#    WFP-based products that operate in the vSwitch must not modify packets on the Egress path of the vSwitch.
+
+   NoEgressModification = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.vSwitch.SupportLiveMigration
+#    WFP-based products that operate in the vSwitch must present a minimal MOF for Live Migration.
+
+   SupportLiveMigration = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.vSwitch.SupportRemoval
+#    WFP-based products that operate in the vSwitch must present be allowed to be removed when the admin disabled WFP for the vSwitch instance.
+
+   SupportRemoval = 1;
+
+# NETWORK-0XXX Filter.Driver.WindowsFilteringPlatform.Scenarios.vSwitch.SupportReordering
+#    WFP-based products that operate in the vSwitch must respond to WFP vmSwitch reorder events.
+
+   SupportReordering = 1;
+
+#Attestation
+#   I have performed interop testing with my product and the WFPSampler in various supported scenarios
+
+   InteropWithWFPSampler = 1;
+
+# Attestation
+#    I hereby confirm that the information included within is accurate to the best of my knowledge in regards to the Product mentioned.
+
+   RunBy = "Dusty Harper";

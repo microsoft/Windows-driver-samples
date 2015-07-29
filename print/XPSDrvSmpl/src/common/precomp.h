@@ -53,10 +53,13 @@ _Analysis_mode_(_Analysis_code_type_user_driver_)
 #include <atlbase.h>
 
 
+#pragma warning (push)
+#pragma warning (disable:4458)
 //
 // GDIPlus includes
 //
 #include <GDIPlus.h>
+#pragma warning (pop)
 
 //
 // MSXML includes

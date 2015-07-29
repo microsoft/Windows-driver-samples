@@ -1,0 +1,128 @@
+///////////////////////////////////////////////////////////////////////////////
+// Microsoft Windows Media Player
+// Copyright (C) Microsoft Corporation, 1999-2000
+//
+// Filename:    effects.idl
+//
+// Abstract:    Interface implemented by all Windows Media Player effects.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+cpp_quote("#include <winapifamily.h>")
+
+#pragma region Desktop Family
+cpp_quote("#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)")
+
+#include <olectl.h>
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+
+// These flags are to be returned in the GetCapabilities method.  They
+// indicate to the effects host what the effect supports
+
+const DWORD EFFECT_CANGOFULLSCREEN  = 0x00000001;   // can the effect go full screen?
+const DWORD EFFECT_HASPROPERTYPAGE  = 0x00000002;   // does the effect have a property page?
+const DWORD EFFECT_VARIABLEFREQSTEP = 0x00000004;   // should effect return frequency data with variable size steps?
+
+// This structure is passed to the Render() method of the effect. It holds the frequency,
+// waveform and state data need to render the effect.
+//
+// The first dimension of each array corresponds to the channel: 0-left/mono 1-right(stereo only)
+// The second dimension contains the sampled levels.  The frequency data ranges
+// from 0..255.  The wave form data represents -128..127 but is stored as 
+// 0..255. The state contains the current audio playback state. The time stamp provides
+// the relative time of these samples in the audio stream.
+
+const int SA_BUFFER_SIZE    = 1024;  // number of frequency/waveform samples
+
+enum PlayerState                    // audio playback states
+{
+    stop_state              = 0,    // audio is currently stopped
+    pause_state             = 1,    // audio is currently paused
+    play_state              = 2     // audio is currently playing
+};
+
+cpp_quote("")
+cpp_quote("//**********************************************************************")
+cpp_quote("// Define the minimum and maximum frequency ranges returned in our")
+cpp_quote("// TimedLevel frequency array (i.e. first index in TimedLevel.frequency")
+cpp_quote("// is at 20Hz and last is at 22050Hz).")
+cpp_quote("//**********************************************************************")
+cpp_quote("const float kfltTimedLevelMaximumFrequency = 22050.0F;")
+cpp_quote("const float kfltTimedLevelMinimumFrequency = 20.0F;")
+cpp_quote("")
+cpp_quote("/*")
+cpp_quote(" * FREQUENCY_INDEX() returns the index into TimedLevel.frequency[] where ")
+cpp_quote(" * the specified frequency is located in the power spectrum")
+cpp_quote(" */")
+cpp_quote("#define FREQUENCY_INDEX(FREQ)\\")
+cpp_quote("  (int)(((FREQ) - kfltTimedLevelMinimumFrequency) /\\")
+cpp_quote("    (((kfltTimedLevelMaximumFrequency - kfltTimedLevelMinimumFrequency) / SA_BUFFER_SIZE)))")
+cpp_quote("")
+
+typedef struct tagTimedLevel
+{
+    unsigned char   frequency[2][SA_BUFFER_SIZE];
+    unsigned char   waveform [2][SA_BUFFER_SIZE]; 
+    int             state;
+    hyper           timeStamp;
+} TimedLevel;
+
+[
+    object,
+    uuid(D3984C13-C3CB-48e2-8BE5-5168340B4F35),
+    helpstring("IEffects Interface"),
+    pointer_default(unique)
+]
+interface IWMPEffects : IUnknown
+{
+    // render effect to the rectangle on the provided dc - the dc is normalized
+    [helpstring("method Render")] 
+    HRESULT Render([in] TimedLevel *pLevels, [in] HDC hdc, [in] RECT *prc);
+
+    // provides the no. channels, sample rate and title of the audio currently playing
+    [helpstring("method MediaInfo")] 
+    HRESULT MediaInfo([in] LONG lChannelCount, [in] LONG lSampleRate, [in] BSTR bstrTitle );
+
+    // called to retrieive the capabilities of the effect (fullscreen? property page?, etc.)
+    [helpstring("method GetCapabilities")]
+    HRESULT GetCapabilities([out] DWORD * pdwCapabilities);
+
+    // retrieve the display title of the effect
+    [helpstring("method GetTitle")]
+    HRESULT GetTitle([out] BSTR *bstrTitle);
+
+    // retrieve the title for a preset
+    [helpstring("method GetPresetTitle")]
+    HRESULT GetPresetTitle([in] LONG nPreset, [out] BSTR *bstrPresetTitle);
+
+    // retrieve the number of presets this effect supports
+    [helpstring("method GetPresetCount")]
+    HRESULT GetPresetCount([out] LONG * pnPresetCount);
+
+    // set / get the current preset
+    [helpstring("method SetPreset")]
+    HRESULT SetCurrentPreset([in] LONG nPreset);
+    [helpstring("method GetPreset")]
+    HRESULT GetCurrentPreset([out] LONG * pnPreset);
+
+    // display the property page of the effect (if there is one)
+    [helpstring("method DisplayPropertyPage")] 
+    HRESULT DisplayPropertyPage([in] HWND hwndOwner);
+
+    // This method will be called when the effect is to start and stop full screen
+    // rendering (if supported)
+    [helpstring("method GoFullscreen")] 
+    HRESULT GoFullscreen([in] BOOL fFullScreen);
+
+    // This method will get called after a successful call to GoFullScreen to render
+    // the effect.  Return failure from this method to signal loss of full screen.
+    [helpstring("method RenderFullScreen")] 
+    HRESULT RenderFullScreen([in] TimedLevel *pLevels);
+};
+
+cpp_quote("#endif /* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) */")
+#pragma endregion
+

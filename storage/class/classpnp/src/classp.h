@@ -113,7 +113,6 @@ extern ULONG ClassMaxInterleavePerCriticalIo;
 #define CLASSP_REG_DISABLE_D3COLD                   (L"DisableD3Cold")
 #define CLASSP_REG_QERR_OVERRIDE_MODE               (L"QERROverrideMode")
 #define CLASSP_REG_LEGACY_ERROR_HANDLING            (L"LegacyErrorHandling")
-#define CLASSP_REG_IO_TIMEOUT_RETRY_COUNT           (L"MaxIoTimeoutRetryCount")
 
 #define CLASS_PERF_RESTORE_MINIMUM                  (0x10)
 #define CLASS_ERROR_LEVEL_1                         (0x4)
@@ -956,6 +955,12 @@ struct _CLASS_PRIVATE_FDO_DATA {
     // Maximum number of retries allowed for IO requests for this device.
     //
     UCHAR MaxNumberOfIoRetries;
+
+    //
+    // Disable All Throttling in case of Error
+    //
+    BOOLEAN DisableThrottling;
+
 };
 
 //
@@ -1175,6 +1180,10 @@ typedef struct _IO_RETRIED_LOG_MESSAGE_CONTEXT {
 #define CLASS_STARVATION_INTERVAL   500         // 500 milliseconds
 #define CLASS_IDLE_TIMER_TICKS      4
 
+//
+// Value of 50 milliseconds in 100 nanoseconds units
+//
+#define FIFTY_MS_IN_100NS_UNITS     50 * 100
 
 /*
  *  Simple singly-linked-list queuing macros, with no synchronization.
@@ -1967,6 +1976,7 @@ ClasspDeviceMediaTypeProperty(
     _Inout_ PSCSI_REQUEST_BLOCK Srb
     );
 
+
 _IRQL_requires_same_
 PUCHAR
 ClasspBinaryToAscii(
@@ -2595,6 +2605,19 @@ ClasspLowerLayerNotSupport (
             (Status == STATUS_NOT_IMPLEMENTED) ||
             (Status == STATUS_INVALID_DEVICE_REQUEST) ||
             (Status == STATUS_INVALID_PARAMETER_1));
+}
+
+__inline
+BOOLEAN
+ClasspSrbTimeOutStatus (
+    _In_ PSTORAGE_REQUEST_BLOCK_HEADER Srb
+    )
+{
+    UCHAR srbStatus = SrbGetSrbStatus(Srb);
+    return ((srbStatus == SRB_STATUS_BUS_RESET) ||
+            (srbStatus == SRB_STATUS_TIMEOUT) ||
+            (srbStatus == SRB_STATUS_COMMAND_TIMEOUT) ||
+            (srbStatus == SRB_STATUS_ABORTED));
 }
 
 NTSTATUS

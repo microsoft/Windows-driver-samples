@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{312373E3-9E58-48CC-A61C-73F3A3B0179B}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <SampleGuid>{BE41C1BA-3C21-458E-BDDD-7AB136137508}</SampleGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType />
+    <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(IntDir)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ItemGroup Label="WrappedTaskItems" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>WFPSamplerService</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>WFPSamplerService</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>WFPSamplerService</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>WFPSamplerService</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;api-ms-win-net-isolation-l1-1-0.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;api-ms-win-net-isolation-l1-1-0.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;api-ms-win-net-isolation-l1-1-0.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;api-ms-win-net-isolation-l1-1-0.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Framework_RPCServerInterface.cpp" />
+    <ClCompile Include="Framework_WFPSamplerService.cpp" />
+    <ClCompile Include="Framework_WindowsFirewall.cpp" />
+    <ClCompile Include="Scenarios_AdvancedPacketInjection.cpp" />
+    <ClCompile Include="Scenarios_AppContainers.cpp" />
+    <ClCompile Include="Scenarios_BasicAction.cpp" />
+    <ClCompile Include="Scenarios_BasicPacketExamination.cpp" />
+    <ClCompile Include="Scenarios_BasicPacketInjection.cpp" />
+    <ClCompile Include="Scenarios_BasicPacketModification.cpp" />
+    <ClCompile Include="Scenarios_BasicStreamInjection.cpp" />
+    <ClCompile Include="Scenarios_FastPacketInjection.cpp" />
+    <ClCompile Include="Scenarios_FastStreamInjection.cpp" />
+    <ClCompile Include="Scenarios_FlowAssociation.cpp" />
+    <ClCompile Include="Scenarios_PendAuthorization.cpp" />
+    <ClCompile Include="Scenarios_PendEndpointClosure.cpp" />
+    <ClCompile Include="Scenarios_Proxy.cpp" />
+    <FilesToPackage Include="$(OutDir)WFPSamplerService.exe" />
+    <MessageCompile Include="Framework_WFPSamplerService_Msg.mc" />
+    <ResourceCompile Include="Framework_WFPSamplerService.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

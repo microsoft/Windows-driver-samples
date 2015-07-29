@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{FDCC489B-556E-43F5-BD3B-71316D442DEA}</UniqueIdentifier>
+      <UniqueIdentifier>{53A053E8-9459-4AAE-8121-C8E18D611B9A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{18150D25-6522-47D8-9CB4-5108F5F98F28}</UniqueIdentifier>
+      <UniqueIdentifier>{CD5A6D68-BA75-419E-8BC0-ECBAB00BE55B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{A79E57E4-3B90-45E9-95EB-A0541E4A8DF4}</UniqueIdentifier>
+      <UniqueIdentifier>{25DF7F05-F2BC-4531-AEFD-F9A4B083145B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{0F70BE0E-ED35-4FD6-88BE-92687BE1BBB6}</UniqueIdentifier>
+      <UniqueIdentifier>{D805F501-79BE-4A7A-B472-8EE48E64C4E2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,9 +30,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\RadioSwitchHidUsbFx2.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\RadioSwitchHidUsbFx2.inx">
       <Filter>Driver Files</Filter>
     </Inf>

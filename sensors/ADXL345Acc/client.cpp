@@ -120,9 +120,18 @@ NTSTATUS ADXL345AccDevice::Initialize(
             InitPropVariantFromString(SENSOR_ACCELEROMETER_MODEL,
                 &(m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_MODEL].Value));
             
+            m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_CONNECTION_TYPE].Key = DEVPKEY_Sensor_ConnectionType;
+            // The DEVPKEY_Sensor_ConnectionType values match the SensorConnectionType enumeration
+            InitPropVariantFromUInt32(0, // 0: INTEGRATED, 1: ATTACHED, 2: EXTERNAL
+                &(m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_CONNECTION_TYPE].Value));
+
             m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_PERSISTENT_UNIQUE_ID].Key = DEVPKEY_Sensor_PersistentUniqueId;
             InitPropVariantFromCLSID(GUID_Adxl345Device_UniqueID,
                 &(m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_PERSISTENT_UNIQUE_ID].Value));
+
+            m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_CATEGORY].Key = DEVPKEY_Sensor_Category;
+            InitPropVariantFromCLSID(GUID_SensorCategory_Motion,
+                &(m_pEnumerationProperties->List[SENSOR_ENUMERATION_PROPERTY_CATEGORY].Value));
         }
     }
 
@@ -147,7 +156,7 @@ NTSTATUS ADXL345AccDevice::Initialize(
         {
             FILETIME time;
             m_pSensorData->List[SENSOR_DATA_TIMESTAMP].Key = PKEY_SensorData_Timestamp;
-            GetSystemTimeAsFileTime(&time);
+            GetSystemTimePreciseAsFileTime(&time);
             InitPropVariantFromFileTime(&time, &(m_pSensorData->List[SENSOR_DATA_TIMESTAMP].Value));
         
             m_pSensorData->List[SENSOR_DATA_ACCELERATION_X_G].Key = PKEY_SensorData_AccelerationX_Gs;
@@ -311,7 +320,7 @@ NTSTATUS ADXL345AccDevice::GetData()
             InitPropVariantFromFloat(Sample.Z, &(m_pSensorData->List[SENSOR_DATA_ACCELERATION_Z_G].Value));
     
             FILETIME Timestamp = {};
-            GetSystemTimeAsFileTime(&Timestamp);
+            GetSystemTimePreciseAsFileTime(&Timestamp);
             InitPropVariantFromFileTime(&Timestamp, &(m_pSensorData->List[SENSOR_DATA_TIMESTAMP].Value));
     
             SensorsCxSensorDataReady(m_SensorInstance, m_pSensorData);

@@ -5,13 +5,6 @@ The umdf\_fx2 sample is a User-Mode Driver Framework (UMDF) driver for the OSR U
 
 The sample can also be used with the CustomDeviceAccess MSDK sample. The sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 
-Starting in Windows 8.1, the osrusbfx2 sample has been divided into these samples:
-
--   [WDF Sample Driver Learning Lab for OSR USB-FX2](http://msdn.microsoft.com/en-us/library/windows/hardware/): This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
-
--   [kmdf\_fx2](gallery_samples.123a_gallery#1): This sample is the final version of kernel-mode [wdf\_osrfx2](http://msdn.microsoft.com/en-us/library/windows/hardware/) driver. The sample demonstrates KMDF methods.
-
--   umdf\_fx2: This sample is the final version of the user-mode driver [wdf\_osrfx2](http://msdn.microsoft.com/en-us/library/windows/hardware/). The sample demonstrates UMDF methods.
 
 Related topics
 --------------

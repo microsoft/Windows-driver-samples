@@ -45,7 +45,7 @@ NTSTATUS CustomSensorDevice::GetData()
     // push to clx
     InitPropVariantFromFloat(pSimulator->GetSample(), &(m_pData->List[CSTM_DATA_CO2_LEVEL_PERCENT].Value));
 
-    GetSystemTimeAsFileTime(&TimeStamp);
+    GetSystemTimePreciseAsFileTime(&TimeStamp);
     InitPropVariantFromFileTime(&TimeStamp, &(m_pData->List[CSTM_DATA_TIMESTAMP].Value));
 
     SensorsCxSensorDataReady(m_SensorInstance, m_pData);

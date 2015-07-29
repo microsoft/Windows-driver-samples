@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{66A9D3F7-7136-483B-A3B0-0B71F39E1A4D}</UniqueIdentifier>
+      <UniqueIdentifier>{893E5462-4618-4E48-B66B-E32DE2DEF6D8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{E6663B10-722E-421B-BE1F-D2450D721956}</UniqueIdentifier>
+      <UniqueIdentifier>{D5C9A765-A4D5-41BB-ADEE-2ACECEC5AE5D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{F2C470A6-B9EF-4AD0-8AB3-3A38A05C42CD}</UniqueIdentifier>
+      <UniqueIdentifier>{FEADB211-2464-41DF-AC2F-6FD5C130DEB7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{CF4D8378-7A1D-49EC-AE7C-220F975A42A2}</UniqueIdentifier>
+      <UniqueIdentifier>{0F4DD998-05BB-4588-B66C-8897C880EAE9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +57,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\WpdMultiTransportDriver.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="WpdMultiTransportDriver.inx">
       <Filter>Driver Files</Filter>
     </Inf>

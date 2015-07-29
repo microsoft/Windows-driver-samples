@@ -1,0 +1,20 @@
+#PRAGMA AUTORECOVER
+
+[Dynamic, Provider("WMIProv"),
+ WMI,
+ Description("Firefly driver information"),
+ guid("{AB27DB29-DB25-42E6-A3E7-28BD46BDB666}"),
+ locale("MS\\0x409")]
+class FireflyDeviceInformation
+{
+    [key, read]
+     string InstanceName;
+    [read] boolean Active;
+
+    [WmiDataId(1),
+     read,
+     write,
+     Description("Current state of the tail light.")]
+    boolean TailLit;
+};
+

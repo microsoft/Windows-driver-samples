@@ -1,0 +1,38 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   Copyright (c) 2012 Microsoft Corporation.  All Rights Reserved.
+//
+//   Module Name:
+//      Framework_WFPSamplerService.rc
+//
+//   Abstract:
+//      Internal resource file for WFPSampler service (WFPSamplerService.exe)
+//
+//   Author:
+//      Dusty Harper      (DHarper)
+//
+//   Revision History:
+//
+//      [ Month ][Day] [Year] - [Revision]-[ Comments ]
+//      May       01,   2010  -     1.0   -  Creation
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef FRAMEWORK_WFP_SAMPLER_SERVICE_RESOURCES
+#define FRAMEWORK_WFP_SAMPLER_SERVICE_RESOURCES
+
+#define VER_FILETYPE             VFT_APP
+#define VER_FILESUBTYPE          VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR  "WFP Sampler Test Service"
+#define VER_INTERNALNAME_STR     "WFPSamplerService.Exe"
+#define VER_ORIGINALFILENAME_STR "WFPSamplerService.Exe"
+#define VER_PRODUCT_VERSION_STR  "1.0.0.1"
+
+#include <windows.h>                          /// Include\UM
+#include <ntverp.h>                           /// Include\Shared
+#include <common.ver>                         /// Include\Shared
+
+#include "Framework_WFPSamplerService_Msg.rc" /// $(OBJ_PATH)\$(O)
+#include "Framework_WFPSamplerService.res"    /// $(OBJ_PATH)\$(O)
+
+#endif /// FRAMEWORK_WFP_SAMPLER_SERVICE_RESOURCES

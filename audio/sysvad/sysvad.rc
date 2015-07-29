@@ -1,0 +1,30 @@
+/*++
+
+Copyright (c) Microsoft Corporation All Rights Reserved
+
+Module Name:
+
+    sysvad.rc
+
+Abstract:
+
+
+--*/
+
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_DRV_SOUND
+#define VER_FILEDESCRIPTION_STR     "Microsoft Virtual Audio Device Slate Sample Driver"
+#define VER_INTERNALNAME_STR        "slateaudiosample.sys"
+#define VER_ORIGINALFILENAME_STR    "slateaudiosample.sys"
+
+#define VER_LEGALCOPYRIGHT_YEARS    "2013"
+#define VER_LEGALCOPYRIGHT_STR	    "Copyright (C) Microsoft Corp." VER_LEGALCOPYRIGHT_YEARS
+
+#include "common.ver"
+
+
+

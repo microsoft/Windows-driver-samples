@@ -6,7 +6,7 @@
 Signature="$Windows NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 CatalogFile=KmdfSamples.cat
 DriverVer=03/27/2011,0.0.0.1
 
@@ -33,7 +33,7 @@ HKR,,Icon,,-5
 ; =================== KMDF Multi-Component Device ==================================
 
 [Manufacturer]
-%MSFT%=Microsoft,NT$ARCH$
+%ManufacturerString%=Microsoft,NT$ARCH$
 
 [Microsoft.NT$ARCH$]
 %WdfMultiCompDeviceName%=WdfMultiComp_Install,WDF\WdfMultiComp
@@ -72,7 +72,8 @@ KmdfLibraryVersion=$KMDFVERSION$
 ; =================== Generic ==================================
 
 [Strings]
-MSFT="Microsoft"
+ProviderString = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
 MediaDescription="KMDF Multi-Component Device Driver Installation Media"
 ClassName="Sample Device"
 WdfMultiCompDeviceName="KMDF Multi-Component Device"

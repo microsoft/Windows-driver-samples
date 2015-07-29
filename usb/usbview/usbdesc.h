@@ -34,6 +34,7 @@ Revision History:
 #define USB_INTERFACE_CLASS_DEVICE      0x00
 #define USB_COMMUNICATION_DEVICE        0x02
 #define USB_HUB_DEVICE                  0x09
+#define USB_DEVICE_CLASS_BILLBOARD      0x11
 #define USB_DIAGNOSTIC_DEVICE           0xDC
 #define USB_WIRELESS_CONTROLLER_DEVICE  0xE0
 #define USB_MISCELLANEOUS_DEVICE        0xEF
@@ -68,6 +69,11 @@ Revision History:
 //IAD protocol values
 //
 #define USB_IAD_PROTOCOL                    0x01
+
+//
+//Device class specific values
+//
+#define BILLBOARD_MAX_NUM_ALT_MODE  0x34
 
 //
 //USB 2.0 Specification Changes - New Descriptors

@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{A4E7927D-2349-4071-BB6A-5A88985C9C5C}</UniqueIdentifier>
+      <UniqueIdentifier>{7EEBC80E-7D1E-487B-9B5C-640CA9103354}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{77C0EAF1-5ED7-4F36-95C8-F195123751D7}</UniqueIdentifier>
+      <UniqueIdentifier>{CDA01452-B2D7-4FFE-B79F-1927EC219EEC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{FA74BC3C-6CFA-48DF-8233-655E0197C9A5}</UniqueIdentifier>
+      <UniqueIdentifier>{1C43D598-56AE-41AF-A280-5971AF597A4A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{ABBAD374-35FA-4C9E-A4F6-EBBBA3F54511}</UniqueIdentifier>
+      <UniqueIdentifier>{CFBD4D42-FFFB-478D-86FD-F543854F66ED}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\simdevice.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\simdevice.inx">
       <Filter>Driver Files</Filter>
     </Inf>

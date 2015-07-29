@@ -183,7 +183,7 @@ NTSTATUS CustomSensorDevice::Initialize(
     m_pData->Count = CSTM_DATA_COUNT;
 
     m_pData->List[CSTM_DATA_TIMESTAMP].Key = PKEY_SensorData_Timestamp;
-    GetSystemTimeAsFileTime(&Time);
+    GetSystemTimePreciseAsFileTime(&Time);
     InitPropVariantFromFileTime(&Time, &(m_pData->List[CSTM_DATA_TIMESTAMP].Value));
 
     // Initialize the sample, at this point of time the sensor is not started yet,

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{70CADFEA-4EA6-46ED-8C0E-966D4F3E7280}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{D04BB44A-89ED-4933-BD10-F593D3879737}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{4A168675-E825-4328-87A1-46ADBFB75DB5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{E0BAFFAC-0DAA-40BB-B49D-9B3AFA3B21F4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTestCtrl", "control\ObCallbackTestCtrl.vcxproj", "{DB8864B4-169E-4815-9922-F552FAA028AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTestCtrl", "control\ObCallbackTestCtrl.vcxproj", "{6E438FB8-A5A5-4A81-8858-2AE023797676}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTest", "driver\ObCallbackTest.vcxproj", "{2C2188DF-F19F-4886-B4C1-5DD95909A64A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObCallbackTest", "driver\ObCallbackTest.vcxproj", "{43C24BD9-11B3-4793-A7F8-029602B80C96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,28 +19,28 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Debug|Win32.Build.0 = Debug|Win32
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Release|Win32.ActiveCfg = Release|Win32
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Release|Win32.Build.0 = Release|Win32
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Debug|x64.ActiveCfg = Debug|x64
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Debug|x64.Build.0 = Debug|x64
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Release|x64.ActiveCfg = Release|x64
-		{DB8864B4-169E-4815-9922-F552FAA028AF}.Release|x64.Build.0 = Release|x64
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Debug|Win32.Build.0 = Debug|Win32
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Release|Win32.ActiveCfg = Release|Win32
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Release|Win32.Build.0 = Release|Win32
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Debug|x64.ActiveCfg = Debug|x64
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Debug|x64.Build.0 = Debug|x64
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Release|x64.ActiveCfg = Release|x64
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A}.Release|x64.Build.0 = Release|x64
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Debug|Win32.Build.0 = Debug|Win32
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Release|Win32.ActiveCfg = Release|Win32
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Release|Win32.Build.0 = Release|Win32
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Debug|x64.ActiveCfg = Debug|x64
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Debug|x64.Build.0 = Debug|x64
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Release|x64.ActiveCfg = Release|x64
+		{6E438FB8-A5A5-4A81-8858-2AE023797676}.Release|x64.Build.0 = Release|x64
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Debug|Win32.ActiveCfg = Debug|Win32
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Debug|Win32.Build.0 = Debug|Win32
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Release|Win32.ActiveCfg = Release|Win32
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Release|Win32.Build.0 = Release|Win32
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Debug|x64.ActiveCfg = Debug|x64
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Debug|x64.Build.0 = Debug|x64
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Release|x64.ActiveCfg = Release|x64
+		{43C24BD9-11B3-4793-A7F8-029602B80C96}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DB8864B4-169E-4815-9922-F552FAA028AF} = {70CADFEA-4EA6-46ED-8C0E-966D4F3E7280}
-		{2C2188DF-F19F-4886-B4C1-5DD95909A64A} = {4A168675-E825-4328-87A1-46ADBFB75DB5}
+		{6E438FB8-A5A5-4A81-8858-2AE023797676} = {D04BB44A-89ED-4933-BD10-F593D3879737}
+		{43C24BD9-11B3-4793-A7F8-029602B80C96} = {E0BAFFAC-0DAA-40BB-B49D-9B3AFA3B21F4}
 	EndGlobalSection
 EndGlobal

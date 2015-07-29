@@ -1,0 +1,9 @@
+; WpdBasicHardwareDriver.def : Declares the module parameters.
+
+LIBRARY "WpdBasicHardwareDriver.DLL"
+
+EXPORTS
+        DllCanUnloadNow         PRIVATE
+        DllGetClassObject       PRIVATE
+        DllRegisterServer       PRIVATE
+        DllUnregisterServer     PRIVATE

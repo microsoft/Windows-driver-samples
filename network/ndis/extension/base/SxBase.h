@@ -129,9 +129,9 @@ FILTER_NET_PNP_EVENT SxNdisNetPnPEvent;
 
 VOID
 SxpNdisCompleteInternalOidRequest(
-    __in PSX_SWITCH_OBJECT Switch,
-    __in PNDIS_OID_REQUEST NdisRequest,
-    __in NDIS_STATUS Status
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _In_ PNDIS_OID_REQUEST NdisRequest,
+    _In_ NDIS_STATUS Status
     );
 
 

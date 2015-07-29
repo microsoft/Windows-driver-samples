@@ -157,7 +157,7 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
         // this is Server SKU
         // Note: the addition max here to make sure we set the min to be at least 
         // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound no matter what maxOutstandingIOPerLUN 
-        // reported. We shouldn’t set this value to be smaller than client system. 
+        // reported. We shouldn't set this value to be smaller than client system. 
         // In other words, the minWorkingSetTransferPackets for server will always between 
         // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound and MIN_WORKINGSET_TRANSFER_PACKETS_Server_UpperBound
 
@@ -823,6 +823,7 @@ VOID SetupReadWriteTransferPacket(  PTRANSFER_PACKET Pkt,
     Pkt->NumRetries = fdoData->MaxNumberOfIoRetries;
     Pkt->SyncEventPtr = NULL;
     Pkt->CompleteOriginalIrpWhenLastPacketCompletes = TRUE;
+    Pkt->NumIoTimeoutRetries = fdoData->MaxNumberOfIoRetries;
 
 
     if (pCdb) {
@@ -1451,6 +1452,7 @@ VOID SetupDriveCapacityTransferPacket(   TRANSFER_PACKET *Pkt,
     PCLASS_PRIVATE_FDO_DATA fdoData = fdoExt->PrivateFdoData;
     PCDB pCdb;
     ULONG srbLength;
+    ULONG timeoutValue = fdoExt->TimeOutValue;
 
     if (fdoExt->AdapterDescriptor->SrbType == SRB_TYPE_STORAGE_REQUEST_BLOCK) {
         srbLength = ((PSTORAGE_REQUEST_BLOCK) fdoData->SrbTemplate)->SrbLength;
@@ -1464,7 +1466,9 @@ VOID SetupDriveCapacityTransferPacket(   TRANSFER_PACKET *Pkt,
     SrbSetOriginalRequest(Pkt->Srb, Pkt->Irp);
     SrbSetSenseInfoBuffer(Pkt->Srb, &Pkt->SrbErrorSenseData);
     SrbSetSenseInfoBufferLength(Pkt->Srb, sizeof(Pkt->SrbErrorSenseData));
-    SrbSetTimeOutValue(Pkt->Srb, fdoExt->TimeOutValue);
+
+
+    SrbSetTimeOutValue(Pkt->Srb, timeoutValue);
     SrbSetDataBuffer(Pkt->Srb, ReadCapacityBuffer);
     SrbSetDataTransferLength(Pkt->Srb, ReadCapacityBufferLen);
 
@@ -1489,6 +1493,8 @@ VOID SetupDriveCapacityTransferPacket(   TRANSFER_PACKET *Pkt,
 
     Pkt->OriginalIrp = OriginalIrp;
     Pkt->NumRetries = NUM_DRIVECAPACITY_RETRIES;
+    Pkt->NumIoTimeoutRetries = NUM_DRIVECAPACITY_RETRIES;
+
     Pkt->SyncEventPtr = SyncEventPtr;
     Pkt->CompleteOriginalIrpWhenLastPacketCompletes = FALSE;
 }

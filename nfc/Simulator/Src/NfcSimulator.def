@@ -1,0 +1,6 @@
+;  
+; Copyright (c) Microsoft Corporation.  All rights reserved.  
+; 
+LIBRARY "NfcDriverSim.dll"
+
+EXPORTS

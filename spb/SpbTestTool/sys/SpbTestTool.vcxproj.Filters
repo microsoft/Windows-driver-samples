@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{91FD9DF9-6894-438F-9FE7-54F26AAE0251}</UniqueIdentifier>
+      <UniqueIdentifier>{E3801549-0C13-4FAB-9FF9-2A093377385F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{773429C3-6E0E-4E2B-B859-13563580C523}</UniqueIdentifier>
+      <UniqueIdentifier>{73E6AB4E-A287-4AD7-BC48-66794144F852}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{D591E539-1E9D-44A8-B13D-6D5217A95A29}</UniqueIdentifier>
+      <UniqueIdentifier>{B3ADF85B-456B-4032-BB7F-1007032D9689}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{5A587D2B-32E7-4FAD-BF91-69C37B635B94}</UniqueIdentifier>
+      <UniqueIdentifier>{FDB36A4E-17A0-425D-AC61-48B005A00D91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,9 +30,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\SpbTestTool.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\SpbTestTool.inx">
       <Filter>Driver Files</Filter>
     </Inf>

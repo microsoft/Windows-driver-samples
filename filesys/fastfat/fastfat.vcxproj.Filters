@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{73952C13-F65F-4462-8992-EFBA397D88BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{07E2EF4D-1D9B-4EBF-B954-8C70849A5EDE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{DB83B853-1CD8-4FAD-9B15-041FAC3314CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{A2195824-1370-4853-B032-E24348F5B667}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AcChkSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AllocSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CacheSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cleanup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Close.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Create.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DevCtrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DevIoSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirCtrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ea.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EaSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FatData.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FatInit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fatprocssrc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileInfo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilObSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Flush.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FsCtrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FspDisp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LockCtrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pnp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Read.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResrcSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shutdown.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SplaySup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrucSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeSup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VerfySup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolInfo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkQue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Write.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FastFat.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

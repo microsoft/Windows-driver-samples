@@ -53,14 +53,14 @@ FilterRegisterDevice(
     Status = NdisRegisterDeviceEx(
                 FilterDriverHandle,
                 &DeviceAttribute,
-                &DeviceObject,
+                &NdisDeviceObject,
                 &NdisFilterDeviceHandle
                 );
 
 
     if (Status == NDIS_STATUS_SUCCESS)
     {
-        FilterDeviceExtension = NdisGetDeviceReservedExtension(DeviceObject);
+        FilterDeviceExtension = NdisGetDeviceReservedExtension(NdisDeviceObject);
 
         FilterDeviceExtension->Signature = 'FTDR';
         FilterDeviceExtension->Handle = FilterDriverHandle;

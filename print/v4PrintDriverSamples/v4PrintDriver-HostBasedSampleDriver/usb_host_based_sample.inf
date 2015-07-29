@@ -7,7 +7,7 @@
 ;
 [Version] 
 Signature="$Windows NT$"
-Provider=%MS%
+Provider=%ProviderString%
 CatalogFile=usb_host_based_sample.cat
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
@@ -21,7 +21,7 @@ ClassVer=4.0
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-%MS%=Microsoft, NTx86, NTamd64, NTarm, NTarm64
+%ManufacturerName%=Standard, NTx86, NTamd64, NTarm, NTarm64
 
 ;
 ; Model sections
@@ -31,17 +31,17 @@ ClassVer=4.0
 ; that they appear in the INF file.
 ;
 
-[Microsoft.NTx86]
-"Microsoft USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1,
+[Standard.NTx86]
+"USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1,
 
-[Microsoft.NTamd64]
-"Microsoft USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
+[Standard.NTamd64]
+"USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
 
-[Microsoft.NTarm]
-"Microsoft USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
+[Standard.NTarm]
+"USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
 
-[Microsoft.NTarm64]
-"Microsoft USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
+[Standard.NTarm64]
+"USB Host Based Sample Driver"     = USB_HOST_BASED_SAMPLE, DO_NOT_USE_THIS_HWID1
 
 ;
 ; Installer Sections
@@ -105,4 +105,5 @@ usb_host_based_sample_events.xml            = 1
 ;
 [Strings]
 Disk1="."
-MS="Microsoft"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"

@@ -1,0 +1,73 @@
+//**@@@*@@@****************************************************
+//
+// Microsoft Windows
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//
+//**@@@*@@@****************************************************
+
+//
+// FileName:    CplExt.idl
+//
+// Abstract:    IDL source for CplExt.  This file will be processed by the
+//              MIDL tool to produce the type library (CplExt.tlb) and
+//              marshalling code.
+//
+// ----------------------------------------------------------------------------
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    object,
+    uuid(E6DB299B-B925-415A-879B-4A76D072F39A),
+    dual,
+    nonextensible,
+    helpstring("ISwapPropPage Interface"),
+    pointer_default(unique)
+]
+interface ISwapPropPage : IDispatch{
+};
+
+
+[
+    object,
+    uuid(D379F7FB-66E0-427f-890D-1F479AD73B4B),
+    dual,
+    nonextensible,
+    helpstring("IAdvEndpointPropPage Interface"),
+    pointer_default(unique)
+]
+interface IAdvEndpointPropPage : IDispatch{
+};
+
+
+[
+    uuid(59390583-ED40-46D9-9B16-7800B9CC5CC2),
+    version(1.0),
+    helpstring("CplExt 1.0 Type Library")
+]
+library CplExtLib
+{
+    importlib("stdole2.tlb");
+    
+    // For Swap Property Page
+    [
+        uuid(19166F23-5F08-47F9-BB57-9F57A977D88E),
+        helpstring("SwapPropPage Class")
+    ]
+    coclass SwapPropPage
+    {
+        [default] interface ISwapPropPage;
+    };
+
+    // For Advanced Endpoint Property Page
+    [
+        uuid(6C57B2A2-91F5-4b90-93D5-FAB82485ECA6),
+        helpstring("AdvEndpointPropPage Class")
+    ]
+    coclass AdvEndpointPropPage
+    {
+        [default] interface IAdvEndpointPropPage;
+    };
+};

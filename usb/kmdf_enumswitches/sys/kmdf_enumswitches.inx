@@ -20,7 +20,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderName%
 DriverVer=03/20/2003,5.00.3788
 CatalogFile=KmdfSamples.cat
 
@@ -38,9 +38,9 @@ HKR,,Icon,,-5
 ; ================= Device section =====================
 
 [Manufacturer]
-%MfgName%=Microsoft,NT$ARCH$
+%MfgName%=OSR,NT$ARCH$
 
-[Microsoft.NT$ARCH$]
+[OSR.NT$ARCH$]
 %USB\VID_045E&PID_930A.DeviceDesc%=kmdf_enumswitches.Dev, USB\VID_0547&PID_1002
 %Switch.DeviceDesc%=Switch.Dev, {6FDE7521-1B65-48ae-B628-80BE62016026}\OsrUsbFxRawPdo
 
@@ -102,7 +102,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 ;---------------------------------------------------------------;
 
 [Strings]
-MSFT="Microsoft"
+ProviderName="TODO-Set-Provider"
 MfgName="OSR"
 Disk_Description="OSRUSBFX2 Installation Disk"
 USB\VID_045E&PID_930A.DeviceDesc="WDF Sample Bus Driver for OSR USB-FX2 Learning Kit"

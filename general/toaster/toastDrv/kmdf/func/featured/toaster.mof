@@ -1,0 +1,109 @@
+#PRAGMA AUTORECOVER
+
+[Dynamic, Provider("WMIProv"),
+ WMI,
+ Description("Toaster driver information"),
+ guid("{BBA21300-6DD3-11d2-B844-00C04FAD5171}"),
+ locale("MS\\0x409")]
+class ToasterDeviceInformation
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read,
+     WmiEnum{"0=I8042 Connector"
+             "1=Serial Connector",
+             "2=Parallel Connector",
+             "3=USB Connector" },
+     Description("How the toaster is connected to the computer")]
+    uint32 ConnectorType;
+
+    [WmiDataId(2),
+     read,
+     Description("This indicates the capacity in Kilo Watts of the toaster device.")]
+    uint32 Capacity;
+
+    [WmiDataId(3),
+     read,
+     Description("Number of errors that occurred on this device")]
+    uint32 ErrorCount;
+
+    [WmiDataId(4),
+     read,
+     Description("Indicates the number of controls on the toaster device.")]
+    uint32 Controls;
+
+    [WmiDataId(5),
+     read,
+     write,
+     Description("The DebugPrintLevel property indicates the debug output level of toaster device.")]
+    uint32 DebugPrintLevel;
+
+    [WmiDataId(6),
+     read,
+     Description("The Toaster Model Name.")]
+    string ModelName;
+
+};
+
+
+[WMI, Dynamic, Provider("WMIProv"),
+ guid("{01CDAFF1-C901-45b4-B359-B5542725E29C}"),
+ locale("MS\\0x409"),
+ WmiExpense(1),
+ Description("Notify Toaster Arrival")]
+class ToasterNotifyDeviceArrival : WMIEvent
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [read,
+     Description("Device Model Name"),
+     WmiDataId(1)]
+    string ModelName;
+};
+
+
+[WMI,
+ Dynamic,
+ Provider("WmiProv"),
+ Locale("MS\\0x409"),
+ Description("WMI method") : amended,
+ guid("CAAE7D9F-ACF7-4737-A4E9-01C29D3FE194")]
+class ToasterControl
+{
+    [key, read]
+    string InstanceName;
+
+    [read]
+    boolean Active;
+
+    [WmiDataId(1),
+     read,
+     write,
+     Description("Toaster Control Property")]
+    uint32 ControlValue;
+
+    [Implemented, WmiMethodId(1)]
+    void ToasterControl1([in]  uint32 InData,
+                         [out] uint32 OutData);
+
+    [Implemented, WmiMethodId(2)]
+    void ToasterControl2([in]  uint32 InData1,
+                         [in]  uint32 InData2,
+                         [out] uint32 OutData);
+
+    [Implemented, WmiMethodId(3)]
+    void ToasterControl3([in]  uint32 InData1,
+                         [in]  uint32 InData2,
+                         [out] uint32 OutData1,
+                         [out] uint32 OutData2);
+
+};

@@ -1,6 +1,8 @@
 PCMCIA Smart Card Driver
 ========================
 
+**Warning, this sample and its documentation are known to be out of date. They will be updated soon. Please be aware that some functionality may not work as expected.**
+
 The PCMCIA Smart Card Driver is used for the SCM PCMCIA smart card reader. This driver is written using Kernel-Mode Driver Framework.
 
 This driver in its original form was written in WDM. It was converted to KMDF to take advantage of all the benefits provided by KMDF in terms of reducing complexity and making it robust. Since this driver still needs to work with the existing smartcard library to handle smartcard specific processing, the driver is not restricted to using only KMDF interfaces. Escaping out of KMDF is necessary for processing I/O requests to get the underlying IRPs and provide that to the smartcard library. The driver also uses advanced IRP handling techniques to work around the limitations imposed by the smartcard library. Except for this quirk, the driver is a fully functional KMDF driver. As a sample, it also makes it easier to adapt this driver for USB devices since KMDF has good support for interfacing with USB devices.
@@ -9,16 +11,6 @@ Power Management is described in detail in the WDK documentation. There is, howe
 
 A card reader will not see any card insertion or removal events in these modes, because the bus might not even have power. The card state must be saved before the reader goes into standby or hibernation mode. After the system returns from these modes, it is necessary to determine what the state of the card is. Card tracking calls must complete whenever there was a card in the reader before standby or hibernation mode or whenever there is a card in the reader after these modes. This step is necessary because the user could have changed the card while the system was in a low-power mode.
 
-
-Build the sample
-----------------
-
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
-
-**Note**  Starting in Windows 8, the WDK no longer contains the co-installers by default. You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
-
-Run the sample
---------------
 
 Installation
 ------------

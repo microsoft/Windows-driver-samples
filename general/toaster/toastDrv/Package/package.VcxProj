@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\classinstaller\tostrcls.vcxproj">
+      <Project>{EA6EA609-654B-4B46-ABA1-1092BD3FA0AC}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\bus\dynamic\dynambus.vcxproj">
+      <Project>{EA66789C-5ABF-44C0-9BFD-C7618507E9C8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\bus\static\StatBus.vcxproj">
+      <Project>{965C0E80-0715-4376-A138-48D08EFDDC09}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\filter\generic\filter.vcxproj">
+      <Project>{C79A9F42-BDB4-4B5A-B7B5-1BEBF7752207}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\filter\sideband\filter.vcxproj">
+      <Project>{5094C704-35B0-4A25-AD30-570C49BCAE82}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\func\featured\wdffeatured.vcxproj">
+      <Project>{CA0E203E-4C96-466F-BF19-24F42DFC0C89}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\func\simple\wdfsimple.vcxproj">
+      <Project>{FB919684-BF55-4E3D-95FA-CBCB7B0D8759}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\kmdf\toastmon\wdftoastmon.vcxproj">
+      <Project>{A5E50982-981B-40B9-BEE6-1E15581FE947}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\umdf\func\WUDFToaster.vcxproj">
+      <Project>{B439C142-C570-44A6-B13C-43F70AE05A69}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\umdf\Toastmon\WUDFToastMon.vcxproj">
+      <Project>{D9D1EDA9-B9AD-4C14-BCDE-DBE39CED25B7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="PropertySheets">
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Utility</ConfigurationType>
+    <DriverType>Package</DriverType>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D72A34B9-86A5-4801-B7E3-256CF1F382AD}</ProjectGuid>
+    <SampleGuid>{DC08D3F2-EDC5-409B-800B-8F8AC3703227}</SampleGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <ImportToStore>False</ImportToStore>
+    <InstallMode>None</InstallMode>
+    <HardwareIdString />
+    <CommandLine />
+    <ScriptPath />
+    <DeployFiles />
+    <ScriptName />
+    <ScriptDeviceQuery>%PathToInf%</ScriptDeviceQuery>
+    <EnableVerifier>False</EnableVerifier>
+    <AllDrivers>False</AllDrivers>
+    <VerifyProjectOutput>True</VerifyProjectOutput>
+    <VerifyDrivers />
+    <VerifyFlags>133563</VerifyFlags>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

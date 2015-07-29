@@ -1,0 +1,27 @@
+HKCR
+{
+    CplExt.AdvEndpointPropPage.1 = s 'AdvEndpointPropPage Class'
+    {
+        CLSID = s '{6C57B2A2-91F5-4b90-93D5-FAB82485ECA6}'
+    }
+    CplExt.AdvEndpointPropPage = s 'AdvEndpointPropPage Class'
+    {
+        CLSID = s '{6C57B2A2-91F5-4b90-93D5-FAB82485ECA6}'
+        CurVer = s 'CplExt.AdvEndpointPropPage.1'
+    }
+    NoRemove CLSID
+    {
+        ForceRemove {6C57B2A2-91F5-4b90-93D5-FAB82485ECA6} = s 'AdvEndpointPropPage Class'
+        {
+            ProgID = s 'CplExt.AdvEndpointPropPage.1'
+            VersionIndependentProgID = s 'CplExt.AdvEndpointPropPage'
+            ForceRemove 'Programmable'
+            InprocServer32 = s '%MODULE%'
+            {
+                val ThreadingModel = s 'Apartment'
+            }
+            val AppID = s '%APPID%'
+            'TypeLib' = s '{59390583-ED40-46D9-9B16-7800B9CC5CC2}'
+        }
+    }
+}

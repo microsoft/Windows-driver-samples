@@ -1,0 +1,139 @@
+; moufiltr.inf
+;
+; Installation inf for the Device that needs filtering adapter.
+;
+; (c) Copyright 2008 Microsoft
+;
+
+[Version]
+Signature="$Windows NT$"
+Provider=%ProviderName%
+ClassGUID={4D36E96F-E325-11CE-BFC1-08002BE10318}
+Class=Mouse
+DriverVer=02/05/2008, 1.0.0.0
+; Uncomment the following line when you have a valid catalog file.
+;         If you use bogus catalog file installation will fail.
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+moufiltr_CoInstaller_CopyFiles = 11
+
+;
+; Driver information
+;
+
+[Manufacturer]
+%MfgName% = Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%moufiltr.DeviceDesc% = moufiltr, *PNP0FAKE
+
+;
+; General installation section
+;
+
+[moufiltr.NT]
+; perform port related actions from mouse.inf
+Include=msmouse.inf
+Needs=PS2_Inst
+
+; Copy the driver over
+CopyFiles=moufiltr.CopyFiles
+
+
+;
+; File sections
+;
+
+[moufiltr.CopyFiles]
+moufiltr.sys
+
+
+;
+; Service Installation
+;
+
+[moufiltr.NT.Services]
+AddService = moufiltr,  , moufiltr_Service_Inst
+; Install the port driver and mouclass from msmouse.inf
+Include=msmouse.inf
+Needs=PS2_Inst.Services
+
+[moufiltr_Service_Inst]
+DisplayName    = %moufiltr.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+ServiceBinary  = %12%\moufiltr.sys
+
+[moufiltr.NT.HW]
+; Add the device upper filter
+AddReg = moufiltr.HW.AddReg
+
+; run the directives need by the port driver
+Include=msmouse.inf
+Needs=PS2_Inst.HW
+
+[moufiltr.HW.AddReg]
+HKR,,"UpperFilters",0x00010000,"moufiltr"
+
+
+;
+; Source file information
+;
+
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[SourceDisksFiles]
+moufiltr.sys = 1
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll = 1
+
+;
+;--- moufiltr Coinstaller installation ------
+;
+
+[moufiltr.NT.CoInstallers]
+AddReg=moufiltr_CoInstaller_AddReg
+CopyFiles=moufiltr_CoInstaller_CopyFiles
+
+[moufiltr_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[moufiltr_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[moufiltr.NT.Wdf]
+KmdfService = moufiltr, moufiltr_wdfsect
+
+[moufiltr_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+
+;
+; Non-Localizable Strings
+;
+
+REG_SZ         = 0x00000000
+REG_MULTI_SZ   = 0x00010000
+REG_EXPAND_SZ  = 0x00020000
+REG_BINARY     = 0x00000001
+REG_DWORD      = 0x00010001
+
+;
+; Localizable Strings
+;
+
+ProviderName = "TODO-Set-Provider"
+MfgName      = "TODO-Set-Manufacturer"
+
+moufiltr.DeviceDesc = "Mouse Filter Sample Device"
+
+; Make sure the service description is unique to avoid collision with another INF.
+moufiltr.SvcDesc = "Mouse Filter Sample Driver"
+
+DiskId1 = "Mouse Filter Install Disk"

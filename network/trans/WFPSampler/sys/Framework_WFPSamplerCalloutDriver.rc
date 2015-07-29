@@ -1,0 +1,28 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   Copyright (c) 2012 Microsoft Corporation.  All Rights Reserved.
+//
+//   Module Name:
+//      WFPSampler.rc
+//
+//   Abstract:
+//      Internal resource file for WFPSamplerCalloutDriver.
+//
+//   Author:
+//      Dusty Harper      (DHarper)
+//
+//   Revision History:
+//
+//      [ Month ][Day] [Year] - [Revision]-[ Comments ]
+//      May       01,   2010  -     1.0   -  Creation
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_DRV_NETWORK
+#define VER_FILEDESCRIPTION_STR     "Microsoft WFP Sampler Test Driver"
+#define VER_INTERNALNAME_STR        "WFPSampler.sys"
+#define VER_ORIGINALFILENAME_STR    "WFPSampler.sys"

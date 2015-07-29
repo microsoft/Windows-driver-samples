@@ -1530,7 +1530,9 @@ Routine Description:
         // Ethernet Header is a guaranteed safe access.
         //
         curMdl = (NET_BUFFER_LIST_FIRST_NB(curNbl))->CurrentMdl;
-        curBuffer =  MmGetSystemAddressForMdlSafe(curMdl, LowPagePriority);
+        curBuffer =  MmGetSystemAddressForMdlSafe(
+                        curMdl,
+                        LowPagePriority | MdlMappingNoExecute);
         curHeader = (PMSFORWARD_ETHERNET_HEADER)
                         (curBuffer + (NET_BUFFER_LIST_FIRST_NB(curNbl))->CurrentMdlOffset);
                         

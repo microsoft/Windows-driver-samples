@@ -8,7 +8,7 @@
 Signature="$WINDOWS NT$"
 Class=FloppyDisk
 ClassGuid={4D36E980-E325-11CE-BFC1-08002BE10318}
-Provider=%DDK_SAMPLE%
+Provider=%ProviderString%
 CatalogFile=ddk_sample.cat
 DriverVer=05/17/2002,5.2.3635.0
 
@@ -30,7 +30,7 @@ sfloppy_copyfiles=12
 DefaultDestDir=12
 
 [Manufacturer]
-%GenManufacturer%=floppy_device,NTx86,NTia64,NTamd64
+%ManufacturerName%=floppy_device,NTx86,NTia64,NTamd64
 
 [floppy_device.NTx86]
 %sfloppy_devdesc%=sfloppy_install,GenSFloppy
@@ -79,9 +79,9 @@ AddReg=sfloppyEnable.RegHW
 HKR,,SuperFloppy,%REG_DWORD%,0x00000001
 
 [Strings]
-DDK_SAMPLE="DDK Sample Provider"
+ProviderString="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
 floppyClassName="Floppy disk drives"
-GenManufacturer="(Standard floppy disk drives)"
 sfloppy_devdesc="High-Capacity Floppy Disk Drive"
 
 REG_DWORD=0x00010001

@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{290F0F28-6606-4D9C-A2D4-2A3BCB252E23}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <SupportsPackaging>false</SupportsPackaging>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <SampleGuid>{CF490AB8-7641-46A9-98CE-6EFC136A00F8}</SampleGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType>WDM</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType>WDM</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType>WDM</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverType>WDM</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(IntDir)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ItemGroup Label="WrappedTaskItems" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>fastfat</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>fastfat</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>fastfat</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>fastfat</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AcChkSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="AllocSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="CacheSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Cleanup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Close.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Create.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="DevCtrl.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="DevIoSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="DirCtrl.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="DirSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="DumpSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Ea.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="EaSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FatData.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FatInit.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="fatprocssrc.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Create</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FileInfo.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FilObSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Flush.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FsCtrl.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="FspDisp.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="LockCtrl.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="NameSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Pnp.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Read.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="ResrcSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Shutdown.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="SplaySup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="StrucSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="TimeSup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="VerfySup.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="VolInfo.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="WorkQue.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Write.c">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>fatprocs.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\fatprocs.h.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ResourceCompile Include="FastFat.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

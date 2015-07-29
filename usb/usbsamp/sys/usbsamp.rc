@@ -1,0 +1,12 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "Framework Sample for Intel 82930 USB Test Board"
+#define VER_INTERNALNAME_STR        "usbsamp.sys"
+#define VER_ORIGINALFILENAME_STR    "usbsamp.sys"
+
+#include "common.ver"
+

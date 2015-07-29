@@ -1,0 +1,15 @@
+HKCR
+{
+    NoRemove CLSID
+    {
+        ForceRemove {21e7e731-f286-4116-b3c2-d43ccba29f07} = s 'WDF NDISPROT driver install Notify Object'
+        {
+            InProcServer32 = s '%MODULE%'
+            {
+                val ThreadingModel = s 'Both'
+            }
+        }
+    }
+}
+
+

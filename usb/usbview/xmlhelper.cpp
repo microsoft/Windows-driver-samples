@@ -200,7 +200,10 @@ array < UsbDeviceConfigurationType ^> ^ XmlGetConfigDescriptors(
         PUSBDEVICEINFO deviceInfo,
         PUSB_CONFIGURATION_DESCRIPTOR configDescs,
         PSTRING_DESCRIPTOR_NODE stringDesc);
-UsbBosDescriptorType ^ XmlGetBosDescriptor(PUSB_BOS_DESCRIPTOR bosDesc);
+UsbBosDescriptorType ^ XmlGetBosDescriptor(
+        PUSB_BOS_DESCRIPTOR bosDesc,
+        PSTRING_DESCRIPTOR_NODE stringDesc
+        );
 UsbDeviceClassType ^ XmlGetDeviceClass(UCHAR deviceClass, UCHAR deviceSubClass, UCHAR deviceProtocol);
 UsbDeviceUnknownDescriptorType ^ XmlGetUnknownDescriptor(
         PUSB_COMMON_DESCRIPTOR unknownDesc
@@ -213,6 +216,10 @@ UsbSuperSpeedExtensionDescriptorType ^ XmlGetSuperSpeedCapabilityExtensionDescri
         );
 UsbDispContIdCapExtDescriptorType ^ XmlGetContainerIdCapabilityExtensionDescriptor(
         PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR capDesc
+        );
+UsbBillboardCapabilityDescriptorType ^ XmlGetBillboardCapabilityDescriptor(
+        PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR capDesc,
+        PSTRING_DESCRIPTOR_NODE stringDesc
         );
 
 /*****************************************************************************
@@ -1525,7 +1532,18 @@ UsbDeviceClassType ^ XmlGetDeviceClass(UCHAR bInterfaceClass, UCHAR bInterfaceSu
                     deviceSubclass += bInterfaceSubclass;
             }
             break;
-
+        case USB_DEVICE_CLASS_BILLBOARD:
+            deviceClass = gcnew String("Billboard Class");
+            switch (bInterfaceSubclass)
+            {
+            case 0:
+                deviceSubclass = gcnew String("Billboard Subclass");
+                break;
+            default:
+                deviceSubclass = gcnew String("CAUTION: This appears to be an invalid bInterfaceSubClass");
+                break;
+            }
+            break;
         default:
 
             deviceClass = gcnew String("Interface Class unknown : ");
@@ -2118,6 +2136,10 @@ String ^ XmlGetDeviceClassString(UCHAR deviceClass)
             deviceClassStr = gcnew String("Vendor specific device");
             break;
 
+        case USB_DEVICE_CLASS_BILLBOARD:
+            deviceClassStr = gcnew String("Billboard class device");
+            break;
+
         default:
             deviceClassStr= gcnew String("ERROR: unknown bDeviceClass" + deviceClass);
             break;
@@ -2185,6 +2207,13 @@ bool XmlAddDeviceClassDetails(
     else
     {
         deviceDetails->DeviceType =  XmlGetDeviceClassString(connectionInfo->DeviceDescriptor.bDeviceClass);
+
+        if (connectionInfo->DeviceDescriptor.bDeviceClass == USB_DEVICE_CLASS_BILLBOARD && 
+            (connectionInfo->DeviceDescriptor.bDeviceSubClass != 0x0 ||
+            connectionInfo->DeviceDescriptor.bDeviceProtocol != 0x0))
+        {
+            deviceDetails->DeviceTypeError = gcnew String("ERROR: Billboard device has invalid bDeviceSubclass/bDeviceProtocol");
+        }
 
         if (connectionInfo->DeviceDescriptor.bDeviceClass == USB_MISCELLANEOUS_DEVICE)
         {
@@ -2443,7 +2472,7 @@ HRESULT XmlAddExternalHub(PSTR ehName, PUSBEXTERNALHUBINFO ehInfo)
         // Add BOS descriptor
         if (NULL != ehInfo->BosDesc)
         {
-            exHub->BosDescriptor = XmlGetBosDescriptor((PUSB_BOS_DESCRIPTOR) (ehInfo->BosDesc + 1));
+            exHub->BosDescriptor = XmlGetBosDescriptor((PUSB_BOS_DESCRIPTOR) (ehInfo->BosDesc + 1), ehInfo->StringDescs);
         }
 
         gXmlStack->Push(exHub);
@@ -2461,7 +2490,10 @@ HRESULT XmlAddExternalHub(PSTR ehName, PUSBEXTERNALHUBINFO ehInfo)
 
   Gets the Bos descriptor object for given BOS descriptor
  *****************************************************************************/
-UsbBosDescriptorType ^ XmlGetBosDescriptor(PUSB_BOS_DESCRIPTOR bosDesc)
+UsbBosDescriptorType ^ XmlGetBosDescriptor(
+        PUSB_BOS_DESCRIPTOR bosDesc,
+        PSTRING_DESCRIPTOR_NODE stringDesc
+        )
 {
     PUSB_COMMON_DESCRIPTOR commonDesc = NULL;
     PUSB_DEVICE_CAPABILITY_DESCRIPTOR capDesc = NULL;
@@ -2470,6 +2502,7 @@ UsbBosDescriptorType ^ XmlGetBosDescriptor(PUSB_BOS_DESCRIPTOR bosDesc)
     ArrayList ^usbSuperSpeedExtDescList = gcnew ArrayList();
     ArrayList ^usbContIdCapExtDescList = gcnew ArrayList();
     ArrayList ^usbUnknownDescList = gcnew ArrayList();
+    ArrayList ^usbBillboardDescList = gcnew ArrayList();
 
     if(NULL == bosDesc)
     {
@@ -2517,6 +2550,14 @@ UsbBosDescriptorType ^ XmlGetBosDescriptor(PUSB_BOS_DESCRIPTOR bosDesc)
                                     )
                                 );
                         break;
+                    case USB_DEVICE_CAPABILITY_BILLBOARD:
+                        usbBillboardDescList->Add(
+                            XmlGetBillboardCapabilityDescriptor(
+                                (PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR) capDesc,
+                                stringDesc
+                                )
+                            );
+                        break;
                     default:
                         usbUnknownDescList->Add(
                                 XmlGetUnknownDescriptor(
@@ -2545,6 +2586,9 @@ UsbBosDescriptorType ^ XmlGetBosDescriptor(PUSB_BOS_DESCRIPTOR bosDesc)
     bosXmlDesc->UsbDispContIdCapExtDescriptor = reinterpret_cast<array<UsbDispContIdCapExtDescriptorType ^>^> (
             usbContIdCapExtDescList->ToArray(UsbDispContIdCapExtDescriptorType::typeid)
             );
+    bosXmlDesc->UsbBillboardCapabilityDescriptor = reinterpret_cast<array<UsbBillboardCapabilityDescriptorType ^>^> (
+        usbBillboardDescList->ToArray(UsbBillboardCapabilityDescriptorType::typeid)
+        );
 
     return bosXmlDesc;
 } 
@@ -2733,6 +2777,125 @@ UsbDispContIdCapExtDescriptorType ^ XmlGetContainerIdCapabilityExtensionDescript
     return capXmlDesc;
 }
 
+
+/*****************************************************************************
+
+XmlGetBillboardCapabilityDescriptor()
+
+Gets a billboard capability descriptor from a given descriptor
+*****************************************************************************/
+UsbBillboardCapabilityDescriptorType ^ XmlGetBillboardCapabilityDescriptor(
+        PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR capDesc,
+        PSTRING_DESCRIPTOR_NODE stringDesc
+        )
+{
+    UCHAR                                  i = 0;
+    UCHAR                                  bNumAlternateModes = 0;
+    UCHAR                                  alternateModeConfiguration = 0;
+    UsbBillboardCapabilityDescriptorType ^ capXmlDesc = nullptr;
+    UsbBillboardSVIDType ^                 svidXmlDesc = nullptr;
+    ArrayList ^                            usbSVIDDescList = gcnew ArrayList();
+
+
+    if (NULL == capDesc)
+    {
+        return nullptr;
+    }
+
+    capXmlDesc = gcnew UsbBillboardCapabilityDescriptorType();
+
+
+    capXmlDesc->BLength = capDesc->bLength;
+    capXmlDesc->BDescriptorType = capDesc->bDescriptorType;
+    capXmlDesc->BDevCapabilityType = capDesc->bDevCapabilityType;
+    capXmlDesc->IAddtionalInfoURL = capDesc->iAddtionalInfoURL;
+    capXmlDesc->BNumberOfAlternateModes = capDesc->bNumberOfAlternateModes;
+    capXmlDesc->BPreferredAlternateMode = capDesc->bPreferredAlternateMode;
+    capXmlDesc->CalculatedBLength = sizeof(USB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR) +
+            sizeof(capDesc->AlternateMode[0]) * (capDesc->bNumberOfAlternateModes - 1);
+    capXmlDesc->BillboardDescriptorErrors = gcnew String("");
+    capXmlDesc->AddtionalInfoURL = XmlGetStringDescriptor(
+            capDesc->iAddtionalInfoURL,
+            stringDesc,
+            false
+            );
+
+    if (capDesc->VconnPower.NoVconnPowerRequired)
+    {
+        capXmlDesc->VConnPower = gcnew String("The adapter does not require Vconn Power. Bits 2..0 ignored");
+    }
+    else
+    {
+        switch (capDesc->VconnPower.VConnPowerNeededForFullFunctionality)
+        {
+        case 0:
+            capXmlDesc->VConnPower = gcnew String("1W needed by adapter for full functionality");
+            break;
+        case 1:
+            capXmlDesc->VConnPower = gcnew String("1.5W needed by adapter for full functionality");
+            break;
+        case 7:
+            capXmlDesc->BillboardDescriptorErrors += "ERROR: VConnPowerNeededForFullFunctionality - Reserved value being used";
+            break;
+        default:
+            capXmlDesc->VConnPower = gcnew String(String::Format("{0} W needed by adapter for full functionality", capDesc->VconnPower.VConnPowerNeededForFullFunctionality));
+        }
+    }
+
+    if (capDesc->bNumberOfAlternateModes > BILLBOARD_MAX_NUM_ALT_MODE)
+    {
+        capXmlDesc->BillboardDescriptorErrors += "ERROR: Invalid bNumberofAlternateModes; ";
+    }
+    if (capDesc->VconnPower.Reserved)
+    {
+        capXmlDesc->BillboardDescriptorErrors += "ERROR: Reserved bits in VCONN Power being used; ";
+    }
+    if (capDesc->bReserved)
+    {
+        capXmlDesc->BillboardDescriptorErrors += "ERROR: bReserved being used; ";
+    }
+
+    bNumAlternateModes = capDesc->bNumberOfAlternateModes;
+    if (bNumAlternateModes > BILLBOARD_MAX_NUM_ALT_MODE)
+    {
+        bNumAlternateModes = BILLBOARD_MAX_NUM_ALT_MODE;
+    }
+    for (i = 0; i < bNumAlternateModes; i++)
+    {
+        svidXmlDesc = gcnew UsbBillboardSVIDType();
+        alternateModeConfiguration = ((capDesc->bmConfigured[i / 4]) >> ((i % 4) * 2)) & 0x3;
+        svidXmlDesc->WSVID = capDesc->AlternateMode[i].wSVID;
+        svidXmlDesc->BAlternateMode = capDesc->AlternateMode[i].bAlternateMode;
+        svidXmlDesc->IAlternateModeString = capDesc->AlternateMode[i].iAlternateModeSetting;
+        svidXmlDesc->AlternateModeString = XmlGetStringDescriptor(
+            capDesc->AlternateMode[i].iAlternateModeSetting,
+            stringDesc,
+            false
+            );
+
+        switch (alternateModeConfiguration)
+        {
+        case 0:
+            svidXmlDesc->Description = gcnew String("Unspecified Error");
+            break;
+        case 1:
+            svidXmlDesc->Description = gcnew String("Alternate Mode configuration not attempted");
+            break;
+        case 2:
+            svidXmlDesc->Description = gcnew String("Alternate Mode configuration attempted but unsuccessful");
+            break;
+        case 3:
+            svidXmlDesc->Description = gcnew String("Alternate Mode configuration successful");
+            break;
+        }
+        usbSVIDDescList->Add(svidXmlDesc);
+    }
+    capXmlDesc->UsbBillboardSVID = reinterpret_cast<array<UsbBillboardSVIDType ^>^> (
+        usbSVIDDescList->ToArray(UsbBillboardSVIDType::typeid));
+
+    return capXmlDesc;
+}
+
 /*****************************************************************************
 
   XmlAddUsbDevice()
@@ -2852,7 +3015,10 @@ HRESULT XmlAddUsbDevice(PSTR devName, PUSBDEVICEINFO deviceInfo)
             // Add BOS descriptor
             if (NULL != deviceInfo->BosDesc)
             {
-                usbDevice->BosDescriptor = XmlGetBosDescriptor((PUSB_BOS_DESCRIPTOR) (deviceInfo->BosDesc + 1));
+                usbDevice->BosDescriptor = XmlGetBosDescriptor(
+                        (PUSB_BOS_DESCRIPTOR) (deviceInfo->BosDesc + 1),
+                        deviceInfo->StringDescs
+                        );
             }
         }
         else

@@ -170,7 +170,7 @@ NTSTATUS SdoDevice::Initialize(
         m_pData->Count = SDO_DATA_COUNT;
 
         m_pData->List[SDO_DATA_TIMESTAMP].Key = PKEY_SensorData_Timestamp;
-        GetSystemTimeAsFileTime(&Time);
+        GetSystemTimePreciseAsFileTime(&Time);
         InitPropVariantFromFileTime(&Time, &(m_pData->List[SDO_DATA_TIMESTAMP].Value));
 
         m_pData->List[SDO_DATA_SIMPLEDEVICEORIENTATION].Key = PKEY_SensorData_SimpleDeviceOrientation;

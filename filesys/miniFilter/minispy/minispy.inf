@@ -9,7 +9,7 @@
 Signature   = "$Windows NT$"
 Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
 ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determined by the Class
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.0
 CatalogFile = minispy.cat
 
@@ -91,7 +91,7 @@ minispy.exe = 1,,
 ;;
 
 [Strings]
-Msft                    = "Microsoft Corporation"
+ProviderString          = "TODO-Set-Provider"
 ServiceDescription      = "Minispy mini-filter driver"
 ServiceName             = "Minispy"
 DriverName              = "minispy"

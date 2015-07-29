@@ -1,0 +1,186 @@
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = HIDClass
+ClassGuid   = {745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider    = %ProviderName%
+DriverVer   = 01/10/2007,1.0.0.0
+CatalogFile = kmdfsamples.cat
+
+;
+;   In order to use IHV drivers, the SourceDisksNames section must list the 
+;   disk(s) containing the drivers and the SourceDisksFiles section must list 
+;   which disk number each file to be copied is found on.
+;
+;   Files used in a driver installation need to be digitally signed otherwise 
+;   installation may fail.  See documentation elsewhere in the DDK regarding 
+;   driver signing.
+
+[SourceDisksFiles]
+hidusbfx2.sys   = 99
+hidkmdf.sys     = 99
+
+[SourceDisksNames]
+99 = %DISK_NAME%,,,""
+
+[DestinationDirs]
+CopyFunctionDriver  = 12
+CopyFilterDriver    = 12
+
+[Manufacturer]
+%ManufacturerName%  = Standard,NT$ARCH$,NT$ARCH$.6.1
+
+; For XP and later
+[Standard.NT$ARCH$]
+%hidusbfx2%         = hidusbfx2.Inst, USB\VID_0547&PID_1002
+%customCollection%  = customCollection.Inst, HID_DEVICE_UP:FF00_U:0001
+
+; For Win7 and later so that we can use inbox HID-KMDF mapper
+[Standard.NT$ARCH$.6.1]
+%hidusbfx2%         = hidusbfx2.Inst.Win7, USB\VID_0547&PID_1002
+%customCollection%  = customCollection.Inst, HID_DEVICE_UP:FF00_U:0001
+
+;===============================================================
+;   Install section for XP thru Vista
+;===============================================================
+[hidusbfx2.Inst.NT]
+CopyFiles = CopyFunctionDriver, CopyFilterDriver
+
+[hidusbfx2.Inst.NT.HW]
+AddReg = hidusbfx2_Parameters.AddReg 
+
+;
+; hidkmdf is the function driver and hidusbfx2 is the lower filter
+;
+[hidusbfx2.Inst.NT.Services]
+AddService = hidkmdf,0x00000002,hidkmdf_Service_Inst,
+AddService = hidusbfx2,, hidusbfx2_Service_Inst
+
+[CopyFunctionDriver]
+hidkmdf.sys
+
+[hidusbfx2_Parameters.AddReg]
+HKR,,"LowerFilters",0x00010000,"hidusbfx2"
+
+[hidkmdf_Service_Inst]
+DisplayName    = %hidkmdf.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\hidkmdf.sys
+
+;===============================================================
+;   Install section for Win7 and later
+;   Use the inbox mshidkmdf.sys as the shim
+;===============================================================
+[hidusbfx2.Inst.Win7.NT]
+; Just copy the driver. No neeed to copy other system binaries.
+CopyFiles = CopyFilterDriver
+
+[hidusbfx2.Inst.Win7.NT.HW]
+AddReg = hidusbfx2_Win7_Parameters.AddReg 
+
+;
+; mshidkmdf is the function driver and hidusbfx2 is the lower filter
+;
+[hidusbfx2.Inst.Win7.NT.Services]
+AddService = hidusbfx2,, hidusbfx2_Service_Inst
+AddService = mshidkmdf, 0x000001fa, mshidkmdf.AddService ;flag 0x2 sets this as the service for the device
+
+[CopyFilterDriver]
+hidusbfx2.sys
+
+[mshidkmdf.AddService]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\mshidkmdf.sys
+
+[hidusbfx2_Win7_Parameters.AddReg]
+HKR,,"LowerFilters",0x00010000,"hidusbfx2"
+HKR,,"AllowIdleIrpInD3",0x00010001,0x1
+
+;===============================================================
+;   Service section (common to all OS versions)
+;===============================================================
+
+[hidusbfx2_Service_Inst]
+DisplayName    = %hidusbfx2%
+ServiceType    = %SERVICE_KERNEL_DRIVER% 
+StartType      = %SERVICE_DEMAND_START% 
+ErrorControl   = %SERVICE_ERROR_IGNORE% 
+ServiceBinary  = %12%\hidusbfx2.sys 
+
+
+;===============================================================
+;   Custom Collection install section
+; - Only a Null service is installed.
+;===============================================================
+[customCollection.Inst.NT]
+; NULL section
+
+[customCollection.Inst.NT.HW]
+AddReg = customCollection.Inst.AddReg.NT.HW
+
+[customCollection.Inst.AddReg.NT.HW]
+HKR,,"SelectiveSuspendEnabled",0x00000001,0x1
+
+[customCollection.Inst.NT.Services]
+AddService = ,0x00000002,   ; NULL Service
+
+;================================================================
+; WDF Coinstaller installation
+;===============================================================
+
+[DestinationDirs]
+hidusbfx2.Inst_CoInstaller_CopyFiles = 11
+
+[hidusbfx2.Inst.NT.CoInstallers]
+AddReg=hidusbfx2.Inst_CoInstaller_AddReg
+CopyFiles=hidusbfx2.Inst_CoInstaller_CopyFiles
+
+[hidusbfx2.Inst_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[hidusbfx2.Inst_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,,,0x00000010    ;COPYFLG_NO_OVERWRITE (for win2k)
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches with SourceDisksNames
+
+[hidusbfx2.Inst.NT.Wdf]
+KmdfService = hidusbfx2, hidusbfx2_wdfsect
+
+[hidusbfx2_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;================================================================
+; Strings section
+;===============================================================
+
+[Strings] 
+;Localizable
+ProviderName        = "TODO-Set-Provider"
+ManufacturerName    = "TODO-Set-Manufacturer"
+hidusbfx2           = "KMDF HID Minidriver for OSR USB-FX2 Device" 
+customCollection    = "HID Vendor-defined Collection for OSR USB-FX2"
+DISK_NAME           = "HID USB FX2 Device Sample Install Disk"
+hidkmdf.SVCDESC     = "Filter Driver Service for HID-KMDF Interface layer"
+
+;Non-Localizable
+SERVICE_BOOT_START     = 0x0 
+SERVICE_SYSTEM_START   = 0x1 
+SERVICE_AUTO_START     = 0x2 
+SERVICE_DEMAND_START   = 0x3 
+SERVICE_DISABLED       = 0x4 
+
+SERVICE_KERNEL_DRIVER  = 0x1 
+SERVICE_ERROR_IGNORE   = 0x0 
+SERVICE_ERROR_NORMAL   = 0x1 
+SERVICE_ERROR_SEVERE   = 0x2 
+SERVICE_ERROR_CRITICAL = 0x3 
+
+REG_EXPAND_SZ          = 0x00020000 
+REG_DWORD              = 0x00010001 
+REG_MULTI_SZ           = 0x00010000
+REG_BINARY             = 0x00000001
+REG_SZ                 = 0x00000000

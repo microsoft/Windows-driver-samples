@@ -21,7 +21,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={e0cbf06c-cd8b-4647-bb8a-263b43f0f974}
-Provider=%MSFTSAMPLE%
+Provider=%ProviderString%
 DriverVer=06/21/2006,6.0.5841.
 CatalogFile=KmdfSamples.cat
 
@@ -39,8 +39,7 @@ BthEchoSampleCli.sys  = 1,,
 ;*****************************************
 
 [Manufacturer]
-%MSFTSAMPLE%=Microsoft,NTamd64...1
-%MSFTSAMPLE%=Microsoft,NTx86...1
+%ManufacturerString%=Microsoft,NTx86...1,NTamd64...1
 
 [Microsoft.NTamd64...1]
 %BthEchoSampleCli.DeviceDesc% = BthEchoSampleCli_Inst,BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
@@ -94,8 +93,8 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-MSFTSAMPLE = "Microsoft Sample"
-StdMfg = "(Standard system devices)"
+ProviderString = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
 DiskId1 = "BthEchoSampleCli installation disk"
 BthEchoSampleCli.DeviceDesc = "Bluetooth Echo Sample Client"
 BthEchoSampleCli.SVCDESC = "BthEchoSampleCli"

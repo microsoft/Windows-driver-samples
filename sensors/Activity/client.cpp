@@ -60,7 +60,7 @@ NTSTATUS ActivityDevice::GetData()
         // update last sample
         FILETIME TimeStamp = {};
         memcpy_s(m_pLastSample, m_pFilteredSample->AllocatedSizeInBytes, m_pFilteredSample, m_pFilteredSample->AllocatedSizeInBytes);
-        GetSystemTimeAsFileTime(&TimeStamp);
+        GetSystemTimePreciseAsFileTime(&TimeStamp);
         InitPropVariantFromFileTime(&TimeStamp, &(m_pLastSample->List[ACTIVITY_DATA_TIMESTAMP].Value));
 
         // push to clx
@@ -315,7 +315,7 @@ VOID ActivityDevice::OnHistoryTimerExpire(_In_ WDFTIMER historyTimer)
                 status = STATUS_INVALID_PARAMETER;
             }
         }
-        GetSystemTimeAsFileTime(&(data.Timestamp));
+        GetSystemTimePreciseAsFileTime(&(data.Timestamp));
 
         if (NT_SUCCESS(status))
         {

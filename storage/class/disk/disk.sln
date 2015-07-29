@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "disk", "src\disk.vcxproj", "{627F8680-3389-4050-A0E1-9EA14F615498}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "disk", "src\disk.vcxproj", "{0900F953-9DAF-4C58-9137-45A2DEC9C62C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Debug|Win32.ActiveCfg = Debug|Win32
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Debug|Win32.Build.0 = Debug|Win32
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Release|Win32.ActiveCfg = Release|Win32
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Release|Win32.Build.0 = Release|Win32
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Debug|x64.ActiveCfg = Debug|x64
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Debug|x64.Build.0 = Debug|x64
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Release|x64.ActiveCfg = Release|x64
-		{627F8680-3389-4050-A0E1-9EA14F615498}.Release|x64.Build.0 = Release|x64
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Debug|Win32.Build.0 = Debug|Win32
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Release|Win32.ActiveCfg = Release|Win32
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Release|Win32.Build.0 = Release|Win32
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Debug|x64.ActiveCfg = Debug|x64
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Debug|x64.Build.0 = Debug|x64
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Release|x64.ActiveCfg = Release|x64
+		{0900F953-9DAF-4C58-9137-45A2DEC9C62C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

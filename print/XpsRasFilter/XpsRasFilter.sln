@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xpsrasfilter", "src\xpsrasfilter.vcxproj", "{7D6A9E48-4B15-454E-846E-580BD64DDAF9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xpsrasfilter", "src\xpsrasfilter.vcxproj", "{275AABC8-E628-42BE-902B-9FBA423934D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Debug|Win32.Build.0 = Debug|Win32
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Release|Win32.ActiveCfg = Release|Win32
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Release|Win32.Build.0 = Release|Win32
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Debug|x64.ActiveCfg = Debug|x64
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Debug|x64.Build.0 = Debug|x64
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Release|x64.ActiveCfg = Release|x64
-		{7D6A9E48-4B15-454E-846E-580BD64DDAF9}.Release|x64.Build.0 = Release|x64
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Debug|Win32.Build.0 = Debug|Win32
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Release|Win32.ActiveCfg = Release|Win32
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Release|Win32.Build.0 = Release|Win32
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Debug|x64.ActiveCfg = Debug|x64
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Debug|x64.Build.0 = Debug|x64
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Release|x64.ActiveCfg = Release|x64
+		{275AABC8-E628-42BE-902B-9FBA423934D3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,118 @@
+;-------------------------------------------------------------------------
+; NDISPROT.INF -- Sample NDIS Protocol Driver
+;
+; Copyright (c) 2003, Microsoft Corporation
+;-------------------------------------------------------------------------
+[version]
+Signature   = "$Windows NT$"
+Class       = NetTrans
+ClassGUID   = {4d36e975-e325-11ce-bfc1-08002be10318}
+CatalogFile = nprt6wdf.cat
+Provider    = %ProviderString%
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%NDISPROT_Desc%=Install, MS_NDISPROT
+
+[SourceDisksNames]
+1 = %NDISPROT_Disk%,,
+
+[SourceDisksFiles]
+nprt6wdf.sys            = 1,,
+ProtNotify.dll          = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll = 1,,
+
+;-------------------------------------------------------------------------
+; Installation Section
+;-------------------------------------------------------------------------
+[Install]
+AddReg         = Inst_Ndi
+CopyFiles      = CpyCoInstaller_DLL, CpyFilesNotify_DLL, CpyFiles_Sys
+Characteristics=0x0 ;
+
+;-------------------------------------------------------------------------
+; Ndi installation support
+;-------------------------------------------------------------------------
+[Inst_Ndi]
+HKR, Ndi             , ClsID        ,0, {21e7e731-f286-4116-b3c2-d43ccba29f07}
+HKR, Ndi             , Service      , , "Ndisprot"
+HKR, Ndi             , ComponentDll , , ProtNotify.dll
+HKR, Ndi             , HelpText     , , %NDISPROT_HelpText%
+HKR, Ndi\Interfaces  , UpperRange   , , noupper
+HKR, "Ndi\Interfaces", "LowerRange" , , "ndis5,ndis4,ndis5_prot"
+
+;-------------------------------------------------------------------------
+; NdisProt keys used by Component Dll
+;-------------------------------------------------------------------------
+[NdisProt_AddReg]
+HKR, Parameters      , SourceInfFile, , %1%\ndisprot.inf
+HKR, Parameters      , WdfSection   , , "WdfSection"
+
+;-------------------------------------------------------------------------
+; Service installation support
+;-------------------------------------------------------------------------
+[Install.Services]
+AddService=Ndisprot,,NDISPROT_Service_Inst
+
+[NDISPROT_Service_Inst]
+DisplayName     = %NDISPROT_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\nprt6wdf.sys
+Description     = %NDISPROT_Desc%
+AddReg          = NdisProt_AddReg, NdisImPlatformBinding_AddReg
+
+[NdisImPlatformBinding_AddReg]
+; By default, when an LBFO team or Bridge is created, all protocols will be
+; unbound from the underlying members and bound to the TNic(s). This keyword
+; allows a component to opt out of the default behavior
+; To prevent binding this protocol to the TNic(s):
+;   HKR, Parameters, NdisImPlatformBindingOptions,0x00010001,1 ; Do not bind to TNic
+; To prevent unbinding this protocol from underlying members:
+;   HKR, Parameters, NdisImPlatformBindingOptions,0x00010001,2 ; Do not unbind from Members
+; To prevent both binding to TNic and unbinding from members:
+;   HKR, Parameters, NdisImPlatformBindingOptions,0x00010001,3 ; Do not bind to TNic or unbind from Members
+HKR, Parameters, NdisImPlatformBindingOptions,0x00010001,0 ; Subscribe to default behavior
+
+[Install.Remove.Services]
+DelService=Ndisprot,0x200
+
+;-------------------------------------------------------------------------
+; Declare Destination Directories for file copy/deletion
+;-------------------------------------------------------------------------
+[DestinationDirs]
+CpyCoInstaller_DLL  = 11
+CpyFilesNotify_DLL  = 11
+CpyFiles_Sys        = 12    ; DIRID_DRIVERS
+
+;-------------------------------------------------------------------------
+; Files to Copy/Delete - Referenced by Install and Remove sections above
+;-------------------------------------------------------------------------
+[CpyCoInstaller_DLL]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,,,2
+
+[CpyFilesNotify_DLL]
+ProtNotify.dll,,,2
+
+[CpyFiles_Sys]
+nprt6wdf.sys,,,2
+
+;-------------------------------------------------------------------------
+; NDISPROT Coinstaller installation
+;-------------------------------------------------------------------------
+[WdfSection]
+KmdfService = NdisProt, NdisProt_WdfSection
+
+[NdisProt_WdfSection]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+NDISPROT_Desc = "Sample NDIS Protocol Driver"
+NDISPROT_Disk = "Sample NDIS Protocol Driver Files"
+NDISPROT_HelpText = "A driver to support user-mode I/O on NDIS devices"

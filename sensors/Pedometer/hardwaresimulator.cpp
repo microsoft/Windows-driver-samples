@@ -387,7 +387,7 @@ HardwareSimulator::GetSample(
 
         WdfWaitLockRelease(m_Lock);
 
-        GetSystemTimeAsFileTime(&Sample->Timestamp);
+        GetSystemTimePreciseAsFileTime(&Sample->Timestamp);
     }
 
     SENSOR_FunctionExit(Status);

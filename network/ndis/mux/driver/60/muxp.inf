@@ -8,19 +8,19 @@
 Signature   = "$Windows NT$"
 Class       = NetTrans
 ClassGUID   = {4D36E975-E325-11CE-BFC1-08002BE10318}
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   =10/01/2002,6.0.5019.0
 
 [Manufacturer]
-%Msft%     = MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName% = Standard,NTx86,NTia64,NTamd64
 
-[MSFT.NTx86]
+[Standard.NTx86]
 %MUXP_Desc% = MUXP.ndi, MS_MUXP
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %MUXP_Desc% = MUXP.ndi, MS_MUXP
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %MUXP_Desc% = MUXP.ndi, MS_MUXP
 
 ; Note:
@@ -92,9 +92,8 @@ DelService = MUXP
 DelFiles = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
 
 [Strings]
-Msft = "Your Company"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
 MUXP_Desc = "Sample Mux-IM Protocol Driver"
 MUXP_HELP = "Sample Mux-IM Protocol"
 DiskDescription = "Microsoft MUX Sample Driver Disk"
-
-

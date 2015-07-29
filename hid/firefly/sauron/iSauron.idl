@@ -1,0 +1,40 @@
+// iSauron.idl : IDL source for Sauron.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (iSauron.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+	[
+		object,
+		uuid(85A2A542-7E3A-4757-85A8-34AE3E9805BA),
+		dual,
+		helpstring("ISauron Interface"),
+		pointer_default(unique)
+	]
+	interface ISauron : IDispatch
+	{
+		[propget, id(1), helpstring("property foregroundColor")] HRESULT foregroundColor([out, retval] BSTR *pVal);
+		[propput, id(1), helpstring("property foregroundColor")] HRESULT foregroundColor([in] BSTR newVal);
+	};
+
+[
+	uuid(185A2923-9B3C-4816-BB77-1BDA42E35605),
+	version(1.0),
+	helpstring("Sauron 1.0 Type Library")
+]
+library SAURONLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(C06687F6-D0F8-4627-A113-2654249C67F9),
+		helpstring("Sauron Class")
+	]
+	coclass Sauron
+	{
+		[default] interface ISauron;
+	};
+};

@@ -1,0 +1,65 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+    PURPOSE.
+
+Module Name:
+
+    classinst.rc
+
+Abstract:
+
+    Resource Script for Toaster Class Installer Sample
+
+Environment:
+
+    user mode only
+
+Revision History:
+
+--*/
+
+
+#include "resource.h"
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE    VFT_APP
+#define VER_FILESUBTYPE VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "Class-Installer DLL for Toaster Sample"
+#define VER_INTERNALNAME_STR        "TostrCls.dll"
+#define VER_ORIGINALFILENAME_STR    "TostrCls.dll"
+
+#include <common.ver>
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+DLG_TOASTER_PORTSETTINGS DIALOGEX 0, 0, 257, 215
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Custom Property Page"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "You can change the friendly name of the device with the following edit box. If you give a name and click OK, it will cause the device to restart.",
+                    IDC_STATIC,43,24,171,27,WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_FRIENDLYNAME,97,78,118,14,ES_AUTOHSCROLL
+    LTEXT           "FriendlyName",204,46,81,46,10
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDI_CLASS_ICON  ICON    DISCARDABLE     "TOASTER.ICO"
+
+

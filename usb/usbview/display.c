@@ -213,8 +213,17 @@ DisplayConfigDesc (
 
 VOID
 DisplayBosDescriptor (
-    PUSB_BOS_DESCRIPTOR BosDesc
+    PUSBDEVICEINFO            info,
+    PUSB_BOS_DESCRIPTOR       BosDesc,
+    PSTRING_DESCRIPTOR_NODE   StringDescs
     );
+
+VOID
+DisplayBillboardCapabilityDescriptor (
+    PUSBDEVICEINFO info,
+    PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR billboardCapDesc,
+    PSTRING_DESCRIPTOR_NODE StringDescs
+);
 
 VOID
 DisplayDeviceQualifierDescriptor (
@@ -926,7 +935,9 @@ UpdateTreeItemDeviceInfo(
 
         if (BosDesc)
         {
-            DisplayBosDescriptor((PUSB_BOS_DESCRIPTOR)(BosDesc + 1));
+            DisplayBosDescriptor((PUSBDEVICEINFO) info, 
+                (PUSB_BOS_DESCRIPTOR) (BosDesc + 1),
+                StringDescs);
         }
     }
 
@@ -1533,6 +1544,15 @@ DisplayConnectionInfo (
             if(gDoAnnotation)
             {AppendTextBuffer("  -> This is a Vendor Specific Device\r\n");}
             else {AppendTextBuffer("\r\n");}
+            break;
+
+        case USB_DEVICE_CLASS_BILLBOARD:
+            tog = 0;
+            if (gDoAnnotation)
+            {
+                AppendTextBuffer("  -> This is a billboard class device\r\n");
+            }
+            else { AppendTextBuffer("\r\n"); }
             break;
 
         case USB_MISCELLANEOUS_DEVICE:
@@ -2381,7 +2401,12 @@ DisplayDeviceQualifierDescriptor (
             AppendTextBuffer("  -> This is a Vendor Specific Device\r\n");
         }
         break;
-
+    case USB_DEVICE_CLASS_BILLBOARD:
+        if (gDoAnnotation)
+        {
+            AppendTextBuffer("  -> This is a billboard class device\r\n");
+        }
+        break;
     default:
         //@@TestCase A3.1
         //@@ERROR
@@ -2675,6 +2700,131 @@ DisplayContainerIdCapabilityExtensionDescriptor (
         pGuid->Data4[7]);
 }
 
+VOID
+DisplayBillboardCapabilityDescriptor (
+    PUSBDEVICEINFO info,
+    PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR billboardCapDesc,
+    PSTRING_DESCRIPTOR_NODE StringDescs
+    )
+{
+    UCHAR i = 0;
+    UCHAR bNumAlternateModes = 0;
+    UCHAR alternateModeConfiguration = 0;
+    UCHAR adjustedBLength = 0;
+
+    AppendTextBuffer("\r\n          ===>Billboard Capability Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X",
+        billboardCapDesc->bLength);
+
+    adjustedBLength = sizeof(USB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR) +
+        sizeof(billboardCapDesc->AlternateMode[0]) * (billboardCapDesc->bNumberOfAlternateModes - 1);
+    AppendTextBuffer("  -> Actual Length: 0x%02X\r\n", adjustedBLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+        billboardCapDesc->bDescriptorType);
+    AppendTextBuffer("bDevCapabilityType:                0x%02X  -> Billboard capability\r\n",
+        billboardCapDesc->bDevCapabilityType);
+    AppendTextBuffer("iAdditionalInfoURL:                0x%02X  ->",
+        billboardCapDesc->iAddtionalInfoURL);
+    if (billboardCapDesc->iAddtionalInfoURL && gDoAnnotation) {
+        DisplayStringDescriptor(billboardCapDesc->iAddtionalInfoURL,
+            StringDescs,
+            info->DeviceInfoNode != NULL ? info->DeviceInfoNode->LatestDevicePowerState : PowerDeviceUnspecified);
+    }
+    AppendTextBuffer("bNumberOfAlternateModes:           0x%02X\r\n",
+        billboardCapDesc->bNumberOfAlternateModes);
+
+    if (billboardCapDesc->bNumberOfAlternateModes > BILLBOARD_MAX_NUM_ALT_MODE)
+    {
+        AppendTextBuffer("*!*ERROR: Invalid bNumberofAlternateModes\r\n");
+    }
+    AppendTextBuffer("bPreferredAlternateMode:           0x%02X\r\n",
+        billboardCapDesc->bPreferredAlternateMode);
+
+    AppendTextBuffer("VCONN Power:                       0x%04X",
+        billboardCapDesc->VconnPower);
+
+    if (billboardCapDesc->VconnPower.NoVconnPowerRequired)
+    {
+        AppendTextBuffer("  -> The adapter does not require Vconn Power. Bits 2..0 ignored\r\n");
+    }
+    else
+    {
+        switch (billboardCapDesc->VconnPower.VConnPowerNeededForFullFunctionality) 
+        {
+        case 0:
+            AppendTextBuffer("  -> 1W needed by adapter for full functionality\r\n");
+            break;
+        case 1:
+            AppendTextBuffer("  -> 1.5W needed by adapter for full functionality\r\n");
+            break;
+        case 7:
+            AppendTextBuffer("  -> *!*ERROR: VConnPowerNeededForFullFunctionality - Reserved value being used\r\n");
+            break;
+        default:
+            AppendTextBuffer("  -> %2XW needed by adapter for full functionality\r\n", billboardCapDesc->VconnPower.VConnPowerNeededForFullFunctionality);
+        }
+    }
+
+    if (billboardCapDesc->VconnPower.Reserved)
+    {
+        AppendTextBuffer("*!*ERROR: Reserved bits in VCONN Power being used\r\n");
+    }
+    if (billboardCapDesc->bReserved)
+    {
+        AppendTextBuffer("*!*ERROR: bReserved being used\r\n");
+    }
+
+
+    bNumAlternateModes = billboardCapDesc->bNumberOfAlternateModes;
+    if (bNumAlternateModes > BILLBOARD_MAX_NUM_ALT_MODE)
+    {
+        bNumAlternateModes = BILLBOARD_MAX_NUM_ALT_MODE;
+    }
+    if (bNumAlternateModes > 0)
+    {
+        AppendTextBuffer("\r\nAlternate Modes Identified:\r\n");
+    }
+    for (i = 0; i < bNumAlternateModes; i++)
+    {
+        alternateModeConfiguration = ((billboardCapDesc->bmConfigured[i / 4]) >> ((i % 4) * 2)) & 0x3;
+        AppendTextBuffer("wSVID - 0x%04X  bAlternateMode - 0x%02X   ->", 
+            billboardCapDesc->AlternateMode[i].wSVID, 
+            billboardCapDesc->AlternateMode[i].bAlternateMode,
+            billboardCapDesc->AlternateMode[i].iAlternateModeSetting);
+
+        switch (alternateModeConfiguration)
+        {
+        case 0:
+            AppendTextBuffer("Unspecified Error\r\n");
+            break;
+        case 1:
+            AppendTextBuffer("Alternate Mode configuration not attempted\r\n");
+            break;
+        case 2:
+            AppendTextBuffer("Alternate Mode configuration attempted but unsuccessful\r\n");
+            break;
+        case 3:
+            AppendTextBuffer("Alternate Mode configuration successful\r\n");
+            break;
+        }
+        AppendTextBuffer("iAlternateModeString - 0x%02X  ", billboardCapDesc->AlternateMode[i].iAlternateModeSetting);
+        if (billboardCapDesc->AlternateMode[i].iAlternateModeSetting && gDoAnnotation) 
+        {
+            DisplayStringDescriptor(billboardCapDesc->AlternateMode[i].iAlternateModeSetting,
+                StringDescs,
+                info->DeviceInfoNode != NULL ? info->DeviceInfoNode->LatestDevicePowerState : PowerDeviceUnspecified);
+        }
+        else
+        {
+            AppendTextBuffer("\r\n");
+        }
+        AppendTextBuffer("\r\n");
+    }
+}
+
+
 /*****************************************************************************
 
 DisplayBosDescriptor()
@@ -2685,7 +2835,9 @@ BosDesc - The Binary Object Store (BOS) Descriptor, and associated Descriptors
 
 VOID
 DisplayBosDescriptor (
-    PUSB_BOS_DESCRIPTOR BosDesc
+    PUSBDEVICEINFO          info,
+    PUSB_BOS_DESCRIPTOR     BosDesc,
+    PSTRING_DESCRIPTOR_NODE StringDescs
     )
 {
     PUSB_COMMON_DESCRIPTOR            commonDesc = NULL;
@@ -2725,6 +2877,9 @@ DisplayBosDescriptor (
                 break;
             case USB_DEVICE_CAPABILITY_CONTAINER_ID:
                 DisplayContainerIdCapabilityExtensionDescriptor((PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR)capDesc);
+                break;
+            case USB_DEVICE_CAPABILITY_BILLBOARD:
+                DisplayBillboardCapabilityDescriptor((PUSBDEVICEINFO) info, (PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR) capDesc, StringDescs);
                 break;
             default:
                 AppendTextBuffer("\r\n          ===>Unknown Capability Descriptor<===\r\n");
@@ -3182,6 +3337,19 @@ DisplayInterfaceDescriptor (
         }
         AppendTextBuffer("bInterfaceSubClass:                0x%02X\r\n",
             InterfaceDesc->bInterfaceSubClass);
+        break;
+    case USB_DEVICE_CLASS_BILLBOARD:
+        AppendTextBuffer("  -> Billboard Class\r\n");
+        AppendTextBuffer("bInterfaceSubClass:                0x%02X", InterfaceDesc->bInterfaceSubClass);
+        switch (InterfaceDesc->bInterfaceSubClass)
+        {
+        case 0:
+            AppendTextBuffer("  -> Billboard Subclass\r\n");
+            break;
+        default:
+            AppendTextBuffer("\r\n*!*CAUTION:    This appears to be an invalid bInterfaceSubClass\r\n");
+            break;
+        }
         break;
 
     default:

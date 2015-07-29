@@ -1,0 +1,5 @@
+LIBRARY	SensorAdapter
+
+EXPORTS
+    WbioQuerySensorInterface
+

@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{7EB6DC3A-11A4-48F2-9730-419C9A104242}</UniqueIdentifier>
+      <UniqueIdentifier>{54D65CE6-224F-4E82-BCA5-3348D0F43339}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{2AAA41D4-E19E-409F-87C1-EA4C640F0BAA}</UniqueIdentifier>
+      <UniqueIdentifier>{FB0DF8C2-7B63-4219-B2EF-23A2BA12B7EC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{9FEF86B3-6289-44F6-B036-2C15E61CDDDE}</UniqueIdentifier>
+      <UniqueIdentifier>{9C2A7E2B-9B74-4579-A1D3-5C5B3D397F7E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{A832F7F9-C73F-4032-83DF-1CA14DE6C0FF}</UniqueIdentifier>
+      <UniqueIdentifier>{B796B525-44D3-4260-8C76-705DBADA1043}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\pscr.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\pscr.inx">
       <Filter>Driver Files</Filter>
     </Inf>

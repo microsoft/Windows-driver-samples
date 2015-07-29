@@ -18,7 +18,7 @@
 Signature   = "$WINDOWS NT$"
 Class       = Sample
 ClassGUID   = {78A1C341-4539-11D3-B88D-00C04FAD5171}
-Provider    = %MSFT%
+Provider    = %ProviderString%
 DriverVer   = 10/29/2005,1.0.0.1
 CatalogFile = KmdfSamples.cat
 
@@ -111,7 +111,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE  = 0x00000002
-MSFT                    = "Microsoft"
+ProviderString          = "TODO-Set-Provider"
 StdMfg                  = "(Standard system devices)"
 ClassName               = "Sample Device"
 DiskId1                 = "WMI Sample Installation Disk #1"

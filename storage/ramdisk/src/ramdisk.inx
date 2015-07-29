@@ -11,7 +11,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 DriverVer=11/14/1999,5.00.2183.1
 CatalogFile=KmdfSamples.cat
 
@@ -35,7 +35,7 @@ WdfRamdisk.sys
 WdfRamdisk.sys=1
 
 [Manufacturer]
-%MSFT% = DiskDevice,NT$ARCH$
+%ManufacturerString% = DiskDevice,NT$ARCH$
 
 ; For XP and later
 [DiskDevice.NT$ARCH$]
@@ -87,11 +87,12 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 
 [Strings]
-MSFT            = "Microsoft"
-ClassName       = "Sample Device"
-DiskDevDesc     = "WDF Sample RAM disk Driver"
-DiskServiceDesc = "Ramdisk Driver"
-InstDisk        = "Ramdisk Install Disk"
+ProviderString     = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
+ClassName          = "Sample Device"
+DiskDevDesc        = "WDF Sample RAM disk Driver"
+DiskServiceDesc    = "Ramdisk Driver"
+InstDisk           = "Ramdisk Install Disk"
 ;*******************************************
 ;Handy macro substitutions (non-localizable)
 SPSVCINST_ASSOCSERVICE = 0x00000002

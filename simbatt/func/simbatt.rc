@@ -1,0 +1,11 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define	VER_FILETYPE	VFT_DRV
+#define	VER_FILESUBTYPE	VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "Simulated Battery Driver"
+#define VER_INTERNALNAME_STR        "simbatt.sys"
+#define VER_ORIGINALFILENAME_STR    "simbatt.sys"
+
+#include "common.ver"

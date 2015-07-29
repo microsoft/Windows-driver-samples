@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simsensor", "simsensor.vcxproj", "{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simsensor", "simsensor.vcxproj", "{92D79466-CE11-417A-9142-08711CDC46CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Debug|Win32.Build.0 = Debug|Win32
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Release|Win32.ActiveCfg = Release|Win32
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Release|Win32.Build.0 = Release|Win32
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Debug|x64.ActiveCfg = Debug|x64
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Debug|x64.Build.0 = Debug|x64
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Release|x64.ActiveCfg = Release|x64
-		{C59FD02E-3C7E-4DC3-94C7-7E04827E0934}.Release|x64.Build.0 = Release|x64
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Debug|Win32.Build.0 = Debug|Win32
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Release|Win32.ActiveCfg = Release|Win32
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Release|Win32.Build.0 = Release|Win32
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Debug|x64.ActiveCfg = Debug|x64
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Debug|x64.Build.0 = Debug|x64
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Release|x64.ActiveCfg = Release|x64
+		{92D79466-CE11-417A-9142-08711CDC46CA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

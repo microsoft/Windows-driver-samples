@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usbview", "usbview.vcxproj", "{53F7289B-2210-4DCD-9A41-D83DE76A7372}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usbview", "usbview.vcxproj", "{3C291787-8A37-4E8C-86D5-0B739A1CEA74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Debug|Win32.ActiveCfg = Debug|Win32
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Debug|Win32.Build.0 = Debug|Win32
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Release|Win32.ActiveCfg = Release|Win32
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Release|Win32.Build.0 = Release|Win32
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Debug|x64.ActiveCfg = Debug|x64
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Debug|x64.Build.0 = Debug|x64
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Release|x64.ActiveCfg = Release|x64
-		{53F7289B-2210-4DCD-9A41-D83DE76A7372}.Release|x64.Build.0 = Release|x64
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Debug|Win32.Build.0 = Debug|Win32
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Release|Win32.ActiveCfg = Release|Win32
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Release|Win32.Build.0 = Release|Win32
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Debug|x64.ActiveCfg = Debug|x64
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Debug|x64.Build.0 = Debug|x64
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Release|x64.ActiveCfg = Release|x64
+		{3C291787-8A37-4E8C-86D5-0B739A1CEA74}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

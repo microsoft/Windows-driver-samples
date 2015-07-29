@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14E1832B-DF5A-4B4C-A079-A9446881E742}</ProjectGuid>
+    <ProjectGuid>{21ED4A9A-E9AA-4337-A59A-118571AE54D9}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{9DB58C83-24AF-4AFE-B48E-AD1449C17B9E}</SampleGuid>
+    <SampleGuid>{A97E9D3C-41CB-4AD7-9E98-11D0397FF579}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,16 +93,19 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
@@ -114,16 +117,19 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
@@ -135,16 +141,19 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
@@ -156,16 +165,19 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""PowerFxApp.PROGRAM"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
@@ -178,7 +190,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

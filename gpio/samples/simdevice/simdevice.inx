@@ -15,7 +15,7 @@
 Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
-Provider=%MSFT%
+Provider=%ProviderName%
 DriverVer=05/07/2010
 CatalogFile=gpiosamples.cat
 
@@ -37,9 +37,9 @@ ExcludeFromSelect=*
 ;*****************************************
 
 [Manufacturer]
-%MSFT%=Microsoft,NT$ARCH$
+%ManufacturerName%=Standard,NT$ARCH$
 
-[Microsoft.NT$ARCH$]
+[Standard.NT$ARCH$]
 %DeviceDesc%=DriverInstall,ACPI\TEST0003
 
 [DriverInstall.NT]
@@ -60,8 +60,8 @@ ServiceBinary  = %12%\Simdevice.sys
 
 [Strings]
 ;Localizable Strings
-MSFT       = "Microsoft"
-Std        = "(Standard system devices) Test device"
+ProviderName = "TODO-Set-Provider"
+ManufacturerName = "TODO-Set-Manufacturer"
 SvcDesc    = "Test device service"
 DeviceDesc = "Test device description"
 

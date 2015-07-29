@@ -1,0 +1,4 @@
+LIBRARY	StorageAdapter
+
+EXPORTS
+    WbioQueryStorageInterface

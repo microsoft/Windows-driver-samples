@@ -7,21 +7,21 @@
 Signature   = "$Windows NT$"
 Class       = NetTrans
 ClassGUID   = {4d36e975-e325-11ce-bfc1-08002be10318}
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   = 10/01/2002,4.2
 CatalogFile  = ndisprot60.cat
 
 
 [Manufacturer]
-%Msft%=MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
 
-[MSFT.NTx86]
+[Standard.NTx86]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
 ;-------------------------------------------------------------------------
@@ -79,12 +79,8 @@ CpyFiles_Sys    = 12    ; DIRID_DRIVERS
 Ndisprot60.sys,,,2
 
 [Strings]
-Msft = "Your Company"
-DiskDescription = "Microsoft Ndisprot Sample Protocol Driver Disk"
+ManufacturerName = "TODO-Set-Manufacturer"
+ProviderString = "TODO-Set-Provider"
+DiskDescription = "Ndisprot Sample Protocol Driver Disk"
 NDISPROT_Desc = "Sample NDIS Protocol Driver"
 NDISPROT_HelpText = "A driver to support user-mode I/O on NDIS devices"
-
-
-
-
-

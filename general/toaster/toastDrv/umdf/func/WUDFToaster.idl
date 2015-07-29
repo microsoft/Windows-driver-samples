@@ -1,0 +1,40 @@
+/*++
+
+  Copyright (c) Microsoft Corporation, All Rights Reserved
+
+  Module Name:
+
+    WUDFToaster.idl
+
+  Abstract:
+
+    Definition of the WUDF Toaster sample's COM class
+
+  Environment:
+
+    Windows User-Mode Driver Framework (WUDF)
+
+--*/
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "wudfddi.idl";
+
+[
+    uuid(04170C5A-388E-410f-9BAA-E7724196AD17),
+    version(1.0),
+    helpstring("WUDF Toaster Driver 1.0 Type Library")
+]
+library WUDFToasterLib
+{
+    importlib("stdole2.tlb");
+    [
+        uuid(5ED5997F-FAED-4a35-BA74-FCF7B43AEBA7),
+        helpstring("WudfToaster Class")
+    ]
+    coclass WUDFToaster
+    {
+        [default] interface IDriverEntry;
+    };
+};
+

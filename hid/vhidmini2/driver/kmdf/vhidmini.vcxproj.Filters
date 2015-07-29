@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{529C6B82-33F1-447C-8745-EA15DF3B320A}</UniqueIdentifier>
+      <UniqueIdentifier>{ACC3297A-03C9-45B6-B62C-0A0A3E089CD0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{14FD4557-FD3C-46E8-91BC-EB85C1102DEC}</UniqueIdentifier>
+      <UniqueIdentifier>{7BBF913C-90ED-455D-9A8D-EB2ACA2113FB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{120DA6E4-65A4-4995-ACDA-1401660F7DE9}</UniqueIdentifier>
+      <UniqueIdentifier>{04EBC112-1A1A-4383-91F9-823EEF5FE3B4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{9161B866-C7A9-49F8-99BF-816F32DCDC37}</UniqueIdentifier>
+      <UniqueIdentifier>{7FD6281F-9EA9-46FF-9767-C95E9A9FEEBB}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\vhidmini.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="vhidmini.inx">
       <Filter>Driver Files</Filter>
     </Inf>

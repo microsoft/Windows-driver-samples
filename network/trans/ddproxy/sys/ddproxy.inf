@@ -9,7 +9,7 @@
     Signature   = "$Windows NT$"
     Class       = WFPCALLOUTS
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
-    Provider    = %Contoso%
+    Provider    = %ProviderString%
     CatalogFile = DDProxy.cat
     DriverVer   = 11/24/2014,14.24.55.836
 
@@ -57,7 +57,7 @@
     HKR,"Parameters",,,
 
 [Strings]
-    Contoso            = "Contoso Ltd."
+    ProviderString     = "TODO-Set-Provider"
     DDProxyDisk        = "DatagramData Proxy Installation Disk"
     DDProxyServiceDesc = "DatagramData Proxy Callout Driver"
     DDProxyServiceName = "DDProxy"

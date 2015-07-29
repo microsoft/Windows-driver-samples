@@ -1,0 +1,78 @@
+;
+; SampleBarcodeScannerDrv.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Sample ;
+ClassGuid={70DF6E9F-68AA-4E29-AF0C-5AE9DB219214} ;
+Provider=Standard,NT$ARCH$
+CatalogFile=SampleBarcodeScannerDrv.cat
+DriverVer=06/25/2015,14.29.18.671
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%DeviceName%=MyDevice_Install, Root\SampleBarcodeScannerDrv ;
+
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+SampleBarcodeScannerDrv.dll=1
+
+[SourceDisksNames]
+1 = %DiskName%
+
+; =================== UMDF Device ==================================
+
+[MyDevice_Install.NT]
+CopyFiles=UMDriverCopy
+
+[MyDevice_Install.NT.hw]
+
+[MyDevice_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[MyDevice_Install.NT.CoInstallers]
+AddReg=CoInstallers_AddReg
+
+[MyDevice_Install.NT.Wdf]
+UmdfService=SampleBarcodeScannerDrv,SampleBarcodeScannerDrv_Install
+UmdfServiceOrder=SampleBarcodeScannerDrv
+
+[SampleBarcodeScannerDrv_Install]
+UmdfLibraryVersion=2.15.0 
+ServiceBinary=%12%\UMDF\SampleBarcodeScannerDrv.dll
+UmdfExtensions=PosCx0102
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WUDFCoinstaller.dll"
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\umdf
+
+[UMDriverCopy]
+SampleBarcodeScannerDrv.dll
+
+; =================== Generic ==================================
+
+[Strings]
+ManufacturerName="" ;
+ClassName="Samples" ;
+DiskName = "SampleBarcodeScannerDrv Installation Disk"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+DeviceName="SampleBarcodeScannerDrv Device"

@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{A0952C7E-AD1D-4BDC-A5D4-23AB2CCA70DB}</UniqueIdentifier>
+      <UniqueIdentifier>{CBAFD46C-9514-44DF-976C-E0F20BD23F38}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{6C6CAD3E-05C8-49A0-A643-041976D083AC}</UniqueIdentifier>
+      <UniqueIdentifier>{99B0F668-B7D9-4D13-ADE9-FF166DD545CE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{09BED7DF-74CB-49CC-B3E3-BD05003E23F5}</UniqueIdentifier>
+      <UniqueIdentifier>{3D93FBBB-1D8A-4A6A-B95F-6293FD4775E5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{882CF447-FA9C-4E3F-AB69-826D25BD8F1D}</UniqueIdentifier>
+      <UniqueIdentifier>{E7DCDE15-599C-484C-B279-AFEB59803700}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -72,9 +72,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\WpdWudfSampleDriver.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="WpdWudfSampleDriver.inx">
       <Filter>Driver Files</Filter>
     </Inf>

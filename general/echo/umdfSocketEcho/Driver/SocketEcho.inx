@@ -6,12 +6,12 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 CatalogFile=wudf.cat
 DriverVer=03/20/2003,5.00.3788
 
 [Manufacturer]
-%MSFTWUDF%=Microsoft,NT$ARCH$
+%ManufacturerString%=Microsoft,NT$ARCH$
 
 [Microsoft.NT$ARCH$]
 %SocketEchoName%=SocketEcho_Install,WUDF\SocketEcho
@@ -82,8 +82,8 @@ SocketEcho.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
 ; =================== Generic ==================================
 
 [Strings]
-MSFT="Microsoft"
-MSFTWUDF="Microsoft Internal (WUDF)"
+ProviderString="TODO-Set-Provider"
+ManufacturerString="TODO-Set-Manufacturer"
 MediaDescription="Microsoft WUDF Sample Driver Installation Media"
 ClassName="Sample Device"
 SocketEchoName="Sample WUDF SocketEcho Driver"

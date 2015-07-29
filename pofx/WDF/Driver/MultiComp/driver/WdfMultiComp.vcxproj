@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E47411F4-AAEA-4766-B62B-A5171ED47CCF}</ProjectGuid>
+    <ProjectGuid>{188D1CB3-96AB-43B5-8BCA-70D6115DC2EB}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{499A6FF7-57CD-4962-9500-BCF78D83750D}</SampleGuid>
+    <SampleGuid>{9F669764-A62B-46FE-B708-C9EEA2B7A6D3}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -104,14 +104,17 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\WdfPoFx.lib</AdditionalDependencies>
@@ -122,14 +125,17 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\WdfPoFx.lib</AdditionalDependencies>
@@ -140,14 +146,17 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\WdfPoFx.lib</AdditionalDependencies>
@@ -158,14 +167,17 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""WdfMultiComp.DRIVER"""</PreprocessorDefinitions>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\WdfPoFx.lib</AdditionalDependencies>
@@ -174,7 +186,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

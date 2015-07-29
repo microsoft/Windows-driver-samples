@@ -1,0 +1,41 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {C06687F6-D0F8-4627-A113-2654249C67F9} = s 'Sauron Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{185A2923-9B3C-4816-BB77-1BDA42E35605}'
+		}
+	}
+}
+HKEY_LOCAL_MACHINE
+{
+	NoRemove SOFTWARE
+	{
+        NoRemove Microsoft
+        {
+            NoRemove MediaPlayer
+            {
+                NoRemove Objects
+                {
+					NoRemove Effects
+					{
+						ForceRemove Sauron
+						{
+							Properties
+							{
+								val classid = s '{C06687F6-D0F8-4627-A113-2654249C67F9}'
+								val name = s 'Sauron'
+								val description = s 'This collection includes the Sauron Bars and Sauron Wave effects.'
+							}
+						}
+					}
+                }
+            }
+        }
+    }
+}

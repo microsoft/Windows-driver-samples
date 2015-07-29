@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PixLib", "PixLib.vcxproj", "{F7850F91-2B8B-4646-9214-9FEC52E95365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PixLib", "PixLib.vcxproj", "{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Debug|Win32.Build.0 = Debug|Win32
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Release|Win32.ActiveCfg = Release|Win32
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Release|Win32.Build.0 = Release|Win32
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Debug|x64.ActiveCfg = Debug|x64
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Debug|x64.Build.0 = Debug|x64
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Release|x64.ActiveCfg = Release|x64
-		{F7850F91-2B8B-4646-9214-9FEC52E95365}.Release|x64.Build.0 = Release|x64
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Debug|Win32.Build.0 = Debug|Win32
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Release|Win32.ActiveCfg = Release|Win32
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Release|Win32.Build.0 = Release|Win32
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Debug|x64.ActiveCfg = Debug|x64
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Debug|x64.Build.0 = Debug|x64
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Release|x64.ActiveCfg = Release|x64
+		{2CC8C302-2377-42A4-A6D2-8E22B5EC85B4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

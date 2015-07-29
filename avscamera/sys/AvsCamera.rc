@@ -1,0 +1,21 @@
+//+-------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//
+//  Copyright (C) Microsoft Corporation, 2015
+//
+//  File:       AvsCam.rc
+//
+//--------------------------------------------------------------------------
+
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "A/V Stream Camera Simulator"
+#define VER_INTERNALNAME_STR        "AvsCam.sys"
+#define VER_ORIGINALFILENAME_STR    "AvsCam.sys"
+
+#include "common.ver"

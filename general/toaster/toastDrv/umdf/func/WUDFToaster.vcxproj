@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B439C142-C570-44A6-B13C-43F70AE05A69}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <UMDF_VERSION_MAJOR>1</UMDF_VERSION_MAJOR>
+    <SupportsPackaging>false</SupportsPackaging>
+    <RequiresPackageProject>true</RequiresPackageProject>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <SampleGuid>{71A982A9-366B-42AD-AEFD-F60AAD4820F2}</SampleGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>UMDF</DriverType>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>UMDF</DriverType>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>UMDF</DriverType>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverType>UMDF</DriverType>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(IntDir)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ItemGroup Label="WrappedTaskItems">
+    <ClCompile Include=".\$(IntDir)\WUDFToaster_i.c">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+    </ClCompile>
+    <ClCompile Include="WUDFToaster.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Driver.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Queue.cpp">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <Inf Include="WUDFToaster.inx">
+      <Architecture>$(InfArch)</Architecture>
+      <SpecifyArchitecture>true</SpecifyArchitecture>
+      <Verbose>true</Verbose>
+      <CopyOutput>.\$(IntDir)\WUDFToaster.inf</CopyOutput>
+    </Inf>
+    <OtherWpp Include="WUDFToaster.rc; WUDFTOaster.idl">
+      <WppEnabled>true</WppEnabled>
+      <WppDllMacro>true</WppDllMacro>
+      <WppScanConfigurationData>internal.h</WppScanConfigurationData>
+    </OtherWpp>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>WUDFToaster</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>WUDFToaster</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>WUDFToaster</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>WUDFToaster</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <EntryPointSymbol Condition="'$(Platform)'=='win32'">_DllMainCRTStartup@12</EntryPointSymbol>
+      <EntryPointSymbol Condition="'$(Platform)'!='win32'">_DllMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <EntryPointSymbol Condition="'$(Platform)'=='win32'">_DllMainCRTStartup@12</EntryPointSymbol>
+      <EntryPointSymbol Condition="'$(Platform)'!='win32'">_DllMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <EntryPointSymbol Condition="'$(Platform)'=='win32'">_DllMainCRTStartup@12</EntryPointSymbol>
+      <EntryPointSymbol Condition="'$(Platform)'!='win32'">_DllMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <EntryPointSymbol Condition="'$(Platform)'=='win32'">_DllMainCRTStartup@12</EntryPointSymbol>
+      <EntryPointSymbol Condition="'$(Platform)'!='win32'">_DllMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\uuid.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\advapi32.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>WUDFToaster.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\uuid.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\advapi32.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>WUDFToaster.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\uuid.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\advapi32.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>WUDFToaster.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);.;.\$(IntDir);..\..\kmdf\inc</AdditionalIncludeDirectories>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\uuid.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\advapi32.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>WUDFToaster.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="stdAfxsrc.cpp">
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>stdAfx.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Create</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <Midl Include="WUDFTOaster.idl" />
+    <ResourceCompile Include="WUDFToaster.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

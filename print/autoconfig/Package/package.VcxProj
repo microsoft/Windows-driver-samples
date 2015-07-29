@@ -18,6 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AutoConfig.vcxproj">
+      <Project>{84059BE0-133C-4AA0-8290-B5A1A6A2B815}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="PropertySheets">
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Utility</ConfigurationType>
@@ -27,8 +32,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2413CDC5-F87A-4C93-A58F-E7AB497C9863}</ProjectGuid>
-    <SampleGuid>{721ABA50-F9B7-47C3-AE46-D758904898FE}</SampleGuid>
+    <ProjectGuid>{1307660E-E51C-463A-8D10-46CFEFD4BC1F}</ProjectGuid>
+    <SampleGuid>{F89C283D-E536-425B-B0D3-198EC54B9C41}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,15 +78,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <!--Inf Include="DriverInf.inv" /-->
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AutoConfig.vcxproj">
-      <Project>{3AC4649E-0746-4815-BE4D-CA5F491BA78C}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

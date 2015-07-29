@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{33B59758-52DF-4853-B3EF-10AB314C0B4F}</ProjectGuid>
+    <ProjectGuid>{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{E35D4009-C471-4212-97F4-BB773763DCBC}</SampleGuid>
+    <SampleGuid>{5A7DAFFE-E936-414D-A9C8-B476C90C5EC5}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,36 +136,64 @@
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;user32.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;user32.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;user32.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;user32.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);___TARGETNAME="""InstallWdf.PROGRAM"""</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="install.cpp" />
@@ -173,7 +201,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

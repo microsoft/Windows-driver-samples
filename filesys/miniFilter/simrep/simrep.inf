@@ -9,7 +9,7 @@
 Signature   = "$Windows NT$"
 Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
 ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   = 01/01/2004,1.0.0.1
 CatalogFile = simrep.cat
 
@@ -89,7 +89,7 @@ simrep.sys
 ;;
 
 [Strings]
-Msft                                = "Microsoft Corporation"
+ProviderString                      = "TODO-Set-Provider"
 SimRepServiceDesc                   = "Simulate Reparse File System Filter Driver Sample"
 SimRepServiceName                   = "SimRep"
 SimRepDebugLevel                    = "DebugLevel"

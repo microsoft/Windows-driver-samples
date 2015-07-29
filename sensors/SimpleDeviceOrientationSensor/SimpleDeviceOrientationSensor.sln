@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleDeviceOrientationSensor", "SimpleDeviceOrientationSensor.vcxproj", "{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleDeviceOrientationSensor", "SimpleDeviceOrientationSensor.vcxproj", "{EC36A603-B217-4538-80D9-C78BA42A3CA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Debug|Win32.Build.0 = Debug|Win32
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Release|Win32.ActiveCfg = Release|Win32
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Release|Win32.Build.0 = Release|Win32
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Debug|x64.ActiveCfg = Debug|x64
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Debug|x64.Build.0 = Debug|x64
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Release|x64.ActiveCfg = Release|x64
-		{BD66C84A-75D9-48E7-848C-E3E8BCF303F9}.Release|x64.Build.0 = Release|x64
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Debug|Win32.Build.0 = Debug|Win32
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Release|Win32.ActiveCfg = Release|Win32
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Release|Win32.Build.0 = Release|Win32
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Debug|x64.ActiveCfg = Debug|x64
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Debug|x64.Build.0 = Debug|x64
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Release|x64.ActiveCfg = Release|x64
+		{EC36A603-B217-4538-80D9-C78BA42A3CA7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

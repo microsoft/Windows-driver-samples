@@ -6,9 +6,6 @@ This solution demonstrates how a User-Mode Driver Framework (UMDF) version 2 dri
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-**Note**
-Due to a known bug in the current Windows Driver Kit tools, when building this sample in Debug mode, the exe project may report some ApiValidator warnings. These can be safely ignored.
-
 Related technologies
 --------------------
 For related information, see the [KMDF Power Framework (PoFx) Sample](http://code.msdn.microsoft.com/windowshardware/PoFx-1974b51c).

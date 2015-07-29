@@ -1,0 +1,57 @@
+' Ping_wpd_enabled.bs2
+'
+' Measure distance with Ping))) sensor and display in both in & cm
+'
+' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+' ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+' THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+' PARTICULAR PURPOSE.
+'
+' Copyright (c) Microsoft Corporation. All rights reserved
+'
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+' =========================================================================
+
+' Conversion constants for room temperature measurements.
+CmConstant CON 2260
+cmDistance VAR Word
+time VAR Word
+SensorID  VAR   Byte  'Sensor identifier = 5 for PIR
+ElementSize VAR Byte  'Size (in bytes) of each element
+ElementCount  VAR   Byte  'Count of elements in packet
+Padding VAR Byte      'Padding for the 8-byte element
+
+SensorID = 4
+ElementSize = 1
+ElementCount = 5      '4-bytes for pressure data; 5 for interval
+
+NewInterval VAR  Word  'New interval requested by user
+Interval  VAR   Word  'Interval value utlized by firmware
+
+
+LFD       CON $10      'Linefeed character
+
+Interval = 200        '.20 of a second interval
+NewInterval = 200
+
+Main:
+  GOSUB PollSensor                  'Was motion detected?
+  GOSUB RetrieveInterval            'Retrieve units data
+
+Timeout:
+  SEROUT 16, 16468, [DEC1 SensorID, DEC1 ElementSize, DEC1 ElementCount, DEC5 cmDistance, DEC5 Interval,LFD]
+GOTO Main
+
+PollSensor:
+  PULSOUT 0, 5
+  PULSIN 0, 1, time
+  cmDistance = cmConstant ** time
+RETURN
+
+RetrieveInterval:
+    SERIN 16, 16468, Interval, Timeout, [DEC NewInterval]   'Retrieve interval
+    IF NewInterval >= 10 AND NewInterval <= 60000 THEN
+      Interval = NewInterval
+    ENDIF
+RETURN

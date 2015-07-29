@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{219EAF9D-A9F6-4F9D-897D-91AB46B2A71B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{7E5E361E-E36E-4728-9D4C-E030A0134F40}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osrusbfx2", "driver\osrusbfx2.vcxproj", "{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osrusbfx2", "exe\osrusbfx2.vcxproj", "{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Debug|Win32.Build.0 = Debug|Win32
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Release|Win32.ActiveCfg = Release|Win32
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Release|Win32.Build.0 = Release|Win32
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Debug|x64.ActiveCfg = Debug|x64
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Debug|x64.Build.0 = Debug|x64
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Release|x64.ActiveCfg = Release|x64
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70}.Release|x64.Build.0 = Release|x64
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Debug|Win32.Build.0 = Debug|Win32
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Release|Win32.ActiveCfg = Release|Win32
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Release|Win32.Build.0 = Release|Win32
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Debug|x64.ActiveCfg = Debug|x64
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Debug|x64.Build.0 = Debug|x64
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Release|x64.ActiveCfg = Release|x64
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E7ECAF21-2522-4E7D-8475-67C4A5E43F70} = {219EAF9D-A9F6-4F9D-897D-91AB46B2A71B}
+		{7289C9A2-233A-449D-AEEC-0D9FC929E0F0} = {7E5E361E-E36E-4728-9D4C-E030A0134F40}
+	EndGlobalSection
+EndGlobal

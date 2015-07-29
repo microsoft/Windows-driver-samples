@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{201450EB-D675-4E41-BAAC-8BF2E93F8BA4}</UniqueIdentifier>
+      <UniqueIdentifier>{413E2A31-6D3D-48D5-B3C7-73714F810CAF}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{28214B85-07EC-4DAA-9EE8-7ECB4867524B}</UniqueIdentifier>
+      <UniqueIdentifier>{1494E901-78AF-4262-8B85-C70B93AA8465}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{CCE43425-7067-4FF7-A1FA-B55E892E4CF6}</UniqueIdentifier>
+      <UniqueIdentifier>{38B6E2D0-6448-48E5-B1F7-BD648B4C0112}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{678E1E03-C75C-4BFD-A872-84A5F2191188}</UniqueIdentifier>
+      <UniqueIdentifier>{62F3F5F6-E755-4AFE-9C33-C1E065E5BAF1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +36,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\SerialBusWdk.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\SerialBusWdk.inx">
       <Filter>Driver Files</Filter>
     </Inf>

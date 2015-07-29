@@ -1520,6 +1520,20 @@ SdhcRestoreContext(
     );
 */
 
+SDPORT_PO_FX_POWER_CONTROL_CALLBACK SdhcPoFxPowerControlCallback;
+/*
+NTSTATUS
+SdhcPoFxPowerControlCallback(
+    _In_ PSD_MINIPORT Miniport,
+    _In_ LPCGUID PowerControlCode,
+    _In_reads_bytes_opt_(InputBufferSize) PVOID InputBuffer,
+    _In_ SIZE_T InputBufferSize,
+    _Out_writes_bytes_opt_(OutputBufferSize) PVOID OutputBuffer,
+    _In_ SIZE_T OutputBufferSize,
+    _Out_opt_ PSIZE_T BytesReturned
+    )
+*/
+
 //-----------------------------------------------------------------------------
 // Hardware access routines.
 //-----------------------------------------------------------------------------
@@ -1585,6 +1599,12 @@ SdhcSetLed(
 
 NTSTATUS
 SdhcSetPresetValue(
+    _In_ PSDHC_EXTENSION SdhcExtension,
+    _In_ BOOLEAN Enable
+    );
+
+NTSTATUS
+SdhcEnableBlockGapInterrupt(
     _In_ PSDHC_EXTENSION SdhcExtension,
     _In_ BOOLEAN Enable
     );

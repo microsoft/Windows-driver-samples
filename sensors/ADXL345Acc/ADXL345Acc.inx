@@ -14,7 +14,7 @@
 Signature   = "$WINDOWS NT$"
 Class       = Sensor
 ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
-Provider    = %MSFT% ;Put the name of your company here
+Provider    = %ProviderName% ;Put the name of your company here
 CatalogFile = ADXL345Acc.cat
 DriverVer   = 08/14/2014,2.00.00.01 ;Should be handled by tool that converts from inx to inf
 
@@ -29,7 +29,7 @@ DefaultDestDir = 12,UMDF
 ADXL345Acc.dll   = 1,,
 
 [Manufacturer]
-%MSFT% = ADXL345Acc_Device, NT$ARCH$
+%ManufacturerName% = ADXL345Acc_Device, NT$ARCH$
 
 
 ;*******************************
@@ -85,11 +85,14 @@ UmdfExtensions           = SensorsCx0102
 HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
 
 [Strings]
+;Localizable Strings
 MediaDescription         = "ADXL345 accelerometer sample Driver"
-MSFT                     = "Microsoft"
+ProviderName             = "TODO-Set-Provider"
+ManufacturerName         = "TODO-Set-Manufacturer"
 ADXL345Acc_DevDesc       = "ADXL345 accelerometer sample"
 WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
 
+;Non-Localizable Strings
 SERVICE_KERNEL_DRIVER    = 1
 SERVICE_DEMAND_START     = 3
 SERVICE_ERROR_NORMAL     = 1

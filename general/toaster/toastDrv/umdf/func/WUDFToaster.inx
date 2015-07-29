@@ -1,0 +1,98 @@
+;
+; WUDFToaster.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=TOASTER
+ClassGuid={B85B7C50-6A01-11d2-B841-00C04FAD5171}
+Provider=%ProviderString%
+CatalogFile=WUDF.cat
+DriverVer=03/10/2004,0.0.0.1
+
+; ================= Class section ============================
+
+[ClassInstall32]
+AddReg=WDF_RegistryAdd
+CopyFiles=ToasterClassInstallerCopyFiles
+
+[WDF_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"100"
+HKR,,Installer32,,"tostrcls.dll,ToasterClassInstaller"
+HKR,,DeviceCharacteristics,0x10001,0x100                 ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)" ;Allow generic all access to system, built-in Admin and Local Service
+                                                         ;This one overrides the security set by the driver
+[ToasterClassInstallerCopyFiles]
+tostrcls.dll
+
+; =================== WUDF Toaster Device =====================
+
+[Manufacturer]
+%ManufacturerString%=Microsoft,NT$ARCH$
+
+[Microsoft.NT$ARCH$]
+%ToasterDeviceName%=Toaster_Install,{b85b7c50-6a01-11d2-b841-00c04fad5171}\MsToaster
+%ToasterDeviceName%=Toaster_Install,Root\MsToaster
+
+
+[Toaster_Install.NT]
+CopyFiles=UMDFDriverCopy
+
+[Toaster_Install.NT.HW]
+
+[Toaster_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Toaster_Install.NT.CoInstallers]
+AddReg = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[Toaster_Install.NT.Wdf]
+UmdfService=WUDFToaster, WUDFToaster_Install
+UmdfServiceOrder=WUDFToaster
+
+[WUDFToaster_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID="{5ED5997F-FAED-4a35-BA74-FCF7B43AEBA7}"
+ServiceBinary=%12%\UMDF\WUDFToaster.dll
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WUDFRd.sys
+
+[SourceDisksFiles]
+WUDFToaster.dll=1
+tostrcls.dll = 1
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+[UMDFDriverCopy]
+WUDFToaster.dll
+
+; =================== WUDF Toaster Device Coinstaller =============
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[DestinationDirs]
+UMDFDriverCopy=12,UMDF ; copy to drivers\umdf
+CoInstallers_CopyFiles=11 ; copy to system32
+
+; =================== Generic =====================================
+
+[Strings]
+ProviderString = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
+MediaDescription="Microsoft WUDF Sample Driver Installation Media"
+ClassName="Toaster"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+ToasterDeviceName="Sample WUDF Toaster Driver"

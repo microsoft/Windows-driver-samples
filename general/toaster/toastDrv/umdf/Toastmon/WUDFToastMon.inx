@@ -1,0 +1,84 @@
+WUDFToastMon;
+; WUDFToastMon.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ProviderName%
+CatalogFile=WUDF.cat
+DriverVer=03/25/2005,0.0.0.1
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ToastMonDeviceName%=ToastMon_Install,UMDFSamples\ToastMon
+
+[ClassInstall32]
+AddReg=SampleClass_RegistryAdd
+
+[SampleClass_RegistryAdd]
+HKR,,,,%ClassName%
+HKR,,Icon,,"-10"
+
+[SourceDisksFiles]
+WUDFToastMon.dll=1
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== UMDF ToastMon Device ==================================
+
+[ToastMon_Install.NT]
+CopyFiles=UMDriverCopy
+
+[ToastMon_Install.NT.hw]
+
+[ToastMon_Install.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[ToastMon_Install.NT.CoInstallers]
+CopyFiles=CoInstallers_CopyFiles
+AddReg=CoInstallers_AddReg
+
+[ToastMon_Install.NT.Wdf]
+UmdfService=ToastMon,ToastMon_Install
+UmdfServiceOrder=ToastMon
+
+[ToastMon_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\WUDFToastMon.dll
+DriverCLSID={8d4ec202-1076-4895-a072-297da88e6005}
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WUDFUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\UMDF
+CoInstallers_CopyFiles=11
+
+[UMDriverCopy]
+WUDFToastMon.dll
+
+; =================== Generic ==================================
+
+[Strings]
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+MediaDescription="Sample Driver Installation Media"
+ClassName="Sample Device"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+ToastMonDeviceName="ToastMon User-Mode Device Sample"

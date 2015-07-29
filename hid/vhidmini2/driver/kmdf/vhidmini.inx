@@ -17,7 +17,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 DriverVer=10/01/2002,6.0.5058.0
 CatalogFile=wudf.cat
 
@@ -33,7 +33,7 @@ HKR,,Icon,,-5
 ; ================= Device section =====================
 
 [Manufacturer]
-%MfgName%=Microsoft,NT$ARCH$.6.1
+%ManufacturerString%=Microsoft,NT$ARCH$.6.1
 
 ; Works on Win7 and later because we use inbox HID-KMDF mapper
 [Microsoft.NT$ARCH$.6.1]
@@ -88,9 +88,9 @@ KMDriverCopy=12
 ;---------------------------------------------------------------;
 
 [Strings]
-MSFT       = "Microsoft"
-MfgName    = "Microsoft"
-ClassName  = "Sample Device"
-DeviceDesc = "HID minidriver (KMDF version) Device"
-ServiceDesc= "HID minidriver (KMDF version) Service"
-DiskDesc   = "HID minidriver (KMDF version) Installation Disk"
+ProviderString     = "TODO-Set-Provider"
+ManufacturerString = "TODO-Set-Manufacturer"
+ClassName          = "Sample Device"
+DeviceDesc         = "HID minidriver (KMDF version) Device"
+ServiceDesc        = "HID minidriver (KMDF version) Service"
+DiskDesc           = "HID minidriver (KMDF version) Installation Disk"

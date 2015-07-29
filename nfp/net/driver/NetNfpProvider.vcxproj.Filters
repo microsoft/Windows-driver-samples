@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{42E23DE8-32D3-4399-8E2F-4287E410E541}</UniqueIdentifier>
+      <UniqueIdentifier>{78477906-B665-46AF-BEE1-F72F97EFA6AB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{A4E94E74-991C-42D2-9F4D-67AD587F6D11}</UniqueIdentifier>
+      <UniqueIdentifier>{73FBF93D-9555-45E9-A7ED-65370C0B708F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{AE74648C-BE93-41BD-B6F8-BCE184684B75}</UniqueIdentifier>
+      <UniqueIdentifier>{5F848688-EEA7-4A9B-B7FB-A34954B9773B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{873765C6-CA93-4C7A-87AF-E0B883B4EBB2}</UniqueIdentifier>
+      <UniqueIdentifier>{8E34281F-9746-4660-BC7E-032C10E99B84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,9 +45,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\NetNfpProvider.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include="NetNfpProvider.inx">
       <Filter>Driver Files</Filter>
     </Inf>

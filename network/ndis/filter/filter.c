@@ -28,7 +28,7 @@ Abstract:
 NDIS_HANDLE         FilterDriverHandle; // NDIS handle for filter driver
 NDIS_HANDLE         FilterDriverObject;
 NDIS_HANDLE         NdisFilterDeviceHandle = NULL;
-PDEVICE_OBJECT      DeviceObject = NULL;
+PDEVICE_OBJECT      NdisDeviceObject = NULL;
 
 FILTER_LOCK         FilterListLock;
 LIST_ENTRY          FilterModuleList;

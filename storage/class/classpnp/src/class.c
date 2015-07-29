@@ -1938,7 +1938,7 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
             //
             fdoExtension->PrivateFdoData->InterpretSenseInfo = driverExtension->InterpretSenseInfo;
 
-            fdoExtension->PrivateFdoData->MaxNumberOfIoRetries = NUM_IO_RETRIES;
+            fdoExtension->PrivateFdoData->MaxNumberOfIoRetries = NUM_IO_RETRIES;            
 
             //
             // Initialize release queue extended SRB
@@ -3926,6 +3926,17 @@ ClassIoComplete(
     }
 
     //
+    // If disk firmware update succeeded, log a system event.
+    //
+
+    if (NT_SUCCESS(status) &&
+        (irpStack->MajorFunction == IRP_MJ_DEVICE_CONTROL) &&
+        (irpStack->Parameters.DeviceIoControl.IoControlCode == IOCTL_STORAGE_FIRMWARE_ACTIVATE)) {
+
+        ClasspLogSystemEventWithDeviceNumber(Fdo, IO_WARNING_DISK_FIRMWARE_UPDATED);
+    }
+
+    //
     // If pending has be returned for this irp then mark the current stack as
     // pending.
     //
@@ -4037,6 +4048,7 @@ ClassSendSrbSynchronous(
 
     NT_ASSERT( ((fdoExtension->AdapterDescriptor->SrbType == SRB_TYPE_SCSI_REQUEST_BLOCK) && (Srb->Function == SRB_FUNCTION_EXECUTE_SCSI)) ||
                ((fdoExtension->AdapterDescriptor->SrbType == SRB_TYPE_STORAGE_REQUEST_BLOCK) && (Srb->Function == SRB_FUNCTION_STORAGE_REQUEST_BLOCK)) );
+
 
     //
     // Sense buffer is in aligned nonpaged pool.
@@ -4315,6 +4327,7 @@ retry:
                 KeDelayExecutionThread(KernelMode, FALSE, &delay);
 
             }
+
 
             //
             // If retries are not exhausted then retry this operation.
@@ -6098,6 +6111,7 @@ __ClassInterpretSenseInfo_ProcessingInvalidSenseBuffer:
 
                     break;
                 }
+
 
                 default: {
                     logError = TRUE;

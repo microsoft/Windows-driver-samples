@@ -17,7 +17,7 @@
 Signature   = "$WINDOWS NT$"
 Class       = Sensor
 ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
-Provider    = %MSFT%
+Provider    = %ProviderName%
 CatalogFile = Pedometer.cat
 DriverVer   = 09/09/2014,2.00.00.01
 
@@ -32,7 +32,7 @@ DefaultDestDir = 12,UMDF
 Pedometer.dll   = 1,,
 
 [Manufacturer]
-%MSFT% = Pedometer_Device, NT$ARCH$
+%ManufacturerName% = Pedometer_Device, NT$ARCH$
 
 ;*******************************
 ; Pedometer Install Section
@@ -85,11 +85,14 @@ UmdfExtensions           = SensorsCx0102
 HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
 
 [Strings]
+;Localizable Strings
 MediaDescription         = "Windows Pedometer Driver"
-MSFT                     = "Microsoft"
+ProviderName             = "TODO-Set-Provider"
+ManufacturerName         = "TODO-Set-Manufacturer"
 Pedometer_DevDesc        = "Pedometer"
 WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
 
+;Non-Localizable Strings
 SERVICE_KERNEL_DRIVER    = 1
 SERVICE_DEMAND_START     = 3
 SERVICE_ERROR_NORMAL     = 1

@@ -106,7 +106,7 @@ Return Value:
     // CallbackCtx.
     //
 
-    if (Argument2 == NULL) {
+    if (Argument2 == NULL) {
 
         //
         // This should never happen but the sal annotation on the callback 

@@ -1,0 +1,139 @@
+; kbfiltr.inf
+;
+; Installation inf for the Device that needs filtering adapter.
+;
+; (c) Copyright 1999 Microsoft
+;
+
+[Version]
+Signature="$Windows NT$"
+Provider=%ProviderName%
+ClassGUID={4D36E96B-E325-11CE-BFC1-08002BE10318}
+Class=Keyboard
+DriverVer=07/20/1999, 1.0.0.0
+; Uncomment the following line when you have a valid catalog file.
+;         If you use bogus catalog file installation will fail.
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir   = 12
+kbfiltr_CoInstaller_CopyFiles = 11
+
+;
+; Driver information
+;
+
+[Manufacturer]
+%MfgName% = Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%kbfiltr.DeviceDesc% = kbfiltr, *PNP0BAAD
+
+;
+; General installation section
+;
+
+[kbfiltr.NT]
+; perform port related actions from keyboard.inf
+Include=keyboard.inf
+Needs=STANDARD_Inst
+
+; Copy the driver over
+CopyFiles=kbfiltr.CopyFiles
+
+
+;
+; File sections
+;
+
+[kbfiltr.CopyFiles]
+kbfiltr.sys
+
+
+;
+; Service Installation
+;
+
+[kbfiltr.NT.Services]
+AddService = kbfiltr,  , kbfiltr_Service_Inst
+; Install the port driver and mouclass from keyboard.inf
+Include=keyboard.inf
+Needs=STANDARD_Inst.Services
+
+[kbfiltr_Service_Inst]
+DisplayName    = %kbfiltr.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+ServiceBinary  = %12%\kbfiltr.sys
+
+[kbfiltr.NT.HW]
+; Add the device upper filter
+AddReg = kbfiltr.HW.AddReg
+
+; run the directives need by the port driver
+Include=keyboard.inf
+Needs=STANDARD_Inst.HW
+
+[kbfiltr.HW.AddReg]
+HKR,,"UpperFilters",0x00010000,"kbfiltr"
+
+
+;
+; Source file information
+;
+
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[SourceDisksFiles]
+kbfiltr.sys = 1
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll = 1
+
+;
+;--- kbfiltr Coinstaller installation ------
+;
+
+[kbfiltr.NT.CoInstallers]
+AddReg=kbfiltr_CoInstaller_AddReg
+CopyFiles=kbfiltr_CoInstaller_CopyFiles
+
+[kbfiltr_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[kbfiltr_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[kbfiltr.NT.Wdf]
+KmdfService = kbfiltr, kbfiltr_wdfsect
+
+[kbfiltr_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+
+;
+; Non-Localizable Strings
+;
+
+REG_SZ         = 0x00000000
+REG_MULTI_SZ   = 0x00010000
+REG_EXPAND_SZ  = 0x00020000
+REG_BINARY     = 0x00000001
+REG_DWORD      = 0x00010001
+
+;
+; Localizable Strings
+;
+
+ProviderName = "TODO-Set-Provider"
+MfgName      = "TODO-Set-Manufacturer"
+
+kbfiltr.DeviceDesc = "Keyboard Filter Sample Device"
+
+; Make sure the service description is unique to avoid collision with another INF.
+kbfiltr.SvcDesc = "Keyboard Filter Sample Driver"
+
+DiskId1 = "Keyboard Filter Install Disk"

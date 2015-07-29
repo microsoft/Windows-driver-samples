@@ -1381,7 +1381,7 @@ Return Value:
             break;
         default:
             FLT_ASSERTMSG( "No such connection type.\n", FALSE);
-            break;
+            return STATUS_INVALID_PARAMETER;
     }
 
     RtlInitUnicodeString( &uniString, portName );

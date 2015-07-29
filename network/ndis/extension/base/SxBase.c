@@ -29,17 +29,17 @@ NDIS_STRING SxExtensionGuid;
 
 NDIS_STATUS
 SxpNdisProcessSetOid(
-    __in PSX_SWITCH_OBJECT Switch,
-    __inout PNDIS_OID_REQUEST OidRequest,
-    __out PBOOLEAN Complete
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _Inout_ PNDIS_OID_REQUEST OidRequest,
+    _Out_ PBOOLEAN Complete
     );
 
 NDIS_STATUS
 SxpNdisProcessMethodOid(
-    __in PSX_SWITCH_OBJECT Switch,
-    __inout PNDIS_OID_REQUEST OidRequest,
-    __out PBOOLEAN Complete,
-    __out PULONG BytesNeeded
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _Inout_ PNDIS_OID_REQUEST OidRequest,
+    _Out_ PBOOLEAN Complete,
+    _Out_ PULONG BytesNeeded
     );
 
     
@@ -852,9 +852,9 @@ Cleanup:
 
 NDIS_STATUS
 SxpNdisProcessSetOid(
-    __in PSX_SWITCH_OBJECT Switch,
-    __inout PNDIS_OID_REQUEST OidRequest,
-    __out PBOOLEAN Complete
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _Inout_ PNDIS_OID_REQUEST OidRequest,
+    _Out_ PBOOLEAN Complete
     )
 {
     NDIS_STATUS status = NDIS_STATUS_SUCCESS;
@@ -1150,10 +1150,10 @@ Cleanup:
 
 NDIS_STATUS
 SxpNdisProcessMethodOid(
-    __in PSX_SWITCH_OBJECT Switch,
-    __inout PNDIS_OID_REQUEST OidRequest,
-    __out PBOOLEAN Complete,
-    __out PULONG BytesNeeded
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _Inout_ PNDIS_OID_REQUEST OidRequest,
+    _Out_ PBOOLEAN Complete,
+    _Out_ PULONG BytesNeeded
     )
 {
     NDIS_STATUS status = NDIS_STATUS_SUCCESS;
@@ -1325,9 +1325,9 @@ Cleanup:
 
 VOID
 SxpNdisCompleteInternalOidRequest(
-    __in PSX_SWITCH_OBJECT Switch,
-    __in PNDIS_OID_REQUEST NdisRequest,
-    __in NDIS_STATUS Status
+    _In_ PSX_SWITCH_OBJECT Switch,
+    _In_ PNDIS_OID_REQUEST NdisRequest,
+    _In_ NDIS_STATUS Status
     )
 /*++
 

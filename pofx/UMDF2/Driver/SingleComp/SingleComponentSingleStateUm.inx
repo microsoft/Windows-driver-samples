@@ -17,7 +17,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 DriverVer=03/20/2003,5.00.3788
 CatalogFile=wudf.cat
 
@@ -81,7 +81,7 @@ UmdfLibraryVersion=$UMDFVERSION$
 ServiceBinary=%12%\UMDF\SingleComponentSingleStateUm.dll
 
 [Strings]
-MSFT = "Microsoft"
+ProviderString = "TODO-Set-Provider"
 StdMfg = "(Standard system devices)"
 DiskId1 = "WDF Sample Single Component Single State Device Installation Disk #1"
 SCSS.DeviceDesc = "UMDF 2.0 Single Component Single State Device"

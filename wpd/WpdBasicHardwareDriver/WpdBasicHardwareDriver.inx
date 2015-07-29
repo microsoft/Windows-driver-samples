@@ -1,0 +1,81 @@
+;
+; WpdBasicHardwareDriver.inf
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=WPD
+ClassGuid={EEC5AD98-8080-425f-922A-DABF3DE3F69A}
+Provider=%Provider%
+CatalogFile=WpdBasicHardwareDriver.cat
+DriverVer=01/24/2007,1.1.1.1
+
+[Manufacturer]
+%Mfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%BasicDeviceName%=Basic_Install,WUDF\WpdBasicHardware
+
+[SourceDisksFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll=1
+WpdBasicHardwareDriver.dll=1
+
+[SourceDisksNames]
+1 = %MediaDescription%
+
+; =================== WPD Sample Device ==================================
+
+[Basic_Install]
+CopyFiles=System32Copy
+
+[Basic_Install.hw]
+AddReg=Device_AddReg
+
+[Basic_Install.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[Basic_Install.CoInstallers]
+AddReg=Basic_Install.CoInstallers_AddReg
+CopyFiles=CoInstallers_CopyFiles
+
+[CoInstallers_CopyFiles]
+WudfUpdate_$UMDFCOINSTALLERVERSION$.dll
+
+[Basic_Install.CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WudfUpdate_$UMDFCOINSTALLERVERSION$.dll"
+
+[Basic_Install.Wdf]
+UmdfService=WpdBasicHardwareDriver, WpdBasicHardwareDriver_Install
+UmdfServiceOrder=WpdBasicHardwareDriver
+; Enable file-handle-based I/O targets
+UmdfDispatcher = FileHandle
+
+[WpdBasicHardwareDriver_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+DriverCLSID="{EC7445EE-BC00-4CED-AFE7-A52849F10239}"
+ServiceBinary=%12%\UMDF\WpdBasicHardwareDriver.dll
+
+[Device_AddReg]
+; HKR,,"EnableLegacySupport",0x10001,0
+
+[WUDFRD_ServiceInstall]
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\WUDFRd.sys
+
+[DestinationDirs]
+System32Copy=12,UMDF ; copy to system32\drivers\umdf
+CoInstallers_CopyFiles=11
+
+[System32Copy]
+WpdBasicHardwareDriver.dll
+
+
+; =================== Generic ==================================
+
+[Strings]
+Mfg="Windows Portable Devices"
+Provider="TODO-Set-Provider"
+MediaDescription="WPD Basic Hardware Driver Installation Media"
+BasicDeviceName="WPD Basic Hardware Driver"

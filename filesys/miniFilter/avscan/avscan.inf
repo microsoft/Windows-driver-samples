@@ -9,7 +9,7 @@
 Signature   = "$Windows NT$"
 Class       = "ContentScreener"                         ;This is determined by the work this filter driver does
 ClassGuid   = {3e3f0674-c83c-4558-bb26-9820e1eba5c5}    ;This value is determined by the Class
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   = 06/16/2011,1.0.0.1
 CatalogFile = avscan.cat
 
@@ -90,7 +90,7 @@ avscan.exe = 1,,
 ;;
 
 [Strings]
-Msft                    = "Microsoft Corporation"
+ProviderString          = "TODO-Set-Provider"
 ServiceDescription      = "Anti-virus Mini-Filter Driver"
 ServiceName             = "avscan"
 DriverName              = "avscan"

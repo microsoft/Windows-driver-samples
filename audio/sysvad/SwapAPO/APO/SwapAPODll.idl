@@ -1,0 +1,54 @@
+//
+// SwapAPODll.idl -- Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Author:
+//
+// Description:
+//
+// SwapAPODll.idl : Definition of COM interfaces and coclasses for the DLL.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "SwapAPOInterface.idl";
+
+//-------------------------------------------------------------------------
+// SwapAPODlllib
+//
+[
+    uuid(7092F0B2-D28D-4095-95A7-6C37A97432A2),
+    version(1.0)
+]
+library SwapAPODlllib
+{
+    importlib("stdole2.tlb");
+
+    // for Swap APO - MFX
+    [
+        uuid(06687E71-F043-403A-BF49-CB591BA6E103)
+    ]
+    coclass SwapAPOMFX
+    {
+        interface IAudioProcessingObject;
+        interface IAudioProcessingObjectRT;
+        interface IAudioProcessingObjectConfiguration;
+        interface IMMNotificationClient;
+        interface IAudioSystemEffects;
+        [default] interface ISwapAPOMFX;
+    };
+
+    // for Swap APO - SFX
+    [
+        uuid(B48DEA3F-D962-425a-8D9A-9A5BB37A9904)
+    ]
+    coclass SwapAPOSFX
+    {
+        interface IAudioProcessingObject;
+        interface IAudioProcessingObjectRT;
+        interface IAudioProcessingObjectConfiguration;
+        interface IMMNotificationClient;
+        interface IAudioSystemEffects;
+        [default] interface ISwapAPOSFX;
+    };
+
+
+}

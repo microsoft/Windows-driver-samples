@@ -9,7 +9,7 @@
     Signature   = "$Windows NT$"
     Class       = WFPCALLOUTS
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
-    Provider    = %Contoso%
+    Provider    = %ProviderString%
     CatalogFile = StmEdit.cat
     DriverVer   = 11/24/2014,14.24.55.836
 
@@ -60,7 +60,7 @@
     HKR,"Parameters",,,
 
 [Strings]
-    Contoso            = "Contoso Ltd."
+    ProviderString     = "TODO-Set-Provider"
     StmEditDisk        = "Stream Edit Installation Disk"
     StmEditServiceDesc = "Stream Edit Callout Driver"
     StmEditServiceName = "StmEdit"

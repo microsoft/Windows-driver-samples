@@ -1,0 +1,93 @@
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+; avssamp.INF -- This file contains installation information for the filter-based
+;                AVStream sample driver avssamp.sys
+;           
+; Note:
+;    
+;     This INF expects the following hierarchy in the installation folder:
+;
+;     \
+;         avssamp.inf
+;         avssamp.sys
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+CatalogFile=avssamp.cat
+DriverVer=09/30/2004,1.0.0.0
+
+[SourceDisksNames]
+1000 = %cdname%,,,
+
+[SourceDisksFiles]
+avssamp.sys = 1000
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[DestinationDirs]
+avssamp.CopyFiles=12
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64,NTx86
+
+;---------------------------------------------------------------
+;   The preferred method to install as a Root-enumerated device.
+;   NOTE: DO NOT INCLUDE THIS FOR A HARDWARE DRIVER!
+;---------------------------------------------------------------
+
+[DeviceInstall32]
+AddDevice = ROOT\SW\{20698827-7099-4c4e-861A-4879D639A35F},,avssamp_RootEnumInstall
+
+[avssamp_RootEnumInstall]
+HardwareIds = SW\{20698827-7099-4c4e-861A-4879D639A35F}
+;---------------------------------------------------------------
+
+[Standard.NTx86]
+%avssamp.DeviceDesc%=avssamp,SW\{20698827-7099-4c4e-861A-4879D639A35F}
+
+[Standard.NTamd64]
+%avssamp.DeviceDesc%=avssamp,SW\{20698827-7099-4c4e-861A-4879D639A35F}
+
+[avssamp.NT]
+include=ks.inf,kscaptur.inf
+needs=KS.Registration,KSCAPTUR.Registration.NT
+CopyFiles=avssamp.CopyFiles
+
+[avssamp.CopyFiles]
+avssamp.sys
+
+[avssamp.NT.Services]
+AddService=avssamp, 0x00000002, avssamp.ServiceInstall
+
+[avssamp.ServiceInstall]
+DisplayName=%avssamp.DeviceDesc%
+ServiceType=%SERVICE_KERNEL_DRIVER%
+StartType=%SERVICE_DEMAND_START%
+ErrorControl=%SERVICE_ERROR_NORMAL%
+ServiceBinary=%12%\avssamp.sys
+
+[Strings]
+; non-localizable
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+avssamp.DeviceId="{20698827-7099-4c4e-861A-4879D639A35F}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSSTRING_Filter="{9B365890-165F-11D0-A195-0020AFD156E4}"
+
+SERVICE_KERNEL_DRIVER=1
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
+REG_EXPAND_SZ=0x00020000
+REG_DWORD=0x00010001
+
+;localizable
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+avssamp.DeviceDesc="AVStream Filter-Centric Sample Driver"
+avssamp.Reader.FriendlyName="avssamp Source"
+
+cdname="Disk 1"

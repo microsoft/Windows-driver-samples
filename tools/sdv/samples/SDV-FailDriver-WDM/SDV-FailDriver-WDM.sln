@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fail_driver1", "driver\fail_driver1.vcxproj", "{00B50311-24EF-44CE-B29E-A1A308EB2649}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fail_driver1", "driver\fail_driver1.vcxproj", "{653F3506-0E37-443B-ACF8-4DB2E50EAE27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Debug|Win32.ActiveCfg = Debug|Win32
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Debug|Win32.Build.0 = Debug|Win32
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Release|Win32.ActiveCfg = Release|Win32
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Release|Win32.Build.0 = Release|Win32
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Debug|x64.ActiveCfg = Debug|x64
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Debug|x64.Build.0 = Debug|x64
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Release|x64.ActiveCfg = Release|x64
-		{00B50311-24EF-44CE-B29E-A1A308EB2649}.Release|x64.Build.0 = Release|x64
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Debug|Win32.ActiveCfg = Debug|Win32
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Debug|Win32.Build.0 = Debug|Win32
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Release|Win32.ActiveCfg = Release|Win32
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Release|Win32.Build.0 = Release|Win32
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Debug|x64.ActiveCfg = Debug|x64
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Debug|x64.Build.0 = Debug|x64
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Release|x64.ActiveCfg = Release|x64
+		{653F3506-0E37-443B-ACF8-4DB2E50EAE27}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

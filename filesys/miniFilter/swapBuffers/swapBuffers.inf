@@ -9,7 +9,7 @@
 signature   = "$Windows NT$"
 Class       = "Encryption"                              ;This is determined by the work this filter driver does
 ClassGuid   = {a0a701c0-a511-42ff-aa6c-06dc0395576f}    ;This value is determined by the Class
-Provider    = %Msft%
+Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.3
 CatalogFile = swapbuffers.cat
 
@@ -83,7 +83,7 @@ swapbuffers.sys = 1,,
 ;;
 
 [Strings]
-Msft                    = "Microsoft Corporation"
+ProviderString          = "TODO-Set-Provider"
 ServiceDescription      = "Swap Buffers Sample Mini-Filter Driver"
 ServiceName             = "SwapBuffers"
 DriverName              = "SwapBuffers"

@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{D9F38118-6A63-448F-A1E6-428B134C40FF}</UniqueIdentifier>
+      <UniqueIdentifier>{B4C67F3E-3D06-47B0-A09C-4E0740919AF8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{13BF032A-5FDD-40A6-BA9C-3C48A3EF713E}</UniqueIdentifier>
+      <UniqueIdentifier>{74F7327B-A6C4-481F-998B-5D49FAC38D3D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{301177B6-FDBA-46E7-BA20-E5AAE5CA0223}</UniqueIdentifier>
+      <UniqueIdentifier>{1E530CA0-70B5-4B7F-A753-F3CDA9804897}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{8D1F3AF6-FD7D-4065-8ADA-FFBF156120D3}</UniqueIdentifier>
+      <UniqueIdentifier>{7B63C0F9-A06F-453D-8701-3EA7C844F62D}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\ramdisk.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\ramdisk.inx">
       <Filter>Driver Files</Filter>
     </Inf>

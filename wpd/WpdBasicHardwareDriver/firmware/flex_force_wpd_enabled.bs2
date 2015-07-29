@@ -1,0 +1,60 @@
+' Flex_force_wpd_enabled.bs2
+'
+' Displays R/C Discharge Time in BASIC Stamp DEBUG Window
+'
+' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+' ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+' THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+' PARTICULAR PURPOSE.
+'
+' Copyright (c) Microsoft Corporation. All rights reserved
+'
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+' =========================================================================
+
+' -----[ Declarations ]----------------------------------------------------
+
+rawForce        VAR     Word            ' Stores raw output
+sensorPin       CON     15              ' Flexiforce sensor circuit
+
+' -----[ Main Routine ]----------------------------------------------------
+
+SensorID  VAR   Byte  'Sensor identifier = 5 for PIR
+ElementSize VAR Byte  'Size (in bytes) of each element
+ElementCount  VAR   Byte  'Count of elements in packet
+Padding VAR Byte      'Padding for the 8-byte element
+
+SensorID = 3
+ElementSize = 1
+ElementCount = 5      '4-bytes for pressure data; 5 for interval
+
+NewInterval VAR  Word  'New interval requested by user
+Interval  VAR   Word  'Interval value utlized by firmware
+
+Interval = 200
+NewInterval = 200
+
+LFD     CON $10        'Linefeed character
+
+Main:
+
+  GOSUB PollSensor                  'Was motion detected?
+  GOSUB RetrieveInterval            'Retrieve units data
+
+Timeout:
+  SEROUT 16, 16468, [DEC1 SensorID, DEC1 ElementSize, DEC1 ElementCount, DEC5 rawForce, DEC5 Interval, LFD]
+ GOTO Main
+
+PollSensor:
+  HIGH sensorPin                        ' Discharge the capacitor
+  PAUSE 2
+  RCTIME sensorPin,1,rawForce           ' Measure RC charge time
+ RETURN
+
+RetrieveInterval:
+    SERIN 16, 16468, Interval, Timeout, [DEC NewInterval]   'Retrieve interval
+    IF NewInterval >= 10 AND NewInterval <= 60000 THEN
+      Interval = NewInterval
+    ENDIF
+  RETURN

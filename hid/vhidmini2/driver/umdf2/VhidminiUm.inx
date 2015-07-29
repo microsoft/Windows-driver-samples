@@ -17,7 +17,7 @@
 Signature="$WINDOWS NT$"
 Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
-Provider=%MSFT%
+Provider=%ProviderString%
 DriverVer=10/01/2002,6.0.5058.0
 CatalogFile=wudf.cat
 
@@ -33,7 +33,7 @@ HKR,,Icon,,-5
 ; ================= Device section =====================
 
 [Manufacturer]
-%MfgName%=Microsoft, NT$ARCH$.6.3
+%ManufacturerString%=Microsoft, NT$ARCH$.6.3
 
 [Microsoft.NT$ARCH$.6.3]
 %DeviceDesc%=VhidminiUm, root\VhidminiUm
@@ -93,9 +93,9 @@ UMDriverCopy=12,UMDF ; copy to drivers\umdf
 ;---------------------------------------------------------------;
 
 [Strings]
-MSFT="Microsoft"
-MfgName="Microsoft"
-ClassName="Sample Device"
-Disk_Description ="HID minidriver (UMDF v2) Installation Disk"
-DeviceDesc       ="HID minidriver (UMDF v2) Device"
-WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+ProviderString     ="TODO-Set-Provider"
+ManufacturerString ="TODO-Set-Manufacturer"
+ClassName          ="Sample Device"
+Disk_Description   ="HID minidriver (UMDF v2) Installation Disk"
+DeviceDesc         ="HID minidriver (UMDF v2) Device"
+WudfRdDisplayName  ="Windows Driver Foundation - User-mode Driver Framework Reflector"

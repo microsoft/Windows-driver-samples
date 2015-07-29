@@ -1,0 +1,108 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    simbatt.inf
+;
+;Abstract:
+;
+;    INF file for installing Simulated Battery WDF driver.
+;    
+;    N.B. Search the file for TODO comments and make necessary changes to make
+;         this INF file functional. 
+;
+;    N.B. Place the WdfCoInstaller files in the same directory as this file to 
+;         make this INF file functional.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Battery
+ClassGuid={72631e54-78a4-11d0-bcf7-00aa00b7b32a}
+Provider=%ProviderName%
+DriverVer=04/30/2008, 6.01.6598
+CatalogFile=simbatt-wdfcoinstall.cat           ; TODO: Add a signed catalog file
+
+[DestinationDirs]
+DefaultDestDir = 12
+SimBatt_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+simbatt.sys = 1
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll = 1
+
+;*****************************************
+; Simulated Battery Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%SimBatt.DeviceDesc% = SimBatt_Device,{6B34C467-CE1F-4c0d-A3E4-F98A5718A9D6}\SimBatt
+
+[SimBatt_Device.NT]
+CopyFiles=SimBatt_Device_Drivers
+Include=battery.inf
+Needs=Battery_Inst
+
+[SimBatt_Device.NT.HW]
+AddReg=SimBatt_Device.NT.AddReg
+
+[SimBatt_Device.NT.AddReg]
+HKR,,Security,,"D:P(A;;GA;;;AU)(A;;GA;;;S-1-15-2-1)"  ; Allow generic-all users and appcontainers
+
+[SimBatt_Device_Drivers]
+simbatt.sys
+
+;-------------- Service installation
+
+[SimBatt_Device.NT.Services]
+AddService = simbatt,%SPSVCINST_ASSOCSERVICE%,SimBatt_Service_Inst
+
+; -------------- simbatt driver install sections
+
+[SimBatt_Service_Inst]
+DisplayName    = %SimBatt.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\simbatt.sys
+
+;*****************************************
+; WDF CoInstaller
+;*****************************************
+
+[SimBatt_Device.NT.CoInstallers]
+AddReg=SimBatt_Device_CoInstaller_AddReg
+CopyFiles=SimBatt_Device_CoInstaller_CopyFiles
+
+[SimBatt_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[SimBatt_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SimBatt_Device.NT.Wdf]
+KmdfService = SimBatt, SimBatt_wdfsect
+
+[SimBatt_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;*****************************************
+; Literals
+;*****************************************
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderName = "TODO-Set-Provider"
+StdMfg = "TODO-Set-Manufacturer"
+DiskId1 = "Simulated Battery Installation Disk"
+SimBatt.DeviceDesc = "Simulated Battery"
+SimBatt.SVCDESC = "Simulated Battery"

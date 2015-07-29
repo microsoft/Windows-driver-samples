@@ -1,0 +1,13 @@
+HKCR
+{
+        NoRemove CLSID
+        {
+                ForceRemove {B48DEA3F-D962-425a-8D9A-9A5BB37A9904} = s 'SwapAPOSFX Class'
+                {
+                        InprocServer32 = s '%MODULE%'
+                        {
+                                val ThreadingModel = s 'Both'
+                        }
+                }
+        }
+}

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddproxy", "sys\ddproxy.vcxproj", "{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddproxy", "sys\ddproxy.vcxproj", "{88969E59-3140-4A06-8E52-7E9483F6E42C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Debug|Win32.Build.0 = Debug|Win32
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Release|Win32.ActiveCfg = Release|Win32
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Release|Win32.Build.0 = Release|Win32
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Debug|x64.ActiveCfg = Debug|x64
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Debug|x64.Build.0 = Debug|x64
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Release|x64.ActiveCfg = Release|x64
-		{CBE3E4FB-B5D5-46F1-B97E-B8400FC372C8}.Release|x64.Build.0 = Release|x64
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Debug|Win32.Build.0 = Debug|Win32
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Release|Win32.ActiveCfg = Release|Win32
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Release|Win32.Build.0 = Release|Win32
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Debug|x64.ActiveCfg = Debug|x64
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Debug|x64.Build.0 = Debug|x64
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Release|x64.ActiveCfg = Release|x64
+		{88969E59-3140-4A06-8E52-7E9483F6E42C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

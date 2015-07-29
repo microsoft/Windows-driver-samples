@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{E3DC03C6-1CAC-44C6-9FC4-0EE64DBBAD0A}</UniqueIdentifier>
+      <UniqueIdentifier>{375A493C-03C2-4C20-B2F4-236061BA63EE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{F0C0BF8A-3AA1-4D6F-858E-25C590B9BF47}</UniqueIdentifier>
+      <UniqueIdentifier>{C1A39E19-0808-487E-8B2B-34B586AA6F50}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{27E4CB77-8F83-4C7D-90AA-87026013ACDA}</UniqueIdentifier>
+      <UniqueIdentifier>{74D04A5E-CCE1-40C8-A807-963F781F4607}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{43996541-713E-472F-87E9-8B79F7EC2A98}</UniqueIdentifier>
+      <UniqueIdentifier>{23C205B5-BAEA-4EC6-BF45-4D7FA8BF1E93}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\mars.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
     <Inf Include=".\mars.inx">
       <Filter>Driver Files</Filter>
     </Inf>

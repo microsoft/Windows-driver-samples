@@ -20,7 +20,7 @@
 Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
-Provider=%MSFTSAMPLE%
+Provider=%ProviderString%
 DriverVer=06/21/2006,6.2.7923.0
 CatalogFile=SerialBusWdk.cat
 
@@ -81,7 +81,7 @@ ServiceBinary  = %12%\SerialBusWdk.sys
 SPSVCINST_ASSOCSERVICE= 0x00000002
 
 ;Localizable
-MSFTSAMPLE = "Microsoft Sample"
+ProviderString = "TODO-Set-Provider"
 StdMfg = "(Standard system devices)"
 DiskId1 = "Serial Bus Driver over UART Installation Disk #1"
 Bus.DeviceDesc = "Serial Bus Driver over UART Bus Enumerator"

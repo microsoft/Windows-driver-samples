@@ -7,7 +7,7 @@
 
 [Version]
 Signature="$Windows NT$"
-Provider=%MS%
+Provider=%ProviderString%
 LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
@@ -21,7 +21,7 @@ CatalogFile=AutoCnfg.cat
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64
+%ManufacturerName%=Standard, NTx86, NTamd64, NTia64
 
 ;
 ; Model sections.
@@ -30,15 +30,15 @@ CatalogFile=AutoCnfg.cat
 ; [Manufacturer] section, above. The models will be displayed in the order
 ; that they appear in the INF file.
 ;
-[Microsoft.NTx86]
+[Standard.NTx86]
 "Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
-[Microsoft.NTamd64]
+[Standard.NTamd64]
 "Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
-[Microsoft.NTia64]
+[Standard.NTia64]
 "Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
@@ -107,5 +107,6 @@ DefaultDestDir=66000
 ; Localizable Strings
 ;
 [Strings]
-MS="Microsoft DDK Sample"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
 AutoConfigSample="AutoConfiguration Samples"

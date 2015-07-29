@@ -1,0 +1,22 @@
+//+-------------------------------------------------------------------------
+//
+//  Microsoft Windows
+//
+//  Copyright (C) Microsoft Corporation, 1999 - 1999
+//
+//  File:       avssamp.rc
+//
+//--------------------------------------------------------------------------
+
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "AVStream Filter-Centric Sample"
+#define VER_INTERNALNAME_STR        "avssamp.sys"
+#define VER_ORIGINALFILENAME_STR    "avssamp.sys"
+
+#include "common.ver"
+

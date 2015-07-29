@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstallWdf", "InstallWdf.vcxproj", "{33B59758-52DF-4853-B3EF-10AB314C0B4F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstallWdf", "InstallWdf.vcxproj", "{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Debug|Win32.Build.0 = Debug|Win32
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Release|Win32.ActiveCfg = Release|Win32
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Release|Win32.Build.0 = Release|Win32
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Debug|x64.ActiveCfg = Debug|x64
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Debug|x64.Build.0 = Debug|x64
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Release|x64.ActiveCfg = Release|x64
-		{33B59758-52DF-4853-B3EF-10AB314C0B4F}.Release|x64.Build.0 = Release|x64
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Debug|Win32.Build.0 = Debug|Win32
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Release|Win32.ActiveCfg = Release|Win32
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Release|Win32.Build.0 = Release|Win32
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Debug|x64.ActiveCfg = Debug|x64
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Debug|x64.Build.0 = Debug|x64
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Release|x64.ActiveCfg = Release|x64
+		{3ACC106E-6FE9-4D7E-895A-1633E1CABC27}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

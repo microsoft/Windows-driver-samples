@@ -1,0 +1,97 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;    wdfsimpleum.INF
+;
+;Abstract:
+;    INF file for installing the UMDF2 Toaster Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon install wdfsimpleum.inf root\toaster" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=TOASTER
+ClassGuid={B85B7C50-6A01-11d2-B841-00C04FAD5171}
+Provider=%ProviderString%
+DriverVer=03/20/2003,5.00.3788
+CatalogFile=wudf.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=ToasterClassReg     
+
+[ToasterClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,100
+HKR,,DeviceCharacteristics,0x10001,0x100     ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system and built-in Admin.
+                                             ;This one overrides the security set by the driver
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+wdfsimpleum.dll = 1,,
+
+;*****************************************
+; Toaster  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+;
+; Hw Id is root\toaster
+;
+[Standard.NT$ARCH$]
+%Toaster.DeviceDesc%=Toaster_Device, root\toaster
+
+;---------------- copy files
+
+[Toaster_Device.NT]
+CopyFiles=UMDriverCopy
+
+[UMDriverCopy]
+wdfsimpleum.dll,,,0x00004000  ; COPYFLG_IN_USE_RENAME
+
+[DestinationDirs]
+UMDriverCopy=12,UMDF ; copy to drivers\umdf
+
+;-------------- Service installation
+[Toaster_Device.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRD_ServiceInstall
+
+[WUDFRD_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+;-------------- WDF specific section -------------
+[Toaster_Device.NT.Wdf]
+UmdfService=wdfsimpleum, Toaster_Install
+UmdfServiceOrder=wdfsimpleum
+
+[Toaster_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary=%12%\UMDF\wdfsimpleum.dll
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderString = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+DiskId1 = "WDF Sample Toaster Installation Disk #1"
+Toaster.DeviceDesc = "Sample UMDF Toaster Driver - simple"
+ClassName = "Toaster"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
+

@@ -1,0 +1,19 @@
+#include <netcfgn.idl>
+
+[
+    uuid(d5a293af-371a-4694-a9b7-fc9d409def3b),
+    version(1.0),
+    helpstring("WDF NDISPROT driver install Notify Object 1.0 Type Library")
+]
+library NotifyLib
+{
+    [
+        uuid(21e7e731-f286-4116-b3c2-d43ccba29f07),
+        helpstring("WDF NDISPROT driver install Notify Class")
+    ]
+    coclass CProtNotify
+    {
+        [restricted] interface INetCfgComponentControl;
+        [restricted] interface INetCfgComponentSetup;
+    };
+};

@@ -53,7 +53,7 @@ NTSTATUS SdoDevice::GetData()
         // push to clx
         InitPropVariantFromUInt32(m_LastSample, &(m_pData->List[SDO_DATA_SIMPLEDEVICEORIENTATION].Value));
 
-        GetSystemTimeAsFileTime(&TimeStamp);
+        GetSystemTimePreciseAsFileTime(&TimeStamp);
         InitPropVariantFromFileTime(&TimeStamp, &(m_pData->List[SDO_DATA_TIMESTAMP].Value));
 
         SensorsCxSensorDataReady(m_SensorInstance, m_pData);

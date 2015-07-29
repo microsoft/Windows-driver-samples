@@ -15,7 +15,7 @@ ClassGUID       = {4D36E974-E325-11CE-BFC1-08002BE10318}
 CatalogFile     = netlwf.cat
 
 ; TODO: Customize this string for your company name
-Provider        = %Msft%
+Provider        = %ProviderString%
 
 ; TODO: Customize this string for the driver version
 DriverVer       = 10/01/2002,6.0.5019.0
@@ -25,17 +25,17 @@ DriverVer       = 10/01/2002,6.0.5019.0
 ; compiled binary.  If you do not supply a driver compiled for ia64, delete the
 ; NTia64 section.
 [Manufacturer]
-%Msft%=MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
 
 ; TODO: Change the "MS_NdisLwf" name below to identify your component.
 ; This name can be used with netcfg.exe to install/uninstall the driver.
-[MSFT.NTx86]
+[Standard.NTx86]
 %NdisLwf_Desc%=Install, MS_NdisLwf
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %NdisLwf_Desc%=Install, MS_NdisLwf
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %NdisLwf_Desc%=Install, MS_NdisLwf
 
 ;-------------------------------------------------------------------------
@@ -193,7 +193,8 @@ HKR, Parameters, NdisImPlatformBindingOptions,0x00010001,0 ; Subscribe to defaul
 
 [Strings]
 ; TODO: Customize these strings.
-Msft = "Your Company"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName = "TODO-Set-Manufacturer"
 NdisLwf_Desc = "NDIS Sample LightWeight Filter"
 NdisLwf_HelpText = "Sample to demonstrate NDIS LightWeight Filters"
 

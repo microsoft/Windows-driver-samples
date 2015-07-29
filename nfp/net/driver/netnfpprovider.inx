@@ -6,14 +6,14 @@
 Signature="$WINDOWS NT$"
 Class=Proximity
 ClassGuid={5630831C-06C9-4856-B327-F5D32586E060}
-Provider=%MSFT%
+Provider=%ProviderName%
 CatalogFile=nfp.cat
 DriverVer=03/20/2003,5.00.3788
 
 [Manufacturer]
-%MSFTWUDF%=Microsoft,NT$ARCH$
+%ManufacturerName%=Standard,NT$ARCH$
 
-[Microsoft.NT$ARCH$]
+[Standard.NT$ARCH$]
 %NetNfpProviderName%=NetNfpProvider_Install,WUDF\NetNfpProvider
 
 [SourceDisksFiles]
@@ -74,10 +74,7 @@ NetNfpProvider.dll
 ; =================== Generic ==================================
 
 [Strings]
-MSFT="Microsoft"
-MSFTWUDF="Microsoft Windows Driver Kit Sample (Proximity)"
-MediaDescription="Microsoft Network NearFieldProximity Provider Installation Media"
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+MediaDescription="Network NearFieldProximity Provider Installation Media"
 NetNfpProviderName="Network NearFieldProximity Provider"
-
-
-

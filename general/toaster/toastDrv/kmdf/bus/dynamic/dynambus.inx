@@ -1,0 +1,102 @@
+;/*++
+;
+;Copyright (c) 1990-1999 Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    DYNAMBUS.INF
+;
+;Abstract:
+;    INF file for installing toaster bus enumerator driver
+;
+;Installation Notes:
+;    Using Devcon: Type "devcon install dynambus.inf root\dynambus" to install
+;
+;--*/
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+DriverVer=06/17/1999, 5.00.2064
+CatalogFile=KmdfSamples.cat
+
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+dynambus.sys  = 1,,
+
+;*****************************************
+; ToasterDynamicBus  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ToasterDynamicBus.DeviceDesc%=ToasterDynamicBus_Device, root\dynambus
+
+[ToasterDynamicBus_Device.NT]
+CopyFiles=Drivers_Dir
+
+[ToasterDynamicBus_Device.NT.HW]
+AddReg=ToasterDynamicBus_Device.NT.AddReg
+
+[ToasterDynamicBus_Device.NT.AddReg]                            
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system 
+
+[Drivers_Dir]
+dynambus.sys
+
+
+;-------------- Service installation
+[ToasterDynamicBus_Device.NT.Services]
+AddService = dynambus,%SPSVCINST_ASSOCSERVICE%, dynambus_Service_Inst
+
+; -------------- dynambus driver install sections
+[dynambus_Service_Inst]
+DisplayName    = %dynambus.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\dynambus.sys
+
+
+;
+;--- ToasterDynamicBus_Device Coinstaller installation ------
+;
+[DestinationDirs]
+ToasterDynamicBus_Device_CoInstaller_CopyFiles = 11
+
+[ToasterDynamicBus_Device.NT.CoInstallers]
+AddReg=ToasterDynamicBus_Device_CoInstaller_AddReg
+CopyFiles=ToasterDynamicBus_Device_CoInstaller_CopyFiles
+
+[ToasterDynamicBus_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ToasterDynamicBus_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[ToasterDynamicBus_Device.NT.Wdf]
+KmdfService = dynambus, dynambus_wdfsect
+[dynambus_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderName = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Toaster Dynamic Bus Installation Disk #1"
+ToasterDynamicBus.DeviceDesc = "Toaster Dynamic Bus Enumerator"
+dynambus.SVCDESC = "Toaster Dynamic Bus Enumerator"

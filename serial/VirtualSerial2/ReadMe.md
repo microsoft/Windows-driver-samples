@@ -13,47 +13,32 @@ For more information, see [Serial Controller and Device Drivers](http://msdn.mic
 Code tour
 ---------
 
-File manifest
-
-Description
-
-comsup.cpp & comsup.h
-
+#### comsup.cpp & comsup.h
 COM Support code - specifically base classes which provide implementations for the standard COM interfaces **IUnknown** and **IClassFactory** which are used throughout the sample.
-
 The implementation of **IClassFactory** is designed to create instances of the CMyDriver class. If you should change the name of your base driver class, you would also need to modify this file.
 
-dllsup.cpp
-
+#### dllsup.cpp
 DLL Support code - provides the DLL's entry point as well as the single required export (**DllGetClassObject**).
-
 These depend on comsup.cpp to perform the necessary class creation.
 
-exports.def
-
+#### exports.def
 This file lists the functions that the driver DLL exports.
 
-internal.h
-
+#### internal.h
 This is the main header file for the sample driver.
 
-driver.cpp & driver.h
-
+#### driver.cpp & driver.h
 Definition and implementation of the driver callback class (CMyDriver) for the sample. This includes **DriverEntry** and events on the framework driver object.
 
-device.cpp & driver.h
-
+#### device.cpp & driver.h
 Definition and implementation of the device callback class (CMyDriver) for the sample. This includes events on the framework device object.
 
-queue.cpp & queue.h
-
+#### queue.cpp & queue.h
 Definition and implementation of the base queue callback class (CMyQueue). This includes events on the framework I/O queue object.
 
-VirtualSerial.rc /FakeModem.rc
-
+#### VirtualSerial.rc /FakeModem.rc
 This file defines resource information for the sample driver.
 
-VirtualSerial.inf / FakeModem.inf
-
+#### VirtualSerial.inf / FakeModem.inf
 INF file that contains installation information for this driver.
 

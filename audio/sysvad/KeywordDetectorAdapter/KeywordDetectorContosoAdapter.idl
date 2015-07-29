@@ -1,0 +1,16 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+import "KeywordDetectorOemAdapter.idl";
+
+[uuid(9D3E6826-CB8E-4D86-8B14-89F0D7EFCD01), version(1.0)]
+library KeywordDetectorContosoAdapterLib
+{
+    // The class's uuid (i.e. the COM CLSID) must match that of the pattern
+    // type GUID returned by the audio driver
+    [uuid(6F7DBCC1-202E-498D-99C5-61C36C4EB2DC), version(1.0)]
+    coclass KeywordDetectorContosoAdapter
+    {
+        [default] interface IKeywordDetectorOemAdapter;
+    }
+};

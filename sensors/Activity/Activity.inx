@@ -17,7 +17,7 @@
 Signature   = "$WINDOWS NT$"
 Class       = Sensor
 ClassGuid   = {5175D334-C371-4806-B3BA-71FD53C9258D}
-Provider    = %MSFT%
+Provider    = %ProviderName%
 CatalogFile = Activity.cat
 DriverVer   = 10/27/2014,2.00.00.01
 
@@ -32,7 +32,7 @@ DefaultDestDir = 12,UMDF
 Activity.dll   = 1,,
 
 [Manufacturer]
-%MSFT% = Activity_Device, NT$ARCH$
+%ManufacturerName% = Activity_Device, NT$ARCH$
 
 ;*******************************
 ; Activity Install Section
@@ -85,11 +85,14 @@ UmdfExtensions           = SensorsCx0102
 HKR,,CoInstallers32,0x00010000,"WudfCoinstaller.dll"
 
 [Strings]
+;Localizable Strings
 MediaDescription         = "Windows Activity Driver"
-MSFT                     = "Microsoft"
+ProviderName             = "TODO-Set-Provider"
+ManufacturerName         = "TODO-Set-Manufacturer"
 Activity_DevDesc         = "Activity"
 WudfRdDisplayName        = "Windows Driver Foundation - User-mode Driver Framework Reflector"
 
+;Non-Localizable Strings
 SERVICE_KERNEL_DRIVER    = 1
 SERVICE_DEMAND_START     = 3
 SERVICE_ERROR_NORMAL     = 1

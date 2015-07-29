@@ -1,0 +1,46 @@
+//// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+//// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+//// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+//// PARTICULAR PURPOSE.
+////
+//// Copyright (c) Microsoft Corporation. All rights reserved
+
+// SampleMft0.idl : IDL source for SampleMft0
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SampleMft0.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "Inspectable.idl";
+import "mftransform.idl";
+[
+    object,
+    uuid(7B917902-D657-4437-9F93-93B94482F286),
+    oleautomation,
+    nonextensible,
+    pointer_default(unique)
+]
+interface ISocMft0 : IUnknown{
+    [id(1)] HRESULT SetState([in] UINT32 state);
+    [id(2)] HRESULT GetState([out] UINT* pState);
+};
+[
+    uuid(8F14E328-2084-442E-A4D9-A80AA30ECBA8),
+    version(1.0),
+]
+library SampleSocMft0Lib
+{
+    importlib("stdole2.tlb");
+    [
+        uuid(424BF154-D92A-42EB-B041-1395F9E5B4A2)		
+    ]
+    coclass Mft0
+    {
+        [default] interface ISocMft0;
+        interface IInspectable;
+        interface IMFTransform;
+    };
+};
+

@@ -8,22 +8,22 @@
 Signature 	= "$Windows NT$"
 Class 		= Net
 ClassGUID 	= {4d36e972-e325-11ce-bfc1-08002be10318}
-Provider 	= %Msft%
+Provider 	= %ProviderString%
 DriverVer	=10/01/2002,6.0.5019.0
 
 [ControlFlags]
 ExcludeFromSelect = MS_MUXMP	
 
 [Manufacturer]
-%Msft% = MSFT,NTx86,NTia64,NTamd64
+%ManufacturerName% = Standard,NTx86,NTia64,NTamd64
 
-[MSFT.NTx86]
+[Standard.NTx86]
 %MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
 
-[MSFT.NTia64]
+[Standard.NTia64]
 %MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
 
-[MSFT.NTamd64]
+[Standard.NTamd64]
 %MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
 
 [MUXMP.ndi]
@@ -61,7 +61,8 @@ Description     = %MUXMP_Desc%
 
 
 [Strings]
-Msft = "Your Company"
+ProviderString = "TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
 MUXMP_Desc = "Sample MUX-IM Virtual Miniport Driver"
 MUXMP_HELP = "Sample MUX-IM Virtual Miniport Instance"
 VlanID = "VLAN ID"
