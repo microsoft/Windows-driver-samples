@@ -5,7 +5,7 @@ This sample driver demonstrates the traffic inspection capabilities of the Windo
 
 The sample driver consists of a kernel-mode Windows Filtering Platform (WFP) callout driver (Inspect.sys) that intercepts all transport layer traffic (for example, Transmission Control Protocol (TCP), User Datagram Protocol (UDP), and nonerror Internet Control Message Protocol (ICMP)) sent to or received from a configurable remote peer and queues then to a worker thread for out-of-band processing.
 
-Inspect.sys inspects inbound and outbound connections and all packets that belong to those connections. Additionally, Inspect.sys demonstrates the special considerations that are required to be compatible with Internet Protocol security (IPsec) in Windows Vista and Windows Server 2008.
+Inspect.sys inspects inbound and outbound connections and all packets that belong to those connections. Additionally, Inspect.sys demonstrates the special considerations that are required to be compatible with Internet Protocol security (IPsec).
 
 Inspect.sys implements the `ClassifyFn` callout functions for the ALE Connect, Recv-Accept, and Transport callouts. In addition, the system worker thread that performs the actual packet inspection is also implemented along with the event mechanisms that are shared between the Classify function and the worker thread.
 

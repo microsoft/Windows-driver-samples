@@ -14,13 +14,13 @@ Building a Driver Using Visual Studio
 
 You build a driver the same way you build any project or solution in Visual Studio. When you create a new driver project using a Windows driver template, the template defines a default (active) project configuration and a default (active) solution build configuration. When you create a project from existing driver sources or convert existing driver code that was built with previous versions of the WDK, the conversion process preserves the target version information (operating systems and platform).
 
-The default Solution build configuration is Windows 8.1 Debug and Win32.
+The default Solution build configuration is Debug and Win32.
 
 ### To select a configuration and build a driver
 
 1.  Open the driver project or solution in Visual Studio (find *filtername*.sln or *filtername*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
 Building a Driver Using the Command Line (MSBuild)
@@ -54,49 +54,19 @@ Design and Operation
 
 The *NameChanger* minifilter illustrates how to make one part of a volume's namespace appear as though it belongs to part of another namespace. It accomplishes this by altering the names of files that reside beneath a particular path (called the "real mapping") to appear as though they actually reside beneath a different path (called the "user mapping"). The .inf file supplied with the sample defines the real and user mappings in the *[Strings]* section. The three strings used for the mappings are:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">String
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>UserMapping</p>
-<p>The location where files will appear to be in when the filter is attached</p></td>
-<td align="left"><p>UserMappingFinalComponentShort</p>
-<p>The&quot;short&quot; (e.g. DOS-compliant 8.3-format) name for the final component of the UserMapping path.</p></td>
-</tr>
-</tbody>
-</table>
+String | Description
+-------|-------------
+UserMapping | The location where files will appear to be in when the filter is attached
+UserMappingFinalComponentShort | The "short" (DOS-compliant 8.3-format) name for the final component of the UserMapping path.
+RealMapping | The actual location where the files reside.
 
 Before attaching the minifilter to a volume, you must set up the user and real paths. By default the .inf defines the mapping paths like in the following manner:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">String
-Mapping</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>UserMapping</p>
-<p>&quot;\X\Y&quot;</p></td>
-<td align="left"><p>UserMappingFinalComponentShort</p>
-<p>&quot;Y&quot;</p></td>
-</tr>
-</tbody>
-</table>
+String | Mapping
+-------|--------
+UserMapping | "\X\Y"
+UserMappingFinalComponentShort | "Y"
+RealMapping | "\A\B"
 
 To successfully attach the filter to a volume you must first create a couple of directories. For example, to attach the *NameChanger* minifilter to the F: volume, first create the RealMapping directory (the F:\\A\\B directory). Next, create the parent of the UserMapping path (the F:\\X directory). The following directories are be created:
 

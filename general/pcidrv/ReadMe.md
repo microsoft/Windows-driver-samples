@@ -43,31 +43,22 @@ Note that it is still possible to use a subset of KMDF APIs when writing a NDIS 
 
 The sample driver has been tested on the following Intel Ethernet controllers:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Device Desc
-Hardware ID</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>IBM Netfinity 10/100 Ethernet Adapter</p>
-<p>PCI\VEN_8086&amp;DEV_1229&amp;SUBSYS_005C1014&amp;REV_05</p></td>
-<td align="left"><p>Intel(R) PRO/100+ Management Adapter with Alert On LAN</p>
-<p>PCI\VEN_8086&amp;DEV_1229&amp;SUBSYS_000E8086&amp;REV_08</p></td>
-</tr>
-</tbody>
-</table>
+Device Description | Hardware ID
+-------------------|------------
+IBM Netfinity 10/100 Ethernet Adapter |  PCIVEN_8086&DEV_1229&SUBSYS_005C1014&amp;REV_05
+Intel(R) PRO/100+ Management Adapter with Alert On LAN | PCI\VEN_8086&DEV_1229&SUBSYS_000E8086&REV_08
+Intel 8255x-based PCI Ethernet Adapter (10/100) | PCI\VEN_8086&DEV_1229&SUBSYS_00000000&REV_01
+Intel Pro/100 S Server Adapter | PCI\VEN_8086&DEV_1229&SUBSYS_00508086&REV_0D
+Intel 8255x-based PCI Ethernet Adapter (10/100) | PCI\VEN_8086&DEV_1229&SUBSYS_00031179&REV_08
+Intel(R) PRO/100 VE Network Connection | PCI\VEN_8086&DEV_103D&SUBSYS_00011179&REV_83
+Intel(R) PRO/100 VM Network Connection | PCI\VEN_8086&DEV_1031&REV_42
+Intel(R) PRO/100 VE Network Connection | PCI\VEN_8086&DEV_1038&REV_41
+Intel(R) PRO/100 SR Mobile Adapter | PCI\VEN_8086&DEV_1229
 
 Using this sample as a standalone driver
 ----------------------------------------
 
-``` {.syntax xml:space="preserve"}
+```
           ---------------------
          |                     |
          |        MYPING       | <-- Usermode test application
@@ -162,25 +153,11 @@ If you have questions on using or adapting this sample for your project, you can
 FILE MANIFEST
 -------------
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>KMDF</p>
-<p>Contains the driver.</p></td>
-<td align="left"><p>KMDF\HW</p>
-<p>Contains hardware specific code.</p></td>
-</tr>
-</tbody>
-</table>
+File | Description
+-----|------------
+KMDF | Contains the driver.
+KMDF\HW | Contains hardware specific code.
+TEST | Contains source of test application (MYPING).
+
 
 

@@ -36,9 +36,11 @@ Before you manually deploy a driver, you must turn on test signing and install a
 Ndislwf is installed as a service (called **NDIS Sample LightWeight Filter** in the supplied INF). To install it, do the following:
 
 1.  Prepare an installation directory on the target computer and copy these files from the host computer into the directory:
+```
     netlwf.cat
     netlwf.inf
     ndislwf.sys
+```
 2.  Open **Control Panel**.
 3.  Click **Network and Internet** and then open **Network and Sharing Center**. Under **View your active networks**, click the connection listed under **Connections**: and click **Properties**.
 4.  If you have previously installed this sample, highlight it in the list.
@@ -68,7 +70,7 @@ If you chose to deploy your driver manually, then you need to set up kernel debu
 
 The kernel-mode debuggers (WinDbg.exe and Kd.exe) are included in the WDK.
 
-On the host computer, locate and open a kernel-mode debugger (example: c:\\Program Files (x86)\\Windows Kits\\8.1\\Debuggers\\x64\\windbg.exe). Establish a kernel-mode debugging session between the host and target computers. The details of how to do this depend on the type of debug cable you are using. For information about how to start a debugging session, see [Setting Up Kernel-Mode Debugging Manually](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439378).
+On the host computer, locate and open a kernel-mode debugger (example: c:\\Program Files (x86)\\Windows Kits\\10\\Debuggers\\x64\\windbg.exe). Establish a kernel-mode debugging session between the host and target computers. The details of how to do this depend on the type of debug cable you are using. For information about how to start a debugging session, see [Setting Up Kernel-Mode Debugging Manually](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439378).
 
 Setting kd\_default\_mask
 -------------------------
@@ -83,25 +85,16 @@ Viewing trace messages
 ----------------------
 
 On the host computer, in the kernel-mode debugger, verify that you see trace messages similar to these:
-
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>NDISLWF: ===&gt;DriverEntry...
+```
+NDISLWF: ===&gt;DriverEntry...
 NDISLWF: ===&gt;FilterRegisterOptions
 NDISLWF: &lt;===FilterRegisterOptions
 NDISLWF: ==&gt;FilterRegisterDevice
 NDISLWF: &lt;==FilterRegisterDevice: 0
 NDISLWF: &lt;===DriverEntry, Status =        0
 NDISLWF: ===&gt;FilterAttach: NdisFilterHandle FFFFE00000F73650
-NDISLWF: &lt;===FilterAttach:    Status 0</code></pre></td>
-</tr>
-</tbody>
-</table>
-
+NDISLWF: &lt;===FilterAttach:    Status 0
+```
 What the Ndislwf sample driver does:
 ------------------------------------
 

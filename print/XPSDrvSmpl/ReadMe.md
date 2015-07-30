@@ -3,7 +3,7 @@ XPSDrv Driver and Filter Sample
 
 This sample is intended to provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver. This goal is accomplished by implementing a number of real-world features within a set of XPS print pipeline filters that are configured through a configuration plug-in that supports custom UI content and PrintTicket handling.
 
-Windows Vista introduced a new print architecture and a new document format known as XPS (XML Paper Specification). Part of the new architecture is the XPSDrv print driver, which is designed to provide a flexible, extensible path to manipulate and print an XPS spool file through a series of filters.
+Windows includes a print architecture and a document format known as XPS (XML Paper Specification). Part of the new architecture is the XPSDrv print driver, which is designed to provide a flexible, extensible path to manipulate and print an XPS spool file through a series of filters.
 
 This sample is intended to provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver. This goal is accomplished by implementing a number of real-world features within a set of XPS print pipeline filters that are configured through a configuration plug-in that supports custom UI content and PrintTicket handling.
 
@@ -13,41 +13,26 @@ The sample broadly consists of three components: a set of filters, a configurati
 Build the sample
 ----------------
 
-To build a driver solution using Windows 8.1 driver kit (WDK 8.1) and Visual Studio 2013, perform the following steps.
+To build a driver solution using Windows Driver Kit (WDK) 10 and Visual Studio 2015, perform the following steps.
 
-1. Open the solution file in Visual Studio 2013
+1. Open the solution file in Visual Studio 2015.
+2. Add all non-binary files (usually located in the \\install directory of the sample) to the Package project:
+  a. In the **Solution Explorer**, right click **Driver Files**
+  b. Select **Add**, then click **Existing Item**
+  c. Navigate to the location to which you downloaded the sample, and select all the files in the install directory, or the equivalent set of non-binary files such as INFs, INIs, GPD, PPD files, etc.
+  d. Click **Add**
+3. Configure these files to be added into the driver package:
+  a. In the **Solution Explorer**, right click on the solution and choose **Add** > **New Project**. Choose **Driver Install Package** under Visual C++/Windows Driver/Package.
+  b. In the **Solution Explorer**, right click the Package project and select **Properties**.
+  c. In the left pane, click **Configuration Properties** \> **Driver Install** \> **Package Files**.
+  d. In the right pane, use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All the data files that you added in **Step 2-c**, except the INF file, should be added.  This configuration is per-architecture, so this configuration must be repeated for each architecture that will be built.
+  e. Click **OK**.
+4. Open the INF file and edit it to match the built output.
+  a. Open the INF file.
+  b. In the Version section, add a reference to a catalog file like this: CatalogFile=XpsDrvSmpl.cat.
+  c. In the SourceDisksFiles section, change the location of the DLL files you are building, to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually.
 
-2. Add all non-binary files (usually located in the \\install directory of the sample) to the Package project
-
-a. In the **Solution Explorer**, right click **Driver Files**
-
-b. Select **Add**, then click **Existing Item**
-
-c. Navigate to the location to which you downloaded the sample, and select all the files in the install directory, or the equivalent set of non-binary files such as INFs, INIs, GPD, PPD files, etc.
-
-d. Click **Add**
-
-3. Configure these files to be added into the driver package
-
-a. In the **Solution Explorer**, right click the Package project and select **Properties**
-
-b. In the left pane, click **Configuration Properties** \> **Driver Install** \> **Package Files**.
-
-c. In the right pane, use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All the data files that you added in **Step 2-c**, except the INF file, should be added.
-
-**Note**  This configuration is per-architecture, so this configuration must be repeated for each architecture that will be built.
-
-d. Click **OK**
-
-4. Open the INF file and edit it to match the built output
-
-a. Open the INF file
-
-b. In the Version section, add a reference to a catalog file like this: CatalogFile=XpsDrvSmpl.cat
-
-c. In the SourceDisksFiles section, change the location of the DLL files you are building, to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually.
-
-At this point, Visual Studio 2013 will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
+At this point, Visual Studio 2015 will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
 **Note**  If you compile your sample driver with Microsoft Visual Studio version 10, or 11 with the \_DEBUG flag set, then you should not use CComVariant on the following two XPS Print Filter Pipeline properties:
 
@@ -56,31 +41,17 @@ At this point, Visual Studio 2013 will be able to build a driver package and ou
 
 There is a known issue with the current implementation of the Print Filter Pipeline, where the variant type for these two properties is set to VT\_BYREF. And as a result of this known issue, any filter binary that is compiled with the \_DEBUG flag set will experience the ATLASSERT() failure. This is because when you use the CComVariant, its destructor checks the returned value from the Clear() function, as shown:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">C++</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>~CComVariant() throw()
+
+```c_cpp
+~CComVariant() throw()
 {
    HRESULT hr = Clear();
    ATLASSERT(SUCCEEDED(hr));
    (hr);
-}</code></pre></td>
-</tr>
-</tbody>
-</table>
+}
+```
 
 When you compile this sample driver with Visual Studio version 9, you don't experience this problem because the destructor for CComVariant doesn't perform this check on the returned value from the Clear() function.
-
-Run the sample
---------------
 
 Installation
 ------------

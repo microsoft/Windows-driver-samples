@@ -8,7 +8,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The sample demonstrates how to register the WMI providers and create provider instances for the Framework device object. It also illustrates how to handle the WMI queries sent to the device.
 
-The [Firefly](gallery_samples.48_gallery#1), [PCIDRV](gallery_samples.32_gallery#1), and [Toaster](gallery_samples.37_gallery#1) sample drivers also implement WMI data providers.
+The **Firefly**, **PCIDRV**, and **Toaster** sample drivers also implement WMI data providers.
 
 Installation
 ------------

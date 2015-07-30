@@ -13,13 +13,13 @@ Building a Driver Using Visual Studio
 
 You build a driver the same way you build any project or solution in Visual Studio. When you create a new driver project using a Windows driver template, the template defines a default (active) project configuration and a default (active) solution build configuration. When you create a project from existing driver sources or convert existing driver code that was built with previous versions of the WDK, the conversion process preserves the target version information (operating systems and platform).
 
-The default Solution build configuration is Windows 8.1 Debug and Win32.
+The default Solution build configuration is Debug and Win32.
 
 ### To select a configuration and build a driver or an application
 
 1.  Open the driver project or solution in Visual Studio (find *samplename*.sln or *samplename*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
 Building a Driver Using the Command Line (MSBuild)

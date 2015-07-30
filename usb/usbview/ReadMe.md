@@ -22,14 +22,12 @@ For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.
 Run the sample
 --------------
 
-Local debugging
----------------
+### Local debugging
 
 1.  Change **Debugger** to launch to **Local Windows Debugger**.
 2.  On the **Debug** menu, select **Start debugging** or hit **F5**.
 
-Manual deployment to a remote target computer
----------------------------------------------
+### Manual deployment to a remote target computer
 
 If you want to debug the sample app on a remote computer,
 
@@ -38,8 +36,7 @@ If you want to debug the sample app on a remote computer,
 3.  Change **Debugger** to launch to **Remote Windows Debugger**.
 4.  On the **Debug** menu, select **Start debugging** or hit **F5**.
 
-View a USB device in Usbview
-----------------------------
+### View a USB device in Usbview
 
 1.  Attach a USB device to one of USB ports on the computer that has Usbview running.
 2.  In the device tree, locate the device. For example the device might be under the Intel(R) ICH10 Family USB Universal Host Controller - 3A34 \> Root Hub node.
@@ -48,26 +45,17 @@ View a USB device in Usbview
 Code tour
 ---------
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File manifest
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Resource.h
-ID definitions for GUI controls</td>
-<td align="left">Usbdesc.h
-USB descriptor type definitions</td>
-</tr>
-</tbody>
-</table>
+File manifest | Description 
+--------------|------------
+Resource.h | ID definitions for GUI controls 
+Usbdesc.h | USB descriptor type definitions 
+Usbview.h | Main header file for this sample 
+Vndrlist.h | List of USB Vendor IDs and vendor names 
+Debug.c | Assertion routines for the checked build 
+Devnode.c | Routines for accessing DevNode information 
+Dispaud.c | Routines for displaying USB audio class device information 
+Enum.c | Routines for displaying USB device information 
+Usbview.c | Entry point and GUI handling routines 
 
 The major topics covered in this tour are:
 

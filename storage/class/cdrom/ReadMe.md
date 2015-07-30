@@ -7,7 +7,7 @@ Build the sample
 ----------------
 
 You can build the sample in two ways: using Microsoft Visual Studio or the command line (*MSBuild*).
-*Note:* When building in Visual Studio, INFVerifer will throw errors. This is intended. Fix those errors with your custom values to build successfully.
+**Note:** When building in Visual Studio, INFVerifer will throw errors. This is intended. Fix those errors with your custom values to build successfully.
 
 Building a Driver Using Visual Studio
 -------------------------------------
@@ -20,7 +20,7 @@ The default Solution build configuration is Visual Studio Debug and Win32.
 
 1.  Open the driver project or solution in Visual Studio (find *samplename*.sln or *samplename*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
 Building a Driver Using the Command Line (MSBuild)

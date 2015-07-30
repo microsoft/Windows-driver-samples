@@ -17,4 +17,4 @@ Related topics
 
 [WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
-[WPD Programming Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/)
+[WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597898)

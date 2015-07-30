@@ -1,11 +1,7 @@
 XPS Rasterization Filter Service Sample
 =======================================
 
-This sample implements an XPSDrv filter that rasterizes fixed pages in an XPS document. Hardware vendors can modify this sample to build an XPSDrv filter that produces bitmap images for their printers or other display devices. The sample uses the XPS Rasterization Service in Windows 7. The sample does not run in versions of Windows before Windows 7.
-
-This document describes the contents and use of the XPS Rasterization Service Filter sample included in the Windows 7 WDK. This document will serve as a point-of-reference to gather and draft the information required for the MSDN entries to accompany the sample prior to flowing this text and information into the appropriate MSDN format.
-
-The XPS Rasterization Service creates rasterizer objects for use by XPSDrv filters. A rasterizer object takes an XPS Object Model (XPS OM) page object and creates a bitmap of a specified region of the page. The sample implements an XPSDrv filter (xpsrasfilter.dll) that can be inserted into the XPS Filter Pipeline. For each fixed page in an XPS document, the sample filter does the following:
+This sample implements an XPSDrv filter that rasterizes fixed pages in an XPS document. Hardware vendors can modify this sample to build an XPSDrv filter that produces bitmap images for their printers or other display devices. The sample uses the XPS Rasterization Service that creates rasterizer objects for use by XPSDrv filters. A rasterizer object takes an XPS Object Model (XPS OM) page object and creates a bitmap of a specified region of the page. The sample implements an XPSDrv filter (xpsrasfilter.dll) that can be inserted into the XPS Filter Pipeline. For each fixed page in an XPS document, the sample filter does the following:
 
 -   Uses the XPS rasterization service to create a rasterizer object for the fixed page.
 -   Partitions the fixed page into several horizontal bands.
@@ -27,12 +23,4 @@ The default parameters in this sample are as follows:
 -   0.25-inch margins (creating an 8-inch by 10.5-inch imageable area).
 -   Scaling is set to FitApplicationBleedSizeToImageableSize.
 -   •Destination resolution set to 96 dpi (can override in print ticket).
-
-**Note**  
-
-To build this sample, you can use Microsoft Visual Studio 2013 (Professional, or Ultimate) and Windows Driver Kit (WDK) 8.1 Update. This sample will not build with Microsoft Visual Studio Express 2013 for Windows Desktop, because the sample uses Active Template Library (ATL). You can get Visual Studio 2013 and WDK 8.1 Update [here](http://go.microsoft.com/fwlink/p/?LInkID=239721).
-
-You can also build this sample with Visual Studio 2013 (Professional or Ultimate) and [Windows Driver Kit (WDK) 8.1](http://go.microsoft.com/fwlink/p/?LInkID=391348).
-
-For Windows Driver Kit (WDK) 8 samples, download the [WDK 8 samples pack](%20http://go.microsoft.com/fwlink/?LinkId=317090). The samples in the WDK 8 samples pack will build only with Microsoft Visual Studio Professional 2012 (Professional or Ultimate) and WDK 8.
 

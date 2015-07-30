@@ -5,25 +5,24 @@ The umdf\_fx2 sample is a User-Mode Driver Framework (UMDF) driver for the OSR U
 
 The sample can also be used with the CustomDeviceAccess MSDK sample. The sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 
+The osrusbfx2 sample is divided into three samples:
 
-Related topics
---------------
+-   **WDF Sample Driver Learning Lab for OSR USB-FX2**: This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
 
-****
+-   **kmdf\_fx2**: This sample is the final version of kernel-mode **wdf\_osrfx2** driver. The sample demonstrates KMDF methods.
 
-[kmdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/)
-
+-   **umdf\_fx2**: This sample is the final version of the user-mode driver **wdf\_osrfx2**. The sample demonstrates UMDF methods.
 
 Build the sample
 ----------------
 
-The default Solution build configuration is Windows 8.1 Debug and Win32. You can change the default configuration to build for Windows 8 or Windows 7 version of the operating system.
+The default Solution build configuration is Debug and Win32. 
 
 **To select a configuration and build a driver**
 
-1.  Open the driver project or solution in Visual Studio 2013 (find *filtername*.sln or *filtername*.vcxproj).
+1.  Open the driver project or solution in Visual Studio 2015 (find *filtername*.sln or *filtername*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
 Overview

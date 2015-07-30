@@ -24,7 +24,7 @@ This sample can be used for these hardware IDs without any modification to the .
 
     If you have other hardware such as an add-in card, then you must add the hardware ID in the .inx as shown in this example. Then, you must build the project as per the instructions given in the Building the sample section in this readme.
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     ; For XP and later
     [MSFT.NTamd64]
     ; DisplayName           Section           DeviceId

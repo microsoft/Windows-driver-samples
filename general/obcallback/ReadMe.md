@@ -11,7 +11,7 @@ The sample exercises both the [**PsSetCreateProcessNotifyRoutineEx**](http://msd
 
 The following is a command line usage scenario to exercise access restriction:
 
-``` {.syntax xml:space="preserve"}
+```
 C:\> obcallbacktestctrl.exe  -?                      (for command line help)
 C:\> obcallbacktestctrl.exe  -install                (installs the kernel driver)
 C:\> obcallbacktestctrl.exe  -name  notepad          (specifies that the string “notepad”  will be watched as a protected executable)
@@ -27,13 +27,11 @@ C:\> obcallbacktestctrl.exe  -deprotect              (remove the protections on 
 
 C:\> kill –f  2329                                   (attempt to kill off the process – which will succeed)
 C:\> obcallbacktestctrl.exe  -uninstall              (uninstall the kernel driver)
- 
- 
 ```
 
 The following is another sample test you can run to prevent a process from being created:
 
-``` {.syntax xml:space="preserve"}
+```
 C:\> obcallbacktestctrl.exe  -install                (installs the kernel driver)
 C:\> obcallbacktestctrl.exe  -reject  notepad        (specifies that the string “notepad”  will be watched and prevented from starting as a process)
 

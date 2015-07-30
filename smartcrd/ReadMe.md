@@ -12,10 +12,20 @@ Power Management is described in detail in the WDK documentation. There is, howe
 A card reader will not see any card insertion or removal events in these modes, because the bus might not even have power. The card state must be saved before the reader goes into standby or hibernation mode. After the system returns from these modes, it is necessary to determine what the state of the card is. Card tracking calls must complete whenever there was a card in the reader before standby or hibernation mode or whenever there is a card in the reader after these modes. This step is necessary because the user could have changed the card while the system was in a low-power mode.
 
 
+Build the sample
+----------------
+
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+
+**Note**  You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+
+Run the sample
+--------------
+
 Installation
 ------------
 
-The PSCR.SYS driver is included in-box in Windows or, starting with Windows 8.1, available from Windows Update. Therefore, when the SCM 488 PCMCIA reader is inserted, the system will automatically install the driver. However, if you want to customize the source code of this driver and replace the in-box driver or the driver from Windows Update with your driver, use the supplied INF file.
+The PSCR.SYS driver is available from Windows Update. Therefore, when the SCM 488 PCMCIA reader is inserted, the system will automatically install the driver. However, if you want to customize the source code of this driver and replace the driver from Windows Update with your driver, use the supplied INF file.
 
 Tools
 -----

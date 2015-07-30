@@ -9,8 +9,6 @@ The RegFltr sample shows how to write a [registry filter driver](http://msdn.mic
 -   Changes in version 1.1 of registry filtering.
 -   How to use version 1 of the [**REG\_CREATE\_KEY\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560920) and [**REG\_OPEN\_KEY\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560957) data structures.
 
-The RegFltr sample demonstrates the registry filtering system on Windows Vista, Windows Server 2008 and later versions of the Windows operating system. It does not work for Windows XP or Windows Server 2003.
-
 The RegFltr sample contains several examples of user-mode and kernel-mode registry-filtering operations. Each example comes with its own corresponding registry callback routine, and performs the following steps:
 
 1.  Does some setup work.

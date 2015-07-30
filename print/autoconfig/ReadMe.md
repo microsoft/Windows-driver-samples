@@ -19,9 +19,9 @@ Build the sample
 
 The auto-configuration sample doesn’t have any binaries to be built. It may be installed by using **Add Printer Wizard** and supplying the AutoCnfg.INF as the INF file.
 
-But to build a signed driver package using Windows Driver Kit (WDK) 10 and Visual Studio 2015, for the project file (csproj) that ships with the auto-configuration sample, perform the following steps.
+But to build a signed driver package using Windows Driver Kit (WDK) 10 and Visual Studio 2015, for the project file (csproj) that ships with the auto-configuration sample, perform the following steps.
 
-1. Open the solution file in Visual Studio 2015.
+1. Open the solution file in Visual Studio 2015.
 
 2. On the **Build** menu, select **Configuration Manager...**.
 
@@ -29,7 +29,7 @@ But to build a signed driver package using Windows Driver Kit (WDK) 10 and Visua
 
 **Note**  When the driver builds, it will be placed in the output folder for the architecture you selected.
 
-At this point, Visual Studio will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
+At this point, Visual Studio will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
 For more information about how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

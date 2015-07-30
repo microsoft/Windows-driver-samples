@@ -13,7 +13,7 @@ Run the sample
 
 1.  Install the manifest (Evntdrv.xml), which is located in the Evntdrv\\Eventdrv folder. Open a Visual Studio Command window (Run as administrator) and use the following command:
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     wevtutil im evntdrv.xml
     ```
 
@@ -29,7 +29,7 @@ Run the sample
 
 3.  Use Tracelog to start a trace session that is called "TestEventdrv." The following command starts the trace session and creates a trace log file, Eventdrv.etl, in the local directory.
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     Tracelog -start TestEventdrv -guid #b5a0bda9-50fe-4d0e-a83d-bae3f58c94d6 -f Eventdrv.etl
     ```
 
@@ -37,13 +37,13 @@ Run the sample
 
 5.  To stop the trace session, run the following command:
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     tracelog -stop TestEventdrv
     ```
 
 6.  To display the traces collected in the Tracedrv.etl file, run the following command:
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     tracerpt Eventdrv.etl
     ```
 
@@ -51,12 +51,12 @@ Run the sample
 
 7.  To uninstall the manifest, run the following command:
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     wevtutil um evntdrv.xml
     ```
 
 Notes
 -----
 
-If you are building the Eventdrv sample to test on a 64-bit version of Windows, you need to sign the driver. Starting with Windows Vista, all 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](http://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
+If you are building the Eventdrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](http://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
 

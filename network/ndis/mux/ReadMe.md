@@ -98,18 +98,11 @@ The only status indications that are forwarded up by MUX are media connect statu
 
 During initialization (`MPInitialize`), the MUX miniport sets the attribute **NDIS\_ATTRIBUTE\_NO\_HALT\_ON\_SUSPEND** in its call to `NdisMSetMiniportAttributes`. When the MUX miniport is requested to report its Plug and Play capabilities (**OID\_PNP\_CAPABILITIES**), the MUX miniport forwards the request to the underlying miniport. If this request succeeds, then the MUX miniport overwrites the following fields before successfully completing the original request:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>NDIS_DEVICE_POWER_STATE          MinMagicPacketWakeUp = NdisDeviceStateUnspecified;
+```
+NDIS_DEVICE_POWER_STATE          MinMagicPacketWakeUp = NdisDeviceStateUnspecified;
 NDIS_DEVICE_POWER_STATE          MinPatternWakeUp= NdisDeviceStateUnspecified;
-NDIS_DEVICE_POWER_STATE          MinLinkChangeWakeUp=NdisDeviceStateUnspecified</code></pre></td>
-</tr>
-</tbody>
-</table>
+NDIS_DEVICE_POWER_STATE          MinLinkChangeWakeUp=NdisDeviceStateUnspecified
+```
 
 See `PtPostProcessPnPCapabilities` for details.
 
@@ -170,5 +163,19 @@ The notify object provides a custom property page for the MUX IM driver. The cus
 
 When the MUX IM driver is uninstalled, or binding is disabled, or the user deletes all the virtual adapters on top of a physical adapter, the notify object restores the bindings of other protocols to the physical adapter if it has been compiled with the preprocessor flag **DISABLE\_PROTOCOLS\_TO\_PHYSICAL** defined in the Sources file.
 
+### File Manifest
 
+File | Description
+-----|------------
+Miniport.c | Miniport related routines for the MUX driver 
+Mux.c | DriverEntry routine and any routines common to the MUX miniport and protocol  
+Mux.h | Prototypes of all functions and data structures used by the MUX driver 
+Mux.rc | Resource file for the MUX driver 
+Muxp.inf | Installation INF for the service (protocol side installation) 
+Mux_mp.inf | Installation INF for the miniport (virtual device installation) 
+Precomp.h | Precompile header file 
+Protocol.c | Protocol related routines for the MUX driver 
+Public.h | Contains the common declarations shared by driver and user applications
+
+For more information, see **NDIS Intermediate Drivers** in the network devices design guide.
 

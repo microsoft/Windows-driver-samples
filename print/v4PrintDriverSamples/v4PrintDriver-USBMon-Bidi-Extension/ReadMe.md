@@ -12,33 +12,20 @@ For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/li
 
 **Note**  This sample is for the v4 print driver model.
 
-**Note**  When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following code snippet can be used to copy the returned array into a new array, and also to remove the additional element.
+**Note**  When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following JavaScript code can be used to copy the returned array into a new array, and also to remove the additional element.
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">JavaScript</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>var readBuffer = [];
+```
+var readBuffer = [];
 var readBytes = 0;
 var readSize = 4096;
 
 readBuffer = printerStream.read( readSize );
 readBytes = readBuffer.length;
 
-
 var cleanArray = [];
            
 for ( i = 0; i &lt; readBytes; i++ ) {
     cleanArray[i] = readBuffer.shift();
-}</code></pre></td>
-</tr>
-</tbody>
-</table>
+}
+```
 

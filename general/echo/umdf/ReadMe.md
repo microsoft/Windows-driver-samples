@@ -20,7 +20,7 @@ To test the Echo driver, you can run echoapp.exe which is built from src\\genera
 
 First install the device as described above. Then run echoapp.exe.
 
-``` {.syntax xml:space="preserve"}
+```
 D:\>echoapp /?
 Usage:
 Echoapp.exe --- Send single write and read request synchronously
@@ -68,57 +68,50 @@ Note that the reads and writes are performed by independent threads in the echo 
 File Manifest
 -------------
 
-File
+**comsup.cpp & comsup.h**
 
-Description
+- COM Support code - specifically base classes which provide implementations for the standard COM interfaces IUnknown and IClassFactory which are used throughout this sample.
+- The implementation of IClassFactory is designed to create instances of the CMyDriver class. If you should change the name of your base driver class, you would also need to modify this file.
 
-comsup.cpp & comsup.h
+**dllsup.cpp**
 
-COM Support code - specifically base classes which provide implementations for the standard COM interfaces IUnknown and IClassFactory which are used throughout this sample.
+- DLL Support code - provides the DLL's entry point as well as the single required export (DllGetClassObject).
+- These depend on comsup.cpp to perform the necessary class creation.
 
-The implementation of IClassFactory is designed to create instances of the CMyDriver class. If you should change the name of your base driver class, you would also need to modify this file.
+**exports.def**
 
-dllsup.cpp
+- This file lists the functions that the driver DLL exports.
 
-DLL Support code - provides the DLL's entry point as well as the single required export (DllGetClassObject).
+**internal.h**
 
-These depend on comsup.cpp to perform the necessary class creation.
+- This is the main header file for this driver.
 
-exports.def
+**Driver.cpp and Driver.h**
 
-This file lists the functions that the driver DLL exports.
+- DriverEntry and events on the driver object.
 
-internal.h
+**Device.cpp and Device.h**
 
-This is the main header file for this driver.
+- The Events on the device object.
 
-Driver.cpp and Driver.h
+**Queue.cpp and Queue.h**
 
-DriverEntry and events on the driver object.
+- Contains Events on the I/O Queue Objects.
 
-Device.cpp and Device.h
+**Echo.rc**
 
-The Events on the device object.
+- Resource file for the driver.
 
-Queue.cpp and Queue.h
+**WUDFEchoDriver.inx**
 
-Contains Events on the I/O Queue Objects.
+- File that describes the installation of this driver. The build process converts this into an INF file.
 
-Echo.rc
+**makefile.inc**
 
-Resource file for the driver.
+- A makefile that defines custom build actions. This includes the conversion of the .INX 
 
-WUDFEchoDriver.inx
+**echodriver.ctl**
 
-File that describes the installation of this driver. The build process converts this into an INF file.
-
-makefile.inc
-
-A makefile that defines custom build actions. This includes the conversion of the .INX file into a .INF file
-
-echodriver.ctl
-
-This file lists the WPP trace control GUID(s) for the sample driver. This file can be used with the tracelog command's -guid flag to enable the collection of these trace events within an established trace session.
-
-These GUIDs must remain in sync with the trace control GUIDs defined in internal.h.
+- This file lists the WPP trace control GUID(s) for the sample driver. This file can be used with the tracelog command's -guid flag to enable the collection of these trace events within an established trace session.
+- These GUIDs must remain in sync with the trace control GUIDs defined in internal.h.
 

@@ -14,26 +14,17 @@ The combined operation of Serial and Serenum provides the function of a Plug and
 
 Windows provides Serenum to support Serial and other serial port function drivers that need to enumerate an RS-232 port. Hardware vendors do not have to create their own enumerator for RS-232 ports. For example, a device driver can use Serenum to enumerate the devices that are attached to the individual RS-232 ports on a multiport device.
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File manifest
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Enum.c
-Functions that enumerate external serial devices—the main purpose of this driver</td>
-<td align="left">Pnp.c
-Plug and Play support code</td>
-</tr>
-</tbody>
-</table>
+### File Manifest
+
+File | Description 
+-----|------------
+Enum.c | Functions that enumerate external serial devices—the main purpose of this driver 
+Pnp.c | Plug and Play support code 
+Power.c | Power support code 
+Serenum.c | Basic driver functionality 
+Serenum.h | Local header with defines, prototypes 
+String.c  | String handling support; mainly ASCII to UNICODE functionality 
+Serenum.rc | Resource script 
 
 For more information, see [Features of Serial and Serenum](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
 

@@ -40,7 +40,7 @@ Copy the user-mode application, monitor.exe to a folder on the target computer (
 
 Copy the PDB file, msnmntr.pdb to a folder on the target computer (for example, c:\\Symbols).
 
-Copy the tool TraceView.exe to a folder on the target computer (for example c:\\Tools). TraceView.exe comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\8.1\\Tools\\x64\\TraceView.exe).
+Copy the tool TraceView.exe to a folder on the target computer (for example c:\\Tools). TraceView.exe comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\10\\Tools\\x64\\TraceView.exe).
 
 Start the msnmntr service
 -------------------------
@@ -52,7 +52,7 @@ Running the user-mode application
 
 On the target computer, open a Command Prompt window as Administrator, and navigate to the folder that contains monitor.exe. Enter **monitor.exe addcallouts**. Then enter **monitor.exe monitor** *TargetAppPath*, where *TargetAppPath* is the path to the application that you want to monitor. Here is an example that initiates monitoring of Internet Explorer.
 
-``` {.syntax xml:space="preserve"}
+```
 monitor.exe addcallouts
 monitor.exe monitor "C:\Program Files (x86)\Internet Explorer\iexplore.exe"
 ```
@@ -71,9 +71,9 @@ Using MSBuild
 
 As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, msnmntr.sln. Use the [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
 
-**msbuild /p:configuration=”Win7 Debug” /p:platform=”x64” msnmntr.sln**
+**msbuild /p:configuration="Debug" /p:platform="x64" msnmntr.sln**
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”win32” msnmntr.sln**
+**msbuild /p:configuration="Release" /p:platform="Win32" msnmntr.sln**
 
 For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

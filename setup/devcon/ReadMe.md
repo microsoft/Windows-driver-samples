@@ -12,22 +12,22 @@ Download and extract the sample
 
 Download the C++ sample from this page, and extract its contents. For example, you could extract to c:\\DevConSample.
 
-Starting in the Visual Studio 2013 WDK, you can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
+You can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
 
 **Building the sample using Visual Studio**
 
 1.  Open Visual Studio. From the **File** menu, select **Open Project/Solution**. Within your WDK installation, navigate to the folder where you extracted DevCon. For example c:\\DevConSample\\C++ and open the devcon.sln project file.
 2.  Right-click the solution in the **Solution Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
-Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. Starting in the Visual Studio 2013 WDK, you can use the Visual Studio Command Prompt window for all build configurations.
+Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. You can use the Visual Studio Command Prompt window for all build configurations.
 
 **Building the sample using the command line (MSBuild)**
 
 1.  Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
 2.  Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called devcon.vcxproj, navigate to the project directory and enter the following MSBuild command: **msbuild /t:clean /t:build .\\devcon.vcxproj**.
-3.  If the build succeeds, you will find the tools (devcon.exe) in the binary output directory corresponding to the target platform, for example samples\\setup\\devcon\\Windows 8.1 Debug.
+3.  If the build succeeds, you will find the tools (devcon.exe) in the binary output directory corresponding to the target platform, for example samples\\setup\\devcon\\Debug.
 
 Run the sample
 --------------

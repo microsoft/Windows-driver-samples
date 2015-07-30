@@ -17,7 +17,7 @@ To test the device, follow these steps:
 5.  Flip the switches on the OSR USB-FX-2 hardware board and watch the raw PDO entries appear and disappear under **Sample Device** in Device Manager.
 6.  Right-click a raw PDO entry, select **Properties**, and then click the **Events** tab. Under **Information**, examine the hardware ID for the PDO. It should be something like this:
 
-    ``` {.syntax xml:space="preserve"}
+    ```
     6FDE7521-1B65-48ae-B628-80BE62016026}\OsrUsbFxRawPdo\6&227995e2&0&08
     ```
 

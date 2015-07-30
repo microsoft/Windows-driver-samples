@@ -3,8 +3,15 @@ Radio Switch Test Driver for OSR USB-FX2 Development Board
 
 This sample demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board.
 
-Starting with Windows 8.1, the hardware switch or button to control wireless transmission and the global software switch (Airplane mode switch) in the Radio Management User Interface must be synchronized. To ensure the hardware and software switches that control radio transmission are synchronized, the hardware switch or button must have a HID-compliant driver.
+The hardware switch or button to control wireless transmission and the global software switch (Airplane mode switch) in the Radio Management User Interface must be synchronized. To ensure the hardware and software switches that control radio transmission are synchronized, the hardware switch or button must have a HID-compliant driver.
 
+Switch Pack Mapping
+-------------------
+
+### Switch Mapping
+ 1 | 2 | 3 | 4 | 5 | 7 | 8
+---|---|---|---|---|---|---
+ Mode Select Bit 3 |  Mode Select Bit 2 |  Mode Select Bit 1 | - | - | - | Radio Switch
 
 Testing
 -------
@@ -15,42 +22,17 @@ The driver supports five modes representing the valid combinations of HID descri
 
 ### Switch Mapping
 
-<table>
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">1
-2
-3
-Mode</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">0
-0
-0
-Mode 1</td>
-<td align="left">0
-0
-1
-Mode 1</td>
-<td align="left">0
-1
-0
-Mode 2</td>
-<td align="left">0
-1
-1
-Mode 3</td>
-</tr>
-</tbody>
-</table>
+ 1 | 2 | 3 | Mode
+---|---|---|-----
+ 0 | 0 | 0 | Mode 1
+ 0 | 0 | 1 | Mode 1
+ 0 | 1 | 0 | Mode 2
+ 0 | 1 | 1 | Mode 3
+ 1 | 0 | 0 | Mode 4
+ 1 | 0 | 1 | Mode 5
+ 1 | 1 | 0 | Mode 1
+ 1 | 1 | 1 | Mode 1
+
 
 ### Mode 1 Radio Push Button
 

@@ -22,18 +22,18 @@ Click the download button on this page. Click **Save**, and then click **Open Fo
 Open the driver solution in Visual Studio
 -----------------------------------------
 
-Navigate to the folder that has the extracted sample. Double click the solution file (umdf2echo.sln). In Microsoft Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that contains 3 projects. There is a driver project (Driver-\>AutoSync-\>echo), an application project (Exe-\>echoapp), and a package project named **package** (lower case).
+Navigate to the folder that has the extracted sample. Double click the solution file (umdf2echo.sln). In Microsoft Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that contains three projects. There is a driver project (Driver-\>AutoSync-\>echo), an application project (Exe-\>echoapp), and a package project named **package** (lower case).
 
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
 
-In Visual Studio, in Solution Explorer, right click **Solution**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. Because this solution uses UMDF version 2, you cannot select a configuration earlier than Windows 8.1.
+In Visual Studio, in Solution Explorer, right click **Solution**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. 
 
 
 Locate the built driver package
 -------------------------------
 
-In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Win8.1 Debug and x64, the package is in your solution folder under x64\\Win8.1Debug\\Package.
+In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. 
 
 Run the sample
 --------------
@@ -70,7 +70,7 @@ Build the sample using MSBuild
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, umdf2echo.sln. Use the MSBuild command to build the solution. Here is an example:
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”Win32” umdf2echo.sln**
+**msbuild /p:configuration="Release" /p:platform="Win32" umdf2echo.sln
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

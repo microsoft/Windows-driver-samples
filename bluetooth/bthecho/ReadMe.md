@@ -3,34 +3,38 @@ Bluetooth Echo L2CAP Profile Driver
 
 This sample demonstrates developing [Bluetooth L2CAP profile drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536598) using [Bluetooth L2CAP DDIs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536585).The sample includes two drivers. One for a device that acts as an L2CAP server and another for a device that acts as an L2CAP client. The server simply echoes back any data that it receives from client on the same L2CA channel. These drivers can be used with devices that can be installed with bth.inf. Such devices get installed as ‘Generic Bluetooth Radio’. Examples of such devices are Bluetooth USB dongles such as (but not limited to):
 
-    Generic Bluetooth Radio = BthUsb, USB\Vid_0a12&Pid_0001
-    CSR Nanosira = BthUsb, USB\Vid_0a12&Pid_0003
-    CSR Nanosira WHQL Reference Radi o= BthUsb, USB\Vid_0a12&Pid_0004
-    CSR Nanosira-Multimedia = BthUsb, USB\Vid_0a12&Pid_0005
-    CSR Nanosira-Multimedia WHQL Reference Radio = BthUsb, USB\Vid_0a12&Pid_0006
+``` 
+Generic Bluetooth Radio=\
+                         BthUsb, USB\Vid_0a12&Pid_0001
+CSR Nanosira=\
+                         BthUsb, USB\Vid_0a12&Pid_0003
+CSR Nanosira WHQL Reference Radio=\
+                         BthUsb, USB\Vid_0a12&Pid_0004
+CSR Nanosira-Multimedia=\
+                         BthUsb, USB\Vid_0a12&Pid_0005
+CSR Nanosira-Multimedia WHQL Reference Radio=\
+                         BthUsb, USB\Vid_0a12&Pid_0006
+```
 
-Please refer to bth.inf for the complete list of devices. The installation steps below describe how to install echo server and client with such a device. Please note that RFCOMM based profiles must be developed and accessed using user-mode socket APIs. This sample is applicable to Windows® Vista, Windows® 7 and Windows® 8 operating systems.
-
+Please refer to bth.inf for the complete list of devices. The installation steps below describe how to install echo server and client with such a device. Please note that RFCOMM based profiles must be developed and accessed using user-mode socket APIs. 
 
 Build the sample
 ----------------
 
-Starting in the WDK, you can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
+You can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
 
 **Building the sample using Visual Studio**
 
-1.  Open Visual Studio. From the **File** menu, select **Open Project/Solution**. Within your WDK installation, navigate to src\\bluetooth\\bthecho and open the bthecho.sln project file.
+1.  Open Visual Studio. From the **File** menu, select **Open Project/Solution** and open the bthecho.sln project file.
 2.  Right-click the solution in the **Solution Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
-
-Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. Starting in the WDK, you can use the Visual Studio Command Prompt window for all build configurations.
 
 **Building the sample using the command line (MSBuild)**
 
 1.  Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
 2.  Navigate to each of the respective project directories and enter the appropriate **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called BthEcho.vcxproj, navigate to the samples\\bluetooth\\bthecho\\bthcli\\sys project directory and enter the following MSBuild command: **msbuild /t:clean /t:build .\\BthEchoSampleCli.vcxproj**.
-3.  If the build succeeds, you will find the driver (BthEchoSampleCli.sys) in the binary output directory corresponding to the target platform, for example src\\bluetooth\\bthecho\\PackageWindows 8.1 Debug.
+3.  If the build succeeds, you will find the driver (BthEchoSampleCli.sys) in the binary output directory corresponding to the target platform.
 
 Run the sample
 --------------
@@ -45,29 +49,27 @@ Run the sample
 
 2. Run bthsrvinst.exe /i to install the echo server device. This enables the Bluetooth Enumerator (BthEnum.sys) to enumerate echo server device and create a PDO for the device (please refer to the device tree below).
 
-3. Step \#2 causes BthEnum.sys to create a PDO. Consequently hardware installation wizard gets launched. Either go through the UI (Device Manager – Update Driver Software in Windows® 7, ‘Found New Hardware’ wizard in Windows® Vista) and point it to the temporary directory where you copied the binaries in step \#1, or using devcon.exe from the tools\\devcon folder, run the following command from the temporary directory:
+3. Step \#2 causes BthEnum.sys to create a PDO. Consequently hardware installation wizard gets launched. Either go through the UI and point it to the temporary directory where you copied the binaries in step \#1, or using devcon.exe from the tools\\devcon folder, run the following command from the temporary directory:
 
-``` {.syntax xml:space="preserve"}
-devcon.exe update BthEchoSampleSrv.inf BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
-```
+  ``` 
+  devcon.exe update BthEchoSampleSrv.inf BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
+  ```
 
-If devcon.exe fails check the error level using:
+  If devcon.exe fails check the error level using:
 
-``` {.syntax xml:space="preserve"}
-echo %errorlevel%
-```
+  ``` 
+  echo %errorlevel%
+  ```
 
-If errorlevel is 1, you need to reboot the machine for KMDF update to take effect. If errorlevel is 2, please make sure that you have the driver files described in \#1 available in the current directory. For more information on installation failure please check setup logs.
+  If errorlevel is 1, you need to reboot the machine for KMDF update to take effect. If errorlevel is 2, please make sure that you have the driver files described in \#1 available in the current directory. For more information on installation failure please check setup logs.
 
 4. Upon successful installation you will see ‘Bluetooth Echo Sample Server’ in Device Manager under Bluetooth devices.
-
-5. (This steps in needed only on Windows® Vista) Navigate to the system tray, right click on the Bluetooth icon, and select ‘Open Settings’. This launches the ‘Bluetooth Settings’ dialog. On the ‘Options’ tab, check ‘Allow Bluetooth devices to find this Computer’. Note that this will make your computer discoverable to other Bluetooth devices, and should be disabled again when no longer required.
 
 **Device tree for Echo Server device**
 
 (Drivers for FDOs are shown for each devnode in the tree.)
 
-``` {.syntax xml:space="preserve"}
+```
  --------------------
 |BthEchoSampleSrv.sys|<----Function driver for PDO ejected by BthEnum.sys
  --------------------
@@ -103,21 +105,21 @@ If errorlevel is 1, you need to reboot the machine for KMDF update to take effec
 
 3. Run bthprops.cpl from a command line or right click on the Bluetooth icon in the system tray and select ‘Show Devices' to bring up a list of installed Bluetooth devices.
 
-4. Windows® 7: In the ‘Bluetooth Devices’ window click the ‘Add a device’ button. Windows® Vista: In the ‘Devices’ tab, click Add button.
+4. In the ‘Bluetooth Devices’ window click the ‘Add a device’ button.
 
 5. In the Add a Device wizard select the server machine (the machine where you installed the echo server) as a Bluetooth device. If the server machine does not appear, please check the echo server installation and make sure that you have enabled ‘Allow Bluetooth device to find this computer’ on the server machine as explained above. When the server machine is correctly displayed, select it and pick ‘Next’.
 
 6. The wizard should default to a numeric compare ceremony for pairing the machines. When this happens, ensure the numbers match on both the client and the server, select ‘Yes’ on both machines to indicate they match, and click ‘Next’ on both machines to complete the pairing.
 
-7. The ‘Found New Hardware’ wizard will be launched on Windows® Vista. On Windows® 7 and Windows® 8 you will need to go through Device Manager and update driver software for it. Either point the wizard to the temporary directory created in step \#2, or use devcon.exe from the tools\\devcon folder to install the client device:
+7. Go through Device Manager and update driver software for it. Either point the wizard to the temporary directory created in step \#2, or use devcon.exe from the tools\\devcon folder to install the client device:
 
-``` {.syntax xml:space="preserve"}
-Devcon.exe update BthEchoSampleCli.inf BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
-```
+  ```
+  Devcon.exe update BthEchoSampleCli.inf BTHENUM\{c07508f2-b970-43ca-b5dd-cc4f2391bef4}
+  ```
 
-Check for any error from devcon.exe as described in server installation.
+  Check for any error from devcon.exe as described in server installation.
 
-If the installation is successful, you will see ‘Bluetooth Echo Sample Client’ in Device Manager under Bluetooth devices.
+  If the installation is successful, you will see ‘Bluetooth Echo Sample Client’ in Device Manager under Bluetooth devices.
 
 The device tree for echo client device is similar to the one shown for the echo server device, since both client and server are enumerated by BthEnum.sys (although the installation mechanism and properties of client and server are different).
 
@@ -129,13 +131,14 @@ The device tree for echo client device is similar to the one shown for the echo 
 
 **Uninstalling Client**
 
-1. Uninstall the device and delete driver software using the Bluetooth Devices window by running bthprops.cpl, right clicking on the device, and selecting ‘Remove Device’
+
+- Uninstall the device and delete driver software using the Bluetooth Devices window by running bthprops.cpl, right clicking on the device, and selecting ‘Remove Device’
 
 **TESTING**
 
 Run BthEcho.exe on the client machine. You should see client sending data to the server and receiving the same data echoed back. Press Ctrl+c to terminate the application. You will see output similar to below:
 
-``` {.syntax xml:space="preserve"}
+```
 D:\bth\wdfcli>BthEcho.exe
 DevicePath: \\?\bthenum#{c07508f2-b970-43ca-b5dd-cc4f2391bef4}_localmfg&000a#7&3
 62d0a3&0&000c55ff727a_c00000001#{fc71b33d-d528-4763-a86c-78777c7bcd7b}
@@ -172,7 +175,7 @@ You can launch multiple instances of BthEcho.exe. Each client application would 
 
 **Connection state machine**:
 
-``` {.syntax xml:space="preserve"}
+```
                      ConnectFailed
                            ^
                            |
