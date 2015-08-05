@@ -7,10 +7,8 @@ This document explains the DevCon design, and how to use the SetupAPI and device
 
 DevCon is provided in ready-to-run form in tools\\devcon. For usage, refer to the document provided with devcon.exe. DevCon is a command line utility with built-in documentation available by typing "devcon help".
 
-Download and extract the sample
+Build the sample
 -------------------------------
-
-Download the C++ sample from this page, and extract its contents. For example, you could extract to c:\\DevConSample.
 
 You can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
 

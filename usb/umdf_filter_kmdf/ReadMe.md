@@ -5,18 +5,16 @@ The umdf\_filter\_kmdf sample demonstrates how to load a UMDF filter driver as a
 
 The sample includes Event Tracing for Windows (ETW) tracing support, and is written for the OSR USB-FX2 Learning Kit. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>.
 
-
-
 Build the sample
 ----------------
 
-The default Solution build configuration is Windows 8.1 Debug and Win32. You can change the default configuration to build for Windows 8 or Windows 7 version of the operating system.
+The default Solution build configuration is **Debug** and **Win32**.
 
 **To select a configuration and build a driver**
 
-1.  Open the driver project or solution in Visual Studio 2013 (find *filtername*.sln or *filtername*.vcxproj).
+1.  Open the driver project or solution in Visual Studio (find *filtername*.sln or *filtername*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
 Overview
@@ -51,28 +49,12 @@ Testing the driver
 
 You can test this sample either by using the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
 
-Sample Contents
+Code tour
 ---------------
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Folder
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">usb\umdf_filter_kmdf\kmdf_driver
-This directory contains source code for the kmdf_fx2 sample driver.</td>
-<td align="left">usb\umdf_filter_kmdf\umdf_filter
-This directory contains the UMDF filter driver.</td>
-</tr>
-</tbody>
-</table>
+Folder | Description 
+-----|------------
+usb\umdf_filter_kmdf\kmdf_driver | This directory contains source code for the kmdf_fx2 sample driver.
+usb\umdf_filter_kmdf\umdf_filter | This directory contains the UMDF filter driver.
 
 

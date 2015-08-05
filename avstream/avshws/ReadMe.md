@@ -5,34 +5,21 @@ The AVStream simulated hardware sample driver (Avshws) provides a pin-centric [A
 
 This sample features enhanced parameter validation and overflow detection.
 
-
-Build the sample
-----------------
-
-Install the sample files
-------------------------
-
-To install the sample files in preparation for building and running the sample, follow these steps:
-
-1.  Click the blue **C++** Download button above.
-2.  The files will be downloaded to a temporary folder. Move them to a convenient location on your hard drive.
-3.  Unzip the files by right-clicking the folder, and then select **Extract All…** and select another folder location.
-
 Provision a target computer
 ---------------------------
 
-After you’ve installed the sample on your host computer, run Visual Studio 2013, and from the **File** menu, select **Open**, then **Project/Solution…**, navigate to the directory where you’ve copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
+After you've installed the sample on your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution…**, navigate to the directory where you’ve copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
 
 In the **Solution Explorer** pane in Visual Studio, at the top is **Solution ‘avshws’**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with the WDK](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
 
-Provision your target computer using instructions in, for example, [Preparing a Computer for Provisioning (WDK 8.1)](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265573). Ensure that in the **Network and Sharing Center** control panel your target computer has **Network Discovery** and **File and Printer Sharing** enabled.
+Provision your target computer using instructions in, for example, [Preparing a Computer for Provisioning](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265573). Ensure that in the **Network and Sharing Center** control panel your target computer has **Network Discovery** and **File and Printer Sharing** enabled.
 
 Deploy the driver to the target computer
 ----------------------------------------
 
 Now you can deploy the Avshws driver that you’ve just built to the target computer, using guidance in [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Specifically, find the package file under the **Package** folder in the Avshws solution. Right-click **package** and select **Properties**. Under Configuration Properties, click **Driver install** and then **Deployment**. Here you must click the check box for **Enable deployment**, and then click the button to the right of **\<Configure Computer…\>**. In the next dialog you enter the **Target Computer Name** and can let the host computer automatically provision the target computer and set up debugger options.
 
-Finally, in Visual Studio 2013, from the **Build** menu select **Deploy Solution** to deploy the sample to the target computer. On the target computer, you can see the deployed package in the **%Systemdrive%\\drivertest\\drivers** folder.
+Finally, in Visual Studio, from the **Build** menu select **Deploy Solution** to deploy the sample to the target computer. On the target computer, you can see the deployed package in the **%Systemdrive%\\drivertest\\drivers** folder.
 
 Install the driver
 ------------------
@@ -81,27 +68,9 @@ In the upper-left corner of the image, a counter counts the number of frames tha
 Code tour
 ---------
 
-**File manifest**
+### File Manifest
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Avshws.h
-<p>Main header file for the sample</p></td>
-<td align="left">Avshws.inf
-<p>Sample installation file</p></td>
-</tr>
-</tbody>
-</table>
-
-
+File | Description 
+-----|------------
+Avshws.h | Main header file for the sample
+Avshws.inf | Sample installation file

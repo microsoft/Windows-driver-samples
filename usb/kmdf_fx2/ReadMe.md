@@ -25,13 +25,13 @@ Related topics
 Build the sample
 ----------------
 
-The default Solution build configuration is Windows 8.1 Debug and Win32. You can change the default configuration to build for Windows 7 or Windows Vista version of the operating system.
+The default Solution build configuration is **Debug** and **Win32**. 
 
 **To select a configuration and build a driver**
 
-1.  Open the driver project or solution in Visual Studio 2013 (find *filtername*.sln or *filtername*.vcxproj).
+1.  Open the driver project or solution in Visual Studio (find *filtername*.sln or *filtername*.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
 Overview
@@ -62,14 +62,10 @@ Here is the overview of the device:
     -   Read/write start/stop events can be used to measure the time taken.
     -   For more information, see Unified Tracing later in this document.
 
-Sample Contents
+Code tour
 ---------------
 
-Folder
-
-Description
-
-usb\\kmdf\_fx2\\driver
+**usb\\kmdf\_fx2\\driver**
 
 This directory contains driver code that demonstrates the following functionality:
 
@@ -88,11 +84,11 @@ This directory contains driver code that demonstrates the following functionalit
 -   Creates ETW provider to log two events to the event log, and read/write start stop events. (*\*kmdf\_fx2 only*)
 -   WPP tracing.
 
-usb\\kmdf\_fx2\\exe
+**usb\\kmdf\_fx2\\exe**
 
 This directory contains a test application that can be used to drive the KMDF driver and FX2 device.
 
-usb\\kmdf\_fx2\\deviceMetadata
+**usb\\kmdf\_fx2\\deviceMetadata**
 
 This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see the [Custom driver access sample](http://go.microsoft.com/fwlink/p/?LinkID=248288).
 
@@ -117,6 +113,7 @@ Usage for Read/Write test:
 
 Use the command, **osrusbfx2.exe -p** options 1-9, to set and clear bar graph display, set and get 7 segment state, and read the toggle switch states. The following shows the function options:
 
+```
 1.  Light bar
 2.  Clear bar
 3.  Light entire bar graph
@@ -129,9 +126,10 @@ Use the command, **osrusbfx2.exe -p** options 1-9, to set and clear bar graph di
 10. Reset the device
 11. Re-enumerate the device
 
-0. Exit
+12. Exit
 
 Selection:
+```
 
 **Reset and re-enumerate the device**
 
@@ -167,187 +165,189 @@ The following command displays all the descriptors and endpoint information.
 
 If the device is operating in high speed mode, you will get the following information:
 
-`===================`
+```
+===================
 
-`USB_CONFIGURATION_DESCRIPTOR`
+USB_CONFIGURATION_DESCRIPTOR
 
-`bLength = 0x9, decimal 9`
+bLength = 0x9, decimal 9
 
-`bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )
 
-`wTotalLength = 0x27, decimal 39`
+wTotalLength = 0x27, decimal 39
 
-`bNumInterfaces = 0x1, decimal 1`
+bNumInterfaces = 0x1, decimal 1
 
-`bConfigurationValue = 0x1, decimal 1`
+bConfigurationValue = 0x1, decimal 1
 
-`iConfiguration = 0x4, decimal 4`
+iConfiguration = 0x4, decimal 4
 
-`bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )`
+bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )
 
-`MaxPower = 0x32, decimal 50`
+MaxPower = 0x32, decimal 50
 
-`-----------------------------`
+-----------------------------
 
-`USB_INTERFACE_DESCRIPTOR #0`
+USB_INTERFACE_DESCRIPTOR #0
 
-`bLength = 0x9`
+bLength = 0x9
 
-`bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )
 
-`bInterfaceNumber = 0x0`
+bInterfaceNumber = 0x0
 
-`bAlternateSetting = 0x0`
+bAlternateSetting = 0x0
 
-`bNumEndpoints = 0x3`
+bNumEndpoints = 0x3
 
-`bInterfaceClass = 0xff`
+bInterfaceClass = 0xff
 
-`bInterfaceSubClass = 0x0`
+bInterfaceSubClass = 0x0
 
-`bInterfaceProtocol = 0x0`
+bInterfaceProtocol = 0x0
 
-`bInterface = 0x0`
+bInterface = 0x0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe00`
+USB_ENDPOINT_DESCRIPTOR for Pipe00
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x81 ( INPUT )`
+bEndpointAddress= 0x81 ( INPUT )
 
-`bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )`
+bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )
 
-`wMaxPacketSize= 0x49, decimal 73`
+wMaxPacketSize= 0x49, decimal 73
 
-`bInterval = 0x1, decimal 1`
+bInterval = 0x1, decimal 1
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe01`
+USB_ENDPOINT_DESCRIPTOR for Pipe01
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x6 ( OUTPUT )`
+bEndpointAddress= 0x6 ( OUTPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x200, `
+wMaxPacketSize= 0x200, 
 
-`decimal 512 bInterval = 0x0, `
+decimal 512 bInterval = 0x0, 
 
-`decimal 0`
+decimal 0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe02`
+USB_ENDPOINT_DESCRIPTOR for Pipe02
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x88 ( INPUT )`
+bEndpointAddress= 0x88 ( INPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x200, decimal 512`
+wMaxPacketSize= 0x200, decimal 512
 
-`bInterval = 0x0, decimal 0`
+bInterval = 0x0, decimal 0
 
 If the device is operating in low speed mode, you will get the following information:
 
-`===================`
+===================
 
-`USB_CONFIGURATION_DESCRIPTOR`
+USB_CONFIGURATION_DESCRIPTOR
 
-`bLength = 0x9, decimal 9`
+bLength = 0x9, decimal 9
 
-`bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )
 
-`wTotalLength = 0x27, decimal 39`
+wTotalLength = 0x27, decimal 39
 
-`bNumInterfaces = 0x1, decimal 1`
+bNumInterfaces = 0x1, decimal 1
 
-`bConfigurationValue = 0x1, decimal 1`
+bConfigurationValue = 0x1, decimal 1
 
-`iConfiguration = 0x3, decimal 3`
+iConfiguration = 0x3, decimal 3
 
-`bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )`
+bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )
 
-`MaxPower = 0x32, decimal 50 `
+MaxPower = 0x32, decimal 50 
 
-`-----------------------------`
+-----------------------------
 
-`USB_INTERFACE_DESCRIPTOR #0`
+USB_INTERFACE_DESCRIPTOR #0
 
-`bLength = 0x9`
+bLength = 0x9
 
-`bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )
 
-`bInterfaceNumber = 0x0 bAlternateSetting = 0x0`
+bInterfaceNumber = 0x0 bAlternateSetting = 0x0
 
-`bNumEndpoints = 0x3`
+bNumEndpoints = 0x3
 
-`bInterfaceClass = 0xff`
+bInterfaceClass = 0xff
 
-`bInterfaceSubClass = 0x0`
+bInterfaceSubClass = 0x0
 
-`bInterfaceProtocol = 0x0`
+bInterfaceProtocol = 0x0
 
-`bInterface = 0x0`
+bInterface = 0x0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe00`
+USB_ENDPOINT_DESCRIPTOR for Pipe00
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x81 ( INPUT )`
+bEndpointAddress= 0x81 ( INPUT )
 
-`bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )`
+bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )
 
-`wMaxPacketSize= 0x49, decimal 73`
+wMaxPacketSize= 0x49, decimal 73
 
-`bInterval = 0x1, decimal 1`
+bInterval = 0x1, decimal 1
 
-`-------  -----------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe01`
+USB_ENDPOINT_DESCRIPTOR for Pipe01
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x6 ( OUTPUT )`
+bEndpointAddress= 0x6 ( OUTPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x40, decimal 64`
+wMaxPacketSize= 0x40, decimal 64
 
-`bInterval = 0x0, decimal 0`
+bInterval = 0x0, decimal 0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe02`
+USB_ENDPOINT_DESCRIPTOR for Pipe02
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x88 ( INPUT )`
+bEndpointAddress= 0x88 ( INPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x40, decimal 64`
+wMaxPacketSize= 0x40, decimal 64
 
-`bInterval = 0x0, decimal 0 `
+bInterval = 0x0, decimal 0
+```
 
 Unified tracing
 ---------------

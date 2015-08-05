@@ -20,7 +20,7 @@ Set the hardware ID in the inx file
 
 This step is required for automatic deployment (described later) to work properly. In the kbfiltr.inx file (located with the driver source files), find the [DDK\_Ex.Mfg.NT\$ARCH\$] section. Change the hardware ID in the %DDK\_Ex% entry from the dummy value to the hardware ID of the PS/2 keyboard on the target computer. The following example shows the hardware ID change.
 
-``` {.syntax xml:space="preserve"}
+```
 ; For XP and above
 [DDK_Ex.Mfg.NT$ARCH$]
 ;%DDK_Ex% = kbfiltr, *PNP0BAAD
