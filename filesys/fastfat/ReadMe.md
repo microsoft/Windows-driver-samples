@@ -13,37 +13,31 @@ Build the sample
 
 You can build the sample in two ways: using Microsoft Visual Studio or the command line (*MSBuild*).
 
-Building a Driver Using Visual Studio
--------------------------------------
+### Building a Driver Using Visual Studio
 
 You build a driver the same way you build any project or solution in Visual Studio. When you create a new driver project using a Windows driver template, the template defines a default (active) project configuration and a default (active) solution build configuration. When you create a project from existing driver sources or convert existing driver code that was built with previous versions of the WDK, the conversion process preserves the target version information (operating systems and platform).
 
-The default Solution build configuration is Windows 8.1 Debug and Win32.
+The default Solution build configuration is **Debug** and **Win32**.
 
-### To select a configuration and build a driver
+**To select a configuration and build a driver**
 
 1.  Open the driver project or solution in Visual Studio (find fastfat.sln or fastfat.vcxproj).
 2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
-Building a Driver Using the Command Line (MSBuild)
---------------------------------------------------
+### Building a Driver Using the Command Line (MSBuild)
 
 You can build a driver from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe) Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. You can now use the Visual Studio Command Prompt window for all build configurations.
 
-### To select a configuration and build a driver or an application
+**To select a configuration and build a driver or an application**
 
 1.  Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
-2.  Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command: **msbuild /t:clean /t:build .\\fastfat.vcxproj**.
+2.  Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command: 
 
-Run the sample
---------------
+    **msbuild /t:clean /t:build .\\fastfat.vcxproj**.
 
 Installation
 ------------
 
 No INF file is provided with this sample because the *fastfat* file system driver (fastfat.sys) is already part of the Windows operating system. You can build a private version of this file system and use it as a replacement for the native driver.
-
-[Send comments about this topic to Microsoft](mailto:wsddocfb@microsoft.com?subject=Documentation%20feedback%20[\ifsk]:%20fastfat%20File%20System%20Driver%20%20RELEASE:%20(1/23/2015)&body=%0A%0APRIVACY%20STATEMENT%0A%0AWe%20use%20your%20feedback%20to%20improve%20the%20documentation.%20We%20don't%20use%20your%20email%20address%20for%20any%20other%20purpose,%20and%20we'll%20remove%20your%20email%20address%20from%20our%20system%20after%20the%20issue%20that%20you're%20reporting%20is%20fixed.%20While%20we're%20working%20to%20fix%20this%20issue,%20we%20might%20send%20you%20an%20email%20message%20to%20ask%20for%20more%20info.%20Later,%20we%20might%20also%20send%20you%20an%20email%20message%20to%20let%20you%20know%20that%20we've%20addressed%20your%20feedback.%0A%0AFor%20more%20info%20about%20Microsoft's%20privacy%20policy,%20see%20http://privacy.microsoft.com/en-us/default.aspx. "Send comments about this topic to Microsoft")
-

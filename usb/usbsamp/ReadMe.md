@@ -23,32 +23,7 @@ If you have a different USB device, you can still use the driver by adding the d
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
 
-In Visual Studio, in Solution Explorer, right click **Solution ‘usbsamp’ (3 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. Here are some examples of configuration and platform settings.
-
-<table>
-<colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Configuration
-Platform
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Win8.1 Debug
-x64
-The driver will run on an x64 hardware platform that is running Windows 8.1. The driver will not run on any earlier versions of Windows.</td>
-<td align="left">Win7 Debug
-x64
-The driver will run on an x64 hardware platform that is running Windows 7 or a later version of Windows.</td>
-</tr>
-</tbody>
-</table>
+In Visual Studio, in Solution Explorer, right click **Solution ‘usbsamp’ (3 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. 
 
 Build the sample using Visual Studio
 ------------------------------------
@@ -57,33 +32,18 @@ In Visual Studio, on the **Build** menu, choose **Build Solution**.
 
 For more information about using Visual Studio to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
-Locate the built driver package
--------------------------------
+Locate the built driver
+-----------------------
 
-In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, the package is in your solution folder under x64\\Win7Debug\\Package.
+In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Debug and x64, the driver is in your solution folder under sys\\driver\\Debug\\usbsamp.
 
-The package contains these files:
+The driver folder contains these files:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">usbsamp.sys
-The driver file.</td>
-<td align="left">WdfCoinstaller010<em>xx</em>.dll
-The coinstaller for version 1.<em>xx</em> of KMDF.</td>
-</tr>
-</tbody>
-</table>
+File | Description 
+-----|------------
+usbsamp.sys | The driver file.
+usbsamp.inf | An information (INF) file that contains information needed to install the driver.
+kmdfsamples.cat | A signed catalog file, which serves as the signature for the entire package.
 
 Run the sample
 --------------
@@ -133,7 +93,7 @@ Testing the sample
 The sample includes a test application, usbsamp.exe. This console application enumerates the interface registered by the driver and opens the device to send Read, Write, or DeviceIoControl requests based on the command line options. To test the sample,
 
 1.  In Visual Studio, choose **Solution Explorer** from the **View** menu. Locate the application project named **usbsamp**, under the **Exe** folder.
-2.  Right-click and choose **Build**. For example, if your settings are Win8.1 Debug and x64, the application executable is in your solution folder under the exe\\x64\\Win8.1Debug\\usbsamp.exe.
+2.  Right-click and choose **Build**. For example, if your settings are Debug and x64, the application executable is in your solution folder under the exe\\Debug\\usbsamp.exe.
 3.  Run the executable on the target machine.
 
 -   To view all descriptors and endpoint information, use the following command.

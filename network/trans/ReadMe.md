@@ -23,19 +23,14 @@ Once you have downloaded the sample, the .mht files in the sample's docs directo
 
 For more information about WFP callout drivers, see [Windows Filtering Platform Callout Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
 
-Related topics
---------------
-
-[Windows Filtering Platform Callout Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571068)
 
 Open the driver solution in Visual Studio
 -----------------------------------------
 
-Navigate to the folder that has the extracted sample. Double click the solution file, WFPSampler.sln. In Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has 6 projects:
+Navigate to the folder that contains the sample. Double click the solution file, WFPSampler.sln. In Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has these projects:
 
 -   a user-mode application project named **WFPSampler** (under the **Exe** node)
 -   a user-mode library project named **WFPSampler** (under the **Lib** node)
--   a package project named **package** (lower case) (under the **Package** node)
 -   a user-mode service project named **WFPSamplerService** (under the **Svc** node)
 -   a driver project named **WFPSamplerCalloutDriver** (under the **Sys** node)
 -   a kernel-mode library project named **WFPSampler** (under the **Syslib** node)
@@ -43,60 +38,7 @@ Navigate to the folder that has the extracted sample. Double click the solution 
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
 
-In Visual Studio, in Solution Explorer, right click **Solution ‘WFPSampler’ (6 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for all three projects. Do not check the **Deploy** boxes. SHere are some examples of configuration and platform settings.
-
-<table>
-<colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Configuration
-Platform
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Win8.1 Debug
-x64
-The driver will run on an x64 hardware platform that is running Windows 8.1. The driver will not run on any earlier versions of Windows.</td>
-<td align="left">Win7 Debug
-x64
-The driver will run on an x64 hardware platform that is running Windows 7 or a later version of Windows.</td>
-</tr>
-</tbody>
-</table>
-
-Set the KMDF version for the driver and kernel-mode library
------------------------------------------------------------
-
-The operating system that you specified in your configuration is called the *target operating system*. For example, if you specified Win7 Debug in your configuration, your target operating system is Windows 7. In Solution Explorer, right-click **WFPSamplerCalloutDriver** (under the **Sys** node), and choose **Properties**. Navigate to **Configuration Properties \> Driver Model Settings**. Set **KMDF Version Major** to 1. Set **KMDF Version Minor** according to your target operating system.
-
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Target operating system
-KMDF minor version</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Windows 7
-9</td>
-<td align="left">Windows 8
-11</td>
-</tr>
-</tbody>
-</table>
-
-Repeat this process for the **WFPSampler** kernel-mode library (under the **Syslib** node).
+In Visual Studio, in Solution Explorer, right click **Solution ‘WFPSampler’ (5 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for all projects. Do not check the **Deploy** boxes.
 
 Set the runtime library for the user-mode application, library, and service
 ---------------------------------------------------------------------------
@@ -112,29 +54,11 @@ Open the WfpSamplerInstall.cmd file (in the scripts folder) in Visual Studio.
 
 Change this line:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>RunDLL32.Exe syssetup,SetupInfObjectInstallAction DefaultInstall 131 %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.Inf</code></pre></td>
-</tr>
-</tbody>
-</table>
+`RunDLL32.Exe syssetup,SetupInfObjectInstallAction DefaultInstall 131 %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.Inf`
 
 to this:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>RunDLL32.Exe syssetup,SetupInfObjectInstallAction DefaultInstall 132 %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.Inf</code></pre></td>
-</tr>
-</tbody>
-</table>
+`RunDLL32.Exe syssetup,SetupInfObjectInstallAction DefaultInstall 132 %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.Inf`
 
 For more information about this setting, see the Remarks section for the [**InstallHinfSection**](http://msdn.microsoft.com/en-us/library/windows/hardware/aa376957) function.
 
@@ -148,62 +72,41 @@ For more information about using Microsoft Visual Studio to build a driver packa
 Locate the built driver package
 -------------------------------
 
-In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, the package is in your sample folder under x64\\Win7Debug\\package.
+In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Debug and x64, the driver is in your sample folder under **\\Debug**.
 
-The package folder contains these 4 files:
+The driver folder contains these files:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">wfpsamplercalloutdriver.cat
-A signed catalog file, which serves as the signature for the entire package.</td>
-<td align="left">WFPSamplerCalloutDriver.inf
-An information (INF) file that contains information needed to install the driver.</td>
-</tr>
-</tbody>
-</table>
+File | Description 
+-----|------------
+wfpsamplercalloutdriver.cat | A signed catalog file, which serves as the signature for the entire package.
+WFPSamplerCalloutDriver.inf | An information (INF) file that contains information needed to install the driver.
+WFPSamplerCalloutDriver.sys | The WFPSampler driver.
 
-**Note**  
+**Note**  The build process might also put WdfCoinstaller010*xx*.dll in the driver folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers.    
 
-The build process might also put WdfCoinstaller010*xx*.dll in the package folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers. The driver package, which is test-signed, actually contains only three files:
-
--   wfpsamplercalloutdriver.cat
--   WFPSamplerCalloutDriver.inf
--   WFPSamplerCalloutDriver.sys
-
-Because the package does not contain a KMDF coinstaller, it is important that you set the KMDF minor version (as described previously) according to your target operating system when you built the driver.
+Because the package does not contain a KMDF coinstaller, it is important that you set the KMDF minor version according to your target operating system when you built the driver.
 
 Locate the symbol file (PDB) for the driver
 -------------------------------------------
 
-In **File Explorer**, locate the symbol file, WFPSamplerCalloutDriver.pdb. The location of this file varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, the PDB file is in your sample folder under sys\\x64\\Win7Debug.
+In **File Explorer**, locate the symbol file, WFPSamplerCalloutDriver.pdb. The location of this file varies depending on what you set for configuration and platform. For example, if your settings are Debug and Win32, the PDB file is in your sample folder under sys\\Debug.
 
 Locate the user-mode application and its symbol file (PDB)
 ----------------------------------------------------------
 
-In **File Explorer**, locate the user-mode application (WFPSampler.exe) and its symbol file (WFPSampler.pdb). The location of these files varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, WFPSampler.exe and WFPSampler.pdb are in your sample folder under exe\\x64\\Win7Debug.
+In **File Explorer**, locate the user-mode application (WFPSampler.exe) and its symbol file (WFPSampler.pdb). The location of these files varies depending on what you set for configuration and platform. For example, if your settings are Debug and x64, WFPSampler.exe and WFPSampler.pdb are in your sample folder under exe\\Debug.
 
 Locate the kernel-mode service and its symbol file (PDB)
 --------------------------------------------------------
 
-In **File Explorer**, locate the kernel-mode library, WFPSamplerService.exe. The location of this file varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, WFPSamplerService.exe and WFPSamplerService.pdb are in your sample folder under svc\\x64\\Win7Debug.
+In **File Explorer**, locate the kernel-mode library, WFPSamplerService.exe. The location of this file varies depending on what you set for configuration and platform. For example, if your settings are Debug and x64, WFPSamplerService.exe and WFPSamplerService.pdb are in your sample folder under svc\\Debug.
 
 Run the sample
 --------------
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from where you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
-The process of moving the driver package to the target computer and installing the driver is called *deploying the driver*. You can deploy the Windows Filtering Platform Sample driver automatically or manually.
+The process of moving the driver to the target computer and installing the driver is called *deploying the driver*. You can deploy the Windows Filtering Platform Sample driver automatically or manually.
 
 Automatic deployment
 --------------------
@@ -231,10 +134,10 @@ Copy additional files to the target computer
 
 Copy the driver's PDB file (WFPSamplerCalloutDriver.pdb), the user-mode service's PDB file (WFPSamplerService.pdb) and the user-mode application's PDB file (WFPSampler.pdb) to a folder on the target computer (for example, c:\\Symbols).
 
-Copy the [TraceView](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) and [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) tools to a folder on the target computer (for example c:\\Tools).
+Copy the [**TraceView**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) and [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) tools to a folder on the target computer (for example c:\\Tools).
 
--   [TraceView](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\8.1\\Tools\\x64\\TraceView.exe).
--   [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) also comes with the WDK. You can find it in your WDK installation folder under bin (for example, c:\\Program Files (x86)\\Windows Kits\\8.1\\bin\\x64\\SignTool.exe).
+-   [**TraceView**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\10\\Tools\\x64\\TraceView.exe).
+-   [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) also comes with the WDK. You can find it in your WDK installation folder under bin (for example, c:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64\\SignTool.exe).
 
 Installing the driver
 ---------------------

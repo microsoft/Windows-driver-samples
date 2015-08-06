@@ -17,7 +17,7 @@ Build the sample
 
 For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
-**Note**  Starting in Windows 8.1, the WDK no longer contains the co-installers by default. You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+**Note**  The WDK no longer contains the co-installers by default. You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 Run the sample
 --------------
@@ -60,7 +60,7 @@ It supports cancellation of any IOCTL which may be I/O intensive, particularly a
 
 There are hooks for all [WBDI IOCTLs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536414), including the optional IOCTLs.
 
-PnP is very simple for this driver. It needs to only implement OnPrepareHardware and OnReleaseHardware from IPnpCallbackHardware.
+PnP is very simple for this driver. It needs to only implement **OnPrepareHardware** and **OnReleaseHardware** from **IPnpCallbackHardware**.
 
 Some device drivers may need to keep several pending reads to the WinUsb I/O target in order to properly flush all I/O that comes from the device during a capture.
 
