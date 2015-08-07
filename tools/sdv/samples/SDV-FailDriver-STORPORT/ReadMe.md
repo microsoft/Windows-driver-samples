@@ -3,7 +3,7 @@ SDV-FailDriver-STORPORT
 
 The SDV-FailDriver-Storport sample driver contains intentional code errors that are designed to show the capabilities and features of [Static Driver Verifier](http://msdn.microsoft.com/en-us/library/windows/hardware/ff552808) (SDV). SDV is a static verification tool that systematically analyzes the source code of Windows kernel-mode drivers. SDV is included in the Windows Driver Kit (WDK) and can be run from Microsoft Visual Studio. The sample demonstrates how SDV can find errors in a Storport driver.
 
-**Caution**  These sample drivers contain intentional code errors that are designed to show the capabilities and features of SDV. These sample drivers are not functional and are not intended as examples for real driver development projects.
+**Caution** These sample drivers contain intentional code errors that are designed to show the capabilities and features of SDV. These sample drivers are not functional and are not intended as examples for real driver development projects.
 
 Run the sample
 --------------

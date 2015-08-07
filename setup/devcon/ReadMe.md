@@ -14,7 +14,7 @@ You can build the sample in two ways: using the Visual Studio Integrated Develop
 
 **Building the sample using Visual Studio**
 
-1.  Open Visual Studio. From the **File** menu, select **Open Project/Solution**. Within your WDK installation, navigate to the folder where you extracted DevCon. For example c:\\DevConSample\\C++ and open the devcon.sln project file.
+1.  Open Visual Studio. From the **File** menu, select **Open Project/Solution**. Navigate to the DevCon sample folder and open the devcon.sln project file.
 2.  Right-click the solution in the **Solution Explorer** and select **Configuration Manager**.
 3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
 4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
@@ -72,9 +72,6 @@ This command allows you to uninstall a Driver Package from the machine. The main
 
 cmdDPEnum  
 This command allows you to enumerate all of the 3rd party Driver Packages currently installed on the machine and also shows you how to get some common properties from a Driver Package (Provider, Class description, DriverVer date and version).
-
-cmdDPEnumLegacy  
-This command shows you how to enumerate 3rd party Driver Packages on Windows Server 2003 and earlier operating systems.
 
 Reboot  
 This function shows how to correctly reboot the machine from a hardware install program. In particular it passes flags to **ExitWindowsEx** that cause the reboot to be associated with hardware installation. You should never reboot the machine unnecessarily.

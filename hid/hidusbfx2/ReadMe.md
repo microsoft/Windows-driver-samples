@@ -212,23 +212,14 @@ To start installing the sample, you must:
     -   **Hidkmdf.sys**
     -   The WDF coinstaller from the *\<WDK ROOT\>\\redist\\wdf\\\<platform\>* directory.
 
-    **Note**  
+    **Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
-    You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
-
-2.  Plug in the device and follow these steps, depending on the operating system that you are using.
-    -   On Windows 7 and later operating systems:
-        1.  Launch Device Manager by executing command devmgmt.msc in a command window, or from the **Hardware and Sound** program group in **Control Panel**.
-        2.  Select **OSR USB-FX2 device** from **Other Devices** category and select **Update Driver Software...** from the right-click menu.
-        3.  Select **Browse my computer for software** and provide the location of the driver files.
-        4.  Select **Install this driver software anyway** when the Windows Security dialog box appears.
-        5.  After the driver is installed, you should see the device in Device Manager under Human Interface Devices.
-    -   On Windows Vista and Windows Server 2008:
-        1.  In the **Found New Hardware** dialog box, select **Locate and install driver software (recommended)**.
-        2.  Select **Don't search online**.
-        3.  Select **I don't have the disc. Show me other options**.
-        4.  Select **Browse my computer for driver software (advanced)**.
-        5.  Enter the location of the driver files, and select **Install this driver software anyway** when the **Windows Security** dialog box appears. After the driver is installed, you'll see the device in Device Manager under Human Interface Devices.
+2.  Plug in the device and follow these steps:
+    1.  Launch Device Manager by executing command devmgmt.msc in a command window, or from the **Hardware and Sound** program group in **Control Panel**.
+    2.  Select **OSR USB-FX2 device** from **Other Devices** category and select **Update Driver Software...** from the right-click menu.
+    3.  Select **Browse my computer for software** and provide the location of the driver files.
+    4.  Select **Install this driver software anyway** when the Windows Security dialog box appears.
+    5.  After the driver is installed, you should see the device in Device Manager under Human Interface Devices.
 
 Testing
 -------

@@ -5,7 +5,7 @@ This sample application and driver demonstrate the stream inspection capabilitie
 
 The sample consists of a user mode application (Monitor.exe) that registers traffic of interest. In this case, all Transmission Control Protocol (TCP) data segments that are sent and received by an application of your choice.
 
-**Note**  Originally this sample was written to monitor the MSN Messenger application. Now it can monitor any application that you specify.
+**Note** Originally this sample was written to monitor the MSN Messenger application. Now it can monitor any application that you specify.
 
 Monitor.exe adds filters and callouts to Windows through the Windows Filtering Platform (WFP) Win32 API. A kernel-mode WFP callout driver (Msnmntr.sys) intercepts TCP traffic and parses out communication patterns. Monitor.exe controls the operations of the callout driver through I/O controls (IOCTLs).
 

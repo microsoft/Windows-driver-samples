@@ -5,9 +5,7 @@ This sample demonstrates how to use an XML extension file to support bidirection
 
 The v4 print driver model continues to employ the WSDMon Bidi Extension file format, as well as the SNMP Bidi Extension file format.
 
-**Note**  
-
-Third-party port monitors and language monitors are not supported in the v4 driver model or with print class drivers.
+**Note** Third-party port monitors and language monitors are not supported in the v4 driver model or with print class drivers.
 
 The WSDMON port monitor is a printer port monitor that supports printing to network printers that comply with the Web Services for Devices (WSD) technology. The WSDMON port monitor listens for WSD events and updates the printer status accordingly.
 
@@ -41,7 +39,7 @@ WSDMON supports the following Xcv commands:
 
 -   ServiceID
 
-**Note**  This sample is for the v4 print driver model.
+**Note** This sample is for the v4 print driver model.
 
 For more information, see [V4 Driver Connectivity Architecture](http://msdn.microsoft.com/en-us/library/windows/hardware/) and [Bidirectional Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
 

@@ -27,9 +27,7 @@ The driver can be installed on a root-enumerated device using the devcon.exe too
 1.  Obtain the devcon.exe tool from the WDK
 2.  Copy the driver binary, INF file and the KMDF coinstaller to a directory on your test machine.
 
-    **Note**  
-
-    You can obtain redistributable framework updates by downloading the Wdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    **Note** You can obtain redistributable framework updates by downloading the Wdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 3.  Run the command "devcon.exe install SingleComponentFStateSample.inf root\\SingleComponentFStateDevice".
 
@@ -55,7 +53,7 @@ The driver can be installed on a root-enumerated device using the devcon.exe too
 
 1.  Obtain the devcon.exe tool from the WDK
 2.  Copy the driver binary, INF file and the KMDF coinstaller to a directory on your test machine.
-    **Note** The WDK no longer contains the co-installers by default. You can obtain the co-installers by downloading theWdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+    **Note** You can obtain the co-installers by downloading theWdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 3.  Run the command "devcon.exe install WdfMultiComp.inf WDF\\WdfMultiComp".
 
 Testing
@@ -96,7 +94,7 @@ The power framework helper library does not have any hardware-specific informati
 -   Accessing component hardware to process I/O requests.
 -   Accessing component hardware to change the component's F-state.
 
-As mentioned earlier, the hardware access shown is this sample is entirely simulated in software. This sample does not work with a real device – it installs on a root-enumerated software device.
+As mentioned earlier, the hardware access shown is this sample is entirely simulated in software. This sample does not work with a real device, it installs on a root-enumerated software device.
 
 S0-idle power management support
 --------------------------------

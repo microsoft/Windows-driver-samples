@@ -20,14 +20,12 @@ Build the sample
 
 For information on how to build a driver using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644). When you build the sample, MSBuild.exe creates luminous.lib, firefly.sys, flicker.exe, and sauron.dll. Copy these files as well as the KMDF coinstaller (wdfcoinstallerMMmmm.dll) and the INF file (firefly.inf) to a floppy disk or a temporary directory on the target system.
 
-**Note**  
-
-You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+**Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 Installation
 ------------
 
-To install the driver on Windows 7 and later operating systems:
+To install the driver:
 
 1.  Plug the Microsoft USB Optical mouse into your target machine and verify that the mouse works. The drivers for this mouse come with the operating system so the device will start working automatically when you plug in.
 2.  You may need to make Group Policy changes in order to replace the existing mouse driver. If you are unable to perform steps 3-9, do the following:
@@ -58,7 +56,7 @@ Usage: Flicker \<-0 | -1 | -2\>
 
 -2 flashes light
 
-The following description applies to Windows Media Player 12 running on Windows 7:
+The following description applies to Windows Media Player 12 running on Windows 7:
 
 **Testing the DLL**
 

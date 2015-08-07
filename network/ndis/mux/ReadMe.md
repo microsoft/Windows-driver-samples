@@ -44,7 +44,7 @@ With the default configured VLAN ID of zero, the driver does not insert tag head
 
 ### Configuring VLANs
 
-The VLAN ID for each VELAN (virtual miniport) can be configured as follows. Right-click on the virtual miniport Local Area Connection icon and choose Properties. Click on the Configure button to bring up the Device Manager UI for the virtual device. Select the Advanced property sheet – this should contain a “VLAN ID” parameter that is configurable to the desired VLAN ID. Choosing a value of 0 (zero) disables receive-side filtering based on VLAN ID.
+The VLAN ID for each VELAN (virtual miniport) can be configured as follows. Right-click on the virtual miniport Local Area Connection icon and choose Properties. Click on the Configure button to bring up the Device Manager UI for the virtual device. Select the Advanced property sheet, this should contain a VLAN ID parameter that is configurable to the desired VLAN ID. Choosing a value of 0 (zero) disables receive-side filtering based on VLAN ID.
 
 ### Programming Tour
 
@@ -52,13 +52,13 @@ When it loads, i.e. from its DriverEntry function, the MUX driver registers as a
 
 ### Binding and VELAN Creation
 
-NDIS calls MUX’s BindAdapter function, `PtBindAdapter`, for each underlying NDIS adapter to which it is configured to bind. This function allocates an `ADAPT` structure to represent the lower adapter, and calls `NdisOpenAdapter` to set up a binding to it. In the context of `BindAdapterHandler`, after successfully opening a binding to the underlying adapter, the driver queries the reserved keyword "UpperBindings" to get a list of device names for the virtual adapters that this particular binding is to expose – see `PtBootStrapVElans` for more details. Note that the MUX driver does not create bindings (i.e. call `NdisOpenAdapter`) from any context other than its BindAdapter function – this is recommended behavior for all drivers of this type.
+NDIS calls MUX’s BindAdapter function, `PtBindAdapter`, for each underlying NDIS adapter to which it is configured to bind. This function allocates an `ADAPT` structure to represent the lower adapter, and calls `NdisOpenAdapter` to set up a binding to it. In the context of `BindAdapterHandler`, after successfully opening a binding to the underlying adapter, the driver queries the reserved keyword "UpperBindings" to get a list of device names for the virtual adapters that this particular binding is to expose – see `PtBootStrapVElans` for more details. Note that the MUX driver does not create bindings (i.e. call `NdisOpenAdapter`) from any context other than its BindAdapter function. This is recommended behavior for all drivers of this type.
 
 For each device name specified in the “UpperBindings” key, the MUX driver allocates a VELAN data structure to represent the virtual miniport, calls `NdisIMInitializeDeviceInstanceEx`. In response, NDIS eventually calls the MUX miniport’s MiniportInitialize entry point, MPInitialize, for each VELAN. After MPInitialize successfully returns, NDIS takes care of getting upper-layer protocols to bind to the newly created virtual adapter(s).
 
 ### Unbinding and Halting
 
-NDIS calls MUX’s `UnbindAdapter` handler, `PtUnbindAdapter`, to request it to unbind from a lower adapter. In processing this, MUX calls `NdisIMDeInitializeDeviceInstance` for each VELAN instantiated on the indicated adapter – see `PtStopVElan` for details. This call results in NDIS first unbinding any protocols bound to the indicated VELAN, and then calling the MiniportHalt routine, `MPHalt`, for that VELAN. `MPHalt` waits for any outstanding receives/sends on the VELAN to finish before unlinking the VELAN from the ADAPT.
+NDIS calls MUX's `UnbindAdapter` handler, `PtUnbindAdapter`, to request it to unbind from a lower adapter. In processing this, MUX calls `NdisIMDeInitializeDeviceInstance` for each VELAN instantiated on the indicated adapter – see `PtStopVElan` for details. This call results in NDIS first unbinding any protocols bound to the indicated VELAN, and then calling the MiniportHalt routine, `MPHalt`, for that VELAN. `MPHalt` waits for any outstanding receives/sends on the VELAN to finish before unlinking the VELAN from the ADAPT.
 
 `PtUnbindAdapter` itself blocks until all VELANs associated with the ADAPT structure have been unlinked from it. This is to make sure that no thread running in the context of a miniport-edge entry point for a VELAN will ever access an invalid lower binding handle. Once all VELANs have been unlinked, `PtUnbindAdapter` closes the lower binding by calling `NdisCloseAdapter`. Note that the MUX driver does not close its lower binding from any context other than its `UnbindAdapter` function – this is recommended behavior for all drivers of this type.
 
@@ -80,7 +80,7 @@ Some power management OIDs are forwarded to the lower miniport. See “Handling 
 
 Data sent down on a VELAN miniport is forwarded to the lower adapter. The MUX driver itself does not generate any data of its own. The MUX driver clones a `NET_BUFFER_LIST` for each `NetBufferList` passed to its `MPSendNetBufferLists` function, and saves a pointer to the original `NET_BUFFER_LIST` in the reserved area of the `NET_BUFFER_LIST` structure. When the lower adapter completes the send (`PtSendNBLComplete`), MUX picks up the original packet and calls `NdisMSendNetBufferListsComplete` to complete the original send request.
 
-If a non-zero VLAN ID is configured for the VELAN, and/or the packet has non-zero Ieee8021QInfo per-packet information, then the MUX driver inserts an NDIS buffer containing a tag header to the front of the packet before sending it down – see function `MPHandleSendTagging` for details.
+If a non-zero VLAN ID is configured for the VELAN, and/or the packet has non-zero Ieee8021QInfo per-packet information, then the MUX driver inserts an NDIS buffer containing a tag header to the front of the packet before sending it down, see function `MPHandleSendTagging` for details.
 
 ### Receiving Data
 
@@ -88,7 +88,7 @@ Data received from a lower adapter is indicated up on zero or more VELANs. The `
 
 The driver’s `MPReturnNetBufferLists` function is called either by NDIS or by MUX itself when protocols are done with a received `NET_BUFFER_LIST`. This function returns the original `NET_BUFFER_LIST` indicated by the lower driver, if any, by calling `NdisReturnNetBufferLists.`
 
-The driver indicates up received frames that do not have an IEEE 802.1Q tag header in them – see function `PtHandleRcvTagging`. It always strips off tag headers, if present, on received frames. If a non-zero VLAN ID is configured, then it checks received frames that contain tag headers for matching VLAN Ids – only matching frames are indicated up to protocols. Any VLAN/priority information present in incoming frames is copied to per-packet information fields of indicated `NET_BUFFER_LIST` structures.
+The driver indicates up received frames that do not have an IEEE 802.1Q tag header in them, see function **PtHandleRcvTagging**. It always strips off tag headers, if present, on received frames. If a non-zero VLAN ID is configured, then it checks received frames that contain tag headers for matching VLAN Ids, only matching frames are indicated up to protocols. Any VLAN/priority information present in incoming frames is copied to per-packet information fields of indicated `NET_BUFFER_LIST` structures.
 
 ### Status Indications
 
@@ -114,7 +114,7 @@ Queries/sets received on a VELAN miniport that are to be forwarded to the underl
 
 ### Handling Global Reconfiguration
 
-All modifications to VELAN configuration are accompanied by PnP reconfigure notifications, i.e. `NetEventReconfigure` events passed to the MUX’s `PnPEventHandler`, `PtPNPHandler`. This driver takes a broad approach to handling reconfiguration, which is to simply re-examine all the “UpperBindings” keys for all currently bound adapters, and start off VELANs for any that do not exist – see `PtBootStrapVElans` for details.
+All modifications to VELAN configuration are accompanied by PnP reconfigure notifications, for example, `NetEventReconfigure` events passed to the MUX’s `PnPEventHandler`, `PtPNPHandler`. This driver takes a broad approach to handling reconfiguration, which is to simply re-examine all the “UpperBindings” keys for all currently bound adapters, and start off VELANs for any that do not exit, see `PtBootStrapVElans` for details.
 
 ### Canceling Sends
 
@@ -177,5 +177,5 @@ Precomp.h | Precompile header file
 Protocol.c | Protocol related routines for the MUX driver 
 Public.h | Contains the common declarations shared by driver and user applications
 
-For more information, see **NDIS Intermediate Drivers** in the network devices design guide.
+For more information, see [NDIS Intermediate Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
 

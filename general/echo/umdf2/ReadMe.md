@@ -14,15 +14,10 @@ Related technologies
 [User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 
 
-Download and extract the sample
--------------------------------
-
-Click the download button on this page. Click **Save**, and then click **Open Folder**. Right click the zip file, and choose **Extract All**. Specify or browse to a folder for the extracted files. For example, you could extract to c:\\umdf2echo.
-
 Open the driver solution in Visual Studio
 -----------------------------------------
 
-Navigate to the folder that has the extracted sample. Double click the solution file (umdf2echo.sln). In Microsoft Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that contains three projects. There is a driver project (Driver-\>AutoSync-\>echo), an application project (Exe-\>echoapp), and a package project named **package** (lower case).
+In Microsoft Visual Studio, open the solution file (umdf2echo.sln). Choose **Solution Explorer** from the **View** menu. In Solution Explorer, you can see one solution that contains three projects. There is a driver project (Driver-\>AutoSync-\>echo), an application project (Exe-\>echoapp), and a package project named **package** (lower case).
 
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
@@ -70,7 +65,7 @@ Build the sample using MSBuild
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, umdf2echo.sln. Use the MSBuild command to build the solution. Here is an example:
 
-**msbuild /p:configuration="Release" /p:platform="Win32" umdf2echo.sln
+**msbuild /p:configuration="Release" /p:platform="Win32" umdf2echo.sln**
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

@@ -3,7 +3,7 @@ Kernel mode display-only miniport driver (KMDOD) sample
 
 The kernel mode display-only miniport driver (KMDOD) sample implements most of the device driver interfaces (DDIs) that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM). The code is useful to understand how to write a miniport driver for a display-only device, or how to develop a full WDDM driver.
 
-For more info on how a KMDOD works, see [Kernel Mode Display-Only Driver (KMDOD) Interface](http://msdn.microsoft.com/en-us/library/windows/hardware/jj673962). For more info on WDDM drivers, see [Windows Vista Display Driver Model (WDDM) Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff570593).
+For more info on how a KMDOD works, see [Kernel Mode Display-Only Driver (KMDOD) Interface](http://msdn.microsoft.com/en-us/library/windows/hardware/jj673962). For more info on WDDM drivers, see [Windows Display Driver Model (WDDM) Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff570593).
 
 This code can also help you to understand the use and implementation of display-related DDIs. The INF file shows how to make a display miniport driver visible to other WDDM components.
 
@@ -35,7 +35,7 @@ In some cases you might need to install the driver manually, as follows.
 
     `Bcdedit.exe -set TESTSIGNING ON`
 
-    **Note**  After you change the TESTSIGNING boot configuration option, restart the computer for the change to take effect.
+    **Note** After you change the TESTSIGNING boot configuration option, restart the computer for the change to take effect.
 
     For more info, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484).
 

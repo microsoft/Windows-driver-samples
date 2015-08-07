@@ -6,11 +6,11 @@ The purpose of this sample is to demonstrate how to implement a basic bus driver
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-**Note**: This sample driver is generic i.e. it is not designed for a specific device and allows for a vendor to adopt and enhance it for supporting Bluetooth
+**Note** This sample driver is generic. It is not designed for a specific device and allows for a vendor to adopt and enhance it for supporting Bluetooth.
 
-This sample driver, as is, may not properly function for a device until all vendor-specific device requirements (e.g. device initialization) have been incorporated
+This sample driver, as is, may not properly function for a device until all vendor-specific device requirements (for example, device initialization) have been incorporated.
 
-It is recommended to use WDK whose version matches the target Windows build version or newer for the development of the serial bus driver.
+It is recommended to use the WDK version  that matches the target Windows build version or newer for the development of the serial bus driver.
 
 **FILE MANIFEST**
 
@@ -30,7 +30,7 @@ io.c – functions that perform IO read pump via UART controller
 
 Io.h – header for io.c
 
-pdo.c – PDO (Bluetooth function) enumeration and IOCTL processing
+pdo.c - PDO (Bluetooth function) enumeration and IOCTL processing
 
 public.h – header to share with application to support Radio On/Off (“Airplane mode”)
 

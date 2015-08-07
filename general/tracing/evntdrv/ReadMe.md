@@ -5,7 +5,7 @@ Eventdrv is a sample kernel-mode trace provider and driver. The driver does not 
 
 Evntdrv registers as a provider by calling the [**EtwRegister**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545603) API. If the registration is successful, it logs a StartEvent with the device's name, the length of the name, and the status code. Then, when the sample receives a DeviceIOControl call, it logs a SampleEventA event. Finally, when the driver gets unloaded, it logs an UnloadEvent event with a pointer to the device object
 
-**Note**  The Windows Pre-Processor (WPP) Tracing tools such as TraceView.exe cannot be used to start, stop, or view traces.
+**Note** The Windows Pre-Processor (WPP) Tracing tools such as TraceView.exe cannot be used to start, stop, or view traces.
 
 
 Run the sample
@@ -19,7 +19,7 @@ Run the sample
 
     Installing the manifest creates registry keys that enable tools to find the resource and message files that contain event provider information. For further details about the WevtUtil.exe tool, see the MSDN Library.
 
-    **Note**  Using a Visual Studio Command windows sets up the environment variables you need to run the tracing tools for this sample.
+    **Note** Using a Visual Studio Command windows sets up the environment variables you need to run the tracing tools for this sample.
 
 2.  Make a folder in the system directory called ETWDriverSample (for example, C:\\ETWDriverSample).
 

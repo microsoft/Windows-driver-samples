@@ -10,7 +10,8 @@ For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-**Hardware requirements**
+Hardware requirements
+---------------------
 
 The sample driver can be loaded as the function driver for any of these devices:
 
@@ -52,8 +53,7 @@ The computer where you install the driver is called the *target computer* or the
 
 The process of moving the driver package to the target computer and installing the driver is called *deploying the driver*. You can deploy the USBSAMP sample automatically or manually.
 
-Automatic deployment
---------------------
+### Automatic deployment
 
 Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
 
@@ -61,8 +61,7 @@ Before you automatically deploy a driver, you must provision the target computer
 2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Install and Verify**. Click **OK**.
 3.  On the **Build** menu, choose **Deploy Package** or **Build Solution**.
 
-Manual deployment
------------------
+### Manual deployment
 
 Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
 
@@ -81,9 +80,9 @@ Build the sample using MSBuild
 
 As an alternative to building the USBSAMP sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, Usbsamp.sln. Use the MSBuild command to build the solution. Here are some examples:
 
-**msbuild /p:configuration=”Win7 Debug” /p:platform=”x64” Usbsamp.sln**
+**msbuild /p:configuration="Debug" /p:platform="x64" Usbsamp.sln**
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”Win32” Usbsamp.sln**
+**msbuild /p:configuration="Release" /p:platform="Win32" Usbsamp.sln**
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

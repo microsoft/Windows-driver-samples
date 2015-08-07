@@ -141,7 +141,7 @@ Other menu options of myping applications are:
 
 -   Exit: Terminate the application.
 
-**Note**  You can use this application only on a device installed in the standalone configuration. If you run it on a device that's installed as a miniport, you will get an error message. For such devices, you can use the system provided ping.exe.
+**Note** You can use this application only on a device installed in the standalone configuration. If you run it on a device that's installed as a miniport, you will get an error message. For such devices, you can use the system provided ping.exe.
 
 RESOURCES
 ---------

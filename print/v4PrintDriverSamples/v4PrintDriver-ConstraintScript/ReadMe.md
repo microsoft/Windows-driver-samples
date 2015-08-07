@@ -10,7 +10,7 @@ The Constraints.js file in this sample demonstrates the implementation of JavaSc
 
 This sample does not demonstrate **ConvertPrintTicketToDevMode** or **ConvertDevModeToPrintTicket**, which utilize a property bag to store data in the private section of the DEVMODE structure.
 
-**Note**  This sample is for the v4 print driver model.
+**Note** This sample is for the v4 print driver model.
 
 Related topics
 --------------

@@ -29,7 +29,7 @@ Related topics
 Installation
 ------------
 
-To test this sample, you must have a test computer that is running Windows Vista or later. This test computer can be a second computer or, if necessary, your development computer.
+To test this sample, you must have a test computer. This can be a second computer or, if necessary, your development computer.
 
 To install the WpdBasicHardwareDriver sample, do the following:
 
@@ -37,7 +37,7 @@ To install the WpdBasicHardwareDriver sample, do the following:
 
 2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\wpdbasichardwaredriver).
 
-    **Note**  Starting in Windows 8.1, the WDK no longer contains the co-installers by default. You can obtain the co-installers by downloading and installing the “Windows Driver Framework (WDF)” package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+    **Note** You can obtain the co-installers by downloading and installing the “Windows Driver Framework (WDF)” package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\wpdbasichardwaredriver), and run DevCon.exe as follows:
     **devcon.exe install wpdbasichardwaredriver.inf WUDF\\WpdBasicHardware**

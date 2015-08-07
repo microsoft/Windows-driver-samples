@@ -29,7 +29,7 @@ To test the Tracedrv event tracing provider, use the following procedure.
   tracelog -start TestTracedrv -guid tracedrv.ctl -f tracedrv.etl -flag 1
   ```
 
-  **Note**  Note: Without the -flag parameter, Tracedrv will not generate any trace messages.
+  **Note** Without the -flag parameter, Tracedrv will not generate any trace messages.
 
 5.  To generate trace messages, run Tracectl.exe. This executable file is built when you build the solution. Each time you type a character, other than **Q** or **q**, Tracectl sends an IOCTL to the driver that signals it to generate trace messages. To stop Tracectl, type **Q** or **q**.
 6.  To stop the trace session, use the following Tracelog command.

@@ -20,13 +20,11 @@ Before you automatically deploy a driver, you must provision the target computer
 4.  On the target computer, open **Control Panel**. Click **Network and Internet** and then open **Network and Sharing Center**.
 5.  Under **View your active networks**, click the connection listed under **Connections:** and click **Properties**. If you have previously installed this sample, highlight it in the list.
 6.  Click **Install**, then **Service**, then **Add**.
-    **Note**  You may see multiple instances of the **NDIS Sample LightWeight Filter** service. If so, highlight the newest one.
+    **Note** You may see multiple instances of the **NDIS Sample LightWeight Filter** service. If so, highlight the newest one.
 7.  Click **Have Disk**.
 8.  In the **Install from Disk** dialog, browse to the DriverTest\\Drivers directory. Highlight the netlwf.inf file and click **Open**, then click OK. This should show **NDIS Sample LightWeight Filter** in a list of **Network Services**. Highlight **NDIS Sample LightWeight Filter** and click **OK**. Click **OK**. Click **Close**. Click **Close**. This installs the Ndislwf filter driver service.
 
-**Note**  
-
-If you've installed the Ndislwf sample on the target computer before, you can use the [PnPUtil](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550419) tool to delete the older versions from the driver store.
+**Note** If you've installed the Ndislwf sample on the target computer before, you can use the [PnPUtil](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550419) tool to delete the older versions from the driver store.
 
 Manual deployment
 -----------------
@@ -47,9 +45,7 @@ Ndislwf is installed as a service (called **NDIS Sample LightWeight Filter** in 
 5.  Click **Install**, then **Service**, then **Add**, then **Have Disk**.
 6.  Browse to the installation directory. Highlight the netlwf.inf file and click **Open**, then click OK. This should show **NDIS Sample LightWeight Filter** in a list of Network Services. Highlight this and click OK. Click OK. This installs the Ndislwf filter driver.
 
-**Note**  
-
-If you've installed the Ndislwf sample on the target computer before, you can use the [PnPUtil](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550419) tool to delete the older versions from the driver store.
+**Note** If you've installed the Ndislwf sample on the target computer before, you can use the [PnPUtil](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550419) tool to delete the older versions from the driver store.
 
 Viewing sample output in the debugger
 -------------------------------------
@@ -60,7 +56,7 @@ If you chose to deploy your driver automatically, then kernel debugging is alrea
 
 On the host computer, in **Visual Studio**, in the **Debug** menu, choose **Attach to Process**. For **Transport**, choose **Windows Kernel Mode Debugger**. For **Qualifier**, choose the name of your target computer. Click **Attach**.
 
-**Note**  If you see a dialog box that asks you to allow the debugger to communicate through the firewall, click the boxes for all types of networks. Click **Allow Access**.
+**Note** If you see a dialog box that asks you to allow the debugger to communicate through the firewall, click the boxes for all types of networks. Click **Allow Access**.
 
 For more information, see [Setting Up Kernel-Mode Debugging in Visual Studio](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439376).
 

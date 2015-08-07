@@ -25,7 +25,7 @@ To build a driver solution using Windows Driver Kit (WDK) 10 and Visual Studio 2
   a. In the **Solution Explorer**, right click on the solution and choose **Add** > **New Project**. Choose **Driver Install Package** under Visual C++/Windows Driver/Package.
   b. In the **Solution Explorer**, right click the Package project and select **Properties**.
   c. In the left pane, click **Configuration Properties** \> **Driver Install** \> **Package Files**.
-  d. In the right pane, use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All the data files that you added in **Step 2-c**, except the INF file, should be added.  This configuration is per-architecture, so this configuration must be repeated for each architecture that will be built.
+  d. In the right pane, use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All the data files that you added in **Step 2-c**, except the INF file, should be added. This configuration is per-architecture, so this configuration must be repeated for each architecture that will be built.
   e. Click **OK**.
 4. Open the INF file and edit it to match the built output.
   a. Open the INF file.
@@ -34,7 +34,7 @@ To build a driver solution using Windows Driver Kit (WDK) 10 and Visual Studio 2
 
 At this point, Visual Studio 2015 will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
-**Note**  If you compile your sample driver with Microsoft Visual Studio version 10, or 11 with the \_DEBUG flag set, then you should not use CComVariant on the following two XPS Print Filter Pipeline properties:
+**Note** If you compile your sample driver with Microsoft Visual Studio version 10, or 11 with the \_DEBUG flag set, then you should not use CComVariant on the following two XPS Print Filter Pipeline properties:
 
 -   XPS\_FP\_USER\_TOKEN
 -   XPS\_FP\_PRINTER\_HANDLE

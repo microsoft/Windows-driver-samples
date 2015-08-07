@@ -3,7 +3,7 @@ USB Host-Based Print Driver Sample
 
 This driver sample demonstrates how to support host-based devices that use the v4 print driver model, and are connected via USB.
 
-**Note**  This sample is for the v4 print driver model.
+**Note** This sample is for the v4 print driver model.
 
 Windows enables manufacturers to support Bidirectional Communication (Bidi) for USB devices, by using a combination of both a Bidi XML file and a Javascript file known as a USB Bidi extender. The *usb\_host\_based\_sample.js* file that is included with the sample, plays the role of the USB Bidi extender.
 

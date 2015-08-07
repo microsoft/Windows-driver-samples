@@ -105,7 +105,7 @@ Run the sample
 
 3. Run bthprops.cpl from a command line or right click on the Bluetooth icon in the system tray and select ‘Show Devices' to bring up a list of installed Bluetooth devices.
 
-4. In the ‘Bluetooth Devices’ window click the ‘Add a device’ button.
+4. In the **Bluetooth Devices** window, click the **Add a device** button.
 
 5. In the Add a Device wizard select the server machine (the machine where you installed the echo server) as a Bluetooth device. If the server machine does not appear, please check the echo server installation and make sure that you have enabled ‘Allow Bluetooth device to find this computer’ on the server machine as explained above. When the server machine is correctly displayed, select it and pick ‘Next’.
 

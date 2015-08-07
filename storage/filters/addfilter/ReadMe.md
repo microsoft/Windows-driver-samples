@@ -10,7 +10,7 @@ This initial sample does not check the filter for validity before it is added to
 
 The minifilter identifies implicit locks when it sees a non-shared write open request on a volume object. In this scenario, the minifilter closes its metadata file and sets a trigger that corresponds to the volume in its instance object. Later, each close operation is examined to identify if the implicit lock on the volume is being released and, if so, a re-open of the minifilter's metadata file is triggered.
 
-**Important**  If you attempt to add a non-existing filter to a boot device and then restart, the system might show the INACCESSIBLE\_BOOT\_DEVICE error message. If this message appears, you will be unable to start the computer. To fix this problem, when the startup menu is displayed when the computer starts up, go to the Advanced Options screen and select **Use Last Known Good Profile**.
+**Important** If you attempt to add a non-existing filter to a boot device and then restart, the system might show the INACCESSIBLE\_BOOT\_DEVICE error message. If this message appears, you will be unable to start the computer. To fix this problem, when the startup menu is displayed when the computer starts up, go to the Advanced Options screen and select **Use Last Known Good Profile**.
 
 The sample is intended for use with upper filter drivers only.
 

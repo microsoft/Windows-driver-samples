@@ -10,9 +10,9 @@ The following files are included in the sample:
 
 For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx).
 
-**Note**  This sample is for the v4 print driver model.
+**Note** This sample is for the v4 print driver model.
 
-**Note**  When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following JavaScript code can be used to copy the returned array into a new array, and also to remove the additional element.
+**Note** When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following JavaScript code can be used to copy the returned array into a new array, and also to remove the additional element.
 
 ```
 var readBuffer = [];

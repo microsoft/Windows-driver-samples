@@ -15,13 +15,13 @@ Related technologies
 [Windows Pointer Device](http://msdn.microsoft.com/en-us/library/windows/hardware/jj151570)
 
 
-##System requirements
+System requirements
 -------------------
-**Client:** Windows 10 Technical Preview
+**Client:** Windows 10
 
-**Server:** Windows 10 Technical Preview
+**Server:** Windows 10
 
-**Phone:**  Windows 10 Technical Preview
+**Phone:**  Windows 10
 
 
 File Manifest

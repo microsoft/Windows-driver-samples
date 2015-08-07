@@ -9,7 +9,7 @@ This sample demonstrates two different ways a Windows kernel-mode driver can not
 
 There are two advantages of IRP-based approach over the event-based approach. First, the driver can send a message to the application along with the event notification. Second, the driver routines don't have to run in the context of the process that made the request. Instead, the application can send a synchronous or asynchronous (overlapped) I/O control request to the driver.
 
-**Note**  This sample driver is not a Plug and Play driver. This is a minimal driver meant to demonstrate a feature of the operating system. Neither this driver nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
+**Note** This sample driver is not a Plug and Play driver. This is a minimal driver meant to demonstrate a feature of the operating system. Neither this driver nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
 
 Run the sample

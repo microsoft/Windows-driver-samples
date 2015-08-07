@@ -82,7 +82,7 @@ wfpsamplercalloutdriver.cat | A signed catalog file, which serves as the signatu
 WFPSamplerCalloutDriver.inf | An information (INF) file that contains information needed to install the driver.
 WFPSamplerCalloutDriver.sys | The WFPSampler driver.
 
-**Note**  The build process might also put WdfCoinstaller010*xx*.dll in the driver folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers.    
+**Note**�The build process might also put WdfCoinstaller010*xx*.dll in the driver folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers.    
 
 Because the package does not contain a KMDF coinstaller, it is important that you set the KMDF minor version according to your target operating system when you built the driver.
 
@@ -147,7 +147,8 @@ Installing the driver
     -   For automatic deployment, this will be DriverTest\\Drivers.
 
 2.  Enter **WFPSamplerInstall.cmd** to run the installation script.
-    **Note**  If you need to uninstall a previous version of the driver, enter **WFPSamplerInstall.cmd -r**.
+
+    **Note** If you need to uninstall a previous version of the driver, enter **WFPSamplerInstall.cmd -r**.
 
 Running the user-mode application
 ---------------------------------

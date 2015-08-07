@@ -7,7 +7,7 @@ The operating system contains a set of APIs which are used as a software mechani
 
 When the user turns the radio off (either by using the specific radio software switch or the airplane mode switch), radio transmission must be turned off. The device can be powered off as long as the radio switch does not disappear from the UI. It is very important that the radio manager developer ensures that when the device is powered off, the radio switch does not disappear from the UI. If the radio switch disappears from the UI when the radio is turned off by the user, then user has no way to turn the radio back on! If it is desired to conserve power by cutting power to the device when the radio is turned off, but the device cannot be completely powered off because it disappears from the UI, then the solution would be to put the device in a low power state (e.g. D3).
 
-**Important**  The radio manager MUST be given a name. This is the name of the radio switch that is displayed to the user in the Wireless page of PC Settings. The name must be simple, yet descriptive of what the radio is. For example, for NFC radios, the value of the name field should be "NFC", and for GPS radios, the value of the name field should be "GPS" or "GNSS", whichever is more appropriate. The name must not include the word "radio" or the manufacturer's name or some other word related to the functionality of the radio (e.g. "Location" OR "port").
+**Important** The radio manager must be given a name. This is the name of the radio switch that is displayed to the user in the Wireless page of PC Settings. The name must be simple, yet descriptive of what the radio is. For example, for NFC radios, the value of the name field should be "NFC", and for GPS radios, the value of the name field should be "GPS" or "GNSS", whichever is more appropriate. The name must not include the word "radio" or the manufacturer's name or some other word related to the functionality of the radio (e.g. "Location" OR "port").
 
 
 Installation
@@ -57,9 +57,9 @@ IsMultiComm
 
 IsAssociatingDevice
 
-\*\*\* It is required that the registry key has AT LEAST a Name value, otherwise the Sample Radio Manager will fail to initialize. \*\*\*
+**Note** It is required that the registry key has AT LEAST a Name value, otherwise the Sample Radio Manager will fail to initialize.
 
-**Important**   The radio manager must be given a name and the registry key must have, as a minimum, a Name value. Otherwise, the Sample Radio Manager will fail to initialize. This is the name of the radio switch that is displayed to the user in the Wireless page of PC Settings. The name must be simple, yet descriptive of what the radio is. For example, for NFC radios, the value of the name field should be "NFC", and for GPS radios, the value of the name field should be "GPS" or "GNSS", whichever is more appropriate. The name must not include the word "radio" or the manufacturer's name or some other word related to the functionality of the radio (e.g. "Location" OR "port").
+**Important** The radio manager must be given a name and the registry key must have, as a minimum, a Name value. Otherwise, the Sample Radio Manager will fail to initialize. This is the name of the radio switch that is displayed to the user in the Wireless page of PC Settings. The name must be simple, yet descriptive of what the radio is. For example, for NFC radios, the value of the name field should be "NFC", and for GPS radios, the value of the name field should be "GPS" or "GNSS", whichever is more appropriate. The name must not include the word "radio" or the manufacturer's name or some other word related to the functionality of the radio (e.g. "Location" OR "port").
 
 When the Radio Manager is initialized, it uses these registry keys to retrieve the "radio" information. The radio state values can be any of the following enum values:
 

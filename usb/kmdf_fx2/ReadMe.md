@@ -366,7 +366,7 @@ To trace, you can use the in-box tools, logman and tracerpt, or download XPerf (
 
     `logman start sample -o osrusbfx2.etl -ets -p OSRUSBFX2`
 
-2.  Generate activity through the osrusbfx2 test application, such as `osrusbfx2.exe –a`.
+2.  Generate activity through the osrusbfx2 test application, such as `osrusbfx2.exe -a`.
 3.  Stop tracing by using the following command:
 
     `Logman stop sample`
@@ -381,7 +381,7 @@ To trace, you can use the in-box tools, logman and tracerpt, or download XPerf (
 
     `xperf -start sample -f osrusbfx2.etl -on OSRUSBFX2`
 
-2.  Generate activity through the osrusbfx2 test application, such as `osrusbfx2.exe –a`.
+2.  Generate activity through the osrusbfx2 test application, such as `osrusbfx2.exe -a`.
 3.  Stop tracing by using the following command:
 
     `xperf -stop sample`

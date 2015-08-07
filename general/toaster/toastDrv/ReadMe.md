@@ -56,9 +56,9 @@ Build the sample using MSBuild
 
 As an alternative to building the Toaster sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, Toaster.sln. Use the MSBuild command to build the solution. Here are some examples:
 
-**msbuild /p:configuration=”Win7 Debug” /p:platform=”x64” Toaster.sln**
+**msbuild /p:configuration="Debug" /p:platform="x64" Toaster.sln**
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”Win32” Toaster.sln**
+**msbuild /p:configuration="Release" /p:platform="Win32" Toaster.sln**
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

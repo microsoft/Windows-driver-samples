@@ -5,7 +5,7 @@ This sample demonstrates the usage of V3 System DMA. It shows how a driver could
 
 The sample consists of a legacy device driver and a Win32 console mode test application. The test application opens a handle to the device exposed by the driver and makes a DeviceIoControl call to initiate the example system DMA. To understand how the V3 system DMA calls are invoked please study SDmaWrite() in SDma.c.
 
-**Note**  This sample driver is not a PnP driver. This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
+**Note** This sample driver is not a PnP driver. This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
 Run the sample
 --------------

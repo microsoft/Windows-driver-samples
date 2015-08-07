@@ -18,7 +18,5 @@ The mars board driver exemplifies several different functions that are essential
 
 For more information, see [Secure Digital (SD) Card Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537945).
 
-**Note**  
-
-This sample provides an example of a minimal driver. Neither the driver nor the sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
+**Note** This sample provides an example of a minimal driver. Neither the driver nor the sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 

@@ -20,12 +20,12 @@ C:\> notepad
 
 C:\> tlist                                           (locate the process ID of notepad.exe)
 
-C:\> kill –f  2329                                   (attempt to kill off the notepad.exe with a PID of 2329)
-process notepad.exe (2329) – ‘Untitled – Notepad’ could not be killed
+C:\> kill -f  2329                                   (attempt to kill off the notepad.exe with a PID of 2329)
+process notepad.exe (2329) - 'Untitled – Notepad' could not be killed
 
 C:\> obcallbacktestctrl.exe  -deprotect              (remove the protections on the notepad process)
 
-C:\> kill –f  2329                                   (attempt to kill off the process – which will succeed)
+C:\> kill -f  2329                                   (attempt to kill off the process – which will succeed)
 C:\> obcallbacktestctrl.exe  -uninstall              (uninstall the kernel driver)
 ```
 

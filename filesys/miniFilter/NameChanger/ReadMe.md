@@ -43,7 +43,7 @@ The minifilter samples come with an INF file that will install the minifilter. T
 
 1.  Make sure that *filtername*.sys and *filtername*.inf are in the same directory.
 
-    **Note**  This installation will make the necessary registry updates to register the minifilter service and place *filtername*.sys in the %SystemRoot%\\system32\\drivers directory.
+    **Note** This installation will make the necessary registry updates to register the minifilter service and place *filtername*.sys in the %SystemRoot%\\system32\\drivers directory.
 
 2.  In Windows Explorer, right-click *filtername*.inf, and click **Install**.
 

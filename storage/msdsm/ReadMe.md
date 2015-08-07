@@ -32,8 +32,8 @@ You can build a driver from the command line using the Visual Studio Command Pro
 
 1.  Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
 2.  Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command: 
-	
-	**msbuild /t:clean /t:build .\\<*samplename*>.vcxproj**.
+    
+    **msbuild /t:clean /t:build .\\<*samplename*>.vcxproj**.
 
 Installation and Operation
 --------------------------
@@ -50,7 +50,7 @@ The following annotated DSM INF file illustrates the correct format for your DSM
 ;
 ```
 
-In the Version section, make sure the DriverVer is correct for your DSM. Ideally it should match the version in the RC file. You must specify a different catalog file since the MPIO core drivers now come pre-signed:
+In the Version section, make sure the DriverVer is correct for your DSM. Ideally it should match the version in the .rc file. You must specify a different catalog file since the MPIO core drivers now come pre-signed:
 
 ```
 [Version]
@@ -96,7 +96,7 @@ AddReg         = mydsm_addreg
 
 This next section contains the Hardware ID strings for your devices. You can have more than one. Sample format: "VENDOR PRODUCT " - remember to use spaces in a field (vendor, product ID) to pad this to be eight characters for the vendor name (as registered with STA) and sixteen for the product ID (unless the supported devices share a common prefix, in which case the product ID can be less than 16 characters).
 
-**Note**   Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
+**Note** Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
 
 In this sample, there are two different strings:
 
@@ -199,7 +199,7 @@ You should be aware of the following when you install the MPIO DSM sample:
 
 It is expected that the adapter that hosts the system volumes (boot/paging) will not restart, but that should not be problem if you are not multipathing the boot volume. However, if you are multipathing the boot volume, you will need to restart the system.
 
-**Note**  Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
+**Note** Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
 
-**Note**  Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.
+**Note** Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.
 

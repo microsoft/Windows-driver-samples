@@ -39,7 +39,7 @@ The test application, *kbftest.exe* is also built as part of the solution under 
 Locate the built driver package
 -------------------------------
 
-In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are Win7 Debug and x64, the package is your solution folder under x64\\Win7Debug\\Package.
+In File Explorer, navigate to the folder that contains your built driver package. The location of this folder varies depending on what you set for configuration and platform. For example, if your settings are **Debug** and **x64**, the package is your solution folder under \\Debug\\Package.
 
 The package contains these files:
 
@@ -69,9 +69,9 @@ Using MSBuild
 
 As an alternative to building the Kbfiltr Filter Driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, kbfiltr.sln. Use the [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
 
-**msbuild /p:configuration=”Win7 Debug” /p:platform=”x64” kbfiltr.sln**
+**msbuild /p:configuration="Debug" /p:platform="x64" kbfiltr.sln**
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”win32” kbfiltr.sln**
+**msbuild /p:configuration="Release" /p:platform="Win32" kbfiltr.sln**
 
 For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
@@ -82,8 +82,7 @@ The computer where you install the driver is called the *target computer* or the
 
 The process of moving the driver package to the target computer and installing the driver is called *deploying the driver*. You can deploy kbfiltr sample driver automatically or manually.
 
-Automatic deployment
---------------------
+### Automatic deployment
 
 Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
 
@@ -91,8 +90,7 @@ Before you automatically deploy a driver, you must provision the target computer
 2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Install and Verify**, and choose **Default Driver Package Installation Task** in the list. Click **OK**.
 3.  On the **Build** menu, choose **Deploy Package** or **Build Solution**.
 
-Manual deployment
------------------
+### Manual deployment
 
 Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
 
@@ -113,7 +111,7 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 Testing
 -------
 
-To use the test application provided with the sample, it must be copied to the target computer manually. Save the kbftest.exe file from the folder where the build result is placed (for example, exe\\x64\\Win7Debug). This file is copied somewhere on the target, possibly where the driver package files are located. The test application is the executed on the target computer in a Command Prompt using **kbftest** as the command.
+To use the test application provided with the sample, it must be copied to the target computer manually. Save the kbftest.exe file from the folder where the build result is placed (for example, exe\\Debug). This file is copied somewhere on the target, possibly where the driver package files are located. The test application is the executed on the target computer in a Command Prompt using **kbftest** as the command.
 
-**Tip**  To avoid DLL dependencies for kbftext.exe, and the need to copy additional files, select the statically linked run-time library when building.
+**Tip** To avoid DLL dependencies for kbftext.exe, and the need to copy additional files, select the statically linked run-time library when building.
 

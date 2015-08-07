@@ -40,9 +40,9 @@ In Visual Studio, click **Build** \> **Build Solution**.
 
 **4. Locate the built driver package**
 
-In File Explorer, navigate to the folder that contains the files for the sample. For example, you would navigate to *C:\Windows-driver-samples\audio\sysvad*, if that's the folder you specified in the preceding Step 1.
+In File Explorer, navigate to the folder that contains the sample files. For example, you would navigate to *C:\\Documents\\Windows-driver-samples\\audio\\sysvad*, if that's the folder you specified in the preceding Step 1.
 
-In the folder, the location of the driver package varies depending on the configuration and platform settings that you selected in the **Configuration Manager**. For example, if you left the default settings unchanged, then the built driver package will be saved to a folder named *Debug* inside the same folder as the extracted files. Double-click the folder for the built driver package, and then double-click the folder named *package*.
+In the folder, the location of the driver package varies depending on the configuration and platform settings that you selected in the **Configuration Manager**. For example, if you left the default settings unchanged, then the built driver package will be saved to a folder named *Debug* inside the same folder as the sample files. Double-click the folder for the built driver package, and then double-click the folder named *package*.
 
 The package should contain these files:
 

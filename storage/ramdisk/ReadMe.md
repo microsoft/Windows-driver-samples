@@ -8,11 +8,11 @@ Build the sample
 
 ### Open the driver solution in Visual Studio ###
 
-Navigate to the folder that has the extracted sample. Double click the solution file, ramdisk.sln. In Microsoft Visual Studio, locate Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has two projects. There is a driver project named **WdfRamdisk** and a package project named **package** (lower case).
+In Visual Studio, open the solution file, ramdisk.sln, and locate Solution Explorer (if this is not already open, choose **Solution Explorer** from the **View** menu). In Solution Explorer, you can see one solution that has two projects. There is a driver project named **WdfRamdisk** and a package project named **package** (lower case).
 
 ### Set the configuration and platform in Visual Studio
 
-In Visual Studio, in Solution Explorer, right click **Solution ‘ramdisk’ (2 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. Here are some examples of configuration and platform settings.
+In Visual Studio, in Solution Explorer, right click **Solution 'ramdisk'(2 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. Here are some examples of configuration and platform settings.
 
 ### Build the sample using Visual Studio ###
 

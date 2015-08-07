@@ -16,8 +16,6 @@ Related topics
 
 [Windows Store device apps for cameras](http://go.microsoft.com/fwlink/p/?LinkId=306683)
 
-[Windows 8 device experience](http://go.microsoft.com/fwlink/p/?linkid=241442)
-
 [Media Foundation Transforms](http://msdn.microsoft.com/en-us/library/windows/hardware/ms703138)
 
 [Roadmap for Developing Streaming Media Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff568130)
