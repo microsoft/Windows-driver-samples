@@ -9,7 +9,7 @@ Use Visual Studio 2015 and Windows Driver Kit (WDK) 10 to build, test, and deplo
 ### Windows 10 Driver Kit (WDK)
 Take a look at the compilation of the new and changed driver-related content for Windows 10. Areas of improvement include camera, print, display, Near Field Communication (NFC), WLAN, Bluetooth, and more.
 
-[Find out what’s new in the WDK](http://go.microsoft.com/fwlink/p/?LinkId=528349 "Find out what's new in the WDK")
+[Find out what's new in the WDK](http://go.microsoft.com/fwlink/p/?LinkId=528349 "Find out what's new in the WDK")
 
 ### Universal Windows drivers
 Write one driver that runs on both Windows 10 for desktop editions and Windows 10 Mobile devices, as well as other Windows 10 editions that share a common set of interfaces.
@@ -22,7 +22,7 @@ The Windows Driver Frameworks (WDF) are a set of libraries that make it simple t
 [WDF driver development guide](http://go.microsoft.com/fwlink/p/?LinkId=524489 "WDF driver development guide")
 
 ### Samples
-Use the samples in this repo to guide your Windows driver development. Whether you’re just getting started or porting an older driver to the newest version of Windows, code samples are valuable guides on how to write drivers.
+Use the samples in this repo to guide your Windows driver development. Whether you're just getting started or porting an older driver to the newest version of Windows, code samples are valuable guides on how to write drivers.
 
 ### Build your first driver
 If you're writing your first driver, use these exercises to get started. Each exercise is independent of the others, so you can do them in any order.

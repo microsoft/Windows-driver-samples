@@ -24,7 +24,7 @@ If you have a different USB device, you can still use the driver by adding the d
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
 
-In Visual Studio, in Solution Explorer, right click **Solution ‘usbsamp’ (3 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. 
+In Visual Studio, in Solution Explorer, right click **Solution 'usbsamp' (3 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for both the driver project and the package project. Do not check the **Deploy** boxes. 
 
 Build the sample using Visual Studio
 ------------------------------------

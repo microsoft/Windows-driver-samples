@@ -37,15 +37,15 @@ The following is a list of key KMDF interfaces demonstrated in this sample:
 
 Note: This sample provides an example of a minimal driver intended for educational purposes. Neither the driver nor its sample test programs are intended for use in a production environment.
 
-As stated earlier, this sample is meant to demonstrate how to write a KMDF driver for a generic PCI device and not for PCI network controllers. For network controllers, you should write a monolithic NDIS miniport driver based on the samples given under the src\\network\\ndis directory.
+As stated earlier, this sample is meant to demonstrate how to write a KMDF driver for a generic PCI device and not for PCI network controllers. For network controllers, you should write a monolithic NDIS miniport driver based on the samples given under the \\network\\ndis directory.
 
-Note that it is still possible to use a subset of KMDF APIs when writing a NDIS miniport (see src\\network\\ndis\\usbnwifi directory for a sample on how to use KMDF interfaces to talk to USB device in an NDIS miniport).
+Note that it is still possible to use a subset of KMDF APIs when writing a NDIS miniport (see \\network\\ndis\\usbnwifi directory for a sample on how to use KMDF interfaces to talk to USB device in an NDIS miniport).
 
 The sample driver has been tested on the following Intel Ethernet controllers:
 
 Device Description | Hardware ID
 -------------------|------------
-IBM Netfinity 10/100 Ethernet Adapter |  PCIVEN_8086&DEV_1229&SUBSYS_005C1014&amp;REV_05
+IBM Netfinity 10/100 Ethernet Adapter |  PCIVEN_8086&DEV_1229&SUBSYS_005C1014&REV_05
 Intel(R) PRO/100+ Management Adapter with Alert On LAN | PCI\VEN_8086&DEV_1229&SUBSYS_000E8086&REV_08
 Intel 8255x-based PCI Ethernet Adapter (10/100) | PCI\VEN_8086&DEV_1229&SUBSYS_00000000&REV_01
 Intel Pro/100 S Server Adapter | PCI\VEN_8086&DEV_1229&SUBSYS_00508086&REV_0D
@@ -91,7 +91,7 @@ The PCIDRV sample acts as a power policy owner of the device and implements all 
 INSTALLATION
 ------------
 
-The driver can be installed as a Net class driver or as a standalone driver (user defined class). The KMDF versions of the INF files are dynamically generated from .INX file. In addition to the driver files, you have to include the WDF coinstaller DLL from the src\\redist\\wdf folder of the WDK.
+The driver can be installed as a Net class driver or as a standalone driver (user defined class). The KMDF versions of the INF files are dynamically generated from .INX file. In addition to the driver files, you have to include the WDF coinstaller DLL from the \\redist\\wdf folder of the WDK.
 
 You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 

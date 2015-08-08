@@ -8,13 +8,13 @@ Related topics
 --------------
 
 [Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
-
 [Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
 
 Related technologies
 --------------------
 
-[Creating Framework-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540774) , [Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
+[Creating Framework-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540774) 
+[Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
 
 Build the sample
 ----------------
@@ -42,7 +42,7 @@ Kernel-Mode Driver Framework (KMDF) does not support HID minidrivers natively be
 
 You can resolve this ownership conflict by using a driver stack that consists of a minimal WDM driver as a function driver and a complete KMDF driver as a lower filter driver. The function driver registers with the HID class (so**hidclass.sys** owns its dispatch table) and forwards all of the requests to the lower filter driver. The lower filter driver (KMDF owns the dispatch table) processes all of the requests.
 
-The minimal function driver code is located in the src\\hid\\hidusbfx2\\hidkmdf directory (the driver binary is named **hidkmdf.sys**), and the lower filter driver code is located in the src\\hid\\hidusbfx2\\sys folder (the binary is named **hidusbfx2.sys**). The function driver is a minimal WDM driver and you can reuse it without any modification. Remember to rename the driver binary when you reuse it, to avoid a name conflict. You need to modify the KMDF filter driver according to your device's requirements.
+The minimal function driver code is located in the \\hidusbfx2\\hidkmdf directory (the driver binary is named **hidkmdf.sys**), and the lower filter driver code is located in the \\hidusbfx2\\sys folder (the binary is named **hidusbfx2.sys**). The function driver is a minimal WDM driver and you can reuse it without any modification. Remember to rename the driver binary when you reuse it, to avoid a name conflict. You need to modify the KMDF filter driver according to your device's requirements.
 
 **Mapping a Non-HID USB Device to HID**
 
@@ -60,41 +60,9 @@ The HID class driver creates a driver stack for each top-level collection. The o
 
 The switch pack on the USB device is mapped as hot keys that are commonly found on modern keyboards. This mapping is possible by exposing the switch pack as two system-supported collections: consumer control and system control. The consumer control collection provides a mapping for some application-launch and application-action keys, as shown in the following table. The system control collection provides a mapping for the power sleep function.
 
-Switch
-
-1
-
-2
-
-3
-
-4
-
-5
-
-6
-
-7
-
-8
-
-Mapping
-
-Sleep
-
-Calculator
-
-Mail
-
-Favorites
-
-Refresh
-
-Forward
-
-Back
-
-Browser
+Switch | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 
+-------|---|---|---|---|---|---|---|---
+Mapping | Sleep | Calculator | Mail | Favorites | Refresh | Forward | Back | Browser
 
 **Segment Display and Bar Graph**
 
@@ -102,97 +70,17 @@ The segment display and bar graph are mapped as HID feature controls that you ca
 
 **Segment Display Mapping**
 
-Usage ID
-
-0xD7
-
-0x06
-
-0xB3
-
-0xA7
-
-0x66
-
-0xE5
-
-0xF4
-
-0x07
-
-0xF7
-
-0x67
-
-Mapping
-
-Display 0
-
-Display 1
-
-Display 2
-
-Display 3
-
-Display 4
-
-Display 5
-
-Display 6
-
-Display 7
-
-Display 8
-
-Display 9
+Usage ID | 0xD7 | 0x06 | 0xB3 | 0xA7 | 0x66 | 0xE5 | 0xF4 | 0x07 | 0xF7 | 0x67
+---------|------|------|------|------|------|------|------|------|------|------
+Mapping | Display 0 | Display 1 | Display 2 | Display 3 | Display 4 | Display 5 | Display 6 | Display 7 | Display 8 | Display 9
 
 **Bar Graph Mapping**
 
 Note that you can OR these values to light multiple LEDs.
 
-Usage ID
-
-0x01
-
-0x02
-
-0x04
-
-0x08
-
-0x10
-
-0x20
-
-0x40
-
-0x80
-
-0xFF
-
-0x00
-
-Mapping
-
-LED 1 ON
-
-LED 2ON
-
-LED 3ON
-
-LED 4ON
-
-LED 5ON
-
-LED 6ON
-
-LED 7ON
-
-LED 8ON
-
-All LEDS ON
-
-All LEDS OFF
+Usage ID | 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80 | 0xFF | 0x00
+---------|------|------|------|------|------|------|------|------|------|------
+Mapping | LED 1 ON | LED 2 ON | LED 3 ON | LED 4 ON | LED 5 ON | LED 6 ON | LED 7 ON | LED 8 ON | All LEDS ON | All LEDS OFF
 
 **Support for Selective Suspend**
 
@@ -232,7 +120,7 @@ Testing
 
 **Testing Bar Graph and 7-Segment Display**
 
-1.  Start the **hidclient.exe** GUI application from the WDK. The application source code is located in the *src\\hid\\hclient* directory, and you build it by using the appropriate build environment.
+1.  Start the **hidclient.exe** GUI application from the WDK. The application source code is located in the \\hid\\hclient directory, and you build it by using the appropriate build environment.
 
 2.  From the **HID Device to examine** menu, select the device that contains "UsagePage 0ff00, Usage 01" as a substring.
 
@@ -248,13 +136,8 @@ Testing
 
 **Report Descriptor**
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>  // Consumer control collection
+```
+   // Consumer control collection
  
    0x05,0x0C,  // USAGE_PAGE (Consumer Page)
  
@@ -343,61 +226,36 @@ Testing
    0xB1,0x00,  //  Feature (Data,Ary,Abs)
  
    0xC0  // END_COLLECTION </code></pre></td>
-</tr>
-</tbody>
-</table>
+```
 
 Code Tour
 ---------
 
-This section includes a file manifest of all the files in the src\\hid\\hidusbfx2 directory.
+This section includes a file manifest of the files in the \\hidusbfx2 directory.
 
-**File Manifest**
+### File Manifest
 
-src\\hid\\hidusbfx2\\hidkmdf
+**\\hidusbfx2\\hidkmdf**
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>hidkmdf.c</p>
-<p>Contains code for driver entry and dispatch</p></td>
-<td align="left"><p>Sources</p>
-<p>WDK sources file</p></td>
-</tr>
-</tbody>
-</table>
+File | Description 
+-----|------------
+hidkmdf.c | Contains code for driver entry and dispatch
+Sources | WDK sources file
+Makefile | WDK build environment makefile
+hidkmdf.rc |  Resource file for the driver
+ 
+**\\hidusbfx2\\sys**
 
-src\\hid\\hidusbfx2\\sys
-
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>Driver.c</p>
-<p>Contains code for driver entry and dispatch functions</p></td>
-<td align="left"><p>hid.c</p>
-<p>Contains code for handling HID IOCTLS</p></td>
-</tr>
-</tbody>
-</table>
-
-
+File | Description 
+-----|------------
+Driver.c | Contains code for driver entry and dispatch functions
+hid.c | Contains code for handling HID IOCTLS
+usb.c | Contains code for communicating with USB stack
+Trace.h | Contains trace-related definitions
+Hidusbfx2.h | Contains type definitions and function declarations
+Hidusbfx2.rc | Resource file for the driver
+Hidusbfx2.inx | INX file for the driver
+Sources | WDK sources file
+Makefile | WDK build environment make file
+Makefile.inc | A makefile that defines custom build actions, including the conversion of the .INX file into a .INF file
+ 

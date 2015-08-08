@@ -23,8 +23,6 @@ This sample would be useful for writing a driver that does not interact with any
 
 The sample is accompanied by a simple multithreaded Win32 console application to test the driver.
 
-This sample is adapted from the original IOCTL sample present in WDK (src\\general\\ioctl).
-
 *Disclaimer*: This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
 

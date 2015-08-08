@@ -7,7 +7,7 @@ This sample driver is a minimal driver meant to demonstrate the usage of the API
 
 **SIGNING THE SAMPLE**
 
-Early Launch drivers are required to be signed with a code-signing certificate that also contains the Early Launch EKU "1.3.6.1.4.1.311.61.4.1". In a production environment, Early Launch drivers are signed by Microsoft for qualifying Anti-Malware vendors with a WHQL certificate that contains this EKU. The makecert.exe tool can be used to generate a self-signed test certificate that contains both the Early Launch EKU and the “1.3.6.1.5.5.7.3.3” Code Signing EKU. Once a certificate of this form has been created, signtool.exe can be used to sign elamsample.sys.
+Early Launch drivers are required to be signed with a code-signing certificate that also contains the Early Launch EKU "1.3.6.1.4.1.311.61.4.1". In a production environment, Early Launch drivers are signed by Microsoft for qualifying Anti-Malware vendors with a WHQL certificate that contains this EKU. The makecert.exe tool can be used to generate a self-signed test certificate that contains both the Early Launch EKU and the "1.3.6.1.5.5.7.3.3" Code Signing EKU. Once a certificate of this form has been created, signtool.exe can be used to sign elamsample.sys.
 
 
 Run the sample

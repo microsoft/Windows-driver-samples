@@ -22,5 +22,5 @@ The default parameters in this sample are as follows:
 -   Letter-sized physical page (can override in print ticket).
 -   0.25-inch margins (creating an 8-inch by 10.5-inch imageable area).
 -   Scaling is set to FitApplicationBleedSizeToImageableSize.
--   •Destination resolution set to 96 dpi (can override in print ticket).
+-   Destination resolution set to 96 dpi (can override in print ticket).
 

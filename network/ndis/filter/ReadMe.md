@@ -82,14 +82,14 @@ Viewing trace messages
 
 On the host computer, in the kernel-mode debugger, verify that you see trace messages similar to these:
 ```
-NDISLWF: ===&gt;DriverEntry...
-NDISLWF: ===&gt;FilterRegisterOptions
-NDISLWF: &lt;===FilterRegisterOptions
-NDISLWF: ==&gt;FilterRegisterDevice
-NDISLWF: &lt;==FilterRegisterDevice: 0
-NDISLWF: &lt;===DriverEntry, Status =        0
-NDISLWF: ===&gt;FilterAttach: NdisFilterHandle FFFFE00000F73650
-NDISLWF: &lt;===FilterAttach:    Status 0
+NDISLWF: ===>DriverEntry...
+NDISLWF: ===>FilterRegisterOptions
+NDISLWF: <===FilterRegisterOptions
+NDISLWF: ==>FilterRegisterDevice
+NDISLWF: <==FilterRegisterDevice: 0
+NDISLWF: <===DriverEntry, Status =        0
+NDISLWF: ===>FilterAttach: NdisFilterHandle FFFFE00000F73650
+NDISLWF: <===FilterAttach:    Status 0
 ```
 What the Ndislwf sample driver does:
 ------------------------------------
@@ -101,6 +101,6 @@ What the Ndislwf sample driver does:
 5.  All requests and sends coming from overlying drivers for the Ndislwf filter driver are repackaged if necessary and sent down to NDIS, to be passed to the underlying NDIS driver.
 6.  All indications arriving from an underlying NDIS driver are forwarded up by Ndislwf filter driver.
 7.  NDIS calls the filter's [*FilterPause*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549957) handler when NDIS needs to detach the filter from the stack or there is some configuration changes in the stack. In processing the pause request from NDIS, the Ndislwf driver waits for all its own outstanding requests to be completed before it completes the pause request.
-8.  NDIS calls the Ndislwf driver’s [*FilterDetach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549918) entry point when NDIS needs to detach a filter module from NDIS stack. The *FilterDetach* handler should free all the memory allocation done in [*FilterAttach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549905), and undo the operations it did in *FilterAttach* Handler.
+8.  NDIS calls the Ndislwf driver's [*FilterDetach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549918) entry point when NDIS needs to detach a filter module from NDIS stack. The *FilterDetach* handler should free all the memory allocation done in [*FilterAttach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549905), and undo the operations it did in *FilterAttach* Handler.
 
 

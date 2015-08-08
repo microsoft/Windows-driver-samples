@@ -18,7 +18,7 @@ Windows provides Serenum to support Serial and other serial port function driver
 
 File | Description 
 -----|------------
-Enum.c | Functions that enumerate external serial devices—the main purpose of this driver 
+Enum.c | Functions that enumerate external serial devices (the main purpose of this driver)
 Pnp.c | Plug and Play support code 
 Power.c | Power support code 
 Serenum.c | Basic driver functionality 

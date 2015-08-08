@@ -10,7 +10,7 @@ Run the sample
 
 1.  In the **Solutions Explorer** window, select the driver project (sdvmp.vcxProj).
 
-    From the **Driver** menu, click **Launch Static Driver Verifier…**.
+    From the **Driver** menu, click **Launch Static Driver Verifier...**.
 
     This opens the Static Driver Verifier application, where you can control, configure, and schedule when Static Driver Verifier performs an analysis.
 

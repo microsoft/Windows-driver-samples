@@ -65,7 +65,7 @@ cmdRescan
 This command shows the correct way to rescan for all Plug & Play devices that may have previously been removed, or that otherwise require a rescan to detect them.
 
 cmdDPAdd  
-This command allows you to add a Driver Package to the machine. The main functionality of this command demonstrates the use of [**SetupCopyOEMInf**](http://msdn.microsoft.com/en-us/library/windows/hardware/). Adding a Driver Package to the machine doesn’t mean the drivers are installed on devices, it simply means the drivers are available automatically when a new device is plugged in or a existing device is updated.
+This command allows you to add a Driver Package to the machine. The main functionality of this command demonstrates the use of [**SetupCopyOEMInf**](http://msdn.microsoft.com/en-us/library/windows/hardware/). Adding a Driver Package to the machine doesn't mean the drivers are installed on devices, it simply means the drivers are available automatically when a new device is plugged in or a existing device is updated.
 
 cmdDPDelete  
 This command allows you to uninstall a Driver Package from the machine. The main functionality of this command demonstrates the use of [**SetupUninstallOEMInf**](http://msdn.microsoft.com/en-us/library/windows/hardware/). Removing a Driver Package from the machine does not uninstall the drivers associated with a device. If you want to accomplish both then use *cmdRemove* on all the devices using a given Driver Package and then *cmdDPDelete* to remove the Driver Package itself from the machine.

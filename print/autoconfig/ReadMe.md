@@ -5,7 +5,7 @@ This sample demonstrates how to implement auto-configuration in v4 print drivers
 
 **Auto-configuration basics**
 
-Many printers ship with optional components which are not present in all versions of the printer. For these printers, it’s important that the driver only shows options which are enabled by the currently installed hardware. For example, if a stapling unit is optional for a particular printer, then the driver shouldn’t expose the stapling feature to the end user if that unit is not installed.
+Many printers ship with optional components which are not present in all versions of the printer. For these printers, it's important that the driver only shows options which are enabled by the currently installed hardware. For example, if a stapling unit is optional for a particular printer, then the driver shouldn't expose the stapling feature to the end user if that unit is not installed.
 
 Windows auto-configuration allows a print driver to specify a mapping between driver installable options and the state of the printer as expressed through the Bidi Schema. 
 
@@ -17,7 +17,7 @@ For more information on the Bidi Schema, see [Bidirectional Communication Schema
 Build the sample
 ----------------
 
-The auto-configuration sample doesn’t have any binaries to be built. It may be installed by using **Add Printer Wizard** and supplying the AutoCnfg.INF as the INF file.
+The auto-configuration sample doesn't have any binaries to be built. It may be installed by using **Add Printer Wizard** and supplying the AutoCnfg.INF as the INF file.
 
 But to build a signed driver package using Windows Driver Kit (WDK) 10 and Visual Studio 2015, for the project file (csproj) that ships with the auto-configuration sample, perform the following steps.
 

@@ -8,16 +8,16 @@ This sample features enhanced parameter validation and overflow detection.
 Provision a target computer
 ---------------------------
 
-After you've installed the sample on your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution…**, navigate to the directory where you’ve copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
+After you've installed the sample on your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution...**, navigate to the directory where you've copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
 
-In the **Solution Explorer** pane in Visual Studio, at the top is **Solution ‘avshws’**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with the WDK](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
+In the **Solution Explorer** pane in Visual Studio, at the top is **Solution 'avshws'**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with the WDK](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
 
 Provision your target computer using instructions in, for example, [Preparing a Computer for Provisioning](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265573). Ensure that in the **Network and Sharing Center** control panel your target computer has **Network Discovery** and **File and Printer Sharing** enabled.
 
 Deploy the driver to the target computer
 ----------------------------------------
 
-Now you can deploy the Avshws driver that you've just built to the target computer, using guidance in [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Specifically, find the package file under the **Package** folder in the Avshws solution. Right-click **package** and select **Properties**. Under Configuration Properties, click **Driver install** and then **Deployment**. Here you must click the check box for **Enable deployment**, and then click the button to the right of **\<Configure Computer…\>**. In the next dialog you enter the **Target Computer Name** and can let the host computer automatically provision the target computer and set up debugger options.
+Now you can deploy the Avshws driver that you've just built to the target computer, using guidance in [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Specifically, find the package file under the **Package** folder in the Avshws solution. Right-click **package** and select **Properties**. Under Configuration Properties, click **Driver install** and then **Deployment**. Here you must click the check box for **Enable deployment**, and then click the button to the right of **\<Configure Computer...\>**. In the next dialog you enter the **Target Computer Name** and can let the host computer automatically provision the target computer and set up debugger options.
 
 Finally, in Visual Studio, from the **Build** menu select **Deploy Solution** to deploy the sample to the target computer. On the target computer, you can see the deployed package in the **%Systemdrive%\\drivertest\\drivers** folder.
 
@@ -32,7 +32,7 @@ On the target computer, open Device Manager, and follow these steps:
 4.  You should see the **AVStream Simulated Hardware Sample** in the **Model** pane on the right. Click this and then click **Next**.
 5.  Click **Next** again to install the driver, and then click **Finish** to exit the wizard.
 
-The sample driver now appears in the Device Manager console tree under **Sound, video and game controllers**. The Avshws INF file will be on the system drive at, for example, **…windows\\System32\\DriverStore\\FileRepository\\**.
+The sample driver now appears in the Device Manager console tree under **Sound, video and game controllers**. The Avshws INF file will be on the system drive at, for example, **...windows\\System32\\DriverStore\\FileRepository\\**.
 
 Sample code hierarchy
 ---------------------
@@ -56,7 +56,7 @@ Follow these steps to see how the sample driver functions:
 
 1.  After installation has completed, access the driver through the Graphedt tool. Graphedt.exe is available in the *tools* directory of the WDK.
 2.  Before running GraphEdit, use the regsvr32 utility to register the proppage.dll DLL and to enable GraphEdit to display property pages for some of the built-in Microsoft DirectShow filters. Open an elevated command window with Administrator privileges, and navigate to the WDK or SDK *tools* directory that contains proppage.dll.
-3.  On the command line, type regsvr32 proppage.dll. If the registration succeeds, you’ll get a message, “DllRegisterServer in proppage.dll succeeded.” Click OK.
+3.  On the command line, type regsvr32 proppage.dll. If the registration succeeds, you'll get a message, "DllRegisterServer in proppage.dll succeeded." Click OK.
 4.  In the Graphedt tool, click the **Graph** menu and click **Insert Filters**. The sample appears under "WDM Streaming Capture Devices" as "avshws Source."
 5.  Click **Insert Filter**. The sample appears in the graph as a single filter labeled, "avshws Source." There is one output pin, which is the video capture pin. This pin emits video in YUY2 format.
 6.  Attach this filter to either a DirectShow Video Renderer or to the VMR default video renderer. Then click **Play**.

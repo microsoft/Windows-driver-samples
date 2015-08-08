@@ -11,7 +11,7 @@ This sample is not intended for use in a production environment.
 WPP SOFTWARE TRACING
 --------------------
 
-This sample driver uses WPP Software Tracing in order to log its actions. You can find detailed information on WPP Software Tracing in the WDK documentation. Here is a quick overview of one way to collect trace logs from the sample driver by using the tracing tools that are available in the \\tools\\tracing directory in the WDK. All code for this sample is located in the src\\network\\WSK\\echosrv directory.
+This sample driver uses WPP Software Tracing in order to log its actions. You can find detailed information on WPP Software Tracing in the WDK documentation. Here is a quick overview of one way to collect trace logs from the sample driver by using the tracing tools that are available in the \\tools\\tracing directory in the WDK. All code for this sample is located in \\network\\WSK\\echosrv directory.
 
 1.  In a Command Prompt window, copy Echosrv.ctl and Echosrv.pdb into a directory and change to that directory (cd).
 2.  Start software tracing for the sample driver by typing the following command:

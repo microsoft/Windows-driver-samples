@@ -43,26 +43,12 @@ In File Explorer, navigate to the folder that contains your built driver package
 
 The package contains these files:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Kmdfsamples.cat
-A signed catalog file, which serves as the signature for the entire package.</td>
-<td align="left">kbfiltr.inf
-An information (INF) file that contains information needed to install the driver.</td>
-</tr>
-</tbody>
-</table>
+File | Description 
+-----|------------
+Kmdfsamples.cat | A signed catalog file, which serves as the signature for the entire package. 
+kbfiltr.inf | An information (INF) file that contains information needed to install the driver. 
+WdfCoinstaller010xx.dll | The coinstaller for version 1.xx of KMDF. 
+kbfiltr.sys | The driver file. 
 
 Using MSBuild
 -------------

@@ -21,13 +21,13 @@ In Microsoft Visual Studio, press **F5** to build the sample and then deploy it 
 
 In some cases you might need to install the driver manually, as follows.
 
-1.  Add the following files to the directory given by …\\[x64]\\C++\\Package:
+1.  Add the following files to the directory given by ...\\[x64]\\C++\\Package:
     -   SampleDriver.cat
     -   SampleDriver.inf
     -   SampleDriver.sys
     -   SampleDriver.cer
 
-2.  Unless you’ve provided a production certificate, you should manually install the SampleDriver.cer digital certificate with the following command:
+2.  Unless you've provided a production certificate, you should manually install the SampleDriver.cer digital certificate with the following command:
 
     `Certutil.exe -addstore root SampleDriver.cer`
 
@@ -45,23 +45,12 @@ In some cases you might need to install the driver manually, as follows.
 
 To install the KMDOD sample driver on a GPU that is an Advanced Configuration and Power Interface (ACPI) device, add these lines to the `[MS]`, `[MS.NTamd64]`, and `[MS.NTarm]` sections of the Sampledisplay.inf file:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Text</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>&quot; Kernel mode display only sample driver &quot; = KDODSamp_Inst, ACPI\CLS_0003&amp;SUBCLS_0000
-&quot; Kernel mode display only sample driver &quot; = KDODSamp_Inst, ACPI\CLS_0003&amp;SUBCLS_0001
-&quot; Kernel mode display only sample driver &quot; = KDODSamp_Inst, ACPI\CLS_0003&amp;SUBCLS_0003</code></pre></td>
-</tr>
-</tbody>
-</table>
+```
+Text
+" Kernel mode display only sample driver " = KDODSamp_Inst, ACPI\CLS_0003&SUBCLS_0000
+" Kernel mode display only sample driver " = KDODSamp_Inst, ACPI\CLS_0003&SUBCLS_0001
+" Kernel mode display only sample driver " = KDODSamp_Inst, ACPI\CLS_0003&SUBCLS_0003
+```
 
 This new code provides generic identifiers for ACPI hardware.
 

@@ -41,7 +41,7 @@ Here is the overview of the device:
     -   Three events are targeted to the event log:
         -   Failure during the add device routine.
         -   Failure to start the OSR device on a USB 1.1 controller.
-        -   Invocation of the “re-enumerate device” IOCTL.
+        -   Invocation of the "re-enumerate device" IOCTL.
     -   Read/write start/stop events can be used to measure the time taken.
 
 Testing the driver

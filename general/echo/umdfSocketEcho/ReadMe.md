@@ -61,7 +61,7 @@ To test this sample drivers on a checked operating system that you have installe
 Testing
 -------
 
-To test the SocketEcho driver, you can run socketechoserver.exe, which is built from the src\\general\\echo\\umdfSocketEcho\\Exe directory, and echoapp.exe, which is built from the Kernel-Mode Driver Framework (KMDF) samples in the src\\general\\echo\\kmdf directory.
+To test the SocketEcho driver, you can run socketechoserver.exe, which is built from the \\echo\\umdfSocketEcho\\Exe directory, and echoapp.exe, which is built from the Kernel-Mode Driver Framework (KMDF) samples in the \\echo\\kmdf directory.
 
 First, you must install the device as described earlier. Then, run socketechoserver.exe from a Command Prompt window.
 

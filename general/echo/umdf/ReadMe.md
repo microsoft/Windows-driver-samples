@@ -16,7 +16,7 @@ Related technologies
 Testing
 -------
 
-To test the Echo driver, you can run echoapp.exe which is built from src\\general\\echo\\exe.
+To test the Echo driver, you can run echoapp.exe which is built from \\echo\\exe.
 
 First install the device as described above. Then run echoapp.exe.
 

@@ -16,7 +16,7 @@ Build the sample
 
 For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
-The 60 subdirectory (src\\network\\ndis\\ndisprot\_kmdf\\60) indicates that the built sample will be NDIS 6.0 compatible.
+The 60 subdirectory (\\ndisprot\_kmdf\\60) indicates that the built sample will be NDIS 6.0 compatible.
 
 Installation
 ------------
@@ -45,60 +45,40 @@ From an administrator command prompt, to start the driver, type **Net start ndis
 
 To stop the driver, type **Net stop ndisprot**.
 
-You can build Prottest.exe from source code located in the src\\network\\ndis\\ndisprot\\6x\\test directory.
+You can build Prottest.exe from source code located in the \\ndisprot\\6x\\test directory.
 
 To test the NDIS 6.0 driver, run prottest. For help on usage, run **prottest -?**.
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>usage: PROTTEST [options] &lt;devicename&gt;
+```
+usage: PROTTEST [options] <devicename>
 options:
  -e: Enumerate devices
  -r: Read
  -w: Write (default)
- -l &lt;length&gt;: length of each packet (default: 100)
- -n &lt;count&gt;: number of packets (defaults to infinity)
- -m &lt;MAC address&gt; (defaults to local MAC)
- -f Use a fake address to send out the packets.</code></pre></td>
-</tr>
-</tbody>
-</table>
+ -l <length>: length of each packet (default: 100)
+ -n <count>: number of packets (defaults to infinity)
+ -m <MAC address> (defaults to local MAC)
+ -f Use a fake address to send out the packets.
+```
+
 
 Prottest exercises the IOCTLs supported by NDISPROT, and sends and/or receives data on the selected device. In order to use Prottest, the user must have administrative privilege. Users should pass down a buffer that is large enough to contain the data returned. If the length of the buffer passed down is smaller than the length of the received data, NDISPROT will only copy part of the data and discard the rest when the given buffer is full.
 
 For an NDIS 6.0 driver, use the -e option on prottest to enumerate all devices to which NDISPROT is bound:
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>C:\prot&gt;prottest -e
+```
+C:\prot>prottest -e
  0. \DEVICE\{9273DA7D-5275-4B9A-AC56-68A49D121F1F}
- - Intel-Based 10/100 Ethernet Card</code></pre></td>
-</tr>
-</tbody>
-</table>
+ - Intel-Based 10/100 Ethernet Card
+```
 
 The following command sends and receives 2 packets on a device. Since these packets are sent to the local MAC address (default), both packets are received. The device name parameter to prottest is picked up from the output of **prottest -e** (see above).
 
-<table>
-<colgroup>
-<col width="100%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"><pre><code>C:\prot&gt;prottest -n 2 \DEVICE\{9273DA7D-5275-4B9A-AC56-68A49D121F1F}
+```
+C:\prot>prottest -n 2 \DEVICE\{9273DA7D-5275-4B9A-AC56-68A49D121F1F}
 DoWriteProc: finished sending 2 packets of 100 bytes each
-DoReadProc finished: read 2 packets</code></pre></td>
-</tr>
-</tbody>
-</table>
+DoReadProc finished: read 2 packets
+```
 
 For security reasons, this driver does not allow packets with fake MAC addresses to be sent from user-mode applications.
 
@@ -109,48 +89,27 @@ File Manifest
 
 **Directory: 60**
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>debug.c</p>
-<p>Routines to aid debugging</p></td>
-<td align="left"><p>debug.h</p>
-<p>Debug macro definitions</p></td>
-</tr>
-</tbody>
-</table>
+File | Description 
+-----|------------
+debug.c | Routines to aid debugging
+debug.h | Debug macro definitions
+excallbk.c | Handles load order dependency between this sample and NDISWDM sample
+macros.h | Spinlock, event, referencing macros
+ndisbind.c | NDIS protocol entry points to handle binding/unbinding from adapters
+ndisprot.h | Data structure definitions
+precomp.h | Contains the precompiled headers
+protuser.h | Has the definitions of ioctls issued by protuser.exe application used on NDIS 6.0 
+nuiouser.h | Has the definitions of ioctls issued by nuiouser.exe application used on NDIS 5.0 
+ndisprot.inf | INF file for installing NDISPROT
+ntdisp.c | NT Entry points and dispatch routines for NDISPROT
+recv.c | NDIS protocol entry points for receiving data, and IRP_MJ_READ processing
 
 **Directory: NotifyOb**
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><p>Common.hpp</p>
-<p>Header file containing the common include files for the project</p></td>
-<td align="left"><p>dllmain.cpp</p>
-<p>Handles loading/unloading of Wdf Coinstaller and the notify object dll</p></td>
-</tr>
-</tbody>
-</table>
-
+File | Description 
+-----|------------
+Common.hpp | Header file containing the common include files for the project
+dllmain.cpp |  Handles loading/unloading of Wdf Coinstaller and the notify object dll
+ProtNotify.idl |  Defines the interfaces for the notify object dll
+ProtNotify.rc |  Resource file for the notify object dll
 

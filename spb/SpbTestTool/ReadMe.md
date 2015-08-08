@@ -58,7 +58,7 @@ The following are the relevant functions in the SpbTestTool peripheral driver fo
 
 Function | Description 
 ---------|------------
-OnPrepareHardware | Traverses the driver’s start resources and caches the connection ID of the I2C or SPI resource. This ID will be used to open the SPB controller later on.
+OnPrepareHardware | Traverses the driver's start resources and caches the connection ID of the I2C or SPI resource. This ID will be used to open the SPB controller later on.
 SpbPeripheralOpen | Opens a handle to the underlying SPB controller via the resource hub. This allows the peripheral driver to be developed without any underlying knowledge of the platform or hardware connections. Instead, the dependency between controller and peripheral is described in ACPI.
 SpbPeripheralClose | Sends IOCTL_SPB_LOCK_CONTROLLER to the SPB controller to lock the bus for exclusive access by this peripheral.
 SpbPeripheralLock | Sends IOCTL_SPB_LOCK_CONTROLLER to the SPB controller to lock the bus for exclusive access by this peripheral.
@@ -74,7 +74,7 @@ The following are the relevant functions in the SpbTestTool peripheral driver fo
 
 Function | Description 
 ---------|------------
-OnPrepareHardware | Traverses the driver’s start resources. If "ConnectInterrupt" is set to 1 in the registry, the driver connects the first interrupt resource found and registers an interrupt service routine.
+OnPrepareHardware | Traverses the driver's start resources. If "ConnectInterrupt" is set to 1 in the registry, the driver connects the first interrupt resource found and registers an interrupt service routine.
 OnInterruptIsr | The interrupt service routine, which has been configured to run at passive-level. Doing so enables the driver to acknowledge or quiesce the interrupt using the SPB interface, which cannot be called at DIRQL. Typically a driver will clear the hardware interrupt and save any volatile information in its ISR, and then it will queue a workitem to continue processing. Our sample driver instead notifies the SpbTestTool app that an interrupt has occurred and calls KeWaitForSingleObject to wait until the interrupt is handled before returning. A "real" driver should never stall in the ISR like this.
 SpbPeripheralWaitOnInterrupt | Called to pend a WaitOnInterrupt request in the driver, which will be completed when the next interrupt occurs.
 SpbPeripheralInterruptNotify | Completes an outstanding WaitOnInterrupt request to inform the SpbTestTool app that an interrupt has occurred.
@@ -82,11 +82,11 @@ SpbPeripheralSignalInterrupt | Notifies the interrupt service routine that the i
 
 ### File manifest
 
-The following source files are in the src\\SPB\\SpbTestTool\\sys folder and are used to build the SpbTestTool.sys and SpbTestTool.inf files.
+The following source files are in the \\SpbTestTool\\sys folder and are used to build the SpbTestTool.sys and SpbTestTool.inf files.
 
 File | Description 
 -----|------------
-driver.h, driver.cpp | Events on the Device Object, and read, write, and IOCTLs from the SpbTestTool application. Implements the driver’s interrupt service routine.
+driver.h, driver.cpp | Events on the Device Object, and read, write, and IOCTLs from the SpbTestTool application. Implements the driver's interrupt service routine.
 internal.h | Common includes and typedefs
 makefile | Redirects to the real makefile that is shared by all components of the WDK.
 peripheral.h, peripheral.cpp | Reflection of the SpbTestTool IOCTLs to the SPB API, including opening the controller via the resource hub and using lock, unlock, read, write, and sequence.
@@ -98,7 +98,7 @@ spbtesttool.h | Private SpbTestTool IOCTLs for use between the application and p
 spbtesttool.inx | Describes the installation of the driver. The build process converts this into an INF.
 trace.h | Sets up WPP tracing.
 
-The following source files are in the src\\SPB\\SpbTestTool\\exe folder and are used to build the SpbTestTool.exe file.
+The following source files are in the \\SpbTestTool\\exe folder and are used to build the SpbTestTool.exe file.
 
 File | Description 
 -----|------------

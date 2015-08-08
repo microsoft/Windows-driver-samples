@@ -24,7 +24,7 @@ readBytes = readBuffer.length;
 
 var cleanArray = [];
            
-for ( i = 0; i &lt; readBytes; i++ ) {
+for ( i = 0; i < readBytes; i++ ) {
     cleanArray[i] = readBuffer.shift();
 }
 ```

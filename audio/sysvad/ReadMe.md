@@ -96,7 +96,7 @@ On the target computer, perform the steps in the **Test the sample** section to 
 
 ### Manual deployment
 
-Before you manually deploy a driver, you must prepare the target computer by turning on test signing and by installing a certificate. You also need to locate the DevCon tool in your WDK installation. After that you’re ready to run the built driver sample.
+Before you manually deploy a driver, you must prepare the target computer by turning on test signing and by installing a certificate. You also need to locate the DevCon tool in your WDK installation. After that you're ready to run the built driver sample.
 
 **1. Prepare the target computer**
 

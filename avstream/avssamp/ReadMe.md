@@ -27,30 +27,25 @@ Audio.cpp lays out a [**KSPIN\_DISPATCH**](http://msdn.microsoft.com/en-us/libra
 
 For more information, see the comments in all .cpp files.
 
-Code tour
----------
+File Manifest
+-------------
 
-**File manifest**
-
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Audio.cpp
-<p>Audio capture pin implementation</p></td>
-<td align="left">Audio.h
-<p>Header file for Audio.cpp</p></td>
-</tr>
-</tbody>
-</table>
-
+File | Description 
+-----|----------
+Audio.cpp | Audio capture pin implementation.
+Audio.h | Header file for Audio.cpp.
+Avssamp.cpp | Main file for the AVStream filter-centric sample.
+Avssamp.h | Main header for the AVStream filter-centric sample.
+Avssamp.inf | Installation information for the AVStream sample driver (avssamp.sys).
+Capture.cpp | Capture pin implementation for all capture pins on the sample filter.
+Capture .h | Capture pin level header for all capture pins on the sample filter.
+Filter.cpp | Capture filter implementation (including frame synthesis) for the fake capture filter.
+Filter.h | Filter level header for the filter-centric capture filter.
+Image.cpp | Image synthesis and overlay code. These objects provide image synthesis (pixel, color-bar, etc) onto RGB24 and UYVY buffers as well as software string overlay into these buffers.
+Image.h | Image synthesis and overlay header.
+Purecall.h | _purecall stub necessary for virtual function usage in drivers.
+Video.cpp | Video capture pin implementation.
+Video.h | Video capture pin header.
+Wave.cpp | Wave object implementation
+Wave.h | Wave object header
 

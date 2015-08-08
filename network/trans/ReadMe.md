@@ -38,7 +38,7 @@ Navigate to the folder that contains the sample. Double click the solution file,
 Set the configuration and platform in Visual Studio
 ---------------------------------------------------
 
-In Visual Studio, in Solution Explorer, right click **Solution ‘WFPSampler’ (5 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for all projects. Do not check the **Deploy** boxes.
+In Visual Studio, in Solution Explorer, right click **Solution 'WFPSampler' (5 projects)**, and choose **Configuration Manager**. Set the configuration and the platform. Make sure that the configuration and platform are the same for all projects. Do not check the **Deploy** boxes.
 
 Set the runtime library for the user-mode application, library, and service
 ---------------------------------------------------------------------------
@@ -82,7 +82,7 @@ wfpsamplercalloutdriver.cat | A signed catalog file, which serves as the signatu
 WFPSamplerCalloutDriver.inf | An information (INF) file that contains information needed to install the driver.
 WFPSamplerCalloutDriver.sys | The WFPSampler driver.
 
-**Note**�The build process might also put WdfCoinstaller010*xx*.dll in the driver folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers.    
+**Note** The build process might also put WdfCoinstaller010*xx*.dll in the driver folder, but this file is not really part of the driver package. The INF file does not reference any coinstallers.    
 
 Because the package does not contain a KMDF coinstaller, it is important that you set the KMDF minor version according to your target operating system when you built the driver.
 
