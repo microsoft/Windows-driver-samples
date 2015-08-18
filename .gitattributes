@@ -16,8 +16,6 @@
 *.htm          text eol=crlf
 *.html         text eol=crlf
 *.idl          text eol=crlf
-*.inf          text eol=crlf
-*.inx          text eol=crlf
 *.js           text eol=crlf
 *.jsproj       text eol=crlf
 *.rc           text eol=crlf
