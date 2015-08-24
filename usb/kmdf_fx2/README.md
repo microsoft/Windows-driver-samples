@@ -10,30 +10,6 @@ The specification for the device is at <http://www.osronline.com/hardware/OSRFX2
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-
-Related topics
---------------
-
-****
-
-[umdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/)
-
-[wdf\_osrfx2](http://msdn.microsoft.com/en-us/library/windows/hardware/)
-
-
-
-Build the sample
-----------------
-
-The default Solution build configuration is **Debug** and **Win32**. 
-
-**To select a configuration and build a driver**
-
-1.  Open the driver project or solution in Visual Studio (find *filtername*.sln or *filtername*.vcxproj).
-2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
-4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
-
 Overview
 --------
 
