@@ -11,9 +11,6 @@ Driver developers can use the framework in this sample to provide support for va
 
 -   The CMiniportTopologyMSVAD interface is the base class for all sample topologies. It has very basic common functions. In addition, this class contains common topology property handlers.
 
-The following table shows the features that are implemented in the various subdirectories of this sample.
-
-
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
 
