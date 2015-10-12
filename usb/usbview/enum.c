@@ -1289,7 +1289,7 @@ EnumerateHubPorts (
         }
 
         if (configDesc != NULL &&
-            connectionInfoEx->DeviceDescriptor.bcdUSB >= 0x0210)
+            connectionInfoEx->DeviceDescriptor.bcdUSB > 0x0200)
         {
             bosDesc = GetBOSDescriptor(hHubDevice,
                                        index);
