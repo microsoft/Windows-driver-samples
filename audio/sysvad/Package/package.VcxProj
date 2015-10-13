@@ -35,6 +35,10 @@
       <Project>{29A5DD25-AB56-4DEE-96AB-21EC2926A300}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\phoneaudiosample.inf" />
+    <None Include="..\tabletaudiosample.inf" />
+  </ItemGroup>
   <PropertyGroup Label="PropertySheets">
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Utility</ConfigurationType>

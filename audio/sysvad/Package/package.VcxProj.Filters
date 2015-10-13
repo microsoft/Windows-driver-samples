@@ -18,4 +18,12 @@
       <UniqueIdentifier>{1028BDCB-C3D9-4F31-845E-AA1B26F6E4BF}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\phoneaudiosample.inf">
+      <Filter>Driver Files</Filter>
+    </None>
+    <None Include="..\tabletaudiosample.inf">
+      <Filter>Driver Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
