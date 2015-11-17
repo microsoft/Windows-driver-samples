@@ -1,0 +1,10 @@
+#include "verrsrc.h"
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "HAL Extension Sample - Timers"
+#define VER_INTERNALNAME_STR        "HalExtSampleTimers.DLL"
+#define VER_ORIGINALFILENAME_STR    "HalExtSampleTimers.DLL"
+
+#include <common.ver>

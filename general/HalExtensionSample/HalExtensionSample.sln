@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HalExtSampleDma", "HalExtSampleDma", "{C258909E-9676-4DCA-AB5E-4134876CC0F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HalExtSampleTimers", "HalExtSampleTimers", "{2F891F34-1182-4F77-8923-AF73DF4844C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HalExtSampleTimers2", "HalExtSampleTimers2", "{20ADC56F-63BE-4671-81B1-D2AC009F7E3C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalExtSampleDma", "HalExtSampleDma\HalExtSampleDma.vcxproj", "{7568DCFB-C421-478A-A809-21EF6EC243BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalExtSampleTimers", "HalExtSampleTimers\HalExtSampleTimers.vcxproj", "{708FC03F-4440-4AF4-B68F-5ADE99A0690B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalExtSampleTimers2", "HalExtSampleTimers2\HalExtSampleTimers2.vcxproj", "{A99E0448-5F6C-42B3-99AA-C43464989418}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Arm = Debug|Arm
+		Release|Arm = Release|Arm
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7568DCFB-C421-478A-A809-21EF6EC243BE}.Debug|Arm.ActiveCfg = Debug|Arm
+		{7568DCFB-C421-478A-A809-21EF6EC243BE}.Debug|Arm.Build.0 = Debug|Arm
+		{7568DCFB-C421-478A-A809-21EF6EC243BE}.Release|Arm.ActiveCfg = Release|Arm
+		{7568DCFB-C421-478A-A809-21EF6EC243BE}.Release|Arm.Build.0 = Release|Arm
+		{708FC03F-4440-4AF4-B68F-5ADE99A0690B}.Debug|Arm.ActiveCfg = Debug|Arm
+		{708FC03F-4440-4AF4-B68F-5ADE99A0690B}.Debug|Arm.Build.0 = Debug|Arm
+		{708FC03F-4440-4AF4-B68F-5ADE99A0690B}.Release|Arm.ActiveCfg = Release|Arm
+		{708FC03F-4440-4AF4-B68F-5ADE99A0690B}.Release|Arm.Build.0 = Release|Arm
+		{A99E0448-5F6C-42B3-99AA-C43464989418}.Debug|Arm.ActiveCfg = Debug|Arm
+		{A99E0448-5F6C-42B3-99AA-C43464989418}.Debug|Arm.Build.0 = Debug|Arm
+		{A99E0448-5F6C-42B3-99AA-C43464989418}.Release|Arm.ActiveCfg = Release|Arm
+		{A99E0448-5F6C-42B3-99AA-C43464989418}.Release|Arm.Build.0 = Release|Arm
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7568DCFB-C421-478A-A809-21EF6EC243BE} = {C258909E-9676-4DCA-AB5E-4134876CC0F1}
+		{708FC03F-4440-4AF4-B68F-5ADE99A0690B} = {2F891F34-1182-4F77-8923-AF73DF4844C2}
+		{A99E0448-5F6C-42B3-99AA-C43464989418} = {20ADC56F-63BE-4671-81B1-D2AC009F7E3C}
+	EndGlobalSection
+EndGlobal
