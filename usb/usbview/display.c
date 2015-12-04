@@ -4870,7 +4870,7 @@ GetVendorString (
     USHORT     idVendor
     )
 {
-    PUSBVENDORID vendorID = NULL;
+    PVENDOR_ID vendorID = NULL;
 
     if (idVendor == 0x0000)
     {
