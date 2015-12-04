@@ -38,11 +38,11 @@ VOID EvtOnBarcodeScanDataRetrieved(_In_ WDFDEVICE Device)
     //  PosEventType::ReleaseDeviceRequested
     
     // The following shows an example of sending barcode scan data
-    WCHAR exampleData[] = L"]0A12345";
-    WCHAR exampleDataLabel[] = L"12345";
+    CHAR exampleData[] = "]0A12345";
+    CHAR exampleDataLabel[] = "12345";
 
     // total size is the struct plus the size of the two strings (minus the null terminators which aren't transmitted).
-    size_t totalSize = sizeof(PosBarcodeScannerDataReceivedEventData) + sizeof(exampleData) - sizeof(WCHAR) + sizeof(exampleDataLabel) - sizeof(WCHAR);
+    size_t totalSize = sizeof(PosBarcodeScannerDataReceivedEventData) + sizeof(exampleData) - sizeof(CHAR) + sizeof(exampleDataLabel) - sizeof(CHAR);
 
     
     // PosCx supports two methods of pending the event data -- one where it takes the WDFMEMORY for the event, and the other where it creates it
@@ -72,19 +72,22 @@ VOID EvtOnBarcodeScanDataRetrieved(_In_ WDFDEVICE Device)
         return;
     }
 
+    // Calculate data and label sizes
+    size_t exampleDataByteCount = sizeof(exampleData) - sizeof(CHAR);
+    size_t exampleLabelByteCount = sizeof(exampleDataLabel) - sizeof(CHAR);
+    
     PosBarcodeScannerDataReceivedEventData* eventHeader = (PosBarcodeScannerDataReceivedEventData*)eventData;
     eventHeader->Header.EventType = PosEventType::BarcodeScannerDataReceived;
     eventHeader->Header.DataLength = (UINT32)totalSize;
     eventHeader->DataType = BarcodeSymbology::Ean13;
+    eventHeader->ScanDataLength = (UINT32)exampleDataByteCount;
+    eventHeader->ScanDataLabelLength = (UINT32)exampleLabelByteCount;
 
     // These use memcpy because wcscpy would append the null terminator and the event data doesn't use it
     BYTE* eventScanData = eventData + sizeof(PosBarcodeScannerDataReceivedEventData);
-    size_t exampleDataByteCount = sizeof(exampleData) - sizeof(WCHAR);
     memcpy(eventScanData, exampleData, exampleDataByteCount);
     BYTE* eventLabelData = eventScanData + exampleDataByteCount;
-    size_t exampleLabelByteCount = sizeof(exampleDataLabel) - sizeof(WCHAR);
     memcpy(eventLabelData, exampleDataLabel, exampleLabelByteCount);
-
 
     // This call actually pends the data to be send to the WinRT APIs.
     status = PosCxPutPendingEventMemory(Device, SCANNER_INTERFACE_TAG, eventMemory, POS_CX_EVENT_ATTR_DATA);

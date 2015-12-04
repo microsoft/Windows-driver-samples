@@ -1,0 +1,38 @@
+TARGETNAME=SampleBarcodeScannerDrv
+TARGETTYPE=DYNLINK
+
+TARGET_DESTINATION=NTTEST\drivers\pos\Samples
+DLLENTRY=_DllMainCRTStartup
+DLLDEF=exports.def
+
+DDK_TARGET_PLATFORM=Universal
+
+UMDF_VERSION_MAJOR=2
+
+USE_MSVCRT=1
+USE_NATIVE_EH=1
+
+USE_STL=1
+STL_VER=STL_VER_CURRENT
+
+
+MSC_WARNING_LEVEL=/W4 /WX 
+
+INCLUDES=$(INCLUDES);\
+         $(DDK_INC_PATH); \
+         $(SDK_INC_PATH)\pos\1.1; \
+         ..\inc; \
+
+PRECOMPILED_INCLUDE=pch.h  
+PRECOMPILED_CXX=1
+
+SOURCES= \
+    Driver.cpp \
+    Device.cpp \
+    File.cpp \
+    Ioctl.cpp \
+    IoRead.cpp \
+    PosEvents.cpp \
+
+TARGETLIBS= \
+            $(SDK_LIB_PATH)\pos\1.1\poscxstub.lib
