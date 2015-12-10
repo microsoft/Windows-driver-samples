@@ -1,15 +1,15 @@
-Slate Virtual Audio Device Driver Sample
+SYSVAD Audio Device Driver Sample
 ========================================
 
-The Microsoft Slate Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
+The SYSVAD audio device driver sample shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
 Some of these audio devices are embedded in the system (for example, speakers, microphone arrays) while others are pluggable (like headphones, speakers, microphones, Bluetooth headsets etc.). The driver uses WaveRT and audio offloading for rendering devices. The driver uses a "virtual audio device" instead of an actual hardware-based adapter, and highlights the different aspects of the audio offloading WDM audio driver architecture.
 
 Driver developers can use the framework in this sample to provide support for various audio devices without concern for hardware dependencies. The framework includes implementations of the following interfaces:
 
--   The CAdapterCommon interface gives the miniports access to virtual mixer hardware. It also implements the **IAdapterPowerManagement** interface.
+-   The *CAdapterCommon* interface gives the miniports access to virtual mixer hardware. It also implements the **IAdapterPowerManagement** interface.
 
--   The CMiniportTopologyMSVAD interface is the base class for all sample topologies. It has very basic common functions. In addition, this class contains common topology property handlers.
+-   The *CMiniportTopologySYSVAD* interface is the base class for all sample topologies. It has very basic common functions. In addition, this class contains common topology property handlers.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
@@ -17,7 +17,7 @@ For more information about the Windows audio engine, see [Exposing Hardware-Offl
 Build the sample
 ----------------
 
-If you simply want to Build this sample driver and don't intend to run or test it, then you do not need a target computer (also called a test computer). If, however, you would like to deploy, run and test this sample driver, then you need a second computer that will server as your target computer. Instructions are provided in the **Run the sample** section to show you how to set up the target computer - also referred to as *provisioning* a target computer.
+If you simply want to Build this sample driver and don't intend to run or test it, then you do not need a target computer (also called a test computer). If, however, you would like to deploy, run and test this sample driver, then you need a second computer that will server as your target computer. Instructions are provided in the **Run the sample** section to show you how to set up the target computer.
 
 Perform the following steps to build this sample driver.
 
@@ -29,7 +29,7 @@ In Visual Studio locate the Solution Explorer. (If this is not already open, cho
 
 **2. Set the sample's configuration and platform**
 
-In Solution Explorer, right-click **Solution 'sysvad' (4 projects)**, and choose **Configuration Manager**. Make sure that the configuration and platform settings are the same for the four projects. By default, the configuration is set to **Debug**, and the platform is set to **Win32** for all the projects. If you make any configuration and/or platform changes for one project, you must make the same changes for the remaining three projects.
+In Solution Explorer, right-click **Solution 'sysvad' (7 projects)**, and choose **Configuration Manager**. Make sure that the configuration and platform settings are the same for the four projects. By default, the configuration is set to **Debug**, and the platform is set to **Win32** for all the projects. If you make any configuration and/or platform changes for one project, you must make the same changes for all of the other projects.
 
 **3. Build the sample using Visual Studio**
 
@@ -43,57 +43,27 @@ In the folder, the location of the driver package varies depending on the config
 
 The package should contain these files:
 
-File | Description 
+File | Description
 -----|------------
-PropPageExt.dll | A sample driver extension for a property page. 
-SlateAudioSample.sys | The driver file. 
-SwapAPO.dll | A sample driver extension for a UI to manage APOs. 
-sysvad.cat | A signed catalog file, which serves as the signature for the entire package. 
-sysvad.inf | An information (INF) file that contains information needed to install the driver. 
-WdfCoinstaller01011.dll | The coinstaller for version 1.xx of KMDF. 
+PropPageExt.dll | A sample driver extension for a property page.
+TabletAudioSample.sys | The tablet (PC) sample driver file.
+PhoneAudioSample.sys | The tablet (PC) sample driver file.
+SwapAPO.dll | A sample driver extension for a UI to manage APOs.
+KeywordDetectorContosoAdapter.dll| A sample keyword detector that is used with voice activation.
+
+Locate the inf file for the platform that you want to work with. For example tabletaudiosample.inf and copy it to the same *package* folder.
 
 Run the sample
 --------------
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from the computer on which you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
-The process of moving the driver package to the target computer and installing the driver is called *deploying* the driver. You can deploy the sample driver, SlateAudioSample, automatically or manually.
+The process of moving the driver package to the target computer and installing the driver is called *deploying* the driver. You can deploy the sample driver, SysvadAudioSample, automatically or manually.
 
-### Automatic deployment
-
-Before you automatically deploy a driver, you must provision the target computer. Verify that the target computer has an ethernet cable connecting it to your local network, and that your host and target computers can ping each other. Then perform the following steps to prepare your host and target computers.
-
-**1. Provision the target computer**
-
-On the target computer install the latest [Windows Driver Kit](http://msdn.microsoft.com/en-us/windows/hardware/gg454513.aspx) (WDK), and then when the installation is completed, navigate to the following folder:
-
-\\Program Files (x86)\\Windows Kits\\10\\Remote\\<*architecture*>\\
-
-For example, if your target computer is an x64 machine, you would navigate to:
-
-\\Program Files (x86)\\Windows Kits\\10\\Remote\\x64\\
-
-Double-click the *WDK Test Target Setup x64-x64\_en-us.msi* file to run it. This program prepares the target computer for provisioning.
-
-On the host computer, in Visual Studio click **Driver** \> **Test** \> **Configure Computers...**, and then click **Add a new computer**.
-
-Type the name of the target computer, select **Provision computer and choose debugger settings**, and click **Next**. In the next window, verify that the **Connection Type** is set to Network. Leave the other (default) settings as they are, and click **Next**. For more information about the settings in this window, see [Getting Set Up for Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450944(v=vs.85).aspx).
-
-**2. Prepare the host computer**
-
-If you haven't already done so, then preform the steps in the **Build the sample** section, to build the sample driver.
-
-In Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties** \> **Driver Install** \> **Deployment**.
-
-Check , **Enable deployment** and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter *\*SYSVAD\_SLATEAUDIO* for the hardware ID. Click **OK**.
-
-On the **Build** menu, choose **Deploy Package** or **Build Solution**. This will deploy the sample driver to your target computer.
-
-On the target computer, perform the steps in the **Test the sample** section to test the sample driver.
 
 ### Manual deployment
 
-Before you manually deploy a driver, you must prepare the target computer by turning on test signing and by installing a certificate. You also need to locate the DevCon tool in your WDK installation. After that you're ready to run the built driver sample.
+Before you manually deploy a driver, you must prepare the target computer by turning on test signing. You also need to locate the DevCon tool in your WDK installation. After that you're ready to install and test driver sample.
 
 **1. Prepare the target computer**
 
@@ -109,35 +79,37 @@ Copy *devcon.exe* to a folder on the target computer where it is easier to find.
 
 Create a folder on the target for the built driver package (for example, *C:\\SysvadDriver*). Copy all the files from the built driver package on the host computer and save them to the folder that you created on the target computer.
 
-Create a folder on the target computer for the certificate created by the build process. For example, you could create a folder named *C:\\Certificates* on the target computer, and then copy *package.cer* to it from the host computer. You can find this certificate in the same folder on the host computer, as the *package* folder that contains the built driver files. On the target computer, right-click the certificate file, and click **Install**, then follow the prompts to install the test certificate.
-
-If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
+If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/library/windows/hardware/dn265571.aspx).
 
 **2. Install the driver**
 
-The SlateAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver. Here's the general syntax for the devcon tool that you will use to install the driver:
+The package folder contains the sample drivers and the three driver extension DLL samples. The following instructions show you how to install and test the sample driver. Here's the general syntax for the devcon tool that you will use to install the driver:
 
 **devcon install \<*INF file*>\<*hardware ID*\>**
 
-The INF file required for installing this driver is *sysvad.inf*. Here's how to find the hardware ID for installing the *SlateAudioSample.sys* sample: On the target computer, navigate to the folder that contains the files for your driver (for example, *C:\\SysvadDriver*). Then right-click the INF file (*sysvad.inf*) and open it with Notepad. Use Ctrl+F to find the [MicrosoftDS] section. Note that there is a comma-separated element at the end of the row. The element after the comma shows the hardware ID. So for this sample, the hardware ID is \*SYSVAD\_SLATEAUDIO.
+The INF file required for installing this driver is *tabletaudiosample.inf*. Here's how to find the hardware ID for installing the *TabletAudioSample.sys* sample: On the target computer, navigate to the folder that contains the files for your driver (for example, *C:\\SysvadDriver*). Then right-click the INF file (*tabletaudiosample.inf*) and open it with Notepad. Use Ctrl+F to find the [HardwareIds] section. Note that there is a comma-separated element at the end of the row. The element after the comma shows the hardware ID. So for this sample, the hardware ID is *Root\sysvad_TabletAudioSample*.
 
 On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
-**devcon install sysvad.inf \*SYSVAD\_SLATEAUDIO**
+**devcon install tabletaudiosample.inf Root\sysvad_TabletAudioSample**
 
-If you get an error message about *devcon* not being recognized, try adding the path to the *devcon* tool. For example, if you copied it to a folder called *C:\\Tools*, then try using the following command:
-
-**c:\\tools\\devcon install sysvad.inf   \*SYSVAD\_SLATEAUDIO**
+If the driver doesn't install, view this log file for additional information using notepad:
+**%windir%\inf\setupapi.dev.log**
 
 For more detailed instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698272(v=vs.85).aspx).
 
 After successfully installing the sample driver, you're now ready to test it.
 
+### Automatic deployment
+
+For information on automatic deployment, see [Provision a computer for driver deployment and testing](https://msdn.microsoft.com/library/windows/hardware/dn745909.aspx).
+
 ### Test the driver
 
-On the target computer, in a Command Prompt window, enter **devmgmt** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate *Microsoft Virtual Audio Device (WDM) - Slate Sample*. This is typically under the **Sound, video and game controllers** node.
+On the target computer, in a Command Prompt window, enter **devmgmt** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate *Microsoft Virtual Audio Device (WDM) - Tablet Sample*. This is typically under the **Sound, video and game controllers** node.
 
-On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Slate Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
+On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Tablet Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
-Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Slate Sample* driver.
+Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Tablet Sample* driver.
 
+You can attach a debugger and set breakpoints to step through the driver code as it runs. For more information, see [Getting Started with Windows Debugging](https://msdn.microsoft.com/library/windows/hardware/mt219729.aspx).  
