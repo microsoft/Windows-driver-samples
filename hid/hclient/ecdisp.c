@@ -2508,7 +2508,7 @@ RoutineDescription:
         tmpLen = strtoul(params -> szListString, &endp, 10);
 
 
-        if (tmpLen > params->ListLength || '\0' != *endp) 
+        if (tmpLen < params->ListLength || '\0' != *endp) 
         {
             free(params -> szListString);     
             params->ListLength = 0;
