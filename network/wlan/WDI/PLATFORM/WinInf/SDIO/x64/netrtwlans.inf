@@ -1,0 +1,1259 @@
+;; netrtwlans.inf 
+;;
+;; Realtek Wireless 802.11b/g/n SDIO Network Adapter
+;;
+;; Copyright (C) 2012 Realtek Semiconductor Corp.
+;;
+;; This release is primarily for WHQL test.
+;;
+
+;; FOR XP/Vista/Win7/Win8
+
+[Version]
+Signature	= "$Windows NT$"
+Class		= Net
+ClassGUID	= {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider	= %Realtek%
+CatalogFile.NT	= netrtwlans.cat		;; for WHQL certified
+DriverVer = 11/23/2015,3008.22.1030.2015
+
+[Manufacturer]
+%Realtek% = Realtek,NTamd64.10.0
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[Realtek.NTamd64.10.0]
+;; For 8723 RTK common		================================================================
+
+;; For 8723 RTK common		================================================================
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_8753
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_B723
+;; Acer
+%RTL8723bs.DeviceDesc% = ACER8723bs.ndi, SD\VID_024C&PID_0623
+;; HP
+%RTL8723bs.DeviceDesc% = HP8723bs.ndi, SD\VID_024C&PID_0523
+;; ECS
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_0524
+;; bestbuy
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_0240
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_0241
+;; For Braswell platform
+%RTL8723bs.DeviceDesc% = RTL8723bs.ndi, SD\VID_024C&PID_0626
+;; Reserved
+%RTL8723bs.DeviceDesc% = RSVD8723bs.ndi, SD\VID_024C&PID_0624
+
+;; For 8188E RTK common		================================================================
+%RTL8188es.DeviceDesc% = RTL8188es.ndi, SD\VID_024C&PID_8188
+%RTL8188es.DeviceDesc% = RTL8188es.ndi, SD\VID_024C&PID_8179 
+
+;; For 8812A RTK common		================================================================
+
+;; For 8814A RTK common		================================================================
+%RTL8814as.DeviceDesc% = RTL8814as.ndi, SD\VID_024C&PID_8813
+
+;; For 8821A RTK common		================================================================
+%RTL8821as.DeviceDesc% = RTL8821as.ndi, SD\VID_024C&PID_8821
+
+;; For 8192ES RTK common		================================================================
+%RTL8192es.DeviceDesc% = RTL8192es.ndi, SD\VID_024C&PID_818B
+
+
+;; For 8703 RTK common		================================================================
+%RTL8703bs.DeviceDesc% = RTL8703bs.ndi, SD\VID_024C&PID_B703
+
+;; For 8188 RTK common		================================================================
+%RTL8188fs.DeviceDesc% = RTL8188fs.ndi, SD\VID_024C&PID_F179
+
+;; For 8822B RTK common		================================================================
+%RTL8822bs.DeviceDesc% = RTL8822bs.ndi, SD\VID_024C&PID_B822
+
+;; For 8723D RTK common		================================================================
+%RTL8723ds.DeviceDesc% = RTL8723ds.ndi, SD\VID_024C&PID_D723
+
+;;----------------------------------------------------------------------------
+;; Realtek 8723as default installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[RTL8723as.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8723as.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8723as.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8723as.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8723bs default installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[RTL8723bs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8723bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, AutoChnlSelon.reg, CIHVS.reg, MCC.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8723bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8723bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+;;----------------------------------------------------------------------------
+;; Acer 8723bs installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[ACER8723bs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8723bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, AutoChnlSelon.reg, CIHVS.reg, RSSI2GridMode_2.reg, MCC.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[ACER8723bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[ACER8723bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+;;----------------------------------------------------------------------------
+;; HP 8723bs installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[HP8723bs.ndi.NT]
+AddReg				= NDIS_64.reg, HP8723bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, AutoChnlSelon.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[HP8723bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[HP8723bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; RSVD 8723bs installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[RSVD8723bs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8723bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, WowlanDisable.reg, 32kEnable.reg, AutoChnlSelon.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RSVD8723bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RSVD8723bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8188eu default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8188es.ndi.NT]
+AddReg				= NDIS_64.reg, RTLWLAN.reg, 11nWirelessMode.reg, Ndis6Set.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8188es.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8188es.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8821as default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8821as.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8821as.common.reg, RTLWLAN.reg, 11acWirelessMode.reg, Ndis6Set.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8821as.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8821as.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8814as default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8814as.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8814as.common.reg, RTLWLAN.reg, 11acWirelessMode.reg, Ndis6Set.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8814as.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8814as.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8192es default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8192es.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8192es.common.reg, RTLWLAN.reg, 11nWirelessMode.reg, Ndis6Set.reg, CIHVS.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8192es.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8192es.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8703bs default installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[RTL8703bs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8703bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, AutoChnlSelon.reg, CIHVS.reg, KFREE_COMMON.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8703bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8703bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8188fs default installation
+;;----------------------------------------------------------------------------
+
+             
+
+
+
+[RTL8188fs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8703bs.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, CIHVS.reg, PnpPreTransOn.reg, AutoChnlSelon.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8188fs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8188fs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+;;----------------------------------------------------------------------------
+;; Realtek 8822bs default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8822bs.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8822bs.common.reg, RTLWLAN.reg, 11acWirelessMode.reg, Ndis6Set.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8822bs.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8822bs.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+
+;;----------------------------------------------------------------------------
+;; Realtek 8723ds default installation
+;;----------------------------------------------------------------------------
+
+
+
+
+
+[RTL8723ds.ndi.NT]
+AddReg				= NDIS_64.reg, RTL8723ds.common.reg, RTLWLAN.reg, Ndis6Set.reg, 11nWirelessMode.reg, ConnectedStandbyEnable.reg, 32kEnable.reg, CIHVS.reg, PnpPreTransOn.reg, AutoChnlSelon.reg
+Include         	= netvwifibus.inf
+Needs				= VWiFiBus.CopyFiles
+Characteristics		= 0x84
+BusType				= 15 
+CopyFiles			= RTWlanS.CopyFiles
+*IfType				= 71            ; IF_TYPE_IEEE80211
+*MediaType			= 16            ; NdisMediumNative802_11
+*PhysicalMediaType	= 9          ; NdisPhysicalMediumNative802_11
+
+[RTL8723ds.ndi.NT.Services]
+AddService			= RtlWlans, 2, RtlWlans.Service, RtlWlans.EventLog
+Include 			= netvwifibus.inf
+Needs 				= VWiFiBus.Services
+
+[RTL8723ds.ndi.NT.HW]
+Include = netvwifibus.inf
+Needs 	= VWiFiBus.PnPFilterRegistration
+
+;;----------------------------------------------------------------------------
+;; OS relative registry.
+;;----------------------------------------------------------------------------
+[NDIS_64.reg]
+HKR, Ndi\Interfaces,	UpperRange, 0, "ndis5,mdcwifi"
+HKR, Ndi\Interfaces,	LowerRange, 0, "wlan,ethernet,vwifi"
+HKR, Ndi,				Service,    0, "RtlWlans"
+;;
+;; OS relative service.
+;;
+[RtlWlans.Service]
+DisplayName    	= %RtlWlans.DeviceDesc.DispName%
+ServiceType    	= 1		; %SERVICE_KERNEL_DRIVER%
+StartType      	= 3		; %SERRVICE_DEMAND_START%
+ErrorControl   	= 1		; %SERRVICE_ERROR_NORMAL%
+ServiceBinary  	= %12%\rtwlans.sys
+LoadOrderGroup 	= NDIS
+
+;;
+;; OS relative event log.
+;;
+[RtlWlans.EventLog]
+AddReg 			= RtlWlans.AddEventLog.reg
+
+[RtlWlans.AddEventLog.reg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported  , 0x00010001, 7
+
+[CIHVS.reg]
+HKR, Ndi\IHVExtensions, ExtensibilityDLL,       0,  "%SystemRoot%\system32\Rtlihvs.dll"
+HKR, Ndi\IHVExtensions, UIExtensibilityCLSID,   0,  "{6C2A8CCA-B2A2-4d81-A3B2-4E15F445C312}"
+HKR, Ndi\IHVExtensions, GroupName,              0,  "Realtek CCX SDK IHV Service"
+HKR, Ndi\IHVExtensions, AdapterOUI,             0x00010001, 0x00e04c
+
+;*******************************************************************************
+; WAPI section
+;*******************************************************************************
+[wapi.reg]
+HKR,defaults,WapiSupport,0,"1"
+HKR,,WapiSupport,0,"1"
+
+;*******************************************************************************
+; RTL8723as common paramters
+;*******************************************************************************
+[RTL8723as.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+
+;*******************************************************************************
+; RTL8723bs common paramters
+;*******************************************************************************
+[RTL8723bs.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,RomDLFwEnable,0,"1"
+HKR,,RomDLFwEnable,0,"1"
+
+HKR,defaults,bFwCtrlPwrOff,0,"1"
+HKR,,bFwCtrlPwrOff,0,"1"
+
+;;HKR,defaults,EnableAdaptivity,0,"0"
+;;HKR,,EnableAdaptivity,0,"0"
+
+HKR,defaults,EnableCarrierSense,0,"0"
+HKR,,EnableCarrierSense,0,"0"
+
+; AOAC reconnect
+HKR,defaults,PnpKeepLink,0,"1"
+HKR,,PnpKeepLink,0,"1"
+
+;; $$ End of RTL8723bs.common.reg
+
+[HP8723bs.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,RomDLFwEnable,0,"1"
+HKR,,RomDLFwEnable,0,"1"
+
+HKR,defaults,bFwCtrlPwrOff,0,"1"
+HKR,,bFwCtrlPwrOff,0,"1"
+
+; Enable Adaptivity
+;;HKR,defaults,EnableAdaptivity,0,"1"
+;;HKR,,EnableAdaptivity,0,"1"
+
+HKR,defaults,EnableCarrierSense,0,"0"
+HKR,,EnableCarrierSense,0,"0"
+
+; Enable Customeized PowerLimit Table
+HKR,,EnableTxPowerLimit,0,"1"
+HKR,,DecryptCustomFile,,"1"
+HKR,,PwrLimitFile,0,"TXPWR_LMT_IEC0921_Enc.txt"
+
+; Regulation WorldWide
+HKR,defaults,PwrTblSel,0,"4"
+HKR,,PwrTblSel,0,"4"
+
+; AOAC reconnect
+HKR,defaults,PnpKeepLink,0,"1"
+HKR,,PnpKeepLink,0,"1"
+
+;; $$ End of HP8723bs.common.reg
+
+;*******************************************************************************
+; RTL8703bs common paramters
+;*******************************************************************************
+[RTL8703bs.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,RomDLFwEnable,0,"1"
+HKR,,RomDLFwEnable,0,"1"
+
+HKR,defaults,bFwCtrlPwrOff,0,"1"
+HKR,,bFwCtrlPwrOff,0,"1"
+
+
+;*******************************************************************************
+; RTL8188Fs common paramters
+;*******************************************************************************
+[RTL8188fs.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,RomDLFwEnable,0,"0"
+HKR,,RomDLFwEnable,0,"0"
+
+HKR,defaults,bFwCtrlPwrOff,0,"1"
+HKR,,bFwCtrlPwrOff,0,"1"
+
+
+;*******************************************************************************
+; RTL8821as common paramters
+;*******************************************************************************
+[RTL8821as.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,bEarlymodeEnable,0,"0"
+HKR,,bEarlymodeEnable,0,"0"
+
+HKR,,StbcCap,0,"17"
+HKR,,LdpcCap,0,"34"
+HKR,,BeamformCap,0,"34"
+
+
+;*******************************************************************************
+; RTL8814as common paramters
+;*******************************************************************************
+[RTL8814as.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,bEarlymodeEnable,0,"0"
+HKR,,bEarlymodeEnable,0,"0"
+
+;; Add for 8814AS, based on 8821AS's modification
+HKR,,StbcCap,0,"17"
+HKR,,LdpcCap,0,"34"
+HKR,,BeamformCap,0,"34"
+
+
+;*******************************************************************************
+; RTL8192es common paramters
+;*******************************************************************************
+[RTL8192es.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,bEarlymodeEnable,0,"0"
+HKR,,bEarlymodeEnable,0,"0"
+
+;*******************************************************************************
+; RTL8822bs common paramters
+;*******************************************************************************
+[RTL8822bs.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,bEarlymodeEnable,0,"0"
+HKR,,bEarlymodeEnable,0,"0"
+
+HKR,,StbcCap,0,"17"
+HKR,,LdpcCap,0,"34"
+HKR,,BeamformCap,0,"34"
+HKR,,ValidRFPath,0,"51"
+HKR,,PreInitMem,0,"1"
+
+
+;*******************************************************************************
+; RTL8723ds common paramters
+;*******************************************************************************
+[RTL8723ds.common.reg]
+HKR,defaults,LedCtrl,0,"1"
+HKR,,LedCtrl,0,"1"
+
+HKR,defaults,QoS,0,"1"
+HKR,,QoS,0,"1"
+
+HKR,defaults,CcxRm,0,"1"
+HKR,,CcxRm,0,"1"
+
+HKR,defaults,CcxOffLineDurUpLimit,0,"0"
+HKR,,CcxOffLineDurUpLimit,0,"0"
+
+HKR,defaults,UsbRxAggMode,0,"1"
+HKR,,UsbRxAggMode,0,"1"
+
+HKR,defaults,bEarlymodeEnable,0,"0"
+HKR,,bEarlymodeEnable,0,"0"
+
+HKR,defaults,LdpcCap,0,"0"
+
+
+;;----------------------------------------------------------------------------
+;; Realtek WLAN NIC parameters
+;;----------------------------------------------------------------------------
+[RTLWLAN.reg]
+
+; Enable Adaptivity
+HKR,,EnableAdaptivity,0,"1"
+
+HKR,defaults,Channel,0,"1"
+HKR,,Channel,0,"1"
+
+;; Antenna Diversity Type
+HKR,defaults,AntennaDivType,0,"0"
+HKR,,AntennaDivType,0,"0"
+
+HKR,defaults,NetworkType,0,"1"
+HKR,,NetworkType,0,"1"
+
+HKR,defaults,StaUapsd,0,"0"
+HKR,,StaUapsd,0,"0"
+
+; For B/G mode and B/G/N mode switch, we will use different wireless mode registry in later section
+HKR,Ndi\params\WirelessMode, 			ParamDesc, 	0, %WL_MODE_STR%
+HKR,Ndi\params\WirelessMode, 			type, 		0, "enum"
+HKR,Ndi\params\WirelessMode, 			default, 	0, "8"
+HKR,Ndi\params\WirelessMode\enum, 		"2", 		0, %IEEE_802_11B_STR%
+HKR,Ndi\params\WirelessMode\enum, 		"4", 		0, %IEEE_802_11BG_STR%
+HKR,Ndi\params\WirelessMode\enum, 		"8", 		0, %IEEE_802_11BGN_STR%
+HKR,defaults,WirelessMode, 0, "8"
+HKR,,WirelessMode, 0, "8"
+
+
+;; For WiFi test, 1: WiFi Config and 0: Performance Config
+HKR,defaults,WiFiConfg,0,"0"
+HKR,,WiFiConfg,0,"0"
+
+HKR,defaults,RxReorder,0,"1"
+HKR,,RxReorder,0,"1"
+
+HKR,,DefaultKeyID,,"0"
+HKR,,DefaultKey0,,""
+HKR,,DefaultKey1,,""
+HKR,,DefaultKey2,,""
+HKR,,DefaultKey3,,""
+
+;Inactive Power Save
+HKR,defaults,InactivePs,0,"0"
+HKR,,InactivePs,0,"0"
+
+;Leisure Power Save
+HKR,defaults,bLeisurePs,0,"2"
+HKR,,bLeisurePs,0,"2"
+
+;Fw Control LPS
+HKR,defaults,bFwCtrlLPS,0,"1"
+HKR,,bFwCtrlLPS,0,"1"
+
+;; LPS Interval
+;HKR,defaults,LPSIntvl,0,"3"
+HKR,,LPSIntvl,0,"3"
+
+HKR,,WEPinNmode,0,"0"
+
+HKR,defaults,RxSC,0,"0"
+HKR,,RxSC,0,"0"
+
+HKR,defaults,TxSC,0,"0"
+HKR,,TxSC,0,"0"
+
+HKR,defaults,NblRacingWA,0,"1"
+HKR,,NblRacingWA,0,"1"
+
+HKR,defaults,SuspendTimerInLowPwr,0,"1"
+HKR,,SuspendTimerInLowPwr,0,"1"
+
+;; Rx reorder pending time
+HKR,,RxReorder_PendTime,0,"100"
+
+;Antenna Diversity
+HKR,Ndi\params\AntDiv,			ParamDesc, 		0, "Antenna Diversity"
+HKR,Ndi\params\AntDiv, 			default, 		0, "0"
+HKR,Ndi\params\AntDiv, 			type, 		    0, "enum"
+HKR,Ndi\params\AntDiv\enum,  	"0",        	0, %DISABLED_STR%
+HKR,Ndi\params\AntDiv\enum,   	"1",        	0, %ENABLED_STR%
+
+HKLM, SYSTEM\CurrentControlSet\Services\RtlWlans\Parameters, "BtAntennaInHw", 0x00010001,2
+
+[Ndis5Set.reg]
+HKR,Ndi\params\PSPXlinkMode,			ParamDesc,  0, %PSP_XLINK_STR%
+HKR,Ndi\params\PSPXlinkMode,			type,       0, "enum"
+HKR,Ndi\params\PSPXlinkMode,			default,    0, "0"
+HKR,Ndi\params\PSPXlinkMode\enum,		"0",        0, %DISABLE_STR%
+HKR,Ndi\params\PSPXlinkMode\enum,		"1",        0, %ENABLE_STR%
+HKR,defaults,PSPXlinkMode,0,"0"
+HKR,,PSPXlinkMode,0,"0"
+
+;Inactive Power Save
+HKR,defaults,InactivePs,0,"0"
+HKR,,InactivePs,0,"0"
+
+
+[Ndis6Set.reg]
+;Inactive Power Save
+HKR,defaults,InactivePs,0,"2"
+HKR,,InactivePs,0,"2"
+
+
+;;----------------------------------------------------------------------------
+;; Wireless mode option parameters
+;;----------------------------------------------------------------------------
+[11nWirelessMode.reg]
+HKR,Ndi\params\WirelessMode, 		ParamDesc, 	0, %WL_MODE_STR%
+HKR,Ndi\params\WirelessMode, 		type, 		0, "enum"
+HKR,Ndi\params\WirelessMode, 		default, 	0, "8"
+HKR,Ndi\params\WirelessMode\enum, 	"2", 		0, %IEEE_802_11B_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"4", 		0, %IEEE_802_11BG_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"8", 		0, %IEEE_802_11BGN_STR%
+HKR,defaults,WirelessMode, 0, "8"
+HKR,,WirelessMode, 0, "8"
+
+;; 40MHz Support in 11n
+HKR,Ndi\params\BWSetting, 			ParamDesc, 	0, "Bandwidth"
+HKR,Ndi\params\BWSetting, 			type, 		0, "enum"
+HKR,Ndi\params\BWSetting, 			default, 	0, "1"
+HKR,Ndi\params\BWSetting\enum, 		"0", 		0, "20MHz Only"
+HKR,Ndi\params\BWSetting\enum, 		"1", 		0, "20_40MHz"
+HKR,defaults,BWSetting,0,"1"
+HKR,,BWSetting,0,"1"
+HKR,,BWSetting,,"1"
+
+HKR,,Channel,0,"10"
+
+[11gWirelessMode.reg]
+HKR,Ndi\params\WirelessMode, 		ParamDesc, 	0, %WL_MODE_STR%
+HKR,Ndi\params\WirelessMode, 		type, 		0, "enum"
+HKR,Ndi\params\WirelessMode, 		default, 	0, "8"
+HKR,Ndi\params\WirelessMode\enum, 	"2", 		0, %IEEE_802_11B_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"4", 		0, %IEEE_802_11BG_STR%
+HKR,defaults,WirelessMode, 0, "4"
+HKR,,WirelessMode, 0, "4"
+
+HKR,,BWSetting,0,"0"
+
+HKR,,Channel,0,"10"
+
+[11acWirelessMode.reg]
+HKR,Ndi\params\WirelessMode, 		ParamDesc, 	0, %WL_MODE_STR%
+HKR,Ndi\params\WirelessMode, 		type, 		0, "enum"
+HKR,Ndi\params\WirelessMode, 		default, 	0, "8"
+HKR,Ndi\params\WirelessMode\enum, 	"8", 		0, %AUTO_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"1", 		0, %IEEE_802_11A_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"2", 		0, %IEEE_802_11B_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"4", 		0, %IEEE_802_11BG_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"16", 		0, %IEEE_802_11BGN_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"32", 		0, %IEEE_802_11AN_STR%
+HKR,Ndi\params\WirelessMode\enum, 	"64", 		0, %IEEE_802_11ANAC_STR%
+HKR,defaults,WirelessMode, 0, "8"
+HKR,,WirelessMode, 0, "8"
+
+HKR,,Channel,0,"36"
+
+;; RF Type
+HKR,,RFType,0,"15"
+
+
+HKR,defaults,BWSetting,0,"2"
+HKR,,BWSetting,0,"2"
+
+;;----------------------------------------------------------------------------
+;; LPS 32k Control Parameters
+;;----------------------------------------------------------------------------
+[32kEnable.reg]
+HKR,,bLowPowerEnable,0,"1"
+[32kDisable.reg]
+HKR,,bLowPowerEnable,0,"0"
+
+;-------------------------------------------------------------------------------
+;	PnP pre-transition handling
+;-------------------------------------------------------------------------------
+[PnpPreTransOn.reg]
+HKR,,PreTransPnP,0,"1"
+[PnpPreTransOff.reg]
+HKR,,PreTransPnP,0,"0"
+
+;;----------------------------------------------------------------------------
+;; WOWLAN Control Parameters
+;;----------------------------------------------------------------------------
+[WowlanAllEnable.reg]
+HKR,,WoWLANLPSLevel,0,"2"
+HKR,,ARPOffloadEnable,0,"1"
+HKR,,GTKOffloadEnable,0,"1"
+
+HKR, Ndi\params\*WakeOnMagicPacket,         ParamDesc,  0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket,         default,    0, "1"
+HKR, Ndi\params\*WakeOnMagicPacket,         type,       0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "1",        0, %ENABLED_STR%
+HKR,,*WakeOnMagicPacket,0,"1"
+
+HKR, Ndi\params\*WakeOnPattern ,            ParamDesc,  0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern,             default,    0, "1"
+HKR, Ndi\params\*WakeOnPattern,             type,       0, "enum"
+HKR, Ndi\params\*WakeOnPattern\enum,        "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnPattern\enum,        "1",        0, %ENABLED_STR%
+HKR,,*WakeOnPattern,0,"1"
+
+[WowlanDisable.reg]
+HKR,,WoWLANLPSLevel,0,"0"
+HKR,,ARPOffloadEnable,0,"0"
+HKR,,GTKOffloadEnable,0,"0"
+
+[WowlanAllEnableNoLPS.reg]
+HKR,,WoWLANLPSLevel,0,"0"
+HKR,,ARPOffloadEnable,0,"1"
+HKR,,GTKOffloadEnable,0,"1"
+
+HKR, Ndi\params\*WakeOnMagicPacket,         ParamDesc,  0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket,         default,    0, "1"
+HKR, Ndi\params\*WakeOnMagicPacket,         type,       0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "1",        0, %ENABLED_STR%
+HKR,,*WakeOnMagicPacket,0,"1"
+
+HKR, Ndi\params\*WakeOnPattern ,            ParamDesc,  0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern,             default,    0, "1"
+HKR, Ndi\params\*WakeOnPattern,             type,       0, "enum"
+HKR, Ndi\params\*WakeOnPattern\enum,        "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnPattern\enum,        "1",        0, %ENABLED_STR%
+HKR,,*WakeOnPattern,0,"1"
+
+[WowlanEnableNoPatternMatch.reg]
+HKR,,WoWLANLPSLevel,0,"2"
+HKR,,ARPOffloadEnable,0,"1"
+HKR,,GTKOffloadEnable,0,"1"
+
+HKR, Ndi\params\*WakeOnMagicPacket,         ParamDesc,  0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket,         default,    0, "1"
+HKR, Ndi\params\*WakeOnMagicPacket,         type,       0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "1",        0, %ENABLED_STR%
+HKR,,*WakeOnMagicPacket,0,"1"
+
+HKR, Ndi\params\*WakeOnPattern ,            ParamDesc,  0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern,             default,    0, "0"
+HKR, Ndi\params\*WakeOnPattern,             type,       0, "enum"
+HKR, Ndi\params\*WakeOnPattern\enum,        "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnPattern\enum,        "1",        0, %ENABLED_STR%
+HKR,,*WakeOnPattern,0,"0"
+
+[WowlanEnableNoLPSNoPatternMatch.reg]
+HKR,,WoWLANLPSLevel,0,"0"
+HKR,,ARPOffloadEnable,0,"1"
+HKR,,GTKOffloadEnable,0,"1"
+
+HKR, Ndi\params\*WakeOnMagicPacket,         ParamDesc,  0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket,         default,    0, "1"
+HKR, Ndi\params\*WakeOnMagicPacket,         type,       0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "1",        0, %ENABLED_STR%
+HKR,,*WakeOnMagicPacket,0,"1"
+
+HKR, Ndi\params\*WakeOnPattern ,            ParamDesc,  0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern,             default,    0, "0"
+HKR, Ndi\params\*WakeOnPattern,             type,       0, "enum"
+HKR, Ndi\params\*WakeOnPattern\enum,        "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnPattern\enum,        "1",        0, %ENABLED_STR%
+HKR,,*WakeOnPattern,0,"0"
+
+[ConnectedStandbyEnable.reg]
+HKR,,WoWLANLPSLevel,0,"2"
+HKR,,ARPOffloadEnable,0,"1"
+HKR,,GTKOffloadEnable,0,"1"
+HKR,,D2ListenIntvl,0,"4"
+HKR,,NSOffloadEnable,0,"1"
+HKR,,NLOEnable,0,"1"
+
+HKR, Ndi\params\*WakeOnMagicPacket,         ParamDesc,  0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket,         default,    0, "0"
+HKR, Ndi\params\*WakeOnMagicPacket,         type,       0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnMagicPacket\enum,    "1",        0, %ENABLED_STR%
+HKR,,*WakeOnMagicPacket,0,"0"
+
+HKR, Ndi\params\*WakeOnPattern ,            ParamDesc,  0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern,             default,    0, "1"
+HKR, Ndi\params\*WakeOnPattern,             type,       0, "enum"
+HKR, Ndi\params\*WakeOnPattern\enum,        "0",        0, %DISABLED_STR%
+HKR, Ndi\params\*WakeOnPattern\enum,        "1",        0, %ENABLED_STR%
+HKR,,*WakeOnPattern,0,"1"
+
+;; Packet coalescing should be enabled in WHCK test
+HKR,defaults,*PacketCoalescing,0,"0"
+HKR,,*PacketCoalescing,0,"0"
+
+;-------------------------------------------------------------------------------
+;	Auto Channel Selection
+;-------------------------------------------------------------------------------
+[AutoChnlSelon.reg]
+HKR,,AutoChnlSel,0,"1"
+[AutoChnlSeloff.reg]
+HKR,,AutoChnlSel,0,"0"
+
+;;----------------------------------------------------------------------------
+;; RSSI to Grid Mode Parameters
+;;----------------------------------------------------------------------------
+[RSSI2GridRealMode.reg]
+HKR,,RSSI2GridMode,0,"1"
+[RSSI2GridMode_2.reg]
+HKR,,RSSI2GridMode,0,"2"
+[RSSI2GridMode_4.reg]
+HKR,,RSSI2GridMode,0,"4"
+
+;;----------------------------------------------------------------------------
+;; KFREE parameters
+;;----------------------------------------------------------------------------
+[KFREE_COMMON.reg]
+HKR,,RfKFreeEnable,0,"0"
+
+;*******************************************************************************
+; Customer reg section
+;*******************************************************************************
+[ScanType.reg]
+HKR,defaults,PassiveScan, 0, "0"
+HKR,,PassiveScan, 0, "0"
+
+;*******************************************************************************
+; Multi-Channel Concurrent section
+;*******************************************************************************
+[MCC.reg]
+HKR,Ndi\params\MultiChannelFcsMode, 		ParamDesc, 	0, %MCC_STR%
+HKR,Ndi\params\MultiChannelFcsMode, 		type, 		0, "enum"
+HKR,Ndi\params\MultiChannelFcsMode, 		default, 	0, "0"
+HKR,Ndi\params\MultiChannelFcsMode\enum, 	"0", 		0, %DISABLED_STR%
+HKR,Ndi\params\MultiChannelFcsMode\enum, 	"4", 		0, %ENABLED_STR%
+HKR,defaults,MultiChannelFcsMode, 0, "0"
+HKR,,MultiChannelFcsMode, 0, "0"
+
+;*******************************************************************************
+; Destination Directory
+;*******************************************************************************
+[RTWlanS.CopyFiles]
+rtwlans.sys,,,2
+
+[DestinationDirs]
+DefaultDestDir     	= 11
+RTWlanS.CopyFiles	= 12
+CIHVS.CopyFiles					= 11
+RtlUI2.CopyFiles				= 10
+
+;;****************************************************************************
+;; Source Files
+;;****************************************************************************
+[CIHVS.CopyFiles]
+Rtlihvs.dll,,,2
+
+[RegisterUIExt]
+11,,RtlExtUI.dll,1
+
+[RtlUI2.CopyFiles]
+RtlUI2.exe,,,2
+
+[SourceDisksFiles]
+rtwlans.sys = 1
+Rtlihvs.dll = 1
+
+[SourceDisksNames]
+1=%DISKNAME%,,,
+
+
+;*******************************************************************************
+; Strings
+;*******************************************************************************
+[Strings]
+SSID_STR				            = "SSID"
+CHANNEL_STR				            = "Channel"
+NETWORK_TYPE_STR			        = "Network Type"
+LED_CONTROL_STR				        = "LED Control" 
+POWER_SAVE_STR				        = "Power Save Mode"
+WIFI_IBSS_STR				        = "IBSS Default 11b Mode"
+RATE_ADAPTIVE_STR			        = "Rate Adaptive"
+QOS_STR					            = "QoS"
+WiFiConfg_STR	  			        = "WiFiConfg"
+WMM_APSD				            = "WMM APSD"
+CCX_RM_STR				            = "CCX Radio Measurement"
+CCX_OFF_LINE_DUR_UP_LIMIT_STR		= "CCX Max Off-Line Measurement (0: unlimited)"
+FORCE_PRIORITY_STR			        = "Forced Priority"
+HW_PARA_STR				            = "Init from HwParaFile"
+THREE_WIRE_MODE_STR		            = "Three Wire Programming Mode"
+BOARD_TYPE_STR			            = "Board Type"
+PROTECTION_MODE_STR		            = "Protection Mode"
+TPC_STR					            = "Transmit Power Control"
+TPC_POLARITY_STR		            = "TPC Polarity Select"
+HIGH_POWER_STR			            = "High Power Mechanism"
+INIT_GAIN_STR			            = "Initial Gain State"
+CW_MAX_MIN_STR			            = "Contention Window"
+PSP_XLINK_STR			            = "PSP XLink Mode"
+DISABLE_STR				            = "Disable"
+ENABLE_STR				            = "Enable"
+DISABLED_STR				            = "Disabled"
+ENABLED_STR				            = "Enabled"
+AUTO_STR							= "Auto"
+AD_HOC_STR				            = "Ad Hoc"
+INFRASTRUCTURE_STR		            = "Infrastructure"
+AUTO_SELECT				            = "Auto select"
+WL_MODE_STR				            = "Wireless Mode"
+RX_REORDER_STR			            = "Rx Reorder"
+CAM_STR					            = "CAM"
+MAX_PSP_STR				            = "MAX_PSP"
+Fast_PSP_STR				        = "Fast_PSP"
+NO_AC_STR					        = "No AC (Disable)"
+ALL_AC_STR				            = "ALL AC"
+IEEE_802_11A_STR 					= "IEEE 802.11a"
+IEEE_802_11B_STR 			        = "IEEE 802.11b"
+IEEE_802_11BG_STR 			        = "IEEE 802.11b/g"
+IEEE_802_11BGN_STR 			        = "IEEE 802.11b/g/n"
+IEEE_802_11AN_STR					= "IEEE 802.11a/n"	
+IEEE_802_11ANAC_STR					= "IEEE 802.11a/n/ac"
+IEEE_802_11AC_STR					= "IEEE 802.11 ac"
+WakeOnMagicPacket					= "Wake on Magic Packet"
+WakeOnPattern						= "Wake on Pattern Match"                                                 
+MCC_STR								= "Multi-Channel Concurrent"
+
+;*******************************************************************************
+; manufacture description
+;*******************************************************************************
+Realtek					            = "Realtek Semiconductor Corp."
+
+
+;*******************************************************************************
+;	Source disk name
+;*******************************************************************************
+DISKNAME							= "Realtek Wireless LAN 802.11n SDIO Network Adapter Driver Disk"
+RtlWlans.DeviceDesc 				= "Realtek Wireless LAN 802.11n SDIO Network Adapter"
+RtlWlans.DeviceDesc.DispName		= "Realtek Wireless LAN 802.11n SDIO Network Adapter"
+
+;*******************************************************************************
+; RTL8723as Device description
+;*******************************************************************************
+RTL8723as.DeviceDesc 				= "Realtek RTL8723AS Wireless LAN 802.11n SDIO Network Adapter"
+RTL8723as.DeviceDesc.DispName		= "Realtek RTL8723AS Wireless LAN 802.11n SDIO Network Adapter"
+
+
+
+;*******************************************************************************
+; RTL8723bs Device description
+;*******************************************************************************
+RTL8723bs.DeviceDesc 				= "Realtek RTL8723BS Wireless LAN 802.11n SDIO Network Adapter"
+RTL8723bs.DeviceDesc.DispName		= "Realtek RTL8723BS Wireless LAN 802.11n SDIO Network Adapter"
+
+;*******************************************************************************
+; RTL8814as Device description
+;*******************************************************************************
+RTL8814as.DeviceDesc 				= "Realtek RTL8814AS Wireless LAN 802.11ac SDIO Network Adapter"
+RTL8814as.DeviceDesc.DispName		= "Realtek RTL8814AS Wireless LAN 802.11ac SDIO Network Adapter"
+
+;*******************************************************************************
+; RTL8188ES Device description
+;*******************************************************************************
+RTL8188es.DeviceDesc 				= "Realtek RTL8189ES Wireless LAN 802.11n USB 2.0 Network Adapter"
+RTL8188es.DeviceDesc.DispName		= "Realtek RTL8189ES Wireless LAN 802.11n USB 2.0 Network Adapter"
+;*******************************************************************************
+; RTL8821as Device description
+;*******************************************************************************
+RTL8821as.DeviceDesc 			= "Realtek RTL8821AS Wireless LAN 802.11ac SDIO 2.0 Network Adapter"
+RTL8821as.DeviceDesc.DispName		= "Realtek RTL8821AS Wireless LAN 802.11ac SDIO 2.0 Network Adapter"
+;*******************************************************************************
+; RTL8192E Device description
+;*******************************************************************************
+RTL8192es.DeviceDesc 				= "Realtek RTL8192ES Wireless LAN 802.11n USB 2.0 Network Adapter"
+RTL8192es.DeviceDesc.DispName		= "Realtek RTL8192ES Wireless LAN 802.11n USB 2.0 Network Adapter"
+
+;*******************************************************************************
+; RTL8703bs Device description
+;*******************************************************************************
+RTL8703bs.DeviceDesc 				= "Realtek RTL8703BS Wireless LAN 802.11n SDIO Network Adapter"
+RTL8703bs.DeviceDesc.DispName		= "Realtek RTL8703BS Wireless LAN 802.11n SDIO Network Adapter"
+
+;*******************************************************************************
+; RTL8188Fs Device description
+;*******************************************************************************
+RTL8188fs.DeviceDesc 				= "Realtek RTL8189FTV Wireless LAN 802.11n SDIO Network Adapter"
+RTL8188fs.DeviceDesc.DispName		= "Realtek RTL8189FTV Wireless LAN 802.11n SDIO Network Adapter"
+;*******************************************************************************
+; RTL8822bs Device description
+;*******************************************************************************
+RTL8822bs.DeviceDesc 			= "Realtek RTL8822BS Wireless LAN 802.11ac SDIO 2.0 Network Adapter"
+RTL8822bs.DeviceDesc.DispName		= "Realtek RTL8822BS Wireless LAN 802.11ac SDIO 2.0 Network Adapter"
+
+;*******************************************************************************
+; RTL8723ds Device description
+;*******************************************************************************
+RTL8723ds.DeviceDesc 				= "Realtek RTL8723DS Wireless LAN 802.11n SDIO Network Adapter"
+RTL8723ds.DeviceDesc.DispName		= "Realtek RTL8723DS Wireless LAN 802.11n SDIO Network Adapter"

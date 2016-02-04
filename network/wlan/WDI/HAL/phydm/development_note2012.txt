@@ -1,0 +1,5272 @@
+
+-----------------------------------------------------------------------------------------------------
+<2014/09/03 14:15 Dino Reviewer:Luke >
+Modified Files:
+	HAL/OUTSRC/rtl8192e/HalPhyRf_8192e.c
+
+Change Notes:
+	1. Fix the coding error of 92E Power tracking in assigning pathA/B CCK-11M TX power
+	
+Verification Before Checked-In:
+	1. N62 build all ok
+
+-----------------------------------------------------------------------------------------------------
+<2014/04/18 19:00 James> 
+Modified Files:
+Change Notes: 
+	HAL/OUTSRC/odm_debug.c
+	HAL/OUTSRC/rtl8814a/HalPhyRf_8814A.c
+	HAL/OUTSRC/rtl8814a/HalPhyRf_8814A.h
+	HAL/PHY/HalComPhyCfg.c
+	HAL/PHY/HalComPhyCfg.h
+	HAL/rtl8814A/Hal8814ACom.c
+	HAL/rtl8814A/rtl8814as/Hal8814ASdioGen.c
+	1. Refine 8814A IQK function
+	  
+Verification Before Checked-In:
+	1. N62/N63 buildall OK
+	2. Mp buildall OK
+
+-----------------------------------------------------------------------------------------------------
+<08/08/2012 19:50 LukeLee> 
+Modified Files:
+
+
+Change Notes: 
+
+	1. Merge WIN Trunk v2908
+	2. [8812A] Update MAC_PHY Reg V021 for MP chip
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+
+-----------------------------------------------------------------------------------------------------
+<08/08/2012 13:45 LukeLee> 
+Modified Files:
+
+	HAL/OUTSRC/odm_debug.c
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/OutputHWImg.bat
+	HAL/OUTSRC/rtl8723a/BB/AGC_TAB_1T.TXT
+	HAL/OUTSRC/rtl8723a/BB/PHY_REG_1T.txt
+	HAL/OUTSRC/rtl8723a/BB/PHY_REG_PG.txt
+	HAL/OUTSRC/rtl8723a/HalHWImg8723A_BB.c
+	HAL/OUTSRC/rtl8723a/HalHWImg8723A_BB.h
+	HAL/OUTSRC/rtl8723a/HalHWImg8723A_MAC.c
+	HAL/OUTSRC/rtl8723a/HalHWImg8723A_RF.c
+	HAL/OUTSRC/rtl8723a/HalHWImg8723A_RF.h
+	HAL/OUTSRC/rtl8723a/MAC/MAC_REG.txt
+	HAL/OUTSRC/rtl8723a/RF/RadioA_1T.txt
+	HAL/OUTSRC/rtl8821a/HalHWImg8821A_FW.c
+	HAL/OUTSRC/rtl8821a/HalHWImg8821A_FW.h
+	HAL/rtl8188E/Hal8812Firmware.c
+
+
+Change Notes: 
+
+	1. [8723A] Update MAC_PHY_REG v001
+	2. [8821A] Update FW v001
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+
+-----------------------------------------------------------------------------------------------------
+<08/07/2012 20:55 LukeLee> 
+Modified Files:
+
+	HAL/OUTSRC/rtl8188e/BB/AGC_TAB_1T.txt
+	HAL/OUTSRC/rtl8188e/BB/PHY_REG_1T.txt
+	HAL/OUTSRC/rtl8188e/BB/PHY_REG_PG.txt
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_MAC.c
+	HAL/OUTSRC/rtl8188e/MAC/MAC_REG.txt
+	HAL/OUTSRC/rtl8188e/RF/RadioA_1T.txt
+
+Change Notes: 
+
+	1. [8188E] Update MAC_PHY_REG v035
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+
+-----------------------------------------------------------------------------------------------------
+<08/07/2012 19:50 LukeLee> 
+Modified Files:
+
+	HAL/OUTSRC/rtl8812a/BB/AGC_TAB.txt
+	HAL/OUTSRC/rtl8812a/BB/PHY_REG.txt
+	HAL/OUTSRC/rtl8812a/HalHWImg8812A_TestChip_BB.c
+	HAL/OUTSRC/rtl8812a/HalHWImg8812A_TestChip_MAC.c
+	HAL/OUTSRC/rtl8812a/HalHWImg8812A_TestChip_RF.c
+	HAL/OUTSRC/rtl8812a/MAC/MAC_REG.txt
+	HAL/OUTSRC/rtl8812a/RF/RadioA.txt
+	HAL/OUTSRC/rtl8812a/RF/RadioB.txt
+	HAL/OUTSRC/rtl8821a/BB/PHY_REG.txt
+	HAL/OUTSRC/rtl8821a/HalHWImg8821A_TestChip_BB.c
+	HAL/OUTSRC/rtl8821a/HalHWImg8821A_TestChip_MAC.c
+	HAL/OUTSRC/rtl8821a/HalHWImg8821A_TestChip_RF.c
+	HAL/OUTSRC/rtl8821a/MAC/MAC_REG.txt
+	HAL/OUTSRC/rtl8821a/RF/RadioA.txt
+
+Change Notes: 
+
+	1. [8812A] Update MAC_PHY_REG v021
+	2. [8821A] Update MAC_PHY_REG v006
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+-----------------------------------------------------------------------------------------------------
+<08/06/2012 11:40 LukeLee> 
+Modified Files:
+
+Change Notes: 
+
+	1. Merge WIN Trunk v2897
+	2. Update Img2Header.exe
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK
+
+-----------------------------------------------------------------------------------------------------
+<07/31/2012 17:10 LukeLee> 
+Modified Files:
+
+	\rtl8812a\BB\AGC_TAB.c
+	\rtl8812a\BB\PHY_REG.txt
+	\rtl8812a\MAC\MAC_REG.txt
+	\rtl8812a\RF\RadioA.txt
+	\rtl8812a\RF\RadioB.txt
+	\rtl8812a\HalHWImg8812A_TestChip_BB.c
+	\rtl8812a\HalHWImg8812A_TestChip_RF.c
+
+Change Notes: 
+
+	1. [8812A] Update MAC_PHY_REG v20
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. Img2Header.exe has problem with FW transformation
+
+----------------------------------------------------------------------------------------------
+<07/31/2012 17:00 JueYang>
+New Files:
+Modified Files:
+	HAL\PHY\Hal8188EPhyCfg.c
+
+Change Notes:
+	1. Fix 20M TxPower Error for TPLINK.
+
+Verification Before Checked-In:
+	1. N63 buildall ok.
+-----------------------------------------------------------------------------------------------------
+<07/31/2012 11:35 Georgia> 
+Modified Files:
+
+Change Notes: 
+
+	1. Fixed incorrect data rate in wireless BG mode.
+
+Verification Before Checked-In:
+	1. 8188EUS CE driver test OK.
+-----------------------------------------------------------------------------------------------------
+<07/30/2012 12:25 LukeLee> 
+Modified Files:
+
+Change Notes: 
+
+	1. Fix compile error of ODM v364
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK.
+
+-----------------------------------------------------------------------------------------------------
+<07/30/2012 13:50 LukeLee> 
+Modified Files:
+
+Change Notes: 
+
+	1. Merge Trunk V2285
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK.
+
+-----------------------------------------------------------------------------------------------------
+<07/23/2012 15:50 Kordan> 
+Modified Files:
+Change Notes: 
+	1. Update Image2Header:
+		a. A single-line comment is now allowable with if-else body.
+		b. Bug fixed: #endif is missed when translating FW_AP.bin.
+		c. '/' is allowed with FILE_NAME.
+
+Verification Before Checked-In:
+	1. Translation OK.
+	
+
+-----------------------------------------------------------------------------------------------------
+<07/23/2012 15:50 Kordan> 
+Modified Files:
+Change Notes: 
+	1. Update Image2Header:
+		a. A single-line comment is now allowable with if-else body.
+		b. Bug fixed: #endif is missed when translating FW_AP.bin.
+		c. '/' is allowed with FILE_NAME.
+
+Verification Before Checked-In:
+	1. Translation OK.
+	
+-----------------------------------------------------------------------------------------------------
+<07/19/2012 16:06 LukeLee> 
+Modified Files:
+
+	/rtl8188e/Hal8188ERateAdaptive.c
+	/rtl8188e/Hal8188ERateAdaptive.h
+	/rtl8188e/HalPhyRf_8188e.c
+	/rtl8188e/odm_RTL8188E.c
+	/rtl8188e/odm_RTL8188E.h
+	/rtl8192c/Hal8192CEFWImg_AP.h
+	/rtl8192c/Hal8192CEMACImg_AP.h
+	/rtl8192c/Hal8192CEPHYImg.h
+	/rtl8192c/Hal8192CEPHYImg_AP.h
+	/rtl8192c/Hal8192CUPHYImg.h
+	/rtl8192c/odm_RTL8192C.c
+	/rtl8192c/odm_RTL8192C.h
+	/rtl8192d/odm_RTL8192D.c
+	/rtl8192d/odm_RTL8192D.h
+	/rtl8812a/HalPhyRf_8812A.c
+	HalPhyRf.c
+	HalPhyRf.h
+	odm.c
+	odm.h
+	odm_debug.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_interface.c
+	odm_interface.h
+	odm_precomp.h
+	odm_types.h
+
+Removed Files:
+
+	Hal8188EDMOutSrc.c
+	Hal8188EDMOutSrc.h
+	Hal8192CDMOutSrc.c
+	Hal8192CDMOutSrc.h
+	Hal8812DMOutSrc.c
+	Hal8812DMOutSrc.h
+	HalComDMOutSrc.c
+	HalComDMOutSrc.h
+
+Change Notes: 
+
+	1. Replace ODM_MP with ODM_WIN 
+	2. Remove redundancy files
+
+Verification Before Checked-In:
+	1. N62 buildall OK.
+
+-----------------------------------------------------------------------------------------------------
+<07/18/2012 15:45 LukeLee> 
+Modified Files:
+
+	/rtl8188e/BB/AGC_TAB_1T.txt
+	/rtl8188e/BB/PHY_REG_1T.txt
+	/rtl8188e/BB/PHY_REG_PG.txt
+	/rtl8188e/MAC/MAC_REG.txt
+	/rtl8188e/RF/RadioA_1T.txt
+	/rtl8812a/HalHWImg8188E_BB.c
+	/rtl8812a/HalHWImg8188E_FW.c
+
+Change Notes: 
+
+	1. [8188E] Release MAC_PHY_Reg V033
+	2. Img2Header.exe has problem, must add #endif in the end of HalHWImg8188E_FW.c
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.
+
+
+-----------------------------------------------------------------------------------------------------
+<07/17/2012 23:15 LukeLee> 
+Modified Files:
+
+	/rtl8812a/BB/AGC_TAB.txt
+	/rtl8812a/BB/PHY_REG.txt
+	/rtl8812a/MAC/MAC_REG.txt
+	/rtl8812a/RF/RadioA.txt
+	/rtl8812a/RF/RadioB.txt
+	/rtl8812a/HalHWImg8812A_BB.c
+	/rtl8812a/HalHWImg8812A_RF.c
+	/rtl8812a/HalHWImg8812A_BB_testchip.c
+	/rtl8812a/HalHWImg8812A_RF_testhcip.c
+
+Change Notes: 
+
+	1. [8812A] Release MAC_PHY_Reg V019
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.
+
+-----------------------------------------------------------------------------------------------------
+<07/17/2012 17:47 NeilChen> 
+Modified Files:
+
+	odm.c
+	odm_interface.c
+Change Notes: 
+
+	1. Initialize SW Antenna diversity ANT flag by efuse PG Setting for all 
+	8723A Series IC MP
+	2. Fix H2C cmd Issue in odm_interface.c
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.
+
+-----------------------------------------------------------------------------------------------------
+<07/11/2012 19:18 NeilChen> 
+Modified Files:
+
+	odm.c
+	hal\rtl8192c\rtl8192ce\hal8192CEGen.c
+Change Notes: 
+
+	1.Fix 8723A SW ANT DIV Bug in MP temporality
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.
+	2. 8723AS_VAU testing OK
+------------------------------------------------------------------------------------------------------
+<07/11/2012 17:45 Luke.Lee> 
+Modified Files:
+
+	/rtl8812a/RF/RadioA.txt 
+	/rtl8812a/RF/RadioB.txt
+	/rtl8812a/HalHWImg8812A_RF.c
+	/rtl8812a/HalHWImg8812A_TestChip_RF.c
+	odm_HWConfig.c
+	odm_precomp.h
+	odm_types.h
+
+Change Notes: 
+
+	/OUTSRC/*.c, *.h        
+	1.[8812A] revise PHY Reg files
+
+	/HAL/rtl8188E/Hal8812Firmware.c
+	2.[8812A] enable DL FW from header
+
+	/HAL/rtl8192C/Hal8192CFirmware.c
+	3.[8723A] add back ODM v344 feature
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.
+	2. 8812AE vs 8812AP  DL:280Mbps, UL:330Mbps
+	3. 8812AE vs 8812AE AdHoc  400Mbps(force 2SS MCS6)	
+
+
+------------------------------------------------------------------------------------------------------
+<07/10/2012 16:40 Luke.Lee> 
+Modified Files: 
+
+Change Notes: 
+        
+	1.Copy Merge_Temp v2836 except OUTSRC
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.	
+
+------------------------------------------------------------------------------------------------------
+<07/09/2012 14:30 Luke.Lee> 
+Modified Files: 
+
+	/8812a/HalHWImg8812A_BB.c
+	/8812a/HalHWImg8812A_BB.h
+	/8812a/HalHWImg8812A_FW.c
+	/8812a/HalHWImg8812A_FW.h
+	/8812a/HalHWImg8812A_RF.c
+	/8812a/HalHWImg8812A_TestChip_BB.c
+	/8812a/HalHWImg8812A_TestChip_BB.h
+	/8812a/HalHWImg8812A_TestChip_MAC.c
+	/8812a/HalHWImg8812A_TestChip_RF.c
+	/8812a/HalHWImg8812A_TestChip_RF.h
+	odm_debug.c
+	odm_HWConfig.c
+	odm_precomp.h
+	odm_types.h
+
+
+Change Notes: 
+        
+	1.[8812A] Modify Reg Init Flow (Currently is TestChip only)
+	
+Verification Before Checked-In:
+	1. N62 buildall OK.	
+
+------------------------------------------------------------------------------------------------------
+<07/06/2012 15:00 Luke.Lee> 
+Modified Files: 
+
+	HAL/OUTSRC/HalPhyRf.c
+	HAL/OUTSRC/HalPhyRf.h
+	HAL/OUTSRC/odm_precomp.h
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.h
+
+Change Notes: 
+        
+	1.Remove AP compile error
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+	2. AP compile OK	
+
+---------------------------------------------------------------------------------------------- 
+<07/06/2012 15:00 lena_yang>
+New Files:
+Modified Files:
+Change Notes:
+	1. Fix 92DU VC BSOD When UNinstall One MAC
+
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+
+
+------------------------------------------------------------------------------------------------------
+<07/06/2012 14:30 Cherry> 
+Modified Files: 
+Change Notes: 
+        
+	HAL\HalDM.c
+	HAL\OUTSRC\odm.c
+	1. Enable 8812 EDCA TUREBO mode. 
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.	
+
+
+------------------------------------------------------------------------------------------------------
+<07/06/2012 10:40 Mingzhi>
+New Files:
+Modified Files:	
+	odm.c
+
+Change Notes:
+	1. modify EDCA turbo for MP
+	
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+----------------------------------------------------------------------------------------------
+<07/04/2012 14:30 Kordan>
+New Files:
+Modified Files:	
+	HAL/rtl8188E/rtl8188ee/Hal8188EEGen.c
+	HAL/rtl8188E/rtl8188es/Hal8188ESdioGen.c
+
+Change Notes:
+	1. Fix compilation error.
+	
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	
+-------------------------------------------------------------------------------------------
+<07/03/2012 17:00 Kordan> 
+Modified Files: 
+	HAL/OUTSRC/HalPhyRf.c
+	HAL/OUTSRC/HalPhyRf.h
+	HAL/OUTSRC/rtl8812a/HalPhyRf_8812A.c
+	HAL/OUTSRC/rtl8812a/HalPhyRf_8812A.h
+	HAL/rtl8188E/Hal8812Com.c
+	HAL/rtl8188E/rtl8188ee/Hal8188EEGen.c
+	HAL/rtl8188E/rtl8188es/Hal8188ESdioGen.c
+	PLATFORM/NDIS5/N5C_Req.c
+
+Change Notes:		
+	1. Implement 8812A IQK prototype.
+
+Verification Before Checked-In:
+	1. MP Buildall ok.
+	2. For test only.
+	
+-------------------------------------------------------------------------------------------
+<06/25/2012 21:25 LukeLee> Modified Files: 
+	odm.c
+
+Change Notes:		
+	1. [8723A]modify odm_CommonInfoSelfInit() to enable SW AntDiv
+
+Verification Before Checked-In:
+	1. WIN N62 Buildall ok.
+
+-------------------------------------------------------------------------------------------
+<06/22/2012 18:30 LukeLee> Modified Files: 
+	rtl8188e\HalHWImg8188E_BB.c
+	rtl8188e\HalHWImg8188E_FW.c
+	rtl8188e\HalHWImg8188E_FW.h
+	rtl8188e\HalHWImg8188E_MAC.c
+	rtl8188e\HalHWImg8188E_RF.c
+	rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:		
+	1. [88E]release 88E MAC_PHY_REG v032 for default ant setting
+
+Verification Before Checked-In:
+	1. WIN N62 Buildall ok.
+
+-------------------------------------------------------------------------------------------
+<06/22/2012 14:36 NeilChen> Modified Files: 
+	odm.c
+	odm.h
+	Hal8192CFirmware.c
+Change Notes:		
+	1. Fix PSD for BT3.0 TP issue
+	2. if BT3.0 is running, PSD scan times will be to decrease
+
+Verification Before Checked-In:
+	1. WIN N5 Buildall ok.
+	2. 8723AE Testing OK.
+------------------------------------------------------------------------------------------- 
+<06/22/2012 14:25 button>
+Modified Files:
+        OUTSRC/rtl8188e/HalPhyRf_8188e.c
+        OUTSRC/Hal8188ERateAdaptive.c
+Change Notes:
+        1. Use Common macro to parse Tx report
+	2. Resolve compile error in AP platform
+
+Verification Before Checked-In:
+        1. AP platform compile ok.
+------------------------------------------------------------------------------------------
+<06/19/2012 19:40 Alexchou>
+Modified Files:		
+	
+	OUTSRC/rtl8812a/FW/FW_NIC.BIN
+	OUTSRC/rtl8812a/FW/FW_WoWLAN.BIN
+	OUTSRC/rtl8812a/HalHWImg8812A_FW.c
+	OUTSRC/rtl8812a/HalHWImg8812A_FW.h
+	
+Change Notes:		
+	1. Update 8812 testchip formal firmware V0003.
+		
+Verification Before Checked-In:
+	1. ImgTransfer ok.
+	
+-------------------------------------------------------------------------------------------
+<06/18/2012 16:50 NeilChen>
+Modified Files:		
+	odm.c
+	odm.h
+	odm_RTL8188E.h
+	HalDMOutSrc8192C_AP.c
+	HalDMOutSrc8192C_CE.c 
+	
+Change Notes:		
+	1. To integrate ANT definition for SW ANT DIV and ANT detect of ODM 
+	mechanism
+	2. MAIN_ANT is use to replace Antenna_A and ANT_Main
+	3. AUX_ANT is use to replace Antenna_B and ANT_Aux 
+		
+Verification Before Checked-In:
+	1.WIN N5 Buildall ok.
+	
+-------------------------------------------------------------------------------------------
+<06/13/2012 16:30 Georgia>
+Modified Files:		
+	rtl8188e/HalHWImg8188E_FW.c
+
+Change Notes:		
+	1. Fixed symbol:Array_8188E_FW_NIC undefine error for 88E.
+		
+Verification Before Checked-In:
+	1.CE DRV make all ok.
+	1.WIN N5 buildall ok.
+	
+-------------------------------------------------------------------------------------------
+<06/13/2012 15:30 Georgia>
+Modified Files:		
+	rtl8188e/HalPhyRf_8188e.c
+Change Notes:		
+	1. Fixed compile error for CE Platform.
+		
+Verification Before Checked-In:
+	1.CE DRV make all ok.
+	
+--------------------------------------------------------------------------------------------
+<06/11/2012 21:00 LukeLee>
+Deleted Files:		
+Change Notes:	
+	HAL\OUTSRC\odm.c
+	1. Revise Single/Dual Ant Detection for 88C
+		
+Verification Before Checked-In:
+	1. WIN N62 buildall ok.
+	2. 88CE ant detection OK	
+
+--------------------------------------------------------------------------------------------
+<06/08/2012 16:12 James>
+Deleted Files:		
+Change Notes:		
+	1. Update 8812 BB/MAC/RF parameters to V13
+		
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	2. 8812AU XP scan ok. 8812AU link with WPA-2 AES AP ok.
+
+--------------------------------------------------------------------------------------------
+<06/07/2012 16:04 MH_Chen>
+Deleted Files:		
+Change Notes:	
+	HAL\OUTSRC\odm.c
+	1. Remove 8812 DM init return.
+		
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	2. 8812AU win7 scan ok. 8812AU signal strength display ok.		
+	
+--------------------------------------------------------------------------------------------
+<06/06/2012 19:04 MH_Chen>
+Deleted Files:		
+Change Notes:	
+	COMMON &\HAL\Non-ODM & PLATFORM
+	1. Merge from windows driver trunk v2764-2766. Support 8812AU dual band scan.
+	
+	
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	2. 8812AE/AU win7 scan ok. 8812AU reload test for 100 rounds ok.		
+	3. 88CU win7 simple test ok. S3/S4/Reload/ Unlpg ok.
+
+--------------------------------------------------------------------------------------------
+<06/06/2012 20:10 Georgia>
+Modified Files:
+	odm.c
+	rtl8188e/Hal8188ERateAdaptive.c
+	rtl8188e/HalHWImg8188E_BB.c
+	rtl8188e/HalHWImg8188E_FW.c
+	rtl8188e/HalHWImg8188E_MAC.c
+	rtl8188e/HalHWImg8188E_RF.c
+	rtl8188e/HalPhyRf_8188e.c
+	rtl8188e/odm_RegConfig8188E.c
+	rtl8188e/odm_RTL8188E.c
+	rtl8192c/odm_RTL8192C.c
+	rtl8192d/odm_RTL8192D.c
+	rtl8723a/HalHWImg8723A_BB.c
+	rtl8723a/HalHWImg8723A_FW.c
+	rtl8723a/HalHWImg8723A_MAC.c
+	rtl8723a/HalHWImg8723A_RF.c
+	rtl8723a/odm_RegConfig8723A.c
+		
+Change Notes:	
+	1. Fix compile error.
+	
+Verification Before Checked-In:
+	1. CE Platform ,make all ok.
+
+--------------------------------------------------------------------------------------------
+<06/06/2012 19:04 MH_Chen>
+Deleted Files:		
+Change Notes:	
+	COMMON &\HAL\Non-ODM & PLATFORM
+	1. Merge from windows driver trunk v2744-2763.
+	ODM
+	1. Revise compile error for windows driver.
+	
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	2. 8812AE/AU win7 scan ok. 8812AU reload test for 100 rounds ok.
+	3. 88EE win7 ping test ok.
+	4. 88EU win7 simple test ok. S3/S4/Reload/ Unlpg ok.
+	4. 88CU win7 simple test ok. S3/S4/Reload/ Unlpg ok.
+
+--------------------------------------------------------------------------------------------
+<06/06/2012 15:44 Georgia>
+Modified Files:	
+	HalPhyRf.c
+	odm.c
+	odm.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_types.h
+	rtl8188e/Hal8188EFWImg_CE.c
+	rtl8188e/Hal8188EFWImg_CE.h
+	rtl8188e/Hal8188ERateAdaptive.c
+	rtl8188e/Hal8188ERateAdaptive.h
+	rtl8188e/HalHWImg8188E_BB.c
+	rtl8188e/HalHWImg8188E_FW.c
+	rtl8188e/HalHWImg8188E_MAC.c
+	rtl8188e/HalHWImg8188E_RF.c
+	rtl8188e/HalPhyRf_8188e.c
+	rtl8188e/odm_RegConfig8188E.c
+	rtl8188e/odm_RTL8188E.c
+	rtl8188e/odm_RTL8188E.h
+	rtl8192c/odm_RTL8192C.c
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/odm_RTL8192D.c
+	rtl8723a/HalHWImg8723A_BB.c
+	rtl8723a/HalHWImg8723A_FW.c
+	rtl8723a/HalHWImg8723A_MAC.c
+	rtl8723a/HalHWImg8723A_RF.c
+	rtl8723a/odm_RegConfig8723A.c
+	
+Change Notes:	
+	1. Add RefreshRAMask for CE platform.
+	2. Move releated marco of TX_RPT prasing to Hal8188ERateAdaptive.h.
+	3. Change data type of ODM_PHY_INFO_T - RxPWDBAll to u1Byte.
+	3. Fix compile error for CE Platform.
+
+Verification Before Checked-In:
+	1. Make all chip drv ok on CE Platform.
+	2. 88EUS/89ES auto-test ok.
+--------------------------------------------------------------------------------------------
+<06/06/2012 14:35 MH_Chen>
+Modified Files:	
+Change Notes:	
+	Merge from 2718 to 2743.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall.
+	2. 88EE ping ok. But s4/reload fail!!?.
+
+--------------------------------------------------------------------------------------------
+<06/06/2012 14:15 MH_Chen>
+Deleted Files:		
+Change Notes:	
+	COMMON &\HAL\Non-ODM & PLATFORM
+	1. Merge from windows driver trunk v2718-2743.
+	HAL\OUTSRC\rtl8812a\BB\AGC_TAB.txt....
+	1. Use MP trunk driver HW parameters to replace ODM\MP parameters and scan ok.
+	2. Use new img2header to transfer MP trunk 8812 parametes.
+	3. RF delay pattern change back to 0xFE?? or 0xFFE??
+	
+Verification Before Checked-In:
+	1. WIN N5/N62 buildall ok.
+	2. 8812AE/AU win7 scan ok.
+	3. 88EE win7 ping test ok.
+	4. 88EU win7 simple test ok. S3/S4/Reload/ Unlpg ok.
+	4. 88C2U win7 simple test ok.
+
+--------------------------------------------------------------------------------------------
+<06/04/2012 21:55 Gimmy>
+Deleted Files:	
+	\HAL\OUTSRC\rtl8188e\FW\RTL8188EFW_A_CUT_T.BIN
+
+Change Notes:	
+        1. delete \HAL\OUTSRC\rtl8188e\FW\RTL8188EFW_A_CUT_T.BIN
+	
+Verification Before Checked-In:
+	1. NONE.
+	2. ImgTransfer ok.
+
+--------------------------------------------------------------------------------------------
+<06/04/2012 20:35 LukeLee>
+Modified Files:	
+	\rtl8188e\BB\PHY_REG_1T.txt
+	\rtl8188e\HalHWImg8188E_BB.c
+	\rtl8188e\HalHWImg8188E_FW.c
+	\rtl8188e\HalHWImg8188E_FW.h
+	\rtl8812a\HalHWImg8812A_BB.c
+
+Change Notes:	
+	1. [88E]Release MAC_PHY_REG v031 for BB swing issue
+	2. [8812A] manually add "0" to patch Img2Header.exe bug
+	
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. 88EE BB QC test OK
+
+---------------------------------------------------------------------------------------------
+<06/04/2012 14:45 Gimmy>
+New Files:	
+        HAL/OUTSRC/rtl8188e/FW/FW_AP.BIN
+
+Modified Files:	
+        HAL/OUTSRC/rtl8188e/FW/FW_NIC.BIN
+        HAL/OUTSRC/rtl8188e/FW/FW_WoWLAN.BIN
+        HAL/OUTSRC/rtl8188e/HalHWImg8188E_FW.c
+        HAL/OUTSRC/rtl8188e/HalHWImg8188E_FW.h
+        HAL/OUTSRC/rtl8812a/HalHWImg8812A_BB.c
+
+Change Notes:
+	1. Update 88E formal firmware. V004.
+			
+Verification Before Checked-In:
+        1. NONE.
+	2. ImgTransfer ok.
+
+--------------------------------------------------------------------------------------------
+<06/01/2012 20:00 LukeLee>
+Modified Files:	
+	HAL/OUTSRC/odm.c
+
+Change Notes:	
+	1. [88E]Fix TP bad issue caused by V321
+	
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. 88EE TP test OK
+
+--------------------------------------------------------------------------------------------
+<06/01/2012 18:50 LukeLee>
+Modified Files:	
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_RegDefine11AC.h
+	HAL/OUTSRC/odm_RegDefine11N.h
+
+Change Notes:	
+	1. Define bCckHighPower & RFPathRxEnable for Jaguar series
+	2. Revise if/else conidition of odm_HwAntDiv and odm_SwAntDivChkAntSwitch
+	
+Verification Before Checked-In:
+	1. N62 buildall OK
+
+--------------------------------------------------------------------------------------------
+<05/30/2012 22:10 LukeLee>
+Modified Files:	
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/odm.c
+
+Change Notes:	
+	1. Modify odm_RxPhyStatusJaguarSeries_Parsing()
+	2. Add Back compile flag in Odm.c for CE team
+	
+	
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. 88EE Ad-Hoc ping OK, RSSI report OK
+
+--------------------------------------------------------------------------------------------
+<05/30/2012 21:26 Alexchou>
+Modified Files:	
+Change Notes:	
+	
+	rtl8812a/FW/FW_NIC.BIN
+	rtl8812a/HalHWImg8812A_FW.c
+	rtl8812a/HalHWImg8812A_FW.h
+	rtl8812a/FW/FW_WoWLAN.BIN
+	1. update 8812 testchip fw v0002 for new Img2header.exe
+	
+	rtl8812a/FW/RTL8812FW_Test_T.BIN
+	rtl8812a/HalHWImg8812A_TestChip_FW.c
+	rtl8812a/HalHWImg8812A_TestChip_FW.h
+	1. remove unused files
+	
+	
+Verification Before Checked-In:
+	1. None
+--------------------------------------------------------------------------------------------
+<05/30/2012 20:17 MH_Chen>
+Modified Files:	
+Change Notes:	
+	COMMON\TransmitDesc.c
+	1. Support new ODM relative AID for luke.
+	HAL\DESC
+	1. Revise raw data input and ODM RSSI parsing with required MACID.
+	HAL\ODM
+	1. Revise for PHY query inRX side and TX side TXFILLDESC.
+	HAL\HalDM.c
+	
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall.
+	2. 88EU simple test ok. AP mode RSSI parsing ok. But vwifi fail.
+
+--------------------------------------------------------------------------------------------
+<05/30/2012 17:40 Kordan>
+Modified Files:	
+Change Notes:	
+	1. Support 8188E/8812A MAC, BB, RF, and FW configuration.
+		Buildrtwe.bat
+		Buildrtws.bat
+		Buildrtwu.bat
+		HAL/OUTSRC/odm.c
+		HAL/OUTSRC/odm.h
+		HAL/OUTSRC/odm_HWConfig.c
+		HAL/OUTSRC/odm_HWConfig.h
+		HAL/OUTSRC/odm_interface.c
+		HAL/OUTSRC/odm_interface.h
+		HAL/OUTSRC/odm_precomp.h
+		HAL/OUTSRC/OutputHWImg.bat
+		HAL/rtl8188E/Hal8188EFirmware.c
+		HAL/rtl8188E/Hal8812Firmware.c
+		HAL/rtl8188E/rtl8188ee/Hal8188EEGen.c
+		HAL/rtl8188E/rtl8188ee/Hal8812EGen.c
+		HAL/rtl8188E/rtl8188es/Hal8188ESdioGen.c
+		HAL/rtl8188E/rtl8188eu/Hal8188EUsbGen.c
+		HAL/rtl8188E/rtl8188eu/Hal8812AUsbGen.c
+		HAL/sources.list.WlanE
+		HAL/sources.list.WlanS
+		HAL/sources.list.WlanU
+		
+	2. Minor bug fixed and some improvement on Image2Header.
+	3. Supports batch conversion.
+		HAL/OUTSRC/Image2Header.exe
+		HAL/OUTSRC/rtl8188e/*
+		HAL/OUTSRC/rtl8723a/*
+		HAL/PHY/Hal8188EPhyCfg.c
+		HAL/PHY/Hal8192CPhyCfg.c
+		HAL/OUTSRC/OutputHWImg.bat
+
+	4. Fix compilation error and revise the code of 88E ODM power tracking.	
+		HAL/MPT/MPT_Bt.c
+		HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+		HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.h
+	
+Verification Before Checked-In:
+	1. N5/N62/MP buildall OK.
+	2. 88EE MP T/Rx ok.
+	3. The PHY reg package of both 8188E and 8812A might be wrong, 
+	   please update the PHY reg and convert again from scratch.
+
+--------------------------------------------------------------------------------------------
+<05/30/2012 17:05 Alexchou>
+Modified Files:	
+Change Notes:	
+
+	rtl8812a/FW/RTL8812FW_Test_T.BIN
+	rtl8812a/HalHWImg8812A_TestChip_FW.c
+	1. update 8812 testchip fw v0002
+	
+Verification Before Checked-In:
+	1. None
+--------------------------------------------------------------------------------------------
+<05/30/2012 15:05 MH_Chen>
+Modified Files:	
+Change Notes:	
+	1. DESC relative code to fix PHY query status.
+	2. ODM DIG MP abort case revise.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall.
+	2. 88EU simple test ok.
+
+--------------------------------------------------------------------------------------------
+<05/30/2012 13:10 MH_Chen>
+Modified Files:	
+Change Notes:	
+	Remove MP relative cofr out of ODM folder.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall.
+	2. 88EU ping ok.
+
+--------------------------------------------------------------------------------------------
+<05/29/2012 21:10 MH_Chen>
+Modified Files:	
+Change Notes:	
+	Windows Driver relative RXdesc resive
+	1. ODM pHY status query must input raw data.
+	2. Add GPL declaration for MP_Precomp.h
+	3. Revise ODM data structure defintion.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall.
+	2. 88EU ping ok.
+
+--------------------------------------------------------------------------------------------
+<05/29/2012 17:00 Alexchou>
+Modified Files:	
+Change Notes:
+	rtl8195/
+	1. deleted rtl8195 folder
+	
+	rtl8812a/
+	rtl8812a/BB/
+	rtl8812a/FW/
+	rtl8812a/FW/RTL8812FW_Test_T.BIN
+	rtl8812a/HalHWImg8812A_TestChip_FW.c
+	rtl8812a/HalHWImg8812A_TestChip_FW.h
+	rtl8812a/MAC/
+	rtl8812a/RF/
+
+	1. Create rtl8812a relative folders.
+	2. update 8812 testchip fw v0001
+	
+Verification Before Checked-In:
+	1. None
+--------------------------------------------------------------------------------------------
+<05/23/2012 17:28 MH_Chen>
+Modified Files:	
+Change Notes:
+	ODM relative file.
+	1. Add MP driver MP_Precomp.h to increase compile speed.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 92CU/92DU/8723AU/88EU simple test ok.
+
+--------------------------------------------------------------------------------------------
+<05/23/2012 14:54 MH_Chen>
+Modified Files:	
+Change Notes:
+	HAL\DESC\Hal8192CRxDesc.c
+	1. Fix ODM PHY & packet info strcucture for 92C &8812 seies.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 92CU simple test ok.
+
+--------------------------------------------------------------------------------------------
+<05/22/2012 22:40 MH_Chen>
+Modified Files:	
+Change Notes:
+	HAL\DESC\Hal8188ERxDesc.c
+	HAL\DESC\Hal8812Desc.c
+	HAL\OUTSRC\odm_HWConfig.c
+	1. Revise ODM PHY & packet info strcucture to fix 88E serries PHy query.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 88EU simple test ok.
+
+--------------------------------------------------------------------------------------------
+<05/17/2012 19:40 Georgia>
+Modified Files:
+	HalPhyRf.h
+	odm.c
+	odm.h
+	odm_debug.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_interface.h
+	odm_precomp.h
+	odm_reg.h
+	odm_RegDefine11AC.h
+	odm_RegDefine11N.h
+	odm_types.h
+
+Change Notes:
+	1. Prevent from "warning: no newline at end of file"
+	2. Fix comile error for CE Platform
+	
+Verification Before Checked-In:
+	1. Make all ok.
+	2. 88EU auto-test ok.
+	
+--------------------------------------------------------------------------------------------
+<05/17/2012 11:40 LukeLee>
+Modified Files:
+	odm.c
+	\rtl8188e\odm_RTL8188E.c
+	\rtl8192c\odm_RTL8192C.c
+	\rtl8192d\odm_RTL8192D.c
+
+Change Notes:
+        1. Add IC comile flag for each IC subfolder
+	2. revise ODM_DMInit() and ODM_DMWatchdog()
+	3. Remove ODM_RF_Saving_8188E()
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. set RTL8192C_SUPPORT/ RTL8192D_SUPPORT/ RTL8188E_SUPPORT to 0 buildall OK
+
+--------------------------------------------------------------------------------------------
+<05/16/2012 23:55 LukeLee>
+Modified Files:
+	odm.c
+
+Change Notes:
+        1. Revise AntDivType Init
+
+Verification Before Checked-In:
+	1. None
+
+--------------------------------------------------------------------------------------------
+<05/16/2012 23:10 LukeLee>
+Modified Files:
+	odm_HWConfig.c
+	odm_types.h
+	odm.c
+	odm.h
+	rtl8188e\odm_RTL8188E.c
+	rtl8188e\odm_RTL8188E.h
+
+Change Notes:
+        1. Add compile flag for SW and HW antenna diveristy
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. 88EU, 88CE TP test OK
+
+--------------------------------------------------------------------------------------------
+<05/16/2012 16:25 LukeLee>
+Modified Files:
+	odm_HWConfig.c
+	odm.c
+	odm.h
+	rtl8188e\HalPhyRf_8188e.c
+	rtl8188e\odm_RTL8188E.c
+
+Change Notes:
+        1. Fix comile error
+	2. Merge HW AntDiv for all platform
+	3. Disable ODM_SwAntDivCheckBeforeLink8192C()
+
+Verification Before Checked-In:
+        1. 88CE vs DIR855  TX:94Mbps RX:92Mbps
+	2. 88EU vs DIR855  TX:83Mbps RX:95Mbps
+
+--------------------------------------------------------------------------------------------
+<05/14/2012 11:21 button>
+Modified Files:
+	odm_precomp.h
+	odm.c
+	odm.h
+	HalPhyRf.c
+	rtl8188e/Hal8188ERateAdaptive.c
+	rtl8188e/HalPhyRf_8188e.c
+	rtl8188e/HalPhyRf_8188e.h
+
+Change Notes:
+        1. Support power tracking in AP platform
+	2. Refine RA threshold for AP
+	3. Fix STA array number 
+
+Verification Before Checked-In:
+        1. AP buildall OK.
+
+--------------------------------------------------------------------------------------------
+<05/12/2012 12:30 LukeLee>	
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.h
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\OUTSRC\odm_RegDefine11N.h
+	HAL\DESC\Hal8188EETxDesc.c
+	HAL\DESC\Hal8188EUsbTxDesc.c
+	HAL\DESC\Hal8188ESdioTxDesc.c
+
+Change Notes:
+	1. [88E]Enable CCK AntDiv and fix some AntDiv bugs 
+			
+Verification Before Checked-In:
+	1. N62 buildall OK.
+	2. 88EE DL:53Mbps UL:49Mbps  88EU DL:51Mbps UL:47Mbps
+
+--------------------------------------------------------------------------------------------
+<05/10/2012 16:00 MH_Chen>
+New Files:		
+Modified Files:	
+Change Notes:
+	1. Merge from MP driver V2680 to V2685. 
+			
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+	2. 88EU ping ok S3/S4/reload/unplug ok.
+
+--------------------------------------------------------------------------------------------
+<05/08/2012 23:00 MH_Chen>
+New Files:		
+Modified Files:	
+Change Notes:
+	1. Merge from MP driver V2560 to V2671. Many modification hard to describe.~~!! Please refer
+	   to MP driver lable v2560-2671.
+			
+Verification Before Checked-In:
+	1. N5/N6/N62 buildall OK.
+	2. 88EU ping ok S3/S4/reload/unplug ok.
+
+--------------------------------------------------------------------------------------------
+<05/08/2012 16:55 LukeLee>
+Modified Files:
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:		
+	1. remove compile error
+	2. [88E] Update MAC_PHY_REG V030 for change RX default ant to CG 
+
+Verification Before Checked-In:	
+	1. N62 buildall OK
+
+--------------------------------------------------------------------------------------------
+<05/07/2012 14:05 Kordan>
+Modified Files:
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/odm_types.h
+
+Change Notes:		
+	1. Add two definitions in RT_SPINLOCK_TYPE.
+	2. [88E] Support PHY_REG_MP.txt configuration.(But disabled now)
+
+Verification Before Checked-In:	
+	1. None
+	
+--------------------------------------------------------------------------------------------
+<05/07/2012 11:40 LukeLee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.h
+
+Removed Files:
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_MP.txt
+
+Change Notes:		
+	1. [88E]Update right MAC_PHY_REG V029 (remove PHY_REG_MP.txt)
+
+Verification Before Checked-In:	
+	1. N62 buildall OK
+
+--------------------------------------------------------------------------------------------
+<05/07/2012 11:20 LukeLee>
+New Files:
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_PG.txt
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.h
+
+Change Notes:		
+	1. [88E]Update MAC_PHY_REG V029 for power by rate
+
+Verification Before Checked-In:	
+	1. 88EE RX:99Mbps, TX:83.5Mbps
+
+--------------------------------------------------------------------------------------------
+<05/03/2012 21:15 LukeLee>
+New Files:
+	HEADER\RegCommon.h
+
+Change Notes:		
+	1. [88E]Modify registry AntennaDivType
+
+Verification Before Checked-In:	
+	1. 88EE RX:98Mbps, TX:84Mbps
+	2. 88EE antenna diversity enable OK
+
+--------------------------------------------------------------------------------------------
+<05/03/2012 17:00 LukeLee>
+New Files:
+	HAL\OUTSRC\odm_RegDefine11AC.h
+	HAL\OUTSRC\odm_RegDefine11N.h
+
+Change Notes:		
+	1. fix compile error
+
+Verification Before Checked-In:	
+	1. None
+
+--------------------------------------------------------------------------------------------
+<05/03/2012 16:00 LukeLee>
+New Files:
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_interface.h
+	HAL\OUTSRC\odm_precomp.h
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	HAL\HalDM.c
+New Files:
+	HAL\OUTSRC\odm_RegDefine11AC.h
+	HAL\OUTSRC\odm_RegDefine11N.h
+
+Change Notes:		
+	1. [8812] Reg Define and DIG modified
+	2. restrict dynamic functions for 11AC series
+	3. Add SupportICtype ODM_RTL8812
+	4. enable odm_DynamicEDCCA() for all 11N series	
+
+Verification Before Checked-In:	
+	1. Buildall OK
+	2. 88EU DL=94Mbps, UL=78Mbps, ODM v285 has the same issue!	
+--------------------------------------------------------------------------------------------
+<05/03/2012 11:00 JueYang>
+New Files:
+Modified Files:	
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+
+Change Notes:		
+	1. Revise CCK PowerByRate.	
+
+Verification Before Checked-In:	
+	1. OFDM and CCK PowerByRate OK.	
+--------------------------------------------------------------------------------------------
+<04/28/2012 12:00 JueYang>
+New Files:
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_PG.txt
+
+Modified Files:	
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.h
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_TestChip_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_TestChip_BB.h
+	HAL\OUTSRC\rtl8188e\odm_RegConfig8188E.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\PHY\Hal8188EPhyCfg.c
+	HAL\PHY\HalComPhyCfg.c
+	HAL\PHY\HalComPhyCfg.h
+
+	HAL\rtl8188E\rtl8188ee\Hal8188EEGen.c
+Change Notes:		
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_PG.txt
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.h
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_TestChip_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_TestChip_BB.h
+	HAL\OUTSRC\rtl8188e\odm_RegConfig8188E.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\PHY\Hal8188EPhyCfg.c
+	HAL\PHY\HalComPhyCfg.c
+	HAL\PHY\HalComPhyCfg.h
+	1. Add PowerByRate and update PHY_REG_PG to V003.	
+
+	HAL\rtl8188E\rtl8188ee\Hal8188EEGen.c
+	1. Fix some bugs.	
+
+
+Verification Before Checked-In:	
+	1. N62 Buildall ok	
+--------------------------------------------------------------------------------------------
+<04/27/2012 19:25 Georgia>
+New Files:
+Modified Files:	
+	odm.c
+	odm.h
+	odm_debug.c
+	odm_debug.h
+	odm_interface.c
+	odm_precomp.h
+	odm_types.h
+	rtl8188e/HalPhyRf_8188e.c
+	rtl8188e/odm_RTL8188E.c
+	rtl8188e/odm_RTL8188E.h
+	rtl8192c/odm_RTL8192C.c
+
+Change Notes:
+	1. Remove CE compile error	
+
+Verification Before Checked-In:
+	1. Make all ok.
+	2. 88EU auto-test ok.
+	
+--------------------------------------------------------------------------------------------
+<04/27/2012 17:33 MH_Chen>
+New Files:
+Modified Files:	
+Change Notes:
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c/h
+	1. Revise TX power tracking mechanism. Prevent BB swing fail.	
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. WIN7 88EU ping /reload/ unplug/ S3 ok.
+
+--------------------------------------------------------------------------------------------
+<04/25/2012 20:00 LukeLee>
+New Files:
+Modified Files:
+	rtl8188e/odm_RTL8188E.c
+Change Notes:
+        1. Remove MP compile error
+
+Verification Before Checked-In:
+        1. MP buildall OK
+
+--------------------------------------------------------------------------------------------
+<04/25/2012 17:20 button>
+New Files:
+Modified Files:
+	odm.c
+	rtl8188e/odm_RTL8188E.c
+Change Notes:
+        1. Refine AP's EDCA turbo function
+	2. Resolve AP's compile error
+
+Verification Before Checked-In:
+        1. AP platform build OK(88E)
+
+--------------------------------------------------------------------------------------------
+<04/23/2012 21:55 LukeLee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:
+        1. [88E] Update MAC_PHY_REG V028 for 20M mode noise resistence
+			
+Verification Before Checked-In:
+        1. 88E Static Analysis OK
+
+--------------------------------------------------------------------------------------------
+<04/13/2012 23:00 MH_Chen>
+New Files:		
+Modified Files:	
+Change Notes:
+	1. Merge from MP driver V2471 to V2561. Mant modification hard to describe.~~!!
+			
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+	2. 88EU/92CU ping ok S3/S4/reload/unplug ok.
+
+---------------------------------------------------------------------------------------------
+<04/13/2012 20:10 LukeLee>
+New Files:	
+	HAL\HalDM.c
+
+Modified Files:	
+Change Notes:
+	1. [8812]enable RSSI Monitor
+			
+Verification Before Checked-In:
+        1. buildall OK
+
+---------------------------------------------------------------------------------------------
+<04/13/2012 19:55 LukeLee>
+New Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\HalDM.c
+
+Modified Files:	
+Change Notes:
+	1. [8812]enable DIG only
+	2. [8812]CCK RSSI format as 88E
+			
+Verification Before Checked-In:
+        1. buildall OK
+
+---------------------------------------------------------------------------------------------
+<04/13/2012 16:38 Gimmy>
+New Files:	
+	HAL\OUTSRC\rtl8188e\FW
+Modified Files:	
+Change Notes:
+	1. Update first version 88E formal firmware. V001.
+			
+Verification Before Checked-In:
+        1. NONE.
+	2. ImgTransfer ok.
+
+---------------------------------------------------------------------------------------------
+<04/12/2012 22:30 LukeLee>
+Modified Files:
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.h
+	HAL\BTCoexist\HalBtCoexist.c
+
+Change Notes:
+	1.[All IC except 8723A]Modify DIG
+	2.[88E] Modify AntDiv
+			
+Verification Before Checked-In:
+        1. buildall ok.
+	2. 88EE test OK
+
+---------------------------------------------------------------------------------------------
+<04/12/2012 12:00 LukeLee>
+Modified Files:
+	PLATFORM\NDIS5\N5C_Init.c
+	PLATFORM\NDIS5\Ndis5Common.h
+	PLATFORM\NDIS6\N6C_Init.c
+	PLATFORM\NDIS6\Ndis6Common.h
+	HAL\EFUSE\Hal8188EEfuse.c
+
+Change Notes:
+	1.[88E]Fix AntDiv type decision in init flow
+			
+			
+Verification Before Checked-In:
+        1. buildall ok.
+	2. 88EE test OK
+
+---------------------------------------------------------------------------------------------
+
+<04/12/2012 10:28 Mingzhi>
+Modified Files:
+	\HEADER\Typedef.c
+	HAL\OUTSRC\odm.c
+
+Change Notes:
+	1.modify definition wireless mode for mp platform
+	2.fix a bug in AP/ADSL: choose_iot_main_sta()
+
+Verification Before Checked-In:
+	1.MP platform buildall ok
+	2.92du ping ok
+
+---------------------------------------------------------------------------------------------
+<04/11/2012 10:20 JueYang>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c
+			
+	HAL\OUTSRC\odm.c
+
+Change Notes:
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c
+        1. [88E] Fix BOSD.
+			
+	HAL\OUTSRC\odm.c
+        1. [88E] Add break.
+			
+Verification Before Checked-In:
+        1. buildall ok.
+
+---------------------------------------------------------------------------------------------
+<04/06/2012 18:20 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:
+        1. [88E] Update MAC_PHY_REG V026
+			
+Verification Before Checked-In:
+        1. 88EU TP dynamic rage test OK
+
+---------------------------------------------------------------------------------------------
+<04/03/2012 10:20 Kordan>
+Modified Files:
+	HEADER/Precomp.h.Wlan*.Windows
+	PLATFORM/WinInf/*/rtwlan*mp.inf
+	PLATFORM/WinInf/*/netrtwlan*.inf
+	PLATFORM/NDIS5/USB/INF/rtwlanump.inf
+	PLATFORM/NDIS5/PCI/INF/rtwlanemp.inf
+	HEADER/RegCommon.h
+	PLATFORM/NDIS5/N5C_Init.c
+	HAL/EFUSE/Hal8188EEfuse.c
+	
+Change Notes:
+	1. Change the default setting of AntennaDivType to "AUTO".
+	2. Ignore 0xC1[3] when 0xC9 is "1" or "2".
+			
+Verification Before Checked-In:
+	1. MP buildall ok.
+	
+---------------------------------------------------------------------------------------------
+<04/02/2012 20:50 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	
+Change Notes:
+	1. [88E] remove DbgPrint in odm_RTL8188E.c
+	2. [88C] modify ODM_SingleDualAntennaDetection()
+			
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 88CE TP test OK
+
+---------------------------------------------------------------------------------------------
+<04/02/2012 15:50 Kordan>
+Added Files:
+	PLATFORM/WinInf/SDIO
+	PLATFORM/WinInf/SDIO/netrtwlans.inf
+	PLATFORM/WinInf/SDIO/rtwlansmp.inf
+
+Deleted Files:
+	HEADER/Precomp.h.WlanES.Windows
+	HEADER/Precomp.h.WlanS.Windows.MP
+	HEADER/Precomp.h.WlanES.Windows.MP
+
+Modified Files:
+	HEADER/Precomp.h.Wlan*.Windows
+	PLATFORM/WinInf/*/rtwlan*mp.inf
+	PLATFORM/WinInf/*/netrtwlan*.inf
+	PLATFORM/NDIS5/USB/INF/rtwlanump.inf
+	PLATFORM/NDIS5/PCI/INF/rtwlanemp.inf
+	HEADER/RegCommon.h
+	PLATFORM/NDIS5/N5C_Init.c
+	HAL/OUTSRC/rtl8188e/odm_RTL8188E.c
+	HAL/EFUSE/Hal8188EEfuse.c
+	MPBuild.bat
+	
+Change Notes:
+	1. Add an option AUTO in advanced setting. (When AUTO is not selected, EFUSE setting would be ignored.)
+	2. Revise the registry setting and default value of Antenna diversity.
+	3. Fix compilation errors.
+			
+Verification Before Checked-In:
+	1. N5/N62/MP buildall ok.
+	2. 88EE MP T/Rx OK.
+
+---------------------------------------------------------------------------------------------
+<03/29/2012 21:05 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_HWConfig.c
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.h
+	
+Change Notes:
+	1. [88E]Modify Antenna Diversity
+	ODM_SetTxAntByAntDiv() needs to be executed in TXDESC in each platform
+			
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 88EE TP test OK
+
+---------------------------------------------------------------------------------------------
+<03/27/2012 23:05 MH_Chen>
+Modified Files:	
+Change Notes:
+	1. Merge from MP driver V2467 to V2470 to support 8821AU and fix some problem.
+			
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 882EU ping ok.
+
+---------------------------------------------------------------------------------------------
+<03/27/2012 22:10 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:
+        1. [88E] Update MAC_PHY_REG V025
+			
+Verification Before Checked-In:
+        1. None
+
+---------------------------------------------------------------------------------------------
+<03/26/2012 20:15 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:
+        1. [88E] Update MAC_PHY_REG V024
+			
+Verification Before Checked-In:
+        1. Power training is verified by Wilson
+
+---------------------------------------------------------------------------------------------
+<03/21/2012 11:50 Kordan>
+Modified Files:
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/rtl8188E/Hal8188ECom.c
+	PLATFORM/NDIS5/SDIO/sdio_main.c
+	MPBuild.bat
+
+Change Notes:
+        1. Fix wrong MACRO definition: READ_AND_CONFIG
+		2. Minor changes for MP driver.
+			
+Verification Before Checked-In:
+        1. N5/N62/MP buildall OK.
+
+---------------------------------------------------------------------------------------------
+<03/19/2012 11:20 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+
+Change Notes:
+        1. Update MAC_PHY Reg V023 
+			
+Verification Before Checked-In:
+        1. None
+
+---------------------------------------------------------------------------------------------
+<03/15/2012 15:30 Kordan>
+Modified Files:
+Change Notes:
+	HAL/EFUSE/Hal8188EEfuse.c
+	HAL/HalDM.c
+	HAL/HalPci.h
+	HAL/HalPG.h
+	HAL/HalSdio.h
+	HAL/HalUsb.h
+	HAL/MPT/MPT_HelperFunc.h
+	HAL/MPT/MPT_Phy.c
+	HAL/MPT/MPT_Phy.h
+	HAL/MPT/MPT_Req.c
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_precomp.h
+	HAL/OUTSRC/rtl8188e/Hal8188EReg.h
+	HAL/OUTSRC/rtl8188e/odm_RTL8188E.c
+	HAL/rtl8188E/Hal8188EReg.h
+	HEADER/CustomOid.h
+	HEADER/MassProductionDef.h
+	HEADER/PrecompInc.h
+	HEADER/RegCommon.h
+	HEADER/TypeDef.h
+	
+		1. [8188E] Read antenna diversity type (0xC9 in EFUSE) into TRxAntDivType.
+		2. [8188E] New OIDs to Set/Query the antenna diversity type.
+		3. odm_FastAntTrainingInit for MP driver.
+		
+	PLATFORM/MACOSX/PMC_Init.cpp
+	PLATFORM/NDIS5/N5C_Init.c
+	PLATFORM/NDIS5/Ndis5Common.h
+	PLATFORM/NDIS5/PCI/INF/rtwlanemp.inf
+	PLATFORM/NDIS5/SDIO/INF/netrtwlans.inf
+	PLATFORM/NDIS5/SDIO/INF/rtwlansmp.inf
+	PLATFORM/NDIS5/USB/INF/rtwlanump.inf
+	PLATFORM/NDIS6/Ndis6Common.h
+	PLATFORM/WinInf/PCI/netrtwlane.inf
+	PLATFORM/WinInf/PCI/rtwlanemp.inf
+	PLATFORM/WinInf/USB/netrtwlanu.inf
+	PLATFORM/WinInf/USB/rtwlanump.inf
+	
+		4. New TRxAntDivType setting in the advance property page of the device manager.
+
+Verification Before Checked-In:
+        1. N5/N62/MP buildall OK.
+		2. MP T/Rx OK.
+
+---------------------------------------------------------------------------------------------
+<03/13/2012 17:40 Luke.Lee>
+Modified Files:
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_RF.c
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+	HAL\OUTSRC\rtl8188e\RF\RadioA_1T.txt
+
+Change Notes:
+        1. Update MAC_PHY Reg V022 
+			
+Verification Before Checked-In:
+        1. 88EE shielding room TP test OK
+
+---------------------------------------------------------------------------------------------
+<03/12/2012 13:40 Kordan>
+Modified Files:
+	HAL/OUTSRC/Image2Header.exe
+
+Change Notes:
+        1. Bug fixed: wrong output array name of MP chip.
+			
+Verification Before Checked-In:
+        1. None
+		
+---------------------------------------------------------------------------------------------
+<03/09/2012 21:45 Kordan>
+Modified Files:
+	HAL/EFUSE/Hal8188EEfuse.c
+	HAL/HalComReg.h
+	HAL/HalDM.c
+	HAL/HalPci.h
+	HAL/HalSdio.h
+	HAL/HalUsb.h
+	HAL/OUTSRC/Image2Header.exe
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/odm_precomp.h
+	HAL/OUTSRC/OutputHWImg.bat
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_*.*
+	HAL/rtl8188E/Hal8188ECom.c
+	HAL/rtl8188E/Hal8188EFirmware.c
+	HAL/rtl8188E/rtl8188ee/Hal8188EEDef.h
+	HAL/rtl8188E/rtl8188ee/Hal8188EEGen.c
+	HAL/rtl8188E/rtl8188es/Hal8188ESdioDef.h
+	HAL/rtl8188E/rtl8188eu/Hal8188EUsbDef.h
+	HAL/rtl8188E/rtl8188eu/Hal8188EUsbGen.c
+	HAL/rtl8188E/rtl8188eu/Hal8812AUsbGen.c
+	HAL/sources.*
+	HEADER/HalDef.h
+	HEADER/Precomp.h.WlanE.Windows
+
+Change Notes:
+        1. Support 8188E runtime configuration of MP chip and Test chip. (determined by "bIsMPChip" variable)
+			a. This feature is now only enabled in 8188EE.
+			b. You can #define RTL8188E_FOR_TEST_CHIP 2 to supprt both MP and test chip.
+			c. Also, #define RTL8188E_FOR_TEST_CHIP 0/1 could reduce the code size.
+			
+Verification Before Checked-In:
+        1. N5/N62/MP buildall OK.
+
+---------------------------------------------------------------------------------------------
+<03/08/2012 21:21 button>
+Modified Files:
+        odm_precomp.h
+	odm_debug.h
+        odm.c
+        odm.h
+        rtl8188e/Hal8188ERateAdaptive.c
+Change Notes:
+        1. Resolve compile error in AP platform.
+Verification Before Checked-In:
+        1. AP platform compile OK.
+
+---------------------------------------------------------------------------------------------
+<03/08/2012 21:10 Kordan> 
+Modified Files:			
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+	HEADER/Precomp.h.WlanE.Windows
+	HEADER/Precomp.h.WlanU.Windows
+	
+Change Notes:
+	1. Fix switch channel bug which causes OS hung.
+	2. Set TEST_CHIP flag to 0.
+	3. Fix MP compilation error.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+	
+---------------------------------------------------------------------------------------------
+<03/05/2012 16:10 Luke.Lee> 
+Modified Files:			
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_MAC.c
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_RF.c
+	HAL/OUTSRC/rtl8188e/MAC/MAC_REG.txt
+	HAL/OUTSRC/rtl8188e/RF/RadioA_1T.txt
+
+Added Files:
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_MAC_testchip.c/h
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_BB_testchip.c/h
+	HAL/OUTSRC/rtl8188e/HalHWImg8188E_RF_testchip.c/h
+
+Change Notes:
+	1. Update RTL8188E_MAC_PHY_ForMPChip_v021.zip
+	2. Rename original MAC/BB/RF files as testchip files
+	
+Verification Before Checked-In:
+	2. 8188ES test OK.
+
+---------------------------------------------------------------------------------------------
+<03/02/2012 19:00 Kordan> 
+Modified Files:			
+COMMON/Debug.c
+	HAL/OUTSRC/Image2Header.exe
+	HAL/OUTSRC/rtl8188e/*.c
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+	HAL/OUTSRC/rtl8188e/RF/RadioA_1T.txt
+
+Change Notes:
+	1. Update HWIMG headers and Image2Header to handle if-else case.
+	2. Turn off RATE_ADAPTIVE_SUPPORT for MP driver.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK.
+	2. 8188EE ping OK.
+---------------------------------------------------------------------------------------------
+<03/02/2012 17:30 Luke.Lee> 
+Modified Files:			
+	odm.c
+	odm.h
+	\rtl8188e\odm_RTL8188E.c
+	\rtl8188e\odm_RTL8188E.h
+
+Change Notes:
+	1. Simplify timer callback of fast antenna training
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK
+	2. 88EE hang in Win7 from label v234
+	3. 88EU workitem does not work if it is started by timer in WatchDog
+
+---------------------------------------------------------------------------------------------
+<02/29/2012 19:40 Georgia> 
+Modified Files:			
+	odm.c
+	rtl8188e/Hal8188ERateAdaptive.c
+	rtl8723a/Hal8723UHWImg_CE.c
+	rtl8723a/Hal8723UHWImg_CE.h
+
+Change Notes:
+	1. Fix incorrect data type usage in func:ODM_RAInfo_Init_all.	
+	2. Fix compile error for CE Platform.
+	
+Verification Before Checked-In:
+	1. Make all ok.
+	2. RTL8723A-VAL auto-test ok.
+	3. RTL8189E auto-test ok.
+---------------------------------------------------------------------------------------------
+<02/24/2012 18:30 Georgia> 
+Modified Files:			
+	HalPhyRf.c
+	HalPhyRf.h
+	odm.c
+	odm.h
+	odm_interface.h
+	odm_precomp.h
+	rtl8188e/Hal8188ERateAdaptive.c
+	rtl8188e/Hal8188ERateAdaptive.h
+	rtl8188e/HalPhyRf_8188e.c
+	rtl8188e/HalPhyRf_8188e.h
+	rtl8188e/odm_RTL8188E.c
+
+Change Notes:
+	1. Fix compile error for CE platform.	
+	2. Add GPL announce.
+	3. Remove useless codes.
+	
+Verification Before Checked-In:
+	1. Make all ok.
+	2. RTL8723A-VAL auto-test ok.
+	3. RTL8189E auto-test ok.
+	
+---------------------------------------------------------------------------------------------
+<02/23/2012 17:10 Kordan> 
+Modified Files:			
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c
+Change Notes:
+	1. Update IQK setting and flow.
+	
+Verification Before Checked-In:
+	1. None
+
+---------------------------------------------------------------------------------------------
+<02/23/2012 22:50 MH_Chen> 
+Modified Files:			
+Change Notes:
+	HAL\OUTSRC\odm.c\h
+	1. Revise CCK path diversity timer and workitem architecture.
+	2. ResetAllHw timer and cancel Hw timer will call ODM relative API..
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	2. 92CU WIN7 S3/S4/S5 reload/unplug ok.
+
+---------------------------------------------------------------------------------------------
+<02/23/2012 21:35 MH_Chen> 
+Modified Files:			
+Change Notes:
+	HAL\OUTSRC\odm.c\h
+	1. Revise path diversity timer and workitem architecture.
+	2. Deleate HAL layer ODM path diversity timer and workitem declaation.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	2. 92CU WIN7 S3/S4/S5 reload/unplug ok.
+	
+---------------------------------------------------------------------------------------------
+<02/23/2012 20:35 MH_Chen> 
+Modified Files:			
+Change Notes:
+	HAL\OUTSRC\odm.c\h
+	1. Revise all ODM timer/workitem init/cancel.release flow.
+	2. Add cancel timer API to prevent BSOD and system resource leakage.
+	3. Fix unplug fail issue.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	2. 92CU WIN7 S3/S4/S5 reload/unplug ok.
+	3. A special flow bug fixed ==> S3/S4 and then disable or unplug OK in NB111_WIN7.
+
+---------------------------------------------------------------------------------------------
+<02/22/2012 16:35 MH_Chen> 
+Modified Files:			
+Change Notes:
+	HAL\OUTSRC\odm.c\h
+	1. Merge from MP 2444 to 2459.
+	2. Some odm code is moved from MP to ODM code base.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	2. 92CU WIN7 S3/S4/S5 reload/unplug ok.
+	3. A special under investigation ==> S3/S4 and then disable or unplug fail. And then
+	   cause all USB port detection fail in QC NB111.
+
+---------------------------------------------------------------------------------------------
+<02/22/2012 15:35 Kordan> 
+Modified Files:		
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+
+Change Notes:
+	1. Revise PHY_ResetIQKResult to ODM format, ODM_ResetIQKResult.
+	2. Move TxPowerTrackControl initialization to odm_TXPowerTrackingThermalMeterInit.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+---------------------------------------------------------------------------------------------
+<02/21/2012 23:10 Kordan> 
+Modified Files:		
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+
+Change Notes:
+	1. Merge TxPower Tracking from trunk to ODM.
+	2. Replace EOF pattern, 0xFF, of ParaFiles with 0xFFFF. 
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	
+---------------------------------------------------------------------------------------------
+<02/21/2012 14:45 button>
+Modified Files:
+	odm_precomp.h
+	odm.c
+	odm.h
+	rtl8192c/HalDMOutSrc8192C_AP.c
+	rtl8188e/odm_RTL8188E.c
+	rtl8188e/odm_RTL8188E.h
+	rtl8188e/Hal8188ERateAdaptive.h
+	rtl8188e/Hal8188ERateAdaptive.c
+Change Notes:
+	1. Resolve compile error in AP platform.
+	2. In AP's IOT engine, search all connected STA, not only root
+	   interface
+	3. Sync 92C dynamic mechanism with trunk
+Verification Before Checked-In:
+	1. AP platform make OK.
+	2. 96e+88e ping ok
+
+---------------------------------------------------------------------------------------------
+<02/19/2012 10:29 Annie>
+Modified Files:
+
+Change Notes:
+	1. Fix compile error in ADSL platform.
+	2. Correct SNR info.
+	3. Add ODM_InitAllTimers interface.
+	4. Add ODM_CompareMemory interface.
+
+Verification Before Checked-In:
+	1. ADSL platform make OK.
+	2. Ping 65500 OK.
+
+---------------------------------------------------------------------------------------------
+<02/17/2012 18:05 Kordan> 
+Modified Files:		
+	HAL/OUTSRC/rtl8188e/HalPhyRf_8188e.c
+
+Change Notes:
+	1. When delta temperature is equal to or larger than 20 centigrade(index delta is about 8), 
+	   do IQK and LCK.
+	2. Update last thermal value to prevent from running IQK and LCK every time. 
+
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+
+---------------------------------------------------------------------------------------------
+<02/17/2012 16:45 Luke.Lee> 
+Modified Files:		
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+
+Change Notes:
+	1. Remove SW AntDiv timer and callback from orignal MP platform
+	2. Add init and free all workitems for MP platform
+
+Verification Before Checked-In:
+	1. N5/N62 buildall OK	
+	2. 88EE web brouse OK
+	
+---------------------------------------------------------------------------------------------
+<02/17/2012 14:18 MH_Chen> 
+Modified Files:		
+Change Notes:
+	1. Add workitem relative API. Not enabled now, so we need not test.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.	
+
+---------------------------------------------------------------------------------------------
+<02/16/2012 22:30 LukeLee> 
+Modified Files:	
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	
+Change Notes:
+	1. [8188E]Modify fast antenna training
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.	
+
+---------------------------------------------------------------------------------------------
+<02/16/2012 17:00 Mingzhi> 
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	
+Change Notes:
+	1. for CE platform, BE TXOP in B/G/BG/A mode is 0x5e(3ms)
+       2. for AP/ADSL platform: fix a bug in BE TXOP
+
+Verification Before Checked-In:
+	1. N5/N62 buildrtwu/buildrtwe ok.	
+
+---------------------------------------------------------------------------------------------
+<02/16/2012 15:00 Luke.Lee> 
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm_precomp.h
+
+New Files:
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.c
+	HAL\OUTSRC\rtl8188e\odm_RTL8188E.h
+	
+Change Notes:
+	1. [8188E]Move Fast antenna training into 88E folder
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.	
+
+---------------------------------------------------------------------------------------------
+<02/14/2012 23:12 MH_Chen> 
+Modified Files:		
+Change Notes:
+	1. FIX ODM tracking list item 60. Revise ODM 88E rate adaptive ability support.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.	
+	2. 8188EU ping test ok. 
+
+---------------------------------------------------------------------------------------------
+<02/14/2012 22:12 MH_Chen> 
+Modified Files:		
+Change Notes:
+	1. FIX ODM tracking list item 58. Revise ODM ability support.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.	
+	2. 8188EU ping test ok. 
+
+---------------------------------------------------------------------------------------------
+<02/14/2012 15:40 Georgia> 
+Modified Files:	
+	odm.c
+	odm_debug.h
+	
+Change Notes:
+	1.Turn on EDCA Turbo function for BG mode (CE Platform)
+
+Verification Before Checked-In:
+	1. CE Platform make ok.	
+	2. 8188E-SDIO auto-test ok. 
+
+---------------------------------------------------------------------------------------------
+<02/13/2012 17:45 Luke.Lee> 
+Modified Files:	
+
+	HAL\OUTSRC\rtl8188e\MAC\MAC_REG.txt
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_MAC.c
+
+Change Notes:
+
+	1.Update RTL8188E_MAC_PHY_ForTestChip_v020
+
+Verification Before Checked-In:
+	1. None
+
+---------------------------------------------------------------------------------------------
+<02/13/2012 17:30 Luke.Lee> 
+Modified Files:	
+
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_HWConfig.c
+
+Change Notes:
+
+	1.Modify fast antenna training (default disabled)
+
+Verification Before Checked-In:
+	1. N62 buildall ok. 
+
+---------------------------------------------------------------------------------------------
+<02/10/2012 19:20 JueYang> 
+Modified Files:	
+	COMMON\MgntLink.c
+
+	HAL\DESC\Hal8188EETxDesc.c
+
+	HAL\OUTSRC\rtl8188e\Hal8188ERateAdaptive.c
+	HAL\OUTSRC\rtl8188e\odm_RegConfig8188E.c
+	PLATFORM\NDIS6\N6C_OidSet.c
+	PLATFORM\NDIS6\N6C_Req.c
+	PLATFORM\NDIS6\Ndis_OID.c
+
+	HAL\OUTSRC\odm.c
+
+	HAL\rtl8188E\rtl8188ee\Hal8188EEGen.c
+
+Change Notes:
+
+	COMMON\MgntLink.c
+	1. Do MgntLinkRequest in function MgntLinkRetry even if JoinProbeRequestTimer cancel NG and SET flag is TRUE.
+	2. Tune 3U Throughput for DIR 655. Reserved at least 2 packets in Tx FIFO to triggle early mode but avoid single AMPDU.
+
+	HAL\DESC\Hal8188EETxDesc.c
+	1. Fix DTM Fuzz BOSD for memory overflow when move memory for ealy mode dummy. Some codes are not covered by pHalData->bEarlyModeEnable. 
+
+	HAL\OUTSRC\rtl8188e\Hal8188ERateAdaptive.c
+	HAL\OUTSRC\rtl8188e\odm_RegConfig8188E.c
+	PLATFORM\NDIS6\N6C_OidSet.c
+	PLATFORM\NDIS6\N6C_Req.c
+	PLATFORM\NDIS6\Ndis_OID.c
+	1. Just revise some traces.
+
+	HAL\OUTSRC\odm.c
+	1. Fix memory overwrite when update AsocEntry RA mask. The function odm_RefreshRateAdaptiveMaskMP tries to write MgntInfo.AsocEntry[ODM_ASSOCIATE_ENTRY_NUM-1].
+
+	HAL\rtl8188E\rtl8188ee\Hal8188EEGen.c
+	1. Fix RX Hang after RF Off and RF On. Enable TRX DMA(REG[0x301]=0) during intialization.
+
+Verification Before Checked-In:
+	1. N62 buildall ok. 
+
+---------------------------------------------------------------------------------------------
+<02/09/2012 22:41 MH_Chen> 
+Modified Files:		
+Change Notes:
+	MERGE MP V2435. 
+	1. Increase build speed and revise aarchitecture.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	1. 88EU reload/s3 ping ok.
+
+---------------------------------------------------------------------------------------------
+<02/09/2012 17:20 Kordan> 
+Modified Files:	
+	HAL\OUTSRC\Image2Header.exe
+
+Change Notes:
+	1. Fix wrong output values of Image2Header.
+
+Verification Before Checked-In:
+	1. None.
+
+---------------------------------------------------------------------------------------------
+<02/08/2012 17:50 Luke.Lee> 
+Modified Files:	
+	HAL\OUTSRC\rtl8188e\BB\PHY_REG_1T.txt
+	HAL\OUTSRC\rtl8188e\RF\RadioA_1T.txt
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_BB.c
+	HAL\OUTSRC\rtl8188e\HalHWImg8188E_RF.c
+
+Change Notes:
+	1. Update MAC_PHY reg v019
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. 
+	2. 88EE run chariot ok.
+
+---------------------------------------------------------------------------------------------
+<02/08/2012 17:20 Luke.Lee> 
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm_HWConfig.c
+
+Change Notes:
+	1. modify ODM_BB_ANT_DIV init in MP Platform
+	2. [8188E] modify fast antenna training (default disabled)
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. 
+	2. 88EE run chariot ok.
+
+---------------------------------------------------------------------------------------------
+<02/07/2012 21:30 MH_Chen> 
+Modified Files:		
+Change Notes:
+	1. Revise all batch file for MP. To fasten build speed.
+	2. We do not request ODM to check buildrtwee/eu/es. The batch files will be removed later.
+	3. Enable 92CU C2H timer for intel case.
+	4. Prevent SDIO build error by modifying buildclean all.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. 
+	2. 88EU ping ok.
+
+---------------------------------------------------------------------------------------------
+<02/07/2012 21:10 Luke.Lee> 
+Modified Files:	
+	HAL\OUTSRC\odm.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\odm_HWConfig.c
+	
+Change Notes:
+	1. [8188E] Modify fast antenna training (default disabled)
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+
+---------------------------------------------------------------------------------------------
+<02/07/2012 13:35 JueYang> 
+Modified Files:	
+	HAL\DESC\Hal8188EETxDesc.c
+	HAL\PHY\HalComPhyCfg.c
+	
+Change Notes:
+	1. [8188E] Revise Power Trainning.
+
+Verification Before Checked-In:
+	1. N62 buildrtwe ok. 
+
+---------------------------------------------------------------------------------------------
+<02/07/2012 11:05 JueYang> 
+Modified Files:	
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c
+	
+Change Notes:
+	1. [8188EE] Fix pbScanInProcess error which cause initialize 88ee delayed 3 seconds.
+
+Verification Before Checked-In:
+	1. N62 buildrtwe ok. 
+
+---------------------------------------------------------------------------------------------
+<02/06/2012 21:30 Luke.Lee> 
+Modified Files:	
+	1. rtl8188e/*
+	
+Change Notes:
+	1. [8188E] Update 88E MAC_PHY_REG v018
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. 
+
+---------------------------------------------------------------------------------------------
+<02/06/2012 20:30 Luke.Lee> 
+Modified Files:	
+	1. rtl8188e/*
+	
+Change Notes:
+	1. [8188E] Update 88E MAC_PHY_REG v017
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. 
+	2. 88EU vs Cisco1252 20M mode DL/UL:48Mbps
+
+---------------------------------------------------------------------------------------------
+<02/06/2012 13:30 Kordan> 
+Modified Files:	
+	1. Image2Header.exe
+	2. rtl8723a/*
+	3. rtl8188e/*
+	
+Change Notes:
+	1. Update Image2Header to remove the redundant code.
+
+Verification Before Checked-In:
+	1. N5/N6/N62 buildall ok. 
+	
+---------------------------------------------------------------------------------------------
+<02/06/2012 11:24 MH_Chen> 
+New Files:
+Delete FIles:
+Modified Files:	
+Change Notes:
+	1. MErge MP V2516 to fix TX short cut and SDIO build error.
+
+Verification Before Checked-In:
+	1. N5/N6/N62 buildall ok. (Do not support buildrtwes in buildall now.)
+	2. 88EU ping ok.
+
+---------------------------------------------------------------------------------------------
+<02/03/2012 18:20 Georgia> 
+New Files:
+Delete FIles:
+Modified Files:
+	rtl8188e/HalPhyRf_8188e.c
+
+Change Notes:
+	1. Fix compile error for CE Platform.
+
+Verification Before Checked-In:
+	1. CE Platform make ok.
+	2. 8723AU auto-test ok.
+	3. 8188E-SDIO auto-test ok.
+
+---------------------------------------------------------------------------------------------
+<02/03/2012 17:35 MH_Chen> 
+New Files:
+Delete FIles:
+Modified Files:
+Change Notes:
+	1. Revise 88E MAC init flow.
+	
+Verification Before Checked-In:
+	1. N6/N5 buildall OK. except sdio driver..
+	2. 92CU S3/S5/Reload/Unplug and ping WPA2-AES ok.
+
+---------------------------------------------------------------------------------------------
+<02/03/2012 14:30 MH_Chen> 
+New Files:
+Delete FIles:
+Modified Files:
+Change Notes:
+	COMMON\ApEngine.c
+	COMMON\WOLPattern.c
+	1. Support ODM for AP engine in MP.
+	2. Fix SDIO compile error.
+	
+	HAL\BTCoexist\HalBtCoexist.c\h
+	HAL\DESC\Hal8192CRxDesc.c
+	HAL\HWIMG\HalHWImg.h
+	1. Support ODM for BT in MP driver.
+	2. IC support flag is moved to haldef.h.
+	HAL\OUTSRC\rtl8188e\Hal8188ERateAdaptive.c
+	HAL\OUTSRC\rtl8188e\HalPhyRf_8188e.c
+	1. Fix MP compile error.
+	
+	HAL\PHY\Hal8188EPhyCfg.c\h
+	HAL\PHY\Hal8192CPhyCfg.c\h
+	HAL\PHY\Hal8192DPhyCfg.h
+	HAL\PHY\HalComPhyCfg.h
+	1. Disable original RF calibraet power tracking mechanism in MP old drv.
+	2. Georgia move some constant declare from MP old position to ODM.
+	
+	HEADER\...
+	1. Define IC support flag.
+	2. Revise precomp for SDIO build.
+	
+	Build batch files:
+	1. Support MP all IC with ODM module.
+	2. Support all SDIO driver build.
+	3. Spport 8812E build.
+	
+Verification Before Checked-In:
+	1. N6/N5 buildall OK. We do not check EE/EU/ES sereis build batch file.
+	2. 92CU S3/S5/Reload/Unplug and ping WPA2-AES ok.
+
+---------------------------------------------------------------------------------------------
+<02/03/2012 15:30 Georgia>
+Change Notes:
+	1. Add func:odm_RATxRPTTimerSetting,to prevent do IO frequently.
+
+Verification Before Checked-In:
+	1. CE Platform make ok.
+	2. 8723AU auto-test ok.
+	3. 8188E-SDIO auto-test ok.
+---------------------------------------------------------------------------------------------
+<02/03/2012 13:40 Georgia>
+Change Notes:
+	1. Fix compile error for CE Platform.
+	2. add relative code for integrate RF Calibration.(add struct ODM_RF_CAL_T)
+	3. integrate RA/Tx power training/RF calibration/tx power tracking for 8188ES
+	4. Add interface: ODM_CompareMemory.
+
+Verification Before Checked-In:
+	1. CE Platform make ok.
+	2. 8723AU auto-test ok.
+	3. 8188E-SDIO auto-test ok.
+---------------------------------------------------------------------------------------------
+<02/02/2012 21:30 Luke.Lee>
+Change Notes:
+	1. Enable 88E Early Mode for all IOT peers
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+	2. 88EU TP verfication OK
+---------------------------------------------------------------------------------------------
+<02/02/2012 21:00 button>
+Modified Files:
+        odm.h
+        odm.c
+	odm_HWConfig.h
+	odm_HWConfig.c
+	odm_interfac.c
+Change Notes:
+        1. AP's timer function
+        2. AP's antenna diversity callback function
+        3. AP's BB,MAC,RF config
+Verification Before Checked-In:
+        1. AP platform build ok.
+---------------------------------------------------------------------------------------------
+<02/02/2012 17:45 JueYang>
+Change Notes:
+	Hal8188EEHWImg.c
+	Hal8188EEHWImg.h
+	Hal8188EUHWImg.c
+	Hal8188EUHWImg.h	
+	Hal8188ESHWImg.c
+	Hal8188ESHWImg.h
+	1. Update 8188E HWImg header file.
+
+Verification Before Checked-In:
+	1. N62 buildall OK
+---------------------------------------------------------------------------------------------
+<02/02/2012 17:30 JueYang>
+Change Notes:
+	Precomp.h.WlanU.Windows
+	usb_DrvIF.c
+	1. [8188EU] Fix BSOD.
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK
+	2. 88EU test OK
+---------------------------------------------------------------------------------------------
+<02/02/2012 11:20 LukeLee>
+Change Notes:
+	1. [8188EE/8188ES] InitHalDm should be put ahead of PHY_MACConfig(Adapter)!
+	2. Fix compile error
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK
+	2. 88EE ping OK
+
+---------------------------------------------------------------------------------------------
+<02/01/2012 23:15 Kordan>
+Change Notes:
+	1. Remove inappropriate 8723_SUPPORT MACRO definition in Precomp.h.
+
+Verification Before Checked-In:
+	1. none
+	
+---------------------------------------------------------------------------------------------
+<02/01/2012 22:10 Kordan>
+Change Notes:
+	1. To avoid redefinition, function names are changed in odm_RegConfig8188E and odm_RegConfig8723A.
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK
+
+---------------------------------------------------------------------------------------------
+<02/01/2012 21:10 LukeLee>
+Change Notes:
+	1. [8188EU] InitHalDm should be put ahead of PHY_MACConfig(Adapter)!
+	2. [8188E] MAC/BB/RF Reg init flow by ODM
+
+Verification Before Checked-In:
+	1. N62/N5 buildall OK
+	2. 88EU ping OK
+
+---------------------------------------------------------------------------------------------
+<02/01/2012 18:10 Kordan>
+Change Notes:
+	1. Update Image2Header and upload the batch file to output hardware images.
+	2. Rename the parameter filename to comply with Image2Heaeder's rule.
+	2. [8188EU] InitHalDm should be put ahead of PHY_MACConfig(Adapter)!
+
+Verification Before Checked-In:
+	1. None
+
+---------------------------------------------------------------------------------------------
+<02/01/2012 11:10 Kordan>
+Change Notes:
+	1. Add 8188E Hardware Images.
+	2. Change the delay pattern, 0xfe, to 0xffe. (0xfe is a active register of 8188E)
+
+Verification Before Checked-In:
+	1. None
+
+---------------------------------------------------------------------------------------------
+<01/31/2012 22:27 Annie>
+Change Notes:
+	1. Fix compile error in ADSL platform.
+
+Verification Before Checked-In:
+	1. ADSL platform make OK.
+	2. Ping FAIL.
+
+---------------------------------------------------------------------------------------------
+<01/31/2012 17:00 Luke.Lee> 
+Modified Files:	
+Change Notes:
+	1. Fix 88EU TX DESC bug
+	2. Add Fast Antenna Training Mechanism (default disabled)
+	3. enable 88EU auto RTS
+	4. Add control flag pAntDivCfg to SW AntDiv
+	
+Verification Before Checked-In:
+	1. N6/N5 buildall OK
+	2. 92CU run TP OK but 88EU TP bad
+
+---------------------------------------------------------------------------------------------
+<01/31/2012 16:07 MH_Chen> 
+Modified Files:	
+Change Notes:
+	1. Merge MP SDIO driver for ODM module test. Unti version 2412.
+	2. Revise for MP common binary & ODM compatiable.
+	
+Verification Before Checked-In:
+	1. N5/N62 Buildall ok.
+	2. 92CU win7 unplug/reload/S3/S5 ok.
+
+---------------------------------------------------------------------------------------------
+<01/30/2012 21:13 MH_Chen> 
+Modified Files:	
+Change Notes:
+	1. Fix rtwlan SDIO source file for MP.
+	2. Revise precomp header file and batch file for MP SDIO driver.
+	
+Verification Before Checked-In:
+	1. N5 Build SDIO driver ok.
+
+---------------------------------------------------------------------------------------------
+<01/30/2012 20:40 MH_Chen> 
+Modified Files:	
+Change Notes:
+	1. Revise ODM phy rx desc query for MP.
+	2. Revise precomp header file for USB.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. N5 Build 8723AS fail.
+	2. 92CU test ok. Link with WPA2-AES AP. Unplug/reload/S3 ok.
+
+---------------------------------------------------------------------------------------------
+<01/29/2012 17:00 JueYang> 
+Modified Files:
+	HAL\OUTSRC\odm.c
+	
+	PLATFORM\NDIS6\USB\N6Usb_DrvIF.c
+	
+Change Notes:
+	HAL\OUTSRC\odm.c
+	1. Fix RA info not initialized.
+	
+	PLATFORM\NDIS6\USB\N6Usb_DrvIF.c
+	1. Fix a mistake in writing which cause USB memory leak.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. 88EE\88CE\88CU test ok.
+---------------------------------------------------------------------------------------------
+<01/29/2012 13:20 JueYang> 
+Modified Files:
+	COMMON\WOLPattern.c
+	HAL\rtl8188E\rtl8188eu\Hal8188EUsbGen.c
+	HAL\rtl8188E\Hal8188ECom.c
+	HAL\rtl8188E\Hal8812Com.c
+	HAL\rtl8192C\rtl8192ce\Hal8192CEGen.c
+	HAL\rtl8192C\rtl8192cu\Hal8192CUsbGen.c
+	HAL\rtl8192S\rtl8192se\Hal8192SEGen.c
+	HEADER\TypeDef.h
+	PLATFORM\NDIS5\PCI\Mp_Req.c
+	PLATFORM\NDIS5\USB\Mp_Req.c
+	PLATFORM\NDIS5\N5C_Init.c
+	PLATFORM\NDIS6\PCI\Mp_Req.c
+	PLATFORM\NDIS6\PCI\N6Pci_Main.c
+	PLATFORM\NDIS6\USB\Mp_Req.c
+	PLATFORM\NDIS6\USB\N6Usb_main.c
+	PLATFORM\NDIS6\N62C_SetOID.c
+	
+	HAL\EFUSE\Hal8192CEfuse.c
+	HAL\EFUSE\HalEfuse.h
+	HAL\OUTSRC\odm.c
+	HEADER\RegCommon.h
+	
+Change Notes:
+	COMMON\WOLPattern.c
+	HAL\rtl8188E\rtl8188eu\Hal8188EUsbGen.c
+	HAL\rtl8188E\Hal8188ECom.c
+	HAL\rtl8188E\Hal8812Com.c
+	HAL\rtl8192C\rtl8192ce\Hal8192CEGen.c
+	HAL\rtl8192C\rtl8192cu\Hal8192CUsbGen.c
+	HAL\rtl8192S\rtl8192se\Hal8192SEGen.c
+	HEADER\TypeDef.h
+	PLATFORM\NDIS5\PCI\Mp_Req.c
+	PLATFORM\NDIS5\USB\Mp_Req.c
+	PLATFORM\NDIS5\N5C_Init.c
+	PLATFORM\NDIS6\PCI\Mp_Req.c
+	PLATFORM\NDIS6\PCI\N6Pci_Main.c
+	PLATFORM\NDIS6\USB\Mp_Req.c
+	PLATFORM\NDIS6\USB\N6Usb_main.c
+	PLATFORM\NDIS6\N62C_SetOID.c
+	1. Use MAX_SUPPORT_WOL_PATTERN_NUM(Adapter) instead of MAX_SUPPORT_WOL_PATTERN_NUM.
+	
+	HAL\EFUSE\Hal8192CEfuse.c
+	HAL\EFUSE\HalEfuse.h
+	HAL\OUTSRC\odm.c
+	HEADER\RegCommon.h
+	1. Remove HAL_SUPPORT_88E_92C.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok
+---------------------------------------------------------------------------------------------
+<01/29/2012 11:20 JueYang> 
+Modified Files:
+	COMMON\MgntGen.c
+	COMMON\sources.Ebd
+	COMMON\sources.props
+	COMMON\sources.Win
+	COMMON\TDLSGen.c
+	COMMON\TransmitDesc.c
+	HAL\DESC\Hal8188EERxDesc.c
+	HAL\DESC\Hal8188EETxDesc.c
+	HAL\DESC\Hal8188ESdioRxDesc.c
+	HAL\DESC\Hal8188ESdioTxDesc.c
+	HAL\DESC\Hal8188EUsbRxDesc.c
+	HAL\DESC\Hal8188EUsbTxDesc.c
+	HAL\DESC\HalComRxDesc.c
+	HAL\DM\HalComDM.c
+	HAL\OUTSRC\Hal8188EDMOutSrc.c
+	HAL\OUTSRC\odm.h
+	HAL\OUTSRC\rtl8188e\Hal8188ERateAdaptive.h
+	HAL\OUTSRC\rtl8188e\Hal8188ERateAdaptive.c
+	HAL\rtl8188E\rtl8188ee\Hal8188EEGen.c
+	HAL\rtl8188E\rtl8188ee\Hal8812EGen.c
+	HAL\rtl8188E\rtl8188es\Hal8188ESdioGen.c
+	HAL\rtl8188E\rtl8188eu\Hal8188EUsbGen.c
+	HAL\rtl8188E\Hal8188ECom.c
+	HAL\rtl8192C\rtl8192ce\Hal8192CEGen.c
+	HAL\rtl8192C\rtl8192cs\Hal8192CSdioGen.c
+	HAL\rtl8192C\rtl8192cu\Hal8192CUsbGen.c
+	HAL\rtl8192S\rtl8192se\Hal8192SEGen.c
+	HAL\rtl8192S\rtl8192su\Hal8192SUsbGen.c
+	HAL\HAL.mk
+	HAL\HalCommon.c
+	HAL\HalDM.c
+	HAL\sources.WlanE
+	HAL\sources.WlanE.props
+	HAL\sources.WlanU.props
+	HAL\sources.WlanU.Win
+	HEADER\HalDef.h
+	Precomp.h.WlanE.Windows
+	HEADER\PrecompInc.h
+	HEADER\TypeDef.h
+	
+Change Notes:
+	1. Move RA from COMMON\ to HAL\OURSRC\RTL8188E.
+	2. Support 88E and other chips when RATE_ADAPTIVE_SUPPORT=1.
+	
+Verification Before Checked-In:
+	1. N5/N62 buildall ok
+----------------------------------------------------------------------------------------------
+<01/20/2012 19:07 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge MP V 2401-2410.
+	
+Verification Before Checked-IN
+	1. N5/N6 buildall ok.
+	2. 92CU win7 ping test ok.
+
+----------------------------------------------------------------------------------------------
+<01/19/2012 22:30 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Support 8188E power tracking mechanism in odm folder for MP.
+	
+Verification Before Checked-IN
+	1. N5/N6 buildall ok.
+	2. 92CU win7 ping test ok.
+
+----------------------------------------------------------------------------------------------
+<01/19/2012 21:30 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge MP V 2384-2400 to support new 88EU/8812U features.
+	
+Verification Before Checked-IN
+	1. N5/N6 buildall ok.
+	2. 92CU win7 ping test ok.
+	3. 92CU XP chariot throughput 1HR ok.
+
+----------------------------------------------------------------------------------------------
+<01/19/2012 20:00 MH_Chen>
+Modified Files:		
+Change Note:
+	1. According to chariot test. 88EU will fail in RX side, we found that
+	   the reason is due to precomp.h setting. If you want to test 88E series IC
+	   Please use below setting. We will fix the problem later.
+	   
+#if 1		// For 92C/92D/8723A
+#define HAL_SUPPORT_88E_92C  0
+#if (HAL_SUPPORT_88E_92C ==1)
+		#undef RTL8192D_DUAL_MAC_MODE_SWITCH		
+		#define RTL8192D_DUAL_MAC_MODE_SWITCH			0
+		#undef RTL8192D_EASY_SMART_CONCURRENT
+		#define RTL8192D_EASY_SMART_CONCURRENT 		0
+		#define RTL8188E_FOR_MP_TEST				1
+		#define	RTL8188E_EARLY_MODE_PKT_NUM_10			1
+
+#endif
+#else		// for 88E
+#define HAL_SUPPORT_88E_92C  1
+#if (HAL_SUPPORT_88E_92C ==1)
+		#undef RTL8192D_DUAL_MAC_MODE_SWITCH		
+		#define RTL8192D_DUAL_MAC_MODE_SWITCH			0
+		#undef RTL8192D_EASY_SMART_CONCURRENT
+		#define RTL8192D_EASY_SMART_CONCURRENT 		0
+		#define RTL8188E_FOR_TEST_CHIP				1
+		#define	RTL8188E_EARLY_MODE_PKT_NUM_10			1
+		#define POWER_TRAINING_ACTIVE				0
+		#define RATE_ADAPTIVE_SUPPORT				1
+
+#endif
+#endif
+	
+Verification Before Checked-IN
+	1. 88EU/92CU chariot throughput test ok. 
+
+----------------------------------------------------------------------------------------------
+<01/19/2012 16:00 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Move 8188E PHY calibrate relative code from HAL\PHY to HAL\ODM\rtl8188e
+	2. Revise MP source & build environment for testing ok.
+	
+Verification Before Checked-IN
+	1. MP N5/N6 buildall ok.
+	2. 92CU win7 ping test ok.
+
+----------------------------------------------------------------------------------------------
+<01/19/2012 11:50 Georgia>
+Modified Files:	
+	odm_HWConfig.c
+	
+Change Note:
+	1. Fix compile error and wrning for CE.
+	2. Fix system crash for CE. (in func:odm_Process_RSSIForDM incorrect condition judgment)
+	
+Verification Before Checked-IN
+	1. CE mak all ok.
+	2. 92DU-VS auto-test ok.
+----------------------------------------------------------------------------------------------
+<01/17/2012 23:03 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge PHY-RF relative API for HW out source share.
+	2. Disable MP PHY-RF calibrate relative function.
+	3. Revise MP build environment for compile pass.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall OK.
+	2. CU Win7/XP ping with WPA2-AES AO OK.
+
+----------------------------------------------------------------------------------------------
+<01/16/2012 18:20 Luke.Lee>
+Modified Files:		
+Change Note:
+	1. Fix ODM_CmnInfoInit()
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 88EU Win7 ping OK
+
+----------------------------------------------------------------------------------------------
+<01/16/2012 11:30 Luke.Lee>
+Modified Files:		
+Change Note:
+	1. Modify 88E CCK RSSI formula.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 88CE Win7 ping OK
+
+----------------------------------------------------------------------------------------------
+<01/13/2012 17:32 Georgia>
+Modified Files:		
+Change Note:
+	1. Fix compile error for CE.
+	
+Verification Before Checked-IN
+	1. CE Platform make ok.
+	2. 88CU/92DU-VS/8723AU/8723AS/8188ES Auto-test ok.
+	
+----------------------------------------------------------------------------------------------
+<01/13/2012 16:35 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Revise common binary arch for 88EE/88EU.
+	2. Fine tune build environment for MP driver.
+	
+Verification Before Checked-IN
+	1. N5/N6/N62 buildall ok.
+	2. XP platform 88EU ping and reload ok.
+	3. Vista platform 92CU link with dir-655 and ping ok.
+	4. WIn7 platform 88CU/92DU-VS/8723AU work at the same with rtwlanu.sys.
+	   Ping with dir-655 wpa2-aes S3/S5/reload ok.
+	
+	
+----------------------------------------------------------------------------------------------
+<01/12/2012 23:50 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge MP V 2383 to support 88EU/8812U in the same binary.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall ok.
+	2. Vista platform 92CU link with dir-655 and ping ok. S3 fail~~!!! Under investigation.
+	3. WIn7 platform 88CU/92DU-VS/8723AU work at the same with rtwlanu.sys.
+	   Ping with dir-655 wpa2-aes S3/S5/reload ok.
+
+----------------------------------------------------------------------------------------------
+<01/12/2012 22:46 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Support default & AP mode STA info revise for MP.
+	2. Fix tracking list item 23/44.
+	3. Add more universal interface for power tracking and rf calibrate.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall ok.
+	2. Vista platform 92CU link with dir-655 and ping ok.
+
+----------------------------------------------------------------------------------------------
+<01/12/2012 22:02 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge mp driver to v2382.
+	2. Revise MP DM entry arch.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall ok.
+	
+----------------------------------------------------------------------------------------------
+<01/12/2012 17:20 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge mp driver to v2382.
+	2. Revise MP DM entry arch.
+	
+Verification Before Checked-IN
+	1. N5/N6/N62 buildall ok.
+	2. 88CU/8723AU/92DU test in the win7 platfrom. Ping with DIR-655 WPA2-AES ok.
+
+----------------------------------------------------------------------------------------------
+<01/12/2012 16:20 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Fix 92CU BSOD in win7 platfrom due to ODM deinit with null ptr.
+	2. Delete MP useless folder.
+	3. Revise driver linked & compilerd object.
+	4. Revise indlud file flow.
+	
+Verification Before Checked-IN
+	1. N5/N6/N62 buildall ok.
+	2. 88CU/8723AU/92DU test in the win7 platfrom. S3/S4/reload unplug with DIR-655 WPA2-AES
+	   and ping 1HR ok. Reload more than 150 rounds ok.
+
+----------------------------------------------------------------------------------------------
+<01/11/2012 22:30 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Enable 8723 ODM HW config mode.
+	
+Verification Before Checked-IN
+	1. N62 buildrtwu ok.
+	2. 88CU/8723AU/92DU test in the win7 platfrom. S3/S4/reload unplug with DIR-655 WPA1-AES
+	   and ping 1HR ok.
+
+----------------------------------------------------------------------------------------------
+<01/11/2012 21:30 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge MP driver from v2258 to v2377.
+	2. Revise ODM structure for MP.
+	3. Mere 88E/8812/8821 common binary.
+	
+Verification Before Checked-IN
+	1. N5/N6/N62 buildall ok.
+	2. CU WIN7/Vista DIR-655 WPA2/AES S3/S4/S5 reload and ping ok.
+	3. DU WIN7 DIR-655 WPA2/AES S3/S4/S5 reload and ping ok.
+	3. IN IBM X60 platfrom, run CU reload endurance test.
+
+----------------------------------------------------------------------------------------------
+<01/10/2012 10:07 Mingzhi>
+Modified Files:		
+Change Note:
+	1. fix a bug which will cause BSOD
+
+Modified Files:	
+	1. odm.c
+	2. odm_RTL8192D.c
+	
+Verification Before Checked-IN
+	1. N5 buildrtwu/buildrtwe ok
+	2. 88CE plug ok
+----------------------------------------------------------------------------------------------
+<01/10/2012 21:30 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Merge MP driver from v2218 to v2258.
+	2. Revise ODM structure for MP.
+	3. Mere 88E common binary.
+	
+Verification Before Checked-IN
+	1. N5/N6/N62 buildall ok.
+	2. WIN7/Vista DIR-655 WPA2/AES S3/S4/S5 reload and ping ok.
+	3. IN previous IBM X60 platfrom, we can ping over 2 HRs ok, no periodic disconnect event.
+
+----------------------------------------------------------------------------------------------
+<01/10/2012 16:15 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Fix unload fail when deinit haldm in platform layer.
+	
+Verification Before Checked-IN
+	1. ping with dir-655 and reload ok in vista.
+
+----------------------------------------------------------------------------------------------
+<01/09/2012 20:08 MH_Chen>
+Modified Files:		
+Change Note:
+	1. Fix compile error in MP.
+	2. Fix USB init fail for inithaldm in platfrom or hal layer.
+	
+Verification Before Checked-IN
+	1. N5/N62 buildall ok.
+	2. 8188CUS Vista & win7 ping with DIR-655 wpa2 aes ok.
+
+----------------------------------------------------------------------------------------------
+<01/09/2012 18:45 Georgia>
+Modified Files:	
+	odm.c	
+	odm.h
+	odm_HWConfig.c
+	rtl8723a/odm_RegConfig8723A.c
+	rtl8723a/odm_RegConfig8723A.h
+
+Change Note:
+	1. Fix compile error in CE.
+	2. Fix SW-ANT-DIV bug.
+
+Verification Before Checked-IN
+	1. CE-Platform make ok.
+	2. 8188CUS with SW-ANT-DIV auto-test ok.
+----------------------------------------------------------------------------------------------
+<01/09/2012 13:05 Kordan>
+Modified Files:	
+	HAL/OUTSRC/odm_precomp.h
+	
+Added Files:
+	rtl8723a/odm_RegConfig8723A.h
+	rtl8723a/odm_RegConfig8723A.c
+
+Change Note:
+	1. Merge RTLXXXXX_HWIMG_SUPPORT and RTLXXXXX_SUPPORT precompile flags to RTLXXXXX_SUPPORT.
+	2. Rename odm_HWConfigCallee to odm_RegConfig8723A.h/.c and put it in each individual IC folder.
+
+Verification Before Checked-IN
+	1. MP N5/6/62 buildall ok.
+----------------------------------------------------------------------------------------------
+<01/09/2012 10:40 MH_Chen>	
+Modified Files:		
+Change Note:
+	1.Fix N5/N6/ All IC compile error in MP.
+	
+Verification Before Checked-IN
+	1.N5/N62 buildall OK
+	2. Link with DIR-655 with 92CU but performance is very bad~~~!! Connect and disconnect periodically~~~!!
+	3. Try another RTK AP also meet hard to link problem.
+
+----------------------------------------------------------------------------------------------
+<01/06/2012 15:40 Georgia>	
+Added Files:
+	rtl8192c/Hal8192CEFWImg_CE.c
+	rtl8192c/Hal8192CEFWImg_CE.h
+	rtl8192c/Hal8192CEMACImg_CE.c
+	rtl8192c/Hal8192CEMACImg_CE.h
+	rtl8192c/Hal8192CEPHYImg_CE.c
+	rtl8192c/Hal8192CEPHYImg_CE.h
+	rtl8192c/Hal8192CUFWImg_CE.c
+	rtl8192c/Hal8192CUFWImg_CE.h
+	rtl8192c/Hal8192CUMACImg_CE.c
+	rtl8192c/Hal8192CUMACImg_CE.h
+	rtl8192c/Hal8192CUPHYImg_CE.c
+	rtl8192c/Hal8192CUPHYImg_CE.h
+	rtl8192d/Hal8192DEFWImg_CE.c
+	rtl8192d/Hal8192DEFWImg_CE.h
+	rtl8192d/Hal8192DEMACImg_CE.c
+	rtl8192d/Hal8192DEMACImg_CE.h
+	rtl8192d/Hal8192DEPHYImg_CE.c
+	rtl8192d/Hal8192DEPHYImg_CE.h
+	rtl8192d/Hal8192DUFWImg_CE.c
+	rtl8192d/Hal8192DUFWImg_CE.h
+	rtl8192d/Hal8192DUMACImg_CE.c
+	rtl8192d/Hal8192DUMACImg_CE.h
+	rtl8192d/Hal8192DUPHYImg_CE.c
+	rtl8192d/Hal8192DUPHYImg_CE.h
+	rtl8723a/Hal8723SHWImg_CE.c
+	rtl8723a/Hal8723SHWImg_CE.h
+	rtl8723a/Hal8723UHWImg_CE.c
+	rtl8723a/Hal8723UHWImg_CE.h
+	
+Modified Files:	
+	odm.c
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	
+Change Note:
+	1.)add related phy-parameters for CE.
+	2.)remove useless code of SW-Ant-div for CE.
+	
+Verification Before Checked-IN
+	1. CE-Platform make OK.
+	2. 8188CUS With SW-ANT-DIV auto-test OK.
+
+----------------------------------------------------------------------------------------------
+<01/05/2012 20:00 Luke.Lee>	
+Modified Files:	
+	odm.c
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_precomp.h
+	rtl8192d/odm_RTL8192D.c
+
+Change Note:
+	1.Fix DIG error in some condition
+	2.include 88E modification from MERGE_TEMP
+	3.remove 64bit division
+	
+Verification Before Checked-IN
+	1.N5/N62 buildall OK
+
+----------------------------------------------------------------------------------------------
+<01/04/2012 18:30 Georgia>	
+Modified Files:	
+	odm.c
+	odm.h
+	odm_precomp.h
+	odm_types.h
+	rtl8192d/odm_RTL8192D.c
+
+Change Note:
+	1.Fix compile error for CE.
+	
+Verification Before Checked-IN
+	1.CE-platform make ok.
+	2.92DU-VS autotest ok.
+	
+----------------------------------------------------------------------------------------------
+<01/04/2012 16:00 Mingzhi>	
+Modified Files:	
+	1.odm.c
+	2.odm_RTL8192D.c
+
+
+Change Note:
+	1. fix a bug in ODM_Write_CCK_CCA_Thres/ODM_Write_CCK_CCA_Thres_92D
+
+Verification Before Checked-IN
+	1. N5 buildrtwu/buildrtwe ok
+
+----------------------------------------------------------------------------------------------
+<01/02/2012 17:40 Kordan>	
+Removed Files:
+	HAL/OUTSRC/rtl8723/*
+	HAL/OUTSRC/rtl8723a/Hal8723HWImg*
+	HAL/OUTSRC/rtl8723a/Hal8723HWImg_RF.h
+	HAL/OUTSRC/rtl8723a/Hal8723SHWImg.*
+	HAL/OUTSRC/rtl8723a/Hal8723UHWImg.*
+
+Change Note:
+	1. none
+
+Verification Before Checked-IN
+	1. none
+----------------------------------------------------------------------------------------------
+<01/02/2012 17:35 Kordan>
+Modified Files:	
+	HAL/HWIMG/HalHWImg.h
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/odm_precomp.h
+	
+Added Files:
+	HAL/OUTSRC/odm_HWConfigCallee.h
+
+Change Note:
+	1. Revise the architecture of ODM HW configuration to meet the memory restriction of CE.
+		a. odm_HWConfigCallee.h to declare functions used in ODM_ReadAndConfig.
+	2. Fix compile error for MP.
+		a. rename Hal8723*HWImg.* to Hal8723*HWImg_CE.*
+		b. define RTL8192D_HWIMG_SUPPORT
+	3. Rename the output hw images' name.
+
+Verification Before Checked-IN
+	1. MP N5/6/62 buildall ok.
+	2. 8723AU ping OK.
+----------------------------------------------------------------------------------------------
+<12/29/2011 22:30 Georgia>
+Modified Files:
+	odm.c
+	odm.h
+	odm_HWConfig.c
+	odm_precomp.h
+	odm_types.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+Added Files:
+	rtl8723a
+	rtl8723a/BB
+	rtl8723a/BB/AGC_TAB_1T.TXT
+	rtl8723a/BB/PHY_REG_1T.txt
+	rtl8723a/BB/PHY_REG_MP.txt
+	rtl8723a/BB/PHY_REG_PG.txt
+	rtl8723a/FW
+	rtl8723a/FW/rtl8723fw.BIN
+	rtl8723a/Hal8723HWImg_BB.c
+	rtl8723a/Hal8723HWImg_BB.h
+	rtl8723a/Hal8723HWImg_FW.c
+	rtl8723a/Hal8723HWImg_FW.h
+	rtl8723a/Hal8723HWImg_MAC.c
+	rtl8723a/Hal8723HWImg_MAC.h
+	rtl8723a/Hal8723HWImg_RF.c
+	rtl8723a/Hal8723HWImg_RF.h
+	rtl8723a/Hal8723Reg.h
+	rtl8723a/Hal8723SHWImg.c
+	rtl8723a/Hal8723SHWImg.h
+	rtl8723a/Hal8723UHWImg.c
+	rtl8723a/Hal8723UHWImg.h
+	rtl8723a/MAC
+	rtl8723a/MAC/MAC_REG.txt
+	rtl8723a/RF
+	rtl8723a/RF/RadioA_1T.txt
+	rtl8723a/RF/RadioB_1T.txt
+
+Change Note:
+	1. add & modify related code for rtl8723a.
+	
+Verification Before Checked-IN:
+	1.CE-Platform make ok.
+	2.8188CUS auto-test (with PS) ok. 
+	2.8723AU auto-test ok.
+	
+----------------------------------------------------------------------------------------------
+<12/29/2011 18:00 Mingzhi>
+Modified Files:
+	1.odm.c
+	2.odm_RTL8192D.c	
+Change Note:
+	1. fix a bug in ODM_Write_CCK_CCA_Thres/ODM_Write_CCK_CCA_Thres_92D
+	2. fix a bug which may cause 92D can't enter false alarm counter statistics function
+	3. modify edca turbo
+
+Verification Before Checked-IN:
+	1.MP N5 buildrtwu/buildrtwe ok.
+	2.92DU unplug/ scan ok
+
+
+----------------------------------------------------------------------------------------------
+<12/28/2011 22:45 MH_Chen>
+Modified Files:	
+Change Note:
+	1. fix compile error for Ra structure. 
+
+Verification Before Checked-IN
+	1. MP N5/6/62 buildall ok.
+	2. 92DU reload unplug/s3/s4/s5 ok.
+
+----------------------------------------------------------------------------------------------
+<12/28/2011 19:55 Annie>
+Modified Files:
+	odm.c
+	odm.h
+
+Change Note:
+	1. Rename: "RATE_ADAPTIVE" -> "ODM_RATE_ADAPTIVE" to fix redifinition bug for MP.
+	2. Recover variables for MP.
+
+Verification Before Checked-IN
+	1. ADSL platform make OK.
+	2. RTL8192SU/RaLink2870 link ok and ping ok.
+
+----------------------------------------------------------------------------------------------
+<12/27/2011 18:12 Annie>
+Modified Files:
+	odm.h
+
+Change Note:
+	1. Revise the architecture of ODM HW configuration to meet CE's memory restriction.
+	2. Using precompile flag to avoid compiler error caused by struct RATE_ADAPTIVE redefinition in MP team.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. RTL8192SU/RaLink2870 link ok and ping ok.
+
+----------------------------------------------------------------------------------------------
+<12/27/2011 18:12 Annie>
+Modified Files:
+	odm.h
+
+Change Note:
+	1. Correct the comment for RATE_ADAPTIVE.LowRSSIThresh.
+
+Verification Before Checked-IN
+	1. ADSL platform make OK.
+	2. RTL8192SU/RaLink2870 link ok and ping ok.
+
+----------------------------------------------------------------------------------------------
+<12/27/2011 18:05 Annie>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.h
+	odm_types.h
+	rtl8192c/HalDMOutSrc8192C_ADSL.c
+	rtl8192c/HalDMOutSrc8192C_ADSL.h
+
+Change Note:
+	1. Fix compile error in ADSL platform.
+	2. RA Mask: add ODM_RAStateCheck() to get rssi_level.
+
+Verification Before Checked-IN
+	1. ADSL platform make OK.
+	2. RTL8192SU/RaLink2870 link ok and ping ok.
+
+----------------------------------------------------------------------------------------------
+<12/26/2011 21:00 Mingzhi>
+Modified Files:		
+	Odm.c
+
+Change Noet:
+	1. Merge HW antenna diversity in CE/AP Platform
+	2. fix a bug about OFDM_Ant1/2_Cnt /CCK_Ant1/2_Cnt caculation in odm_Hwconfig.h
+
+Verification Before Checked-IN
+	1. N5 buildrtwu/we ok
+	2. 92DU-VC test ok
+----------------------------------------------------------------------------------------------
+<12/26/2011 15:20 Georgia>
+Modified Files:		
+	Odm.c
+Change Noet:
+	1. Fixed null pointer exception in func:odm_CmnInfoHook_Debug
+
+Verification Before Checked-IN
+	1. CE-Platform make OK
+	2. 92DU-VS autotest OK.
+
+----------------------------------------------------------------------------------------------
+<12/23/2011 21:30 Mingzhi>
+Modified Files:	
+	Odm.h
+	Odm.c
+Change Noet:
+	1. Remove ODM_ChooseIotMainSTA/ODM_IotEdcaSwitch definition to odm.h
+	2. add function(MP/CE) odm_IsEdcaTurboDisable/ODM_EdcaParaSelByIot
+
+Verification Before Checked-IN
+	1. N5 buildall OK
+	2. 92DU ping ok
+
+----------------------------------------------------------------------------------------------
+<12/23/2011 20:50 Georgia>
+Modified Files:		
+	odm.c
+	odm_RTL8192D.c
+
+Change Noet:
+	1. Fix the RSSI monitor bug in CE Platform
+
+Verification Before Checked-IN
+	1. CE-Platform make ok
+	2. 92DU-VS autotest ok
+----------------------------------------------------------------------------------------------
+<12/23/2011 18:00 Kordan>
+Modified Files:		
+	Image2Header.exe
+	HW Configuration source/header/text files
+
+Change Noet:
+	1. Update merged 8723 RF config.
+	2. Fix the line-break bug of Image2Header.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 8723AU ping OK
+	3. 8723AU hw config OK
+----------------------------------------------------------------------------------------------
+<12/21/2011 13:20 Georgia>
+Added Files:
+	HW_Integration_Status_20111221.xls
+Deleted Files:
+	HW_Integration_Status_20111215.xls
+Modified Files:		
+	odm.h
+	odm_interface.c
+	odm_interface.h
+
+Change Noet:
+	1. Update ODM status.
+	2. Add ODM_ReleaseSpinLock.
+	3. Modify ODM_BW_E's definition.
+
+Verification Before Checked-IN
+	1. CE Platform make ok.
+----------------------------------------------------------------------------------------------
+<12/20/2011 21:20 Georgia>
+Modified Files:		
+	odm.c
+	odm.h
+	odm_interface.c
+	rtl8192d/odm_RTL8192D.c
+
+Change Noet:
+	1. Remove useless code for CE platform.
+	2. Add func: odm_EdcaTurboCheckCE temporarily.
+	3. Add memory management APIs for CE platform.
+
+Verification Before Checked-IN
+	1. CE Platform make ok.
+	2. 8188CUS Auto-test oK.
+----------------------------------------------------------------------------------------------
+<12/20/2011 11:07 MH_Chen>
+Modified Files:		
+Change Noet:
+	1. Fix 92C/92D init fail for scan fail issue.
+	2. Fix ODM HT Channel width setting.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. Link with DIr-655 reload/unplug/S3/S4/S5 and ping ok.
+	
+----------------------------------------------------------------------------------------------
+<12/20/2011 10:50 Kordan>
+Modified Files:	
+	HAL/rtl8192C/rtl8192ce/Hal8192CEGen.c
+	HAL/rtl8192S/rtl8192su/Hal8192SUsbGen.c
+
+Change Noet:
+	1. Fix compile error under 92CE/SU. (remove ODM_CancelAllTimers from SU)
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/20/2011 10:13 Mingzhi>
+Modified Files:	
+	odm.c
+
+Change Noet:
+	1. fix a bug which cause dual mac edca turbo works fail
+	2. add iot case for 92d in ce platform
+
+Verification Before Checked-IN
+	1. N5 buildrtwu/buildrtwe fail
+----------------------------------------------------------------------------------------------
+<12/19/2011 20:20 Georgia>
+Modified Files:	
+	odm.c
+Deleted Files:
+	odm_TimerCallbacks.h
+
+Change Noet:
+	1. Move odm_SwAntDivChkAntSwitchCallback APIs back to odm.c
+
+Verification Before Checked-IN
+	1. CE Platform make OK	
+----------------------------------------------------------------------------------------------
+<12/19/2011 19:40 Kordan>
+Modified Files:	
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_interface.c
+	HAL/OUTSRC/odm_interface.h
+
+Change Noet:
+	1. Move ODM_InitAllTimers/ODM_CancelAllTimers APIs back to odm.c
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK	
+----------------------------------------------------------------------------------------------
+<12/19/2011 18:10 Kordan>
+Modified Files:	
+	none
+Change Noet:
+	1. Add missing odm_TimerCallbacks.h
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/19/2011 18:05 Kordan>
+Modified Files:	
+	HalDM.c
+	OUTSRC/odm.c
+	OUTSRC/odm_interface.c
+	OUTSRC/odm_TimerCallbacks.h
+	rtl8192C/rtl8192ce/Hal8192CEGen.c
+	rtl8192C/rtl8192cs/Hal8192CSdioGen.c
+	rtl8192C/rtl8192cu/Hal8192CUsbGen.c
+	HEADER/HTType.h  
+
+Change Noet:
+	1. Fix RF performance issue: The hardware capability only supports 20M.
+	2. ODM_InitAllTimers/ODM_CancelAllTimers API:
+		a. TimerCallbacks are now defined in odm_TimerCallbacks.h instead of odm.c.
+		b. Move ODM_InitAllTimers to InitHalDM (after NicIFReadAdapterInfo).
+		c. ODM_CancelAllTimers in DeInitHalDM (after NicIFDeInitResource).
+		d. ODM_CancelAllTimers should also be called when doing a reset.(Added in 92CU/CE/CS)
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/19/2011 17:02 Button>
+Modified Files:	
+	odm.c
+	odm.h
+	odm_interface.c
+	odm_types.h
+	rtl8192c/HALDMOutSrc8192C_AP.c
+	
+Change Noet:
+	1. Fix compile error in AP platform.
+	2. Add delay, timer, memory function
+	3. Remove unused funtions
+
+Verification Before Checked-IN
+	1. AP platform build ok.
+
+----------------------------------------------------------------------------------------------
+<12/19/2011 13:29 Kordan>
+Modified Files:	
+	odm.c
+	Hal8192CUsbGen.c
+
+Change Noet:
+	1. Fix MP compile error caused by CE precompile flag.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/19/2011 10:25 Kordan>
+Modified Files:	
+	odm.h
+	HAL/PHY/Hal8192CRf6052.c
+
+Change Noet:
+	1. Replace phy_ConfigRFWithHeaderFile with ODM_ConfigRFWithHeaderFile.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/16/2011 18:30 Georgia>
+Modified Files:	
+	HAL/OUTSRC/odm.c
+	HAL/OUTSRC/odm.h
+	HAL/OUTSRC/odm_interface.c
+	HAL/OUTSRC/odm_interface.h
+	HAL/OUTSRC/odm_types.h
+	HAL/OUTSRC/rtl8192c/HalDMOutSrc8192C_CE.c
+	HAL/OUTSRC/rtl8192c/HalDMOutSrc8192C_CE.h
+	HAL/OUTSRC/rtl8192d/HalDMOutSrc8192D_CE.c
+	HAL/OUTSRC/rtl8192d/HalDMOutSrc8192D_CE.h
+	HAL/rtl8192C/rtl8192ce/Hal8192CEGen.c
+	HAL/rtl8192C/rtl8192cs/Hal8192CSdioGen.c
+	HAL/rtl8192C/rtl8192cu/Hal8192CUsbGen.c
+
+Change Noet:
+        1. Refine related code of SW AntDiv after link.
+        2. Refine some codes of CE platform.
+
+Verification Before Checked-IN
+	1. CE platform make OK
+	2. 8188CUS/8188CU(With Antenna_Div)/92DU-VS(With 2.4G) Auto-test ok.
+----------------------------------------------------------------------------------------------
+<12/16/2011 11:23 Kordan>
+Modified Files:	
+	HAL/HWIMG/HalHWImg.h
+	HAL/OUTSRC/odm_HWConfig.c
+	HAL/OUTSRC/odm_HWConfig.h
+	HAL/OUTSRC/rtl8192c/Hal8192CHWImg_*.c
+	HAL/OUTSRC/rtl8192c/Hal8192CHWImg_*.h
+	HAL/OUTSRC/rtl8723/Hal8723HWImg_*.c
+	HAL/OUTSRC/rtl8723/Hal8723HWImg_*.h
+
+Change Noet:
+	1. ODM_ConfigRFWithHeaderFile is reverted to r14591 and updated.
+	2. ODM_ConfigBBWithHeaderFile bug fixed and move RF/AGC_TAB_1T.TXT to BB/.
+	3. Image2Header outputs *_HWIMG_SUPPORT flag.
+	4. Fix minor compiler error in the previous revision.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/15/2011 14:04 Annie>
+Modified Files:	
+	odm.c
+	odm_debug.h
+
+Change Noet:
+	1. Correct debug message code about ODM_COMP_RA_MASK functions.
+
+Verification Before Checked-IN
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<12/14/2011 17:52 Annie>
+Modified Files:	
+	odm.c
+	odm.h
+	odm_debug.c
+	odm_debug.h
+	
+Change Noet:
+	1. Fix compiler error in ADSL platform.
+	2. Correct debug message code about ODM_COMP_ANT_DIV functions.
+	3. Refine ODM_RT_TRACE macro.
+
+Verification Before Checked-IN
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<12/14/2011 13:30 Kordan>
+Modified Files:	
+	odm_types.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	
+Change Noet:
+	1. Define HAL_STATUS status code in odm_types.h
+	2. Replace ODM_ConfigXxxWithHeaderFile(...) return value with HAL_STATUS.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/14/2011 09:55 Kordan>
+Modified Files:	
+	odm.c
+	odm_HWConfig.c
+	odm_HWConfig.h
+	PHY/Hal8192CPhyCfg.c
+	rtl8192C/rtl8192cu/Hal8192CUsbGen.c
+	NDIS5/USB/usb_main.c
+	NDIS6/USB/N6Usn_main.c
+	
+Change Noet:
+	1. Put InitHalDM right after NicIFReadAdapter to avoid null adapter.
+	2. ODM_ConfigMACWithHeaderFile prototype changed.
+	3. Fix minor bugs in previous revision.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/13/2011 23:58 Georgia>
+Modified Files:	
+	odm.c
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.c
+		
+Change Noet:
+	1. odm_DynamicTxPowerNIC integration.
+
+Verification Before Checked-IN
+	1. CE platform make ok.
+	2. 8188CUS Autotest ok.
+----------------------------------------------------------------------------------------------
+<12/13/2011 20:00 Georgia>
+Modified Files:	
+	odm.c
+	odm.h
+	odm_HWConfig.h
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+	
+Change Noet:
+	1. Fix compiler error in CE platform
+
+Verification Before Checked-IN
+	1. CE platform make ok.
+	2. 8188CUS Autotest(with PS-IPS/LPS) ok.
+----------------------------------------------------------------------------------------------
+<12/12/2011 20:01 Mingzhi>
+Modified Files:	
+	odm.c
+
+Change Noet:
+	1. fix a bug in EDCA Turbo MP/CE
+	2. Attention:WMMEDCA_BE is now set to 0, so sometimes EDCA_BE=0
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/12/2011 14:30 Mingzhi>
+Modified Files:	
+	odm.c
+
+Change Noet:
+	1. re-check EDCA Turbo function in AP/ADSL
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/09/2011 14:30 Mingzhi>
+Modified Files:	
+	odm.c
+
+Change Noet:
+	1. fix the bug, that source insight can parsing our code correctly
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+----------------------------------------------------------------------------------------------
+<12/07/2011 22:33 MH_Chen>
+Modified Files:		
+Change Noet:
+	1. Revise SW antenna diversity atchitecture.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 92CU win7 ping WPA2-AES AP ok.
+	
+----------------------------------------------------------------------------------------------
+<12/07/2011 19:16 Mingzhi>
+Modified Files:	
+	odm.h
+	odm.c
+
+Change Noet:
+	1. add WMMEDCA_BE in common info
+	2. Remov ODM_REG() access in EDCA Turbo function
+	3. check in HW Antenna Diversity
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+
+----------------------------------------------------------------------------------------------
+<12/07/2011 17:00 Kordan>
+Modified Files:	
+	odm_HWConfig.c
+	odm.h
+
+Change Noet:
+	1. Replace 4-space with TAB.
+	2. Move RegA24 from HalData to ODM common info.
+	3. HalData removed.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+
+----------------------------------------------------------------------------------------------
+<12/07/2011 16:55 MH_Chen>
+Modified Files:		
+Change Noet:
+	1. Enable all support abilit for chanel emurator test in MP driver.
+	2. Fix BSOD in Edca turbo scheme.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK.
+	2. 92CU ping with 92DU MAC1 AP mode with WPA2 AES and ping large packet ok.
+	3. Reload/S3/S5 ok.
+
+----------------------------------------------------------------------------------------------
+<12/07/2011 13:10 Kordan>
+Modified Files:	
+	odm_interface.c
+	odm_interface.h
+	odm_HWConfig.c
+
+Change Noet:
+	1. Commit missing changes in v87.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	
+----------------------------------------------------------------------------------------------
+<12/07/2011 13:10 Kordan>
+Modified Files:	
+	odm_interface.c
+	odm_interface.h
+	odm_HWConfig.c
+
+Change Noet:
+	1. New interface: ODM_FreeMemory
+	2. Corresponding allocate/free changes in ODM_HWConfig.c
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	
+----------------------------------------------------------------------------------------------
+<12/06/2011 14:40 Kordan>
+Modified Files:	
+	odm_HWConfig.h
+	odm_precomp.h
+	rtl8723/*
+
+Change Noet:
+	1. Modify build batch files and sources files to build RTL8723.
+	2. Add IC type in the name of both variables and functions.
+	3. And using the MACRO to replace the long function name.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	
+----------------------------------------------------------------------------------------------
+<12/05/2011 20:20 LukeLee>
+Modified Files:	
+	odm.c
+
+Change Noet:
+	1. remove useless compile flag
+
+Verification Before Checked-IN
+	1. MP buildall OK
+	2. 88CE ping OK
+
+----------------------------------------------------------------------------------------------
+<12/02/2011 20:25 MH_Chen>
+Modified Files:	
+Change Noet:
+	1. Merge MP code base from V1990 to V2218.
+	2. Support 88E and 8812 Jaguar code base for MP.
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 88CU ping DIR-655 AES OK with large pkt 60000 for more than 1HR.
+	3. S3/S4/S5/Reload/Unlog ok.
+
+----------------------------------------------------------------------------------------------
+<12/02/2011 18:00 LukeLee>
+Modified Files:
+	odm.c
+	odm.h
+	odm_HWConfig.h
+
+Change Noet:
+	1. Merge SW AntDiv after link
+
+Verification Before Checked-IN
+	1. N5/N62 buildall OK
+	2. 88CE ping OK
+
+----------------------------------------------------------------------------------------------
+<12/02/2011 15:22 Annie>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.h
+	odm_precomp.h
+
+Change Noet:
+	1. Use ODM_REG for EDCA_PARAM registers.
+	2. Buug fix: correct SupportICType in ADSL path, remove REG_NAMING_RULE_TEST 
+	   and ODM_RegisterOffsetTestFunction().
+	3. Disable ODM_GlobalDebugLevel and ODM_GlobalDebugComponents.
+
+Verification Before Checked-IN
+	1. ADSL platform make ok.
+	2. Ping 65500 with Ralink 2870 STA over 30 minutes.
+	3. Enable ODM_COMP_COMMON: message OK.
+
+----------------------------------------------------------------------------------------------
+<12/01/2011 16:40 MH_Chen>
+Modified Files:	
+Change Noet:
+	1. Fix compiler error in V92 for different declaration.
+
+Verification Before Checked-IN
+	1. MP N5/N62 buildall ok.
+	2. 88CU testi wht DIR-655 in WPA2AES ping 60000 packet ok. S3/S4/S5/reload/inplug ok.
+
+----------------------------------------------------------------------------------------------
+<12/01/2011 16:30 MH_Chen>
+Modified Files:	
+Change Noet:
+	1. Revise debug module to fix compile error. 
+	2. Fix BSOD in MP EDUCA init case temporarily.
+
+Verification Before Checked-IN
+	1. MP N5/N62 buildall ok.
+	2. 88CU testi wht DIR-655 in WPA2AES ping 60000 packet ok. S3/S4/S5/reload/inplug ok.
+
+----------------------------------------------------------------------------------------------
+<12/01/2011 16:14 Annie>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.h
+
+Change Noet:
+	1. ODM_CmnInfoUpdate(): add ODM_CMNINFO_DBG_COMP/ODM_CMNINFO_DBG_LEVEL to 
+	   update DebugComponents/DebugLevel.
+
+Verification Before Checked-IN
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<12/01/2011 15:05 Annie>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.h
+	odm_reg.h
+	rtl8192c/HalDMOutSrc8192C_ADSL.c
+	rtl8192c/HalDMOutSrc8192C_ADSL.h
+
+Change Noet:
+	1. Fix compiler error in ADSL platform.
+	2. Revise odm debug print macro.
+
+Verification Before Checked-IN
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<12/01/2011 11:00 Georgia>
+Modified Files:
+	odm_debug.h
+
+Change Noet:
+	1.Append Chip name in ODM_RT_TRACE.
+
+Verification Before Checked-IN
+	1.CE Platform make ok
+	
+----------------------------------------------------------------------------------------------
+<11/30/2011 23:40 Georgia>
+Modified Files:
+	odm.c
+	odm_debug.c
+	odm_debug.h
+	odm_HWConfig.c
+	rtl8192c/HalDMOutSrc8192C_AP.c
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/odm_RTL8192D.c
+
+Change Noet:
+	1.Rename RT_TRACE to ODM_RT_TRACE
+
+Verification Before Checked-IN
+	1.CE Platform make ok
+	
+----------------------------------------------------------------------------------------------
+<11/30/2011 23:20 Georgia>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.c
+	odm_debug.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_interface.h
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+	rtl8192d/odm_RTL8192D.h
+
+Change Noet:
+	1.Fixed compiler error in CE platform
+
+Verification Before Checked-IN
+	1.CE Platform make ok
+
+----------------------------------------------------------------------------------------------
+<11/30/2011 18:42 Mingzhi>
+Modified Files:
+	odm.c
+	odm.h
+	odm_RTL8192D.c
+	odm_RTL8192D.h
+
+Change Noet:
+	1.Merge AP/ADSL/MP/CE Edca turbo function
+	2.move	ODM_dynamicEarlyMode function to odm_RTL8192D.c
+
+Verification Before Checked-IN
+	1.buildrtwu/buildrtwe ok
+
+----------------------------------------------------------------------------------------------
+<11/30/2011 16:50 LukeLee>
+Modified Files:
+	odm.c
+	odm.h
+
+Change Notes:
+	1. Merge SW AntDiv 
+
+Verification Before Checked-IN
+	1. BuildAll ok.
+
+----------------------------------------------------------------------------------------------
+<11/30/2011 15:30 Kordan>
+Modified Files:
+	PrecompInc.h
+
+Change Notes:
+	1. 8192CS compilation error fixed 
+
+Verification Before Checked-IN
+	1. BuildAll ok.
+
+----------------------------------------------------------------------------------------------
+<11/29/2011 20:23 Kordan>
+Modified Files:
+	rtl8723/BB
+	rtl8723/MAC
+	rtl8723/RF
+	rtl8723/FW
+Change Notes:
+	1. Create new folders for rtl8723
+
+Verification Before Checked-IN
+	1. none
+
+----------------------------------------------------------------------------------------------
+<11/29/2011 17:52 Annie>
+Modified Files:
+	odm.c
+	odm.h
+Change Notes:
+	1. Add ODM_CMNINFO_ONE_PATH_CCA hook pointer API in common info.
+
+Verification Before Checked-IN
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<11/28/2011 15:50 Kordan>
+Modified Files:
+        Image2Header.exe
+        Hal8192CHWImg_Xxx.c
+		Hal8192CHWImg_Xxx.h
+
+Change Notes:
+        1. Extract repeated code from ODM_GetArrayLengthXxx(...) to reduce the code size.
+        2. Remove I2H.tmp after processing.
+		3. The bug of transferring FW Binary to HW image is fixed.
+
+Verification Before Checked-IN
+        1. WinXP/Win7 Buildrtwu.bat OK 
+----------------------------------------------------------------------------------------------
+<11/28/2011 14:00 Kordan>
+Modified Files:
+        odm_HWConfig.c
+        odm_HWConfig.h
+
+Change Notes:
+        1. Return type of the ODM_ConfigXxxWithHeader(...) is changed to VOID.
+        2. Replace COMP_INIT, DBG_LOUD with ODM-prefixed definition
+
+Verification Before Checked-IN
+        1. WinXP/Win7 Buildrtwu.bat OK 
+----------------------------------------------------------------------------------------------
+<11/28/2011 11:30 Kordan>
+Modified Files:
+        odm.h
+        odm_HWConfig.c
+        odm_interface.h
+
+Change Notes:
+        1. New definition: MAX_STALL_TIME, RT_STATUS
+        2. odm_ConfigRFReg(...) is new function used to set RF register in ODM_ConfigRFWithHeader(...)
+        3. Minor bugs fixed
+
+Verification Before Checked-IN
+        1. WinXP/Win7 Buildrtwu.bat OK 
+----------------------------------------------------------------------------------------------
+<11/25/2011 20:45 Annie>
+Modified Files:
+	rtl8192c/Hal8192CHWImg_BB.c
+	rtl8192c/Hal8192CHWImg_BB.h
+	rtl8192c/Hal8192CHWImg_FW.c
+	rtl8192c/Hal8192CHWImg_FW.h
+	rtl8192c/Hal8192CHWImg_MAC.c
+	rtl8192c/Hal8192CHWImg_MAC.h
+	rtl8192c/Hal8192CHWImg_RF.c
+	rtl8192c/Hal8192CHWImg_RF.h
+	odm.h
+	odm_precomp.h
+
+Change Notes:
+	1. Fix compile error at ADSL platform.
+	2. Rearrange file including in odm_precomp.h.
+	3. Move gArrayPointer_XXX from img.h to img.c for redefinition issue.
+
+Verification Before Checked-IN
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<11/25/2011 14:30 Georgia>
+Modified Files:
+	odm.c
+	odm.h
+	odm_debug.c
+	odm_debug.h
+	odm_HWConfig.c
+	odm_HWConfig.h
+	odm_interface.c
+	odm_interface.h
+	odm_precomp.h
+	odm_types.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+	
+Change Notes:
+	1. remove related pack(1) statement.
+	2. add sleep/delay funcs.
+	3. fixed compile error / warning at CE platform.
+
+Verification Before Checked-IN
+	1. CE Platform make ok
+
+----------------------------------------------------------------------------------------------
+<11/25/2011 11:49 Kordan>
+Modified Files:
+        odm.h
+        odm_HWConfig.c
+        odm_interface.c
+        Image2Header.exe
+
+Change Notes:
+        1. New definition in odm.h:
+                a. ODM_RF_RADIO_PATH_E
+                b. ODM_delay_ms, ODM_delay_us, odm_StallExecution
+                c. InterfaceIndex
+                d. ODM_BaseBand_Config_Type
+                e. InternalPA5G
+        2. Eliminate MP-specific code, for example: PlatformStallExecution -> ODM_delay_us
+        3. Arguments of Image2Header.exe now are case-insensitive.
+
+Verification Before Checked-IN
+        1. WinXP/Win7 Buildrtwu.bat OK 
+
+----------------------------------------------------------------------------------------------
+<11/24/2011 21:12 button>
+Modified Files:
+        odm.h
+        odm.c
+	rtl8192c/HalDMOutSrc8192C_AP.c
+
+Change Notes:
+	1. Remove AP's PSD from ODM module
+	2. Move AP's RSSI monitor into ODM module
+	3. Refine AP's IOT peer definition
+
+Verification Before Checked-In:
+        1. AP platform build ok.
+----------------------------------------------------------------------------------------------
+<11/24/2011 21:00 Annie>
+Renamed Files:
+	Hal8192CHWImg_fw.c	-> Hal8192CHWImg_FW.c
+	Hal8192CHWImg_fw.h	-> Hal8192CHWImg_FW.h
+	Hal8192CHWImg_mac.c	-> Hal8192CHWImg_MAC.c
+	Hal8192CHWImg_mac.h	-> Hal8192CHWImg_MAC.h
+
+Change Notes:
+	1. Rename image FW/MAC files, because linux system is case sensitive.
+
+Verification Before Checked-IN
+	N/A
+
+----------------------------------------------------------------------------------------------
+<11/23/2011 22:30 LukeLee>
+Modified Files:
+	HW_Integration_Status_Luke.xls
+	odm.c 
+	odm_RTL8192D.c
+	odm_debug.c
+	odm_HWConfig.c
+
+Change Notes:
+	1. add GPL on odm_RTL8192D.c
+	2. update common info for MP platform
+
+Verification Before Checked-IN
+	1. MP buildall OK except N5 buildrtws fail
+	2. 88CE Win7 ping OK
+
+----------------------------------------------------------------------------------------------
+<11/23/2011 17:30 LukeLee>
+Modified Files:
+	HW_Integration_Status_Luke.xls
+	odm.c 
+        odm.h
+	odm_debug.c
+	odm_HWConfig.c
+	odm_precomp.h
+
+Added Files:
+	Hal8192CHWImg_BB.c
+	Hal8192CHWImg_BB.h
+	Hal8192CHWImg_fw.c
+	Hal8192CHWImg_fw.h
+	Hal8192CHWImg_mac.c
+	Hal8192CHWImg_mac.h
+	Hal8192CHWImg_RF.c
+	Hal8192CHWImg_RF.h
+
+Change Notes:
+	1. remove compile error
+        2. DIG merge OK
+	3. PSD and RXHP only for MP platform
+
+Verification Before Checked-IN
+        1. MP buildall OK except N5 buildrtws fail
+	2. 88CE Win7 ping OK
+
+----------------------------------------------------------------------------------------------
+<11/21/2011 15:50 Mingzhi>
+Modified Files:
+	odm.c 
+        odm.h
+
+Change Notes:
+	1. remove variable bDefAdapter_APMode/bDefAdapter_ClientMode/bExtAdapter_APMode/bExtClientMode in Common info
+        2. modify dynamic early mode
+
+Verification Before Checked-IN
+        1. MP Platform buildrtwu/buildrtwe ok
+
+----------------------------------------------------------------------------------------------
+<21/11/2011 14:12 Kordan>
+Modified Files:
+        Image2Header.exe
+        odm_HWConfig.c
+        odm_precomp.h       
+
+Change Notes:
+        1. Add three ODM_ConfigXxxWithHeaderFile(...) APIs in odm_HWConfig.c.
+        2. Image2Header.exe is updated.
+        3. Notes:
+                a. HWImg header files should be included in OUTSRC\odm_precomp.h
+                b. HWImg source files should be added in source file, 
+                   for example, HAL\rtl8192C\rtl8192cu\sources.WlanU.Win
+                c. By now, text files under the folders are just for testing.
+
+Verification Before Checked-IN
+        1. Buildrtwu.bat OK
+----------------------------------------------------------------------------------------------
+<11/21/2011 14:04 Annie>
+Modified Files:
+	odm.c
+	odm_precomp.h
+
+Change Notes:
+	1. Use RTL8192XX_HWIMG_SUPPORT flag to separate code of differentail chip.
+
+Verification Before Checked-IN
+	1. ADSL platform buildall ok.
+
+----------------------------------------------------------------------------------------------
+<11/21/2011 13:40 LukeLee>
+Removed Files:
+	HW_Itegration_Status.xls
+
+Added Files:
+	HW_Integration_Status_Luke.xls
+
+Change Notes:
+	1. Update HW_Iteration_Status
+
+Verification Before Checked-IN
+	N/A
+----------------------------------------------------------------------------------------------
+<11/21/2011 11:36 Annie>
+Modified Files:
+	odm.c
+	odm.h
+
+Change Notes:
+	1. Add common info interface ODM_CMNINFO_BOARD_TYPE.
+
+Verification Before Checked-IN
+	1. ADSL platform buildall ok.
+
+----------------------------------------------------------------------------------------------
+<11/18/2011 19:10 Annie>
+Modified Files:
+	rtl8192c\odm_RTL8192C.c
+	rtl8192c\odm_RTL8192C.h
+	rtl8192d\odm_RTL8192D.c
+	rtl8192d\odm_RTL8192D.h
+	odm.c
+	odm.h
+	odm_debug.c
+	odm_precomp.h
+	odm_types.h
+
+Change Notes:
+	1. Make sure ADSL make ok.
+	2. Workaround: Add NO_8192D flag to not include 8192d file and functions.
+	3. Check for debug print related code.
+
+Verification Before Checked-IN
+	1. ADSL platform buildall ok.
+	2. RT_TRACE: DIG message print OK.
+
+----------------------------------------------------------------------------------------------
+<11/18/2011 17:50 LukeLee>
+Modified Files:        
+Change Notes:
+        1. Move bLinked and RSSI_Min to ODM_CmnInfoUpdate()
+
+Verification Before Checked-IN
+        1. N5/N62 buildall ok.
+	2. HW_Itegration_Status.xls cannot be opened
+
+----------------------------------------------------------------------------------------------
+<18/11/2011 18:13 Kordan>
+Modified Files:
+        Image2Header.exe
+
+Change Notes:
+        1. Bug fixed: If too many files are under the folder, it would run out of buffer.
+        2. Bug fixed: Wrong fprintf causes some header files are not included.
+
+Verification Before Checked-IN
+
+----------------------------------------------------------------------------------------------
+<11/18/2011 00:01 MH_Chen>
+Modified Files:        
+Change Notes:
+        1. Support ODM PHY status query.
+
+Verification Before Checked-IN
+        1. N5/N62 buildall ok.
+        2. CU slim combo card link with DIR-655 in AES mode and ping more than 20 minutes ok.
+        3. PHY status query ok but RSSI seems incorrect.
+
+----------------------------------------------------------------------------------------------
+<11/17/2011 23:15 MH_Chen>
+Modified Files:        
+Change Notes:
+        1. Add more universal interface template and MP can work.
+
+Verification Before Checked-IN
+        1. N5/N62 buildall ok.
+        2. CU slim combo card link with DIR-655 in AES mode and ping more than 20 minutes ok.
+
+----------------------------------------------------------------------------------------------
+<11/17/2011 21:06 MH_Chen>
+Modified Files:        
+Change Notes:
+        1. Revise #include flow to be compatiable with other SW team.
+
+Verification Before Checked-IN
+        1. N5/N62 buildall ok.
+        2. CU slim combo card link with DIR-655 in AES mode and ping more than 20 minutes ok.
+
+----------------------------------------------------------------------------------------------
+<11/17/2011 20:30 LukeLee>
+Modified Files:
+	HW_Itegration_Status.xls
+        
+Change Notes:
+        1. update status          
+
+Verification Before Checked-IN
+	None
+----------------------------------------------------------------------------------------------
+<11/17/2011 16:48 MH_Chen>
+Modified Files:        
+Change Notes:
+        1. Add new API for spin lock and memory allocate.
+        2. Revise MP include flow to default setting.           
+
+Verification Before Checked-IN
+        1. N5/N62 buildall ok.
+        2. CU slim combo card link with DIR-655 in AES mode and ping more than 20 minutes ok.
+
+----------------------------------------------------------------------------------------------
+<17/11/2011 10:34 Mingzhi>
+Modified Files:
+        odm.c
+
+Change Notes:
+        1. fix a bug in dynamic_early_mode 
+            
+
+Verification Before Checked-IN
+        1. MP platfrom N5 build ok
+
+----------------------------------------------------------------------------------------------
+<17/11/2011 10:34 Mingzhi>
+Modified Files:
+        odm.c
+
+Change Notes:
+        1. add variable bDefAdapter_APMode/bDefAdapter_ClientMode/bExtAdapter_APMode/bExtClientMode in Common info
+        2. remove ACTING_AS_AP() from dynamic_early_mode
+            
+
+Verification Before Checked-IN
+        1. MP platfrom N5 build ok
+----------------------------------------------------------------------------------------------
+<17/11/2011 13:23 Kordan>
+Modified Files:
+        Image2Header.exe
+
+Change Notes:
+        1. Remove img2headerfile.exe from SVN
+		2. Add new Image2Header.exe to SVN
+
+Verification Before Checked-IN
+        1. Usage: Image2Header.exe IC_TYPE FILE_TYPE 
+		
+			Example: If you want to convert text files in OUTSRC/rtl8192cu/BB/, 
+							you could type the following command. The output files will be 
+							put under OUTSRC/rtl8192cu/.
+			$ Image2Header.exe rtl8192cu BB (case-sensitive)
+			
+----------------------------------------------------------------------------------------------
+<17/11/2011 10:34 Mingzhi>
+Modified Files:
+        odm.c
+
+Change Notes:
+        1. re-check dynamic_early_mode() function
+
+Verification Before Checked-IN
+        1. MP platfrom N5 build ok
+----------------------------------------------------------------------------------------------
+<11/16/2011 22:22 MH_Chen>
+Modified Files:	
+Change Notes:
+	1. Revise Dual mac band definition to prevent scan fail. Need to adjust later.
+
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 	
+	2. 92CU/92CE ping with open AP ok. But CU scan stop after a while.
+
+----------------------------------------------------------------------------------------------
+<11/16/2011 22:22 button>
+Modified Files:
+        odm.h
+        odm.c
+        odm_debug.c
+        odm_debug.h
+
+Change Notes:
+        1. Move AP team's tx power control to ODM module
+        2. rename macro IS_STA_VALID
+	3. GlobalDebugComponents => ODM_GlobalDebugComponents ,  
+	   GlobalDebugLevel      => ODM_GlobalDebugLevel
+
+Verification Before Checked-In:
+        1. AP platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/16/2011 17:40 LukeLee>
+Modified Files:
+        odm.c
+	odm.h
+	odm_debug.c
+	odm_debug.h
+	odm_precomp.h
+	\rtl8192c\odm_RTL8192C.c
+	\rtl8192d\odm_RTL8192D.c
+
+Added Files:
+	HW_Itegration_Status.xls
+
+Change Notes:
+        1. add debug flag
+	2. add common info print function
+	3. modify DIG related functions
+
+Verification Before Checked-In:
+        1. MP platform build ok.
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c/odm_RTL8192C.c/odm_RTL8192D.c) 
+	2. 88CE Win7X86 cannot show scan list since v0049
+	3. #include <../Mp_Promcomp.h> is not allowable in MP platform
+
+----------------------------------------------------------------------------------------------
+<11/15/2011 13:40 LukeLee>
+Modified Files:
+        odm.c
+
+Change Notes:
+        1. fix compile error
+
+Verification Before Checked-In:
+        1. MP platform build ok.
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c/odm_RTL8192C.c/odm_RTL8192D.c) 
+
+----------------------------------------------------------------------------------------------
+<11/15/2011 13:00 LukeLee>
+Modified Files:
+        odm_debug.h
+        odm.c
+
+Added Files:
+	\rtl8192c\odm_RTL8192C.c
+	\rtl8192c\odm_RTL8192C.h
+	\rtl8192d\odm_RTL8192D.c
+	\rtl8192d\odm_RTL8192D.h
+
+Change Notes:
+        1. Merge DIG / FA statistics / CCK CCA threshold functions
+        2. debug print OK
+
+Verification Before Checked-In:
+        1. MP platform build ok.
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c/odm_RTL8192C.c/odm_RTL8192D.c) 
+
+----------------------------------------------------------------------------------------------
+<11/14/2011 21:15 button>
+Modified Files:
+        odm.h
+        odm.c
+
+Change Notes:
+        1. Add IOT peer definition
+        2. Add a macro "isSTAValid" to check sta validd or not
+
+Verification Before Checked-In:
+        1. AP platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/14/2011 16:50 MH_Chen>
+Modified Files:
+	odm.h	
+	odm.c
+	odm_debug.c
+	odm_HWConfig.c
+
+Change Notes:
+	1. hook real common info in MP platform.
+	2. Revise some universal interface definition compatiable with other SW team.
+
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 	
+
+----------------------------------------------------------------------------------------------
+<11/14/2011 13:00 LukeLee>
+Modified Files:
+	odm.h	
+	odm.c
+	odm_debug.c
+	odm_HWConfig.c
+
+Change Notes:
+	1. hook fake common info in MP platform for bluescreen issue
+	2. add odm_IsLinked() and odm_InitCommonInfo() for ODM internal common info
+
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+----------------------------------------------------------------------------------------------
+<14/11/2011 10:56 Mingzhi>
+Modified Files:
+        odm.c
+
+Change Notes:
+        1. Modify dynamic_early_mode() function
+
+Verification Before Checked-IN
+        1. MP platfrom N5 build ok
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+
+----------------------------------------------------------------------------------------------
+<11/11/2011 17:20 LukeLee>
+Modified Files:
+	odm.h	
+	odm.h
+	odm_debug.h
+	odm_HWConfig.c
+
+Change Notes:
+	1. Modifiy ODM_CmnInfoInit() and ODM_CmnInfoHook()
+	2. Define debug tracing components
+
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+----------------------------------------------------------------------------------------------
+<11/11/2011 10:00 LukeLee>
+Modified Files:	
+	odm.h
+
+Change Notes:
+	1. Re-define common info
+
+Verification Before Checked-In:
+	1. All platforms should not compile OK!!!
+
+----------------------------------------------------------------------------------------------
+<11/10/2011 23:00 LukeLee>
+Modified Files:
+	odm.c	
+	odm.h
+
+Change Notes:
+	1. Re-define common info
+
+Verification Before Checked-In:
+	1. All platforms should not compile OK
+
+----------------------------------------------------------------------------------------------
+<11/10/2011 16:40 MH_Chen>
+Modified Files:	
+	odm.c
+	odm.h	
+Change Notes:
+	1. bRFPathRxEnable 想一下，這應該是設定為 ODM write variable，所有 team 都不需要設定才對，
+	   如果從我們的 HAL copy 過去應該不合理。所以應該是在 ODM 之中update 這個value 給 PHY query 時使用，
+	   原本 code base 也有也誤，我們應該改為 bit oriented coding style，這部分我會 update。
+	2. MacPhyMode 修改成 ptr reference，目前只有MP用其他team follow
+	3. BTCoexist  修改成 ptr reference 修改成只有 ON/OFF boolean 選擇，由於有可能有 driver 部支援，
+	   我定義一個 pseudo ptr in DM structure for all team reference?。
+	4. 下面全部移為 prt reference，只有 init 設定一次。
+	5. 下面建議也由 run-time 設定值，修改為 ptr reference，之後 HAL 共用時就修改比較小~~~!!
+	6. 由於更動一些ptr 設定，可能會讓其他team compile不過還請幫忙~~~!!! 不曉得上面建議是否可以 support 啊?? 如果不行還請修改 execel 架構，謝謝。
+	7. 我們下次需要 review 一下哪些是 ODM/Driver write 切割一下結構規劃。
+
+Verification Before Checked-In:
+	1. N5N62 buildall ok.
+
+----------------------------------------------------------------------------------------------
+<11/09/2011 23:10 Annie>
+Modified Files:	
+	odm.c
+	odm.h
+	odm_interface.h
+	odm_precomp.h
+	odm_types.h
+
+Change Notes:
+	1. Change PVOID position to bind and allocate DM_ODM_T in priv.
+	2. Temporarily mark some code by ADSL_BUILD_WORKAROUND flag
+	   to make sure ADSL make ok.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/09/2011 22:50 LukeLee>
+Modified Files:
+	odm.c
+
+Change Notes:
+	1. clean compile errors
+	
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+----------------------------------------------------------------------------------------------
+<11/09/2011 22:00 LukeLee>
+Modified Files:
+	odm.c
+	odm.h
+
+Change Notes:
+	1. Merge DIG function into ODM structure
+	
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+----------------------------------------------------------------------------------------------
+<11/09/2011 21:45 Button>
+Modified Files:
+        odm.c
+        odm.h
+        odm_HWConfig.c
+
+Change Notes:
+        1. Modify structure _ODM_Phy_Status_Info_ for AP query phy info
+        2. Avoid core dump when pEntry = NULL
+
+Verification Before Checked-In:
+        1.  AP platform build ok
+
+----------------------------------------------------------------------------------------------
+<11/09/2011 17:00 LukeLee>
+Removed Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	HalHWOutSrc.c
+	HalHWOutSrc.h
+
+Added Files:
+	odm.c
+	odm.h
+	odm_HWConfig.c
+	odm_HWconfig.h
+
+Change Notes:
+	1. File rename
+		HalDMOutSrc.c/h -> odm.c/h
+		HalHWOutSrc.c/h -> odm_HWConfig.c/h
+	2. add common info for BTDM and DMSP
+	3. remove compile errors in MP platform
+	
+Verification Before Checked-In:
+	1. MP platform N5/N62 build ok. 
+	(need to include Mp_Precomp.h in odm_debug.c/odm_interface.c/odm.c/odm_HWConfig.c) 
+
+----------------------------------------------------------------------------------------------
+<11/09/2011 14:40 Georgia>
+Modified Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	HalHWOutSrc.c
+	HalHWOutSrc.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+
+Change Notes:
+	1. Revise related source of odm_DynamicBBPowerSaving for MP driver compile ok.
+	2. Removed useless code of CE team driver.
+	3. Revise customer id for AP/ADSL driver compiler ok.
+	
+Verification Before Checked-In:
+	1. CE platform build ok. 	
+	
+----------------------------------------------------------------------------------------------
+<11/08/2011 14:20 Georgia>
+Modified Files:	
+	HalHWOutSrc.c
+	HalHWOutSrc.h
+
+Change Notes:
+	1. Removed useless code.
+	
+Verification Before Checked-In:
+	1. CE platform build ok. 	
+	
+----------------------------------------------------------------------------------------------
+<11/08/2011 12:00 Georgia>
+Modified Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	HalHWOutSrc.c
+	odm_debug.c
+
+Change Notes:
+	1. fixed phy_staus parsing error in func odm_RxPhyStatus92CSeries_Parsing
+	
+Verification Before Checked-In:
+	1. CE platform build ok. 	
+
+----------------------------------------------------------------------------------------------
+<11/07/2011 17:00 LukeLee>
+Modified Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+
+Change Notes:
+	1. Merge part of DIG function into ODM structure
+	2. divide common info OPMode into several BOOLEAN variables
+
+Verification Before Checked-In:
+	1. MP platform build ok. 
+	(need to include Mp_Precomp.h in odm_interface.c/HalDMOutSrc.c/HalHWOutSrc.c) 
+
+----------------------------------------------------------------------------------------------
+<11/04/2011 16:14 Annie>
+Modified Files:	
+	odm_interface.h
+
+Change Notes:
+	1. Sorry for no file saving correctly on previous version.
+	   Now compiler ok.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/04/2011 13:23 Annie>
+Modified Files:	
+	odm_interface.h
+
+Change Notes:
+	1. ODM register/bitmap: currently for 92C_SERIES(11N) only,
+	   we don't need to define JAGUARS registers now.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/03/2011 16:57 Annie>
+New Files:
+	rtl8195/Hal8195Reg.h
+	odm_reg.h
+Modified Files:	
+	rtl8188e/Hal8188EReg.h
+	rtl8192c/Hal8192CReg.h
+	rtl8192d/Hal8192DReg.h
+	rtl8192s/Hal8192SReg.h
+	rtl8723/Hal8723Reg.h
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_interface.h
+	odm_precomp.h
+	odm_types.h
+
+Change Notes:
+	1. Improve ODM register/bitmap naming rule: use new ODM_REG and ODM_BIT macro.
+	2. Move general register definition to odm_reg.h.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 22:47 MH_Chen>
+Modified Files:	
+	HAL\rtl8192C\sources.WlanE/U/S
+	HAL\HalDM.c
+Change Notes:
+	1. Revise source for MP driver all interface compile ok.
+	2. Fix compile error for all CE/AP/ADSL checkin ODM relative function.
+	3. Still can not support compile pass withour mp_precomp.h
+	4. Revise wireless mode/band type/security mode for CE/MP.
+	5. Support ODM debug module.
+
+Verification Before Checked-In:
+	1. N5/N62 compile all ok. Please enale mp_precomp.h in start address.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 21:30 Georgia>
+
+Modified Files:	
+	HalDMOutSrc.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.c
+
+Change Notes:
+	1.Remove useless code.
+	2.move EDCA related DM of CE platform to ODM.
+
+Verification Before Checked-In:
+	1. CE platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 20:00 Georgia>
+Modified Files:	
+	HalDMOutSrc.h
+	HalHWOutSrc.c
+	odm_types.h
+
+Change Notes:
+	1.Remove useless flag and code.
+	2.Fixed incorrect compiler flag.
+
+Verification Before Checked-In:
+	1. Reviewer: Luke Lee.
+	2. CE platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 18:20 Georgia>
+New Files:
+	HalHWOutSrc.c
+	HalHWOutSrc.h
+	
+Modified Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_debug.c
+	odm_debug.h
+	odm_interface.c
+	odm_interface.h
+	odm_precomp.h
+	odm_types.h
+	rtl8192c/Hal8192CReg.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192d/Hal8192DReg.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	
+Removed Files:
+	rtl8192c/odm_phy_info.h
+	rtl8192d/odm_phy_info.h
+	
+Change Notes:
+	1. Add Func ODM_PhyStatusQuery.
+	2. Modify INT8/INT16.. series declaration.
+
+Verification Before Checked-In:
+	1. CE platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 17:03 Annie>
+Modified Files:
+	HalDMOutSrc.h
+	odm_interface.h
+	odm_types.h
+
+Change Notes:
+	1. Add I/O prototypes.
+	2. ADSL compile check.
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<11/02/2011 14:45 button>
+Removed Files:
+	HalDMOutSrc_AP.c
+	HalDMOutSrc_AP.h
+Modified Files:
+        HalDMOutSrc.c
+        HalDMOutSrc.h
+	odm_precomp.h
+	odm_types.h
+	rtl8192c/Hal8192CEFWImg_AP.c
+	rtl8192c/HHal8192CEMACImg_AP.c
+	rtl8192c/HHal8192CEPHYImg_AP.c
+	rtl8192c/HHalDMOutSrc8192C_AP.c
+Change Notes:
+        1. Merge HalDMOutSrc_AO.c/h into HalDMOutSrc.c/h
+
+Verification Before Checked-In:
+        1. AP platform build ok.
+----------------------------------------------------------------------------------------------
+<11/01/2011 15:09 Annie>
+New Files:
+	rtl8188e/Hal8188EReg.h
+	rtl8192c/Hal8192CReg.h
+	rtl8192d/Hal8192DReg.h
+	rtl8192s/Hal8192SReg.h
+	rtl8723/Hal8723Reg.h
+Modified Files:
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_interface.h
+	odm_precomp.h
+
+Change Notes:
+	1. Add REG and REG_BIT for general register naming.
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<10/31/2011 14:42 Annie>
+Modified Files:
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_interface.c
+	odm_precomp.h
+	odm_types.h
+
+Change Notes:
+	1. Change DM_ODM_SUPPORT_TYPE definition: defined by BIT
+	   (1) so that we can use "#if(DM_ODM_SUPPORT_TYPE & (ODM_CE|ODM_MP))" statement.
+	   (2) Define BITs in odm_types.h.
+	2. 8192cd_util.h can be included in odm_precomp.h formally
+	   because it defines basic I/O functions.
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<10/28/2011 13:32 Annie>
+Modified Files:
+	HalDMOutSrc.h
+	odm_interface.c
+	odm_precomp.h
+	odm_types.h
+
+Change Notes:
+	1. Correct I/O prototype.
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<10/27/2011 20:02 button>
+Modified Files:
+	HalDMOutSrc_AP.c
+	HalDMOutSrc_AP.h
+	odm_types.h
+	odm_precomp.h
+	odm_interface.c
+
+Change Notes:
+	1. Support ODM I/O W/R.
+	2. Sync HalDMOutSrc.c/h with HalDMOutSrc_AP.c/h
+
+Verification Before Checked-In:
+	1. AP platform build ok.
+----------------------------------------------------------------------------------------------
+<10/27/2011 17:51 Annie>
+New Files:
+	rtl8192c/Hal8192CEFWImg_ADSL.[ch]
+Modified Files:
+	rtl8192c/Hal8192CEMACImg_ADSL.[ch]
+	HalDMOutSrc.[ch]
+	odm_precomp.h
+
+Change Notes:
+	1. MAC image: Seperate firmware array to firmware file.
+	2. Set ODM_ENDIAN_TYPE for ADSL and AP.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<10/27/2011 15:06 Annie>
+Modified Files:
+	odm_types.h
+
+Change Notes:
+	1. Add STA_INFO_T for ADSL/AP case.
+
+Verification Before Checked-In:
+	1. ADSL platform build ok.
+
+----------------------------------------------------------------------------------------------
+<10/21/2011 18:26 MH>
+New Files:
+	Add odm debug & interface .
+Modified Files:		
+Change Notes:
+	1. Support ODM independent I/O and debug interface.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. (Except N5 SDIO due to PSD ODM) 
+
+----------------------------------------------------------------------------------------------
+<10/21/2011 16:20 Georgia>
+New Files:
+	rtl8192c/odm_phy_info.h
+	rtl8192d/odm_phy_info.h
+Modified Files:	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_precomp.h
+	odm_types.h
+Change Notes:
+	1. Add data struct declaration of phy_info and rx_desc(must discuss the data member declaration method which different HW interface). 
+	2. Add related statement for pack(1).
+	3. Fixed some compiler warning and error in linux platform.	
+
+Verification Before Checked-In:
+	1. CE make ok.
+
+----------------------------------------------------------------------------------------------
+<10/20/2011 23:44 MH>
+Modified Files:	
+	HAL\OUTSRC\HalDMOutSrc.c\h
+	HAL\HalDM.c
+	HEADER\TypeDef.h
+Change Notes:
+	1. Add common info interface init/hook/update/array pointer hook. 
+	2. MP driver can hook all common info interface. You can refer to API dm_ODMStructureInit()
+	3. Revise code architecture for common interface hook readbility.	
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok. (Except N5 SDIO due to PSD ODM) 
+
+----------------------------------------------------------------------------------------------
+<10/20/2011 21:30 LukeLee>
+Modified Files:
+	HalDMOutSrc.h
+	odm_types.h
+Change Notes:
+	1. Add Reg Naming
+	2. Define PHY_INFO
+	3. Define TX_INFO
+
+Verification Before Checked-In:
+	1. N5/N62 buildrtwu/buildrtwe ok. (Need to enable mp_precomp.h)
+	2. N5/N62 build819xP/build8192SE/build8192SU fail from v0016
+	3. N5 buildrtws fail from v0016
+----------------------------------------------------------------------------------------------
+<10/19/2011 11:04 MH_Chen>
+Modified Files:
+	HAL\OUTSRC\HalDMOutSrc.c\h
+Change Notes:
+	1. Add and revise for ODM universal interface.
+
+Verification Before Checked-In:
+	1. N5/N62 buildrtwu ok. (Need to enable mp_precomp.h)
+
+----------------------------------------------------------------------------------------------
+<10/17/2011 14:06 Annie>
+
+Modified Files:
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_ADSL.c
+	rtl8192c/HalDMOutSrc8192C_ADSL.h
+
+Change Notes:
+	1. Move original dynamic mechanism to OURSRC.
+
+Verification Before Checked-In:
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<10/13/2011 21:40 Georgia>
+
+New Files:
+	
+Modified Files:
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_precomp.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+
+Change Notes:
+        1. Modify odm_precomp.h for CE project compiler.
+				2. Move related code of IQK/APK/LCK to OUTSRC.
+Verification Before Checked-In:
+	1. CE make ok.
+	2. 8192 CU/DU test ok.
+
+----------------------------------------------------------------------------------------------
+<10/12/2011 15:42 Annie>
+
+New Files:
+	1. HAL/OUTSRC/odm_precomp.h
+
+Modified Files:
+	HAL/OUTSRC/
+	1. rtl8192c/Hal8192CEMACImg_ADSL.c
+	2. rtl8192c/Hal8192CEPHYImg_ADSL.c
+	3. rtl8192c/Hal8192CEPHYImg_ADSL.h
+	4. HalDMOutSrc.c
+	5. odm_types.h
+
+Change Notes:
+        1. Add odm_precomp.h to provide the including order of header files.
+
+Verification Before Checked-In:
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<10/07/2011 23:43 Annie>
+
+New Files:
+	HAL/OUTSRC/
+	1. rtl8192c/HalDMOutSrc8192C_ADSL.c
+	2. rtl8192c/HalDMOutSrc8192C_ADSL.h
+
+Modified Files:
+	HAL/OUTSRC/
+	1. HalDMOutSrc.c
+	2. HalDMOutSrc.h
+	3. HalDMOutSrc.h
+
+Change Notes:
+        1. Modify common code for ADSL project compiler.
+	   - Add a workaround flag: "ADSL_AP_BUILD_WORKAROUND", 
+	     it should be eliminated before final stage.
+
+Verification Before Checked-In:
+	1. ADSL platform make ok.
+
+----------------------------------------------------------------------------------------------
+<10/07/2011 17:12 Georgia>
+Modified Files:    	
+	HalDMOutSrc.c
+	HalDMOutSrc.h
+	odm_types.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+
+Change Notes:
+        1. Modified related ODM code for build CE Team's universal interface.
+
+Verification Before Checked-In:
+        1. CE Team linux driver make ok.
+	
+----------------------------------------------------------------------------------------------
+<10/06/2011 22:12 Jensonlee>
+Modified Files:
+        HAL/OUTSRC/
+        1. rtl8192c/Hal8192CEMACImg_AP.c
+        2. rtl8192c/Hal8192CEMACImg_AP.h
+        3. rtl8192c/Hal8192CEPHYImg_AP.c
+        4. rtl8192c/Hal8192CEPHYImg_AP.c
+	5. rtl8192c/Hal8192CEFWImg_AP.h.h
+	6. rtl8192c/Hal8192CEFWImg_AP.h.c
+	7. rtl8192c/HalDMOutSrc8192C_AP.c
+	8. rtl8192c/HalDMOutSrc8192C_AP.h
+	9. HalDMOutSrc_AP.h
+	a. HalDMOutSrc_AP.c
+
+Change Notes:
+        1. Update parameters and ODM outsrc files of AP
+
+Verification Before Checked-In:
+        1. AP platform 8196c+8192c build ok, connect with STA ok.
+	
+----------------------------------------------------------------------------------------------
+<10/06/2011 21:22 Annie>
+Modified Files:
+	HAL/OUTSRC/
+	1. rtl8192c/Hal8192CEMACImg_ADSL.c
+	2. rtl8192c/Hal8192CEPHYImg_ADSL.c
+	3. rtl8192c/Hal8192CEPHYImg_ADSL.h
+	4. odm_types.h
+
+Change Notes:	
+	1. Update parameter files: try to sync with sd7 ODM svn.
+
+Verification Before Checked-In:
+	1. ADSL platform make ok.	
+
+----------------------------------------------------------------------------------------------
+<10/05/2011 22:50 Luke>
+New Files:
+Modified Files:
+	/HalDMOutSrc.h
+Change Notes:	
+	1. Add common info and STA structure
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+
+----------------------------------------------------------------------------------------------
+<10/05/2011 22:11 Annie>
+New Files:
+	HAL/OUTSRC/rtl8192c/
+	1. Hal8192CEMACImg_ADSL.c
+	2. Hal8192CEMACImg_ADSL.h
+	3. Hal8192CEPHYImg_ADSL.c
+	4. Hal8192CEPHYImg_ADSL.h
+
+Change Notes:	
+	1. Add 8192ce MAC/BB/RF parameter files for current ADSL platform.
+
+Verification Before Checked-In:
+	1. ADSL platform make ok.	
+
+----------------------------------------------------------------------------------------------
+<10/05/2011 12:00 Georgia>
+New Files:	
+Modified Files:
+Change Notes:	
+	1. Add odm_types.h.
+	2. Remove useless img files.	
+	
+Verification Before Checked-In:
+	1. CE Team linux driver make ok.	
+
+----------------------------------------------------------------------------------------------
+<09/30/2011 17:50 MH_Chen>
+New Files:	
+Modified Files:
+Change Notes:	
+	1. Revise HW integration architecture.
+	2. Add MAC relative image.c.
+	3. Update the newest HW parameters. 
+	
+Verification Before Checked-In:
+	1. Windows N5/N62 compiler buildall ok.	
+
+----------------------------------------------------------------------------------------------
+<09/23/2011 11:30 Georgia>
+New Files:
+	rtl8192c/Hal8192CEPHYImg_CE.c
+	rtl8192c/Hal8192CEPHYImg_CE.h
+	rtl8192c/Hal8192CUPHYImg_CE.c
+	rtl8192c/Hal8192CUPHYImg_CE.h
+	rtl8192c/HalDMOutSrc8192C_CE.c
+	rtl8192c/HalDMOutSrc8192C_CE.h
+	rtl8192d/Hal8192DEPHYImg_CE.c
+	rtl8192d/Hal8192DEPHYImg_CE.h
+	rtl8192d/Hal8192DETestPHYImg_CE.c
+	rtl8192d/Hal8192DETestPHYImg_CE.h
+	rtl8192d/Hal8192DUPHYImg_CE.c
+	rtl8192d/Hal8192DUPHYImg_CE.h
+	rtl8192d/Hal8192DUTestPHYImg_CE.c
+	rtl8192d/Hal8192DUTestPHYImg_CE.h
+	rtl8192d/HalDMOutSrc8192D_CE.c
+	rtl8192d/HalDMOutSrc8192D_CE.h
+Modified Files:
+Change Notes:	
+	1. Add related files for SD4- NIC Linux 
+	
+Verification Before Checked-In:
+	1. CE,CU,DE,DU buildall ok.	
+----------------------------------------------------------------------------------------------
+<09/22/2011 23:09 MH_Chen>
+New Files:
+Modified Files:
+Change Notes:	
+	1. Revise batch file for MP driver PCIE/USB/SDIO compile pass.
+	2. Revise all architecture for differemt team shaer common iinterface.
+	3. Revise coding style for readbility.
+	4. All common interface share the same DM structure.
+
+Verification Before Checked-In:
+	1. N5/N62 buildall ok.
+	2. We need other teams to use the file to compile pass.
+
+----------------------------------------------------------------------------------------------
+<09/20/2011 23:01 MH_Chen>
+New Files:
+Modified Files:
+Change Notes:	
+	1. Add new out source interface for AP/Linux/ADSL/Windows team.
+	HAL\OUTSRC			==> common interface
+	HAL\OUTSRC\rtl8192c	==> independent out src files for different team temporarily.
+	HAL\OUTSRC\rtl8192c\Hal8192CEPHYImg.c/h ....
+	HAL\OUTSRC\rtl8192c\HalDMOutSrc8192C.c
+	2. Disable DM temporarily until the architecture is ready.
+	3. Revise DM architecture flow for MP driver.
+
+Verification Before Checked-In:
+	1. Windows CU build ok.
+	2. We need other teams to use the file to compile pass.
+
+------------------------------------------------------------------------------------------
+
+<------Template---->
+< ??/??/2009 00:00 Name >
+New Files:
+Modified Files:
+Change Notes:
+Verification before checked-in:
+
