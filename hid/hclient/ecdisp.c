@@ -2643,7 +2643,6 @@ RoutineDescription:
                                                  &params -> ListLength);
         free(params -> szListString);
         params->szListString = NULL;
-        params->ListLength = 0;
 
         if (!ExecuteStatus) 
         {
