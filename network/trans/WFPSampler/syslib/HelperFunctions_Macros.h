@@ -220,7 +220,8 @@ extern "C"
       )                                                        \
    {                                                           \
       size_t SAFE_SIZE = 0;                                    \
-      if(RtlSizeTMult(sizeof(object),                          \
+      if(count &&                                              \
+         RtlSizeTMult(sizeof(object),                          \
                       (size_t)count,                           \
                       &SAFE_SIZE) == STATUS_SUCCESS &&         \
          SAFE_SIZE >= (sizeof(object) * count))                \
@@ -233,7 +234,10 @@ extern "C"
                           SAFE_SIZE);                          \
       }                                                        \
       else                                                     \
+      {                                                        \
+         pPtr = 0;                                             \
          break;                                                \
+      }                                                        \
    }
 
 /**
@@ -252,7 +256,8 @@ extern "C"
       )                                                            \
    {                                                               \
       size_t SAFE_SIZE = 0;                                        \
-      if(RtlSizeTMult(sizeof(object),                              \
+      if(count &&                                                  \
+         RtlSizeTMult(sizeof(object),                              \
                       (size_t)count,                               \
                       &SAFE_SIZE) == STATUS_SUCCESS &&             \
          SAFE_SIZE >= (sizeof(object) * count))                    \
@@ -265,7 +270,10 @@ extern "C"
                           SAFE_SIZE);                              \
       }                                                            \
       else                                                         \
+      {                                                            \
+         pPtr = 0;                                                 \
          break;                                                    \
+      }                                                            \
    }
 
 /**

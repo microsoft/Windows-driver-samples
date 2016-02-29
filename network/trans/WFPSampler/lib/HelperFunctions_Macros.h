@@ -145,7 +145,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
    {                                                  \
       size_t SAFE_SIZE = 0;                           \
       HLPR_DELETE_ARRAY(pPtr);                        \
-      if(SizeTMult(sizeof(object),                    \
+      if(count &&                                     \
+         SizeTMult(sizeof(object),                    \
                    (size_t)count,                     \
                    &SAFE_SIZE) == S_OK &&             \
          SAFE_SIZE >= (sizeof(object) * count))       \
@@ -157,6 +158,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
       }                                               \
       else                                            \
       {                                               \
+         pPtr = 0;                                    \
          HlprLogError(L"[count: %d][objectSize: %d]", \
                       count,                          \
                       sizeof(object));                \
@@ -178,7 +180,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
    {                                                          \
       size_t SAFE_SIZE = 0;                                   \
       HLPR_DELETE_ARRAY(pPtr);                                \
-      if(SizeTMult(sizeof(object),                            \
+      if(count &&                                             \
+         SizeTMult(sizeof(object),                            \
                    (size_t)count,                             \
                    &SAFE_SIZE) == S_OK &&                     \
          SAFE_SIZE >= (sizeof(object) * count))               \
@@ -190,6 +193,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
       }                                                       \
       else                                                    \
       {                                                       \
+         pPtr = 0;                                            \
          HlprLogError(L"[count: %d][objectSize: %d]",         \
                       count,                                  \
                       sizeof(object));                        \

@@ -110,7 +110,6 @@
    ECHO Copying WFPSampler application binaries to %WinDir%\System32\
       COPY /Y %WFPSAMPLER_EXE% %WinDir%\System32\
       COPY /Y %WFPSAMPLERSERVICE_EXE% %WinDir%\System32\
-goto :Cleanup
    IF EXIST %WinDir%\System32\WFPSamplerService.Exe (
       ECHO.
       ECHO Registering the WFPSampler Service
