@@ -23,6 +23,7 @@ Environment:
 
 #include <ntddk.h>
 #include <ntdddisk.h>
+#include <mountmgr.h>
 
 #pragma warning(default:4201)
 

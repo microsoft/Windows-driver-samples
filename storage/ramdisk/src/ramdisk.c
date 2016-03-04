@@ -228,9 +228,6 @@ Return Value:
     size_t            bufSize;
     PDEVICE_EXTENSION devExt = QueueGetExtension(Queue)->DeviceExtension;
 
-    UNREFERENCED_PARAMETER(OutputBufferLength);
-    UNREFERENCED_PARAMETER(InputBufferLength);
-
     switch (IoControlCode) {
     case IOCTL_DISK_GET_PARTITION_INFO: {
 
@@ -286,6 +283,78 @@ Return Value:
         //
 
         Status = STATUS_SUCCESS;
+        break;
+
+    case IOCTL_STORAGE_QUERY_PROPERTY: {
+
+            PSTORAGE_PROPERTY_QUERY storagePropertyQuery;
+
+            Status = WdfRequestRetrieveInputBuffer(Request, InputBufferLength, &storagePropertyQuery, NULL);
+            if (NT_SUCCESS(Status)) {
+                switch (storagePropertyQuery->PropertyId) {
+                case StorageDeviceProperty: {
+
+                        PSTORAGE_DEVICE_DESCRIPTOR storageDeviceDescriptor;
+
+                        Status = WdfRequestRetrieveOutputBuffer(Request, OutputBufferLength, &storageDeviceDescriptor, NULL);
+                        if (NT_SUCCESS(Status)) {
+                            RtlZeroMemory(storageDeviceDescriptor, OutputBufferLength);
+                            storageDeviceDescriptor->Version = sizeof(STORAGE_DEVICE_DESCRIPTOR);
+                            storageDeviceDescriptor->Size = sizeof(STORAGE_DEVICE_DESCRIPTOR);
+                            storageDeviceDescriptor->DeviceType = FILE_DEVICE_DISK;
+                            storageDeviceDescriptor->DeviceTypeModifier = 0;
+                            storageDeviceDescriptor->RemovableMedia = TRUE;
+                            storageDeviceDescriptor->CommandQueueing = FALSE;
+                            storageDeviceDescriptor->VendorIdOffset = 0;
+                            storageDeviceDescriptor->ProductIdOffset = 0;
+                            storageDeviceDescriptor->ProductRevisionOffset = 0;
+                            storageDeviceDescriptor->SerialNumberOffset = 0;
+                            storageDeviceDescriptor->BusType = BusTypeVirtual;
+                            storageDeviceDescriptor->RawPropertiesLength = 0;
+                        }
+                    }
+                    break;
+
+                default:
+                    Status = STATUS_INVALID_PARAMETER;
+                    break;
+                }
+            }
+        }
+        break;
+
+    case IOCTL_DISK_GET_LENGTH_INFO: {
+
+            PGET_LENGTH_INFORMATION lengthInfo;
+
+            Status = WdfRequestRetrieveOutputBuffer(Request, OutputBufferLength, &lengthInfo, NULL);
+            if (NT_SUCCESS(Status)) {
+                lengthInfo->Length.QuadPart = DEFAULT_DISK_SIZE;
+            }
+        }
+        break;
+
+    case IOCTL_MOUNTDEV_QUERY_DEVICE_NAME: {
+
+            PMOUNTDEV_NAME name;
+
+            Status = WdfRequestRetrieveOutputBuffer(Request, OutputBufferLength, &name, NULL);
+            if (NT_SUCCESS(Status)) {
+                RtlZeroMemory(name, OutputBufferLength);
+                UNICODE_STRING ntDeviceName = RTL_CONSTANT_STRING(NT_DEVICE_NAME);
+                name->NameLength = ntDeviceName.Length;
+                RtlCopyMemory(name->Name, ntDeviceName.Buffer,name->NameLength);
+            }
+        }
+        break;
+
+    default:
+
+        //
+        // Display unhandled IoControlCode for future updates.
+        //
+
+        KdPrint(("RamDiskEvtIoDeviceControl: Unhandled IoControlCode 0x%x.\n", IoControlCode));
         break;
     }
 
