@@ -3696,10 +3696,12 @@ AsynchReadThreadProc(
     PREAD_THREAD_CONTEXT    Context
 )
 {
-    HANDLE  completionEvent;
-    BOOL    readStatus;
-    DWORD   waitStatus;
-    ULONG   numReadsDone;
+    HANDLE     completionEvent;
+    BOOL       readStatus;
+    DWORD      waitStatus;
+    ULONG      numReadsDone;
+    OVERLAPPED overlap;
+    DWORD      bytesTransferred;
     
     //
     // Create the completion event to send to the the OverlappedRead routine
@@ -3743,7 +3745,7 @@ AsynchReadThreadProc(
         //  exit
         //
 
-        readStatus = ReadOverlapped( Context -> HidDevice, completionEvent );
+        readStatus = ReadOverlapped( Context -> HidDevice, completionEvent, &overlap );
 
     
         if (!readStatus) 
@@ -3761,11 +3763,13 @@ AsynchReadThreadProc(
 
             //
             // If completionEvent was signaled, then a read just completed
-            //   so let's leave this loop and process the data
+            //   so let's get the status and leave this loop and process the data
             //
             
             if ( WAIT_OBJECT_0 == waitStatus)
             { 
+                readStatus = GetOverlappedResult(Context->HidDevice->HidDevice, &overlap, &bytesTransferred, TRUE);
+
                 break;
             }
         }
@@ -3804,7 +3808,8 @@ AsynchReadThreadProc(
                 CLM_PrintInputReport(Context -> HidDevice);
             }
         }
-    } while ( !Context -> TerminateThread &&
+    } while ( readStatus &&
+              !Context -> TerminateThread &&
               (INFINITE_READS == Context -> NumberOfReads || 
                numReadsDone < Context -> NumberOfReads));
 

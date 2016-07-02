@@ -64,7 +64,8 @@ Done:
 BOOLEAN
 ReadOverlapped (
     PHID_DEVICE     HidDevice,
-    HANDLE          CompletionEvent
+    HANDLE          CompletionEvent,
+    LPOVERLAPPED    overlap
    )
 /*++
 RoutineDescription:
@@ -72,7 +73,6 @@ RoutineDescription:
    into the InputData array.
 --*/
 {
-    static OVERLAPPED  overlap;
     DWORD       bytesRead;
     BOOL        readStatus;
 
@@ -81,9 +81,9 @@ RoutineDescription:
     //  to use for signalling the completion of the Read
     */
 
-    memset(&overlap, 0, sizeof(OVERLAPPED));
+    memset(overlap, 0, sizeof(OVERLAPPED));
     
-    overlap.hEvent = CompletionEvent;
+    overlap->hEvent = CompletionEvent;
     
     /*
     // Execute the read call saving the return code to determine how to 
@@ -94,7 +94,7 @@ RoutineDescription:
                             HidDevice -> InputReportBuffer,
                             HidDevice -> Caps.InputReportByteLength,
                             &bytesRead,
-                            &overlap);
+                            overlap);
                           
     /*
     // If the readStatus is FALSE, then one of two cases occurred.  
