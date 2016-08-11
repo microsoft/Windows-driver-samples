@@ -113,19 +113,19 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
    SIZE_T   mdlByteCount         = 0;
    SIZE_T   remainingBytesToCopy = bytesToCopy;
    SIZE_T   copySize             = 0;
+   UINT32   noExecute            = 0;
 
    *pBytesCopied = 0;
 
-   if(MmGetMdlByteCount(pMDL) >= mdlOffset + bytesToCopy)
-   {
-      BYTE*  pSystemAddress = 0;
-      UINT32 noExecute      = 0;
-
 #if(NTDDI_VERSION >= NTDDI_WIN8)
 
-      noExecute = MdlMappingNoExecute;
+   noExecute = MdlMappingNoExecute;
 
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
+
+   if(MmGetMdlByteCount(pMDL) >= mdlOffset + bytesToCopy)
+   {
+      BYTE* pSystemAddress = 0;
 
       pSystemAddress = (BYTE*)MmGetSystemAddressForMdlSafe(pMDL,
                                                            LowPagePriority | noExecute);
@@ -171,7 +171,7 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
                         mdlByteCount);  
 
          pSystemAddress = (BYTE*)MmGetSystemAddressForMdlSafe(pMDL,
-                                                              LowPagePriority);
+                                                              LowPagePriority | noExecute);
          if(pSystemAddress)
          {
             RtlCopyMemory(pSystemAddress + mdlOffset,

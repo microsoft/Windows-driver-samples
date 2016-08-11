@@ -133,6 +133,12 @@ NTSTATUS CustomSensorDevice::Initialize(
     InitPropVariantFromCLSID(GUID_SensorCategory_Other, 
                              &(m_pEnumerationProperties->List[SENSOR_CATEGORY].Value));
 
+    m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Key = DEVPKEY_Sensor_IsPrimary;
+    InitPropVariantFromBoolean(FALSE,
+                             &(m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Value)); // This value should be set to TRUE if multiple custom sensors
+                                                                                         // with the same vendor defined type exist on the system and
+                                                                                         // this sensor is the primary sensor
+
     m_pEnumerationProperties->List[SENSOR_VENDOR_DEFINED_TYPE].Key = DEVPKEY_Sensor_VendorDefinedSubType;
     InitPropVariantFromCLSID(GUID_CustomSensorDevice_VendorDefinedSubTypeID,
                              &(m_pEnumerationProperties->List[SENSOR_VENDOR_DEFINED_TYPE].Value));

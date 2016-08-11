@@ -9,9 +9,9 @@
     Signature   = "$Windows NT$"
     Class       = WFPCALLOUTS
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
-    Provider    = %ProviderString%
+    Provider    = %Contoso%
     CatalogFile = StmEdit.cat
-    DriverVer   = 11/24/2014,14.24.55.836
+    DriverVer   = 01/01/2015,1.0.09.15
 
 [SourceDisksNames]
    1 = %StmEditDisk%,,,""
@@ -50,17 +50,17 @@
     AddReg        = StmEdit.AddRegistry
 
 [StmEdit.AddRegistry]
-    HKR,"Parameters","EditInline",0x00010001,0            ; FLG_ADDREG_TYPE_DWORD
-    HKR,"Parameters","StringToFind",0x00000000,"rainy"    ; FLG_ADDREG_TYPE_SZ
-    HKR,"Parameters","StringToReplace",0x00000000,"sunny" ; FLG_ADDREG_TYPE_SZ
-    HKR,"Parameters","InspectionPort",0x00010001,5001     ; FLG_ADDREG_TYPE_DWORD
-    HKR,"Parameters","InspectOutbound",0x00010001,0       ; FLG_ADDREG_TYPE_DWORD
+    HKR,"Parameters","MultipleCallouts",     0x00010001, 1          ; FLG_ADDREG_TYPE_DWORD
+    HKR,"Parameters","StringToFind",         0x00000000, "rainy"    ; FLG_ADDREG_TYPE_SZ
+    HKR,"Parameters","InspectionRemotePort", 0x00010001, 0    	    ; FLG_ADDREG_TYPE_DWORD
+    HKR,"Parameters","InspectionLocalPort",  0x00010001, 8888       ; FLG_ADDREG_TYPE_DWORD
+
 
 [StmEdit.DelRegistry]
     HKR,"Parameters",,,
 
 [Strings]
-    ProviderString     = "TODO-Set-Provider"
+    Contoso            = "Contoso Ltd."
     StmEditDisk        = "Stream Edit Installation Disk"
     StmEditServiceDesc = "Stream Edit Callout Driver"
     StmEditServiceName = "StmEdit"

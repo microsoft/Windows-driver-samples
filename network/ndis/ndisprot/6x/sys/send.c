@@ -88,7 +88,7 @@ Return Value:
         //
         
         pEthHeader = NULL;
-        NdisQueryMdl(pIrp->MdlAddress, &pEthHeader, &DataLength, NormalPagePriority);
+        NdisQueryMdl(pIrp->MdlAddress, &pEthHeader, &DataLength, NormalPagePriority | MdlMappingNoExecute);
 
         if (pEthHeader == NULL)
         {
@@ -222,7 +222,7 @@ Return Value:
         {
             PUCHAR      pData;
 
-            pData = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority);
+            pData = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority | MdlMappingNoExecute);
             NPROT_ASSERT(pEthHeader == pData);
 
             DEBUGP(DL_VERY_LOUD, 

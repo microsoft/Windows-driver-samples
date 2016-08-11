@@ -1,0 +1,6 @@
+LIBRARY TESTMCRO
+
+EXPORTS
+        MicroEntry
+        Scan
+        SetPixelWindow

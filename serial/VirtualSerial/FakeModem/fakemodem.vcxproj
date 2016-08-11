@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BCF39170-D785-4372-A97E-AAE0915630BE}</ProjectGuid>
+    <ProjectGuid>{ACC7F2B5-F886-4169-84C0-32E44847E2B3}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>1</UMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{BB77384F-D084-459A-A05F-FDF65FF05318}</SampleGuid>
+    <SampleGuid>{632318C9-FA2B-44A3-BB8C-3ADC5F2E2A86}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -81,11 +81,6 @@
       <WppDllMacro>true</WppDllMacro>
       <WppScanConfigurationData>..\internal.h</WppScanConfigurationData>
     </ClCompile>
-    <Inf Include="fakemodem.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\fakemodem.inf</CopyOutput>
-    </Inf>
     <OtherWpp Include="fakemodem.rc">
       <WppEnabled>true</WppEnabled>
       <WppDllMacro>true</WppDllMacro>
@@ -242,7 +237,6 @@
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
-    <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

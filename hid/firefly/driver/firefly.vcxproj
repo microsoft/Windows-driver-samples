@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{72EF0AC2-AF89-4FAF-B50B-CFD1CBCFC1FA}</ProjectGuid>
+    <ProjectGuid>{FF968AD9-B8FF-450D-93A0-4CC5AC2B49B5}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{3BBB9A3C-6D04-44EA-94CD-1BCBB6785ABE}</SampleGuid>
+    <SampleGuid>{2DD1A137-CFE3-476C-B434-CE31733A7325}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,11 +76,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <Inf Include=".\firefly.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\firefly.inf</CopyOutput>
-    </Inf>
     <MofComp Include="firefly.mof">
       <CreateBinaryMofFile>".\$(IntDir)\firefly.bmf"</CreateBinaryMofFile>
     </MofComp>

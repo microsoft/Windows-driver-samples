@@ -27,7 +27,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define CELLULAR_MAX_INPUT_SYSTEM_STREAMS            1       // Raw stream
+#define CELLULAR_MAX_INPUT_SYSTEM_STREAMS            1
 
 
 //=============================================================================

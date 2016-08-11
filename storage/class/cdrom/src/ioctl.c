@@ -4150,9 +4150,10 @@ Return Value:
         driveLetterName.MaximumLength = sizeof(driveLetterNameBuffer);
         driveLetterName.Length = 0;
 
-        queryTable[0].Flags = RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_DIRECT;
+        queryTable[0].Flags = RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable[0].Name = valueName;
         queryTable[0].EntryContext = &driveLetterName;
+        queryTable[0].DefaultType = (REG_SZ << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
         status = RtlQueryRegistryValues(RTL_REGISTRY_ABSOLUTE,
                                         L"\\Registry\\Machine\\System\\DISK", // why hard coded?

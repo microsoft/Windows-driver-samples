@@ -121,14 +121,15 @@ ULONG FatTotalTicks[32] = { 0 };
 
 PVOID FatNull = NULL;
 
-NTSTATUS FatInterestingException = 0;
-
 #endif // FASTFATDBG
 
 #if DBG
 
-NTSTATUS FatAssertNotStatus = STATUS_SUCCESS;
 BOOLEAN FatTestRaisedStatus = FALSE;
+
+NTSTATUS FatBreakOnInterestingIoCompletion = STATUS_SUCCESS;
+NTSTATUS FatBreakOnInterestingExceptionStatus = 0;
+NTSTATUS FatBreakOnInterestingIrpCompletion = 0;
 
 #endif
 
@@ -204,10 +205,10 @@ Return Value:
     DebugTrace(0, DEBUG_TRACE_UNWIND, "FatExceptionFilter %X\n", ExceptionCode);
     DebugDump("FatExceptionFilter\n", Dbg, NULL );
 
-#ifdef FASTFATDBG
+#ifdef DBG
 
-    if( FatInterestingException != 0 && ExceptionCode == FatInterestingException ) {
-        NT_ASSERT(FALSE);
+    if( FatBreakOnInterestingExceptionStatus != 0 && ExceptionCode == FatBreakOnInterestingExceptionStatus ) {
+        DbgBreakPoint();
     }
     
 #endif
@@ -724,6 +725,13 @@ Return Value:
 {
     PAGED_CODE();
 
+#if DBG
+    if ( (FatBreakOnInterestingIrpCompletion != 0) && (Status == FatBreakOnInterestingIrpCompletion) ) {
+        DbgBreakPoint();
+    }
+    
+#endif
+
     //
     //  If we have an Irp Context then unpin all of the repinned bcbs
     //  we might have collected.
@@ -900,6 +908,7 @@ Return Value:
         }
 
     } else {
+
 
         //
         //  Also check for a write-protected volume here.

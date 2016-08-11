@@ -48,6 +48,7 @@ typedef enum
     SENSOR_ENUMERATION_PROPERTY_CONNECTION_TYPE,
     SENSOR_ENUMERATION_PROPERTY_PERSISTENT_UNIQUE_ID,
     SENSOR_ENUMERATION_PROPERTY_CATEGORY,
+    SENSOR_ENUMERATION_PROPERTY_ISPRIMARY,
     SENSOR_ENUMERATION_PROPERTIES_COUNT
 } SENSOR_ENUMERATION_PROPERTIES_INDEX;
 
@@ -75,8 +76,22 @@ typedef struct _REGISTER_SETTING
     BYTE Value;
 } REGISTER_SETTING, *PREGISTER_SETTING;
 
+// Return the rate that is just less than the desired report interval
+inline DATA_RATE _GetDataRateFromReportInterval(_In_ ULONG ReportInterval)
+{
+    DATA_RATE dataRate = ACCELEROMETER_SUPPORTED_DATA_RATES[0];
 
-inline DATA_RATE _GetDataRateFromReportInterval(_In_ ULONG ReportInterval);
+    for (ULONG i = 0; i < ACCELEROMETER_SUPPORTED_DATA_RATES_COUNT; i++)
+    {
+        dataRate = ACCELEROMETER_SUPPORTED_DATA_RATES[i];
+        if (dataRate.DataRateInterval <= ReportInterval)
+        {
+            break;
+        }
+    }
+
+    return dataRate;
+}
 
 // Array of settings that describe the initial device configuration.
 const REGISTER_SETTING g_ConfigurationSettings[] =

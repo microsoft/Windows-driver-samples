@@ -188,14 +188,14 @@ Return Value:
     //
     status = WdfIoTargetAllocAndQueryTargetProperty(Target,
                                                     DevicePropertyFriendlyName,
-                                                    NonPagedPool,
+                                                    NonPagedPoolNx,
                                                     WDF_NO_OBJECT_ATTRIBUTES,
                                                     TargetName);
 
     if (!NT_SUCCESS(status) && status != STATUS_INSUFFICIENT_RESOURCES) {
         status = WdfIoTargetAllocAndQueryTargetProperty(Target,
                                                         DevicePropertyDeviceDescription,
-                                                        NonPagedPool,
+                                                        NonPagedPoolNx,
                                                         WDF_NO_OBJECT_ATTRIBUTES,
                                                         TargetName);
 

@@ -30,7 +30,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define MICARRAY_MAX_INPUT_STREAMS              2       // Raw + Default streams
+#define MICARRAY_MAX_INPUT_STREAMS              4
 
 //=============================================================================
 static 
@@ -538,10 +538,28 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
     },
 };
 
+// if MicArrayPinDataRangesProcessedStream is changed, we MUST update MicArrayPinDataRangePointersStream too!
+C_ASSERT(SIZEOF_ARRAY(MicArrayPinDataRangesProcessedStream) == 8);
+
 static
 PKSDATARANGE MicArrayPinDataRangePointersStream[] =
 {
+    // All supported device formats should be listed in the DataRange.
     PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[0]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[1]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[2]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[3]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[4]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[5]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[6]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[7]),
     PKSDATARANGE(&PinDataRangeAttributeList),
     PKSDATARANGE(&MicArrayPinDataRangesRawStream[0]),
     PKSDATARANGE(&PinDataRangeAttributeList),

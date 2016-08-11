@@ -32,6 +32,8 @@ NTSTATUS CustomSensorDevice::GetData()
             m_StartTime = 0;
             TraceError("CSTM %!FUNC! GetPerformanceTime %!STATUS!", Status);
         }
+
+        m_SampleCount = 0;
     }
 
     pSimulator = GetHardwareSimulatorContextFromInstance(m_SimulatorInstance);
@@ -114,8 +116,17 @@ CustomSensorDevice::OnTimerExpire(
                 }
                 else
                 {
-                    WaitTimeHundredNanoseconds = pDevice->m_Interval -
-                        ((CurrentTimeMs - pDevice->m_StartTime) % pDevice->m_Interval);
+                    pDevice->m_SampleCount++;
+                    if (CurrentTimeMs > (pDevice->m_StartTime + (pDevice->m_Interval * (pDevice->m_SampleCount + 1))))
+                    {
+                        // If we skipped two or more beats, reschedule the timer with a zero due time to catch up on missing samples
+                        WaitTimeHundredNanoseconds = 0;
+                    }
+                    else
+                    {
+                        WaitTimeHundredNanoseconds = (pDevice->m_StartTime +
+                            (pDevice->m_Interval * (pDevice->m_SampleCount + 1))) - CurrentTimeMs;
+                    }
                     WaitTimeHundredNanoseconds = WDF_REL_TIMEOUT_IN_MS(WaitTimeHundredNanoseconds);
                 }
             }
@@ -143,7 +154,7 @@ CustomSensorDevice::OnStart(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
     }
 
     if (NT_SUCCESS(Status))
@@ -207,7 +218,7 @@ CustomSensorDevice::OnStop(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("CSTM %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("CSTM %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
     }
 
     if (NT_SUCCESS(Status))
@@ -461,14 +472,14 @@ CustomSensorDevice::OnGetDataInterval(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("CSTM %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("CSTM %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
     if (nullptr == DataRateMs)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("CSTM %!FUNC! DataRateMs(%08X) parameter is invalid. Failed %!STATUS!", (INT)DataRateMs, Status);
+        TraceError("CSTM %!FUNC! DataRateMs(0x%p) parameter is invalid. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 
@@ -496,7 +507,14 @@ CustomSensorDevice::OnSetDataInterval(
     if (nullptr == pDevice || Cstm_Default_MinDataInterval_Ms > DataRateMs)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("CSTM %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("CSTM %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
+        goto Exit;
+    }
+
+    if (Cstm_Default_MinDataInterval_Ms > DataRateMs)
+    {
+        Status = STATUS_INVALID_PARAMETER;
+        TraceError("CSTM %!FUNC! DataRateMs(%d) parameter is smaller than the minimum data interval. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 

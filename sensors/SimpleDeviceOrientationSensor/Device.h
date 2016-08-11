@@ -49,6 +49,7 @@ typedef enum
     SENSOR_MANUFACTURER,
     SENSOR_MODEL,
     SENSOR_PERSISTENT_UNIQUEID,
+    SENSOR_ISPRIMARY,
     SENSOR_ENUMERATION_PROPERTIES_COUNT
 } SENSOR_ENUMERATION_PROPERTIES_INDEX;
 
@@ -96,6 +97,8 @@ private:
     ULONG                                           m_Interval;
     BOOLEAN                                         m_FirstSample;
     ULONG                                           m_StartTime;
+    ULONGLONG                                       m_SampleCount;
+
     PSENSOR_COLLECTION_LIST                         m_pData;                    // Sdo data that is going to push to clx
     ABI::Windows::Devices::Sensors::SimpleOrientation    m_LastSample;
 

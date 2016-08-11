@@ -50,7 +50,7 @@ TraceTransfer (
     SgProgrammed = 0;
     SgLength = 0;
 
-    if (Request == NULL) {    
+    if (Request == NULL) {
         Transaction = UfxEndpointGetTransferContext(Endpoint)->Transaction;
         if (Transaction != NULL) {
             PDMA_CONTEXT DmaContext;
@@ -78,22 +78,22 @@ TraceTransfer (
         }
     }
 
-    EventWriteTransfer( 
-        &UfxClientSampleGuid, 
+    EventWriteTransfer(
+        &UfxClientSampleGuid,
         Stage,
-        (ULONG) Endpoint,
+        Endpoint,
         UfxEndpointGetContext(Endpoint)->PhysicalEndpoint,
-        (ULONG) Request,
-        (ULONG) Transaction,
+        Request,
+        Transaction,
         BytesRequested,
         BytesProgrammed,
         BytesTransferred,
         SgProgrammed,
         SgLength);
 
-    TraceInformation("TRANSFER %s: %08X (%d), RQ: %08X, DMA: %08X, BytesReq: %08X, BytesProg: %08X, BytesTrans: %08X, SG: %d/%d",
-        Stage, (ULONG) Endpoint, UfxEndpointGetContext(Endpoint)->PhysicalEndpoint, (ULONG) Request,
-        (ULONG) Transaction, BytesRequested, BytesProgrammed, BytesTransferred, SgProgrammed, SgLength);
+    TraceInformation("TRANSFER %s: 0x%p (%d), RQ: 0x%p, DMA: 0x%p, BytesReq: %08X, BytesProg: %08X, BytesTrans: %08X, SG: %d/%d",
+        Stage, Endpoint, UfxEndpointGetContext(Endpoint)->PhysicalEndpoint, Request,
+        Transaction, BytesRequested, BytesProgrammed, BytesTransferred, SgProgrammed, SgLength);
 }
 
 #define TRACE_TRANSFER(Stage, Endpoint, Request) \
@@ -178,7 +178,7 @@ Parameters Description:
 --*/
 {
     PTRANSFER_CONTEXT TransferContext;
- 
+
     TraceEntry();
 
     TransferContext = UfxEndpointGetTransferContext(Endpoint);
@@ -342,7 +342,7 @@ Parameters Description:
     TraceEntry();
 
     TransferContext = UfxEndpointGetTransferContext(Endpoint);
-                           
+
     if (TransferContext->TransferStarted) {
         TransferCommandUpdate(Endpoint);
 
@@ -374,7 +374,7 @@ Parameters Description:
         NTSTATUS Status;
         PDMA_CONTEXT DmaContext;
         UFXENDPOINT Endpoint;
-        
+
         DmaContext = DmaGetContext(Transaction);
         Endpoint = DmaContext->Endpoint;
 
@@ -408,12 +408,12 @@ OnEvtRequestCancel (
 Routine Description:
 
     EvtRequestCancel callback for cancellable transfer requests.
-    This cancels a programmed transfer request by issuing a corresponding 
+    This cancels a programmed transfer request by issuing a corresponding
     'TransferEnd' command to the contoller.
 
 Parameters Description:
 
-    Request - Request being cancelled.    
+    Request - Request being cancelled.
 
 --*/
 {
@@ -431,14 +431,14 @@ TransferRequestCancel (
 /*++
 Routine Description:
 
-    This cancels a programmed transfer request by issuing a corresponding 
+    This cancels a programmed transfer request by issuing a corresponding
     'TransferEnd' command to the contoller.
 
 Parameters Description:
 
-    Request - Request being cancelled.    
+    Request - Request being cancelled.
 
-    QueueIsStopped - indicates if this request is being stopped and cancellation 
+    QueueIsStopped - indicates if this request is being stopped and cancellation
                      should avoid fetching subsequent request from queue
 
 --*/
@@ -465,7 +465,7 @@ Parameters Description:
 
         Status = WdfRequestUnmarkCancelable(Request);
         CHK_NT_MSG(Status, "WdfRequestUnmarkCancelable failed during queue stop");
-        
+
     } else {
         TRACE_TRANSFER("CANCEL", Endpoint, Request);
     }
@@ -493,7 +493,7 @@ Parameters Description:
                 // is considered an error by driver verifier since the DMA state is
                 // FxDmaTransactionStateTransferFailed.
                 //
-                
+
                 DmaContext->State = Cancelled;
 
             } else {
@@ -510,7 +510,7 @@ Parameters Description:
     if (TransferContext->TransferStarted) {
         TransferContext->CleanupOnEndComplete = TRUE;
         TransferCommandEnd(Endpoint);
-            
+
     } else if (Cleanup) {
         NewTransaction = TransferCancelCleanup(Endpoint);
     }
@@ -552,7 +552,7 @@ Parameters Description:
     //
     // Start transfer
     //
-                  
+
     TransferCommandStart(Endpoint);
     ControlContext->SetupRequested = TRUE;
     ControlContext->HandshakeRequested = FALSE;
@@ -603,7 +603,7 @@ Parameters Description:
         ControlContext = UfxEndpointGetControlContext(Endpoint);
 
         RequestToCancel = ControlContext->HandshakeRequest;
-    }   
+    }
 
     //
     // Before canceling, we need to make sure we can unmark it cancelable.
@@ -660,7 +660,7 @@ Parameters Description:
     Transaction = TransferContext->Transaction;
     if (Transaction != NULL) {
         PDMA_CONTEXT DmaContext;
-        
+
         DmaContext = DmaGetContext(Transaction);
 
         RequestToCancel = DmaContext->Request;
@@ -700,13 +700,13 @@ Parameters Description:
         FetchNextRequest = !RequestContext->QueueIsStopped;
 
         Referenced = RequestContext->ReferencedOnCancel;
-        
+
         //
         // In case the completion work-item has already been queued, prevent
         // it from also trying to complete this request when it executes.
         //
         TransferContext->PendingCompletion = FALSE;
-        
+
         WdfRequestComplete(RequestToCancel, STATUS_CANCELLED);
         if (Referenced) {
             WdfObjectDereference(RequestToCancel);
@@ -720,7 +720,7 @@ Parameters Description:
         if (TransferContext->Stalled) {
             CommandStallClear(Endpoint);
         }
-    
+
     //
     // Bring control endpoint back to setup stage.
     //
@@ -768,7 +768,7 @@ Return Value:
     PUFXENDPOINT_CONTEXT EpContext;
 
     TraceEntry();
-    
+
     TransferContext = UfxEndpointGetTransferContext(Endpoint);
     EpContext = UfxEndpointGetContext(Endpoint);
     DmaContext = DmaGetContext(Transaction);
@@ -795,7 +795,7 @@ Return Value:
         //
         // #### TODO: Insert code to map scatter gather buffers to controller transfer structures ####
         //
-        
+
         //
         // Need to remember how much we really programmed
         //
@@ -818,9 +818,9 @@ Return Value:
         TRACE_TRANSFER("EXTRA", Endpoint, DmaContext->Request);
 
         //
-        // #### TODO: Insert code to append an extra buffer to the transfer structures #### 
+        // #### TODO: Insert code to append an extra buffer to the transfer structures ####
         //
-        
+
     }
 
     //
@@ -897,7 +897,7 @@ Parameters Description:
     //
     Status = WdfRequestUnmarkCancelable(DmaContext->Request);
     CHK_NT_MSG(Status, "WdfRequestUnmarkCancelable failed during programming");
-    
+
     Status = WdfRequestMarkCancelableEx(DmaContext->Request, OnEvtRequestCancel);
     if (Status == STATUS_CANCELLED) {
         LOG_NT_MSG(Status, "Request cancelled during programming");
@@ -953,7 +953,7 @@ Parameters Description:
         TransferContext->CleanupOnEndComplete = FALSE;
         Transaction = TransferCancelCleanup(Endpoint);
     }
-    
+
     TransferUnlock(Endpoint);
     TransferDmaExecute(Transaction);
     TraceExit();
@@ -989,30 +989,30 @@ Parameters Description:
     //
     // #### TODO: Insert code to determine status of command ####
     //
-    
+
     // sample will assume no error for illustration purposes
     CommandStatus = 0;
-    
+
     //
     // Command start has failed. Clean up the request.
     //
     if (CommandStatus != 0) {
         TRACE_TRANSFER("START FAIL", Endpoint, NULL);
-    
+
         TransferContext->TransferStarted = FALSE;
-    
+
         if (CONTROL_ENDPOINT(Endpoint)) {
             PCONTROL_CONTEXT ControlContext;
-            
+
             ControlContext = UfxEndpointGetControlContext(Endpoint);
-       
+
             if (ControlContext->SetupRequested) {
                 //
                 // Error on a setup request.  Wait for host to reset us or user reconnect.
                 //
                 TraceError("ERROR: Failed a setup packet!");
                 NT_ASSERT(FALSE);
-                
+
             } else {
                 CommandStallSet(Endpoint);
             }
@@ -1020,7 +1020,7 @@ Parameters Description:
         } else {
             Transaction = TransferRequestTryUnmarkCancelableAndCleanup(Endpoint);
         }
-    
+
     } else {
         TransferContext->TransferCommandStartComplete = TRUE;
     }
@@ -1068,7 +1068,7 @@ Parameters Description:
     }
 
     Transaction = TransferContext->Transaction;
-    
+
     //
     // Make sure request wasn't cancelled before work item got to run.
     //
@@ -1091,7 +1091,7 @@ Parameters Description:
         BytesTransferred = DmaContext->BytesProgrammed - DmaContext->BytesRemaining;
         if (BytesTransferred > DmaContext->BytesRequested) {
             TraceWarning("Transferred more than what is asked for: "
-                        "Bytes Requested: %d, Bytes Transferred:%d", 
+                        "Bytes Requested: %d, Bytes Transferred:%d",
                         DmaContext->BytesRequested, BytesTransferred);
             BytesTransferred = DmaContext->BytesRequested;
         }
@@ -1112,7 +1112,7 @@ Parameters Description:
     TransferContext->TransferStarted = FALSE;
     Transaction = TransferNextRequest(Endpoint);
 
-End:    
+End:
     TransferUnlock(Endpoint);
 
     if (Transaction != NULL) {
@@ -1169,16 +1169,16 @@ Parameters Description:
 
     // Sample will assume transfer is complete
     TransferComplete = TRUE;
-    
+
     //
-    // If the transfer is complete we need to complete the request.  
+    // If the transfer is complete we need to complete the request.
     //
     if (TransferComplete) {
         DmaContext->BytesRemaining = BytesRemaining;
         TRACE_TRANSFER("COMPLETE (Last packet or short packet)", Endpoint, NULL);
         TransferContext->PendingCompletion = TRUE;
         WdfWorkItemEnqueue(TransferContext->CompletionWorkItem);
-    
+
     //
     // If transfer is still in progress, we need to program more transfers
     //
@@ -1200,7 +1200,7 @@ Parameters Description:
 
         if (Status != STATUS_MORE_PROCESSING_REQUIRED && !NT_SUCCESS(Status)) {
             NewTransaction = TransferRequestTryUnmarkCancelableAndCleanup(Endpoint);
-        }   
+        }
     }
 
 End:
@@ -1242,7 +1242,7 @@ Parameters Description:
     //
     if (ControlContext->SetupRequested) {
         TRACE_TRANSFER("COMPLETE (Setup)", Endpoint, NULL);
-        
+
         ControlContext->SetupRequested = FALSE;
         TransferContext->TransferStarted = FALSE;
 
@@ -1255,7 +1255,7 @@ Parameters Description:
         NTSTATUS Status;
 
         TRACE_TRANSFER("COMPLETE (Handshake)", Endpoint, ControlContext->HandshakeRequest);
-        
+
         Status = WdfRequestUnmarkCancelable(ControlContext->HandshakeRequest);
         if (Status != STATUS_CANCELLED) {
             WdfRequestComplete(ControlContext->HandshakeRequest, Status);
@@ -1366,7 +1366,7 @@ Parameters Description:
     SetupPacketBuffer = NULL;
     if (CONTROL_ENDPOINT(Endpoint)) {
         PCONTROL_CONTEXT ControlContext;
-        
+
         ControlContext = UfxEndpointGetControlContext(Endpoint);
         SetupPacketBuffer = ControlContext->SetupPacketBuffer;
         ControlContext->SetupPacketBuffer = NULL;
@@ -1469,16 +1469,16 @@ Return Value:
     }
 
     Buffer = WdfCommonBufferGetAlignedVirtualAddress(TransferContext->CommonBuffer);
-    TransferContext->LogicalCommonBuffer = 
-        WdfCommonBufferGetAlignedLogicalAddress(TransferContext->CommonBuffer); 
+    TransferContext->LogicalCommonBuffer =
+        WdfCommonBufferGetAlignedLogicalAddress(TransferContext->CommonBuffer);
     TransferContext->Buffer = Buffer;
 
     RtlZeroMemory(TransferContext->CommonBuffer, ENDPOINT_COMMON_BUFFER_SIZE);
-    
+
     //
     // #### TODO: Insert code to initialize controller data structures in the shared common buffer
     //
-    
+
     //
     // Map physical endpoint
     //
@@ -1663,7 +1663,7 @@ Parameters Description:
         ControlContext = UfxEndpointGetControlContext(Endpoint);
         ControlContext->DataStageExists = TRUE;
     }
- 
+
     //
     // Keep track of DMA
     //
@@ -1683,7 +1683,7 @@ Parameters Description:
     if (DmaContext->BytesRequested == 0) {
 
         DmaContext->ZeroLength = TRUE;
-        
+
         TRACE_TRANSFER("ZERO LENGTH", Endpoint, DmaContext->Request);
 
         DmaContext->ExtraBytes = 0;
@@ -1704,7 +1704,7 @@ Parameters Description:
         //
         // Caller is expected to execute the DMA.
         //
-    } 
+    }
 
 End:
     if (!NT_SUCCESS(Status)) {
@@ -1715,7 +1715,7 @@ End:
             Transaction = NULL;
         }
     }
-        
+
     TraceExit();
     return Transaction;
 }
@@ -1848,23 +1848,23 @@ Fetch:
     }
 
     CHK_NT_MSG(Status, "Failed to retrieve next request");
-    
+
     WDF_REQUEST_PARAMETERS_INIT(&Params);
     WdfRequestGetParameters(Request, &Params);
     Ioctl = Params.Parameters.DeviceIoControl.IoControlCode;
 
     if (Ioctl == IOCTL_INTERNAL_USBFN_CONTROL_STATUS_HANDSHAKE_IN) {
         TransferHandshake(Endpoint, Request, TRUE);
-    
+
     } else if (Ioctl == IOCTL_INTERNAL_USBFN_CONTROL_STATUS_HANDSHAKE_OUT) {
         TransferHandshake(Endpoint, Request, FALSE);
-    
+
     } else if (DIRECTION_IN(Endpoint) &&
                Ioctl == IOCTL_INTERNAL_USBFN_TRANSFER_IN) {
 
         Transaction = TransferBegin(Endpoint, Request, TRUE, FALSE);
 
-    } else if (DIRECTION_IN(Endpoint) && 
+    } else if (DIRECTION_IN(Endpoint) &&
                Ioctl == IOCTL_INTERNAL_USBFN_TRANSFER_IN_APPEND_ZERO_PKT) {
 
         Transaction = TransferBegin(Endpoint, Request, TRUE, TRUE);
@@ -1875,8 +1875,8 @@ Fetch:
         Transaction = TransferBegin(Endpoint, Request, FALSE, FALSE);
 
     } else {
-        TraceWarning("INVALID: %08X (%d), Ioctl: %08X",
-            (ULONG) Endpoint, EpContext->PhysicalEndpoint, Ioctl);
+        TraceWarning("INVALID: 0x%p (%d), Ioctl: %08X",
+            Endpoint, EpContext->PhysicalEndpoint, Ioctl);
         WdfRequestComplete(Request, STATUS_INVALID_DEVICE_REQUEST);
         goto Fetch;
     }
@@ -1912,7 +1912,7 @@ Parameters Description:
 
     EpContext = UfxEndpointGetContext(Endpoint);
     TransferContext = UfxEndpointGetTransferContext(Endpoint);
-     
+
     TransferLock(Endpoint);
 
     TRACE_TRANSFER("RESET", Endpoint, NULL);
@@ -1939,7 +1939,7 @@ Parameters Description:
             TransferCommandEnd(Endpoint);
         }
     }
-    
+
     TransferUnlock(Endpoint);
     TraceExit();
 }
@@ -2080,7 +2080,7 @@ Parameters Description:
     NewTransaction = NULL;
 
     TransferLock(Endpoint);
-    
+
     //
     // If we stall a control endpoint, we need to reset its state and start
     // over from the setup packet request.
@@ -2091,7 +2091,7 @@ Parameters Description:
             NewTransaction = TransferRequestTryUnmarkCancelableAndCleanup(Endpoint);
         }
     }
-    
+
     if (EpContext->StallRequest) {
         Request = EpContext->StallRequest;
         EpContext->StallRequest = NULL;
@@ -2127,9 +2127,9 @@ Parameters Description:
     EpContext = UfxEndpointGetContext(Endpoint);
 
     TransferLock(Endpoint);
-    
+
     NT_ASSERT(!CONTROL_ENDPOINT(Endpoint));
-    
+
     if (EpContext->ClearRequest) {
         Request = EpContext->ClearRequest;
         EpContext->ClearRequest = NULL;

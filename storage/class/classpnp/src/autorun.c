@@ -804,6 +804,7 @@ ClasspInternalSetMediaChangeState(
     MEDIA_CHANGE_DETECTION_STATE oldMediaState;
     PMEDIA_CHANGE_DETECTION_INFO info = FdoExtension->MediaChangeDetectionInfo;
     CLASS_MEDIA_CHANGE_CONTEXT mcnContext;
+    PIO_WORKITEM workItem;
 
     if (!((NewState >= MediaUnknown) && (NewState <= MediaUnavailable))) {
         return;
@@ -836,6 +837,25 @@ ClasspInternalSetMediaChangeState(
         //
 
         return;
+    }
+    
+    //
+    // Inform PartMgr that the media changed. It will need to propagate
+    // DO_VERIFY_VOLUME to each partition. Ensure that only one work item
+    // updates the disk's properties at any given time.
+    //
+    if (InterlockedCompareExchange((volatile LONG *)&FdoExtension->PrivateFdoData->UpdateDiskPropertiesWorkItemActive, 1, 0) == 0) {
+
+        workItem = IoAllocateWorkItem(FdoExtension->DeviceObject);
+
+        if (workItem) {
+
+            IoQueueWorkItem(workItem, ClasspUpdateDiskProperties, DelayedWorkQueue, workItem);
+
+        } else {
+
+            InterlockedExchange((volatile LONG *)&FdoExtension->PrivateFdoData->UpdateDiskPropertiesWorkItemActive, 0);
+        }
     }
 
     if(info->MediaChangeDetectionDisableCount != 0) {
@@ -2595,8 +2615,8 @@ ClasspMediaChangeDeviceInstanceOverride(
 
             RtlZeroMemory(&queryTable[0], sizeof(queryTable));
 
-            queryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
-            queryTable[0].DefaultType   = REG_DWORD;
+            queryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
+            queryTable[0].DefaultType   = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
             queryTable[0].DefaultLength = 0;
 
             if (i==0) {
@@ -3001,7 +3021,7 @@ ClasspIsMediaChangeDisabledForClass(
     parameters[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
     parameters[0].Name          = L"Autorun";
     parameters[0].EntryContext  = &mcnRegistryValue;
-    parameters[0].DefaultType   = REG_DWORD;
+    parameters[0].DefaultType   = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD;
     parameters[0].DefaultData   = &mcnRegistryValue;
     parameters[0].DefaultLength = sizeof(ULONG);
 

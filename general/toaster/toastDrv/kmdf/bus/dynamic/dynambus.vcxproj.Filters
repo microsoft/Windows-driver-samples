@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{F47FA196-0B9F-4630-A6DC-87B41000BC35}</UniqueIdentifier>
+      <UniqueIdentifier>{AC53A94A-C5A4-40B4-8A66-32832F92CC2F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{62AF8524-CB5B-468E-9398-455D5E9DC688}</UniqueIdentifier>
+      <UniqueIdentifier>{55B97607-1E61-45FF-91CB-B2B5A201C882}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{812EE7F2-C44C-4C50-AC55-CE56B09EF7AC}</UniqueIdentifier>
+      <UniqueIdentifier>{D0EAD36D-F4E0-4E66-9393-160608E23A85}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{00095F3E-A751-4C8E-9052-D3E64DF88F1E}</UniqueIdentifier>
+      <UniqueIdentifier>{847FA4FE-DFFD-4B58-860A-38A570C5CFD6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include=".\dynambus.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
     <MofComp Include="busenum.mof">
       <Filter>Driver Files</Filter>
     </MofComp>

@@ -599,7 +599,7 @@ Return Value:
         
                             DebugTrace(0, Dbg, "Delete File allocation\n", 0);
         
-                            FatTruncateFileAllocation( IrpContext, Fcb, 0, TRUE );
+                            FatTruncateFileAllocation( IrpContext, Fcb, 0 );
 
                             if (Fcb->Header.AllocationSize.LowPart == 0) {
         
@@ -713,6 +713,8 @@ Return Value:
                                        FileObject,
                                        IoGetRequestorProcess( Irp ),
                                        NULL );
+
+
 
             //
             //  We can proceed with on-disk updates only if the volume is mounted
@@ -862,11 +864,13 @@ Return Value:
                             DebugTrace(0, Dbg, "truncate file allocation\n", 0);
     
                             if (Vcb->VcbCondition == VcbGood) {
-    
+
+
                                 FatTruncateFileAllocation( IrpContext,
                                                            Fcb,
-                                                           Fcb->Header.FileSize.LowPart,
-                                                           FlagOn(Fcb->FcbState, FCB_STATE_DELETE_ON_CLOSE) );
+                                                           Fcb->Header.FileSize.LowPart );
+
+
                             }
     
                             //

@@ -1,3 +1,6 @@
+#pragma autorecover
+#pragma namespace("\\\\.\\Root\\WMI")
+
 [WMI, guid("F903D6EC-8647-438f-9E42-891F4733EDAF")]
 
 class MSStorageDriver_ScsiRequestBlock {

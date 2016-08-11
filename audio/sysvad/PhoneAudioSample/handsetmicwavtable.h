@@ -27,7 +27,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define HANDSETMIC_MAX_INPUT_STREAMS             2       // Raw + Default streams
+#define HANDSETMIC_MAX_INPUT_STREAMS             4
 
 //=============================================================================
 static 

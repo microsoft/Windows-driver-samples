@@ -28,8 +28,8 @@ Environment:
 #include <wudfwdm.h>
 #include <wdf.h>
 #include <initguid.h>
-#include "..\inc\driver.h"
-#include "..\inc\public.h"
+#include "driver.h"
+#include "public.h"
 
 #define TOASTER_POOL_TAG (ULONG) 'saoT'
 

@@ -40,10 +40,6 @@ Revision History:
 #include "classwmi.tmh"
 #endif
 
-const UCHAR wmiInternalMOF[] = {
-#include "classlog.x"
-};
-
 #define TIME_STRING_LENGTH      25
 
 BOOLEAN
@@ -95,15 +91,11 @@ ClassFindInternalGuid(
 GUIDREGINFO wmiClassGuids[] =
 {
     {
-        MSWmi_MofDataGuid, 1, 0
-    },
-    {
         MSStorageDriver_ClassErrorLogGuid, 1, 0
     }
 };
 
-#define MSWmi_MofData_GUID_Index                    0
-#define MSStorageDriver_ClassErrorLogGuid_Index     1
+#define MSStorageDriver_ClassErrorLogGuid_Index     0
 #define NUM_CLASS_WMI_GUIDS     (sizeof(wmiClassGuids) / sizeof(GUIDREGINFO))
 
 
@@ -820,15 +812,7 @@ Return Value:
     ULONG sizeNeeded = 0, i;
     PFUNCTIONAL_DEVICE_EXTENSION fdoExt = DeviceObject->DeviceExtension;
 
-    if (GuidIndex == MSWmi_MofData_GUID_Index) {
-        sizeNeeded = sizeof(wmiInternalMOF);
-        if (BufferAvail >= sizeNeeded) {
-            RtlMoveMemory(Buffer, wmiInternalMOF, sizeof(wmiInternalMOF));
-            status = STATUS_SUCCESS;
-        } else {
-            status = STATUS_BUFFER_TOO_SMALL;
-        }
-    } else if (GuidIndex == MSStorageDriver_ClassErrorLogGuid_Index) {
+    if (GuidIndex == MSStorageDriver_ClassErrorLogGuid_Index) {
 
         //
         // NOTE - ClassErrorLog is still using SCSI_REQUEST_BLOCK and will not be

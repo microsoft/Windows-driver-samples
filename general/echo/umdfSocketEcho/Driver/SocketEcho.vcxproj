@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E10361E8-3F60-4FA4-9E72-CA0703AF2D4B}</ProjectGuid>
+    <ProjectGuid>{353E2F22-BD87-47F3-A211-90DE8D583D26}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>1</UMDF_VERSION_MAJOR>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{57A14DB7-700E-4B8F-BB83-0476F61B04AB}</SampleGuid>
+    <SampleGuid>{CE6B3D79-4604-4FAC-8A53-20B7000101FD}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -82,11 +82,6 @@
       <WppDllMacro>true</WppDllMacro>
       <WppScanConfigurationData>internal.h</WppScanConfigurationData>
     </ClCompile>
-    <Inf Include="SocketEcho.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\SocketEcho.inf</CopyOutput>
-    </Inf>
     <OtherWpp Include="SocketEcho.rc">
       <WppEnabled>true</WppEnabled>
       <WppDllMacro>true</WppDllMacro>

@@ -122,9 +122,10 @@ Return Value:
             LEAVE;
         }
 
-        queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT;
+        queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable[0].Name = L"RootPartitionMountable";
         queryTable[0].EntryContext = &(rootPartitionMountable);
+        queryTable[0].DefaultType = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
 #pragma prefast(suppress:6309, "We don't have QueryRoutine so Context doesn't make any sense")
         status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,

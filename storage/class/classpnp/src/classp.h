@@ -74,7 +74,6 @@ Revision History:
 #define WPP_CONTROL_GUIDS       WPP_CONTROL_GUIDS_NORMAL_FLAGS(WPP_GUID_CLASSPNP)
 #endif
 
-
 /*
  *  IA64 requires 8-byte alignment for pointers, but the IA64 NT kernel expects 16-byte alignment
  */
@@ -113,6 +112,7 @@ extern ULONG ClassMaxInterleavePerCriticalIo;
 #define CLASSP_REG_DISABLE_D3COLD                   (L"DisableD3Cold")
 #define CLASSP_REG_QERR_OVERRIDE_MODE               (L"QERROverrideMode")
 #define CLASSP_REG_LEGACY_ERROR_HANDLING            (L"LegacyErrorHandling")
+#define CLASSP_REG_COPY_OFFLOAD_MAX_TARGET_DURATION (L"CopyOffloadMaxTargetDuration")
 
 #define CLASS_PERF_RESTORE_MINIMUM                  (0x10)
 #define CLASS_ERROR_LEVEL_1                         (0x4)
@@ -146,6 +146,7 @@ extern ULONG ClassMaxInterleavePerCriticalIo;
 #define NUM_MODESENSE_RETRIES           1
 #define NUM_MODESELECT_RETRIES          1
 #define NUM_DRIVECAPACITY_RETRIES       1
+#define NUM_THIN_PROVISIONING_RETRIES   32
 
 #if (NTDDI_VERSION >= NTDDI_WINBLUE)
 
@@ -194,7 +195,7 @@ extern ULONG ClassMaxInterleavePerCriticalIo;
 #define MAX_RECEIVE_TOKEN_INFORMATION_PARAMETER_DATA_LENGTH         MAXULONG
 #define MAX_TOKEN_TRANSFER_SIZE                                     MAXULONGLONG
 #define MAX_NUMBER_BLOCKS_PER_BLOCK_DEVICE_RANGE_DESCRIPTOR         MAXULONG
-#define MAX_TARGET_DURATION                                         (4ULL * 10 * 1000 * 1000) // 4sec in 100ns units
+#define DEFAULT_MAX_TARGET_DURATION                                 4 // 4sec
 #define DEFAULT_MAX_NUMBER_BYTES_PER_SYNC_WRITE_USING_TOKEN         (64ULL * 1024 * 1024)  // 64MB
 #define MAX_NUMBER_BYTES_PER_SYNC_WRITE_USING_TOKEN                 (256ULL * 1024 * 1024) // 256MB
 #define MIN_TOKEN_LIST_IDENTIFIERS                                  256
@@ -230,6 +231,11 @@ extern ULONG DiskIdleTimeoutInMS;
 
 extern CONST LARGE_INTEGER Magic10000;
 #define SHIFT10000               13
+
+//
+// Constant to help wih various time conversions
+//
+#define CONST_MSECS_PER_SEC                 1000
 
 #define Convert100nsToMilliseconds(LARGE_INTEGER)                       \
     (                                                                   \
@@ -494,7 +500,8 @@ typedef struct _TRANSFER_PACKET {
          *  Stuff for retrying the transfer.
          */
 #if (NTDDI_VERSION >= NTDDI_WINBLUE)
-        USHORT NumRetries; // Total number of retries remaining.
+        UCHAR NumRetries; // Total number of retries remaining.
+        UCHAR NumThinProvisioningRetries; //Number of retries carried out so far for a request failed with THIN_PROVISIONING_SOFT_THRESHOLD_ERROR
         UCHAR NumIoTimeoutRetries; // Number of retries remaining for a timed-out request.
         UCHAR TimedOut; // Indicates if this packet has timed-out.
 #else
@@ -636,6 +643,13 @@ typedef struct _PNL_SLIST_HEADER {
 // snooping by other utilities.
 //
 struct _CLASS_PRIVATE_FDO_DATA {
+
+    //
+    // The amount of time allowed for a target to complete a copy offload
+    // operation, in seconds.  Default is 4s, but it can be modified via
+    // registry key.
+    //
+    ULONG CopyOffloadMaxTargetDuration;
 
 
 #if (NTDDI_VERSION >= NTDDI_WIN8)
@@ -882,25 +896,10 @@ struct _CLASS_PRIVATE_FDO_DATA {
 #endif
 
     //
-    // Timer interval for sending low priority I/O
-    //
-    USHORT IdleTimerInterval;
-
-    //
-    // Idle counts required to process idle request
+    // Idle duration required to process idle request
     // to avoid starvation
     //
-    USHORT StarvationCount;
-
-    //
-    // Idle timer tick count
-    //
-    ULONG IdleTimerTicks;
-
-    //
-    // Idle timer tick count
-    //
-    ULONG IdleTicks;
+    USHORT StarvationDuration;
 
     //
     // Idle I/O count
@@ -913,9 +912,19 @@ struct _CLASS_PRIVATE_FDO_DATA {
     LONG IdleTimerStarted;
 
     //
+    // Time when the Idle timer was started
+    //
+    LARGE_INTEGER AntiStarvationStartTime;
+
+    //
     // Normal priority I/O time
     //
-    LARGE_INTEGER LastIoTime;
+    LARGE_INTEGER LastNonIdleIoTime;
+
+    //
+    // Time when the last IO of any priority completed.
+    //
+    LARGE_INTEGER LastIoCompletionTime;
 
     //
     // Count of active normal priority I/O
@@ -940,9 +949,6 @@ struct _CLASS_PRIVATE_FDO_DATA {
     //
     ULONG MaxPowerOperationRetryCount;
     PIRP  PowerProcessIrp;
-
-    // Counter frequency : Currently used for KeQueryPerferformanceCounter
-    LARGE_INTEGER PerfCounterFrequency;
 
     //
     // Indicates legacy error handling should be used.
@@ -1176,14 +1182,15 @@ typedef struct _IO_RETRIED_LOG_MESSAGE_CONTEXT {
 #define MINIMUM_RETRY_UNITS         ((LONGLONG)32)
 #define MODE_PAGE_DATA_SIZE         192
 
-#define CLASS_IDLE_INTERVAL         50          // 50 milliseconds
+#define CLASS_IDLE_INTERVAL_MIN     12          // 12 milliseconds
+#define CLASS_IDLE_INTERVAL         12          // 12 milliseconds
 #define CLASS_STARVATION_INTERVAL   500         // 500 milliseconds
-#define CLASS_IDLE_TIMER_TICKS      4
 
 //
 // Value of 50 milliseconds in 100 nanoseconds units
 //
 #define FIFTY_MS_IN_100NS_UNITS     50 * 100
+
 
 /*
  *  Simple singly-linked-list queuing macros, with no synchronization.
@@ -1245,21 +1252,15 @@ ClasspIsIdleRequest(
     return ((BOOLEAN)Irp->Tail.Overlay.DriverContext[1]);
 }
 
-extern BOOLEAN UseQPCTime;
-
 __inline
 LARGE_INTEGER
 ClasspGetCurrentTime(
-    PLARGE_INTEGER Frequency
+    VOID
     )
 {
     LARGE_INTEGER currentTime;
 
-    if (UseQPCTime) {
-        currentTime = KeQueryPerformanceCounter(Frequency);
-    } else {
-        currentTime.QuadPart = (LONGLONG)KeQueryUnbiasedInterruptTime();
-    }
+    currentTime.QuadPart = KeQueryUnbiasedInterruptTimePrecise((ULONG64*)&currentTime.QuadPart);
 
     return currentTime;
 }
@@ -1267,16 +1268,10 @@ ClasspGetCurrentTime(
 __inline
 ULONGLONG
 ClasspTimeDiffToMs(
-    PCLASS_PRIVATE_FDO_DATA FdoData,
     ULONGLONG TimeDiff
     )
 {
-    if (UseQPCTime) {
-        TimeDiff *= 1000;
-        TimeDiff /= FdoData->PerfCounterFrequency.QuadPart;
-    } else {
-        TimeDiff /= (10 * 1000);
-    }
+    TimeDiff /= (10 * 1000);
 
     return TimeDiff;
 }
@@ -1839,6 +1834,7 @@ NTSTATUS ClasspDeviceLBProvisioningProperty(
 NTSTATUS ClasspDeviceTrimProcess(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
+    _In_ PGUID ActivityId,
     _Inout_ PSCSI_REQUEST_BLOCK Srb
     );
 
@@ -1904,6 +1900,14 @@ ClasspGetMaximumTokenListIdentifier(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_z_ PWSTR RegistryPath,
     _Out_ PULONG MaximumListIdentifier
+    );
+
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSTATUS
+ClasspGetCopyOffloadMaxDuration(
+    _In_ PDEVICE_OBJECT DeviceObject,
+    _In_z_ PWSTR RegistryPath,
+    _Out_ PULONG MaxDuration
     );
 
 _IRQL_requires_max_(APC_LEVEL)
@@ -2594,6 +2598,11 @@ Return Value:
     return BaseStructureSizeInBytes - OffsetInBytes;
 }
 
+
+BOOLEAN
+ClasspIsThinProvisioningError (
+    _In_ PSCSI_REQUEST_BLOCK _Srb
+    );
 
 __inline
 BOOLEAN

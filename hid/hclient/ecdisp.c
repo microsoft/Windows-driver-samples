@@ -650,6 +650,7 @@ bExtCallDlgProc(
     static INT                  nFeatureReportIDs;
     static HANDLE               ReadThread;
     static READ_THREAD_CONTEXT  readContext;
+    static HID_DEVICE           device;
     
            INT                  iIndex;
            ECDISPLAY_PARAMS     params;
@@ -770,9 +771,25 @@ bExtCallDlgProc(
         
             if (NULL == ReadThread) 
             {
-                readContext.HidDevice = pDevice;
+                if (!OpenHidDevice(pDevice->DevicePath,
+                    TRUE,
+                    FALSE,
+                    (LOWORD(wParam) == IDC_READ_SYNCH) ? FALSE : TRUE,
+                    FALSE,
+                    &device))
+                {
+                    MessageBox(hDlg,
+                        "Failed opening the device for read.",
+                        HCLIENT_ERROR,
+                        MB_ICONEXCLAMATION);
+                        break;
+                }
+
+                SendDlgItemMessage(hDlg, IDC_CALLOUTPUT, LB_RESETCONTENT, 0, 0);
+
+                readContext.HidDevice = &device;
                 readContext.TerminateThread = FALSE;
-                readContext.NumberOfReads = 1;
+                readContext.NumberOfReads = INFINITE_READS;
                 readContext.DisplayEvent = NULL;
                 readContext.DisplayWindow = hDlg;
 
@@ -792,7 +809,7 @@ bExtCallDlgProc(
                                HCLIENT_ERROR,
                                MB_ICONEXCLAMATION);
                 }
-                else 
+                else
                 {
                     EnableWindow(GetDlgItem(hDlg, IDC_READ_SYNCH),
                                  (LOWORD(wParam) == IDC_READ_SYNCH));
@@ -802,15 +819,17 @@ bExtCallDlgProc(
 
                     SetWindowText(GetDlgItem(hDlg, LOWORD(wParam)),
                                   "Stop Read Thread");
-                                 
+
                     EnableWindow(GetDlgItem(hDlg, IDC_CANCEL), FALSE);
                 }
             }
-            else 
+            else
             {
                 readContext.TerminateThread = TRUE;
 
                 WaitForSingleObject(ReadThread, INFINITE);
+
+                CloseHidDevice(&device);
 
                 ReadThread = NULL;
                 
@@ -820,11 +839,11 @@ bExtCallDlgProc(
                 SetWindowText(GetDlgItem(hDlg, IDC_READ_ASYNCH),
                               "Start Asynchronous Read Thread");
 
-                EnableWindow(GetDlgItem(hDlg, IDC_READ_SYNCH), TRUE);                                     
-                EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH), TRUE);                                     
-                EnableWindow(GetDlgItem(hDlg, IDC_CANCEL), TRUE);                                     
-            }                                     
-            break;    
+                EnableWindow(GetDlgItem(hDlg, IDC_READ_SYNCH), TRUE);
+                EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH), TRUE);
+                EnableWindow(GetDlgItem(hDlg, IDC_CANCEL), TRUE);
+            }
+            break;
 
         case IDC_CANCEL:
             BufferDisplay_Destroy(pInputDisplay);
@@ -2643,7 +2662,6 @@ RoutineDescription:
                                                  &params -> ListLength);
         free(params -> szListString);
         params->szListString = NULL;
-        params->ListLength = 0;
 
         if (!ExecuteStatus) 
         {

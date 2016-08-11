@@ -3,25 +3,22 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{E4869018-74E3-4289-AD22-20F70C981AE2}</UniqueIdentifier>
+      <UniqueIdentifier>{849BE81A-B9DC-4096-AC00-2D7D742FB0E8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{1F21272C-56E1-4F3E-9CCC-6B4A3A4C789B}</UniqueIdentifier>
+      <UniqueIdentifier>{29531875-8C9E-4110-BBE3-1CFC9D282A6B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{22D17D30-9550-4068-801A-6533F5191361}</UniqueIdentifier>
+      <UniqueIdentifier>{AE3E2BD7-4200-448A-8100-6C69BE4720FE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{3970B561-8552-40C0-89DC-8AE1A82F3034}</UniqueIdentifier>
+      <UniqueIdentifier>{617E5D49-6208-482D-BEA6-DCF17EDD8033}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include=".\firefly.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
     <MofComp Include="firefly.mof">
       <Filter>Driver Files</Filter>
     </MofComp>

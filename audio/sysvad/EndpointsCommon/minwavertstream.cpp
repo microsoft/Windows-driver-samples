@@ -162,20 +162,25 @@ Return Value:
     m_ullWritePosition = 0;
     m_ullDmaTimeStamp = 0;
     m_hnsElapsedTimeCarryForward = 0;
+    m_ullLastDPCTimeStamp = 0;
+    m_hnsDPCTimeCarryForward = 0;
     m_ulDmaMovementRate = 0;
+    m_byteDisplacementCarryForward = 0;
     m_bLfxEnabled = FALSE;
     m_pbMuted = NULL;
     m_plVolumeLevel = NULL;
     m_plPeakMeter = NULL;
     m_pWfExt = NULL;
     m_ullLinearPosition = 0;
+    m_ullPresentationPosition = 0;
     m_ulContentId = 0;
     m_ulCurrentWritePosition = 0;
     m_ulLastOsReadPacket = ULONG_MAX;
     m_ulLastOsWritePacket = ULONG_MAX;
-    m_llEoSPosition = (-1);
     m_IsCurrentWritePositionUpdated = 0;
     m_SignalProcessingMode = SignalProcessingMode;
+    m_bEoSReceived = FALSE;
+    m_bLastBufferRendered = FALSE;
 
 #ifdef SYSVAD_BTH_BYPASS
     m_ScoOpen = FALSE;
@@ -184,6 +189,9 @@ Return Value:
     m_pPortStream = PortStream_;
     InitializeListHead(&m_NotificationList);
     m_ulNotificationIntervalMs = 0;
+
+    // Initialize the spinlock to synchronize position updates
+    KeInitializeSpinLock(&m_PositionSpinLock);
 
     m_pNotificationDpc = (PRKDPC)ExAllocatePoolWithTag(
         NonPagedPoolNx,
@@ -426,7 +434,9 @@ NTSTATUS CMiniportWaveRTStream::AllocateBufferWithNotification
     {
         NTSTATUS ntStatus;
         
-        ntStatus = m_SaveData.SetMaxWriteSize(RequestedSize_);    
+        // Sysvad uses following buffer to hold data before writing to a file.
+        // Allocating larger buffer will reduce File I/O operations.
+        ntStatus = m_SaveData.SetMaxWriteSize(RequestedSize_ * 4);
         if (!NT_SUCCESS(ntStatus))
         {
             return ntStatus;
@@ -524,6 +534,7 @@ NTSTATUS CMiniportWaveRTStream::RegisterNotificationEvent
 
     nleNew->NotificationEvent = NotificationEvent_;
 
+    // Fail if the notification event already exists in our list.
     if (!IsListEmpty(&m_NotificationList))
     {
         PLIST_ENTRY leCurrent = m_NotificationList.Flink;
@@ -532,7 +543,6 @@ NTSTATUS CMiniportWaveRTStream::RegisterNotificationEvent
             NotificationListEntry* nleCurrent = CONTAINING_RECORD( leCurrent, NotificationListEntry, ListEntry);
             if (nleCurrent->NotificationEvent == NotificationEvent_)
             {
-                RemoveEntryList( leCurrent );
                 ExFreePoolWithTag( nleNew, MINWAVERTSTREAM_POOLTAG );
                 return STATUS_UNSUCCESSFUL;
             }
@@ -731,6 +741,9 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
         return STATUS_NOT_SUPPORTED;
     }
 
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
+
     if (m_KsState == KSSTATE_RUN)
     {
         //
@@ -742,6 +755,8 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
 
     Position_->PlayOffset = m_ullPlayPosition;
     Position_->WriteOffset = m_ullWritePosition;
+
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
 
     ntStatus = STATUS_SUCCESS;
     
@@ -807,19 +822,19 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
         return ntStatus;
     }
 
-    if (m_KsState == KSSTATE_RUN)
-    {
-        //
-        // Get the current time and update simulated position.
-        //
-        LARGE_INTEGER ilQPC = KeQueryPerformanceCounter(NULL);
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
 
-        UpdatePosition(ilQPC);
-    }
+    LONGLONG packetCounter = m_llPacketCounter;
+    ULONGLONG ullLinearPosition = m_ullLinearPosition;
+    ULONGLONG hnsElapsedTimeCarryForward = m_hnsElapsedTimeCarryForward;
+    ULONGLONG ullDmaTimeStamp = m_ullDmaTimeStamp;
+
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
 
     // The 0-based number of the last completed packet
     // FUTURE-2014/10/27 Update to allow different numbers of packets per WaveRT buffer
-    availablePacketNumber = LODWORD(m_llPacketCounter - 1);  // Note this might be ULONG_MAX if called during the first packet
+    availablePacketNumber = LODWORD(packetCounter - 1);  // Note this might be ULONG_MAX if called during the first packet
 
     // If no new packets are available...
     if (availablePacketNumber == m_ulLastOsReadPacket)
@@ -843,10 +858,12 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
     // driver, it is extrapolated from the sample driver's internal simulated position corrleation
     // [m_ullLinearPosition @ m_ullDmaTimeStamp] and the sample's internal 64-bit packet counter, subtracting
     // 1 from the packet counter to compute the time at the start of that last completed packet.
-    ULONGLONG linearPositionOfAvailablePacket = (m_llPacketCounter - 1) * (m_ulDmaBufferSize / m_ulNotificationsPerBuffer);
-    ULONGLONG deltaLinearPosition = m_ullLinearPosition - linearPositionOfAvailablePacket;
+    ULONGLONG linearPositionOfAvailablePacket = (packetCounter - 1) * (m_ulDmaBufferSize / m_ulNotificationsPerBuffer);
+    // Need to divide by (1000 * 10000 because m_ulDmaMovementRate is average bytes per sec
+    ULONGLONG carryForwardBytes = (hnsElapsedTimeCarryForward * m_ulDmaMovementRate) / 10000000;
+    ULONGLONG deltaLinearPosition = ullLinearPosition + carryForwardBytes - linearPositionOfAvailablePacket;
     ULONGLONG deltaTimeInHns = deltaLinearPosition * 10000000 / m_ulDmaMovementRate;
-    ULONGLONG timeOfAvailablePacketInHns = m_ullDmaTimeStamp - deltaTimeInHns;
+    ULONGLONG timeOfAvailablePacketInHns = ullDmaTimeStamp - deltaTimeInHns;
     ULONGLONG timeOfAvailablePacketInQpc = timeOfAvailablePacketInHns * m_ullPerformanceCounterFrequency.QuadPart / 10000000;
 
     *PerformanceCounterValue = timeOfAvailablePacketInQpc;
@@ -882,9 +899,9 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
 _IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::SetWritePacket
 (
-_In_ ULONG      PacketNumber,
-_In_ DWORD      Flags,
-_In_ ULONG      EosPacketLength
+    _In_ ULONG      PacketNumber,
+    _In_ DWORD      Flags,
+    _In_ ULONG      EosPacketLength
 )
 {
     NTSTATUS ntStatus;
@@ -898,21 +915,16 @@ _In_ ULONG      EosPacketLength
     ULONG oldLastOsWritePacket = m_ulLastOsWritePacket;
 
     // This function should not be called once EoS has been set.
-    if (m_llEoSPosition >= 0)
+    if (m_bEoSReceived)
     {
         return STATUS_INVALID_DEVICE_STATE;
     }
 
-    // Update linear positions
-    if (m_KsState == KSSTATE_RUN)
-    {
-        // Get the current time and update simulated position.
-        LARGE_INTEGER ilQPC = KeQueryPerformanceCounter(NULL);
-        UpdatePosition(ilQPC);
-    }
-
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
     // 1-based count of completed packets, 0-based packet number of current packet
     LONGLONG currentPacket = m_llPacketCounter;
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
 
     // If not running, the current packet hasn't actually started transfering so OS should be writing
     // to the current packet. If running, then the current packing is already transfering to hardware
@@ -949,7 +961,7 @@ _In_ ULONG      EosPacketLength
             // EOS position will be after the total completed packets, plus the packet in progress,
             // plus this EOS packet length
             m_ulLastOsWritePacket = PacketNumber;
-            m_llEoSPosition = ((m_llPacketCounter + 1) * packetSize) + EosPacketLength;
+            ulCurrentWritePosition += EosPacketLength;
             ntStatus = SetStreamCurrentWritePositionForLastBuffer(ulCurrentWritePosition);
         }
     }
@@ -962,12 +974,13 @@ _In_ ULONG      EosPacketLength
         // Will not return an error when the passed in parameter is 0.
         // Will also check if this function was called with the same write position(in event mode only)
         // Underruning will also be checked via timer mechanism
+        KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
         ntStatus = SetCurrentWritePositionInternal(ulCurrentWritePosition);
+        KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
     }
 
     if (!NT_SUCCESS(ntStatus))
     {
-        m_llEoSPosition = (-1);
         m_ulLastOsWritePacket = oldLastOsWritePacket;
     }
 
@@ -1002,13 +1015,16 @@ NTSTATUS CMiniportWaveRTStream::GetPacketCount
 )
 {
     ASSERT(pPacketCount);
-    
+
     // The call must be from event driven mode
     if(m_ulNotificationsPerBuffer == 0)
     {
         return STATUS_NOT_SUPPORTED;
     }
     
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
+
     if (m_KsState == KSSTATE_RUN)
     {
         // Get the current time and update simulated position.
@@ -1017,49 +1033,54 @@ NTSTATUS CMiniportWaveRTStream::GetPacketCount
     }
 
     *pPacketCount = LODWORD(m_llPacketCounter);
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
 
     return STATUS_SUCCESS;
 }
 
 //=============================================================================
-#pragma code_seg("PAGE")
+#pragma code_seg()
 NTSTATUS CMiniportWaveRTStream::SetState
 (
     _In_    KSSTATE State_
 )
 {
-    PAGED_CODE();
-
     NTSTATUS        ntStatus        = STATUS_SUCCESS;
     PADAPTERCOMMON  pAdapterComm    = m_pMiniport->GetAdapterCommObj();
+    KIRQL oldIrql;
 
     // Spew an event for a pin state change request from portcls
     //Event type: eMINIPORT_PIN_STATE
-    //Parameter 1: Current linear buffer position	
-    //Parameter 2: Current WaveRtBufferWritePosition	
+    //Parameter 1: Current linear buffer position
+    //Parameter 2: Current WaveRtBufferWritePosition
     //Parameter 3: Pin State 0->KS_STOP, 1->KS_ACQUIRE, 2->KS_PAUSE, 3->KS_RUN 
     //Parameter 4:0
     pAdapterComm->WriteEtwEvent(eMINIPORT_PIN_STATE, 
-                                100, // replace with the correct "Current linear buffer position"	
-                                m_ulCurrentWritePosition, // replace with the previous WaveRtBufferWritePosition that the drive received	
-                                State_, // repalce with the correct "Data length completed"
+                                100, // replace with the correct "Current linear buffer position"
+                                m_ulCurrentWritePosition, // replace with the previous WaveRtBufferWritePosition that the driver received
+                                State_, // replace with the correct "Data length completed"
                                 0);  // always zero
 
     switch (State_)
     {
         case KSSTATE_STOP:
+            KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
             // Reset DMA
             m_llPacketCounter = 0;
             m_ullPlayPosition = 0;
             m_ullWritePosition = 0;
             m_ullLinearPosition = 0;
+            m_ullPresentationPosition = 0;
             
             // Reset OS read/write positions
             m_ulLastOsReadPacket = ULONG_MAX;
             m_ulCurrentWritePosition = 0;
             m_ulLastOsWritePacket = ULONG_MAX;
-            m_llEoSPosition = (-1);
-            
+            m_bEoSReceived = FALSE;
+            m_bLastBufferRendered = FALSE;
+
+            KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
+
             // Wait until all work items are completed.
             if (!m_bCapture && !g_DoNotCreateDataFiles)
             {
@@ -1116,7 +1137,6 @@ NTSTATUS CMiniportWaveRTStream::SetState
             break;
 
         case KSSTATE_PAUSE:
-            ULONGLONG ullPositionTemp;
 
             if (m_KsState > KSSTATE_PAUSE)
             {
@@ -1136,9 +1156,8 @@ NTSTATUS CMiniportWaveRTStream::SetState
                     KeFlushQueuedDpcs(); 
                 }
             }
-
-            // This call updates the linear buffer position.
-            GetLinearBufferPosition(&ullPositionTemp, NULL);
+            // This call updates the linear buffer and presentation positions.
+            GetPositions(NULL, NULL, NULL);
             break;
 
         case KSSTATE_RUN:
@@ -1149,23 +1168,24 @@ NTSTATUS CMiniportWaveRTStream::SetState
                 m_pMiniport->m_KeywordDetector.Run();
             }
             ullPerfCounterTemp = KeQueryPerformanceCounter(&m_ullPerformanceCounterFrequency);
-            m_ullDmaTimeStamp = KSCONVERT_PERFORMANCE_TIME(m_ullPerformanceCounterFrequency.QuadPart, ullPerfCounterTemp);
-            m_hnsElapsedTimeCarryForward  = 0;
+            m_ullLastDPCTimeStamp = m_ullDmaTimeStamp = KSCONVERT_PERFORMANCE_TIME(m_ullPerformanceCounterFrequency.QuadPart, ullPerfCounterTemp);
 
             if (m_ulNotificationIntervalMs > 0)
             {
                 LARGE_INTEGER   delay;
 
-                delay.QuadPart = (-2) * (((LONGLONG)m_ulNotificationIntervalMs) * HNSTIME_PER_MILLISECOND);
+                delay.QuadPart = (-1) * HNSTIME_PER_MILLISECOND;
 
-                // ISSUE-2014/10/20 Set resolution based on packet size
                 ExSetTimerResolution(HNSTIME_PER_MILLISECOND, TRUE);
-
+                // Set timer for 1 ms. This will cause DPC to run every 1 ms but driver will send out 
+                // notification events only after notification interval. This timer is used by Sysvad to 
+                // emulate hardware and send out notification event. Real hardware should not use this
+                // timer to fire notification event as it will drain power if the timer is running at 1 msec.
                 KeSetTimerEx
                 (
                     m_pNotificationTimer,
                     delay,
-                    m_ulNotificationIntervalMs,
+                    1,  // 1 ms
                     m_pNotificationDpc
                 );
             }
@@ -1228,28 +1248,56 @@ VOID CMiniportWaveRTStream::UpdatePosition
     // lose some bytes, so we will carry the remainder forward to the next GetPosition() call.
     //
     // need to divide by 1000 because m_ulDmaMovementRate is average bytes per sec.
-    ULONG ByteDisplacement = (m_ulDmaMovementRate * TimeElapsedInMS) / 1000;
-    
+
+    ULONG ByteDisplacement = ((m_ulDmaMovementRate * TimeElapsedInMS) + m_byteDisplacementCarryForward) / 1000 ;
+    m_byteDisplacementCarryForward = ((m_ulDmaMovementRate * TimeElapsedInMS) + m_byteDisplacementCarryForward) % 1000;
+
+    // Increment presentation position even after last buffer is rendered.
+    m_ullPresentationPosition += ByteDisplacement;
+
     if (m_bCapture)
     {
         // Write sine wave to buffer.
         WriteBytes(ByteDisplacement);
     }
-    else if (!g_DoNotCreateDataFiles)
+    else
     {
-        // Read from buffer and write to a file.
-        ReadBytes(ByteDisplacement);
-        
-        // If the last packet was rendered(read in the sample driver's case), send out an etw event.
-        if ( (m_llEoSPosition >= 0) 
-          && ((m_llEoSPosition - m_ullLinearPosition) < ByteDisplacement))
+        if (m_bEoSReceived)
         {
+            // since EoS flag is set, we'll need to make sure not to read data beyond EOS position.
+            // If driver's current position is less than EoS position, then make sure not to read data beyond EoS.
+            if (m_ullWritePosition <= m_ulCurrentWritePosition)
+            {
+                ByteDisplacement = min(ByteDisplacement, m_ulCurrentWritePosition - (ULONG)m_ullWritePosition);
+            }
+            // If our current position is ahead of EoS position and we'll wrap around after new position then adjust
+            // new position if it crosses EoS.
+            else if ((m_ullWritePosition + ByteDisplacement) % m_ulDmaBufferSize < m_ullWritePosition)
+            {
+                if ((m_ullWritePosition + ByteDisplacement) % m_ulDmaBufferSize > m_ulCurrentWritePosition)
+                {
+                    ByteDisplacement = ByteDisplacement - (((ULONG)m_ullWritePosition + ByteDisplacement) % m_ulDmaBufferSize - m_ulCurrentWritePosition);
+                }
+            }
+        }
+
+        // If the last packet was rendered(read in the sample driver's case), send out an etw event.
+        if ( m_bEoSReceived && !m_bLastBufferRendered
+            && (m_ullWritePosition + ByteDisplacement) % m_ulDmaBufferSize == m_ulCurrentWritePosition)
+        {
+            m_bLastBufferRendered = TRUE;
             PADAPTERCOMMON pAdapterComm = m_pMiniport->GetAdapterCommObj();
             pAdapterComm->WriteEtwEvent(eMINIPORT_LAST_BUFFER_RENDERED, 
                                         m_ullLinearPosition + ByteDisplacement, // Current linear buffer position  
                                         m_ulCurrentWritePosition, // The very last WaveRtBufferWritePosition that the driver received
                                         0, 
                                         0);
+        }
+
+        if (!g_DoNotCreateDataFiles)
+        {
+            // Read from buffer and write to a file.
+            ReadBytes(ByteDisplacement);
         }
     }
     
@@ -1273,7 +1321,7 @@ VOID CMiniportWaveRTStream::UpdatePosition
 #pragma code_seg()
 VOID CMiniportWaveRTStream::WriteBytes
 (
-_In_ ULONG ByteDisplacement
+    _In_ ULONG ByteDisplacement
 )
 /*++
 
@@ -1304,7 +1352,7 @@ ByteDisplacement - # of bytes to process.
 #pragma code_seg()
 VOID CMiniportWaveRTStream::ReadBytes
 (
-_In_ ULONG ByteDisplacement
+    _In_ ULONG ByteDisplacement
 )
 /*++
 
@@ -1490,14 +1538,39 @@ TimerNotifyRT
         return;
     }
 
-    InterlockedIncrement64(&_this->m_llPacketCounter);
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&_this->m_PositionSpinLock, &oldIrql);
+    // Convert ticks to 100ns units.
+    LONGLONG  hnsCurrentTime = KSCONVERT_PERFORMANCE_TIME(_this->m_ullPerformanceCounterFrequency.QuadPart, qpc);
+
+    // Calculate the time elapsed since the last we ran DPC that matched Notification interval. Note that the division by 10000 
+    // to convert to milliseconds may cause us to lose some of the time, so we will carry the remainder forward.
+
+    ULONG TimeElapsedInMS = (ULONG)(hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward)/10000;
+
+    if (TimeElapsedInMS < _this->m_ulNotificationIntervalMs && !_this->m_bEoSReceived)
+    {
+        goto End;
+    }
+
+    // Carry forward the remainder of this division
+    _this->m_hnsDPCTimeCarryForward = (hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward) % 10000;
+    // Save the last time DPC ran at notification interval
+    _this->m_ullLastDPCTimeStamp = (ULONG)hnsCurrentTime;
+
+    _this->UpdatePosition(qpc);
+
+    if (!_this->m_bEoSReceived)
+    {
+        _this->m_llPacketCounter++;
+    }
 
 #ifdef SYSVAD_BTH_BYPASS
     if (_this->m_ScoOpen)
     {
         if (!NT_SUCCESS(_this->GetScoStreamNtStatus()))
         {
-            return;
+            goto End;
         }
     }
 #endif  // SYSVAD_BTH_BYPASS
@@ -1506,13 +1579,13 @@ TimerNotifyRT
 
     if (_this->m_KsState != KSSTATE_RUN)
     {
-        return;
+        goto End;
     }
     
     PADAPTERCOMMON  pAdapterComm = _this->m_pMiniport->GetAdapterCommObj();
 
     // Simple buffer underrun detection.
-    if (!_this->IsCurrentWaveRTWritePositionUpdated())
+    if (!_this->IsCurrentWaveRTWritePositionUpdated() && !_this->m_bEoSReceived)
     {
         //Event type: eMINIPORT_GLITCH_REPORT
         //Parameter 1: Current linear buffer position 
@@ -1526,21 +1599,23 @@ TimerNotifyRT
                                     0); 
     }
 
-    if (!IsListEmpty(&_this->m_NotificationList))
+    if (!IsListEmpty(&_this->m_NotificationList) && 
+        (TimeElapsedInMS >= _this->m_ulNotificationIntervalMs || _this->m_bLastBufferRendered))
     {
         PLIST_ENTRY leCurrent = _this->m_NotificationList.Flink;
         while (leCurrent != &_this->m_NotificationList)
         {
             NotificationListEntry* nleCurrent = CONTAINING_RECORD( leCurrent, NotificationListEntry, ListEntry);
             //Event type: eMINIPORT_BUFFER_COMPLETE
-            //Parameter 1: Current linear buffer position	
-            //Parameter 2: the previous WaveRtBufferWritePosition that the drive received
-            //Parameter 3: Data length completed	
+            //Parameter 1: Current linear buffer position
+            //Parameter 2: the previous WaveRtBufferWritePosition that the driver received
+            //Parameter 3: Data length completed
             //Parameter 4:0
+
             pAdapterComm->WriteEtwEvent(eMINIPORT_BUFFER_COMPLETE, 
-                                        100, // replace with the correct "Current linear buffer position"	
-                                        _this->GetCurrentWaveRTWritePosition(), 	
-                                        300, // repalce with the correct "Data length completed"
+                                        100, // replace with the correct "Current linear buffer position"
+                                        _this->GetCurrentWaveRTWritePosition(),
+                                        300, // replace with the correct "Data length completed"
                                         0);  // always zero
 
             KeSetEvent(nleCurrent->NotificationEvent, 0, 0);
@@ -1548,6 +1623,15 @@ TimerNotifyRT
             leCurrent = leCurrent->Flink;
         }
     }
+
+    if (_this->m_bLastBufferRendered)
+    {
+        KeCancelTimer(_this->m_pNotificationTimer);
+    }
+
+End:
+    KeReleaseSpinLock(&_this->m_PositionSpinLock, oldIrql);
+    return;
 }
 //=============================================================================
 

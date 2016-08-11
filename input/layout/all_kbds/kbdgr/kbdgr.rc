@@ -1,0 +1,11 @@
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE              VFT_DLL
+#define VER_FILESUBTYPE           VFT2_DRV_KEYBOARD
+#define VER_FILEDESCRIPTION_STR   "German Keyboard Layout"
+#define VER_INTERNALNAME_STR      "kbdgr (3.11)"
+#define VER_ORIGINALFILENAME_STR  "kbdgr.dll"
+
+#define VER_LANGNEUTRAL
+#include "common.ver"

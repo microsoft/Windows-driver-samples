@@ -106,7 +106,7 @@ Return Value:
 
     status = WdfDeviceAllocAndQueryProperty(device,
                                     DevicePropertyPhysicalDeviceObjectName,
-                                    NonPagedPool,
+                                    NonPagedPoolNx,
                                     &attributes,
                                     &memory);
 

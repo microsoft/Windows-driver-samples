@@ -189,7 +189,7 @@ Return Value:
   //2. Copy data
     ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Function = Function;
 
-    if(ChannelExtension->AdapterExtension->IS) {
+    if (ChannelExtension->AdapterExtension->IS) {
         // Keep using the old field "IS" to save StateFlags information.
         StorPortCopyMemory(&ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].IS, &ChannelExtension->StateFlags, sizeof(ULONG));
     } else {
@@ -494,7 +494,7 @@ PortBusChangeProcess (
     )
 {
     AHCI_SERIAL_ATA_CONTROL sctl;
-    STOR_LOCK_HANDLE        lockhandle = {0};
+    STOR_LOCK_HANDLE        lockhandle = {InterruptLock, 0};
     ULONG                   status     = STOR_STATUS_UNSUCCESSFUL;
 
   //1 if link speed was limited, restore the supported value.
@@ -821,6 +821,7 @@ AhciCompleteJustSlottedRequest(
     PAHCI_SRB_EXTENSION     srbExtension;
     BOOLEAN                 isSenseSrb;
     PSTORAGE_REQUEST_BLOCK  srbToComplete;
+    STOR_LOCK_HANDLE        lockHandle = {InterruptLock, 0};
 
     srbExtension = GetSrbExtension(Srb);
     slotContent = &ChannelExtension->Slot[srbExtension->QueueTag];
@@ -840,6 +841,10 @@ AhciCompleteJustSlottedRequest(
         srbExtension->AtaFunction = 0;
     } else {
         srbToComplete = Srb;
+    }
+
+    if (!AtDIRQL) {
+        AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockHandle);
     }
 
   //1. Make the slot available again
@@ -863,6 +868,10 @@ AhciCompleteJustSlottedRequest(
     }
     if ((ChannelExtension->SlotManager.CommandsToComplete & (1 << srbExtension->QueueTag)) != 0) {
         ChannelExtension->SlotManager.CommandsToComplete &= ~(1 << srbExtension->QueueTag);
+    }
+
+    if (!AtDIRQL) {
+        AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockHandle);
     }
 
   //3. Complete the command
@@ -890,7 +899,7 @@ Called by:
     ReleaseSlottedCommand
 
 NOTE:
-    The caller of this routine should call AhciGetNextIos or ActiveQueue to program the command (from Srb completion routine) to adapter
+    The caller of this routine should call ActiveQueue to program the command (from Srb completion routine) to adapter
 
 --*/
 {
@@ -900,9 +909,9 @@ NOTE:
     if ( ((srbExtension->Flags & ATA_FLAGS_ACTIVE_REFERENCE) != 0) ||
          (srbExtension->CompletionRoutine != NULL) ) {
 
-        STOR_LOCK_HANDLE    lockhandle = {0};
-
         if (AtDIRQL == FALSE) {
+            STOR_LOCK_HANDLE lockhandle = {InterruptLock, 0};
+
             AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
             AddQueue(ChannelExtension, &ChannelExtension->CompletionQueue, Srb, 0xDEADBEEF, 0x90);
             AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
@@ -984,6 +993,16 @@ Return Value:
             srbExtension->QueueTag = 0;
         }
         return;
+    }
+
+    // case of Sense.Srb used for NCQ error recovery.
+    if ((Srb == (PSTORAGE_REQUEST_BLOCK)&ChannelExtension->Sense.Srb) &&
+        IsAtaCommand(srbExtension->AtaFunction)) {
+
+        if ((allocated & (1 << 0)) == 0) {
+            srbExtension->QueueTag = 0;
+            return;
+        }
     }
 
   //2.2 Chose the slot circularly starting with CCS

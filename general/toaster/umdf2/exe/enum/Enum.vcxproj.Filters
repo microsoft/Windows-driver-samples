@@ -3,15 +3,15 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{58733B34-2D37-4533-A53B-61D148D97CC2}</UniqueIdentifier>
+      <UniqueIdentifier>{0478CA74-6E89-40CC-BA37-7A2FBC70982B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{4C9923EA-9B5C-4DD4-BF2F-EBAA7B6815C0}</UniqueIdentifier>
+      <UniqueIdentifier>{418A5D3D-5225-4430-AD6C-DBCDB8B00D57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{A563728A-CB57-4506-BEC0-BA328E4BC76C}</UniqueIdentifier>
+      <UniqueIdentifier>{F170FC27-1BFE-4060-A548-BD9A219A502C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

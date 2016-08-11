@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AB1C3428-9D78-4226-9A5D-DC92A47C279E}</ProjectGuid>
+    <ProjectGuid>{126FE1F4-434C-496A-A52B-400BBB74AC3B}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{BB241330-87DE-4B07-A649-644EA6B5DD53}</SampleGuid>
+    <SampleGuid>{224F1D35-6CD5-408C-822A-A57A2BAABE53}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,11 +76,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <Inf Include=".\WmiSamp.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\WmiSamp.inf</CopyOutput>
-    </Inf>
     <MofComp Include="wmisamp.mof">
       <WmiSyntaxCheck>true</WmiSyntaxCheck>
       <CreateBinaryMofFile>.\$(IntDir)\wmisamp.bmf</CreateBinaryMofFile>

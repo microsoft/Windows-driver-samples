@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<catalog xmlns:wpat="http://schemas.microsoft.com/windows/2010/04/wia/patchcode">
+    <wpat:PatchCodeDetectionReport>
+        <wpat:Count>2</wpat:Count>
+        <wpat:ListOfPatchCodes>
+            <wpat:PatchCodeInfo>
+                <wpat:Type>2</wpat:Type>
+            </wpat:PatchCodeInfo>
+            <wpat:PatchCodeInfo>
+                <wpat:Type>1</wpat:Type>
+            </wpat:PatchCodeInfo>
+        </wpat:ListOfPatchCodes>
+    </wpat:PatchCodeDetectionReport>
+</catalog>

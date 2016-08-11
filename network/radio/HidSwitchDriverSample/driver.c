@@ -24,7 +24,7 @@ NTSTATUS DriverEntry (_In_ PDRIVER_OBJECT pDriverObject, _In_ PUNICODE_STRING ps
     // Initialize WPP Tracing
     WPP_INIT_TRACING(pDriverObject, pszRegistryPath);
 
-    TraceInfo(DBG_INIT, "(%!FUNC!) Enter -Sample Built %s %s\n", __DATE__, __TIME__);
+    TraceInfo(DBG_INIT, "(%!FUNC!) Enter -DriverEntry\n");
 
     WDF_DRIVER_CONFIG_INIT(&config, HidFx2EvtDeviceAdd);
 

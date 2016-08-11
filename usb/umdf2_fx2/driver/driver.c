@@ -110,9 +110,6 @@ Return Value:
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
                        "OSRUSBFX2 Driver Sample - Driver Framework Edition.\n");
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
-                "Built %s %s\n", __DATE__, __TIME__);
-
     //
     // Register with ETW (unified tracing)
     // 

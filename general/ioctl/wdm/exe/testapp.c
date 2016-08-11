@@ -19,7 +19,7 @@ Environment:
 #include <stdlib.h>
 #include <string.h>
 #include <strsafe.h>
-#include "..\sys\sioctl.h"
+#include <sys\sioctl.h>
 
 
 BOOLEAN
@@ -122,9 +122,9 @@ main(
     // Printing Input & Output buffer pointers and size
     //
 
-    printf("InputBuffer Pointer = %p, BufLength = %d\n", InputBuffer,
+    printf("InputBuffer Pointer = %p, BufLength = %Iu\n", InputBuffer,
                         sizeof(InputBuffer));
-    printf("OutputBuffer Pointer = %p BufLength = %d\n", OutputBuffer,
+    printf("OutputBuffer Pointer = %p BufLength = %Iu\n", OutputBuffer,
                                 sizeof(OutputBuffer));
     //
     // Performing METHOD_BUFFERED

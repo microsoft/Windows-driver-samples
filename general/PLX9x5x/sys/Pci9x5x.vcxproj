@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1DE5F13E-88E1-4AE6-A063-C35A5472D3FF}</ProjectGuid>
+    <ProjectGuid>{501DB362-22B7-4447-9F0B-690EE0F83CF3}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <KMDF_VERSION_MINOR>9</KMDF_VERSION_MINOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{1D35F3A3-A9F3-4F69-BFDD-0D12D5AED768}</SampleGuid>
+    <SampleGuid>{01A592F9-DDED-4EDB-B96A-3B9061461BE3}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,11 +127,6 @@
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\precomp.pch</PreCompiledHeaderOutputFile>
     </ClCompile>
-    <Inf Include=".\pci9x5x.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\pci9x5x.inf</CopyOutput>
-    </Inf>
     <OtherWpp Include="Pci9656.rc">
       <WppEnabled>true</WppEnabled>
       <WppKernelMode>true</WppKernelMode>

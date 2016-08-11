@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AC913FF4-1E9D-4666-BA65-BA9C3C6BDC7A}</ProjectGuid>
+    <ProjectGuid>{5B711254-3F53-4E1D-A1AD-CC81E34588B7}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{C259646B-9566-4D0C-96B5-74D23C92DABF}</SampleGuid>
+    <SampleGuid>{F915ED95-7BE9-4CDB-B09A-0D3F4C9657FE}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -83,11 +83,6 @@
       <WppGenerateUsingTemplateFile>{um-default.tpl}*.tmh</WppGenerateUsingTemplateFile>
       <WppPreprocessorDefinitions>ENABLE_WPP_RECORDER=1;WPP_MACRO_USE_KM_VERSION_FOR_UM=1</WppPreprocessorDefinitions>
     </ClCompile>
-    <Inf Include=".\osrusbfx2um.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\osrusbfx2um.inf</CopyOutput>
-    </Inf>
     <MessageCompile Include="osrusbfx2.man">
       <GenerateUserModeLoggingMacros>true</GenerateUserModeLoggingMacros>
       <GenerateMofFile>true</GenerateMofFile>

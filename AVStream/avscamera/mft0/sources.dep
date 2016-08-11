@@ -1,0 +1,21 @@
+PUBLIC_PASS0_CONSUMES= \
+    avcore\published\idl|PASS0 \
+    avcore\published\media|PASS0 \
+    avcore\published\mf\publish|PASS0 \
+    base\appmodel\search\search\search\structuredquery\interfaces\publish|PASS0 \
+    base\published2|PASS0 \
+    com\published\idlole\publish|PASS0 \
+    enduser\sql\xml\msxml3\publish|PASS0 \
+    inetcore\published\sdk\inc|PASS0 \
+    minkernel\published\base|PASS0 \
+    onecore\avcore\published\media|PASS0 \
+    onecore\base\published2|PASS0 \
+    onecore\com\published\idlole\publish|PASS0 \
+    onecore\enduser\sql\xml\msxml3\publish|PASS0 \
+    onecore\inetcore\published\sdk\inc|PASS0 \
+    onecore\shell\propsys\inc0|PASS0 \
+    onecore\shell\published\inc\inc0|PASS0 \
+    onecoreuap\base\appmodel\search\search\search\structuredquery\interfaces\publish|PASS0 \
+    shell\propsys\inc0|PASS0 \
+    shell\published\inc\inc0|PASS0 \
+

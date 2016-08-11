@@ -36,11 +36,11 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 #define BTHHFPSPEAKER_OFFLOAD_MIN_SAMPLE_RATE             8000    // Min Sample Rate
 #define BTHHFPSPEAKER_OFFLOAD_MAX_SAMPLE_RATE             8000    // Max Sample Rate
 
-#define BTHHFPSPEAKER_LOOPBACK_MAX_CHANNELS               1       // Max Channels.
-#define BTHHFPSPEAKER_LOOPBACK_MIN_BITS_PER_SAMPLE        8       // Min Bits Per Sample
-#define BTHHFPSPEAKER_LOOPBACK_MAX_BITS_PER_SAMPLE        16      // Max Bits Per Sample
-#define BTHHFPSPEAKER_LOOPBACK_MIN_SAMPLE_RATE            8000    // Min Sample Rate
-#define BTHHFPSPEAKER_LOOPBACK_MAX_SAMPLE_RATE            8000    // Max Sample Rate
+#define BTHHFPSPEAKER_LOOPBACK_MAX_CHANNELS               BTHHFPSPEAKER_HOST_MAX_CHANNELS          // Must be equal to host pin's Max Channels.
+#define BTHHFPSPEAKER_LOOPBACK_MIN_BITS_PER_SAMPLE        BTHHFPSPEAKER_HOST_MIN_BITS_PER_SAMPLE   // Must be equal to host pin's Min Bits Per Sample
+#define BTHHFPSPEAKER_LOOPBACK_MAX_BITS_PER_SAMPLE        BTHHFPSPEAKER_HOST_MAX_BITS_PER_SAMPLE   // Must be equal to host pin's Max Bits Per Sample
+#define BTHHFPSPEAKER_LOOPBACK_MIN_SAMPLE_RATE            BTHHFPSPEAKER_HOST_MIN_SAMPLE_RATE       // Must be equal to host pin's Min Sample Rate
+#define BTHHFPSPEAKER_LOOPBACK_MAX_SAMPLE_RATE            BTHHFPSPEAKER_HOST_MAX_SAMPLE_RATE       // Must be equal to host pin's Max Sample Rate
 
 #define BTHHFPSPEAKER_DOLBY_DIGITAL_MAX_CHANNELS          1       // Max Channels.
 #define BTHHFPSPEAKER_DOLBY_DIGITAL_MIN_BITS_PER_SAMPLE   8       // Min Bits Per Sample
@@ -215,61 +215,6 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerOffloadPinSupportedDeviceFormats[
     }
 };
 
-static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerLoopbackPinSupportedDeviceFormats[] =
-{
-    { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                16000,
-                2,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    }
-};
-
 //
 // Supported modes (only on streaming pins).
 //
@@ -314,8 +259,8 @@ PIN_DEVICE_FORMATS_AND_MODES BthHfpSpeakerPinDeviceFormatsAndModes[] =
     },
     {
         RenderLoopbackPin,
-        BthHfpSpeakerLoopbackPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(BthHfpSpeakerLoopbackPinSupportedDeviceFormats),
+        BthHfpSpeakerHostPinSupportedDeviceFormats,   // Must support all the formats supported by host pin
+        SIZEOF_ARRAY(BthHfpSpeakerHostPinSupportedDeviceFormats),
         NULL,   // loopback doesn't support modes.
         0
     },

@@ -1460,10 +1460,10 @@ VOID SerenumStartDeviceWorker(
     }else{
         RtlZeroMemory(QueryTable,sizeof(RTL_QUERY_REGISTRY_TABLE)*2);
         QueryTable[0].QueryRoutine = NULL;
-        QueryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
+        QueryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;;
         QueryTable[0].EntryContext = &commonData->DebugLevel;
         QueryTable[0].Name      = L"DebugLevel";
-        QueryTable[0].DefaultType   = REG_DWORD;
+        QueryTable[0].DefaultType = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD;
         QueryTable[0].DefaultData   = &DebugLevelDefault;
         QueryTable[0].DefaultLength= sizeof(ULONG);
 

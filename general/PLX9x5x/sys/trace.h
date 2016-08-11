@@ -55,6 +55,8 @@ Environment:
         WPP_DEFINE_BIT(DBG_LOCKS)            /* bit 10 = 0x00000400 */ \
         WPP_DEFINE_BIT(DBG_QUEUEING)         /* bit 11 = 0x00000800 */ \
         WPP_DEFINE_BIT(DBG_HW_ACCESS)        /* bit 12 = 0x00001000 */ \
+        WPP_DEFINE_BIT(DBG_IOCTL)            /* bit 13 = 0x00002000 */ \
+        WPP_DEFINE_BIT(DBG_MDLCHAIN)         /* bit 14 = 0x00004000 */ \
         /* You can have up to 32 defines. If you want more than that,\
             you have to provide another trace control GUID */\
         )

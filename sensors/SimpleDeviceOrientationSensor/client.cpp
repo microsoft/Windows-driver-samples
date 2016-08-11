@@ -34,6 +34,8 @@ NTSTATUS SdoDevice::GetData()
             m_StartTime = 0;
             TraceError("SDOS %!FUNC! GetPerformanceTime %!STATUS!", Status);
         }
+
+        m_SampleCount = 0;
     }
 
     pSimulator = GetHardwareSimulatorContextFromInstance(m_SimulatorInstance);
@@ -127,8 +129,17 @@ VOID SdoDevice::OnTimerExpire(
                 }
                 else
                 {
-                    WaitTime = pDevice->m_Interval -
-                        ((CurrentTimeMs - pDevice->m_StartTime) % pDevice->m_Interval);
+                    pDevice->m_SampleCount++;
+                    if (CurrentTimeMs > (pDevice->m_StartTime + (pDevice->m_Interval * (pDevice->m_SampleCount + 1))))
+                    {
+                        // If we skipped two or more beats, reschedule the timer with a zero due time to catch up on missing samples
+                        WaitTime = 0;
+                    }
+                    else
+                    {
+                        WaitTime = (pDevice->m_StartTime +
+                            (pDevice->m_Interval * (pDevice->m_SampleCount + 1))) - CurrentTimeMs;
+                    }
                     WaitTime = WDF_REL_TIMEOUT_IN_MS(WaitTime);
                 }
             }
@@ -154,7 +165,7 @@ NTSTATUS SdoDevice::OnStart(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("SDOS %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("SDOS %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
     }
     else if (0 == pDevice->m_Interval)
     {
@@ -212,7 +223,7 @@ NTSTATUS SdoDevice::OnStop(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("SDOS %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("SDOS %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
     }
 
     if (NT_SUCCESS(Status))
@@ -428,14 +439,14 @@ NTSTATUS SdoDevice::OnGetDataInterval(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("SDOS %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("SDOS %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
     if (nullptr == DataRateMs)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("SDOS %!FUNC! DataRateMs(%08X) parameter is invalid. Failed %!STATUS!", (INT)DataRateMs, Status);
+        TraceError("SDOS %!FUNC! DataRateMs(0x%p) parameter is invalid. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 
@@ -458,10 +469,17 @@ NTSTATUS SdoDevice::OnSetDataInterval(
 
     SENSOR_FunctionEnter();
 
-    if (nullptr == pDevice || Sdo_Mininum_DataInterval > DataRateMs)
+    if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("SDOS %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("SDOS %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
+        goto Exit;
+    }
+
+    if (Sdo_Mininum_DataInterval > DataRateMs)
+    {
+        Status = STATUS_INVALID_PARAMETER;
+        TraceError("SDOS %!FUNC! DataRateMs(%d) parameter is smaller than the minimum data interval. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 

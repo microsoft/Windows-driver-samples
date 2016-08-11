@@ -79,6 +79,15 @@ Return Value:
     }
 
     //
+    // Set the transaction's Single Transfer Requirement if
+    // the user application asked for it. This needs to be
+    // set before initializing the transaction.
+    //
+    WdfDmaTransactionSetSingleTransferRequirement(
+        devExt->WriteDmaTransaction,
+        devExt->RequireSingleTransfer);
+
+    //
     // Following code illustrates two different ways of initializing a DMA
     // transaction object. If ASSOC_WRITE_REQUEST_WITH_DMA_TRANSACTION is
     // defined in the sources file, the first section will be used.
@@ -124,8 +133,9 @@ Return Value:
         PTRANSACTION_CONTEXT  transContext;
         PMDL                  mdl;
         PVOID                 virtualAddress;
-        ULONG                 length;
+        size_t                length;
 
+#ifndef SIMULATE_MEMORY_FRAGMENTATION
         //
         // Initialize this new DmaTransaction with direct parameters.
         //
@@ -138,6 +148,27 @@ Return Value:
 
         virtualAddress = MmGetMdlVirtualAddress(mdl);
         length = MmGetMdlByteCount(mdl);
+#else
+        PVOID buffer;
+
+        //
+        // For illustrative purposes, copy the Request's memory to a
+        // heavily fragmented MDL chain. If RequireSingleTransfer was set,
+        // then KMDF will attempt to fulfill the DMA transaction in a single
+        // transfer. Otherwise, the transaction may require several operations
+        // in which case PLxEvtProgramWriteDma will be invoked multiple times.
+        //
+        status = WdfRequestRetrieveInputBuffer(Request, 0, &buffer, &length);
+        if (!NT_SUCCESS(status)) {
+            TraceEvents(TRACE_LEVEL_ERROR, DBG_WRITE,
+                        "WdfRequestRetrieveInputBuffer failed: %!STATUS!", status);
+            goto CleanUp;
+        }
+
+        mdl = devExt->WriteMdlChain;
+        virtualAddress = MmGetMdlVirtualAddress(mdl);
+        CopyBufferToMdlChain(buffer, length, mdl);
+#endif // SIMULATE_MEMORY_FRAGMENTATION
 
         _Analysis_assume_(length > 0);
         status = WdfDmaTransactionInitialize( devExt->WriteDmaTransaction,
@@ -160,7 +191,7 @@ Return Value:
         transContext = PLxGetTransactionContext( devExt->WriteDmaTransaction );
         transContext->Request = Request;
     }
-#endif
+#endif // ASSOC_WRITE_REQUEST_WITH_DMA_TRANSACTION
 
 #if 0 //FYI
         //

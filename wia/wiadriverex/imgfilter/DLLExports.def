@@ -1,0 +1,31 @@
+; /*++
+;
+; Copyright (C) Microsoft Corporation, 1985 - 2002
+; All rights reserved.
+;
+; Module Name:
+;
+;     DLLExports.def
+; 
+; Abstract:
+; 
+;     Declares the module parameters
+;    
+; Author:
+; 
+;     Mikael Horal       May-5-2003
+; 
+; Revision History:
+; 
+;     Mikael Horal       May-5-2003
+;         created
+; 
+; --*/
+LIBRARY      imgfilter
+
+EXPORTS
+    DllCanUnloadNow         PRIVATE
+    DllGetClassObject       PRIVATE
+    DllRegisterServer	    PRIVATE
+    DllUnregisterServer	    PRIVATE
+    

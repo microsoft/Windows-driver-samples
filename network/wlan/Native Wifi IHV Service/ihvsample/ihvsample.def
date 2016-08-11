@@ -1,8 +1,0 @@
-; Test Ihv Extensibility DLL
-
-LIBRARY IhvSample.dll
-
-EXPORTS
-    DllMain
-    Dot11ExtIhvGetVersionInfo
-    Dot11ExtIhvInitService

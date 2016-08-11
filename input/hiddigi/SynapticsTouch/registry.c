@@ -635,11 +635,11 @@ TchRegistryGetControllerSettings(
     }
     
     //
-    // RtlQueryRegistryValues table must be allocated from NonPagedPool
+    // RtlQueryRegistryValues table must be allocated from NonPagedPoolNx
     //
 
     regTable = ExAllocatePoolWithTag(
-        NonPagedPool,
+        NonPagedPoolNx,
         gcbRegistryTable,
         TOUCH_POOL_TAG);
 

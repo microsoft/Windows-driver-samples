@@ -458,28 +458,40 @@ BOOLEAN RetryTransferPacket(PTRANSFER_PACKET Pkt)
     PCLASS_PRIVATE_FDO_DATA fdoData = fdoExtension->PrivateFdoData;
     PCDB pCdb = SrbGetCdb(Pkt->Srb);
 
-    TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_GENERAL, "retrying failed transfer (pkt=%ph, op=%s)", Pkt, DBGGETSCSIOPSTR(Pkt->Srb)));
+    if(ClasspIsThinProvisioningError((PSCSI_REQUEST_BLOCK)Pkt->Srb) &&
+        (pCdb != NULL) && IS_SCSIOP_READWRITE(pCdb->CDB10.OperationCode)) {
 
-    NT_ASSERT(Pkt->NumRetries > 0 || Pkt->RetryHistory);
-    Pkt->NumRetries--;
+        if(Pkt->NumThinProvisioningRetries >= NUM_THIN_PROVISIONING_RETRIES) {
+            //We've already retried this the maximum times.  Bail out.
+            return TRUE;
+        }
+        Pkt->NumThinProvisioningRetries++;
+    }
+    else {
+        NT_ASSERT(Pkt->NumRetries > 0 || Pkt->RetryHistory);
+        Pkt->NumRetries--;
+    }
+
+    TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_GENERAL, "retrying failed transfer (pkt=%ph, op=%s)", Pkt, DBGGETSCSIOPSTR(Pkt->Srb)));
 
     if (!fdoData->DisableThrottling) {
 
         //
         // If this is the last retry, then turn off disconnect, sync transfer,
         // and tagged queuing.  On all other retries, leave the original settings.
+        // Do not apply this for thin provisioning soft threshold errors, since
+        // they should succeed as soon as they're retried on the right IT nexus.
         //
-        if (Pkt->NumRetries == 0) {
+        if ((Pkt->NumRetries == 0) && !ClasspIsThinProvisioningError((PSCSI_REQUEST_BLOCK)Pkt->Srb)) {
             scaleDown = TRUE;
         }
 
 #if (NTDDI_VERSION >= NTDDI_WINBLUE)
         //
         // If this request previously timed-out and there are no more retries left
-        // for timed-out requests then we should also apply the scale down.
+        // for timed-out requests, then we should also apply the scale down.
         //
-        if (Pkt->TimedOut &&
-            Pkt->NumIoTimeoutRetries == 0) {
+        if (Pkt->TimedOut && Pkt->NumIoTimeoutRetries == 0) {
             scaleDown = TRUE;
         }
 #endif

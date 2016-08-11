@@ -40,7 +40,6 @@ Revision History:
 #include <PscrCmd.h>
 #include <PscrRdWr.h>
 
-#pragma optimize( "", off )
 VOID
 PscrFlushInterface( PREADER_EXTENSION ReaderExtension )
 /*++
@@ -503,7 +502,5 @@ Return Value:
 
     return NTStatus;
 }
-
-#pragma optimize( "", on )
 
 

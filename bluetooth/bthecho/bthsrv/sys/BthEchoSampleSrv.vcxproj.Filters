@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{DB9631DF-48DF-461B-AE7F-506167663FDB}</UniqueIdentifier>
+      <UniqueIdentifier>{8F4E1315-5AE6-42C1-9805-2CEE83FC73F9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{80DE4EC6-38A5-4477-89E7-7474A47F2AB9}</UniqueIdentifier>
+      <UniqueIdentifier>{B8FCA8F8-0A1A-4394-9FAA-156D7B5ACFE2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{9A504811-A75F-4216-9CF0-308AA242BA42}</UniqueIdentifier>
+      <UniqueIdentifier>{82014751-C401-4476-ACFB-2D23D2424BF6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{D808070A-9612-4A62-842D-141D1C7A3100}</UniqueIdentifier>
+      <UniqueIdentifier>{DDB3C091-B021-4283-8DED-A7E68D9E1C3A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -34,10 +34,5 @@
     <ClCompile Include="server.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\BthEchoSampleSrv.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
 </Project>

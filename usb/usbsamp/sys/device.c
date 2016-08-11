@@ -554,7 +554,7 @@ Return Value:
     attributes.ParentObject = pDeviceContext->WdfUsbTargetDevice;
 
     status = WdfMemoryCreate(&attributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              POOL_TAG,
                              size,
                              &memory,

@@ -3,25 +3,20 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{D6BF3D48-CBBA-42B5-B745-30ECADE8EC41}</UniqueIdentifier>
+      <UniqueIdentifier>{AD2988D8-6DA0-4869-9A1F-EFE79039AF5C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{DB8B8A2E-77FA-4567-8AA8-B36DE48FDC76}</UniqueIdentifier>
+      <UniqueIdentifier>{ED3E81C6-62FB-41AB-951A-E31D29B1D57A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{122D039B-46C3-41E1-AC33-2B0AFE33A066}</UniqueIdentifier>
+      <UniqueIdentifier>{496635AE-7630-4081-84FA-2AF8B9142237}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{EA2F6E70-5FFD-4177-A858-FCEA368FFBB1}</UniqueIdentifier>
+      <UniqueIdentifier>{7714C5D6-7632-4B05-BC97-BA989667B1BB}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\usbsamp.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\bulkrwr.c">

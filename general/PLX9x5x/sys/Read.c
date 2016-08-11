@@ -76,7 +76,17 @@ Return Value:
             status = STATUS_INVALID_BUFFER_SIZE;
             break;
         }
-        
+
+        //
+        // Set the transaction's Single Transfer Requirement if
+        // the user application asked for it. This needs to be
+        // set before initializing the transaction.
+        //
+        WdfDmaTransactionSetSingleTransferRequirement(
+            devExt->ReadDmaTransaction,
+            devExt->RequireSingleTransfer);
+
+#ifndef SIMULATE_MEMORY_FRAGMENTATION
         //
         // Initialize this new DmaTransaction.
         //
@@ -92,6 +102,42 @@ Return Value:
                         "failed: %!STATUS!", status);
             break;
         }
+#else
+        PMDL mdl;
+        PVOID virtualAddress;
+        PTRANSACTION_CONTEXT context;
+
+        //
+        // For illustrative purposes, initialize the DMA transaction with a
+        // heavily fragmented MDL chain instead of the request's output buffer.
+        // If RequireSingleTransfer was set, then KMDF will attempt to fulfill
+        // the DMA transaction in a single transfer. Otherwise, the transaction
+        // may require several operations in which case PLxEvtProgramReadDma
+        // will be invoked multiple times.
+        //
+        mdl = devExt->ReadMdlChain;
+        virtualAddress = MmGetMdlVirtualAddress(mdl);
+
+        status = WdfDmaTransactionInitialize(devExt->ReadDmaTransaction,
+                                             PLxEvtProgramReadDma,
+                                             WdfDmaDirectionReadFromDevice,
+                                             mdl,
+                                             virtualAddress,
+                                             Length);
+        if(!NT_SUCCESS(status)) {
+            TraceEvents(TRACE_LEVEL_ERROR, DBG_WRITE,
+                        "WdfDmaTransactionInitialize failed: %!STATUS!", status);
+            break;
+        }
+
+        //
+        // Get this DMA transaction's context and save the Request handle
+        // to it, since the Request isn't otherwise associated with the
+        // transaction object.
+        //
+        context = PLxGetTransactionContext(devExt->ReadDmaTransaction);
+        context->Request = Request;
+#endif // SIMULATE_MEMORY_FRAGMENTATION
 
 #if 0 // FYI
         //
@@ -425,10 +471,41 @@ Return Value:
     WDFREQUEST         request;
     size_t             bytesTransferred;
 
+#ifndef SIMULATE_MEMORY_FRAGMENTATION
     //
     // Get the associated request from the transaction.
     //
     request = WdfDmaTransactionGetRequest(DmaTransaction);
+#else
+    PVOID buffer;
+    size_t length;
+    WDFDEVICE device;
+    PDEVICE_EXTENSION devExt;
+
+    device = WdfDmaTransactionGetDevice(DmaTransaction);
+    devExt = PLxGetDeviceContext(device);
+
+    //
+    // This means that the DMA transaction was not initialized
+    // with WdfDmaTransactionInitializeUsingRequest, so the
+    // request was not implicitly associated with it. Instead,
+    // we saved it in the object's context space.
+    //
+    request = PLxGetTransactionContext(DmaTransaction)->Request;
+
+    //
+    // Copy the MDL chain's contents back to the original request buffer.
+    //
+    Status = WdfRequestRetrieveOutputBuffer(request, 0, &buffer, &length);
+    if (!NT_SUCCESS(Status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_READ,
+                    "WdfRequestRetrieveOutputBuffer failed: %!STATUS!",
+                    Status);
+    }
+    else {
+        CopyMdlChainToBuffer(devExt->ReadMdlChain, buffer, length);
+    }
+#endif // SIMULATE_MEMORY_FRAGMENTATION
 
     ASSERT(request);
 

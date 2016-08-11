@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AutoConfig.vcxproj">
-      <Project>{84059BE0-133C-4AA0-8290-B5A1A6A2B815}</Project>
+      <Project>{DBBDF822-170C-4685-BAE7-5E0531334164}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -32,8 +32,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1307660E-E51C-463A-8D10-46CFEFD4BC1F}</ProjectGuid>
-    <SampleGuid>{F89C283D-E536-425B-B0D3-198EC54B9C41}</SampleGuid>
+    <ProjectGuid>{34C973B1-CBF0-4A78-A05A-176FCFB1D25F}</ProjectGuid>
+    <SampleGuid>{2E5E1DA7-8772-44A5-ABE9-1B80A98A90AD}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

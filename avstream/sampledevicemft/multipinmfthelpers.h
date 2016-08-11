@@ -204,3 +204,88 @@ private:
 };
 
 
+/*
+################## EVENT HANDLING #############################################
+Events are usually divided into two categories by the Capture Pipeline
+1) Regular Event / Manual Reset Event
+2) One Shot Event
+
+Regular events are set and cleared by the pipeline
+One shot Events will only be set by the pipeline and it should be cleared
+by the Component managing the Event Store i.e. KS or DMFT. For Redstone
+The pipeline should not send any Non One shot events.This sample however
+does show the handling of Regular/ Manual Reset events
+
+This clearing of One shot events is done when the event is fired..
+E.g before sending the warm start command The pipeline will send a one shot event
+KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART and when the operation completes the
+event should be fired.
+The Device MFT should usually keep a watch for one shot events sent by the Pipeline
+for Async Extended controls..The list of Asynchronous controls are as follows..
+
+KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE
+KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE
+KSPROPERTY_CAMERACONTROL_EXTENDED_FOCUSMODE
+KSPROPERTY_CAMERACONTROL_REGION_OF_INTEREST_PROPERTY_ID
+KSPROPERTY_CAMERACONTROL_EXTENDED_ISO
+KSPROPERTY_CAMERACONTROL_EXTENDED_ISO_ADVANCED
+KSPROPERTY_CAMERACONTROL_EXTENDED_EVCOMPENSATION
+KSPROPERTY_CAMERACONTROL_EXTENDED_WHITEBALANCEMODE
+KSPROPERTY_CAMERACONTROL_EXTENDED_EXPOSUREMODE
+KSPROPERTY_CAMERACONTROL_EXTENDED_SCENEMODE
+KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTHUMBNAIL
+KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART
+KSPROPERTY_CAMERACONTROL_EXTENDED_ROI_ISPCONTROL
+KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE
+The complete list can be found from the Camera DDI spec
+###############################################################################
+*/
+
+typedef struct _DMFTEventEntry{
+    ULONG   m_ulEventId;        // KSEVENT->Id
+    PVOID   m_pEventData;       // Lookup for events in the data structure
+    HANDLE  m_hHandle;          // The duplicate handle stored from the event
+    //
+    // Constructor. We simply cache the handles, the property id and the KSEVENTDATA buffer sent from the user mode
+    //
+    _DMFTEventEntry( _In_ ULONG ulEventId, _In_ PVOID pEventData, _In_ HANDLE pHandle):m_pEventData(pEventData)
+        , m_ulEventId(ulEventId)
+        , m_hHandle(pHandle)
+    {
+    }
+    ~_DMFTEventEntry()
+    {
+        if ( m_hHandle != nullptr )
+        {
+            CloseHandle(m_hHandle);
+            m_hHandle = nullptr;
+        }
+    }
+
+}DMFTEventEntry, *PDMFTEventEntry;
+
+//
+// Handler for one shot events and Normal events
+//
+class CDMFTEventHandler{
+public:
+    //
+    // Handle the events here
+    //
+    STDMETHOD(KSEvent)(_In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
+        _In_ ULONG ulEventLength,
+        _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
+        _In_ ULONG ulDataLength,
+        _Inout_ ULONG* pBytesReturned);
+    STDMETHOD(SetOneShot)(ULONG);
+    STDMETHOD(SetRegularEvent)(ULONG);
+    STDMETHOD(Clear)();
+protected:
+    STDMETHOD(Dupe)(_In_ HANDLE hEventHandle, _Outptr_ LPHANDLE lpTargetHandle);
+private:
+    map< ULONG, HANDLE >        m_OneShotEventMap;
+    vector< PDMFTEventEntry >   m_RegularEventList;
+};
+
+
+

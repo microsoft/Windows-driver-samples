@@ -104,7 +104,7 @@ Return Value:
         //
         // Try to get a virtual address for the MDL.
         //
-        pEthHeader = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority);
+        pEthHeader = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority | MdlMappingNoExecute);
 
         if (pEthHeader == NULL)
         {

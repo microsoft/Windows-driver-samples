@@ -1955,13 +1955,6 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
             }
 
 
-            // Initialize performance counter frequency
-            KeQueryPerformanceCounter(&(fdoExtension->PrivateFdoData->PerfCounterFrequency));
-
-            if (fdoExtension->PrivateFdoData->PerfCounterFrequency.QuadPart == 0) {
-                fdoExtension->PrivateFdoData->PerfCounterFrequency.QuadPart = 1;
-            }
-
             /*
              *  Anchor the FDO in our static list.
              *  Pnp is synchronized, so we shouldn't need any synchronization here.
@@ -2244,6 +2237,16 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
                 UNREFERENCED_PARAMETER(legacyErrorHandling);
 #endif
 
+
+                //
+                // Get the copy offload max target duration value.
+                // This function will set the default value if one hasn't been
+                // specified in the registry.
+                //                
+                ClasspGetCopyOffloadMaxDuration(DeviceObject,
+                                                REG_DISK_CLASS_CONTROL,
+                                                &(fdoExtension->PrivateFdoData->CopyOffloadMaxTargetDuration));
+            
             }
 
         }
@@ -2409,6 +2412,7 @@ NTSTATUS ClassReadWrite(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
     isRemoved = ClassAcquireRemoveLock(DeviceObject, Irp);
     if (isRemoved) {
         Irp->IoStatus.Status = STATUS_DEVICE_DOES_NOT_EXIST;
+        Irp->IoStatus.Information = 0;
         ClassReleaseRemoveLock(DeviceObject, Irp);
         ClassCompleteRequest(DeviceObject, Irp, IO_NO_INCREMENT);
         status = STATUS_DEVICE_DOES_NOT_EXIST;
@@ -2451,6 +2455,7 @@ NTSTATUS ClassReadWrite(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
         _Analysis_assume_(status != STATUS_PENDING);
         if (!NT_SUCCESS(status)){
             NT_ASSERT(Irp->IoStatus.Status == status);
+            Irp->IoStatus.Information = 0;
             ClassReleaseRemoveLock(DeviceObject, Irp);
             ClassCompleteRequest (DeviceObject, Irp, IO_NO_INCREMENT);
         }
@@ -2575,8 +2580,7 @@ NTSTATUS ClassReadWrite(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
                             ClasspMarkIrpAsIdle(Irp, FALSE);
                             status = ServiceTransferRequest(DeviceObject, Irp, FALSE);
                             if (fdoData->IdlePrioritySupported == TRUE) {
-                                fdoData->LastIoTime = ClasspGetCurrentTime(NULL);
-                                fdoData->IdleTicks = 0;
+                                fdoData->LastNonIdleIoTime = ClasspGetCurrentTime();
                             }
 
                             ClassReleaseRemoveLock(DeviceObject, (PVOID)&uniqueAddr);
@@ -7274,6 +7278,7 @@ ClassDeviceControl(
 
     NTSTATUS status;
     ULONG modifiedIoControlCode = 0;
+    GUID activityId = {0};
 
 
     //
@@ -7457,9 +7462,11 @@ ClassDeviceControl(
             driveLetterName.Length = 0;
 
             queryTable[0].Flags = RTL_QUERY_REGISTRY_REQUIRED |
-                                  RTL_QUERY_REGISTRY_DIRECT;
+                                  RTL_QUERY_REGISTRY_DIRECT |
+                                  RTL_QUERY_REGISTRY_TYPECHECK;
             queryTable[0].Name = valueName;
             queryTable[0].EntryContext = &driveLetterName;
+            queryTable->DefaultType = (REG_SZ << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
             status = RtlQueryRegistryValues(RTL_REGISTRY_ABSOLUTE,
                                             L"\\Registry\\Machine\\System\\DISK",
@@ -8550,7 +8557,7 @@ ClassDeviceControl(
 
                 // only process Trim action in class layer if possible.
                 case DeviceDsmAction_Trim: {
-                    status = ClasspDeviceTrimProcess(DeviceObject, Irp, srb);
+                    status = ClasspDeviceTrimProcess(DeviceObject, Irp, &activityId, srb);
                     break;
                 }
 
@@ -9451,10 +9458,10 @@ ClassQueryTimeOutRegistryValue(
     RtlZeroMemory(parameters,
                   (sizeof(RTL_QUERY_REGISTRY_TABLE)*2));
 
-    parameters[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
+    parameters[0].Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
     parameters[0].Name          = L"TimeOutValue";
     parameters[0].EntryContext  = &timeOut;
-    parameters[0].DefaultType   = REG_DWORD;
+    parameters[0].DefaultType   = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD;
     parameters[0].DefaultData   = &zero;
     parameters[0].DefaultLength = sizeof(ULONG);
 
@@ -12589,10 +12596,10 @@ ClasspScanForSpecialInRegistry(
     // Setup the structure to read
     //
 
-    queryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
+    queryTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
     queryTable[0].Name          = CLASSP_REG_HACK_VALUE_NAME;
     queryTable[0].EntryContext  = &deviceHacks;
-    queryTable[0].DefaultType   = REG_DWORD;
+    queryTable[0].DefaultType   = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD;
     queryTable[0].DefaultData   = &deviceHacks;
     queryTable[0].DefaultLength = 0;
 
@@ -13369,7 +13376,7 @@ Arguments:
 
     DeviceObject - Supplies the device object associated with this request
     Irp - The IRP to be processed
-    Srb - An SRB that can be optinally used to process this request
+    Srb - An SRB that can be optimally used to process this request
 
 Return Value:
 
@@ -15608,12 +15615,18 @@ Return Value:
 --*/
 
 {
+    PFUNCTIONAL_DEVICE_EXTENSION fdoExtension = OffloadWriteContext->Fdo->DeviceExtension;
+    PCLASS_PRIVATE_FDO_DATA fdoData = fdoExtension->PrivateFdoData;
+
+    //
+    // Time taken in 100ns units.
+    //
+    ULONGLONG durationIn100ns = (KeQueryInterruptTime() - OffloadWriteContext->OperationStartTime);
+    ULONGLONG maxTargetDuration = fdoData->CopyOffloadMaxTargetDuration * 10ULL * 1000 * 1000;
+
     NT_ASSERT(
         OffloadWriteContext->TotalSectorsProcessedSuccessfully <=
-        OffloadWriteContext->TotalRequestSizeSectors);
-
-    // Time taken in 100 ns units
-    ULONGLONG durationIn100ns = (KeQueryInterruptTime() - OffloadWriteContext->OperationStartTime);
+        OffloadWriteContext->TotalRequestSizeSectors);    
 
 
     if (OffloadWriteContext->TotalSectorsProcessedSuccessfully == OffloadWriteContext->TotalRequestSizeSectors) {
@@ -15627,7 +15640,7 @@ Return Value:
     // Since we don't want a layered timeout mechanism (e.g. guest and parent OS in Hyper-V scenarios)
     // to cause a SCSI timeout for the higher layer token operations.
     //
-    if (MAX_TARGET_DURATION <= durationIn100ns) {
+    if (maxTargetDuration <= durationIn100ns) {
 
         TracePrint((TRACE_LEVEL_WARNING,
                     TRACE_FLAG_IOCTL,

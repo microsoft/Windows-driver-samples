@@ -149,7 +149,7 @@ SerialDeviceFileCreateWorker (
 
             extension->BufferSize = 4096;
             extension->InterruptReadBuffer = ExAllocatePoolWithTag(
-                                                 NonPagedPool,
+                                                 NonPagedPoolNx,
                                                  extension->BufferSize,
                                                  POOL_TAG
                                                  );
@@ -164,7 +164,7 @@ SerialDeviceFileCreateWorker (
 
             extension->BufferSize = 1024;
             extension->InterruptReadBuffer = ExAllocatePoolWithTag(
-                                                 NonPagedPool,
+                                                 NonPagedPoolNx,
                                                  extension->BufferSize,
                                                  POOL_TAG
                                                  );
@@ -179,7 +179,7 @@ SerialDeviceFileCreateWorker (
 
             extension->BufferSize = 128;
             extension->InterruptReadBuffer = ExAllocatePoolWithTag(
-                                                 NonPagedPool,
+                                                 NonPagedPoolNx,
                                                  extension->BufferSize,
                                                  POOL_TAG
                                                  );

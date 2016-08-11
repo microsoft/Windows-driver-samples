@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <winnt.h>
 #include <tchar.h>
+#include <comdef.h>
 #include <initguid.h>
 #include <ks.h>
 #include <ksmedia.h>

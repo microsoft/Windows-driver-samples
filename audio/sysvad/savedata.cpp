@@ -43,7 +43,7 @@ Abstract:
 #define FMT__TAG                    0x20746D66;
 #define DATA_TAG                    0x61746164;
 
-#define DEFAULT_FRAME_COUNT         2
+#define DEFAULT_FRAME_COUNT         4
 #define DEFAULT_FRAME_SIZE          PAGE_SIZE * 4 
 #define DEFAULT_BUFFER_SIZE         DEFAULT_FRAME_SIZE * DEFAULT_FRAME_COUNT
 

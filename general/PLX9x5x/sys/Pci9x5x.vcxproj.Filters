@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{B669D948-3401-4ED3-A372-17F5ACB06C88}</UniqueIdentifier>
+      <UniqueIdentifier>{D8D64C18-868F-4EF5-90D1-BC576379183C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{6BF69C07-3C57-4B3E-B476-2FE25863C4E7}</UniqueIdentifier>
+      <UniqueIdentifier>{80D325BC-90F3-46E6-B694-24F192421197}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{C8335578-FDE2-4937-A4B4-983F51CC74A2}</UniqueIdentifier>
+      <UniqueIdentifier>{F76CE674-3662-4D6E-AB77-260FE0381AC9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{CE1E380F-0E2C-4AB0-A135-46775B8C4371}</UniqueIdentifier>
+      <UniqueIdentifier>{8BAFE965-5A65-4AB5-9799-251428E27882}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,11 +37,6 @@
     <ClCompile Include="Write.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\pci9x5x.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Pci9656.rc">

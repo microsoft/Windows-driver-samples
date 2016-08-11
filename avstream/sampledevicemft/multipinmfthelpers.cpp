@@ -6,7 +6,7 @@
 #include <wincodec.h>
 
 #ifdef MF_WPP
-#include "multipinmfthelpers.tmh"
+#include "multipinmfthelpers.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 class CMediaTypePrinter;
 //
@@ -35,7 +35,16 @@ Description:
 STDMETHODIMP_(VOID) CPinQueue::InsertInternal( _In_ IMFSample *pSample )
 {
     pSample->AddRef();
-    m_sampleList.push_back( pSample );
+    HRESULT hr = ExceptionBoundary([&]()
+    {
+        m_sampleList.push_back(pSample);
+    });
+
+    if (FAILED(hr))
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
+        SAFE_RELEASE(pSample);
+    }
 }
 
 STDMETHODIMP_(BOOL) CPinQueue::Insert( _In_ IMFSample *pSample )
@@ -656,6 +665,324 @@ STDMETHODIMP CDecoderTee::ConfigureDecoder( _In_ IMFTransform *pTransform)
     return S_OK;
 }
 
+/*++
+Descrtiption:
+    Handles events sent by the pipeline
+ --*/
+STDMETHODIMP CDMFTEventHandler::KSEvent(
+    _In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
+    _In_ ULONG ulEventLength,
+    _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
+    _In_ ULONG ulDataLength,
+    _Inout_ ULONG* pBytesReturned)
+{
+    HRESULT hr = S_OK;
+    UNREFERENCED_PARAMETER(ulDataLength);
+    UNREFERENCED_PARAMETER(pBytesReturned);
 
+    if (pEvent == nullptr)
+    {
+        //
+        // We can have an Event Reset here
+        //
+        if (pEventData == nullptr)
+        {
+            //
+            // Invalid input. KSEVENT and KSEVENTDATA cannot both be null
+            //
+            DMFTCHECKHR_GOTO(E_INVALIDARG, done);
+        }
+        //
+        // The way KSevents work are, KSEVENT and KSEVENTDATA both have to be non null for events to be Set
+        // on the driver. If the pipeline wishes to reset the event we pass the KSEVENT structure as NULL and
+        // the KSEVENTDATA to be nonnull.
+        //   ********** EVENT RESET here since KSEVENT is null and KSEVENTDATA is not**********
+        // We will never get Event Reset for One shot events
+        // Search the list of regular events to find the KSEVENTDATA pointer and then free the entry  
+        //
+        for ( vector<PDMFTEventEntry>::iterator it = m_RegularEventList.begin(); it != m_RegularEventList.end(); ++it )
+        {
+            PDMFTEventEntry pEntry = nullptr;
+            pEntry = *it;
+            DMFTCHECKNULL_GOTO(pEntry, done, E_UNEXPECTED); // We should never see a null data structure entry 
+            if (pEntry->m_pEventData == pEventData)
+            {
+                it = m_RegularEventList.erase(it);
+                delete(pEntry); // Delete the entry!
+                goto done;
+            }
+        }
 
+        DMFTCHECKHR_GOTO(E_NOT_SET, done);
+    }
+    else
+    {
+        //
+        // If we are here the pipeline wants to do the following things
+        // 1) Store a regular event
+        // 2) Store a oneshot event
+        //
+        HANDLE          evtHandle   = nullptr;
+        PKSEVENT        pEvt        = pEvent;
+        PKSEVENTDATA    pEvtdata    = reinterpret_cast<PKSEVENTDATA>(pEventData);
 
+        if (ulEventLength < sizeof(KSEVENT))
+        {
+            DMFTCHECKNULL_GOTO(pBytesReturned, done, E_INVALIDARG);
+            *pBytesReturned = sizeof(KSEVENT);
+            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
+        }
+
+        if (!pEvtdata)
+        {
+            //
+            // Need the event data  to be present to service the call properly!
+            //
+            DMFTCHECKHR_GOTO(E_INVALIDARG, done);
+        }
+
+        if (pEvt->Flags & KSEVENT_TYPE_ENABLE) // Regular/ Manual Reset Event 
+        {
+            vector<PDMFTEventEntry>::iterator it = m_RegularEventList.begin();
+            for (; it != m_RegularEventList.end(); it++)
+            {
+                PDMFTEventEntry pEntry = *it;
+                DMFTCHECKNULL_GOTO(pEntry, done, E_FAIL); 
+                if (pEntry->m_pEventData == pEventData)
+                {
+                    break;
+                }
+            }
+            if (it != m_RegularEventList.end())
+            {
+                //
+                // Duplicate entry found. 
+                //
+                DMFTCHECKHR_GOTO(E_NOT_VALID_STATE, done);
+            }
+        }
+        else if (pEvt->Flags & KSEVENT_TYPE_ONESHOT)
+        {
+            ULONG ulEventCommand = pEvt->Id;
+            hr = ExceptionBoundary([&]()
+            {
+                map<ULONG, HANDLE>::iterator it = m_OneShotEventMap.find(ulEventCommand);
+                if (it != m_OneShotEventMap.end())
+                {
+                    //
+                    // Duplicate entry found. 
+                    //
+                    hr = E_NOT_VALID_STATE;
+                }
+            });
+            DMFTCHECKHR_GOTO(hr, done);
+        }
+        else
+        {
+            DMFTCHECKHR_GOTO(E_NOTIMPL, done);
+        }
+ 
+        //
+        // Duplicate the handle
+        //
+        DMFTCHECKHR_GOTO(Dupe(pEvtdata->EventHandle.Event, &evtHandle),done);
+        ULONG ulEventCommand = pEvt->Id;
+        
+        if (pEvt->Flags & KSEVENT_TYPE_ENABLE)
+        {
+            //  ************** REGULAR EVENT ****************************
+            // Regualar event. When this needs to be cleqared we will geta  call with KSEVENT = null
+            // and KSEVENTDATA with the same address as this call(pEvtdata). Hence store it
+            // To set the event all we need is the EVENT id.
+            //
+            PDMFTEventEntry pEntry = new DMFTEventEntry(ulEventCommand, pEvtdata, evtHandle);
+            DMFTCHECKNULL_GOTO(pEntry, done, E_OUTOFMEMORY);
+            hr = ExceptionBoundary([&]()
+            {
+                (VOID)m_RegularEventList.push_back(pEntry);
+            });
+        }
+        else if(pEvt->Flags & KSEVENT_TYPE_ONESHOT)
+        {
+            // *************** SINGLE SHOT EVENT ************************
+            // Single Shot event store. Store the event Id and the Handle.
+            //
+            hr = ExceptionBoundary([&]()
+            {
+                (VOID)m_OneShotEventMap.insert(std::pair<ULONG, HANDLE>(ulEventCommand, evtHandle));
+            });
+            DMFTCHECKHR_GOTO(hr, done);
+        }
+    }
+
+done:
+    return hr;
+}
+
+/*++
+Descrtiption:
+ Used to set the One shot events sent by the pipeline.
+ One shot events should be closed by the component after firing. The Pipeline
+ will not send a reset or a clear for one shot events
+--*/
+
+STDMETHODIMP CDMFTEventHandler::SetOneShot( ULONG ulEventId )
+{
+    HRESULT hr = S_OK;
+    hr = ExceptionBoundary([&]()
+    {
+        map<ULONG, HANDLE>::iterator it = m_OneShotEventMap.find(ulEventId);
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! trying to Set  OneShot  %d ", ulEventId);
+
+        if (it != m_OneShotEventMap.end())
+        {
+            // Found the event
+            HANDLE hOneShot = it->second;
+            if (SetEvent(hOneShot))
+            {
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting  OneShot  %d Succeeded",
+                    ulEventId);
+                CloseHandle(hOneShot);
+                m_OneShotEventMap.erase(it);
+            }
+            else
+            {
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting  OneShot  %d failed %x",
+                    ulEventId,
+                    HRESULT_FROM_WIN32(GetLastError()));
+            }
+        }
+        else
+        {
+            hr = E_NOT_SET;
+        }
+    });
+    DMFTCHECKHR_GOTO(hr, done);
+done:
+    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting  OneShot  %d failed %x",
+        ulEventId,
+        HRESULT_FROM_WIN32(GetLastError()));
+    return hr;
+}
+
+/*++
+Descrtiption:
+    Used to set the Regular events sent by the pipeline.
+    Regular events unlike the one shot events must be persisted
+    until the pipeline explicitly needs the event to be unset.
+--*/
+
+STDMETHODIMP CDMFTEventHandler::SetRegularEvent(ULONG ulEventId)
+{
+    BOOL bEvtFound = FALSE;
+    HRESULT hr = ExceptionBoundary([&]()
+    {
+        
+        for (vector<PDMFTEventEntry>::iterator it = m_RegularEventList.begin(); it != m_RegularEventList.end(); ++it)
+        {
+            PDMFTEventEntry pEntry = *it;
+            if (ulEventId == pEntry->m_ulEventId)
+            {
+                // Found the event
+                bEvtFound = TRUE;
+                if (!::SetEvent(pEntry->m_hHandle))
+                {
+                    hr = HRESULT_FROM_WIN32(GetLastError());
+                    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting  Event  %d Failed 0x%x",
+                        ulEventId, hr);
+                }
+                else
+                {
+                    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting  Event  %d s",
+                        ulEventId);
+                }
+            }
+        }
+    });
+    if (!bEvtFound)
+    {
+        DMFTCHECKHR_GOTO(E_NOT_SET, done);
+    }
+done:
+    return hr;
+}
+
+/*++
+Descrtiption:
+    Duplicates the handle passed.
+--*/
+
+STDMETHODIMP CDMFTEventHandler::Dupe(_In_ HANDLE hEventHandle, _Outptr_ LPHANDLE lpTargetHandle)
+{
+    HRESULT hr = S_OK;
+    DMFTCHECKNULL_GOTO(hEventHandle, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(lpTargetHandle, done, E_INVALIDARG);
+    //
+    // Duplicate handle and store it for when it needs to be fired
+    //
+    if (!DuplicateHandle(GetCurrentProcess(), hEventHandle, 
+        GetCurrentProcess(), lpTargetHandle, 
+        0, 
+        false,   
+        DUPLICATE_SAME_ACCESS
+        ))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Duplicating Event Handle failed %x",
+            hr);
+        DMFTCHECKHR_GOTO(hr, done);
+    }
+done:
+    return hr;
+}
+
+/*++
+
+Descrtiption:
+ Cleans the event lists, both the Single shot and the Regular ones
+
+--*/
+STDMETHODIMP CDMFTEventHandler::Clear()
+{
+    HRESULT hr = S_OK;
+    hr = ExceptionBoundary([&]()
+    {
+        map<ULONG, HANDLE>::iterator it = m_OneShotEventMap.begin();
+        for (; it != m_OneShotEventMap.end(); ++it)
+        {
+            //
+            // Delete the one shot entries. We should not see this path usually
+            // as the pipeline will send a one shot event and set it soon. We 
+            // should remore the entry then.
+            //
+            CloseHandle(it->second);
+            it = m_OneShotEventMap.erase(it);
+            if (it == m_OneShotEventMap.end())
+            {
+                // We've reached the end break
+                break;
+            }
+        }
+    });
+    DMFTCHECKHR_GOTO(hr, done);
+    hr = ExceptionBoundary([=]()
+    {
+        vector<PDMFTEventEntry>::iterator it2 = m_RegularEventList.begin();
+        for (; it2 != m_RegularEventList.end(); ++it2)
+        {
+            //
+            // Delete the entries. This will be traversed
+            //
+            PDMFTEventEntry pEntry = *it2;
+            it2 = m_RegularEventList.erase(it2);
+            SAFE_DELETE(pEntry);
+            if (it2 == m_RegularEventList.end())
+            {
+                break;
+            }
+        }
+    });
+    DMFTCHECKHR_GOTO(hr, done);
+done:
+    return hr;
+}

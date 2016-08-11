@@ -190,7 +190,7 @@ Return Value
             break;
         }
 
-        printf( "Received message, size %d\n", pOvlp->InternalHigh );
+        printf( "Received message, size %Id\n", pOvlp->InternalHigh );
 
         notification = &message->Notification;
 

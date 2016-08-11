@@ -1233,6 +1233,8 @@ TLInspectWorker(
    KLOCK_QUEUE_HANDLE packetQueueLockHandle;
    KLOCK_QUEUE_HANDLE connListLockHandle;
 
+   BOOLEAN found = FALSE;
+
    UNREFERENCED_PARAMETER(StartContext);
 
    for(;;)
@@ -1261,15 +1263,45 @@ TLInspectWorker(
 
       if (!IsListEmpty(&gConnList))
       {
-         _Analysis_assume_(gConnList.Flink != NULL);
-         listEntry = gConnList.Flink;
+         //
+         // Skip pended connections in the list, for which the auth decision is already taken.
+         // They should not be for inbound connections.
+         //
+         _Analysis_assume_(gConnList.Flink != NULL);         
+         for (listEntry = gConnList.Flink;
+              listEntry != &gConnList;
+              listEntry = listEntry->Flink)
+         {
+            packet = CONTAINING_RECORD(
+                                listEntry,
+                                TL_INSPECT_PENDED_PACKET,
+                                listEntry
+                                );
 
-         packet = CONTAINING_RECORD(
-                           listEntry,
-                           TL_INSPECT_PENDED_PACKET,
-                           listEntry
-                           );
-         if (packet->direction == FWP_DIRECTION_INBOUND)
+            NT_ASSERT((packet->direction == FWP_DIRECTION_INBOUND) ||
+                      (packet->authConnectDecision == 0));
+        
+            if (packet->authConnectDecision == 0)
+            {
+               found = TRUE;
+               break;
+            }
+         }
+
+         //
+         // If not found, reset entry and packet
+         //
+         if (!found)
+         {
+            listEntry = NULL;
+            packet = NULL;
+         }
+
+         //
+         // Completing a pended recv_accept auth does not trigger reauth. 
+         // So the pended entries for AUTH_RECV_ACCEPT are removed here. 
+         //
+         if (packet != NULL && packet->direction == FWP_DIRECTION_INBOUND)
          {
             RemoveEntryList(&packet->listEntry);
          }

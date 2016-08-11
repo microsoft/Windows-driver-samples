@@ -1730,7 +1730,6 @@ Return Value:
     UNICODE_STRING newFileName;
 
     struct {
-        BOOLEAN ReplaceIfExists;
         HANDLE RootDirectory;
         ULONG FileNameLength;
         PWSTR FileName;
@@ -1749,6 +1748,7 @@ Return Value:
     switch (fileInfoClass) {
         
         case FileRenameInformation:
+        case FileRenameInformationEx:
 
             //
             //  Note: We should never see a rename of the mapping path \x\y itself
@@ -1759,7 +1759,12 @@ Return Value:
 
             renameInfo = Cbd->Iopb->Parameters.SetFileInformation.InfoBuffer;
 
-            setInfo.ReplaceIfExists = renameInfo->ReplaceIfExists;
+            //
+            //  Accessing ReplaceIfExists -
+            //    Using FileRenameInformation - renameInfo->ReplaceIfExists
+            //    Using FileRenameInformationEx - FlagOn( renameInfo->Flags, FILE_RENAME_REPLACE_IF_EXISTS )
+            //
+
             setInfo.RootDirectory = renameInfo->RootDirectory;
             setInfo.FileNameLength = renameInfo->FileNameLength;
             setInfo.FileName = renameInfo->FileName;
@@ -1770,7 +1775,8 @@ Return Value:
 
             linkInfo = Cbd->Iopb->Parameters.SetFileInformation.InfoBuffer;
 
-            setInfo.ReplaceIfExists = linkInfo->ReplaceIfExists;
+            //  Accessing ReplaceIfExists - linkInfo->ReplaceIfExists
+            
             setInfo.RootDirectory = linkInfo->RootDirectory;
             setInfo.FileNameLength = linkInfo->FileNameLength;
             setInfo.FileName = linkInfo->FileName;
@@ -1815,6 +1821,7 @@ Return Value:
         case FileIdFullDirectoryInformation: // 38
         case FileValidDataLengthInformation: // 39
         case FileShortNameInformation:       // 40
+        case FileDispositionInformationEx:   // 64
 
             goto SimRepPreSetInformationCleanup;
         
@@ -1928,7 +1935,8 @@ Return Value:
     //  destination from FLT_GET_DESTINATION_FILE_NAME_INFORMATION.
     //
 
-    if (fileInfoClass == FileRenameInformation) {
+    if ((fileInfoClass == FileRenameInformation) ||
+        (fileInfoClass == FileRenameInformationEx)) {
 
          bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
 
@@ -1942,7 +1950,7 @@ Return Value:
 
          newRenameInfo = (PFILE_RENAME_INFORMATION)buffer;
          
-         newRenameInfo->ReplaceIfExists = renameInfo->ReplaceIfExists;
+         newRenameInfo->Flags = renameInfo->Flags;
          newRenameInfo->RootDirectory = NULL;
          newRenameInfo->FileNameLength = newFileName.Length;
 

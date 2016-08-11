@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{147B5094-8C9D-4C84-B266-297D1E03D038}</ProjectGuid>
+    <ProjectGuid>{3DC6A380-6A31-4460-B934-83E1BAC700EE}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{31AFCCDA-DE2F-4533-AFB7-F8D0C668C5AE}</SampleGuid>
+    <SampleGuid>{CE26AF24-DCC9-47E5-A4EF-F27522A31C90}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -186,11 +186,6 @@
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\precomp.pch</PreCompiledHeaderOutputFile>
     </ClCompile>
-    <Inf Include="..\genpci.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\genpci.inf</CopyOutput>
-    </Inf>
     <MofComp Include="..\pcidrv.mof">
       <CreateBinaryMofFile>".\$(IntDir)\pcidrv.bmf"</CreateBinaryMofFile>
     </MofComp>
@@ -284,54 +279,54 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;POOL_NX_OPTIN=1</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

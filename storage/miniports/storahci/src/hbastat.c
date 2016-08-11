@@ -452,11 +452,12 @@ RunNextPort(
 
     // run next port or declare the ports running process completed.
     if (nextPortExtension != NULL) {
-        if (nextPortExtension->StartState.ChannelNextStartState == 0) {
+        if ((nextPortExtension->StartState.ChannelNextStartState == 0) ||
+            (nextPortExtension->StartState.ChannelNextStartState == Stopped)) {
             P_Running_StartAttempt(nextPortExtension, AtDIRQL);
         } else {
             // return, do nothing here as the Port Start effort has been made.
-            // RunNextPort() is only used in AhciAdapterRunAllPorts() which is one time operation from AhciHwFindAdapter.
+            // RunNextPort() is only used in AhciAdapterRunAllPorts() which is called by AhciHwFindAdapter.
             // In other cases, P_Running_StartAttempt() will be called directly for each port.
             return;
         }
@@ -486,7 +487,7 @@ Affected Variables/Registers:
     none
 */
 {
-    STOR_LOCK_HANDLE    lockhandle = {0};
+    STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
 
     if (!AtDIRQL) {
         AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
@@ -537,7 +538,7 @@ P_Running_Callback(
 
     // only clear the bit if this is the first timer callback in Port Start process
     if (callbackIndex == 1) {
-        STOR_LOCK_HANDLE    lockhandle = {0};
+        STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
 
         AhciInterruptSpinlockAcquire(AdapterExtension, channelExtension->PortNumber, &lockhandle);
 
@@ -1108,7 +1109,7 @@ WaitOnBSYDRQ_Start:
     }
   //3.1 Set ST to 1
     if ( ( tfd.STS.BSY == 0) && ( tfd.STS.DRQ == 0) ) {
-        STOR_LOCK_HANDLE    lockhandle = {0};
+        STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
         BOOLEAN             needSpinLock;
 
         if ( TimerCallbackProcess && (ChannelExtension->StartState.DirectStartInProcess == 1) ) {
@@ -1138,7 +1139,7 @@ WaitOnBSYDRQ_Start:
         StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - Port Started\n", ChannelExtension->PortNumber);
 
       //Start requests on this Port
-        AhciGetNextIos(ChannelExtension, TRUE);
+        ActivateQueue(ChannelExtension, TRUE);
 
         ChannelExtension->StartState.DirectStartInProcess = 0;
 
@@ -1243,7 +1244,7 @@ Affected Variables/Registers:
     none
 */
 {
-    STOR_LOCK_HANDLE    lockhandle = {0};
+    STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
     BOOLEAN             needSpinLock;
 
     if ( TimerCallbackProcess && (ChannelExtension->StartState.DirectStartInProcess == 1) ) {
@@ -1283,6 +1284,9 @@ Affected Variables/Registers:
   //1.2 clear out the programmed slots
     ChannelExtension->SlotManager.CommandsToComplete = GetOccupiedSlots(ChannelExtension);
     ChannelExtension->SlotManager.CommandsIssued = 0;
+    ChannelExtension->SlotManager.NCQueueSliceIssued = 0;
+    ChannelExtension->SlotManager.NormalQueueSliceIssued = 0;
+    ChannelExtension->SlotManager.SingleIoSliceIssued = 0;
     ChannelExtension->SlotManager.NCQueueSlice = 0;
     ChannelExtension->SlotManager.NormalQueueSlice = 0;
     ChannelExtension->SlotManager.SingleIoSlice = 0;
@@ -1292,7 +1296,7 @@ Affected Variables/Registers:
     PortClearPendingInterrupt(ChannelExtension);
     Set_PxIE(ChannelExtension, &ChannelExtension->Px->IE);
 
-  //2.1 Call AhciGetNextIos to complete all outstanding commands now that ChannelNextStartState is StartFailed
+  //2.1 Call AhciPortFailAllIos to complete all outstanding commands now that ChannelNextStartState is StartFailed
     AhciPortFailAllIos(ChannelExtension, SRB_STATUS_NO_DEVICE, TRUE);
 
     ChannelExtension->StartState.DirectStartInProcess = 0;
@@ -1435,6 +1439,9 @@ Affected Variables/Registers:
         ci &= ~(1 << failingCommand);
         // Move the errant command from Issued list to the 'to complete' list
         ChannelExtension->SlotManager.CommandsIssued &= ~(1 << failingCommand);
+        ChannelExtension->SlotManager.NCQueueSliceIssued &= ~(1 << failingCommand);
+        ChannelExtension->SlotManager.NormalQueueSliceIssued &= ~(1 << failingCommand);
+        ChannelExtension->SlotManager.SingleIoSliceIssued &= ~(1 << failingCommand);
         ChannelExtension->SlotManager.HighPriorityAttribute &= ~(1 << failingCommand);
         ChannelExtension->SlotManager.CommandsToComplete |= (1 << failingCommand);
 
@@ -1480,6 +1487,9 @@ Affected Variables/Registers:
     //2.2 Restore the unsent programmed commands for careful reprocessing
     ChannelExtension->SlotManager.NormalQueueSlice |= ci;   //put the commands that didn't get a chance to finish back into the normal queue
     ChannelExtension->SlotManager.CommandsIssued &= ~ci;    //Remove the unfinished commands from the 'issued' list
+    ChannelExtension->SlotManager.NCQueueSliceIssued &= ~ci;
+    ChannelExtension->SlotManager.NormalQueueSliceIssued &= ~ci;
+    ChannelExtension->SlotManager.SingleIoSliceIssued &= ~ci;
 
     //2.3 If there were commands that are ready to complete, complete them
     if (ChannelExtension->SlotManager.CommandsToComplete) {
@@ -1517,8 +1527,8 @@ NcqErrorRecoveryCompletion (
 */
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONG               issuedCommands = (ULONG)srbExtension->CompletionContext;
-    STOR_LOCK_HANDLE    lockhandle = { 0 };
+    ULONG               issuedCommands = (ULONG)(ULONG_PTR)srbExtension->CompletionContext;
+    STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
     BOOLEAN             fallBacktoReset = FALSE;
 
     RecordExecutionHistory(ChannelExtension, 0x0000001b);   //Enter NcqErrorRecoveryCompletion
@@ -1633,6 +1643,15 @@ NcqErrorRecoveryCompletion (
             RecordExecutionHistory(ChannelExtension, 0x1002001b);   //NcqErrorRecoveryCompletion, NCQ Tag doesn't belong to issued commands.
         }
 
+    } else if ((Srb->SrbStatus == SRB_STATUS_BUSY) &&
+               (srbExtension->QueueTag == 0xFF)) {
+        //
+        // Read NCQ Error Log cannot be issued, as all slots are occupied.
+        //
+        fallBacktoReset = TRUE;
+
+        RecordExecutionHistory(ChannelExtension, 0x1004001b);   //NcqErrorRecoveryCompletion, Read NCQ Error Log cannot be issued, as all slots are occupied..
+
     } else {
         //
         // Read NCQ Error Log failed. Completes all NCQ commands back to upper layer.
@@ -1654,6 +1673,7 @@ NcqErrorRecoveryCompletion (
         //
         ChannelExtension->SlotManager.NCQueueSlice &= ~issuedCommands;
         ChannelExtension->SlotManager.CommandsIssued |= issuedCommands;
+        ChannelExtension->SlotManager.NCQueueSliceIssued |= issuedCommands;
         AhciPortReset(ChannelExtension, FALSE);
 
         AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
@@ -1753,7 +1773,7 @@ Called by:
         //
         // COMRESET is issued, bail out the function.
         //
-        RecordExecutionHistory(ChannelExtension, 0x10160014);       //AhciNcqErrorRecovery, RESET is bing issued.
+        RecordExecutionHistory(ChannelExtension, 0x10160014);       //AhciNcqErrorRecovery, RESET is being issued.
         AhciPortReset(ChannelExtension, FALSE);
         return;
     }
@@ -1766,7 +1786,7 @@ Called by:
         //
         // COMRESET is issued, bail out the function.
         //
-        RecordExecutionHistory(ChannelExtension, 0x10170014);       //AhciNcqErrorRecovery, RESET is bing issued because Local Srb is in use.
+        RecordExecutionHistory(ChannelExtension, 0x10170014);       //AhciNcqErrorRecovery, RESET is being issued because slot 0 is in use.
         AhciPortReset(ChannelExtension, FALSE);
         return;
     }
@@ -1775,7 +1795,22 @@ Called by:
                        ChannelExtension->PortNumber, ChannelExtension->SlotManager.CommandsIssued);
 
     //
+    // Only one NCQ Error Recovery should be happening at a time.
+    // If we get another error before we finished processing the previous one
+    // then this is likely a device issue so do reset.
+    //
+    NT_ASSERT(ChannelExtension->StateFlags.NcqErrorRecoveryInProcess == 0);
+    if (ChannelExtension->StateFlags.NcqErrorRecoveryInProcess) {
+        RecordExecutionHistory(ChannelExtension, 0x10170015);       //AhciNcqErrorRecovery, RESET is being issued because NCQ error recovery is already in progress.
+        AhciPortReset(ChannelExtension, FALSE);
+        return;
+    }    
+
+    //
     // Set the state flag indicating it's in NCQ Error Recovery process.
+    // This doesn't get cleared until NcqErrorRecoverCompletion is called,
+    // which happens after the local Sense.Srb is removed from the completion
+    // queue. (It also gets cleared on a port reset.)
     //
     ChannelExtension->StateFlags.NcqErrorRecoveryInProcess = 1;
 
@@ -1805,6 +1840,7 @@ Called by:
     //
     ChannelExtension->SlotManager.NCQueueSlice |= ChannelExtension->SlotManager.CommandsIssued;
     ChannelExtension->SlotManager.CommandsIssued = 0;
+    ChannelExtension->SlotManager.NCQueueSliceIssued = 0;
 
     IssueReadLogExtCommand( ChannelExtension,
                             (PSTORAGE_REQUEST_BLOCK)&ChannelExtension->Sense.Srb,
@@ -1964,25 +2000,31 @@ Return Values:
   //3.1 Complete all issued commands
     ChannelExtension->SlotManager.CommandsToComplete = ChannelExtension->SlotManager.CommandsIssued;
     ChannelExtension->SlotManager.CommandsIssued = 0;
+    ChannelExtension->SlotManager.NCQueueSliceIssued = 0;
+    ChannelExtension->SlotManager.NormalQueueSliceIssued = 0;
+    ChannelExtension->SlotManager.SingleIoSliceIssued = 0;
     ChannelExtension->SlotManager.HighPriorityAttribute &= ~ChannelExtension->SlotManager.CommandsToComplete;
 
     commandsToCompleteCount = NumberOfSetBits(ChannelExtension->SlotManager.CommandsToComplete);
 
     if (commandsToCompleteCount > 0) {
-        UCHAR completeStatus;
+        UCHAR completeStatus = SRB_STATUS_BUS_RESET;
 
-        //
-        // Slot 0 is reserved for miniport internal request.
-        // It's preferred to return SRB_STATUS_BUS_RESET to internal request to make it aware of reset happened.
-        //
-        if ((commandsToCompleteCount == 1) && ((ChannelExtension->SlotManager.CommandsToComplete & 0x00000001) == 0)) {
-            // we know the error is for this command as it's the only one programmed to adapter,
-            // set status to be SRB_STATUS_ERROR to make sure the function - AtaMapError() assigns the real error to Srb
-            completeStatus = SRB_STATUS_ERROR;
-        } else {
-            // more than one command were programmed, we don't know which one triggered the error.
-            // set status to be SRB_STATUS_BUS_RESET to reflect the action StorAHCI is doing.
-            completeStatus = SRB_STATUS_BUS_RESET;
+        if (commandsToCompleteCount == 1) {
+            ULONG   i;
+
+            for (i = 0; i <= ChannelExtension->AdapterExtension->CAP.NCS; i++) {
+                if (((ChannelExtension->SlotManager.CommandsToComplete & (1 << i)) != 0) &&
+                    (ChannelExtension->Slot[i].Srb != NULL) &&
+                    (!IsMiniportInternalSrb(ChannelExtension, ChannelExtension->Slot[i].Srb))) {
+                    //
+                    // we know the error is for this command as it's the only one programmed to adapter,
+                    // set status to be SRB_STATUS_ERROR for external Srb to make sure the function - AtaMapError() assigns the real error to Srb
+                    // It's preferred to return SRB_STATUS_BUS_RESET to internal request to make it aware of reset happened.
+                    //
+                    completeStatus = SRB_STATUS_ERROR;
+                }
+            }
         }
 
         AhciCompleteIssuedSRBs(ChannelExtension, completeStatus, TRUE); //AhciPortReset is under Interrupt spinlock

@@ -2764,8 +2764,8 @@ Routine Description:
     IRP_MJ_SET_INFORMATION in this miniFilter.
 
     The pre-setinfo callback is important because setting
-    FileDispositionInformation is another way of putting the file in a
-    delete-pending state.
+    FileDispositionInformation/FileDispositionInformationEx is another way of
+    putting the file in a delete-pending state.
 
     Since the delete disposition is a reversible condition, we have to
     make sure to do the right thing when multiple operations are racing:
@@ -2790,8 +2790,8 @@ Return Value:
     FLT_PREOP_SYNCHRONIZE - we never do any sort of asynchronous processing
         here, and we synchronize postop.
 
-    FLT_PREOP_SUCCESS_NO_CALLBACK - if not FileDispositionInformation or we
-        can't set a streamcontext.
+    FLT_PREOP_SUCCESS_NO_CALLBACK - if not FileDispositionInformation/FileDispositionInformationEx
+        or we can't set a streamcontext.
 
 --*/
 {
@@ -2806,6 +2806,7 @@ Return Value:
     switch (Data->Iopb->Parameters.SetFileInformation.FileInformationClass) {
 
         case FileDispositionInformation:
+        case FileDispositionInformationEx:
 
             //
             //  We're interested when the file delete disposition changes.
@@ -2912,16 +2913,16 @@ Return Value:
 
     PAGED_CODE();
 
-    // assert on FileDispositionInformation
-    ASSERT( Data->Iopb->Parameters.SetFileInformation.FileInformationClass
-            == FileDispositionInformation );
+    // assert on FileDispositionInformation/FileDispositionInformationEx
+    ASSERT( (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformation) ||
+            (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformationEx) );
 
     // pass from pre-callback to post-callback
     ASSERT( NULL != CompletionContext );
     streamContext = (PDF_STREAM_CONTEXT) CompletionContext;
 
     //
-    //  Reaching a postop for FileDispositionInformation means we
+    //  Reaching a postop for FileDispositionInformation/FileDispositionInformationEx means we
     //  MUST have a stream context passed in the CompletionContext.
     //
 
@@ -2934,9 +2935,38 @@ Return Value:
         //  file is a delete candidate, so it will be checked at post-
         //  -cleanup regardless of the value of SetDisp.
         //
+
+        //
+        //  Using FileDispositinInformationEx -
+        //    FILE_DISPOSITION_ON_CLOSE controls delete on close
+        //    or set disposition behavior. It uses FILE_DISPOSITION_INFORMATION_EX structure.
+        //    FILE_DISPOSITION_ON_CLOSE is set - Set or clear DeleteOnClose
+        //    depending on FILE_DISPOSITION_DELETE flag.
+        //    FILE_DISPOSITION_ON_CLOSE is NOT set - Set or clear disposition information
+        //    depending on the flag FILE_DISPOSITION_DELETE.
+        //
+        //
+        //   Using FileDispositionInformation -
+        //    Controls only set disposition information behavior. It uses FILE_DISPOSITION_INFORMATION structure.
+        //
         
-        streamContext->SetDisp = ((PFILE_DISPOSITION_INFORMATION)
-                                  Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->DeleteFile;
+        if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformationEx) {
+
+            ULONG Flags = ((PFILE_DISPOSITION_INFORMATION_EX) Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->Flags;
+
+            if (FlagOn( Flags, FILE_DISPOSITION_ON_CLOSE )) {
+
+                streamContext->DeleteOnClose = BooleanFlagOn( Flags, FILE_DISPOSITION_DELETE );
+                
+            } else {
+
+                streamContext->SetDisp = BooleanFlagOn( Flags, FILE_DISPOSITION_DELETE );
+            }
+            
+        } else {
+
+            streamContext->SetDisp = ((PFILE_DISPOSITION_INFORMATION) Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->DeleteFile;
+        }
     }
 
     //
@@ -3112,6 +3142,7 @@ Return Value:
         //
         //  3. DeleteOnClose. If the file was ever opened with
         //  FILE_DELETE_ON_CLOSE, we must check to see if it was deleted.
+        //  FileDispositionInformationEx allows the this flag to be unset.
         //
         //  Also, if a deletion of this stream was already notified, there is no
         //  point notifying it again.

@@ -71,14 +71,14 @@ CreateMiniportTopologySYSVAD
 //
 static struct
 {
-    KSAUDIO_PACKETSIZE_CONSTRAINTS TransportPacketConstraints;
+    KSAUDIO_PACKETSIZE_CONSTRAINTS2 TransportPacketConstraints;
     KSAUDIO_PACKETSIZE_PROCESSINGMODE_CONSTRAINT AdditionalProcessingConstraints[1];
 } SysvadWaveRtPacketSizeConstraintsRender =
 {
     {
-        1 * HNSTIME_PER_MILLISECOND,                // 1 ms minimum processing interval
-        FILE_256_BYTE_ALIGNMENT,                    // 256 byte packet size alignment
-        0,                                          // reserved
+        2 * HNSTIME_PER_MILLISECOND,                // 2 ms minimum processing interval
+        FILE_BYTE_ALIGNMENT,                        // 1 byte packet size alignment
+        0,                                          // no maximum packet size constraint
         2,                                          // 2 processing constraints follow
         {
             STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,          // constraint for default processing mode
@@ -98,7 +98,7 @@ static struct
 const SYSVAD_DEVPROPERTY SysvadWaveFilterInterfacePropertiesRender[] =
 {
     {
-        &DEVPKEY_KsAudio_PacketSize_Constraints,            // Key
+        &DEVPKEY_KsAudio_PacketSize_Constraints2,           // Key
         DEVPROP_TYPE_BINARY,                                // Type
         sizeof(SysvadWaveRtPacketSizeConstraintsRender),    // BufferSize
         &SysvadWaveRtPacketSizeConstraintsRender,           // Buffer
@@ -107,13 +107,13 @@ const SYSVAD_DEVPROPERTY SysvadWaveFilterInterfacePropertiesRender[] =
 
 static struct
 {
-    KSAUDIO_PACKETSIZE_CONSTRAINTS TransportPacketConstraints;
+    KSAUDIO_PACKETSIZE_CONSTRAINTS2 TransportPacketConstraints;
 } SysvadWaveRtPacketSizeConstraintsCapture =
 {
     {
-        0,                                                      // no minimum processing interval
-        FILE_128_BYTE_ALIGNMENT,                                // 128 byte packet size alignment
-        0,                                                      // reserved
+        2 * HNSTIME_PER_MILLISECOND,                            // 2 ms minimum processing interval
+        FILE_BYTE_ALIGNMENT,                                    // 1 byte packet size alignment
+        0x100000,                                               // 1 MB maximum packet size
         1,                                                      // 1 processing constraint follows
         {
             STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,   // constraint for communications processing mode
@@ -126,7 +126,7 @@ static struct
 const SYSVAD_DEVPROPERTY SysvadWaveFilterInterfacePropertiesCapture[] =
 {
     {
-        &DEVPKEY_KsAudio_PacketSize_Constraints,            // Key
+        &DEVPKEY_KsAudio_PacketSize_Constraints2,           // Key
         DEVPROP_TYPE_BINARY,                                // Type
         sizeof(SysvadWaveRtPacketSizeConstraintsCapture),   // BufferSize
         &SysvadWaveRtPacketSizeConstraintsCapture,          // Buffer

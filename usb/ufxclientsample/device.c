@@ -536,7 +536,7 @@ Arguments:
 
 #pragma prefast(suppress:6014, "Memory allocation is expected")
     HardwareFailureContext = ExAllocatePoolWithTag(
-                                 NonPagedPool,
+                                 NonPagedPoolNx,
                                  sizeof(HARDWARE_FAILURE_CONTEXT),
                                  UFX_CLIENT_TAG);
 

@@ -392,7 +392,7 @@ Return value:
     //       
     #pragma warning(suppress:28160)
     status = WdfMemoryCreate(&objectAttributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0, // PoolTag
                              memorySize,
                              &memory, 
@@ -733,7 +733,7 @@ Return value:
     WDF_OBJECT_ATTRIBUTES_INIT(&objectAttributes);
     objectAttributes.ParentObject = Device; // auto-delete when parent deleted
     status = WdfMemoryCreate(&objectAttributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0, // PoolTag
                              powerIrpPreprocessInfoSize,
                              &memory, 
@@ -977,7 +977,7 @@ PfhInitializePowerFrameworkSettings(
     WDF_OBJECT_ATTRIBUTES_INIT(&objectAttributes);
     objectAttributes.ParentObject = Device; // auto-delete when parent deleted
     status = WdfMemoryCreate(&objectAttributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0, // PoolTag
                              pofxDeviceInfoSize,
                              &memory, 
@@ -1065,7 +1065,7 @@ PfhInitializePowerFrameworkSettings(
         WDF_OBJECT_ATTRIBUTES_INIT(&objectAttributes);
         objectAttributes.ParentObject = Device;//auto-delete when parent deleted
         status = WdfMemoryCreate(&objectAttributes,
-                                 NonPagedPool,
+                                 NonPagedPoolNx,
                                  0, // PoolTag
                                  idleStatesSize,
                                  &memory,
@@ -1121,7 +1121,7 @@ PfhInitializePowerFrameworkSettings(
     WDF_OBJECT_ATTRIBUTES_INIT(&objectAttributes);
     objectAttributes.ParentObject = Device; // auto-delete when parent deleted
     status = WdfMemoryCreate(&objectAttributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0, // PoolTag
                              componentInfoSize,
                              &memory, 

@@ -482,6 +482,7 @@ Return Value:
 
             IrpContext->FatIoContext->Wait.Async.FileObject = FileObject;
         }
+        
     }
 
     //
@@ -863,7 +864,7 @@ Return Value:
             FatNormalizeAndRaiseStatus( IrpContext, Status );
         }
 
-        DebugTrace(-1, Dbg, "CommonRead -> %08lx\n", Status );
+        DebugTrace(-1, Dbg, "CommonWrite -> %08lx\n", Status );
 
         FatCompleteRequest( IrpContext, Irp, Status );
         return Status;
@@ -2065,6 +2066,8 @@ Return Value:
                 
                 ValidDataToCheck = ValidDataLength;
             }
+
+
 
             //
             // HANDLE THE NON-CACHED CASE
@@ -2803,8 +2806,9 @@ Return Value:
                             CcSetFileSizes( FileObject, (PCC_FILE_SIZES)&FcbOrDcb->Header.AllocationSize );
                         }
                     }
+                    
                 }
-
+                
                 //
                 //  Note that we have to unpin repinned Bcbs here after the above
                 //  work, but if we are going to post the request, we must do this

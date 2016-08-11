@@ -1251,7 +1251,8 @@ Return Value:
             BOOLEAN FoundValidLfn;
 
             UpcasedLfnValid = FALSE;
-            
+
+
             //
             //  Try to read in the dirent
             //
@@ -2158,102 +2159,6 @@ Return Value:
     return IsDirectoryEmpty;
 }
 
-_Requires_lock_held_(_Global_critical_region_)
-VOID
-FatDeleteFile (
-    IN PIRP_CONTEXT IrpContext,
-    IN PDCB TargetDcb,
-    IN ULONG LfnOffset,
-    IN ULONG DirentOffset,
-    IN PDIRENT Dirent,
-    IN PUNICODE_STRING Lfn
-    )
-{
-    PFCB Fcb;
-    PLIST_ENTRY Links;
-
-    PAGED_CODE();
-
-    //
-    //  We can do the replace by removing the other Fcb(s) from
-    //  the prefix table.
-    //
-
-    for (Links = TargetDcb->Specific.Dcb.ParentDcbQueue.Flink;
-         Links != &TargetDcb->Specific.Dcb.ParentDcbQueue;
-         Links = Links->Flink) {
-
-        Fcb = CONTAINING_RECORD( Links, FCB, ParentDcbLinks );
-
-        if (FlagOn(Fcb->FcbState, FCB_STATE_NAMES_IN_SPLAY_TREE) &&
-            (Fcb->DirentOffsetWithinDirectory == DirentOffset)) {
-
-            NT_ASSERT( NodeType(Fcb) == FAT_NTC_FCB );
-            NT_ASSERT( Fcb->LfnOffsetWithinDirectory == LfnOffset );
-
-            if ( Fcb->UncleanCount != 0 ) {
-                
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
-                FatBugCheck(0,0,0);
-
-            } else {
-
-                PERESOURCE Resource;
-
-                //
-                //  Make this fcb "appear" deleted, synchronizing with
-                //  paging IO.
-                //
-
-                FatRemoveNames( IrpContext, Fcb );
-
-                Resource = Fcb->Header.PagingIoResource;
-
-                (VOID)ExAcquireResourceExclusiveLite( Resource, TRUE );
-
-                SetFlag(Fcb->FcbState, FCB_STATE_DELETE_ON_CLOSE);
-
-                Fcb->ValidDataToDisk = 0;
-                Fcb->Header.FileSize.QuadPart =
-                Fcb->Header.ValidDataLength.QuadPart = 0;
-
-                Fcb->FirstClusterOfFile = 0;
-
-                ExReleaseResourceLite( Resource );
-            }
-        }
-    }
-
-    //
-    //  The file is not currently opened so we can delete the file
-    //  that is being overwritten.  To do the operation we dummy
-    //  up an fcb, truncate allocation, delete the fcb, and delete
-    //  the dirent.
-    //
-
-    Fcb = FatCreateFcb( IrpContext,
-                        TargetDcb->Vcb,
-                        TargetDcb,
-                        LfnOffset,
-                        DirentOffset,
-                        Dirent,
-                        Lfn,
-                        FALSE,
-                        FALSE );
-
-    Fcb->Header.FileSize.LowPart = 0;
-
-    try {
-
-        FatTruncateFileAllocation( IrpContext, Fcb, 0, TRUE );
-
-        FatDeleteDirent( IrpContext, Fcb, NULL, TRUE );
-
-    } finally {
-
-        FatDeleteFcb( IrpContext, &Fcb );
-    }
-}
 
 
 
@@ -2266,7 +2171,7 @@ FatConstructDirent (
     IN BOOLEAN ComponentReallyLowercase,
     IN BOOLEAN ExtensionReallyLowercase,
     IN PUNICODE_STRING Lfn OPTIONAL,
-    IN UCHAR Attributes,
+    IN USHORT Attributes,
     IN BOOLEAN ZeroAndSetTimeFields,
     IN PLARGE_INTEGER SetCreationTime OPTIONAL
     )
@@ -2394,7 +2299,7 @@ Return Value:
     //  Copy the attributes
     //
 
-    Dirent->Attributes = Attributes;
+    Dirent->Attributes = (UCHAR)Attributes;
 
     //
     //  Set the magic bit here, to tell dirctrl.c that this name is really

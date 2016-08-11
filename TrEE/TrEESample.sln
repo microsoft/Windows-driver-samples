@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Miniport", "Miniport", "{E3F88200-7D31-4C70-97A6-83885195E581}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OSService", "OSService", "{EF1FA66C-82A9-4572-ACC7-76DEBA085FF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{420587AA-51DE-4966-B692-C428836BF8B2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrEEMiniportSample", "Miniport\TrEEMiniportSample.vcxproj", "{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrEEOSServiceSample", "OSService\TrEEOSServiceSample.vcxproj", "{7661C397-614D-4562-9CC7-6178B246DB17}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrEESampleTest", "Test\TrEESampleTest.vcxproj", "{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+		Debug|Arm = Debug|Arm
+		Release|Arm = Release|Arm
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Win32.Build.0 = Debug|Win32
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Win32.ActiveCfg = Release|Win32
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Win32.Build.0 = Release|Win32
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|x64.ActiveCfg = Debug|x64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|x64.Build.0 = Debug|x64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|x64.ActiveCfg = Release|x64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|x64.Build.0 = Release|x64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Arm.ActiveCfg = Debug|Arm
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Arm.Build.0 = Debug|Arm
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Arm.ActiveCfg = Release|Arm
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Arm.Build.0 = Release|Arm
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|Win32.Build.0 = Debug|Win32
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|Win32.ActiveCfg = Release|Win32
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|Win32.Build.0 = Release|Win32
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|x64.ActiveCfg = Debug|x64
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|x64.Build.0 = Debug|x64
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|x64.ActiveCfg = Release|x64
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|x64.Build.0 = Release|x64
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|Arm.ActiveCfg = Debug|Arm
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Debug|Arm.Build.0 = Debug|Arm
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|Arm.ActiveCfg = Release|Arm
+		{7661C397-614D-4562-9CC7-6178B246DB17}.Release|Arm.Build.0 = Release|Arm
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|Win32.Build.0 = Debug|Win32
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|Win32.ActiveCfg = Release|Win32
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|Win32.Build.0 = Release|Win32
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|x64.ActiveCfg = Debug|x64
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|x64.Build.0 = Debug|x64
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|x64.ActiveCfg = Release|x64
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|x64.Build.0 = Release|x64
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|Arm.ActiveCfg = Debug|Arm
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Debug|Arm.Build.0 = Debug|Arm
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|Arm.ActiveCfg = Release|Arm
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF}.Release|Arm.Build.0 = Release|Arm
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C} = {E3F88200-7D31-4C70-97A6-83885195E581}
+		{7661C397-614D-4562-9CC7-6178B246DB17} = {EF1FA66C-82A9-4572-ACC7-76DEBA085FF2}
+		{DDA508B0-8C40-47C1-BC1C-AD6717E895EF} = {420587AA-51DE-4966-B692-C428836BF8B2}
+	EndGlobalSection
+EndGlobal

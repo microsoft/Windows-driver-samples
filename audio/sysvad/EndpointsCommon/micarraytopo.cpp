@@ -19,6 +19,14 @@ Abstract:
 #include "micarraytopo.h"
 #include "micarray1toptable.h"
 
+constexpr float MICARRAY_SENSITIVITY = -46.5f;
+constexpr float MICARRAY_SNR = 66.0f;
+
+constexpr inline LONG FloatToFixedPoint16_16(float fl)
+{
+    return (static_cast<LONG>((fl)* (65536.0f)));
+}
+
 #pragma code_seg("PAGE")
 
 //=============================================================================
@@ -498,6 +506,96 @@ Return Value:
 
 //=============================================================================
 NTSTATUS
+CMicArrayMiniportTopology::PropertyHandlerMicProperties
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+/*++
+
+Routine Description:
+
+Handles ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_MIC_SENSITIVITY )
+Handles ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_MIC_SNR )
+
+Arguments:
+
+PropertyRequest -
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandlerMicProperties]"));
+
+    NTSTATUS    ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    ULONG       nPinId = (ULONG)-1;
+
+    if (PropertyRequest->InstanceSize >= sizeof(ULONG))
+    {
+        nPinId = *(PULONG(PropertyRequest->Instance));
+
+        if (nPinId == KSPIN_TOPO_MIC_ELEMENTS)
+        {
+            if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+            {
+                ntStatus =
+                    PropertyHandler_BasicSupport
+                    (
+                    PropertyRequest,
+                    KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_GET,
+                    VT_ILLEGAL
+                    );
+            }
+            else
+            {
+                ntStatus =
+                    ValidatePropertyParams
+                    (
+                        PropertyRequest,
+                        sizeof(LONG),
+                        0
+                    );
+
+                if (NT_SUCCESS(ntStatus))
+                {
+                    if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                    {
+                        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY)
+                        {
+                            LONG* micSensitivity = (LONG*)PropertyRequest->Value;
+                            // Return microphone sensitivity information.
+                            *micSensitivity = FloatToFixedPoint16_16(MICARRAY_SENSITIVITY); // convert float dBFS to fixed point arithmetic
+                            PropertyRequest->ValueSize = sizeof(LONG);
+                            ntStatus = STATUS_SUCCESS;
+                        }
+                        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
+                        {
+                            LONG* micSNR = (LONG*)PropertyRequest->Value;
+                            // Return microphone SNR information.
+                            *micSNR = FloatToFixedPoint16_16(MICARRAY_SNR); // convert float dB to fixed point arithmetic
+                            ntStatus = STATUS_SUCCESS;
+                        }
+                    }
+                    else
+                    {
+                        ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+                    }
+                }
+            }
+        }
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+NTSTATUS
 CMicArrayMiniportTopology::PropertyHandlerJackDescription
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest 
@@ -730,6 +828,14 @@ Return Value:
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_ARRAY_GEOMETRY)
         {
             ntStatus = pMiniport->PropertyHandlerMicArrayGeometry(PropertyRequest);
+        }
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY)
+        {
+            ntStatus = pMiniport->PropertyHandlerMicProperties(PropertyRequest);
+        }
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
+        {
+            ntStatus = pMiniport->PropertyHandlerMicProperties(PropertyRequest);
         }
     }
     else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Jack))

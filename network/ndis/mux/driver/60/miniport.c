@@ -2543,7 +2543,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     while (TRUE)
                     {
                         pVa = NULL;
-                        NdisQueryMdl(Mdl, &pVa, &BufferLength, NormalPagePriority);
+                        NdisQueryMdl(Mdl, &pVa, &BufferLength, NormalPagePriority | MdlMappingNoExecute);
 
                         if (pVa == NULL)
                         {
@@ -2853,7 +2853,7 @@ Return Value:
             NdisQueryMdl(NET_BUFFER_CURRENT_MDL(CurrentMdlAllocatedNetBuffer), 
                          &pVa, 
                          &BufferLength, 
-                         NormalPagePriority);
+                         NormalPagePriority | MdlMappingNoExecute);
             if( pVa == NULL ){
                 //you may do something
             }

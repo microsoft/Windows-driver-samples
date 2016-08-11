@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{5AEF704A-4799-414D-BC85-F523B601FF9D}</UniqueIdentifier>
+      <UniqueIdentifier>{77F46A21-812D-47F4-8CDA-8667B9516A0D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{8688F2E4-3E07-4E21-947E-9A0917D3799F}</UniqueIdentifier>
+      <UniqueIdentifier>{DB601389-B92E-40DF-919C-4DB72E7E890A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{D979FABA-F85A-4E60-8402-9E1603B7F223}</UniqueIdentifier>
+      <UniqueIdentifier>{9043E19F-FA3C-4876-B616-FE80F6FFFA40}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{91E1B29C-05DE-4125-9FB5-C19173D157DD}</UniqueIdentifier>
+      <UniqueIdentifier>{AA6801CD-B2C4-47AD-8ADE-357A97AE98EB}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,9 +30,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include=".\wdffeatured.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
     <MofComp Include="toaster.mof">
       <Filter>Driver Files</Filter>
     </MofComp>

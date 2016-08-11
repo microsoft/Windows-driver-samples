@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\kmdf_driver\osrusbfx2.vcxproj">
-      <Project>{6ABDB82A-B2BA-4EE3-A4CC-C0B00B7B5220}</Project>
+      <Project>{837F98CF-D3A4-472C-BACC-47950340E57B}</Project>
     </ProjectReference>
     <ProjectReference Include="..\umdf_filter\WUDFOsrUsbFilter.vcxproj">
-      <Project>{BE14DB05-36A7-4ECE-88E1-FB8157CA568E}</Project>
+      <Project>{ADCCB27A-E522-4367-86B9-9C9DF2636B93}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -35,8 +35,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2BA68E64-0EBB-409C-937F-FDAC3FB7A39D}</ProjectGuid>
-    <SampleGuid>{9515D06E-6666-40E0-BC9B-4D353B06AF3B}</SampleGuid>
+    <ProjectGuid>{10E372EF-AE85-4528-919C-A261253EDDAE}</ProjectGuid>
+    <SampleGuid>{4535F3DF-5A13-4953-9565-74B05B8FA4C6}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

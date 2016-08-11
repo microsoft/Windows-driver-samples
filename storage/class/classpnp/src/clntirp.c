@@ -31,8 +31,7 @@ Revision History:
 
 VOID
 ClasspStartIdleTimer(
-    IN PCLASS_PRIVATE_FDO_DATA FdoData,
-    IN ULONGLONG IdleInterval
+    IN PCLASS_PRIVATE_FDO_DATA FdoData
     );
 
 VOID
@@ -47,6 +46,7 @@ ClasspServiceIdleRequest(
     PFUNCTIONAL_DEVICE_EXTENSION FdoExtension,
     BOOLEAN PostToDpc
     );
+
 
 PIRP
 ClasspDequeueIdleRequest(
@@ -165,7 +165,6 @@ Routine Description:
 Arguments:
 
     FdoExtension    - Pointer to the device extension
-    IdleInterval    - Timer interval
 
 Return Value:
 
@@ -207,7 +206,7 @@ ClasspInitializeIdleTimer(
                             CLASSP_REG_IDLE_INTERVAL_NAME,
                             &idleInterval);
 
-    if ((idleInterval < CLASS_IDLE_TIMER_TICKS) || (idleInterval > USHORT_MAX)) {
+    if ((idleInterval < CLASS_IDLE_INTERVAL_MIN) || (idleInterval > USHORT_MAX)) {
         //
         // If the interval is too low or too high, reset it to the default value.
         //
@@ -220,18 +219,8 @@ ClasspInitializeIdleTimer(
     KeInitializeDpc(&fdoData->IdleDpc, ClasspIdleTimerDpc, FdoExtension);
     InitializeListHead(&fdoData->IdleIrpList);
     fdoData->IdleTimerStarted = FALSE;
-    fdoData->IdleTimerInterval = (USHORT) (idleInterval / CLASS_IDLE_TIMER_TICKS);
-    fdoData->StarvationCount = CLASS_STARVATION_INTERVAL / fdoData->IdleTimerInterval;
-
-    //
-    // Due to the coarseness of the idle timer frequency, some variability in
-    // the idle interval will be tolerated such that it is the desired idle
-    // interval on average.
-    fdoData->IdleInterval =
-        (USHORT)(idleInterval - (fdoData->IdleTimerInterval / 2));
-
-    fdoData->IdleTimerTicks = 0;
-    fdoData->IdleTicks = 0;
+    fdoData->StarvationDuration = CLASS_STARVATION_INTERVAL;
+    fdoData->IdleInterval = (USHORT)(idleInterval);
     fdoData->IdleIoCount = 0;
     fdoData->ActiveIoCount = 0;
     fdoData->ActiveIdleIoCount = 0;
@@ -263,8 +252,6 @@ Arguments:
 
     FdoData - Pointer to the private fdo data
 
-    IdleInterval - Amount of time since the completion of the last non-idle request
-
 Return Value:
 
     None
@@ -272,8 +259,7 @@ Return Value:
 --*/
 VOID
 ClasspStartIdleTimer(
-    IN PCLASS_PRIVATE_FDO_DATA FdoData,
-    IN ULONGLONG IdleInterval
+    IN PCLASS_PRIVATE_FDO_DATA FdoData
     )
 {
     LARGE_INTEGER dueTime;
@@ -287,15 +273,9 @@ ClasspStartIdleTimer(
     if (!timerStarted) {
 
         //
-        // Reset the anti-starvation timer tick counter and set the idle tick
-        // counter according to the actual amount of idle time. The latter is
-        // important to do to ensure that if the idle queue drains and the timer
-        // has to be stopped and started on the arrival of the next idle request,
-        // those requests don't get delayed unnecessarily due to IdleTicks not
-        // reflecting actual idle time.
+        // Reset the anti-starvation start time.
         //
-        FdoData->IdleTimerTicks = 0;
-        FdoData->IdleTicks = (ULONG)(IdleInterval / FdoData->IdleTimerInterval);
+        FdoData->AntiStarvationStartTime = ClasspGetCurrentTime();
 
         //
         // convert milliseconds to a relative 100ns
@@ -305,11 +285,11 @@ ClasspStartIdleTimer(
         //
         // multiply the period
         //
-        dueTime.QuadPart = Int32x32To64(FdoData->IdleTimerInterval, mstotimer);
+        dueTime.QuadPart = Int32x32To64(FdoData->IdleInterval, mstotimer);
 
         KeSetTimerEx(&FdoData->IdleTimer,
                      dueTime,
-                     FdoData->IdleTimerInterval,
+                     FdoData->IdleInterval,
                      &FdoData->IdleDpc);
     }
     return;
@@ -369,36 +349,27 @@ Return Value:
 --*/
 ULONGLONG
 ClasspGetIdleTime (
-    IN PCLASS_PRIVATE_FDO_DATA FdoData
+    IN PCLASS_PRIVATE_FDO_DATA FdoData,
+    IN LARGE_INTEGER CurrentTime
     )
 {
     ULONGLONG idleTime;
-    LARGE_INTEGER currentTime;
     NTSTATUS status;
-
-    //
-    // If there are any outstanding non-idle requests, then there has been no
-    // idle time.
-    //
-    if (FdoData->ActiveIoCount > 0) {
-        return 0;
-    }
 
     //
     // Get the time difference between current time and last I/O
     // complete time.
     //
-    currentTime = ClasspGetCurrentTime(NULL);
 
-    status = RtlULongLongSub((ULONGLONG)currentTime.QuadPart,
-                             (ULONGLONG)FdoData->LastIoTime.QuadPart,
+    status = RtlULongLongSub((ULONGLONG)CurrentTime.QuadPart,
+                             (ULONGLONG)FdoData->LastNonIdleIoTime.QuadPart,
                              &idleTime);
 
     if (NT_SUCCESS(status)) {
         //
         // Convert the time to milliseconds.
         //
-        idleTime = ClasspTimeDiffToMs(FdoData, idleTime);
+        idleTime = ClasspTimeDiffToMs(idleTime);
     } else {
         //
         // Failed to get time difference, assume enough time passed.
@@ -411,58 +382,57 @@ ClasspGetIdleTime (
 
 /*++
 
-ClasspIdleTicksSufficient
+ClasspIdleDurationSufficient
 
 Routine Description:
 
-    This routine whether enough idle ticks have occurred since the completion of
-    the last non-idle request.
+    This routine computes whether enough idle duration has elapsed since the
+    completion of the last non-idle request.
 
 Arguments:
 
     FdoData - Pointer to the private fdo data
 
+    CurrentTimeIn - If CurrentTimeIn is non-NULL
+        - contents are set to NULL if the time is not updated.
+        - time is updated otherwise
+
 Return Value:
 
-    TRUE if sufficient idle ticks have expired to issue the next idle request.
+    TRUE if sufficient idle duration has elapsed to issue the next idle request.
 
 --*/
 LOGICAL
-ClasspIdleTicksSufficient (
-    IN PCLASS_PRIVATE_FDO_DATA FdoData
+ClasspIdleDurationSufficient (
+    IN PCLASS_PRIVATE_FDO_DATA FdoData,
+    OUT LARGE_INTEGER** CurrentTimeIn
     )
 {
     ULONGLONG idleInterval;
+    LARGE_INTEGER CurrentTime;
 
     //
-    // If it has been more than enough idle timer ticks since the completion of
-    // the last non-idle request, enough idle time has passed.
+    // If there are any outstanding non-idle requests, then there has been no
+    // idle time.
     //
-
-    if (FdoData->IdleTicks > CLASS_IDLE_TIMER_TICKS) {
-        return TRUE;
-    }
-
-    //
-    // If there have not been enough timer ticks, then there has not been
-    // enough idle time.
-    //
-    if (FdoData->IdleTicks < CLASS_IDLE_TIMER_TICKS) {
+    if (FdoData->ActiveIoCount > 0) {
+        if (CurrentTimeIn != NULL) {
+            *CurrentTimeIn = NULL;
+        }
         return FALSE;
     }
 
     //
-    // IdleTicks can reach CLASS_IDLE_TIMER_TICKS before FdoData->IdleInterval
-    // worth of time elapses from the completion of the last non-idle request.
-    // This can happen because when the idle timer is running, the last non-idle
-    // request can complete at any time in the middle of the timer period (half
-    // on average) so on the next timer expiration, IdleTicks will transition
-    // 0->1 without its full time having passed since the completion of the last
-    // non-idle request. So when IdleTicks is exactly CLASS_IDLE_TIMER_TICKS,
-    // explicitly check whether an idle request should be issued now or on the
-    // next timer expiration.
+    // Check whether an idle request should be issued now or on the next timer
+    // expiration.
     //
-    idleInterval = ClasspGetIdleTime(FdoData);
+
+    CurrentTime = ClasspGetCurrentTime();
+    idleInterval = ClasspGetIdleTime(FdoData, CurrentTime);
+
+    if (CurrentTimeIn != NULL) {
+        **CurrentTimeIn = CurrentTime;
+    }
 
     if (idleInterval >= FdoData->IdleInterval) {
         return TRUE;
@@ -478,14 +448,8 @@ ClasspIdleTimerDpc
 Routine Description:
 
     Timer dpc function. This function will be called once every
-    IdleInterval. This will increment the IdleTicks and
-    if it goes above 1 (i.e., disk is in idle state) then
-    it will service an idle request.
-
-    This function will increment IdleTimerTicks if the IdleTicks
-    does not go above 1 (i.e., disk is not in idle state). When it
-    reaches the starvation idle count (1 second) it will process
-    one idle request.
+    IdleInterval. An idle request will be queued if sufficient idle time
+    has elapsed since the last non-idle request.
 
 Arguments:
 
@@ -509,6 +473,10 @@ ClasspIdleTimerDpc(
 {
     PFUNCTIONAL_DEVICE_EXTENSION fdoExtension = Context;
     PCLASS_PRIVATE_FDO_DATA fdoData;
+    ULONGLONG idleTime;
+    NTSTATUS status;
+    LARGE_INTEGER currentTime;
+    LARGE_INTEGER* pCurrentTime;
 
     UNREFERENCED_PARAMETER(Dpc);
     UNREFERENCED_PARAMETER(SystemArgument1);
@@ -521,11 +489,10 @@ ClasspIdleTimerDpc(
 
     fdoData = fdoExtension->PrivateFdoData;
 
-    if ((fdoData->ActiveIoCount <= 0) &&
-        (++fdoData->IdleTicks >= CLASS_IDLE_TIMER_TICKS)) {
+    if (fdoData->ActiveIoCount <= 0) {
 
         //
-        // If there are max active idle request, do not issue another one here.
+        // If there are max active idle requests, do not issue another one here.
         //
         if (fdoData->ActiveIdleIoCount >= fdoData->IdleActiveIoMax) {
             return;
@@ -536,22 +503,48 @@ ClasspIdleTimerDpc(
         // request has completed.
         //
 
-        if (ClasspIdleTicksSufficient(fdoData)) {
+        pCurrentTime = &currentTime;
+        if (ClasspIdleDurationSufficient(fdoData, &pCurrentTime)) {
             //
             // We are going to issue an idle request so reset the anti-starvation
             // timer counter.
+            // If we are here (Idle duration is sufficient), pCurrentTime is
+            // expected to be set.
             //
-            fdoData->IdleTimerTicks = 0;
+            NT_ASSERT(pCurrentTime != NULL);
+            fdoData->AntiStarvationStartTime = *pCurrentTime;
             ClasspServiceIdleRequest(fdoExtension, FALSE);
         }
         return;
     }
 
     //
+    // Get the time difference between current time and last I/O
+    // complete time.
+    //
+
+    currentTime = ClasspGetCurrentTime();
+    status = RtlULongLongSub((ULONGLONG)currentTime.QuadPart,
+                             (ULONGLONG)fdoData->AntiStarvationStartTime.QuadPart,
+                             &idleTime);
+
+    if (NT_SUCCESS(status)) {
+        //
+        // Convert the time to milliseconds.
+        //
+        idleTime = ClasspTimeDiffToMs(idleTime);
+    } else {
+        //
+        // Failed to get time difference, assume enough time passed.
+        //
+        idleTime = fdoData->StarvationDuration;
+    }
+
+    //
     // If the timer is running then there must be at least one idle priority I/O pending
     //
-    if (++fdoData->IdleTimerTicks >= fdoData->StarvationCount) {
-        fdoData->IdleTimerTicks = 0;
+    if (idleTime >= fdoData->StarvationDuration) {
+        fdoData->AntiStarvationStartTime = currentTime;
         TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_TIMER, "ClasspIdleTimerDpc: Starvation timer. Send one idle request\n"));
         ClasspServiceIdleRequest(fdoExtension, FALSE);
     }
@@ -588,24 +581,18 @@ ClasspEnqueueIdleRequest(
     PCLASS_PRIVATE_FDO_DATA fdoData = fdoExtension->PrivateFdoData;
     KIRQL oldIrql;
     BOOLEAN issueRequest = TRUE;
-    ULONGLONG idleInterval;
+    LARGE_INTEGER currentTime;
+    LARGE_INTEGER* pCurrentTime;
 
     TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_TIMER, "ClasspEnqueueIdleRequest: Queue idle request %p\n", Irp));
 
     IoMarkIrpPending(Irp);
 
     //
-    // Get the time difference between current time and last non-idle request
-    // complete time. If the there has been enough idle time, then issue the
-    // request (unless other factors prevent us from doing so below) and set the
-    // idle time such that we starting the timer below, it would start off with
-    // enough idle ticks.
+    // Reset issueRequest if the idle duration is not sufficient.
     //
-    idleInterval = ClasspGetIdleTime(fdoData);
-
-    if (idleInterval >= fdoData->IdleInterval) {
-        idleInterval = fdoData->IdleTimerInterval * CLASS_IDLE_TIMER_TICKS;
-    } else {
+    pCurrentTime = &currentTime;
+    if (ClasspIdleDurationSufficient(fdoData, &pCurrentTime) == FALSE) {
         issueRequest = FALSE;
     }
 
@@ -617,7 +604,6 @@ ClasspEnqueueIdleRequest(
         issueRequest = FALSE;
     }
 
-    TracePrint((TRACE_LEVEL_VERBOSE, TRACE_FLAG_TIMER, "ClasspEnqueueIdleRequest: Diff time %I64d\n", idleInterval));
 
     KeAcquireSpinLock(&fdoData->IdleListLock, &oldIrql);
     if (IsListEmpty(&fdoData->IdleIrpList)) {
@@ -628,7 +614,7 @@ ClasspEnqueueIdleRequest(
 
     fdoData->IdleIoCount++;
     if (!fdoData->IdleTimerStarted) {
-        ClasspStartIdleTimer(fdoData, idleInterval);
+        ClasspStartIdleTimer(fdoData);
     }
 
     if (fdoData->IdleIoCount != 1) {
@@ -699,6 +685,8 @@ ClasspDequeueIdleRequest(
     }
 
     KeReleaseSpinLock(&fdoData->IdleListLock, oldIrql);
+
+
     return irp;
 }
 
@@ -736,7 +724,7 @@ ClasspCompleteIdleRequest(
     if ((fdoData->IdleIoCount > 0) &&
         (fdoData->ActiveIdleIoCount < fdoData->IdleActiveIoMax) &&
         (fdoData->ActiveIoCount <= 0) &&
-        (ClasspIdleTicksSufficient(fdoData))) {
+        (ClasspIdleDurationSufficient(fdoData, NULL))) {
         TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_TIMER, "ClasspCompleteIdleRequest: Service next idle reqeusts\n"));
         ClasspServiceIdleRequest(FdoExtension, TRUE);
     }
@@ -778,6 +766,4 @@ ClasspServiceIdleRequest(
     }
     return;
 }
-
-
 

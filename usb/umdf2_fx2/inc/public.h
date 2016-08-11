@@ -119,7 +119,7 @@ typedef struct _SWITCH_STATE {
 #pragma warning(pop)
 
 #define IOCTL_INDEX             0x800
-#define FILE_DEVICE_OSRUSBFX2   0x65500
+#define FILE_DEVICE_OSRUSBFX2   65500U
 
 #define IOCTL_OSRUSBFX2_GET_CONFIG_DESCRIPTOR CTL_CODE(FILE_DEVICE_OSRUSBFX2,     \
                                                      IOCTL_INDEX,     \

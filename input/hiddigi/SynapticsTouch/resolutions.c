@@ -400,10 +400,10 @@ TchGetScreenProperties(
 
     //
     // Table passed to RtlQueryRegistryValues must be allocated 
-    // from NonPagedPool
+    // from NonPagedPoolNx
     //
     regTable = ExAllocatePoolWithTag(
-        NonPagedPool,
+        NonPagedPoolNx,
         gcbRegistryTable,
         TOUCH_POOL_TAG);
 

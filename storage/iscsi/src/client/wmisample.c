@@ -4117,8 +4117,8 @@ Routine Description:
 
                     adapterExtension->InitiatorSecretLen = 0;
 
-                    if (InBufferSize >= FIELD_OFFSET(SetCHAPSharedSecret_IN,
-                                                     SharedSecret)) {
+                    if (InBufferSize >= (ULONG)FIELD_OFFSET(SetCHAPSharedSecret_IN,
+                                                            SharedSecret)) {
 
                         setCHAPSecretIn = (PSetCHAPSharedSecret_IN) Buffer;
 
@@ -4187,8 +4187,8 @@ Routine Description:
 
                     adapterExtension->RadiusSecretLen = 0;
 
-                    if (InBufferSize >= FIELD_OFFSET(SetRADIUSSharedSecret_IN,
-                                                     SharedSecret)) {
+                    if (InBufferSize >= (ULONG)FIELD_OFFSET(SetRADIUSSharedSecret_IN,
+                                                            SharedSecret)) {
 
                         setRADIUSSecretIn = (PSetRADIUSSharedSecret_IN) Buffer;
 
@@ -4321,7 +4321,7 @@ Routine Description:
                     updatedCount = count + 1;
                     size = updatedCount * sizeof(ISCSI_IP_Address);
 
-                    adapterExtension->RadiusServerList = ExAllocatePoolWithTag(NonPagedPool,
+                    adapterExtension->RadiusServerList = ExAllocatePoolWithTag(NonPagedPoolNx,
                                                              size,
                                                              'vrSR');
 
@@ -4446,7 +4446,7 @@ Routine Description:
 
                         if (updatedCount > 0) {
 
-                            adapterExtension->RadiusServerList = ExAllocatePoolWithTag(NonPagedPool,
+                            adapterExtension->RadiusServerList = ExAllocatePoolWithTag(NonPagedPoolNx,
                                                                          size,
                                                                          'vrSR');
 
@@ -6300,7 +6300,7 @@ iSpSetLoadBalancePolicy(
         //
         if (!overFlow) {
 
-            LBPolicy = iSpAllocatePool(NonPagedPool,
+            LBPolicy = iSpAllocatePool(NonPagedPoolNx,
                                        sizeNeeded,
                                        ISCSI_TAG_LB_POLICY);
             if (LBPolicy != NULL) {

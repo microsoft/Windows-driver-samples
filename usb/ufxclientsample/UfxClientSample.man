@@ -114,23 +114,23 @@
                 outType="xs:string"
                 />
             <data
-                inType="win:UInt32"
+                inType="win:Pointer"
                 name="Endpoint"
-                outType="win:HexInt32"
+                outType="win:HexInt64"
                 />
             <data
                 inType="win:UInt32"
                 name="PhysicalEndpoint"
                 />
             <data
-                inType="win:UInt32"
+                inType="win:Pointer"
                 name="Request"
-                outType="win:HexInt32"
+                outType="win:HexInt64"
                 />
             <data
-                inType="win:UInt32"
+                inType="win:Pointer"
                 name="Transaction"
-                outType="win:HexInt32"
+                outType="win:HexInt64"
                 />
             <data
                 inType="win:UInt32"

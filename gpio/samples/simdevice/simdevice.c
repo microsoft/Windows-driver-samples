@@ -268,7 +268,7 @@ NTSTATUS
 SampleDrvEvtDeviceAdd (
     WDFDRIVER Driver,
     PWDFDEVICE_INIT DeviceInit
-)
+    )
 
 /*++
 
@@ -340,12 +340,19 @@ Return Value:
     }
 
     //
-    // Create an interrupt object for the DIRQL ISR
+    // Create an interrupt object. For the KMDF driver, the ISR will be run at
+    // DIRQL. For UMDF(v2), it will be run at PASSIVE_LEVEL, hence the DPC is
+    // only defined in the KMDF case.
     //
 
     WDF_INTERRUPT_CONFIG_INIT(&InterruptConfiguration,
                               SampleDrvInterruptIsr,
-                              SampleDrvInterruptDpc);
+#ifdef _KERNEL_MODE
+                              SampleDrvInterruptDpc
+#else
+                              NULL
+#endif
+                              );
 
     Status = WdfInterruptCreate(Device,
                                 &InterruptConfiguration,
@@ -491,11 +498,12 @@ Return Value:
     }
 
     //
-    //  Ensure that at least two interrupt resources are defined. One for DIRQL
-    //  and another for the passive level ISR
+    //  Ensure that at least one interrupt resource is defined.
     //
 
+#ifdef _KERNEL_MODE
     NT_ASSERT(SampleDrvExtension->InterruptCount > 0);
+#endif
 
     if (SampleDrvExtension->InterruptCount < 1) {
         Status = STATUS_UNSUCCESSFUL;

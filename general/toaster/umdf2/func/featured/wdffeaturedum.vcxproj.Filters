@@ -3,25 +3,20 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{4C00BD29-A08C-48FF-9326-65CB99A38B85}</UniqueIdentifier>
+      <UniqueIdentifier>{B8C9DC5B-7C98-4A49-93F3-E3442CBF75A5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{588F07FC-8AC0-4132-B7D8-A2C7C589CBA1}</UniqueIdentifier>
+      <UniqueIdentifier>{14D2CA4B-89D1-4EBA-9189-6488CD5FA53B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{F07FF097-C35A-47EB-A0F6-1B7AF7677990}</UniqueIdentifier>
+      <UniqueIdentifier>{9E64748C-D7C7-4161-9D23-8F53507ECDDA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{AEBC341B-92EB-4BFD-980F-F69DD9AEC99C}</UniqueIdentifier>
+      <UniqueIdentifier>{13A3B2C6-C1C7-4A41-8F08-27011CD7C327}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\wdffeaturedum.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="power.c">

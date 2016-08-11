@@ -499,7 +499,7 @@ Notes:
         // Map MDL memory to System Address Space. LowPagePriority means mapping may fail if 
         // system is low on memory resources. 
         //
-        PUCHAR SrcMemory = MmGetSystemAddressForMdlSafe(CurrentMdl, LowPagePriority);
+        PUCHAR SrcMemory = MmGetSystemAddressForMdlSafe(CurrentMdl, LowPagePriority | MdlMappingNoExecute);
         ULONG Length = MmGetMdlByteCount(CurrentMdl);
         if (!SrcMemory)
         {

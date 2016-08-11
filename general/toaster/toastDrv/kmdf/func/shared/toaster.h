@@ -28,8 +28,8 @@ Environment:
 
 #include "wmilib.h"
 #include <initguid.h>
-#include "..\inc\driver.h"
-#include "..\inc\public.h"
+#include "driver.h"
+#include "public.h"
 
 // For Featured driver only
 #ifdef TOASTER_FUNC_FEATURED

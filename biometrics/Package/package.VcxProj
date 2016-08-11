@@ -20,16 +20,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\adapters\engine_adapter\EngineAdapter.vcxproj">
-      <Project>{105C343E-EFA4-45C3-A954-A48D79504BE6}</Project>
+      <Project>{22EED378-7FE9-4946-A653-05BB1EE20717}</Project>
     </ProjectReference>
     <ProjectReference Include="..\adapters\sensor_adapter\SensorAdapter.vcxproj">
-      <Project>{D6372638-968B-4FDC-A56F-C70C339E1448}</Project>
+      <Project>{321860DA-56D9-427A-A5C2-346DFE8FB529}</Project>
     </ProjectReference>
     <ProjectReference Include="..\adapters\storage_adapter\StorageAdapter.vcxproj">
-      <Project>{B7ABEA68-C3BF-4E04-A77D-10473902A5E3}</Project>
+      <Project>{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}</Project>
     </ProjectReference>
     <ProjectReference Include="..\driver\WudfBioUsbSample.vcxproj">
-      <Project>{F97C7BE3-C238-4575-BBAF-5C5E42C7D6BF}</Project>
+      <Project>{474A1976-0414-48E7-9F2B-4FDED5BA700C}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -41,8 +41,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FB7B90E0-BABC-4B40-ACCF-ED9EE8750AD6}</ProjectGuid>
-    <SampleGuid>{970D30FD-F299-4C8C-A760-05F2F25ECD0B}</SampleGuid>
+    <ProjectGuid>{93931C7A-00DC-4E0F-8D54-06A960AF23FC}</ProjectGuid>
+    <SampleGuid>{A1648E68-56F1-41FA-903C-F64C87787413}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

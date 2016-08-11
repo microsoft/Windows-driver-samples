@@ -314,7 +314,7 @@ WmiSampSetEc1(
         return;
     }
 
-    ec1 = ExAllocatePoolWithTag(NonPagedPool, ec1Length, WMI_SAMPLE_TAG);
+    ec1 = ExAllocatePoolWithTag(NonPagedPoolNx, ec1Length, WMI_SAMPLE_TAG);
     if (ec1 != NULL) {
 
         RtlCopyMemory(ec1, Buffer, Length);
@@ -394,7 +394,7 @@ WmiSampSetEc2(
         return;
     }
 
-    ec2 = ExAllocatePoolWithTag(NonPagedPool, ec2Length, WMI_SAMPLE_TAG);
+    ec2 = ExAllocatePoolWithTag(NonPagedPoolNx, ec2Length, WMI_SAMPLE_TAG);
     if (ec2 != NULL) {
 
         RtlCopyMemory(ec2, Buffer, Length);

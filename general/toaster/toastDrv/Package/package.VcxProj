@@ -19,35 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\classinstaller\tostrcls.vcxproj">
-      <Project>{EA6EA609-654B-4B46-ABA1-1092BD3FA0AC}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\kmdf\bus\dynamic\dynambus.vcxproj">
-      <Project>{EA66789C-5ABF-44C0-9BFD-C7618507E9C8}</Project>
+      <Project>{E5E1F492-05BB-45A3-B09F-F643DC1C6B03}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\bus\static\StatBus.vcxproj">
-      <Project>{965C0E80-0715-4376-A138-48D08EFDDC09}</Project>
+      <Project>{6C6E0C23-5B37-4BBB-8909-435078D49364}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\filter\generic\filter.vcxproj">
-      <Project>{C79A9F42-BDB4-4B5A-B7B5-1BEBF7752207}</Project>
+      <Project>{B39F6628-73BA-4AC3-863A-EA20892F1EFD}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\filter\sideband\filter.vcxproj">
-      <Project>{5094C704-35B0-4A25-AD30-570C49BCAE82}</Project>
+      <Project>{1A40DA6D-B948-43A7-864C-962517EE0A1D}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\func\featured\wdffeatured.vcxproj">
-      <Project>{CA0E203E-4C96-466F-BF19-24F42DFC0C89}</Project>
+      <Project>{C0049CDD-7551-4681-9E30-EFE32868F651}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\func\simple\wdfsimple.vcxproj">
-      <Project>{FB919684-BF55-4E3D-95FA-CBCB7B0D8759}</Project>
+      <Project>{1C73C590-1F01-45BF-9BFA-97F8BCEB2795}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\toastmon\wdftoastmon.vcxproj">
-      <Project>{A5E50982-981B-40B9-BEE6-1E15581FE947}</Project>
+      <Project>{D15FD911-F2DA-4644-8142-6D22756AD287}</Project>
     </ProjectReference>
     <ProjectReference Include="..\umdf\func\WUDFToaster.vcxproj">
-      <Project>{B439C142-C570-44A6-B13C-43F70AE05A69}</Project>
+      <Project>{3A32C2D4-D40F-4DB8-9F25-ABB21CEB7C7F}</Project>
     </ProjectReference>
     <ProjectReference Include="..\umdf\Toastmon\WUDFToastMon.vcxproj">
-      <Project>{D9D1EDA9-B9AD-4C14-BCDE-DBE39CED25B7}</Project>
+      <Project>{F575419D-099B-4DA0-B80C-88D766DD7542}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -59,8 +56,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D72A34B9-86A5-4801-B7E3-256CF1F382AD}</ProjectGuid>
-    <SampleGuid>{DC08D3F2-EDC5-409B-800B-8F8AC3703227}</SampleGuid>
+    <ProjectGuid>{30FFB863-CECC-4E27-85F1-8DAC2256FC2F}</ProjectGuid>
+    <SampleGuid>{198A87DB-8A25-471F-971B-7F131503ADBA}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

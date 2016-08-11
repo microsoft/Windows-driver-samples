@@ -236,6 +236,11 @@ PedometerDevice::Initialize(
     InitPropVariantFromCLSID(GUID_SensorCategory_Motion,
         &(m_pEnumerationProperties->List[SENSOR_CATEGORY].Value));
 
+    m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Key = DEVPKEY_Sensor_IsPrimary;
+    InitPropVariantFromBoolean(FALSE,
+        &(m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Value)); // This value should be set to TRUE if multiple pedometers
+                                                                    // exist on the system and this sensor is the primary sensor
+
     m_pEnumerationProperties->List[SENSOR_POWER].Key = PKEY_Sensor_Power_Milliwatts;
     InitPropVariantFromFloat(Pedometer_Default_Power_Milliwatts,
         &(m_pEnumerationProperties->List[SENSOR_POWER].Value));

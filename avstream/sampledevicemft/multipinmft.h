@@ -12,7 +12,16 @@
 #include "mftpeventgenerator.h"
 #include "basepin.h"
 #include "custompin.h"
+#include "multipinmfthelpers.h"
 
+//
+// The Below GUID is needed to transfer photoconfirmation sample successfully in the pipeline
+// It is used to propagate the mediatype of the sample to the pipeline which will consume the sample
+// This attribute is known to the OS, but not publicly defined.
+//
+
+DEFINE_GUID(MFSourceReader_SampleAttribute_MediaType_priv,
+    0x0ea5c1e8, 0x9845, 0x41e0, 0xa2, 0x43, 0x72, 0x32, 0x07, 0xfc, 0x78, 0x1f);
 
 
 interface IDirect3DDeviceManager9;
@@ -408,7 +417,7 @@ protected:
 
     __inline IMFTransform* Parent()
     {
-        return m_pSourceTransform.Get();
+        return m_spSourceTransform.Get();
     }
 
     __inline VOID SetStreamingState(DeviceStreamState state)
@@ -439,17 +448,17 @@ private:
     long                         m_nRefCount;                 // Reference count
     CCritSec                     m_critSec;                   // Control lock.. taken only durign state change operations   
     ComPtr <IUnknown>            m_spDeviceManagerUnk;        // D3D Manager set, when MFT_MESSAGE_SET_D3D_MANAGER is called through ProcessMessage
-    ComPtr<IMFTransform>         m_pSourceTransform;          // The sources transform
+    ComPtr<IMFTransform>         m_spSourceTransform;          // The sources transform
     MFSHUTDOWN_STATUS            m_eShutdownStatus;
     DWORD                        m_dwWorkQueueId;
     LONG                         m_lWorkQueuePriority;
     UINT32                       m_punValue;
-    ComPtr<IKsControl>           m_ikscontrol;
-    ComPtr<IMFAttributes>        m_attributes;
- 
-    multimap<int, int>          m_inputPinMap;            //How input pins are connected to output pins o-><0..inpins>
-    multimap<int, int>          m_outputPinMap;           //How output pins are connected to input pins i-><0..outpins>
-    HANDLE                      m_AsyncPropEvent;
+    ComPtr<IKsControl>           m_spIkscontrol;
+    ComPtr<IMFAttributes>        m_spAttributes;
+    
+    multimap<int, int>          m_inputPinMap;            // How input pins are connected to output pins o-><0..inpins>
+    multimap<int, int>          m_outputPinMap;           // How output pins are connected to input pins i-><0..outpins>
+    CDMFTEventHandler           m_eventHandler;
 
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
     ComPtr<IMFAsyncCallback>    m_spPhotoConfirmationCallback;  //Photo Confirmation related definitions

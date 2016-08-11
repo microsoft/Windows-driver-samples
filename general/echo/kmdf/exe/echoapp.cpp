@@ -446,7 +446,7 @@ AsyncIo(
 
                 error = GetLastError();
                 if (error != ERROR_IO_PENDING) {
-                    printf(" %dth Read failed %d \n",i, GetLastError());
+                    printf(" %dth Read failed %d \n", (ULONG) i, GetLastError());
                     result = FALSE;
                     goto Error;
                 }
@@ -460,7 +460,7 @@ AsyncIo(
                       &pOvList[i]) == 0) {
                 error = GetLastError();
                 if (error != ERROR_IO_PENDING) {
-                    printf(" %dth Write failed %d \n",i, GetLastError());
+                    printf(" %dth Write failed %d \n", (ULONG) i, GetLastError());
                     result = FALSE;
                     goto Error;
                 }
@@ -487,7 +487,7 @@ AsyncIo(
         if (ioType == READER_TYPE) {
 
             i = completedOv - pOvList;
-            printf("Number of bytes read by request number %d is %d\n", i, numberOfBytesTransferred);
+            printf("Number of bytes read by request number %Id is %d\n", i, numberOfBytesTransferred);
 
             //
             // If we're done with the I/Os, then exit
@@ -513,7 +513,7 @@ AsyncIo(
                       completedOv) == 0) {
                 error = GetLastError();
                 if (error != ERROR_IO_PENDING) {
-                    printf("%dth Read failed %d \n", i, GetLastError());
+                    printf("%Idth Read failed %d \n", i, GetLastError());
                     result = FALSE;
                     goto Error;
                 }
@@ -522,7 +522,7 @@ AsyncIo(
 
             i = completedOv - pOvList;
 
-            printf("Number of bytes written by request number %d is %d\n", i, numberOfBytesTransferred);
+            printf("Number of bytes written by request number %Id is %d\n", i, numberOfBytesTransferred);
 
             //
             // If we're done with the I/Os, then exit
@@ -549,7 +549,7 @@ AsyncIo(
                 error = GetLastError();
                 if (error != ERROR_IO_PENDING) {
 
-                    printf("%dth write failed %d \n", i, GetLastError());
+                    printf("%Idth write failed %d \n", i, GetLastError());
                     result = FALSE;
                     goto Error;
                 }

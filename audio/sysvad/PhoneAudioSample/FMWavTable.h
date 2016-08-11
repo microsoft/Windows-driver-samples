@@ -26,7 +26,7 @@ Abstract:
 #define FMRX_MAX_BITS_PER_SAMPLE         16      // Max Bits Per Sample
 #define FMRX_MIN_SAMPLE_RATE             48000   // Min Sample Rate
 #define FMRX_MAX_SAMPLE_RATE             48000   // Max Sample Rate
-#define FMRX_MAX_INPUT_SYSTEM_STREAMS    1       // Raw stream
+#define FMRX_MAX_INPUT_SYSTEM_STREAMS    1
 
 
 //=============================================================================

@@ -163,7 +163,6 @@ Return Value:
 
     NT_ASSERT((Ccb == NULL) || (NodeType(Ccb) == FAT_NTC_CCB));
 
-
     //
     //  And return to our caller
     //
@@ -292,21 +291,30 @@ Return Value:
             *FcbOrDcb = FsContext;
             *Vcb = (*FcbOrDcb)->Vcb;
 
-
-            if (*Ccb == NULL ) {
-                TypeOfOpen = EaFile;
-                DebugTrace(0, Dbg, "Referencing EA file: %wZ\n", &(*FcbOrDcb)->FullFileName);                               
+            if (*Ccb != NULL ) {
+                
+                TypeOfOpen = UserFileOpen;
+                DebugTrace(0, Dbg, "Referencing file: %wZ\n", &(*FcbOrDcb)->FullFileName);                
+                
             } else {
-                if (((ULONG_PTR)*Ccb & 0x7) == 0x0) {
-                    TypeOfOpen = UserFileOpen;
-                    DebugTrace(0, Dbg, "Referencing file: %wZ\n", &(*FcbOrDcb)->FullFileName);
-                }
+
+                //
+                // No Ccb means this is a special open.
+                //
 
 
-                else {
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+                if ( *FcbOrDcb == (*Vcb)->EaFcb ) {
+                    
+                    TypeOfOpen = EaFile;
+                    DebugTrace(0, Dbg, "Referencing EA file: %wZ\n", &(*FcbOrDcb)->FullFileName);                               
+                    
+                } else {
+                
+#pragma prefast(suppress:28159, "things are seriously wrong if we get here")
                     FatBugCheck( NodeType(FsContext), 0, 0 );                
+
                 }
+
             }
 
             break;

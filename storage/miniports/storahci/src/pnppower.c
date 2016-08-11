@@ -732,7 +732,7 @@ IssueReadLogExtCommand(
     _In_ USHORT PageNumber,
     _In_ USHORT BlockCount,
     _In_ USHORT FeatureField,
-    _In_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
+    _In_opt_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
     _In_ PVOID DataBuffer,
     _In_opt_ PSRB_COMPLETION_ROUTINE CompletionRoutine
     )
@@ -1357,10 +1357,18 @@ AhciPortSmartCompletion(
         outParams->DriverStatus.bDriverError = 0;
         outParams->DriverStatus.bIDEError = 0;
 
+        // RETURN_SMART_STATUS does not perform data transfer but copies the registers.
+        if (srbExtension->TaskFile.Current.bFeaturesReg == RETURN_SMART_STATUS) {
+            outParams->cBufferSize = sizeof(ATAREGISTERS);
+        } else {
+            outParams->cBufferSize = srbExtension->DataTransferLength;
+        }
+
     } else  {
         // command failed
         outParams->DriverStatus.bDriverError = SMART_IDE_ERROR;
         outParams->DriverStatus.bIDEError = srbExtension->AtaStatus;
+        outParams->cBufferSize = 0;
     }
 
     return;
@@ -1656,8 +1664,6 @@ AhciDeviceInitialize (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
-    STOR_LOCK_HANDLE lockhandle = {0};
-
     RecordExecutionHistory(ChannelExtension, 0x00000007);   //AhciDeviceInitialize
 
   //1 update preserved commands per device needs.
@@ -1702,9 +1708,7 @@ AhciDeviceInitialize (
   //5.1 Configure device with init commands and persistent configuration commands
     AhciPortIssueInitCommands(ChannelExtension);
 
-    AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
-    ActivateQueue(ChannelExtension, TRUE);
-    AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+    ActivateQueue(ChannelExtension, FALSE);
 
     RecordExecutionHistory(ChannelExtension, 0x10000007);//Exit AhciDeviceInitialize
     return TRUE;
@@ -2002,10 +2006,7 @@ AhciPortPowerSettingNotification(
         needRestartIo = AhciLpmSettingsModes(ChannelExtension, userLpmPowerSettings);
 
         if (needRestartIo) {
-            STOR_LOCK_HANDLE lockhandle = {0};
-            AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
-            ActivateQueue(ChannelExtension, TRUE);
-            AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+            ActivateQueue(ChannelExtension, FALSE);
         }
     }
 
@@ -2059,7 +2060,8 @@ AhciAutoPartialToSlumber(
     ci = StorPortReadRegisterUlong(AdapterExtension, &channelExtension->Px->CI);
     sact = StorPortReadRegisterUlong(AdapterExtension, &channelExtension->Px->SACT);
 
-    if (!PartialToSlumberTransitionIsAllowed(channelExtension, cmd, ci, sact)) {
+    if (((ci | sact) != 0) ||
+        !PartialToSlumberTransitionIsAllowed(channelExtension, &cmd)) {
         // validate again in case any condition changed that not allowing StorAHCI to perform Partial to Slumber transition.
         StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - Transit into Slumber from Partial - bailed out, request outstanding: CI: 0x%08X, SACT: 0x%08X \n", channelExtension->PortNumber, ci, sact);
 

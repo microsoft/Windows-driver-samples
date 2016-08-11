@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BA465874-4CF2-44E3-915C-025AA92540DF}</ProjectGuid>
+    <ProjectGuid>{85E4144B-986D-4B01-BA1C-2536DCF175DD}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{5B91FF85-2F51-495B-A642-4BBC6954AB83}</SampleGuid>
+    <SampleGuid>{740DFB1D-45E5-406F-BBB6-4AF0E6C30DBA}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

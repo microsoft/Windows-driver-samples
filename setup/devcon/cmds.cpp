@@ -1327,7 +1327,7 @@ Return Value:
         &DeviceInfoData,
         SPDRP_HARDWAREID,
         (LPBYTE)hwIdList,
-        (lstrlen(hwIdList)+1+1)*sizeof(TCHAR)))
+        ((DWORD)_tcslen(hwIdList)+1+1)*sizeof(TCHAR)))
     {
         goto final;
     }
@@ -1863,7 +1863,7 @@ Return Value:
             LPTSTR multiSz = multiVal[-1];
             LPTSTR p = multiSz;
             while(*p) {
-                p+=lstrlen(p)+1;
+                p+=_tcslen(p)+1;
             }
             p++; // skip past null
             len = (p-multiSz)*sizeof(TCHAR);
@@ -2054,7 +2054,7 @@ Return Value:
             LPTSTR multiSz = hwlist[-1];
             LPTSTR p = multiSz;
             while(*p) {
-                p+=lstrlen(p)+1;
+                p+=_tcslen(p)+1;
             }
             p++; // skip past final null
             len = (p-multiSz)*sizeof(TCHAR);

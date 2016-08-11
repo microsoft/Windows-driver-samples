@@ -332,47 +332,54 @@ void
 PLX::Menu()
 {
     int menu = -1;
+    const char* menuItems[MENU_MAX];
+    BOOL status, toggle;
 
-    while(menu != 0 && pDeviceInterfaceDetail) {
-        printf("\n"
-               " 1- Read from device\n"
-               " 2- Write from device\n"
-               " 3- Read/Write from device\n"
-               " 4- Read/Write Thread Test\n"
-               " 5- Select new device\n"
-               " 6- Change Buffer Size\n"
-               " 7- Compare Read/Write Buffers\n"
-               " 8- Display Read/Write Buffers\n"
-               " 9- Change Thread Lifetime\n"
-               "10- Command Line Options\n"
-               " 0- Quit\n");
+    menuItems[MENU_TEST] = "Quit";
+    menuItems[READ_TEST] = "Read from device";
+    menuItems[WRITE_TEST] = "Write to device";
+    menuItems[READ_WRITE_TEST] = "Read/Write from device";
+    menuItems[THREAD_TEST] = "Read/Write Thread Test";
+    menuItems[DEVICE_PATH] = "Select new device";
+    menuItems[SET_SIZE] = "Change Buffer Size";
+    menuItems[COMPARE_BUFFERS] = "Compare Read/Write Buffers";
+    menuItems[DISPLAY_BUFFERS] = "Display Read/Write Buffers";
+    menuItems[THREAD_TIME] = "Change Thread Lifetime";
+    menuItems[SINGLE_TRANSFER_TOGGLE] = "Toggle single transfer requirement";
+    menuItems[COMMAND_LINE] = "Command Line Options";
 
-        if (scanf_s("%d", &menu) == 0) {
+    while(menu != MENU_TEST && pDeviceInterfaceDetail) {
+        for (int i = MENU_TEST + 1; i < MENU_MAX; i++) {
+            printf("\n%2x - %s", i, menuItems[i]);
+        }
+        printf("\n%2x - %s\n", MENU_TEST, menuItems[MENU_TEST]);
+
+        if (scanf_s("%x", &menu) == 0) {
             break;
         }
 
         switch(menu) {
-            case READ_TEST:                             // 1
+            case READ_TEST:
                 ReadTest();
                 break;
 
-            case WRITE_TEST:                            // 2
+            case WRITE_TEST:
                 WriteTest();
                 break;
 
-            case READ_WRITE_TEST:                       // 3
+            case READ_WRITE_TEST:
                 ReadWriteTest();
                 break;
 
-            case THREAD_TEST:                           // 4
+            case THREAD_TEST:
                 ThreadedReadWriteTest();
                 break;
 
-            case DEVICE_PATH:                           // 5
+            case DEVICE_PATH:
                 GetDevicePath();
                 break;
 
-            case SET_SIZE:                              // 6
+            case SET_SIZE:
                 ULONG size;
                 printf("\nEnter new buffer size: ");
                 if (scanf_s("%u", &size) != 0) {
@@ -380,22 +387,34 @@ PLX::Menu()
                 }
                 break;
 
-            case COMPARE_BUFFERS:                       // 7
+            case COMPARE_BUFFERS:
                 CompareReadWriteBuffers();
                 break;
 
-            case DISPLAY_BUFFERS:                       // 8
+            case DISPLAY_BUFFERS:
                 DisplayReadWriteBuffers();
                 break;
 
-            case THREAD_TIME:                           // 9
+            case THREAD_TIME:
                 printf("\nEnter new Thread Lifetime (ms): ");
                 if (scanf_s("%u", &ThreadTimer) == 0) {
                     break;
                 }
                 break;
 
-            case COMMAND_LINE:                          // 10
+            case SINGLE_TRANSFER_TOGGLE:
+                status = SendSingleTransferIoctl(&toggle);
+                if (status) {
+                    printf("Single transfer requirement is %s\n",
+                        toggle ? "on" : "off");
+                }
+                else {
+                    printf("Could not toggle the single transfer "
+                           "requirement\n");
+                }
+                break;
+
+            case COMMAND_LINE:
                 printf("Command Line Options\n"
                        " Set Read Buffer Size:           '/rb=xx'\n"
                        " Set Write Buffer Size:          '/wb=xx'\n"
@@ -548,6 +567,13 @@ PLX::ThreadedReadWriteTest()
             if (error) {
                 printf("WaitForMultipleObjects[%d] error %u\n", i, error);
             }
+        }
+
+        if (!error) {
+            //
+            // Reset the TimeUp flag
+            //
+            g_TimeUp = 0;
         }
     }
 
@@ -773,6 +799,44 @@ PLX::SetBufferSizes(ULONG size)
     status = SetReadBufferSize(size);
     if (status) {
         status = SetWriteBufferSize(size);
+    }
+
+    return status;
+}
+
+BOOL
+PLX::SendSingleTransferIoctl(BOOL* Toggle)
+{
+    BOOL status = TRUE;
+    UCHAR outBuffer = 0;
+    DWORD bytesReceived = 0;
+
+    if (hDevice == INVALID_HANDLE_VALUE) {
+        status = GetDeviceHandle();
+        if (status == FALSE) {
+            goto Done;
+        }
+    }
+
+    status = DeviceIoControl(hDevice,
+                             IOCTL_PLX9X5X_TOGGLE_SINGLE_TRANSFER,
+                             NULL,
+                             0,
+                             &outBuffer,
+                             sizeof(outBuffer),
+                             &bytesReceived,
+                             NULL);
+    if (status == FALSE || bytesReceived != sizeof(outBuffer)) {
+        printf("DeviceIoControl failed 0x%x\n", GetLastError());
+        goto Done;
+    }
+
+    *Toggle = outBuffer;
+
+Done:
+    if (hDevice != INVALID_HANDLE_VALUE) {
+        CloseHandle(hDevice);
+        hDevice = INVALID_HANDLE_VALUE;
     }
 
     return status;
@@ -1101,4 +1165,5 @@ PLX::SetThreadLifeTime(ULONG time)
 {
     ThreadTimer = time;
 }
+
 

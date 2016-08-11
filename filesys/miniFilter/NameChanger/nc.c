@@ -1600,8 +1600,10 @@ Routine Description:
 
     Currently we munge:
         FileDispositionInformation
+        FileDispositionInformationEx
         FileLinkInformation
         FileRenameInformation
+        FileRenameInformationEx
         FileShortNameInformation
 
 Arguments:
@@ -1629,6 +1631,7 @@ Return Value:
     switch( Data->Iopb->Parameters.SetFileInformation.FileInformationClass ) {
 
         case FileDispositionInformation:
+        case FileDispositionInformationEx:
 
             result = NcPreSetDisposition( Data,
                                           FltObjects,
@@ -1645,6 +1648,7 @@ Return Value:
             break;
 
         case FileRenameInformation:
+        case FileRenameInformationEx:
 
             result = NcPreRename( Data,
                                   FltObjects,

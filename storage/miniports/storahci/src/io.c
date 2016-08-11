@@ -179,9 +179,8 @@ Input Parameters:
     Tag:        bit 31 ~ 24, Queue->CurrentDepth: bit 23 ~ 0
 */
 {
-    PVOID tempTail, foundSrb;
-    ULONG srbsFound;
-
+    PVOID               tempTail, foundSrb;
+    ULONG               srbsFound;
     UNREFERENCED_PARAMETER(ChannelExtension);
 
     if (Queue->Tail == NULL) {
@@ -213,6 +212,8 @@ Input Parameters:
     if (Queue->CurrentDepth > Queue->DeepestDepth) {
         Queue->DeepestDepth = Queue->CurrentDepth;
     }
+
+    return;
 }
 
 PSTORAGE_REQUEST_BLOCK
@@ -223,8 +224,8 @@ RemoveQueue (
     _In_ UCHAR Tag
     )
 {
-    PVOID nextSrb, foundSrb;
-    ULONG srbsFound;
+    PVOID               nextSrb, foundSrb;
+    ULONG               srbsFound;
 
     UNREFERENCED_PARAMETER(ChannelExtension);
 
@@ -260,6 +261,7 @@ RemoveQueue (
     if (Queue->CurrentDepth > Queue->DeepestDepth) {
         Queue->DeepestDepth = Queue->CurrentDepth;
     }
+
     return (PSTORAGE_REQUEST_BLOCK)nextSrb;
 }
 
@@ -297,56 +299,56 @@ Affected Variables/Registers:
 Return Values:
 --*/
 {
-    BOOLEAN         status;
-    AHCI_COMMAND    cmd;
-    ULONG           sact;
-    ULONG           ci;
-    ULONG           slotsToActivate;
-    BOOLEAN         activateNcq;
+    BOOLEAN         status = TRUE;
+    ULONG           slotsToActivate = 0;
+    BOOLEAN         activateNcq = FALSE;
     int             i;
 
     PAHCI_ADAPTER_EXTENSION adapterExtension = ChannelExtension->AdapterExtension;
-    STOR_LOCK_HANDLE        lockhandle = { 0 };
-
-    if (!AtDIRQL) {
-        AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
-    }
+    STOR_LOCK_HANDLE        lockhandle = {InterruptLock, 0};
 
   //1.1 Initialize variables
     if (LogExecuteFullDetail(adapterExtension->LogFlags)) {
         RecordExecutionHistory(ChannelExtension, 0x00000022);//ActivateQueue
     }
 
-    slotsToActivate = 0;
-    activateNcq = FALSE;
-
-  //1.1.1 If there is no command to program, leave
-    if ( (ChannelExtension->SlotManager.SingleIoSlice == 0) &&
-         (ChannelExtension->SlotManager.NormalQueueSlice == 0) &&
-         (ChannelExtension->SlotManager.NCQueueSlice == 0) ) {
-        //
-        if (LogExecuteFullDetail(adapterExtension->LogFlags)) {
-            RecordExecutionHistory(ChannelExtension, 0x10040022);//ActivateQueue, No Commands to program
-        }
+  // If the programming should not happen now, leave
+    if (ChannelExtension->StartState.ChannelNextStartState != StartComplete) {
+        RecordExecutionHistory(ChannelExtension, 0x10010022);//ActivateQueue, Channel Not Yet Started
         status = FALSE;
-        goto Exit;
+        return status;
     }
 
-  //1.2 If the programming should not happen now, leave
+    if (ChannelExtension->StateFlags.QueuePaused == TRUE) {
+        RecordExecutionHistory(ChannelExtension, 0x10020022);//ActivateQueue, Channel Queue Paused
+        status = FALSE;
+        return status;
+    }
+
     if ( !IsPortStartCapable(ChannelExtension) ) {
         RecordExecutionHistory(ChannelExtension, 0x10030022);//ActivateQueue, Channel Not Start Capable
         status = FALSE;
-        goto Exit;
+        return status;
     }
 
     if ( ErrorRecoveryIsPending(ChannelExtension) ) {
         RecordExecutionHistory(ChannelExtension, 0x10070022);//ActivateQueue, Error Recovery is pending.
         status = FALSE;
-        goto Exit;
+        return status;
     }
 
-    if (ChannelExtension->StateFlags.QueuePaused == TRUE) {
-        RecordExecutionHistory(ChannelExtension, 0x10020022);//ActivateQueue, Channel Queue Paused
+    if (!AtDIRQL) {
+        AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+    }
+
+  //1.1.1 If there is no command to program, leave
+    if ( (ChannelExtension->SlotManager.SingleIoSlice == 0) &&
+         (ChannelExtension->SlotManager.NormalQueueSlice == 0) &&
+         (ChannelExtension->SlotManager.NCQueueSlice == 0) ) {
+
+        if (LogExecuteFullDetail(adapterExtension->LogFlags)) {
+            RecordExecutionHistory(ChannelExtension, 0x10040022);//ActivateQueue, No Commands to program
+        }
         status = FALSE;
         goto Exit;
     }
@@ -361,31 +363,23 @@ Return Values:
         goto Exit;
     }
 
-    cmd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->CMD.AsUlong);
-    if (cmd.ST == 0) {
-        RecordExecutionHistory(ChannelExtension, 0x10010022);//ActivateQueue, Channel Not Yet Started
-        status = FALSE;
-        goto Exit;
-    }
-
   //2.1 Choose the Queue with which to program the controller
-    sact = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->SACT);
-    ci = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->CI);
   //2.1.2 Single IO SRBs have highest priority.
     if(ChannelExtension->SlotManager.SingleIoSlice != 0) {
-        if ( ( sact == 0 ) && ( ci == 0 ) ) {
+        if ( (ChannelExtension->SlotManager.NCQueueSliceIssued | ChannelExtension->SlotManager.NormalQueueSliceIssued | ChannelExtension->SlotManager.SingleIoSliceIssued) == 0 ) {
             //Safely get Single IO in round robin fashion
             i = GetSingleIo(ChannelExtension);
             if (i != 0xff) {
                 slotsToActivate = (1 << i);
                 ChannelExtension->SlotManager.SingleIoSlice &= ~slotsToActivate;
+                ChannelExtension->SlotManager.SingleIoSliceIssued |= slotsToActivate;
                 ChannelExtension->StateFlags.QueuePaused = TRUE;            //and pause the queue so no other IO get programmed
             }
         }
   //2.1.2 When there are no Single IO commands, Normal IO get the next highest priority
     } else if (ChannelExtension->SlotManager.NormalQueueSlice != 0) {
         // Normal commands can not be sent when NCQ commands are outstanding.  When the NCQ commands complete ActivateQueue will get called again.
-        if (sact == 0) {
+        if (ChannelExtension->SlotManager.NCQueueSliceIssued == 0) {
             //Grab the High Priority Normal IO before the Low Priority Normal IO
             slotsToActivate = ChannelExtension->SlotManager.HighPriorityAttribute & ChannelExtension->SlotManager.NormalQueueSlice;
             //If there aren't any High Priority, grab everything else
@@ -395,11 +389,13 @@ Return Values:
                 slotsToActivate = ChannelExtension->SlotManager.NormalQueueSlice;
                 ChannelExtension->SlotManager.NormalQueueSlice = 0;
             }
+            ChannelExtension->SlotManager.NormalQueueSliceIssued |= slotsToActivate;
         }
   //2.1.3 When there are no Single or Normal commands, NCQ commands get the next highest priority
-    } else if (ChannelExtension->SlotManager.NCQueueSlice != 0) {
+    } else if ((ChannelExtension->SlotManager.NCQueueSlice != 0) &&
+               (ChannelExtension->StateFlags.NcqErrorRecoveryInProcess == 0)) {
         // NCQ commands can not be sent when Normal commands are outstanding.  When the Normal commands complete, Activate Queue will get called again.
-        if ( ( ci != 0 ) && (sact == 0) ) {
+        if ( ( ChannelExtension->SlotManager.SingleIoSliceIssued | ChannelExtension->SlotManager.NormalQueueSliceIssued ) != 0 ) {
             slotsToActivate = 0;
         } else {
             //Grab the High Priority NCQ IO before the Low Priority NCQ IO
@@ -418,6 +414,7 @@ Return Values:
                     //and if there are any IO still selected, clear them from the NCQueue
                     activateNcq = TRUE;     //Remember to program SACT for these commands
                     ChannelExtension->SlotManager.NCQueueSlice &= ~slotsToActivate;
+                    ChannelExtension->SlotManager.NCQueueSliceIssued |= slotsToActivate;
                     //the selected IO will be activated at the end of this function
                 }
             }
@@ -458,13 +455,21 @@ Return Values:
     }
 
     if (LogExecuteFullDetail(adapterExtension->LogFlags)) {
-        RecordInterruptHistory(ChannelExtension, slotsToActivate, 0, 0, ci, sact, 0x10060022); //ActivateQueue, after getting IO slices,
+        RecordInterruptHistory(ChannelExtension,
+                               slotsToActivate,
+                               0,
+                               0,
+                               (ChannelExtension->SlotManager.SingleIoSliceIssued | ChannelExtension->SlotManager.NormalQueueSliceIssued),
+                               ChannelExtension->SlotManager.NCQueueSliceIssued,
+                               0x10060022); //ActivateQueue, after getting IO slices,
+
         RecordExecutionHistory(ChannelExtension, 0x10050022);//Exit ActivateQueue
     }
 
     status = TRUE;
 
 Exit:
+
     if (!AtDIRQL) {
         AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
     }
@@ -570,7 +575,7 @@ Affected Variables/Registers:
                 //This shall never happen.
                 //The completed slot has no SRB so it can not be completed back to Storport.
                 //Give back the empty slot
-                //NT_ASSERT(FALSE);
+                NT_ASSERT(FALSE);
                 ChannelExtension->SlotManager.CommandsToComplete &= ~(1 << i);
                 ChannelExtension->SlotManager.HighPriorityAttribute &= ~(1 << i);
                 continue;
@@ -639,7 +644,7 @@ Affected Variables/Registers:
     }
 
   //3.1 Start the next IO(s) if any
-    AhciGetNextIos(ChannelExtension, AtDIRQL);
+    ActivateQueue(ChannelExtension, AtDIRQL);
 
     return;
 }
@@ -1034,16 +1039,17 @@ This routine does following:
     1. Check if no device command associated with Srb, or the port failed to start. Bail out in these cases.
     2. Central place for special command handling.
     3. Get available slot
-    4. Call AhciFormIo() to Fill the slot; Program command Table & Header; Put IO in Slice
+    4. Fill the slot; Program command Table & Header; Put IO in Slice
 
 Note: This routine can be called even the Port is stopped.
-      This routine and the calling routine AhciFormIo() does NOT program IO to adapter.
+      This routine does NOT program IO to adapter.
 */
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    UCHAR   pathId = 0;
-    UCHAR   targetId = 0;
-    UCHAR   lun = 0;
+    UCHAR               pathId = 0;
+    UCHAR               targetId = 0;
+    UCHAR               lun = 0;
+    STOR_LOCK_HANDLE    lockHandle = {InterruptLock, 0};
 
     SrbGetPathTargetLun(Srb, &pathId, &targetId, &lun);
 
@@ -1100,6 +1106,10 @@ Note: This routine can be called even the Port is stopped.
     }
 
   //3 Find an available slot/tag (AHCI 1.1 Section 5.5.1)
+    if (!AtDIRQL) {
+        AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockHandle);
+    }
+
     GetAvailableSlot(ChannelExtension, Srb);    //srbExtension->QueueTag will be set
 
     // 3.1 If no tag is available, reject the command to be retried later
@@ -1112,9 +1122,9 @@ Note: This routine can be called even the Port is stopped.
         }
         Srb->SrbStatus = SRB_STATUS_BUSY;
         MarkSrbToBeCompleted(Srb);
-        AhciCompleteRequest(ChannelExtension, Srb, AtDIRQL);
+        AhciCompleteRequest(ChannelExtension, Srb, TRUE);
         RecordExecutionHistory(ChannelExtension, 0x10030020);   //AllocateQueueTagFailed
-        return TRUE;
+        goto exit;
     }
 
 #ifdef DBG
@@ -1139,15 +1149,24 @@ Note: This routine can be called even the Port is stopped.
             }
 
             MarkSrbToBeCompleted(Srb);
-            AhciCompleteRequest(ChannelExtension, Srb, AtDIRQL);
+            AhciCompleteRequest(ChannelExtension, Srb, TRUE);
             RecordExecutionHistory(ChannelExtension, 0x10040020);//Tag given for slot in use
-            return TRUE;
+            goto exit;
         }
     }
 #endif
-    //srbExtension->QueueTag and Slot[srbExtension->QueueTag] are now guaranteed ready.
 
-    return AhciFormIo (ChannelExtension, Srb, AtDIRQL);
+    //srbExtension->QueueTag and Slot[srbExtension->QueueTag] are now guaranteed ready.
+    
+    AhciFormIo (ChannelExtension, Srb, TRUE);
+
+exit:
+
+    if (!AtDIRQL) {
+        AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockHandle);
+    }
+
+    return TRUE;
 }
 
 BOOLEAN
@@ -1248,6 +1267,7 @@ AhciFormIo(
     }
 
 
+
   //3. Build the PRD Table in CommandTable.
     if( IsDataTransferNeeded(slotContent->Srb) ) {
         prdtLength = SRBtoPRDT(ChannelExtension, slotContent);
@@ -1312,6 +1332,8 @@ AhciFormIo(
     return TRUE;
 }
 
+
+
 PSCSI_REQUEST_BLOCK
 BuildRequestSenseSrb(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
@@ -1334,6 +1356,10 @@ BuildRequestSenseSrb(
         // Request Sense is for ATAPI commands which are single IOs. At the same time there should be only one command failed and needs this Srb.
         NT_ASSERT(srbExtension && srbExtension->AtaFunction == 0);
         return NULL;
+    }
+
+    if ((srbSenseBuffer != NULL) && (srbSenseBufferLength > 0)) {
+        AhciZeroMemory((PCHAR)srbSenseBuffer, srbSenseBufferLength);
     }
 
     //2. initialize Srb and SrbExtension structures.
@@ -1383,17 +1409,7 @@ AhciPortFailAllIos(
     _In_ BOOLEAN AtDIRQL
     )
 {
-    PSTORAGE_REQUEST_BLOCK srb;
     UCHAR i;
-
-    // complete all requests still in queue
-    srb = RemoveQueue(ChannelExtension, &ChannelExtension->SrbQueue, 0xDEADC0DE, 0x1F);
-    while (srb != NULL) {
-        srb->SrbStatus = SrbStatus;
-        MarkSrbToBeCompleted(srb);
-        AhciCompleteRequest(ChannelExtension, srb, AtDIRQL);
-        srb = RemoveQueue(ChannelExtension, &ChannelExtension->SrbQueue, 0xDEADC0DE, 0x1F);
-    }
 
     // complete all requests in slots
     for (i = 0; i <= ChannelExtension->AdapterExtension->CAP.NCS; i++) {
@@ -1417,7 +1433,7 @@ AhciPortSrbCompletionDpcRoutine(
   )
 {
     PAHCI_CHANNEL_EXTENSION channelExtension = (PAHCI_CHANNEL_EXTENSION)SystemArgument1;
-    STOR_LOCK_HANDLE        lockhandle = {0};
+    STOR_LOCK_HANDLE        lockhandle = {InterruptLock, 0};
     PSTORAGE_REQUEST_BLOCK  srb = NULL;
     PSRB_COMPLETION_ROUTINE completionRoutine = NULL;
     BOOLEAN                 reservedSlotInUse = FALSE;
@@ -1464,17 +1480,20 @@ AhciPortSrbCompletionDpcRoutine(
                 if ( (srbExtension->AtaFunction != 0) &&
                      (!SrbShouldBeCompleted(srbExtension->Flags)) &&
                      (srb->SrbStatus != SRB_STATUS_BUS_RESET) ) {
+
                     // new command associated needs to be processed, do not complete the request.
-                    AhciInterruptSpinlockAcquire(channelExtension->AdapterExtension, channelExtension->PortNumber, &lockhandle);
-                    AhciProcessIo(channelExtension, srb, TRUE);
-                    AhciInterruptSpinlockRelease(channelExtension->AdapterExtension, channelExtension->PortNumber, &lockhandle);
+                    AhciProcessIo(channelExtension, srb, FALSE);
+
                     // this Srb should not be completed yet
                     completeSrb = FALSE;
                     sendCommand = TRUE;
+
                 } else if (SrbShouldBeCompleted(srbExtension->Flags)) {
                     // clear the flag
                     CLRMASK(srbExtension->Flags, ATA_FLAGS_COMPLETE_SRB);
                 }
+
+
             } else {
                 // a Srb without completion routine should be completed.
             }

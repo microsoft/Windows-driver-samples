@@ -190,7 +190,7 @@ Return Value:
                  RegisterDevice->AcpiDeviceName->Length +
                  sizeof(WCHAR);
 
-    PepInternalDevice = ExAllocatePoolWithTag(NonPagedPool,
+    PepInternalDevice = ExAllocatePoolWithTag(NonPagedPoolNx,
                                               SizeNeeded,
                                               PEP_POOL_TAG);
 
@@ -714,3 +714,4 @@ Return Value:
     PepProcessCompleteWorkRequests(Data);
     return;
 }
+

@@ -20,34 +20,34 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\common\xdsmplcmn.vcxproj">
-      <Project>{5DBE2309-E951-4840-A138-3284BD2B61C6}</Project>
+      <Project>{42677515-C196-4C0F-99A2-F11E2FB55BF6}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\debug\xdsdbg.vcxproj">
-      <Project>{5DD79EE3-3778-4674-9537-70EA840F13B4}</Project>
+      <Project>{E5DC3A24-691A-4F3A-B519-E4C49B2DAC98}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\booklet\xdbook.vcxproj">
-      <Project>{0230CB91-5810-491F-83CA-BFEF080C100C}</Project>
+      <Project>{8D542B56-EB45-43B1-AAB8-417352F5BDE6}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\color\XDColMan.vcxproj">
-      <Project>{9D2A1569-C11C-42CE-BF2F-86A10E869BB3}</Project>
+      <Project>{C9C14C99-103E-45CB-B1B4-2C165429E35C}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\common\xdfltcmn.vcxproj">
-      <Project>{FBC26C8C-2B0B-4394-8477-C40A418C5540}</Project>
+      <Project>{0F8262C1-75D8-4A92-BCB6-37A290891708}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\nup\xdnup.vcxproj">
-      <Project>{5F377CEC-1783-4793-96E7-FF05DF1770D7}</Project>
+      <Project>{23BA577F-B171-4CEC-92E0-49EE44564366}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\scaling\xdscale.vcxproj">
-      <Project>{5B69A33D-2119-49E7-961F-136998752761}</Project>
+      <Project>{1893FA97-40A9-480F-BB77-279F959EAE6E}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\watermark\xdwmark.vcxproj">
-      <Project>{EEEB99E0-6403-4D91-AC46-9894657F2295}</Project>
+      <Project>{E31D1C4F-8E0D-428A-8583-5159CE690B33}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\filters\xdcont\xdcont.vcxproj">
-      <Project>{7B6DB6B7-543A-4FBB-B4A0-F9542C934D46}</Project>
+      <Project>{D38B87BF-5778-4DA8-8DCE-B0F37F087D5A}</Project>
     </ProjectReference>
     <ProjectReference Include="..\src\ui\xdsmplui.vcxproj">
-      <Project>{F6900780-9A02-439C-A7F1-D10CEBEE2CA3}</Project>
+      <Project>{7441D7F2-F509-4A47-9404-3EB8653AE037}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -59,8 +59,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6DC00584-D5C7-430E-98EA-9B103C5DC293}</ProjectGuid>
-    <SampleGuid>{1C40097E-EA72-4247-A54E-023A86EDDB06}</SampleGuid>
+    <ProjectGuid>{4A7303D2-92DB-4537-A380-24D334FC24FE}</ProjectGuid>
+    <SampleGuid>{A7EB2426-E8C0-4DB0-A077-F37FCB01D98C}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

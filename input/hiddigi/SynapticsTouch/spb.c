@@ -66,7 +66,7 @@ SpbDoWriteDataSynchronously(
     {
         status = WdfMemoryCreate(
             WDF_NO_OBJECT_ATTRIBUTES,
-            NonPagedPool,
+            NonPagedPoolNx,
             TOUCH_POOL_TAG,
             length,
             &memory,
@@ -240,7 +240,7 @@ SpbReadDataSynchronously(
     {
         status = WdfMemoryCreate(
             WDF_NO_OBJECT_ATTRIBUTES,
-            NonPagedPool,
+            NonPagedPoolNx,
             TOUCH_POOL_TAG,
             Length,
             &memory,
@@ -445,12 +445,12 @@ SpbTargetInitialize(
     }
 
     //
-    // Allocate some fixed-size buffers from NonPagedPool for typical
+    // Allocate some fixed-size buffers from NonPagedPoolNx for typical
     // Spb transaction sizes to avoid pool fragmentation in most cases
     //
     status = WdfMemoryCreate(
         WDF_NO_OBJECT_ATTRIBUTES,
-        NonPagedPool,
+        NonPagedPoolNx,
         TOUCH_POOL_TAG,
         DEFAULT_SPB_BUFFER_SIZE,
         &SpbContext->WriteMemory,
@@ -468,7 +468,7 @@ SpbTargetInitialize(
 
     status = WdfMemoryCreate(
         WDF_NO_OBJECT_ATTRIBUTES,
-        NonPagedPool,
+        NonPagedPoolNx,
         TOUCH_POOL_TAG,
         DEFAULT_SPB_BUFFER_SIZE,
         &SpbContext->ReadMemory,

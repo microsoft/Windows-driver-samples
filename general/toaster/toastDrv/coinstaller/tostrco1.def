@@ -1,6 +1,0 @@
-LIBRARY  TOSTRCO1
-
-EXPORTS   
-   ToasterCoInstaller 
-
-   

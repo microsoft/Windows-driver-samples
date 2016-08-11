@@ -64,6 +64,10 @@ NTSTATUS ActivityDevice::InitializeEnumerationProperties()
         InitPropVariantFromCLSID(GUID_SensorCategory_Motion,
             &(m_pEnumerationProperties->List[SENSOR_CATEGORY].Value));
 
+        m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Key = DEVPKEY_Sensor_IsPrimary;
+        InitPropVariantFromBoolean(FALSE,
+            &(m_pEnumerationProperties->List[SENSOR_ISPRIMARY].Value));
+
         m_pEnumerationProperties->List[SENSOR_MIN_INTERVAL].Key = PKEY_Sensor_MinimumDataInterval_Ms;
         InitPropVariantFromUInt32(Act_Default_MinDataInterval_Ms,
             &(m_pEnumerationProperties->List[SENSOR_MIN_INTERVAL].Value));

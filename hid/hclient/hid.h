@@ -158,7 +158,8 @@ Read (
 BOOLEAN
 ReadOverlapped (
     PHID_DEVICE     HidDevice,
-    HANDLE          CompletionEvent
+    HANDLE          CompletionEvent,
+    LPOVERLAPPED    Overlap
    );
    
 BOOLEAN

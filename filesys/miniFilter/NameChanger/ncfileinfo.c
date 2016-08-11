@@ -1224,7 +1224,8 @@ Return Value:
     PNC_MAPPING Mapping;
     NC_PATH_OVERLAP RealOverlap;
     NC_PATH_OVERLAP UserOverlap;
-    PFILE_DISPOSITION_INFORMATION Disposition;
+    FILE_INFORMATION_CLASS fileInformationClass;
+    BOOLEAN IsDeleteFile;
     BOOLEAN IgnoreCase = !BooleanFlagOn( FltObjects->FileObject->Flags,
                                          FO_OPENED_CASE_SENSITIVE );
 
@@ -1234,14 +1235,19 @@ Return Value:
 
     FLT_ASSERT( IoGetTopLevelIrp() == NULL );
 
+    fileInformationClass = Data->Iopb->Parameters.SetFileInformation.FileInformationClass;
+
     //
     //  See if they are setting the delete disposition to false.
     //  If they are we can passthrough. We don't care if people
     //  want to mark the mapping as "don't delete".
     //
 
-    Disposition = Data->Iopb->Parameters.SetFileInformation.InfoBuffer;
-    if (Disposition->DeleteFile == FALSE) {
+    IsDeleteFile = (fileInformationClass == FileDispositionInformationEx) ?
+        BooleanFlagOn( ((PFILE_DISPOSITION_INFORMATION_EX)Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->Flags, FILE_DISPOSITION_DELETE ) :
+        ((PFILE_DISPOSITION_INFORMATION)Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->DeleteFile;
+
+    if (IsDeleteFile == FALSE) {
 
         Status = STATUS_SUCCESS;
         goto NcPreSetDispositionCleanup;
@@ -1700,13 +1706,24 @@ Return Value:
     BOOLEAN IgnoreCase = !BooleanFlagOn( FltObjects->FileObject->Flags,
                                          FO_OPENED_CASE_SENSITIVE );
 
+    FILE_INFORMATION_CLASS fileInformationClass;
+    BOOLEAN ReplaceIfExists;
+
+    fileInformationClass = Data->Iopb->Parameters.SetFileInformation.FileInformationClass;
+    ReplaceIfExists = (fileInformationClass == FileRenameInformationEx) ?
+        BooleanFlagOn( RenameInfo->Flags, FILE_RENAME_REPLACE_IF_EXISTS ) :
+        RenameInfo->ReplaceIfExists;
+        
+
     PAGED_CODE();
 
     UNREFERENCED_PARAMETER( CompletionContext );
 
     FLT_ASSERT( IoGetTopLevelIrp() == NULL );
 
-    
+    FLT_ASSERT( (fileInformationClass == FileRenameInformation) ||
+                (fileInformationClass == FileRenameInformationEx) );
+
     //
     //  Get Instance Context 
     //
@@ -1837,7 +1854,7 @@ Return Value:
         goto NcPreRenameCleanup;
 
     } else if ((TargetRealOverlap.Ancestor || TargetUserOverlap.Ancestor) &&
-                RenameInfo->ReplaceIfExists) {
+                ReplaceIfExists) {
 
         Status = STATUS_ACCESS_DENIED;
         ReturnValue = FLT_PREOP_COMPLETE;    
@@ -1894,7 +1911,7 @@ Return Value:
         //  Copy user rename parameters.
         //
 
-        MungedRenameInfo->ReplaceIfExists = RenameInfo->ReplaceIfExists;
+        MungedRenameInfo->Flags = RenameInfo->Flags;
         MungedRenameInfo->RootDirectory = NULL;
         MungedRenameInfo->FileNameLength = MungedTargetName.Length;
         RtlCopyMemory( &MungedRenameInfo->FileName, 
@@ -1912,7 +1929,7 @@ Return Value:
                                         FltObjects->FileObject,
                                         MungedRenameInfo,
                                         MungedRenameLength,
-                                        FileRenameInformation );
+                                        fileInformationClass );
 
         //
         //  Complete the IO.

@@ -681,9 +681,9 @@ Arguments:
     DebugTrace(+1, Dbg, "FatLookupFileAllocation\n", 0);
     DebugTrace( 0, Dbg, "  FcbOrDcb  = %p\n", FcbOrDcb);
     DebugTrace( 0, Dbg, "  Vbo       = %8lx\n", Vbo);
-    DebugTrace( 0, Dbg, "  Lbo       = %8lx\n", Lbo);
-    DebugTrace( 0, Dbg, "  ByteCount = %8lx\n", ByteCount);
-    DebugTrace( 0, Dbg, "  Allocated = %8lx\n", Allocated);
+    DebugTrace( 0, Dbg, "  pLbo       = %8lx\n", Lbo);
+    DebugTrace( 0, Dbg, "  pByteCount = %8lx\n", ByteCount);
+    DebugTrace( 0, Dbg, "  pAllocated = %8lx\n", Allocated);
 
     Context.Bcb = NULL;
 
@@ -1134,7 +1134,6 @@ Arguments:
         FatLookupFileAllocationSize( IrpContext, FcbOrDcb );
     }
 
-
     //
     //  Check for the benign case that the desired allocation is already
     //  within the allocation size.
@@ -1427,8 +1426,7 @@ VOID
 FatTruncateFileAllocation (
     IN PIRP_CONTEXT IrpContext,
     IN PFCB FcbOrDcb,
-    IN ULONG DesiredAllocationSize,
-    IN BOOLEAN ForDeletion    
+    IN ULONG DesiredAllocationSize
     )
 
 /*++
@@ -1471,10 +1469,7 @@ Return Value:
 
     PAGED_CODE();
 
-    UNREFERENCED_PARAMETER( ForDeletion );
-
     Vcb = FcbOrDcb->Vcb;
-
 
     DebugTrace(+1, Dbg, "FatTruncateFileAllocation\n", 0);
     DebugTrace( 0, Dbg, "  FcbOrDcb  =             %p\n", FcbOrDcb);
@@ -2592,6 +2587,12 @@ Arguments:
 
 
 
+//
+// Limit our zeroing writes to 1 MB.
+//
+
+#define MAX_ZERO_MDL_SIZE (1*1024*1024)
+
 _Requires_lock_held_(_Global_critical_region_)
 VOID
 FatDeallocateDiskSpace (
@@ -2647,6 +2648,8 @@ Return Value:
 
     PFAT_WINDOW Window;
 
+    NTSTATUS ZeroingStatus = STATUS_SUCCESS;
+
     PAGED_CODE();
 
     DebugTrace(+1, Dbg, "FatDeallocateDiskSpace\n", 0);
@@ -2669,138 +2672,174 @@ Return Value:
 
     if (ZeroOnDeallocate) {
 
-        NTSTATUS Status = STATUS_SUCCESS;
-        PIRP IoIrp;
-        KEVENT IoEvent;
-        IO_STATUS_BLOCK Iosb;
-        PVOID Buffer = NULL;
-        PMDL Mdl;
-        ULONG ByteCountToZero;
-        ULONG MdlSizeMapped;
+        try {
 
-        //
-        // Issue the writes down for each run in the Mcb
-        //
-
-        KeInitializeEvent( &IoEvent,
-                           NotificationEvent,
-                           FALSE );
-                
-        for ( McbIndex = 0; McbIndex < RunsInMcb; McbIndex++ ) {
-
-            FatGetNextMcbEntry( Vcb, Mcb, McbIndex, &Vbo, &Lbo, &ByteCount );
+            PIRP IoIrp;
+            KEVENT IoEvent;
+            IO_STATUS_BLOCK Iosb;
+            PVOID Buffer = NULL;
+            PMDL Mdl;
+            ULONG ByteCountToZero;
+            ULONG MdlSizeMapped;
 
             //
-            //  Assert that Fat files have no holes.
+            // Issue the writes down for each run in the Mcb
             //
 
-            NT_ASSERT( Lbo != 0 );
+            KeInitializeEvent( &IoEvent,
+                               NotificationEvent,
+                               FALSE );
+                    
+            for ( McbIndex = 0; McbIndex < RunsInMcb; McbIndex++ ) {
 
-            //
-            // Setup our MDL for the this run.
-            //
-
-            Mdl = FatBuildZeroMdl( IrpContext, ByteCount);
-            if (!Mdl) {
-                FatNormalizeAndRaiseStatus( IrpContext, STATUS_INSUFFICIENT_RESOURCES);
-            }
-
-            try {
+                FatGetNextMcbEntry( Vcb, Mcb, McbIndex, &Vbo, &Lbo, &ByteCount );
 
                 //
-                // Map the MDL.
+                //  Assert that Fat files have no holes.
                 //
 
-                Buffer = MmGetSystemAddressForMdlSafe(Mdl, HighPagePriority|MdlMappingNoExecute);
-                if (!Buffer) {
-                    FatNormalizeAndRaiseStatus( IrpContext, STATUS_INSUFFICIENT_RESOURCES);
+                NT_ASSERT( Lbo != 0 );
+
+                //
+                // Setup our MDL for the this run.
+                //
+
+                if (ByteCount > MAX_ZERO_MDL_SIZE) {
+                    Mdl = FatBuildZeroMdl( IrpContext, MAX_ZERO_MDL_SIZE);                
+                } else {
+                    Mdl = FatBuildZeroMdl( IrpContext, ByteCount);
                 }
 
-                //
-                // We might not have not been able to get an MDL big enough to map the whole
-                // run. In this case, break up the write.
-                //
+                if (!Mdl) {
+                    ZeroingStatus = STATUS_INSUFFICIENT_RESOURCES;
+                    goto try_exit;
+                }
 
-                MdlSizeMapped = min( ByteCount, Mdl->ByteCount );
-                ByteCountToZero = ByteCount;
-
-                //
-                // Loop until there are no bytes left to write
-                //
-
-                while (ByteCountToZero != 0) {
+                try {
 
                     //
-                    //  Write zeros to each run.
+                    // Map the MDL.
                     //
 
-                    KeClearEvent( &IoEvent );
-
-                    IoIrp = IoBuildSynchronousFsdRequest( IRP_MJ_WRITE,
-                                                          Vcb->TargetDeviceObject,
-                                                          Buffer,
-                                                          MdlSizeMapped,
-                                                          (PLARGE_INTEGER)&Lbo,
-                                                          &IoEvent,
-                                                          &Iosb );
-
-                    if (IoIrp == NULL) {
-
-                        FatRaiseStatus( IrpContext,
-                                        STATUS_INSUFFICIENT_RESOURCES );
+                    Buffer = MmGetSystemAddressForMdlSafe(Mdl, HighPagePriority|MdlMappingNoExecute);
+                    if (!Buffer) {
+                        NT_ASSERT( FALSE );
+                        ZeroingStatus = STATUS_INSUFFICIENT_RESOURCES;
+                        goto try_exit2;
                     }
 
                     //
-                    //  Set a flag indicating that we want to write through any
-                    //  cache on the controller.  This eliminates the need for
-                    //  an explicit flush-device after the write.
+                    // We might not have not been able to get an MDL big enough to map the whole
+                    // run. In this case, break up the write.
                     //
 
-                    SetFlag( IoGetNextIrpStackLocation(IoIrp)->Flags, SL_WRITE_THROUGH );
-
-                    Status = IoCallDriver( Vcb->TargetDeviceObject, IoIrp );
-
-                    if (Status == STATUS_PENDING) {
-
-                        (VOID)KeWaitForSingleObject( &IoEvent,
-                                                     Executive,
-                                                     KernelMode,
-                                                     FALSE,
-                                                     (PLARGE_INTEGER)NULL );
-
-                        Status = Iosb.Status;
-                    }
-
-                    if (!NT_SUCCESS( Status )) {
-
-                        FatNormalizeAndRaiseStatus( IrpContext,
-                                                    Status );
-                    }
+                    MdlSizeMapped = min( ByteCount, Mdl->ByteCount );
+                    ByteCountToZero = ByteCount;
 
                     //
-                    // Decrement ByteCount
+                    // Loop until there are no bytes left to write
                     //
 
-                    if (MdlSizeMapped <= ByteCountToZero) {
+                    while (ByteCountToZero != 0) {
+
+                        //
+                        //  Write zeros to each run.
+                        //
+
+                        KeClearEvent( &IoEvent );
+
+                        IoIrp = IoBuildSynchronousFsdRequest( IRP_MJ_WRITE,
+                                                              Vcb->TargetDeviceObject,
+                                                              Buffer,
+                                                              MdlSizeMapped,
+                                                              (PLARGE_INTEGER)&Lbo,
+                                                              &IoEvent,
+                                                              &Iosb );
+
+                        if (IoIrp == NULL) {
+                            NT_ASSERT( FALSE );                            
+                            ZeroingStatus = STATUS_INSUFFICIENT_RESOURCES;
+                            goto try_exit2;
+                        }
+
+                        //
+                        //  Set a flag indicating that we want to write through any
+                        //  cache on the controller.  This eliminates the need for
+                        //  an explicit flush-device after the write.
+                        //
+
+                        SetFlag( IoGetNextIrpStackLocation(IoIrp)->Flags, SL_WRITE_THROUGH );
+
+                        ZeroingStatus = IoCallDriver( Vcb->TargetDeviceObject, IoIrp );
+
+                        if (ZeroingStatus == STATUS_PENDING) {
+
+                            (VOID)KeWaitForSingleObject( &IoEvent,
+                                                         Executive,
+                                                         KernelMode,
+                                                         FALSE,
+                                                         (PLARGE_INTEGER)NULL );
+
+                            ZeroingStatus = Iosb.Status;
+                        }
+
+                        if (!NT_SUCCESS( ZeroingStatus )) {
+                            NT_ASSERT( FALSE );                            
+                            goto try_exit2;
+                        }
+
+                        //
+                        // Increment the starting offset where we will zero.
+                        //
+                        
+                        Lbo += MdlSizeMapped;
+
+                        //
+                        // Decrement ByteCount
+                        //
+
                         ByteCountToZero -= MdlSizeMapped;
-                    } else {
-                        MdlSizeMapped = ByteCountToZero;
+
+                        if (ByteCountToZero < MdlSizeMapped) {
+                            MdlSizeMapped = ByteCountToZero;
+                        }
+                        
                     }
+                    
+                try_exit2:
+                
+                    NOTHING;
+                    
+                } finally {
+
+                    if (!FlagOn( Mdl->MdlFlags, MDL_SOURCE_IS_NONPAGED_POOL) &&
+                        FlagOn( Mdl->MdlFlags, MDL_MAPPED_TO_SYSTEM_VA )) {
+
+                        MmUnmapLockedPages( Mdl->MappedSystemVa, Mdl );
+                    }
+                    IoFreeMdl( Mdl );
                 }
                 
-            } finally {
+            }            
 
-                if (!FlagOn( Mdl->MdlFlags, MDL_SOURCE_IS_NONPAGED_POOL) &&
-                    FlagOn( Mdl->MdlFlags, MDL_MAPPED_TO_SYSTEM_VA )) {
+        try_exit:
 
-                    MmUnmapLockedPages( Mdl->MappedSystemVa, Mdl );
-                }
-                IoFreeMdl( Mdl );
-            }
+            NOTHING;
             
-        }    
+        } except(FatExceptionFilter( NULL, GetExceptionInformation() )) {
+        
+            //
+            // If we failed to zero for some reason, still go ahead and deallocate 
+            // the clusters. Otherwise we'll leak space from the volume.
+            //
+            
+            ZeroingStatus = GetExceptionCode();
+                                    
+        }
 
     }
+
+    NT_ASSERT( NT_SUCCESS(ZeroingStatus) );
 
     try {
 
@@ -4052,10 +4091,12 @@ Arguments:
         }
 
         //
-        //  Unpin the Bcb.  For cleaning operations, we make this write-through.
+        //  Unpin the Bcb.  For cleaning operations or if the corruption was detected while mounting we make this write-through.
         //
 
-        if (CleaningOperation && Bcb) {
+        if ((CleaningOperation ||
+             FlagOn(Vcb->VcbState, VCB_STATE_FLAG_MOUNT_IN_PROGRESS)) &&
+             Bcb) {
 
             IO_STATUS_BLOCK IgnoreStatus;
 
@@ -4619,10 +4660,11 @@ Return Value:
 {
     UCHAR Log = 0;
 
-    PAGED_CODE();
+#if FASTFATDBG
+    ULONG OrigValue = Value;
+#endif
 
-    DebugTrace(+1, Dbg, "LogOf\n", 0);
-    DebugTrace( 0, Dbg, "  Value = %8lx\n", Value);
+    PAGED_CODE();
 
     //
     //  Knock bits off until we we get a one at position 0
@@ -4641,13 +4683,16 @@ Return Value:
 
     if (Value != 0x1) {
 
+        DebugTrace(+1, Dbg, "LogOf\n", 0);
+        DebugTrace( 0, Dbg, "  Value = %8lx\n", OrigValue);
+
         DebugTrace( 0, Dbg, "Received non power of 2.\n", 0);
-        
+
+        DebugTrace(-1, Dbg, "LogOf -> %8lx\n", Log);
+    
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
         FatBugCheck( Value, Log, 0 );
     }
-
-    DebugTrace(-1, Dbg, "LogOf -> %8lx\n", Log);
 
     return Log;
 }

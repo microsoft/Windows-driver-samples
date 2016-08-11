@@ -282,7 +282,7 @@ Return Value:
             // layering itself over a this driver. A driver is
             // required to supply a dispatch routine for IRP_MJ_CREATE.
             //
-            fileContext = ExAllocatePoolWithQuotaTag(NonPagedPool, 
+            fileContext = ExAllocatePoolWithQuotaTag(NonPagedPoolNx, 
                                               sizeof(FILE_CONTEXT),
                                               TAG);
 

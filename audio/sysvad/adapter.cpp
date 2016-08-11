@@ -32,6 +32,7 @@ Abstract:
 
 
 
+
 typedef void (*fnPcDriverUnload) (PDRIVER_OBJECT);
 fnPcDriverUnload gPCDriverUnloadRoutine = NULL;
 extern "C" DRIVER_UNLOAD DriverUnload;
@@ -61,7 +62,6 @@ C_ASSERT(sizeof(POHANDLE) == sizeof(PVOID));
 
 #define SYSVAD_DEEPEST_FSTATE_LATENCY_IN_MS     SYSVAD_F3_LATENCY_IN_MS
 #define SYSVAD_DEEPEST_FSTATE_RESIDENCY_IN_SEC  SYSVAD_F3_RESIDENCY_IN_SEC
-
 
 //-----------------------------------------------------------------------------
 // PoFx - Single Component - Multi Fx States support.
@@ -243,7 +243,8 @@ DRIVER_DISPATCH PnpHandler;
 // Rendering streams are saved to a file by default. Use the registry value 
 // DoNotCreateDataFiles (DWORD) > 0 to override this default.
 //
-DWORD g_DoNotCreateDataFiles = 0;
+DWORD g_DoNotCreateDataFiles = 0;  // default is off.
+DWORD g_DisableToneGenerator = 0;  // default is to generate tones.
 
 
 #ifdef SYSVAD_BTH_BYPASS
@@ -252,7 +253,7 @@ DWORD g_DoNotCreateDataFiles = 0;
 // default. Use the registry value DisableBthScoBypass (DWORD) > 0 to override 
 // this default.
 //
-DWORD g_DisableBthScoBypass = 0;
+DWORD g_DisableBthScoBypass = 0;   // default is SCO bypass enabled.
 #endif // SYSVAD_BTH_BYPASS
 
 //-----------------------------------------------------------------------------
@@ -307,6 +308,7 @@ Environment:
         WdfDriverMiniportUnload(WdfGetDriver());
     }
 
+
 Done:
     return;
 }
@@ -340,10 +342,18 @@ Returns:
 {
     NTSTATUS                    ntStatus;
     UNICODE_STRING              parametersPath;
-    RTL_QUERY_REGISTRY_TABLE    paramTable[4];
-    
+    RTL_QUERY_REGISTRY_TABLE    paramTable[] = {
+    // QueryRoutine     Flags                                               Name                     EntryContext             DefaultType                                                    DefaultData              DefaultLength
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DoNotCreateDataFiles", &g_DoNotCreateDataFiles, (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DoNotCreateDataFiles, sizeof(ULONG)},
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableToneGenerator", &g_DisableToneGenerator, (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableToneGenerator, sizeof(ULONG)},
+#ifdef SYSVAD_BTH_BYPASS
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableBthScoBypass",  &g_DisableBthScoBypass,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableBthScoBypass,  sizeof(ULONG)},
+#endif
+        { NULL,   0,                                                        NULL,                    NULL,                    0,                                                             NULL,                    0}
+    };
+
     DPF(D_TERSE, ("[GetRegistrySettings]"));
-    
+
     PAGED_CODE(); 
 
     RtlInitUnicodeString(&parametersPath, NULL);
@@ -361,29 +371,6 @@ Returns:
 
     RtlAppendUnicodeToString(&parametersPath, RegistryPath->Buffer);
     RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
-
-    RtlZeroMemory(&paramTable[0], sizeof(paramTable));
-
-    g_DoNotCreateDataFiles = 0; // default is off.
-    
-    paramTable[0].Flags         = RTL_QUERY_REGISTRY_DIRECT;
-    paramTable[0].Name          = L"DoNotCreateDataFiles";
-    paramTable[0].EntryContext  = &g_DoNotCreateDataFiles;
-    paramTable[0].DefaultType   = REG_DWORD;
-    paramTable[0].DefaultData   = &g_DoNotCreateDataFiles;
-    paramTable[0].DefaultLength = sizeof(ULONG);
-    
-#ifdef SYSVAD_BTH_BYPASS
-    g_DisableBthScoBypass = 0;  // default is off.
-    
-    paramTable[1].Flags         = RTL_QUERY_REGISTRY_DIRECT;
-    paramTable[1].Name          = L"DisableBthScoBypass";
-    paramTable[1].EntryContext  = &g_DisableBthScoBypass;
-    paramTable[1].DefaultType   = REG_DWORD;
-    paramTable[1].DefaultData   = &g_DisableBthScoBypass;
-    paramTable[1].DefaultLength = sizeof(ULONG);
-#endif // SYSVAD_BTH_BYPASS
-
 
     ntStatus = RtlQueryRegistryValues(
                  RTL_REGISTRY_ABSOLUTE | RTL_REGISTRY_OPTIONAL,
@@ -405,10 +392,11 @@ Returns:
     // Dump settings.
     //
     DPF(D_VERBOSE, ("DoNotCreateDataFiles: %u", g_DoNotCreateDataFiles));
+    DPF(D_VERBOSE, ("DisableToneGenerator: %u", g_DisableToneGenerator));
 #ifdef SYSVAD_BTH_BYPASS
     DPF(D_VERBOSE, ("DisableBthScoBypass: %u", g_DisableBthScoBypass));
 #endif // SYSVAD_BTH_BYPASS
-    
+
     //
     // Cleanup.
     //
@@ -452,7 +440,6 @@ Return Value:
     WDF_DRIVER_CONFIG           config;
 
     DPF(D_TERSE, ("[DriverEntry]"));
-    
     //
     // Get registry configuration.
     //
@@ -590,6 +577,7 @@ Return Value:
         );
 
 
+
     return ntStatus;
 } // AddDevice
 
@@ -635,6 +623,7 @@ InstallEndpointRenderFilters(
     PPORTCLSRUNTIMEPOWER        pPortClsRuntimePower    = NULL;
 #endif // _USE_IPortClsRuntimePower
     PPORTCLSStreamResourceManager pPortClsResMgr        = NULL;
+    PPORTCLSStreamResourceManager2 pPortClsResMgr2      = NULL;
 
     PAGED_CODE();
     
@@ -645,7 +634,8 @@ InstallEndpointRenderFilters(
         _pAeMiniports,
         NULL,
         &unknownTopology,
-        &unknownWave);
+        &unknownWave,
+        NULL, NULL);
 
     if (unknownWave) // IID_IPortClsEtwHelper and IID_IPortClsRuntimePower interfaces are only exposed on the WaveRT port.
     {
@@ -696,8 +686,9 @@ InstallEndpointRenderFilters(
         //
         // Test: add and remove current thread as streaming audio resource.  
         // In a real driver you should only add interrupts and driver-owned threads 
-        // (i.e., do not add the current thread as streaming resource).
+        // (i.e., do NOT add the current thread as streaming resource).
         //
+        // testing IPortClsStreamResourceManager:
         ntStatus = unknownWave->QueryInterface(IID_IPortClsStreamResourceManager, (PVOID *)&pPortClsResMgr);
         if (NT_SUCCESS(ntStatus))
         {
@@ -720,6 +711,31 @@ InstallEndpointRenderFilters(
 
             pPortClsResMgr->Release();
             pPortClsResMgr = NULL;
+        }
+        
+        // testing IPortClsStreamResourceManager2:
+        ntStatus = unknownWave->QueryInterface(IID_IPortClsStreamResourceManager2, (PVOID *)&pPortClsResMgr2);
+        if (NT_SUCCESS(ntStatus))
+        {
+            PCSTREAMRESOURCE_DESCRIPTOR res;
+            PCSTREAMRESOURCE hRes = NULL;
+            PDEVICE_OBJECT pdo = NULL;
+
+            PcGetPhysicalDeviceObject(_pDeviceObject, &pdo);
+            PCSTREAMRESOURCE_DESCRIPTOR_INIT(&res);
+            res.Pdo = pdo;
+            res.Type = ePcStreamResourceThread;
+            res.Resource.Thread = PsGetCurrentThread();
+            
+            NTSTATUS ntStatusTest = pPortClsResMgr2->AddStreamResource2(pdo, NULL, &res, &hRes);
+            if (NT_SUCCESS(ntStatusTest))
+            {
+                pPortClsResMgr2->RemoveStreamResource(hRes);
+                hRes = NULL;
+            }
+
+            pPortClsResMgr2->Release();
+            pPortClsResMgr2 = NULL;
         }
     }
 
@@ -774,7 +790,8 @@ InstallEndpointCaptureFilters(
         _pAeMiniports,
         NULL,
         NULL,
-        NULL);
+        NULL,
+        NULL, NULL);
         
     return ntStatus;
 }

@@ -27,6 +27,18 @@ Abstract:
 //-------------------------------------------------------------------------
 // Description:
 //
+// jump to the given label.
+//
+// Parameters:
+//
+//      label - [in] label to jump if condition is met
+//
+#define JUMP(label)                                             \
+        goto label;  
+
+//-------------------------------------------------------------------------
+// Description:
+//
 // If the condition evaluates to TRUE, jump to the given label.
 //
 // Parameters:
@@ -175,6 +187,7 @@ typedef struct _PIN_DEVICE_FORMATS_AND_MODES
 
 } PIN_DEVICE_FORMATS_AND_MODES, *PPIN_DEVICE_FORMATS_AND_MODES;
 
+
 // forward declaration.
 typedef struct _ENDPOINT_MINIPAIR *PENDPOINT_MINIPAIR;
 
@@ -232,7 +245,7 @@ typedef struct _ENDPOINT_MINIPAIR
     USHORT                          DeviceMaxChannels;
     PIN_DEVICE_FORMATS_AND_MODES*   PinDeviceFormatsAndModes;
     ULONG                           PinDeviceFormatsAndModesCount;
-    
+
     // Miniport physical connections.
     PHYSICALCONNECTIONTABLE*        PhysicalConnections;
     ULONG                           PhysicalConnectionCount;
@@ -435,7 +448,9 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
         _In_        PENDPOINT_MINIPAIR  MiniportPair,
         _In_opt_    PVOID               DeviceContext,
         _Out_opt_   PUNKNOWN *          UnknownTopology,
-        _Out_opt_   PUNKNOWN *          UnknownWave
+        _Out_opt_   PUNKNOWN *          UnknownWave,
+        _Out_opt_   PUNKNOWN *          UnknownMiniportTopology,
+        _Out_opt_   PUNKNOWN *          UnknownMiniportWave
     );
 
     STDMETHOD_(NTSTATUS,        RemoveEndpointFilters)

@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "multipinmft.h"
 #ifdef MF_WPP
-#include "multipinmft.tmh"
+#include "multipinmft.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 //
 //Note since MFT_UNIQUE_METHOD_NAMES is defined all the functions of IMFTransform have the Mft suffix..
@@ -36,12 +36,11 @@ CMultipinMft::CMultipinMft()
     m_OutputPinCount( 0 ),
     m_dwWorkQueueId ( MFASYNC_CALLBACK_QUEUE_MULTITHREADED ),
     m_lWorkQueuePriority ( 0 ),
-    m_attributes( nullptr ),
-    m_pSourceTransform( nullptr ),
+    m_spAttributes( nullptr ),
+    m_spSourceTransform( nullptr ),
     m_PhotoTriggerSent(false),
     m_filterHasIndependentPin( false ),
     m_FilterInPhotoSequence( false ),
-    m_AsyncPropEvent( nullptr ),
     m_filterInWarmStart(false)
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
    , m_spPhotoConfirmationCallback(nullptr)
@@ -53,7 +52,10 @@ CMultipinMft::CMultipinMft()
     pAttributes->SetUINT32( MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE, TRUE );
     pAttributes->SetUINT32( MF_SA_D3D_AWARE, TRUE );
     pAttributes->SetString( MFT_ENUM_HARDWARE_URL_Attribute, L"SampleMultiPinMft" );
-    m_attributes = pAttributes;
+    m_spAttributes = pAttributes;
+#if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
+    m_guidPhotoConfirmationSubtype = MFVideoFormat_NV12;
+#endif
 }
 
 CMultipinMft::~CMultipinMft( )
@@ -73,7 +75,7 @@ CMultipinMft::~CMultipinMft( )
         SAFERELEASE( pioPin );
     }
     m_OutPins.clear();
-    m_pSourceTransform = nullptr;
+    m_spSourceTransform = nullptr;
 
 }
 
@@ -150,6 +152,12 @@ STDMETHODIMP CMultipinMft::QueryInterface(
         *ppv = static_cast< IMFCapturePhotoConfirmation* >(this);
         AddRef();
     }
+    else
+    if (iid == __uuidof(IMFGetService))
+    {
+        *ppv = static_cast< IMFGetService* >(this);
+        AddRef();
+    }
 #endif
     else
     {
@@ -194,12 +202,12 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
     //
     DMFTCHECKHR_GOTO( pAttributes->GetUnknown( MF_DEVICEMFT_CONNECTED_FILTER_KSCONTROL,IID_PPV_ARGS( &spFilterUnk ) ),done );
     
-    DMFTCHECKHR_GOTO( spFilterUnk.As( &m_pSourceTransform ), done );
+    DMFTCHECKHR_GOTO( spFilterUnk.As( &m_spSourceTransform ), done );
     
-    DMFTCHECKHR_GOTO( m_pSourceTransform.As( &m_ikscontrol ), done );
+    DMFTCHECKHR_GOTO( m_spSourceTransform.As( &m_spIkscontrol ), done );
     
-    DMFTCHECKHR_GOTO( m_pSourceTransform->MFTGetStreamCount( &inputStreams, &outputStreams ), done );
-    
+    DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamCount( &inputStreams, &outputStreams ), done );
+
     spFilterUnk = nullptr;
 
     //
@@ -215,7 +223,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
         pcOutputStreams = new DWORD[ outputStreams ];
         DMFTCHECKNULL_GOTO( pcOutputStreams, done, E_OUTOFMEMORY );
         
-        DMFTCHECKHR_GOTO( m_pSourceTransform->MFTGetStreamIDs( inputStreams, pcInputStreams,
+        DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamIDs( inputStreams, pcInputStreams,
             outputStreams,
             pcOutputStreams ),done );
 
@@ -227,7 +235,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
         {           
             ComPtr<IMFAttributes> pInAttributes = nullptr;
             
-            DMFTCHECKHR_GOTO( m_pSourceTransform->GetOutputStreamAttributes(pcOutputStreams[ulIndex], pInAttributes.GetAddressOf()), done);
+            DMFTCHECKHR_GOTO( m_spSourceTransform->GetOutputStreamAttributes(pcOutputStreams[ulIndex], pInAttributes.GetAddressOf()), done);
             
             DMFTCHECKHR_GOTO( pInAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &streamCategory), done);
             
@@ -252,9 +260,14 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
                 pInPin = new CInPin( pInAttributes.Get(), pcOutputStreams[ulIndex], this);
                 DMFTCHECKNULL_GOTO(pInPin, done, E_OUTOFMEMORY);
             }
-            m_InPins.push_back( pInPin );
-            
-            DMFTCHECKHR_GOTO( pInPin->Init(m_pSourceTransform.Get() ), done);
+
+            hr = ExceptionBoundary([this,pInPin]()
+            {
+                m_InPins.push_back(pInPin);
+            });
+
+            DMFTCHECKHR_GOTO(hr, done);
+            DMFTCHECKHR_GOTO( pInPin->Init(m_spSourceTransform.Get() ), done);
             
             
             pInPin->AddRef();
@@ -280,10 +293,17 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
             for ( ULONG ulIndex = 0; ulIndex < outputStreams; ulIndex++ )
             {
                 ComPtr<IKsControl> pKsControl = NULL;
+                COutPin *poPin = nullptr;
                 
                 DMFTCHECKHR_GOTO( piPin->QueryInterface(IID_PPV_ARGS( &pKsControl ) ), done);
+                
+                hr = ExceptionBoundary([&]()
+                {
+                    poPin = new COutPin(ulIndex, this, pKsControl.Get());
+                });
+                
+                DMFTCHECKHR_GOTO(hr, done);
 
-                COutPin *poPin  = new COutPin( ulIndex, this, pKsControl.Get() ); 
                 DMFTCHECKNULL_GOTO( poPin,done, E_OUTOFMEMORY );
 
                 DMFTCHECKHR_GOTO( BridgeInputPinOutputPin( piPin, poPin ),done );
@@ -373,8 +393,11 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
                     }
 #endif
                     DMFTCHECKHR_GOTO(BridgeInputPinOutputPin(piPin, poPin), done);
-
-                    m_OutPins.push_back(poPin);
+                    hr = ExceptionBoundary([&]()
+                    {
+                        m_OutPins.push_back(poPin);
+                    });
+                    DMFTCHECKHR_GOTO(hr, done);
                 }
            }
         }
@@ -419,7 +442,7 @@ done:
         //
         // Simply clear the custom pins since the input pins must have deleted the pin
         //
-        m_pSourceTransform = nullptr;
+        m_spSourceTransform = nullptr;
     }
     return hr;
 }
@@ -1146,6 +1169,19 @@ STDMETHODIMP CMultipinMft::KsProperty(
     UNREFERENCED_PARAMETER(pulBytesReturned);
     DMFTCHECKNULL_GOTO(pProperty, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(pulBytesReturned, done, E_INVALIDARG);
+    
+    //
+    // Enable Warm Start on All filters for the sample. Please comment out this
+    // section if this is not needed
+    //
+    if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl)
+        && (pProperty->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART))
+    {
+        DMFTCHECKHR_GOTO(WarmStartHandler(pProperty,
+            ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned),done);
+        goto done;
+    }
+
     if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl)
         && (pProperty->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTHUMBNAIL))
     {
@@ -1182,11 +1218,7 @@ STDMETHODIMP CMultipinMft::KsProperty(
                 ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
             goto done;
             break;
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART:
-            hr = WarmStartHandler(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
+
         }
     }
     else
@@ -1235,7 +1267,7 @@ STDMETHODIMP CMultipinMft::KsProperty(
             goto done;
         }
     }
-    hr = m_ikscontrol->KsProperty(pProperty,
+    hr = m_spIkscontrol->KsProperty(pProperty,
         ulPropertyLength,
         pvPropertyData,
         ulDataLength,
@@ -1262,7 +1294,7 @@ STDMETHODIMP CMultipinMft::KsMethod(
     Implements IKSProperty::KsMethod function.
     --*/
 {
-    return m_ikscontrol->KsMethod(
+    return m_spIkscontrol->KsMethod(
         pMethod,
         ulPropertyLength,
         pvPropertyData,
@@ -1284,11 +1316,35 @@ STDMETHODIMP CMultipinMft::KsEvent(
     Implements IKSProperty::KsEvent function.
     --*/
 {
+
+    HRESULT hr = S_OK;
+    if (pEvent && (pEvent->Set == KSEVENTSETID_ExtendedCameraControl) &&
+        (pEvent->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART))
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Acquiring Event for Async Extended Control");
+        //
+        // For the Sample the warmstate handlers are supported by Device MFT and not passed to driver
+        //
+       hr = m_eventHandler.KSEvent(pEvent,
+            ulEventLength,
+            pEventData,
+            ulDataLength,
+            pBytesReturned
+            );
+       goto done;
+    }
+     
     if ((pEvent && (pEvent->Set == KSEVENTSETID_ExtendedCameraControl))
         && (!filterHasIndependentPin()))
     {
         //
-        //Store only for emualted controls..To do!!!
+        // Important: Extended controls will send events which are strictly 
+        // One shot. The event comes first where it should be duped and stored,
+        // the control comes next. The event should be set after control completes
+        // and it should be then closed.
+        // The below code handles only certain events needed for
+        // implementing photo sequence. For a complete exhaustive
+        // list refer documentation.
         //
         switch (pEvent->Id)
         {
@@ -1297,20 +1353,32 @@ STDMETHODIMP CMultipinMft::KsEvent(
         case KSPROPERTY_CAMERACONTROL_EXTENDED_MAXVIDFPS_PHOTORES:
         case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTRIGGERTIME:
         case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOFRAMERATE:
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART:
-        {
-             DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Acquiring Event for Async Extended Control");
-             KSEVENTDATA* ksEventData = (KSEVENTDATA*)pEventData;
-             m_AsyncPropEvent = ksEventData->EventHandle.Event;
-        }
-            return S_OK;
+            {
+                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Acquiring Event for Async Extended Control"); 
+                 //
+                 // Let the event handler handle the event
+                 //
+                 DMFTCHECKHR_GOTO(m_eventHandler.KSEvent(pEvent,
+                     ulEventLength,
+                     pEventData,
+                     ulDataLength,
+                     pBytesReturned
+                     ),done);
+                 goto done;
+            }
         }
     }
-    return m_ikscontrol->KsEvent(pEvent,
+    //
+    // All the Events we don't handle should be sent to the driver!
+    //
+    hr = m_spIkscontrol->KsEvent(pEvent,
         ulEventLength,
         pEventData,
         ulDataLength,
         pBytesReturned);
+done:
+    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
+    return hr;
 }
 
 
@@ -1401,9 +1469,9 @@ STDMETHODIMP CMultipinMft::GetAttributes(
     
     *ppAttributes = nullptr;
 
-    if (m_attributes != nullptr)
+    if (m_spAttributes != nullptr)
     {
-        m_attributes.CopyTo(ppAttributes);
+        m_spAttributes.CopyTo(ppAttributes);
     }
     else
     {
@@ -1763,8 +1831,10 @@ STDMETHODIMP CMultipinMft::BridgeInputPinOutputPin(
     DMFTCHECKNULL_GOTO( piPin, done, E_INVALIDARG );
     DMFTCHECKNULL_GOTO( poPin, done, E_INVALIDARG );
     //
-    //Copy over the media types from input pin to output pin. Since there is no
-    //decoder support, only the uncompressed media types are inserted
+    // Copy over the media types from input pin to output pin. Since there is no
+    // decoder support, only the uncompressed media types are inserted. Please make
+    // sure any pin advertised supports at least one media type. The pipeline doesn't
+    // like pins with no media types
     //
     while ( SUCCEEDED( hr = piPin->GetMediaTypeAt( ulIndex++, &pMediaType )))
     {
@@ -1781,12 +1851,14 @@ STDMETHODIMP CMultipinMft::BridgeInputPinOutputPin(
     //
     //Add the Input Pin to the output Pin
     //
-    DMFTCHECKHR_GOTO( poPin->AddPin(piPin->streamId()), done );
-    //
-    //Add the output pin to the input pin. 
-    //
-    piPin->ConnectPin( poPin );
-
+    DMFTCHECKHR_GOTO(poPin->AddPin(piPin->streamId()), done);
+    hr = ExceptionBoundary([&](){
+        //
+        //Add the output pin to the input pin. 
+        //
+        piPin->ConnectPin(poPin);
+    });
+    DMFTCHECKHR_GOTO(hr, done);
     //
     //Create the map. This will be useful when we have to decide the state transitions of the pins
     //
@@ -1796,6 +1868,10 @@ done:
     //
     //Failed adding media types
     //
+    if (FAILED(hr))
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_ERROR, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
+    }
     return hr;
 }
 
@@ -1841,7 +1917,7 @@ _Inout_    PULONG      pulBytesReturned
             //PKSCAMERA_EXTENDEDPROP_PHOTOMODE pExtendedValue = (PKSCAMERA_EXTENDEDPROP_PHOTOMODE)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
             //
             m_FilterInPhotoSequence = pExtendedHeader->Flags & KSCAMERA_EXTENDEDPROP_PHOTOMODE_SEQUENCE;
-            SetEvent( m_AsyncPropEvent );
+            DMFTCHECKHR_GOTO(m_eventHandler.SetOneShot(KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE), done);
         }
         else
         {
@@ -1919,7 +1995,7 @@ STDMETHODIMP CMultipinMft::ExtendedPhotoMaxFrameRate(
             //PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = (PKSCAMERA_EXTENDEDPROP_HEADER)(pPayload);
             //PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue = (PKSCAMERA_EXTENDEDPROP_VALUE)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
             //
-            SetEvent(m_AsyncPropEvent);
+            DMFTCHECKHR_GOTO(m_eventHandler.SetOneShot(KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE), done);
         }
         else
         {
@@ -2204,8 +2280,7 @@ STDMETHODIMP CMultipinMft::WarmStartHandler(
             }
 
             *pulBytesReturned = sizeof( PKSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-
-            SetEvent( m_AsyncPropEvent );
+            m_eventHandler.SetOneShot(KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART);
         }
         else
         {
@@ -2268,6 +2343,8 @@ STDMETHODIMP CMultipinMft::Shutdown(
     void
     )
 {
+    CAutoLock Lock(m_critSec);
+    (VOID) m_eventHandler.Clear();
     return ShutdownEventGenerator();
 }
 
@@ -2323,7 +2400,7 @@ STDMETHODIMP CMultipinMft::ProcessCapturePhotoConfirmationCallBack(
     DMFTCHECKHR_GOTO(MFCreateMediaType(&spMediaType), done);
     DMFTCHECKHR_GOTO(pMediaType->CopyAllItems(spMediaType.Get()), done);
 
-    DMFTCHECKHR_GOTO(pSample->SetUnknown(MFSourceReader_SampleAttribute_MediaType, spMediaType.Get()), done);
+    DMFTCHECKHR_GOTO(pSample->SetUnknown(MFSourceReader_SampleAttribute_MediaType_priv, spMediaType.Get()), done);
 
     DMFTCHECKHR_GOTO(pSample->GetSampleTime(&timeStamp), done);
     DMFTCHECKHR_GOTO(pSample->SetUINT64(MFSampleExtension_DeviceReferenceSystemTime, timeStamp), done);

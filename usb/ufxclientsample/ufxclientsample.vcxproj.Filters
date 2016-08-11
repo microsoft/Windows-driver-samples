@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{913D3EC7-37FD-4BC5-B8F3-5B0316F839BD}</UniqueIdentifier>
+      <UniqueIdentifier>{4F0B7594-FA2A-4042-8049-D0430408CF13}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{CFA48238-7E09-4139-BABE-B24CA80F2A32}</UniqueIdentifier>
+      <UniqueIdentifier>{D0032D76-9227-4277-A41F-DB8C231318A3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{088F289C-03FC-4BBE-B6D4-FEBA220934FD}</UniqueIdentifier>
+      <UniqueIdentifier>{9A2DC11D-9B3A-43E6-B800-D10DB0FD86A7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{B057205B-0933-44FF-A94F-65B1491C15CE}</UniqueIdentifier>
+      <UniqueIdentifier>{1C7FA3C4-EB62-4228-BDC6-545602320AC5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,11 +46,6 @@
     <ClCompile Include="ufxendpoint.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\ufxclientsample.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <MessageCompile Include="ufxclientsample.man">

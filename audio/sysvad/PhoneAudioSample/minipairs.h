@@ -75,6 +75,73 @@ CreateMiniportTopologySYSVAD
 );
 
 //
+// Describe buffer size constraints for WaveRT buffers
+//
+static struct
+{
+    KSAUDIO_PACKETSIZE_CONSTRAINTS2 TransportPacketConstraints;
+    KSAUDIO_PACKETSIZE_PROCESSINGMODE_CONSTRAINT AdditionalProcessingConstraints[1];
+} SysvadWaveRtPacketSizeConstraintsRender =
+{
+    {
+        2 * HNSTIME_PER_MILLISECOND,                // 2 ms minimum processing interval
+        FILE_BYTE_ALIGNMENT,                        // 1 byte packet size alignment
+        0,                                          // no maximum packet size constraint
+        2,                                          // 2 processing constraints follow
+        {
+            STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,          // constraint for default processing mode
+            128,                                                // 128 samples per processing frame
+            0,                                                  // NA hns per processing frame
+        },
+    },
+    {
+        {
+            STATIC_AUDIO_SIGNALPROCESSINGMODE_MOVIE,            // constraint for movie processing mode
+            1024,                                               // 1024 samples per processing frame
+            0,                                                  // NA hns per processing frame
+        },
+    }
+};
+
+const SYSVAD_DEVPROPERTY SysvadWaveFilterInterfacePropertiesRender[] =
+{
+    {
+        &DEVPKEY_KsAudio_PacketSize_Constraints2,           // Key
+        DEVPROP_TYPE_BINARY,                                // Type
+        sizeof(SysvadWaveRtPacketSizeConstraintsRender),    // BufferSize
+        &SysvadWaveRtPacketSizeConstraintsRender,           // Buffer
+    },
+};
+
+static struct
+{
+    KSAUDIO_PACKETSIZE_CONSTRAINTS2 TransportPacketConstraints;
+} SysvadWaveRtPacketSizeConstraintsCapture =
+{
+    {
+        2 * HNSTIME_PER_MILLISECOND,                            // 2 ms minimum processing interval
+        FILE_BYTE_ALIGNMENT,                                    // 1 byte packet size alignment
+        0x100000,                                               // 1 MB maximum packet size
+        1,                                                      // 1 processing constraint follows
+        {
+            STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,   // constraint for communications processing mode
+            0,                                                  // NA samples per processing frame
+            20 * HNSTIME_PER_MILLISECOND,                       // 200000 hns (20ms) per processing frame
+        },
+    },
+};
+
+const SYSVAD_DEVPROPERTY SysvadWaveFilterInterfacePropertiesCapture[] =
+{
+    {
+        &DEVPKEY_KsAudio_PacketSize_Constraints2,           // Key
+        DEVPROP_TYPE_BINARY,                                // Type
+        sizeof(SysvadWaveRtPacketSizeConstraintsCapture),   // BufferSize
+        &SysvadWaveRtPacketSizeConstraintsCapture,          // Buffer
+    },
+};
+
+//
 // Render miniports.
 //
 
@@ -111,7 +178,8 @@ ENDPOINT_MINIPAIR SpeakerMiniports =
     L"WaveSpeaker",                         // make sure this name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &SpeakerWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    ARRAYSIZE(SysvadWaveFilterInterfacePropertiesRender),   // Interface properties
+    SysvadWaveFilterInterfacePropertiesRender,
     SPEAKER_DEVICE_MAX_CHANNELS,
     SpeakerPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(SpeakerPinDeviceFormatsAndModes),
@@ -242,7 +310,8 @@ ENDPOINT_MINIPAIR MicArray1Miniports =
     L"WaveMicArray1",                       // make sure this name matches with KSNAME_WaveMicArray1 in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &MicArrayWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    ARRAYSIZE(SysvadWaveFilterInterfacePropertiesCapture),  // Interface properties
+    SysvadWaveFilterInterfacePropertiesCapture,
     MICARRAY_DEVICE_MAX_CHANNELS,
     MicArrayPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(MicArrayPinDeviceFormatsAndModes),

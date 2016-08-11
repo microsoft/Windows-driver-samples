@@ -102,13 +102,16 @@ protected:
     ULONGLONG                   m_ullPlayPosition;
     ULONGLONG                   m_ullWritePosition;
     ULONGLONG                   m_ullLinearPosition;
+    ULONGLONG                   m_ullPresentationPosition;
     ULONG                       m_ulLastOsReadPacket;
     ULONG                       m_ulLastOsWritePacket;
-    LONGLONG                    m_llEoSPosition;
     LONGLONG                    m_llPacketCounter;
     ULONGLONG                   m_ullDmaTimeStamp;
     LARGE_INTEGER               m_ullPerformanceCounterFrequency;
     ULONGLONG                   m_hnsElapsedTimeCarryForward;
+    ULONGLONG                   m_ullLastDPCTimeStamp;
+    ULONGLONG                   m_hnsDPCTimeCarryForward;
+    ULONG                       m_byteDisplacementCarryForward;
     ULONG                       m_ulDmaMovementRate;
     BOOL                        m_bLfxEnabled;
     PBOOL                       m_pbMuted;
@@ -119,6 +122,9 @@ protected:
     CSaveData                   m_SaveData;
     ToneGenerator               m_ToneGenerator;
     GUID                        m_SignalProcessingMode;
+    BOOLEAN                     m_bEoSReceived;
+    BOOLEAN                     m_bLastBufferRendered;
+    KSPIN_LOCK                  m_PositionSpinLock;
 
 #ifdef SYSVAD_BTH_BYPASS
     BOOLEAN                     m_ScoOpen;
@@ -245,9 +251,10 @@ private:
         _In_  ULONG ulCurrentWritePosition
     );
     
-    NTSTATUS GetLinearBufferPosition
+    NTSTATUS GetPositions
     (
         _Out_ ULONGLONG *pullLinearBufferPosition,
+        _Out_ ULONGLONG *pullPresentationPosition,
         _Out_ LARGE_INTEGER *_pliQPCTime
     );
 

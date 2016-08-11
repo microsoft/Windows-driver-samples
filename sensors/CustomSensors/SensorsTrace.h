@@ -122,7 +122,6 @@ extern "C" {
 //FUNC SENSRSVC_FunctionEnter{LEVEL=TRACE_LEVEL_VERBOSE,FLAGS=EntryExit}(...);
 //end_wpp
 
-
 //MACRO: SENSRSVC_FunctionExit
 //
 //begin_wpp config
@@ -136,6 +135,16 @@ extern "C" {
                                                                         HRESULT __hr = hr;
 #define WPP_LEVEL_FLAGS_SENSRSVCEXIT_POST(LEVEL, FLAGS, hr)             /*TraceMessage()*/;              \
                                                                     }
+
+
+
+// WPP Recorder -------------------------------------------------------------------------------------------
+//
+// The following two macros are required to enable WPP Recorder functionality for clients of the Sensor Class Extension
+//
+#define WPP_RECORDER_LEVEL_FLAGS_SENSOREXIT_FILTER(LEVEL, FLAGS, status)   WPP_RECORDER_LEVEL_FLAGS_FILTER(LEVEL, FLAGS)
+#define WPP_RECORDER_LEVEL_FLAGS_SENSOREXIT_ARGS(LEVEL, FLAGS, status)     WPP_RECORDER_LEVEL_FLAGS_ARGS(LEVEL, FLAGS)
+
 
 #ifdef __cplusplus
 }

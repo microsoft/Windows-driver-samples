@@ -473,7 +473,7 @@ Return Value:
         // system overhead for large size buffers.
         //
 
-        buffer = MmGetSystemAddressForMdlSafe(mdl, NormalPagePriority );
+        buffer = MmGetSystemAddressForMdlSafe( mdl, NormalPagePriority | MdlMappingNoExecute );
 
         if (!buffer) {
                 ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -527,7 +527,7 @@ Return Value:
         }
 
 
-        buffer = MmGetSystemAddressForMdlSafe(mdl, NormalPagePriority );
+        buffer = MmGetSystemAddressForMdlSafe( mdl, NormalPagePriority | MdlMappingNoExecute );
 
         if (!buffer) {
             MmUnlockPages(mdl);
@@ -588,7 +588,7 @@ Return Value:
         // from the application to the driver.
         //
 
-        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority);
+        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
 
         if (!buffer) {
             ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -641,7 +641,7 @@ Return Value:
         // from the driver to the application.
         //
 
-        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority);
+        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
 
         if (!buffer) {
             ntStatus = STATUS_INSUFFICIENT_RESOURCES;

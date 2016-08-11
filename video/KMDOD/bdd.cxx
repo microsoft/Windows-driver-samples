@@ -87,8 +87,9 @@ NTSTATUS BASIC_DISPLAY_DRIVER::StartDevice(_In_  DXGK_START_INFO*   pDxgkStartIn
         return STATUS_UNSUCCESSFUL;
     }
     m_Flags.DriverStarted = TRUE;
-   *pNumberOfViews = MAX_VIEWS;
-   *pNumberOfChildren = MAX_CHILDREN;
+    *pNumberOfViews = MAX_VIEWS;
+    *pNumberOfChildren = MAX_CHILDREN;
+
 
    return STATUS_SUCCESS;
 }
@@ -117,6 +118,7 @@ VOID BASIC_DISPLAY_DRIVER::CleanUp()
             m_CurrentModes[Source].Flags.FrameBufferIsActive = FALSE;
         }
     }
+
 }
 
 
@@ -243,7 +245,6 @@ NTSTATUS BASIC_DISPLAY_DRIVER::QueryDeviceDescriptor(_In_    ULONG              
     if (!m_Flags.EDID_Attempted)
     {
         GetEdid(ChildUid);
-
     }
 
     if (!m_Flags.EDID_Retrieved || !m_Flags.EDID_ValidHeader || !m_Flags.EDID_ValidChecksum)
@@ -439,8 +440,6 @@ NTSTATUS BASIC_DISPLAY_DRIVER::SetPointerShape(_In_ CONST DXGKARG_SETPOINTERSHAP
 
     return STATUS_NOT_IMPLEMENTED;
 }
-
-
 NTSTATUS BASIC_DISPLAY_DRIVER::PresentDisplayOnly(_In_ CONST DXGKARG_PRESENT_DISPLAYONLY* pPresentDisplayOnly)
 {
     PAGED_CODE();
@@ -556,7 +555,6 @@ NTSTATUS BASIC_DISPLAY_DRIVER::GetEdid(D3DDDI_VIDEO_PRESENT_TARGET_ID TargetId)
 
     return Status;
 }
-
 
 VOID BASIC_DISPLAY_DRIVER::BlackOutScreen(D3DDDI_VIDEO_PRESENT_SOURCE_ID SourceId)
 {

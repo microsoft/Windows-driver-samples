@@ -1,0 +1,39 @@
+#include "resource.h"
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE             VFT_APP
+#define VER_FILESUBTYPE          VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR  "WIA DRIVER"
+#define VER_INTERNALNAME_STR     "WIADRIVER"
+#define VER_LEGALCOPYRIGHT_YEARS "1996-2003"
+#define VER_ORIGINALFILENAME_STR "WIADRIVER.DLL"
+
+#include <common.ver>
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_FLATBED       BITMAP  "flatbed.bmp"
+IDB_FEEDER        BITMAP  "feeder.bmp"
+IDB_FILM          BITMAP  "film.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+IDS_EVENT_DEVICE_CONNECTED_NAME             "Device connected"
+IDS_EVENT_DEVICE_DISCONNECTED_NAME          "Device disconnected"
+IDS_EVENT_DEVICE_CONNECTED_DESCRIPTION      "This event is sent when the device is initially connected to the computer"
+IDS_EVENT_DEVICE_DISCONNECTED_DESCRIPTION   "This event is sent when the device is disconnected from the computer"
+IDS_EVENT_TREE_UPDATED_NAME                 "WIA item tree updated"
+IDS_EVENT_TREE_UPDATED_DESCRIPTION          "This event is sent when the WIA item tree is updated by other clients"
+IDS_CMD_SYNCHRONIZE_NAME                    "WIA Synchronize command"
+IDS_CMD_SYNCHRONIZE_DESCRIPTION             "This command instrcuts the driver to rebuild its driver item tree"
+END
+

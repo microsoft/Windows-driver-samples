@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{F6210FA1-03EF-44C9-A049-317C86CB6108}</UniqueIdentifier>
+      <UniqueIdentifier>{4D12751F-90E2-480C-ADCF-EEDAAFFD9C57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{D2D50F99-E5BE-444B-A65B-9E509A935F45}</UniqueIdentifier>
+      <UniqueIdentifier>{59C993D4-EA02-4442-BBC9-684B51C41C00}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{10B8A7EE-C817-424C-A850-E21F7DE8C8B5}</UniqueIdentifier>
+      <UniqueIdentifier>{2A84A485-FE49-4E3D-8AB6-EB5ACCE646C8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{1FDF6179-3D32-4F47-BF5F-D497E58451C2}</UniqueIdentifier>
+      <UniqueIdentifier>{25FFE655-03CE-457C-A01B-9BAB1FB83EBC}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,12 +81,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include=".\Debug\\serial.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
-    <Inf Include=".\serial.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
     <MessageCompile Include="serlog.mc">
       <Filter>Driver Files</Filter>
     </MessageCompile>

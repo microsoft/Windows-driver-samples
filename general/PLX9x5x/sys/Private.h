@@ -68,9 +68,17 @@ typedef struct _DEVICE_EXTENSION {
     WDFDMAENABLER           DmaEnabler;
     ULONG                   MaximumTransferLength;
 
+    // IOCTL handling
+    WDFQUEUE                ControlQueue;
+    BOOLEAN                 RequireSingleTransfer;
+
+#ifdef SIMULATE_MEMORY_FRAGMENTATION
+    PMDL                    WriteMdlChain;
+    PMDL                    ReadMdlChain;
+#endif
+
     // Write
     WDFQUEUE                WriteQueue;
-
     WDFDMATRANSACTION       WriteDmaTransaction;
 
     ULONG                   WriteTransferElements;
@@ -87,7 +95,6 @@ typedef struct _DEVICE_EXTENSION {
     PHYSICAL_ADDRESS        ReadCommonBufferBaseLA;   // Logical Address
 
     WDFDMATRANSACTION       ReadDmaTransaction;
-
     WDFQUEUE                ReadQueue;
 
     ULONG                   HwErrCount;
@@ -120,6 +127,7 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(TRANSACTION_CONTEXT, PLxGetTransactionContext
 DRIVER_INITIALIZE DriverEntry;
 
 EVT_WDF_DRIVER_DEVICE_ADD PLxEvtDeviceAdd;
+EVT_WDF_OBJECT_CONTEXT_CLEANUP PlxEvtDeviceCleanup;
 
 EVT_WDF_OBJECT_CONTEXT_CLEANUP PlxEvtDriverContextCleanup;
 
@@ -130,6 +138,7 @@ EVT_WDF_DEVICE_RELEASE_HARDWARE PLxEvtDeviceReleaseHardware;
 
 EVT_WDF_IO_QUEUE_IO_READ PLxEvtIoRead;
 EVT_WDF_IO_QUEUE_IO_WRITE PLxEvtIoWrite;
+EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL PLxEvtIoDeviceControl;
 
 EVT_WDF_INTERRUPT_ISR PLxEvtInterruptIsr;
 EVT_WDF_INTERRUPT_DPC PLxEvtInterruptDpc;
@@ -144,6 +153,11 @@ PLxSetIdleAndWakeSettings(
 NTSTATUS
 PLxInitializeDeviceExtension(
     IN PDEVICE_EXTENSION DevExt
+    );
+
+VOID
+PlxCleanupDeviceExtension(
+    _In_ PDEVICE_EXTENSION DevExt
     );
 
 NTSTATUS
@@ -204,6 +218,45 @@ NTSTATUS
 PLxInitializeDMA(
     IN PDEVICE_EXTENSION DevExt
     );
+
+#ifdef SIMULATE_MEMORY_FRAGMENTATION
+//
+// Passed to ExAllocatePoolWithTag to track memory allocations
+//
+#define POOL_TAG 'x5x9'
+
+//
+// Constants for the MDL chains we use to simulate memory fragmentation.
+//
+#define MDL_CHAIN_LENGTH 8
+#define MDL_BUFFER_SIZE  ((PCI9656_MAXIMUM_TRANSFER_LENGTH) / MDL_CHAIN_LENGTH)
+
+C_ASSERT(MDL_CHAIN_LENGTH * MDL_BUFFER_SIZE == PCI9656_MAXIMUM_TRANSFER_LENGTH);
+
+NTSTATUS
+BuildMdlChain(
+    _Out_ PMDL* MdlChain
+    );
+
+VOID
+DestroyMdlChain(
+    _In_ PMDL MdlChain
+    );
+
+VOID
+CopyBufferToMdlChain(
+    _In_reads_bytes_(Length) PVOID Buffer,
+    _In_ size_t Length,
+    _In_ PMDL MdlChain
+    );
+
+VOID
+CopyMdlChainToBuffer(
+    _In_ PMDL MdlChain,
+    _Out_writes_bytes_(Length) PVOID Buffer,
+    _In_ size_t Length
+    );
+#endif // SIMULATE_MEMORY_FRAGMENTATION
 
 #pragma warning(disable:4127) // avoid conditional expression is constant error with W4
 

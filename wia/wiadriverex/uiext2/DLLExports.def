@@ -1,0 +1,22 @@
+; /*++
+;
+; Copyright (C) Microsoft Corporation, 1985 - 2002
+; All rights reserved.
+;
+; Module Name:
+;
+;     DLLExports.def
+; 
+; Abstract:
+; 
+;     Declares the module parameters
+;    
+
+LIBRARY      uiext2
+
+EXPORTS
+    DllCanUnloadNow         PRIVATE
+    DllGetClassObject       PRIVATE
+    DllRegisterServer	    PRIVATE
+    DllUnregisterServer	    PRIVATE
+    

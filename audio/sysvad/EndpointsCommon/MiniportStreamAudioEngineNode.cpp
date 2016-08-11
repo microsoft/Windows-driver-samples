@@ -457,7 +457,7 @@ NTSTATUS CMiniportWaveRTStream::GetStreamLinearBufferPosition(_Out_ ULONGLONG *_
     ASSERT(_pullLinearBufferPosition);
     DPF_ENTER(("[CMiniportWaveRTStream::GetStreamLinearBufferPosition]"));
 
-    ntStatus = GetLinearBufferPosition(_pullLinearBufferPosition, NULL);
+    ntStatus = GetPositions(_pullLinearBufferPosition, NULL, NULL);
  
     return ntStatus;
 }
@@ -721,23 +721,22 @@ NTSTATUS CMiniportWaveRTStream::SetChannelMute(_In_  UINT32 _uiChannel, _In_  BO
     PAGED_CODE ();
     DPF_ENTER(("[CMiniportWaveRTStream::SetChannelMute]"));
 
-    m_plVolumeLevel[_uiChannel] = _bMute;
+    m_pbMuted[_uiChannel] = _bMute;
 
     return STATUS_SUCCESS;
 }
 //presentation
-#pragma code_seg("PAGE")
+#pragma code_seg()
 //
 //  UINT64 u64PositionInBlocks; // The block offset from the start of the stream to the current post-decoded uncompressed 
 //                              // position in the stream, where a block is the group of channels in the same sample; for a PCM stream, 
-//  			      // a block is same as a frame. For compressed formats, a block is a single sample within a frame 
+//                              // a block is same as a frame. For compressed formats, a block is a single sample within a frame 
 //                              // (eg. each MP3 frame has 1152 samples or 1152 blocks) 
 //  UINT64 u64QPCPosition;      // The value of the performance counter at the time that the audio endpoint device read the device 
 //                              // position (*pu64Position) in response to the KSAUDIO_PRESENTATION_POSITION call.
 
 NTSTATUS CMiniportWaveRTStream::GetPresentationPosition(_Out_  KSAUDIO_PRESENTATION_POSITION *_pPresentationPosition)
 {
-    PAGED_CODE ();
     ASSERT (_pPresentationPosition);
     LARGE_INTEGER timeStamp;
     PADAPTERCOMMON pAdapterComm = m_pMiniport->GetAdapterCommObj();
@@ -745,18 +744,17 @@ NTSTATUS CMiniportWaveRTStream::GetPresentationPosition(_Out_  KSAUDIO_PRESENTAT
     DPF_ENTER(("[CMiniportWaveRTStream::GetPresentationPosition]"));
 
     ULONGLONG ullLinearPosition = {0};
+    ULONGLONG ullPresentationPosition = {0};
     NTSTATUS status = STATUS_SUCCESS;
     
-    status = GetLinearBufferPosition(&ullLinearPosition, &timeStamp);
+    status = GetPositions(&ullLinearPosition, &ullPresentationPosition, &timeStamp);
     if (!NT_SUCCESS(status)) 
     { 
         return status; 
     }
 
-    _pPresentationPosition->u64PositionInBlocks = ullLinearPosition * m_pWfExt->Format.nSamplesPerSec / m_pWfExt->Format.nAvgBytesPerSec;
-
+    _pPresentationPosition->u64PositionInBlocks = ullPresentationPosition * m_pWfExt->Format.nSamplesPerSec / m_pWfExt->Format.nAvgBytesPerSec;
     _pPresentationPosition->u64QPCPosition = (UINT64)timeStamp.QuadPart;
-
 
     //Event type: eMINIPORT_GET_PRESENTATION_POSITION
     //Parameter 1: Current linear buffer position	
@@ -771,9 +769,10 @@ NTSTATUS CMiniportWaveRTStream::GetPresentationPosition(_Out_  KSAUDIO_PRESENTAT
      
     return STATUS_SUCCESS;
 }
+
+#pragma code_seg()
 NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWritePosition)
 {
-    PAGED_CODE ();
     DPF_ENTER(("[CMiniportWaveRTStream::SetCurrentWritePosition]"));
     
     NTSTATUS ntStatus;
@@ -794,15 +793,19 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWr
         ntStatus = STATUS_INVALID_DEVICE_REQUEST;
         goto Done;
     }
-    
+
+    KIRQL oldIrql;
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
     ntStatus = SetCurrentWritePositionInternal(_ulCurrentWritePosition);
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
 
 Done:
     return ntStatus;
 }
+
+#pragma code_seg()
 NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulCurrentWritePosition)
 {
-    PAGED_CODE ();
     DPF_ENTER(("[CMiniportWaveRTStream::SetCurrentWritePositionInternal]"));
     
     if (_ulCurrentWritePosition > m_ulDmaBufferSize)
@@ -811,7 +814,7 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
     }
     
     PADAPTERCOMMON pAdapterComm = m_pMiniport->GetAdapterCommObj();
-    
+
     //Event type: eMINIPORT_SET_WAVERT_BUFFER_WRITE_POSITION
     //Parameter 1: Current linear buffer position	
     //Parameter 2: the previous WaveRtBufferWritePosition that the drive received	
@@ -846,20 +849,20 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
     
     m_ulCurrentWritePosition = _ulCurrentWritePosition;
     InterlockedExchange(&m_IsCurrentWritePositionUpdated, 1);
-    
+
     return STATUS_SUCCESS;
 }
-//linear position
-#pragma code_seg("PAGE")
-NTSTATUS CMiniportWaveRTStream::GetLinearBufferPosition(_Out_  ULONGLONG *_pullLinearBufferPosition, LARGE_INTEGER *_pliQPCTime)
+
+//linear and presentation positions
+#pragma code_seg()
+NTSTATUS CMiniportWaveRTStream::GetPositions(_Out_  ULONGLONG *_pullLinearBufferPosition, _Out_  ULONGLONG *_pullPresentationPosition, LARGE_INTEGER *_pliQPCTime)
 {
-    PAGED_CODE ();
     ASSERT (_pullLinearBufferPosition);
-    DPF_ENTER(("[CMiniportWaveRTStream::GetLinearBufferPosition]"));
+    DPF_ENTER(("[CMiniportWaveRTStream::GetPositions]"));
 
     NTSTATUS        ntStatus;
     LARGE_INTEGER   ilQPC;
-    
+    KIRQL           oldIrql;
 #ifdef SYSVAD_BTH_BYPASS
     if (m_ScoOpen)
     {
@@ -875,16 +878,25 @@ NTSTATUS CMiniportWaveRTStream::GetLinearBufferPosition(_Out_  ULONGLONG *_pullL
     //
     // Get the current time and update position.
     //
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
     ilQPC = KeQueryPerformanceCounter(NULL);
     if (m_KsState == KSSTATE_RUN)
     {
         UpdatePosition(ilQPC);
     }
+    if (_pullLinearBufferPosition)
+    {
+        *_pullLinearBufferPosition = m_ullLinearPosition;
+    }
+    if (_pullPresentationPosition)
+    {
+        *_pullPresentationPosition = m_ullPresentationPosition;
+    }
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
     if (_pliQPCTime)
     {
         *_pliQPCTime = ilQPC;
     }
-    *_pullLinearBufferPosition = m_ullLinearPosition;
 
     ntStatus = STATUS_SUCCESS;
 
@@ -931,7 +943,7 @@ NTSTATUS CMiniportWaveRTStream::SetLoopbackProtection(_In_ CONSTRICTOR_OPTION pr
     return STATUS_SUCCESS;
 }
 
-#pragma code_seg("PAGE")
+#pragma code_seg()
 //----------------------------------------------------------------------------------
 // Description:
 //      Set current write position for the very last buffer in a stream
@@ -960,12 +972,25 @@ NTSTATUS CMiniportWaveRTStream::SetLoopbackProtection(_In_ CONSTRICTOR_OPTION pr
 
 NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ ULONG _ulWritePosition)
 {
-    PAGED_CODE ();
     DPF_ENTER(("[CMiniportWaveRT::SetStreamCurrentWritePositionForLastBuffer]"));
+    NTSTATUS        ntStatus;
+    KIRQL           oldIrql;
 
-    return SetCurrentWritePositionInternal(_ulWritePosition);
+    ASSERT(m_bEoSReceived == FALSE);
+
+    KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
+
     // Miniport driver needs to prepare to signal buffer completion event
     // when it's done with reading the last valid byte - an _ulWritePosition offset from the beginning WaveRT buffer
     // Note: _ulWritePosition will be smaller than buffer size in most of the cases 
+    ntStatus = SetCurrentWritePositionInternal(_ulWritePosition);
+    if (NT_SUCCESS(ntStatus))
+    {
+        m_bEoSReceived = TRUE;
+    }
+
+    KeReleaseSpinLock(&m_PositionSpinLock, oldIrql);
+
+    return ntStatus;
 }
 

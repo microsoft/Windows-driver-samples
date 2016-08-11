@@ -85,6 +85,12 @@ QueryPhysicalTopologyIoctlProcess(
     _In_ PSTORAGE_REQUEST_BLOCK Srb
     );
 
+VOID
+AtaAlwaysSuccessRequestCompletion (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    );
+
 ULONG
 SCSItoATA(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
@@ -739,6 +745,7 @@ SrbConvertToATACommand(
     case SCSIOP_WRITE_DATA_BUFF:
         status = AtaWriteBufferRequest(ChannelExtension, Srb, Cdb);
         break;
+
 
     default:
 
@@ -1503,9 +1510,6 @@ AtaModeSenseRequest (
         return STOR_STATUS_INSUFFICIENT_RESOURCES;
     }
 
-    // initialize to success
-    Srb->SrbStatus = SRB_STATUS_SUCCESS;
-
     // this initializes the wrapper structure and sets the ModeDataLength
     // field
     status = AtaInitModePageHeaderWrapper(Cdb, modePageHeader, srbDataBufferLength, &modePageHeaderWrapper);
@@ -1552,7 +1556,7 @@ AtaModeSenseRequest (
                 SetCommandReg((&srbExtension->TaskFile.Current), IDE_COMMAND_IDENTIFY);
 
                 return STOR_STATUS_SUCCESS; //Get Media Protect Status will be preformed in AtaModeSenseRequestCompletionWriteCache.
-           }
+            }
         } else {
             Srb->SrbStatus = SRB_STATUS_DATA_OVERRUN;
         }
@@ -1568,6 +1572,9 @@ AtaModeSenseRequest (
         srbExtension->CompletionRoutine = AtaModeSenseRequestCompletionMediaStatus;
 
         SetCommandReg((&srbExtension->TaskFile.Current), IDE_COMMAND_GET_MEDIA_STATUS);
+    } else {
+        // Return header information if there is no other information to retrieve.
+        Srb->SrbStatus = SRB_STATUS_SUCCESS;
     }
 
     return STOR_STATUS_SUCCESS;
@@ -2454,8 +2461,25 @@ AtaStartStopUnitRequest (
             SetCommandReg((&srbExtension->TaskFile.Current), IDE_COMMAND_STANDBY_IMMEDIATE);
         }
     } else {
-        //no action required for AHCI
-        Srb->SrbStatus = SRB_STATUS_SUCCESS;
+        //
+        // If 48Bit LBA supported and its not SSD, spin up the device right away using
+        // mechanism suggested by SCSI to ATA translation specification (SAT-4 Rev 2 Table 73)
+        // Ignore if this is an eHDD (1667 supported) as immediate spin up may not be needed 
+        //
+        if (Support48Bit(&ChannelExtension->DeviceExtension->DeviceParameters) &&
+            (!DeviceIncursNoSeekPenalty(ChannelExtension)) &&
+            (ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.IEEE1667 == 0)) {
+            srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
+            srbExtension->CompletionRoutine = AtaAlwaysSuccessRequestCompletion;
+     
+            SetSectorCount((&srbExtension->TaskFile.Current), 1);
+            SetDeviceReg((&srbExtension->TaskFile.Current), IDE_LBA_MODE);
+            SetCommandReg((&srbExtension->TaskFile.Current), IDE_COMMAND_VERIFY_EXT); 
+        } else {
+            //no action needed
+            Srb->SrbStatus = SRB_STATUS_SUCCESS;
+        }
+        
     }
 
     return STOR_STATUS_SUCCESS;
@@ -3267,6 +3291,7 @@ AtaWriteBufferRequest (
 
     return STOR_STATUS_SUCCESS;
 }
+
 
 UCHAR
 AtaMapError(
@@ -4258,6 +4283,7 @@ SmartIdentifyData(
         if ( srbDataBufferLength >= sizeof(SRB_IO_CONTROL) + RTL_SIZEOF_THROUGH_FIELD(SENDCMDOUTPARAMS, DriverStatus) ) {
             outParams->DriverStatus.bDriverError = SMART_INVALID_BUFFER;
             outParams->DriverStatus.bIDEError = 0;
+            outParams->cBufferSize = 0;
         }
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         return STOR_STATUS_BUFFER_TOO_SMALL;
@@ -4268,6 +4294,7 @@ SmartIdentifyData(
         NT_ASSERT(FALSE);
         outParams->DriverStatus.bDriverError = SMART_INVALID_DRIVE;
         outParams->DriverStatus.bIDEError = 0;
+        outParams->cBufferSize = 0;
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         return STOR_STATUS_INVALID_DEVICE_REQUEST;
     }
@@ -4329,6 +4356,7 @@ SmartGeneric(
             if (srbDataBufferLength >= (sizeof(SRB_IO_CONTROL) + RTL_SIZEOF_THROUGH_FIELD(SENDCMDOUTPARAMS, DriverStatus))) {
                 outParams->DriverStatus.bDriverError = SMART_INVALID_BUFFER;
                 outParams->DriverStatus.bIDEError = 0;
+                outParams->cBufferSize = 0;
             }
 
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -4383,6 +4411,7 @@ SmartGeneric(
                     if (srbDataBufferLength >= (sizeof(SRB_IO_CONTROL) + RTL_SIZEOF_THROUGH_FIELD(SENDCMDOUTPARAMS, DriverStatus))) {
                         outParams->DriverStatus.bDriverError = SMART_INVALID_BUFFER;
                         outParams->DriverStatus.bIDEError = 0;
+                        outParams->cBufferSize = 0;
                     }
                     Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
                     return STOR_STATUS_BUFFER_TOO_SMALL;
@@ -4442,7 +4471,7 @@ SmartGeneric(
     srbExtension->TaskFile.Current.bDriveHeadReg = 0xA0 | (inParams->irDriveRegs.bDriveHeadReg & 0x0F);
     srbExtension->TaskFile.Current.bCommandReg = inParams->irDriveRegs.bCommandReg;
 
-    Srb->SrbStatus = SRB_STATUS_SUCCESS;
+    Srb->SrbStatus = SRB_STATUS_PENDING;
     return STOR_STATUS_SUCCESS;
 }
 
@@ -4604,7 +4633,7 @@ NVCacheGeneric(
     srbExtension->TaskFile.Current.bDriveHeadReg = 0xA0;
     srbExtension->TaskFile.Current.bCommandReg = NVC_ATA_NV_CACHE_COMMAND;
 
-    Srb->SrbStatus = SRB_STATUS_SUCCESS;
+    Srb->SrbStatus = SRB_STATUS_PENDING;
     return  STOR_STATUS_SUCCESS;
 
 }
@@ -6942,7 +6971,7 @@ IssueSmartReadLogCommand(
     _In_ UCHAR  LogAddress,
     _In_ USHORT PageNumber,
     _In_ USHORT BlockCount,
-    _In_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
+    _In_opt_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
     _In_ PVOID DataBuffer,
     _In_opt_ PSRB_COMPLETION_ROUTINE CompletionRoutine
     )
@@ -7852,10 +7881,9 @@ Return Value:
     deviceData = (PSTORAGE_PHYSICAL_DEVICE_DATA)(adapterData + 1);
 
     if (!queryAdapterTopology) {
-        UCHAR   lun = 0;
-        SrbGetPathTargetLun(Srb, NULL, NULL, &lun);
+        UCHAR   pathId = SrbGetPathId(Srb);
 
-        GetDevicePhysicalTopologyData(AdapterExtension->PortExtension[lun], deviceData);
+        GetDevicePhysicalTopologyData(AdapterExtension->PortExtension[pathId], deviceData);
     } else {
         ULONG   availableBufferLength = topologyBufferLength - FIELD_OFFSET(STORAGE_PHYSICAL_TOPOLOGY_DESCRIPTOR, Node) -
                                         sizeof(STORAGE_PHYSICAL_NODE_DATA) - sizeof(STORAGE_PHYSICAL_ADAPTER_DATA);

@@ -8,8 +8,8 @@ Module Name:
 
 Abstract:
 
-    This module contains the code for reading/writing hid reports and 
-    translating those HID reports into useful information. 
+    This module contains the code for reading/writing hid reports and
+    translating those HID reports into useful information.
 
 Environment:
 
@@ -64,7 +64,8 @@ Done:
 BOOLEAN
 ReadOverlapped (
     PHID_DEVICE     HidDevice,
-    HANDLE          CompletionEvent
+    HANDLE          CompletionEvent,
+    LPOVERLAPPED    Overlap
    )
 /*++
 RoutineDescription:
@@ -72,7 +73,6 @@ RoutineDescription:
    into the InputData array.
 --*/
 {
-    static OVERLAPPED  overlap;
     DWORD       bytesRead;
     BOOL        readStatus;
 
@@ -81,10 +81,10 @@ RoutineDescription:
     //  to use for signalling the completion of the Read
     */
 
-    memset(&overlap, 0, sizeof(OVERLAPPED));
-    
-    overlap.hEvent = CompletionEvent;
-    
+    memset(Overlap, 0, sizeof(OVERLAPPED));
+
+    Overlap->hEvent = CompletionEvent;
+
     /*
     // Execute the read call saving the return code to determine how to 
     //  proceed (ie. the read completed synchronously or not).
@@ -94,20 +94,20 @@ RoutineDescription:
                             HidDevice -> InputReportBuffer,
                             HidDevice -> Caps.InputReportByteLength,
                             &bytesRead,
-                            &overlap);
-                          
+                            Overlap);
+
     /*
-    // If the readStatus is FALSE, then one of two cases occurred.  
+    // If the readStatus is FALSE, then one of two cases occurred.
     //  1) ReadFile call succeeded but the Read is an overlapped one.  Here,
     //      we should return TRUE to indicate that the Read succeeded.  However,
     //      the calling thread should be blocked on the completion event
     //      which means it won't continue until the read actually completes
-    //    
+    //
     //  2) The ReadFile call failed for some unknown reason...In this case,
     //      the return code will be FALSE
-    */        
+    */
 
-    if (!readStatus) 
+    if (!readStatus)
     {
         return (ERROR_IO_PENDING == GetLastError());
     }
@@ -149,7 +149,7 @@ RoutineDescription:
 
     pData = HidDevice -> OutputData;
 
-    for (Index = 0; Index < HidDevice -> OutputDataLength; Index++, pData++) 
+    for (Index = 0; Index < HidDevice -> OutputDataLength; Index++, pData++)
     {
         pData -> IsDataSet = FALSE;
     }
@@ -164,14 +164,14 @@ RoutineDescription:
     Status = TRUE;
 
     pData = HidDevice -> OutputData;
-    for (Index = 0; Index < HidDevice -> OutputDataLength; Index++, pData++) 
+    for (Index = 0; Index < HidDevice -> OutputDataLength; Index++, pData++)
     {
 
         if (!pData -> IsDataSet) 
         {
             /*
             // Package the report for this data structure.  PackReport will
-            //    set the IsDataSet fields of this structure and any other 
+            //    set the IsDataSet fields of this structure and any other
             //    structures that it includes in the report with this structure
             */
 
@@ -192,7 +192,7 @@ RoutineDescription:
                                   &bytesWritten,
                                   NULL) && (bytesWritten == HidDevice -> Caps.OutputReportByteLength);
 
-            Status = Status && WriteStatus;                         
+            Status = Status && WriteStatus;
         }
     }
     return (Status);

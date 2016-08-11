@@ -1,0 +1,103 @@
+#include "resource.h"
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE             VFT_APP
+#define VER_FILESUBTYPE          VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR  "Production Scanner Driver Sample DLL"
+#define VER_INTERNALNAME_STR     "ProdScan"
+#define VER_LEGALCOPYRIGHT_YEARS "2010"
+#define VER_ORIGINALFILENAME_STR "ProdScan.dll"
+
+#include <common.ver>
+
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+
+IDS_EVENT_DEVICE_CONNECTED_NAME             "Device connected"
+IDS_EVENT_DEVICE_CONNECTED_DESCRIPTION      "This PnP event is sent when the device is initially connected to the computer"
+
+IDS_EVENT_DEVICE_DISCONNECTED_NAME          "Device disconnected"
+IDS_EVENT_DEVICE_DISCONNECTED_DESCRIPTION   "This PnP event is sent when the device is disconnected from the computer"
+
+IDS_EVENT_POWER_SUSPEND_NAME                "Power suspend"
+IDS_EVENT_POWER_SUSPEND_DESCRIPTION         "This PnP event is sent when the computer enters stand-by or hibernation"
+
+IDS_EVENT_POWER_RESUME_NAME                 "Power resume"
+IDS_EVENT_POWER_RESUME_DESCRIPTION          "This PnP event is sent when the computer recovers from stand-by or hibernation"
+
+IDS_EVENT_TREE_UPDATED_NAME                 "Tree updated"
+IDS_EVENT_TREE_UPDATED_DESCRIPTION          "This event is sent by the driver when the item tree is updated"
+
+IDS_CMD_SYNCHRONIZE_NAME                    "Synchronize"
+IDS_CMD_SYNCHRONIZE_DESCRIPTION             "This command requests to the driver to rebuild its driver item tree"
+
+IDS_CMD_BUILD_DEVICE_TREE_NAME              "Build item tree"
+IDS_CMD_BUILD_DEVICE_TREE_DESCRIPTION       "This command requests to the driver to build the driver item tree"
+
+IDS_CMD_DELETE_DEVICE_TREE_NAME             "Delete item tree"
+IDS_CMD_DELETE_DEVICE_TREE_DESCRIPTION      "This command requests to the driver to delete the driver item tree"
+
+IDS_EVENT_SCAN_IMAGE_NAME                   "Scan"
+IDS_EVENT_SCAN_IMAGE_DESCRIPTION            "This event is sent when the device is ready to transfer an image file"
+
+IDS_EVENT_DEVICE_NOT_READY_NAME             "Device not ready"
+IDS_EVENT_DEVICE_NOT_READY_DESCRIPTION      "This event is sent when the device becomes not ready to scan"
+
+IDS_EVENT_DEVICE_READY_NAME                 "Device ready"
+IDS_EVENT_DEVICE_READY_DESCRIPTION          "This event is sent when the device becomes ready to scan"
+
+IDS_EVENT_FLATBED_LID_OPEN_NAME             "Flatbed lid open"
+IDS_EVENT_FLATBED_LID_OPEN_DESCRIPTION      "This event is sent when the device's flatbed lid is opened"
+
+IDS_EVENT_FLATBED_LID_CLOSED_NAME           "Flatbed lid closed"
+IDS_EVENT_FLATBED_LID_CLOSED_DESCRIPTION    "This event is sent when the device's flatbed lid is closed"
+
+IDS_EVENT_FEEDER_LOADED_NAME                "Feeder loaded"
+IDS_EVENT_FEEDER_LOADED_DESCRIPTION         "This event is sent when the device's feeder is loaded by the scanner operator"
+
+IDS_EVENT_FEEDER_EMPTIED_NAME               "Feeder emptied"
+IDS_EVENT_FEEDER_EMPTIED_DESCRIPTION        "This event is sent when the device's feeder is unloaded by the scanner operator"
+
+IDS_EVENT_COVER_OPEN_NAME                   "Cover open"
+IDS_EVENT_COVER_OPEN_DESCRIPTION            "This event is sent when a device's scan path cover is opened"
+
+IDS_EVENT_COVER_CLOSED_NAME                 "Cover closed"
+IDS_EVENT_COVER_CLOSED_DESCRIPTION          "This event is sent when the last device's scan path cover is closed"
+
+
+IDS_CMD_START_FEEDER_NAME                   "Start feeder"
+IDS_CMD_START_FEEDER_DESCRIPTION            "This command requests the driver to start the scanner feeder motor and prepare for scanning"
+
+IDS_CMD_STOP_FEEDER_NAME                    "Stop feeder"
+IDS_CMD_STOP_FEEDER_DESCRIPTION             "This command requests the driver to stop the scanner feeder motor"
+
+END
+
+//
+// Test images (equivalent to the image obtained from scanning a 8.5" x 11" document at 300 DPI):
+//
+IDB_TESTIMAGE_GRAY RCDATA "Res\\TestGray.jpg"
+IDB_TESTIMAGE_COLOR RCDATA "Res\\TestRGB.jpg"
+
+//
+// Sample imprinter/endorser image for graphics data download:
+//
+IDB_TEST_IMPRINTER_IMAGE RCDATA "Res\\Printer.bmp"
+
+//
+// Sample XML metadata files for barcode, patch code and MICR:
+//
+IDB_BARCODE_SAMPLE RCDATA "Res\\Barcodes.xml"
+IDB_PATCH_CODE_SAMPLE RCDATA "Res\\PatchCod.xml"
+IDB_MICR_SAMPLE RCDATA "Res\\Micr.xml"
+
+
+
+
+
+

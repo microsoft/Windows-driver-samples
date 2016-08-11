@@ -1042,7 +1042,7 @@ Return Value:
         //  that this will be only a single page.
         //
 
-        if (MmGetSystemAddressForMdlSafe( Mdl, NormalPagePriority ) == NULL) {
+        if (MmGetSystemAddressForMdlSafe( Mdl, NormalPagePriority | MdlMappingNoExecute ) == NULL) {
 
             FatRaiseStatus( IrpContext, STATUS_INSUFFICIENT_RESOURCES );
         }
@@ -1874,6 +1874,12 @@ Return Value:
         }
 
         //
+        //  Back up a copy of the IrpContext flags for later use in async completion.
+        //
+
+        Context->IrpContextFlags = IrpContext->Flags;
+
+        //
         //  Now that all the dangerous work is done, issue the read requests
         //
 
@@ -2093,6 +2099,12 @@ Return Value:
                                        (PVOID)Context->Wait.Async.ResourceThreadId );
         }
     }
+
+    //
+    //  Back up a copy of the IrpContext flags for later use in async completion.
+    //
+    
+    IrpContext->FatIoContext->IrpContextFlags = IrpContext->Flags;
 
     //
     //  Issue the read request
@@ -2419,7 +2431,11 @@ Return Value:
 
     if (!NT_SUCCESS( Irp->IoStatus.Status )) {
 
-        NT_ASSERT( NT_SUCCESS( FatAssertNotStatus ) || Irp->IoStatus.Status != FatAssertNotStatus );
+#if DBG
+        if(!( NT_SUCCESS( FatBreakOnInterestingIoCompletion ) || Irp->IoStatus.Status != FatBreakOnInterestingIoCompletion )) {
+            DbgBreakPoint();
+        }
+#endif
 
 #ifdef SYSCACHE_COMPILE
         DbgPrint( "FAT SYSCACHE: MultiSync (IRP %08x for Master %08x) -> %08x\n", Irp, MasterIrp, Irp->IoStatus );
@@ -2503,9 +2519,10 @@ Return Value:
 --*/
 
 {
-
+    NTSTATUS Status = STATUS_SUCCESS;
     PFAT_IO_CONTEXT Context = Contxt;
     PIRP MasterIrp = Context->MasterIrp;
+    BOOLEAN PostRequest = FALSE;
 
     DebugTrace(+1, Dbg, "FatMultiAsyncCompletionRoutine, Context = %p\n", Context );
 
@@ -2515,7 +2532,11 @@ Return Value:
 
     if (!NT_SUCCESS( Irp->IoStatus.Status )) {
 
-        NT_ASSERT( NT_SUCCESS( FatAssertNotStatus ) || Irp->IoStatus.Status != FatAssertNotStatus );
+#if DBG
+        if (!( NT_SUCCESS( FatBreakOnInterestingIoCompletion ) || Irp->IoStatus.Status != FatBreakOnInterestingIoCompletion )) {
+            DbgBreakPoint();
+        }
+#endif
 
 #ifdef SYSCACHE_COMPILE
         DbgPrint( "FAT SYSCACHE: MultiAsync (IRP %08x for Master %08x) -> %08x\n", Irp, MasterIrp, Irp->IoStatus );
@@ -2548,6 +2569,19 @@ Return Value:
                          IoGetCurrentIrpStackLocation(MasterIrp)->MajorFunction == IRP_MJ_READ ?
                          FO_FILE_FAST_IO_READ : FO_FILE_MODIFIED );
             }
+            
+        } else {
+
+            //
+            // Post STATUS_VERIFY_REQUIRED failures. Only post top level IRPs, because recursive I/Os
+            // cannot process volume verification.
+            //
+            
+            if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) && 
+                (MasterIrp->IoStatus.Status == STATUS_VERIFY_REQUIRED)) {
+                PostRequest = TRUE;
+            }        
+            
         }
 
         //
@@ -2594,13 +2628,35 @@ Return Value:
         //
 
         ExFreePool( Context );
+
+        if (PostRequest) {
+
+            PIRP_CONTEXT IrpContext = NULL;
+
+            try {
+                
+                IrpContext = FatCreateIrpContext(Irp, TRUE );
+                ClearFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_RECURSIVE_CALL);
+                FatFsdPostRequest( IrpContext, Irp );
+                Status = STATUS_MORE_PROCESSING_REQUIRED;
+                
+            } except( FatExceptionFilter(NULL, GetExceptionInformation()) ) {
+
+                //
+                // If we failed to post the IRP, we just have to return the failure
+                // to the user. :(
+                //
+                
+                NOTHING;
+            }
+        }        
     }
 
     DebugTrace(-1, Dbg, "FatMultiAsyncCompletionRoutine -> SUCCESS\n", 0 );
 
     UNREFERENCED_PARAMETER( DeviceObject );
 
-    return STATUS_SUCCESS;
+    return Status;
 }
 
 
@@ -2984,7 +3040,12 @@ Return Value:
 
     if (!NT_SUCCESS( Irp->IoStatus.Status )) {
 
-        NT_ASSERT( NT_SUCCESS( FatAssertNotStatus ) || Irp->IoStatus.Status != FatAssertNotStatus );
+#if DBG
+        if(!( NT_SUCCESS( FatBreakOnInterestingIoCompletion ) || Irp->IoStatus.Status != FatBreakOnInterestingIoCompletion )) {
+            DbgBreakPoint();
+        }
+#endif
+
     }
 
     NT_ASSERT( !(NT_SUCCESS( Irp->IoStatus.Status ) && Irp->IoStatus.Information == 0 ));
@@ -3042,7 +3103,10 @@ Return Value:
 --*/
 
 {
+    NTSTATUS Status = STATUS_SUCCESS;
+    
     PFAT_IO_CONTEXT Context = Contxt;
+    BOOLEAN PostRequest = FALSE;
 
     DebugTrace(+1, Dbg, "FatSingleAsyncCompletionRoutine, Context = %p\n", Context );
 
@@ -3071,11 +3135,25 @@ Return Value:
 
     } else {
 
-        NT_ASSERT( NT_SUCCESS( FatAssertNotStatus ) || Irp->IoStatus.Status != FatAssertNotStatus );
+#if DBG
+        if(!( NT_SUCCESS( FatBreakOnInterestingIoCompletion ) || Irp->IoStatus.Status != FatBreakOnInterestingIoCompletion )) {
+            DbgBreakPoint();
+        }
+#endif
     
 #ifdef SYSCACHE_COMPILE
         DbgPrint( "FAT SYSCACHE: SingleAsync (IRP %08x) -> %08x\n", Irp, Irp->IoStatus );
 #endif
+
+        //
+        // Post STATUS_VERIFY_REQUIRED failures. Only post top level IRPs, because recursive I/Os
+        // cannot process volume verification.
+        //
+        
+        if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) && 
+            (Irp->IoStatus.Status == STATUS_VERIFY_REQUIRED)) {
+            PostRequest = TRUE;
+        }
 
     }
 
@@ -3125,11 +3203,34 @@ Return Value:
 
     ExFreePool( Context );
 
+    if (PostRequest) {
+
+        PIRP_CONTEXT IrpContext = NULL;
+
+        try {
+            
+            IrpContext = FatCreateIrpContext(Irp, TRUE );
+            ClearFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_RECURSIVE_CALL);            
+            FatFsdPostRequest( IrpContext, Irp );
+            Status = STATUS_MORE_PROCESSING_REQUIRED;
+            
+        } except( FatExceptionFilter(NULL, GetExceptionInformation()) ) {
+
+            //
+            // If we failed to post the IRP, we just have to return the failure
+            // to the user. :(
+            //
+            
+            NOTHING;
+        }
+    }
+
+
     DebugTrace(-1, Dbg, "FatSingleAsyncCompletionRoutine -> STATUS_MORE_PROCESSING_REQUIRED\n", 0 );
 
     UNREFERENCED_PARAMETER( DeviceObject );
 
-    return STATUS_SUCCESS;
+    return Status;
 }
 
 
@@ -3256,7 +3357,7 @@ Return Value:
     
     } else {
 
-        PVOID Address = MmGetSystemAddressForMdlSafe( Irp->MdlAddress, NormalPagePriority );
+        PVOID Address = MmGetSystemAddressForMdlSafe( Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute );
 
         if (Address == NULL) {
 

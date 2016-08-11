@@ -24,8 +24,15 @@
 #include <initguid.h>
 
 #ifdef MF_WPP
-#include "dllmain.tmh"
+#include "dllmain.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
+
+//
+// The static variable needed to check the object count of the deviceMFts loaded.
+//
+
+volatile long CDMFTModuleLifeTimeManager::s_lObjectCount = 0;
+
 
 
 HRESULT RegisterObject(HMODULE hModule, REFGUID guid, PCWSTR pszDescription, PCWSTR pszThreadingModel);
@@ -203,7 +210,17 @@ STDMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *)
 
 STDMETHODIMP DllCanUnloadNow()
 {
-    return (g_cRefModule == 0) ? S_OK : S_FALSE;
+    HRESULT hr = ((g_cRefModule == 0) && (CDMFTModuleLifeTimeManager::GetDMFTObjCount() == 0)) ? S_OK : S_FALSE;
+    //
+    // Debug object lifetimes
+    //
+    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! returning %d %d %!HRESULT!",
+        g_cRefModule,
+        CDMFTModuleLifeTimeManager::GetDMFTObjCount(),
+        hr);
+
+    return hr;
+
 }
 
 _Check_return_

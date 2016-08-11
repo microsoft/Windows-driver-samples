@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleBarcodeScannerDrv", "SampleBarcodeScannerDrv.vcxproj", "{6551F16A-3A12-4CDA-B585-2E2F813CF25E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleBarcodeScannerDrv", "SampleBarcodeScannerDrv.vcxproj", "{AD0547CF-66EE-4B75-A711-F91FD45E0A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Arm = Release|Arm
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|Win32.Build.0 = Debug|Win32
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|Win32.ActiveCfg = Release|Win32
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|Win32.Build.0 = Release|Win32
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|x64.ActiveCfg = Debug|x64
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|x64.Build.0 = Debug|x64
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|x64.ActiveCfg = Release|x64
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|x64.Build.0 = Release|x64
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|Arm.ActiveCfg = Debug|Arm
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Debug|Arm.Build.0 = Debug|Arm
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|Arm.ActiveCfg = Release|Arm
-		{6551F16A-3A12-4CDA-B585-2E2F813CF25E}.Release|Arm.Build.0 = Release|Arm
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|Win32.Build.0 = Debug|Win32
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|Win32.ActiveCfg = Release|Win32
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|Win32.Build.0 = Release|Win32
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|x64.ActiveCfg = Debug|x64
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|x64.Build.0 = Debug|x64
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|x64.ActiveCfg = Release|x64
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|x64.Build.0 = Release|x64
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|Arm.ActiveCfg = Debug|Arm
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Debug|Arm.Build.0 = Debug|Arm
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|Arm.ActiveCfg = Release|Arm
+		{AD0547CF-66EE-4B75-A711-F91FD45E0A50}.Release|Arm.Build.0 = Release|Arm
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

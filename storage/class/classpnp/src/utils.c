@@ -118,10 +118,10 @@ VOID ClassGetDeviceParameter(
 
         defaultParameterValue = *ParameterValue;
 
-        queryTable->Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+        queryTable->Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable->Name          = ParameterName;
         queryTable->EntryContext  = ParameterValue;
-        queryTable->DefaultType   = REG_DWORD;
+        queryTable->DefaultType   = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
         queryTable->DefaultData   = NULL;
         queryTable->DefaultLength = 0;
 
@@ -181,10 +181,10 @@ VOID ClassGetDeviceParameter(
 
             defaultParameterValue = *ParameterValue;
 
-            queryTable->Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+            queryTable->Flags         = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
             queryTable->Name          = ParameterName;
             queryTable->EntryContext  = ParameterValue;
-            queryTable->DefaultType   = REG_DWORD;
+            queryTable->DefaultType   =  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
             queryTable->DefaultData   = NULL;
             queryTable->DefaultLength = 0;
 
@@ -1569,7 +1569,7 @@ ClassReadCapacity16 (
         FdoExtension->LowerLayerSupport->AccessAlignment.LowerLayerSupported = Supported;
     to indicate that info has been cached.
 
-    NOTE: some future processes may use this funciton to send the command anyway, it will be caller's decision
+    NOTE: some future processes may use this function to send the command anyway, it will be caller's decision
           on checking 'AccessAlignment.LowerLayerSupported' in case the cached info is good enough.
 */
 {
@@ -1638,7 +1638,7 @@ ClassReadCapacity16 (
     //prepare the Srb
     if (NT_SUCCESS(status))
     {
-    
+
         SrbSetTimeOutValue(Srb, FdoExtension->TimeOutValue);
         SrbSetRequestTag(Srb, SP_UNTAGGED);
         SrbSetRequestAttribute(Srb, SRB_SIMPLE_TAG_REQUEST);
@@ -1745,7 +1745,7 @@ NTSTATUS ClasspAccessAlignmentProperty(
 
     //
     // Request validation.
-    // Note that InputBufferLength and IsFdo have been validated beforing entering this routine.
+    // Note that InputBufferLength and IsFdo have been validated before entering this routine.
     //
 
     if (KeGetCurrentIrql() >= DISPATCH_LEVEL) {
@@ -1814,7 +1814,7 @@ NTSTATUS ClasspAccessAlignmentProperty(
             } else {
                 information = 0;
             }
-            goto Exit;
+
         } else {
             // case 2: the request is supported and it completes successfully
             // case 3: the request is supported by lower stack but other failure status is returned.
@@ -1823,8 +1823,11 @@ NTSTATUS ClasspAccessAlignmentProperty(
             information = (ULONG)Irp->IoStatus.Information;
 
 
-            goto Exit;
         }
+
+
+        goto Exit;
+
         break;
     }
 
@@ -1851,7 +1854,7 @@ NTSTATUS ClasspAccessAlignmentProperty(
     }
 
     case Supported: {
-        NT_ASSERT(FALSE); // this case is handled at the begining of the function.
+        NT_ASSERT(FALSE); // this case is handled at the beginning of the function.
         status = STATUS_INTERNAL_ERROR;
         break;
     }
@@ -3154,6 +3157,8 @@ DeviceProcessDsmTrimRequest(
     _In_ ULONG                        DataSetRangesCount,
     _In_ ULONG                        UnmapGranularity,
     _In_ ULONG                        SrbFlags,
+    _In_ PIRP                         Irp,
+    _In_ PGUID                        ActivityId,
     _Inout_ PSCSI_REQUEST_BLOCK       Srb
 )
 /*++
@@ -3199,8 +3204,11 @@ Return Value:
     ULONGLONG               maxLbaCount;
     ULONGLONG               maxParameterListLength;
 
-    UNREFERENCED_PARAMETER(UnmapGranularity);
 
+    UNREFERENCED_PARAMETER(UnmapGranularity);    
+    UNREFERENCED_PARAMETER(ActivityId);
+    UNREFERENCED_PARAMETER(Irp);
+    
     //
     // The given LBA ranges are in DEVICE_DATA_SET_RANGE format and need to be converted into UNMAP Block Descriptors.
     // The UNMAP command is able to carry 0xFFFF bytes (0xFFF8 in reality as there are 8 bytes of header plus n*16 bytes of Block Descriptors) of data.
@@ -3320,6 +3328,7 @@ Return Value:
     blockDescrIndex = 0;
     lbaCount = 0;
 
+
     while (!allDataSetRangeFullyConverted) {
 
         //
@@ -3348,8 +3357,8 @@ Return Value:
         //
         // Send the UNMAP command when the buffer is full or when all input entries are converted.
         //
-        if ( (blockDescrIndex == maxBlockDescrCount) ||         // Buffer full or block descriptor count reached
-             (lbaCount == maxLbaCount) ||                       // Block LBA count reached
+        if ((blockDescrIndex == maxBlockDescrCount) ||         // Buffer full or block descriptor count reached
+            (lbaCount == maxLbaCount) ||                       // Block LBA count reached
              allDataSetRangeFullyConverted) {                   // All DataSetRanges have been converted
 
             USHORT transferSize;
@@ -3457,6 +3466,7 @@ Exit:
 NTSTATUS ClasspDeviceTrimProcess(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
+    _In_ PGUID ActivityId,
     _Inout_ PSCSI_REQUEST_BLOCK Srb
     )
 /*
@@ -3482,6 +3492,7 @@ NTSTATUS ClasspDeviceTrimProcess(
 
     CLASS_VPD_B0_DATA           blockLimitsData;
     ULONG                       generationCount;
+
 
     if ( (DeviceObject->DeviceType != FILE_DEVICE_DISK) ||
          (TEST_FLAG(DeviceObject->Characteristics, FILE_FLOPPY_DISKETTE)) ||
@@ -3510,6 +3521,7 @@ NTSTATUS ClasspDeviceTrimProcess(
         status = STATUS_INVALID_LEVEL;
         goto Exit;
     }
+
 
     //
     // If the caller has not set the "entire dataset range" flag then at least
@@ -3703,6 +3715,8 @@ NTSTATUS ClasspDeviceTrimProcess(
                                                      dataSetRangesCount,
                                                      granularityInBlocks,
                                                      srbFlags,
+                                                     Irp,
+                                                     ActivityId,
                                                      Srb);
             } else {
                 // DSM IOCTL should be completed as not supported
@@ -3735,6 +3749,8 @@ Exit:
     //
     Irp->IoStatus.Information = 0;
     Irp->IoStatus.Status = status;
+
+
 
     ClassReleaseRemoveLock(DeviceObject, Irp);
     ClassCompleteRequest(DeviceObject, Irp, IO_NO_INCREMENT);
@@ -6725,7 +6741,7 @@ Return Value:
     //
     // Indicate that there is NO call-back routine.
     //
-    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT;
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
 
     //
     // The value to query.
@@ -6736,7 +6752,7 @@ Return Value:
     // Where to put the value, the type of the value, default value and length.
     //
     queryTable[0].EntryContext = &value;
-    queryTable[0].DefaultType = REG_DWORD;
+    queryTable[0].DefaultType = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD;
     queryTable[0].DefaultData = &value;
     queryTable[0].DefaultLength = sizeof(value);
 
@@ -6761,6 +6777,99 @@ Return Value:
                 DeviceObject,
                 status,
                 *MaximumListIdentifier));
+
+    return status;
+}
+
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSTATUS
+ClasspGetCopyOffloadMaxDuration(
+    _In_ PDEVICE_OBJECT DeviceObject,
+    _In_z_ PWSTR RegistryPath,
+    _Out_ PULONG MaxDuration
+    )
+
+    /*++
+
+    Routine Description:
+
+    This routine returns the maximum time (in seconds) that a Copy Offload
+    operation should take to complete by a target.
+
+    Arguments:
+
+    DeviceObject - The device handling the request.
+    RegistryPath - The absolute registry path under which MaxDuration resides.
+    MaxDuration - Returns the value being queried, in seconds.
+
+    Return Value:
+
+    STATUS_SUCCESS or appropriate error status returned by Registry API.
+
+    --*/
+
+{
+    RTL_QUERY_REGISTRY_TABLE queryTable[2];
+    ULONG value = 0;
+    NTSTATUS status;
+
+    TracePrint((TRACE_LEVEL_VERBOSE,
+                TRACE_FLAG_PNP,
+                "ClasspGetCopyOffloadMaxDuration (%p): Entering function.\n",
+                DeviceObject));
+
+    //
+    // Zero the table entries.
+    //
+    RtlZeroMemory(queryTable, sizeof(queryTable));
+
+    //
+    // The query table has two entries. One for CopyOffloadMaxDuration and
+    // the second which is the 'NULL' terminator.
+    //
+    // Indicate that there is NO call-back routine.
+    //
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK;
+
+    //
+    // The value to query.
+    //
+    queryTable[0].Name = CLASSP_REG_COPY_OFFLOAD_MAX_TARGET_DURATION;
+
+    //
+    // Where to put the value, the type of the value, default value and length.
+    //
+    queryTable[0].EntryContext = &value;
+    queryTable[0].DefaultType = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
+    queryTable[0].DefaultData = &value;
+    queryTable[0].DefaultLength = sizeof(value);
+
+    //
+    // Try to get the max target duration.
+    //
+    status = RtlQueryRegistryValues(RTL_REGISTRY_ABSOLUTE,
+                                    RegistryPath,
+                                    queryTable,
+                                    NULL,
+                                    NULL);
+
+    //
+    // Don't allow the user to set the value to lower than the default (4s) so
+    // they don't break ODX functionality if they accidentally set it too low.
+    //
+    if (NT_SUCCESS(status) &&
+        value > DEFAULT_MAX_TARGET_DURATION) {
+        *MaxDuration = value;
+    } else {
+        *MaxDuration = DEFAULT_MAX_TARGET_DURATION;
+    }
+
+    TracePrint((TRACE_LEVEL_VERBOSE,
+                TRACE_FLAG_PNP,
+                "ClasspGetCopyOffloadMaxDuration (%p): Exiting function with status %x (Max Duration %u seconds).\n",
+                DeviceObject,
+                status,
+                *MaxDuration));
 
     return status;
 }
@@ -8205,7 +8314,7 @@ ClassDeviceHwFirmwareIsPortDriverSupported(
 /*
 Routine Description:
 
-    This function informs the caller whether the port driver supports hardware firmware requests. 
+    This function informs the caller whether the port driver supports hardware firmware requests.
 
 Arguments:
     DeviceObject: The target object.
@@ -8343,9 +8452,14 @@ Exit_Firmware_Get_Info:
         //
         // Firmware information is already cached in classpnp. Return a copy.
         //
+        KLOCK_QUEUE_HANDLE lockHandle;
+        KeAcquireInStackQueuedSpinLock(&fdoExtension->FunctionSupportInfo->SyncLock, &lockHandle);
+
         ULONG dataLength = min(irpStack->Parameters.DeviceIoControl.OutputBufferLength, fdoExtension->FunctionSupportInfo->HwFirmwareInfo->Size);
 
         memcpy(Irp->AssociatedIrp.SystemBuffer, fdoExtension->FunctionSupportInfo->HwFirmwareInfo, dataLength);
+
+        KeReleaseInStackQueuedSpinLock(&lockHandle);
 
         Irp->IoStatus.Information = dataLength;
     }
@@ -8426,6 +8540,8 @@ ClassDeviceHwFirmwareDownloadProcess(
     PIRP irp2 = NULL;
     PIO_STACK_LOCATION newStack = NULL;
     PCDB cdb = NULL;
+    BOOLEAN lockHeld = FALSE;
+    KLOCK_QUEUE_HANDLE lockHandle;
 
 
     //
@@ -8521,6 +8637,13 @@ ClassDeviceHwFirmwareDownloadProcess(
     }
 
     //
+    // Acquire the SyncLock to ensure the HwFirmwareInfo pointer doesn't change
+    // while we're dereferencing it.
+    //
+    lockHeld = TRUE;    
+    KeAcquireInStackQueuedSpinLock(&fdoExtension->FunctionSupportInfo->SyncLock, &lockHandle);
+
+    //
     // Validate the device support
     //
     if ((fdoExtension->FunctionSupportInfo->HwFirmwareInfo->SupportUpgrade == FALSE) ||
@@ -8573,6 +8696,14 @@ ClassDeviceHwFirmwareDownloadProcess(
         //
         bufferSize = ALIGN_UP_BY(firmwareDownload->BufferSize, fdoExtension->FunctionSupportInfo->HwFirmwareInfo->ImagePayloadAlignment);
 
+        //
+        // We're done accessing HwFirmwareInfo at this point so we can release
+        // the SyncLock.
+        //
+        NT_ASSERT(lockHeld);
+        KeReleaseInStackQueuedSpinLock(&lockHandle);
+        lockHeld = FALSE;
+
 #pragma prefast(suppress:6014, "The allocated memory that firmwareImageBuffer points to will be freed in ClassHwFirmwareDownloadComplete().")
         firmwareImageBuffer = ExAllocatePoolWithTag(NonPagedPoolNx, bufferSize, CLASSPNP_POOL_TAG_FIRMWARE);
 
@@ -8586,6 +8717,10 @@ ClassDeviceHwFirmwareDownloadProcess(
         RtlCopyMemory(firmwareImageBuffer, firmwareDownload->ImageBuffer, (ULONG)firmwareDownload->BufferSize);
 
     } else {
+        NT_ASSERT(lockHeld);
+        KeReleaseInStackQueuedSpinLock(&lockHandle);
+        lockHeld = FALSE;
+
         firmwareImageBuffer = firmwareDownload->ImageBuffer;
         bufferSize = (ULONG)firmwareDownload->BufferSize;
     }
@@ -8654,7 +8789,7 @@ ClassDeviceHwFirmwareDownloadProcess(
     SrbSetCdbLength(Srb, CDB10GENERIC_LENGTH);
     cdb = SrbGetCdb(Srb);
     cdb->WRITE_BUFFER.OperationCode = SCSIOP_WRITE_DATA_BUFF;
-    cdb->WRITE_BUFFER.Mode = 0x0E;
+    cdb->WRITE_BUFFER.Mode = SCSI_WRITE_BUFFER_MODE_DOWNLOAD_MICROCODE_WITH_OFFSETS_SAVE_DEFER_ACTIVATE;
     cdb->WRITE_BUFFER.ModeSpecific = 0;     //Reserved for Mode 0x0E
     cdb->WRITE_BUFFER.BufferID = firmwareDownload->Slot;
 
@@ -8713,6 +8848,15 @@ ClassDeviceHwFirmwareDownloadProcess(
 Exit_Firmware_Download:
 
     //
+    // Release the SyncLock if it's still held.
+    // This should only happen in the failure path.
+    //
+    if (lockHeld) {
+        KeReleaseInStackQueuedSpinLock(&lockHandle);
+        lockHeld = FALSE;
+    }
+
+    //
     // Firmware Download request will be failed.
     //
     NT_ASSERT(!NT_SUCCESS(status));
@@ -8751,6 +8895,8 @@ ClassDeviceHwFirmwareActivateProcess(
     BOOLEAN passDown = FALSE;
     PCDB cdb = NULL;
     ULONG   i;
+    BOOLEAN lockHeld = FALSE;
+    KLOCK_QUEUE_HANDLE lockHandle;
 
 
     //
@@ -8845,6 +8991,13 @@ ClassDeviceHwFirmwareActivateProcess(
     }
 
     //
+    // Acquire the SyncLock to ensure the HwFirmwareInfo pointer doesn't change
+    // while we're dereferencing it.
+    //
+    lockHeld = TRUE;
+    KeAcquireInStackQueuedSpinLock(&fdoExtension->FunctionSupportInfo->SyncLock, &lockHandle);
+
+    //
     // Validate the device support
     //
     if (fdoExtension->FunctionSupportInfo->HwFirmwareInfo->SupportUpgrade == FALSE) {
@@ -8870,6 +9023,14 @@ ClassDeviceHwFirmwareActivateProcess(
     }
 
     //
+    // We're done accessing HwFirmwareInfo at this point so we can release
+    // the SyncLock.
+    //
+    NT_ASSERT(lockHeld);
+    KeReleaseInStackQueuedSpinLock(&lockHandle);
+    lockHeld = FALSE;
+
+    //
     // Process the request by translating it into WRITE BUFFER command.
     //
     //
@@ -8878,7 +9039,7 @@ ClassDeviceHwFirmwareActivateProcess(
     SrbSetCdbLength(Srb, CDB10GENERIC_LENGTH);
     cdb = SrbGetCdb(Srb);
     cdb->WRITE_BUFFER.OperationCode = SCSIOP_WRITE_DATA_BUFF;
-    cdb->WRITE_BUFFER.Mode = 0x0F;
+    cdb->WRITE_BUFFER.Mode = SCSI_WRITE_BUFFER_MODE_ACTIVATE_DEFERRED_MICROCODE;
     cdb->WRITE_BUFFER.ModeSpecific = 0;                     //Reserved for Mode 0x0F
     cdb->WRITE_BUFFER.BufferID = firmwareActivate->Slot;    //NOTE: this field will be ignored by SCSI device.
 
@@ -8912,6 +9073,15 @@ ClassDeviceHwFirmwareActivateProcess(
 Exit_Firmware_Activate:
 
     //
+    // Release the SyncLock if it's still held.
+    // This should only happen in the failure path.
+    //
+    if (lockHeld) {
+        KeReleaseInStackQueuedSpinLock(&lockHandle);
+        lockHeld = FALSE;
+    }
+
+    //
     // Firmware Activate request will be failed.
     //
     NT_ASSERT(!NT_SUCCESS(status));
@@ -8930,3 +9100,46 @@ Exit_Firmware_Activate:
     return status;
 }
 
+
+BOOLEAN
+ClasspIsThinProvisioningError (
+    _In_ PSCSI_REQUEST_BLOCK Srb
+    )
+/*++
+
+Routine Description:
+
+    This routine checks whether the completed SRB Srb was completed with a thin provisioning
+    soft threshold error.
+
+Arguments:
+
+    Srb - the SRB to be checked.
+
+Return Value:
+
+    BOOLEAN
+
+--*/
+{
+    if (TEST_FLAG(Srb->SrbStatus, SRB_STATUS_AUTOSENSE_VALID)) {
+        PVOID senseBuffer = SrbGetSenseInfoBuffer(Srb);
+        if (senseBuffer) {
+            UCHAR senseKey = 0;
+            UCHAR addlSenseCode = 0;
+            UCHAR addlSenseCodeQual = 0;
+            BOOLEAN validSense = ScsiGetSenseKeyAndCodes(senseBuffer,
+                                                         SrbGetSenseInfoBufferLength(Srb),
+                                                         SCSI_SENSE_OPTIONS_NONE,
+                                                         &senseKey,
+                                                         &addlSenseCode,
+                                                         &addlSenseCodeQual);
+
+            return (validSense
+                    && (senseKey == SCSI_SENSE_UNIT_ATTENTION)
+                    && (addlSenseCode == SCSI_ADSENSE_LB_PROVISIONING)
+                    && (addlSenseCodeQual == SCSI_SENSEQ_SOFT_THRESHOLD_REACHED));
+        }
+    }
+    return FALSE;
+}

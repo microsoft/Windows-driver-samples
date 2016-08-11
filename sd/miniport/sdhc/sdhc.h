@@ -1372,6 +1372,12 @@ typedef struct _SDHC_EXTENSION {
 
     PSDPORT_REQUEST OutstandingRequests[SDHC_MAX_OUTSTANDING_REQUESTS];
     USHORT UnhandledEvents;
+
+    //
+    // Whether this driver is used for crashdump/hibernate.
+    //
+
+    BOOLEAN CrashdumpMode;
       
 } SDHC_EXTENSION, *PSDHC_EXTENSION;
 
@@ -1480,7 +1486,8 @@ VOID
 SdhcSlotToggleEevnts(
     _In_ PSDPORT_SLOT_EXTENSION SlotExtension,
     _In_ ULONG EventMask,
-    _In_ BOOLEAN Enable
+    _In_ BOOLEAN Enable,
+    _In_ BOOLEAN CrashdumpMode
     );
 */
 
@@ -1531,6 +1538,14 @@ SdhcPoFxPowerControlCallback(
     _Out_writes_bytes_opt_(OutputBufferSize) PVOID OutputBuffer,
     _In_ SIZE_T OutputBufferSize,
     _Out_opt_ PSIZE_T BytesReturned
+    )
+*/
+
+SDPORT_CLEANUP SdhcCleanup;
+/*
+VOID
+SdhcCleanup(
+    _In_ PSD_MINIPORT Miniport
     )
 */
 

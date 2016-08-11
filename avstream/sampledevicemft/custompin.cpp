@@ -3,7 +3,7 @@
 #include "basepin.h"
 #include "custompin.h"
 #ifdef MF_WPP
-#include "custompin.tmh"
+#include "custompin.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 
 

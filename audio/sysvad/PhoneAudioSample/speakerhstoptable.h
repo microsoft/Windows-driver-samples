@@ -15,6 +15,8 @@ Abstract:
 #ifndef _SYSVAD_SPEAKERHSTOPTABLE_H_
 #define _SYSVAD_SPEAKERHSTOPTABLE_H_
 
+#include <mintopo.h>
+
 //=============================================================================
 static
 KSDATARANGE SpeakerHsTopoPinDataRangesBridge[] =
@@ -93,7 +95,6 @@ KSJACK_DESCRIPTION SpeakerHsJackDesc =
     eGenLocPrimaryBox,
     ePortConnJack,
     FALSE               // NOTE: For convenience, wired headset jacks will be "unplugged" at boot.
-                        // However, we need to introduce a test hook to toggle jack state of this and other endpoints.                                 
 };
 
 //=============================================================================
@@ -132,7 +133,17 @@ PCPROPERTY_ITEM PropertiesSpeakerHsTopoFilter[] =
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerHsTopoFilter, PropertiesSpeakerHsTopoFilter);
+static PCEVENT_ITEM SpeakerHsJackInfoChangeEvent[] =
+{
+    {
+        &KSEVENTSETID_PinCapsChange,   // Something changed
+        KSEVENT_PINCAPS_JACKINFOCHANGE,  // Jack Info Changes
+        KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
+        CMiniportTopology_EventHandler_JackState
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationSpeakerHsTopoFilter, PropertiesSpeakerHsTopoFilter, SpeakerHsJackInfoChangeEvent);
 
 //=============================================================================
 static

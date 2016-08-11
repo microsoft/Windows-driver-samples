@@ -835,7 +835,7 @@ Return Value:
                     (ULONG)RequiredSizeAugmented,
                     (ULONG)(*BiosResourcesSize));
 
-        BiosResource = ExAllocatePoolWithTag(NonPagedPool,
+        BiosResource = ExAllocatePoolWithTag(NonPagedPoolNx,
                                              RequiredSize,
                                              PEP_POOL_TAG);
 

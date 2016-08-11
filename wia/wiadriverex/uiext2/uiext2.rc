@@ -1,0 +1,30 @@
+//(C) COPYRIGHT MICROSOFT CORP., 1998-1999
+
+
+#include "resource.h"
+#include "windows.h"
+
+IDI_TESTDEVICE ICON "testdev.ico"
+
+#include <winver.h>
+#include <ntverp.h>
+
+
+STRINGTABLE
+BEGIN
+    IDS_MESSAGEBOX_WIAUIEXTENSION_DIALOG    "CWiaUIExtension::DeviceDialog is being called"
+    IDS_MESSAGEBOX_WIAUIEXTENSION_TITLE     "IWiaUIExtension"
+    IDS_MESSAGEBOX_TRANSFERMESSAGE_DIALOG   "Transferred From Flatbed to File: "
+END
+
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "WIA TestCam UI DLL"
+#define VER_INTERNALNAME_STR        "extend\0"
+#define VER_ORIGINALFILENAME_STR    "extend.dll"
+
+#include "common.ver"
+
+
+
+

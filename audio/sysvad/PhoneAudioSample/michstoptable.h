@@ -15,6 +15,8 @@ Abstract:
 #ifndef _SYSVAD_MICHSTOPTABLE_H_
 #define _SYSVAD_MICHSTOPTABLE_H_
 
+#include <mintopo.h>
+
 // Function declarations.
 NTSTATUS
 PropertyHandler_MicHsTopoFilter( 
@@ -101,7 +103,6 @@ KSJACK_DESCRIPTION MicHsJackDesc =
     eGenLocPrimaryBox,
     ePortConnJack,
     FALSE               // NOTE: For convenience, wired headset jacks will be "unplugged" at boot.
-                        // However, we need to introduce a test hook to toggle jack state of this and other endpoints.   
 };
 
 //=============================================================================
@@ -222,7 +223,17 @@ PCPROPERTY_ITEM MicHsPropertiesTopoFilter[] =
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationMicHsTopoFilter, MicHsPropertiesTopoFilter);
+static PCEVENT_ITEM MicHsJackInfoChangeEvent[] =
+{
+    {
+        &KSEVENTSETID_PinCapsChange,   // Something changed
+        KSEVENT_PINCAPS_JACKINFOCHANGE,  // Jack Info Changes
+        KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
+        CMiniportTopology_EventHandler_JackState
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationMicHsTopoFilter, MicHsPropertiesTopoFilter, MicHsJackInfoChangeEvent);
 
 //=============================================================================
 static

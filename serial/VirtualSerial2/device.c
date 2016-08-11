@@ -257,7 +257,7 @@ DeviceGetPdoName(
     status = WdfDeviceAllocAndQueryProperty(
                             device,
                             DevicePropertyPhysicalDeviceObjectName,
-                            NonPagedPool,
+                            NonPagedPoolNx,
                             &attributes,
                             &memory);
     if (!NT_SUCCESS(status)) {

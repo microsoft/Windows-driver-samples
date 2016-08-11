@@ -38,6 +38,7 @@ Environment:
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
 #pragma alloc_text (PAGE, PLxEvtDeviceAdd)
+#pragma alloc_text (PAGE, PlxEvtDeviceCleanup)
 #pragma alloc_text (PAGE, PLxEvtDevicePrepareHardware)
 #pragma alloc_text (PAGE, PLxEvtDeviceReleaseHardware)
 #pragma alloc_text (PAGE, PLxEvtDeviceD0Exit)
@@ -201,6 +202,12 @@ Return Value:
     attributes.SynchronizationScope = WdfSynchronizationScopeDevice;
 
     //
+    // This callback is invoked when the device is removed or the driver
+    // is unloaded.
+    //
+    attributes.EvtCleanupCallback = PlxEvtDeviceCleanup;
+
+    //
     // Create the device
     //
     status = WdfDeviceCreate( &DeviceInit, &attributes, &device );
@@ -286,6 +293,36 @@ Return Value:
                 "<-- PLxEvtDeviceAdd %!STATUS!", status);
 
     return status;
+}
+
+_Use_decl_annotations_
+VOID
+PlxEvtDeviceCleanup(
+    _In_ WDFOBJECT Device
+    )
+/*++
+
+Routine Description:
+
+    Invoked before the device object is deleted.
+
+Arguments:
+
+    Device - A handle to the WDFDEVICE
+
+Return Value:
+
+     None
+
+--*/
+{
+    PDEVICE_EXTENSION devExt;
+
+    PAGED_CODE();
+
+    devExt = PLxGetDeviceContext((WDFDEVICE)Device);
+
+    PlxCleanupDeviceExtension(devExt);
 }
 
 NTSTATUS
@@ -382,12 +419,11 @@ Return Value:
     devExt = PLxGetDeviceContext(Device);
 
     if (devExt->RegsBase) {
-
         MmUnmapIoSpace(devExt->RegsBase, devExt->RegsLength);
         devExt->RegsBase = NULL;
     }
 
-    if(devExt->SRAMBase){
+    if (devExt->SRAMBase) {
         MmUnmapIoSpace(devExt->SRAMBase, devExt->SRAMLength);
         devExt->SRAMBase = NULL;
     }

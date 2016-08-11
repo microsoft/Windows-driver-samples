@@ -56,6 +56,8 @@ PedometerDevice::GetData(
             TraceError("PED %!FUNC! GetPerformanceTime failed %!STATUS!", Status);
         }
 
+        m_SampleCount = 0;
+
         DataReady = TRUE;
     }
     else
@@ -186,8 +188,17 @@ PedometerDevice::OnTimerExpire(
             }
             else
             {
-                WaitTimeHundredNanoseconds = pDevice->m_Interval -
-                    ((CurrentTimeMs - pDevice->m_StartTime) % pDevice->m_Interval);
+                pDevice->m_SampleCount++;
+                if (CurrentTimeMs > (pDevice->m_StartTime + (pDevice->m_Interval * (pDevice->m_SampleCount + 1))))
+                {
+                    // If we skipped two or more beats, reschedule the timer with a zero due time to catch up on missing samples
+                    WaitTimeHundredNanoseconds = 0;
+                }
+                else
+                {
+                    WaitTimeHundredNanoseconds = (pDevice->m_StartTime +
+                        (pDevice->m_Interval * (pDevice->m_SampleCount + 1))) - CurrentTimeMs;
+                }
                 WaitTimeHundredNanoseconds = WDF_REL_TIMEOUT_IN_MS(WaitTimeHundredNanoseconds);
             }
         }
@@ -216,7 +227,7 @@ PedometerDevice::OnStart(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -270,7 +281,7 @@ PedometerDevice::OnStop(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -315,7 +326,7 @@ PedometerDevice::OnStartHistory(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -371,7 +382,7 @@ PedometerDevice::OnStopHistory(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -442,7 +453,7 @@ PedometerDevice::OnClearHistory(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -500,7 +511,7 @@ PedometerDevice::OnStartHistoryRetrieval(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
@@ -612,7 +623,7 @@ PedometerDevice::OnCancelHistoryRetrieval(
     if (nullptr == pDevice || nullptr == pBytesWritten)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Invalid Parameters: Sensor(%08X), pBytesWritten (%08X). Failed %!STATUS!", (INT)SensorInstance, (INT)pBytesWritten, Status);
+        TraceError("PED %!FUNC! Invalid Parameters: Sensor(0x%p), pDevice (0x%p), pBytesWritten (0x%p). Failed %!STATUS!", SensorInstance, pDevice, pBytesWritten, Status);
         goto Exit;
     }
 
@@ -689,7 +700,7 @@ PedometerDevice::HistoryRetrievalThread(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. pDevice is null", (INT)SensorInstance);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. pDevice is null", SensorInstance);
         goto Exit;
     }
 
@@ -1025,14 +1036,14 @@ PedometerDevice::OnGetDataInterval(
     if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 
     if (nullptr == DataRateMs)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! DataRateMs(%08X) parameter is invalid. Failed %!STATUS!", (INT)DataRateMs, Status);
+        TraceError("PED %!FUNC! DataRateMs(0x%p) parameter is invalid. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 
@@ -1057,10 +1068,17 @@ PedometerDevice::OnSetDataInterval(
 
     SENSOR_FunctionEnter();
 
-    if (nullptr == pDevice || Pedometer_Default_MinDataInterval_Ms > DataRateMs)
+    if (nullptr == pDevice)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
+        goto Exit;
+    }
+
+    if (Pedometer_Default_MinDataInterval_Ms > DataRateMs)
+    {
+        Status = STATUS_INVALID_PARAMETER;
+        TraceError("PED %!FUNC! DataRateMs(%d) parameter is smaller than the minimum data interval. Failed %!STATUS!", DataRateMs, Status);
         goto Exit;
     }
 
@@ -1163,7 +1181,7 @@ PedometerDevice::OnSetDataThresholds(
     if (pDevice == nullptr)
     {
         Status = STATUS_INVALID_PARAMETER;
-        TraceError("PED %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT)SensorInstance, Status);
+        TraceError("PED %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", SensorInstance, Status);
         goto Exit;
     }
 

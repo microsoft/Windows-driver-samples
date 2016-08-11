@@ -199,7 +199,7 @@ Return Value:
 
                 printf( "UNEXPECTED LOG_RECORD->Length: length=%d expected>=%d\n",
                         pLogRecord->Length,
-                        (sizeof(LOG_RECORD)+sizeof(WCHAR)));
+                        (ULONG)(sizeof(LOG_RECORD)+sizeof(WCHAR)));
 
                 break;
             }
@@ -1013,7 +1013,7 @@ Return Value:
         fprintf( File, "\t%-12s", TIME_ERROR );
     }
 
-    fprintf(File, "\t%8x.%-4x ", RecordData->ProcessId, RecordData->ThreadId);
+    fprintf(File, "\t%8Ix.%-4Ix ", RecordData->ProcessId, RecordData->ThreadId);
 
     PrintIrpCode( RecordData->CallbackMajorId,
                   RecordData->CallbackMinorId,
@@ -1153,7 +1153,7 @@ Return Value:
         printf( "%-12s ", TIME_ERROR );
     }
 
-    printf("%8x.%-4x ", RecordData->ProcessId, RecordData->ThreadId);
+    printf("%8Ix.%-4Ix ", RecordData->ProcessId, RecordData->ThreadId);
 
     PrintIrpCode( RecordData->CallbackMajorId,
                   RecordData->CallbackMinorId,

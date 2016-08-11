@@ -851,7 +851,7 @@ Return Value:
     attributes.ParentObject = request;
     status = WdfMemoryCreate(
                         &attributes,
-                        NonPagedPool,
+                        NonPagedPoolNx,
                         DRIVER_TAG,
                         READ_BUF_SIZE,
                         &memory,
@@ -931,7 +931,7 @@ Return Value:
     attributes.ParentObject = request;
     status = WdfMemoryCreate(
                         &attributes,
-                        NonPagedPool,
+                        NonPagedPoolNx,
                         DRIVER_TAG,
                         WRITE_BUF_SIZE,
                         &memory,

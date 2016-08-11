@@ -30,11 +30,11 @@ Abstract:
 #define HANDSETSPEAKER_HOST_MIN_SAMPLE_RATE                24000   // Min Sample Rate
 #define HANDSETSPEAKER_HOST_MAX_SAMPLE_RATE                96000   // Max Sample Rate
 
-#define HANDSETSPEAKER_LOOPBACK_MAX_CHANNELS               2       // Max Channels.
-#define HANDSETSPEAKER_LOOPBACK_MIN_BITS_PER_SAMPLE        16      // Min Bits Per Sample
-#define HANDSETSPEAKER_LOOPBACK_MAX_BITS_PER_SAMPLE        16      // Max Bits Per Sample
-#define HANDSETSPEAKER_LOOPBACK_MIN_SAMPLE_RATE            24000   // Min Sample Rate
-#define HANDSETSPEAKER_LOOPBACK_MAX_SAMPLE_RATE            48000   // Max Sample Rate
+#define HANDSETSPEAKER_LOOPBACK_MAX_CHANNELS               HANDSETSPEAKER_HOST_MAX_CHANNELS          // Must be equal to host pin's Max Channels.
+#define HANDSETSPEAKER_LOOPBACK_MIN_BITS_PER_SAMPLE        HANDSETSPEAKER_HOST_MIN_BITS_PER_SAMPLE   // Must be equal to host pin's Min Bits Per Sample
+#define HANDSETSPEAKER_LOOPBACK_MAX_BITS_PER_SAMPLE        HANDSETSPEAKER_HOST_MAX_BITS_PER_SAMPLE   // Must be equal to host pin's Max Bits Per Sample
+#define HANDSETSPEAKER_LOOPBACK_MIN_SAMPLE_RATE            HANDSETSPEAKER_HOST_MIN_SAMPLE_RATE       // Must be equal to host pin's Min Sample Rate
+#define HANDSETSPEAKER_LOOPBACK_MAX_SAMPLE_RATE            HANDSETSPEAKER_HOST_MAX_SAMPLE_RATE       // Must be equal to host pin's Max Sample Rate
 
 #define HANDSETSPEAKER_DOLBY_DIGITAL_MAX_CHANNELS          2       // Max Channels.
 #define HANDSETSPEAKER_DOLBY_DIGITAL_MIN_BITS_PER_SAMPLE   16      // Min Bits Per Sample
@@ -45,7 +45,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define HANDSETSPEAKER_MAX_INPUT_SYSTEM_STREAMS            2       // Raw + Default streams
+#define HANDSETSPEAKER_MAX_INPUT_SYSTEM_STREAMS            3
 #define HANDSETSPEAKER_MAX_OUTPUT_LOOPBACK_STREAMS         MAX_OUTPUT_LOOPBACK_STREAMS
 
 //=============================================================================
@@ -204,111 +204,6 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE HandsetSpeakerHostPinSupportedDeviceFormats[] 
     }
 };
 
-static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE HandsetSpeakerLoopbackPinSupportedDeviceFormats[] =
-{
-    { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                24000,
-                96000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                32000,
-                128000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 2
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                44100,
-                176400,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 3
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                48000,
-                192000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    }
-};
-
 //
 // Supported modes (only on streaming pins).
 //
@@ -345,8 +240,8 @@ PIN_DEVICE_FORMATS_AND_MODES HandsetSpeakerPinDeviceFormatsAndModes[] =
     },
     {
         RenderLoopbackPin,
-        HandsetSpeakerLoopbackPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(HandsetSpeakerLoopbackPinSupportedDeviceFormats),
+        HandsetSpeakerHostPinSupportedDeviceFormats,   // Must support all the formats supported by host pin
+        SIZEOF_ARRAY(HandsetSpeakerHostPinSupportedDeviceFormats),
         NULL,   // loopback doesn't support modes.
         0
     },

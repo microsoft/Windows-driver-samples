@@ -3603,9 +3603,10 @@ Return Value:
 
         RtlZeroMemory(queryTable, sizeof(queryTable));
 
-        queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+        queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable[0].Name = DSM_LOAD_BALANCE_POLICY;
         queryTable[0].EntryContext = &loadBalanceType;
+        queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
         status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                         targetKey,

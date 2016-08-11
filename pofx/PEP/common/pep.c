@@ -21,8 +21,8 @@ Environment:
 //-------------------------------------------------------------------- Includes
 //
 
-#include <initguid.h>
 #include "pch.h"
+#include <initguid.h>
 
 #if defined(EVENT_TRACING)
 #include "pep.tmh"

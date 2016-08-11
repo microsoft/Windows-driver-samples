@@ -484,7 +484,7 @@ Return Value:
     // Allocate memory for the disk image.
     //
     pDeviceExtension->DiskImage = ExAllocatePoolWithTag(
-        NonPagedPool,
+        NonPagedPoolNx,
         pDeviceExtension->DiskRegInfo.DiskSize,
         RAMDISK_TAG
         );

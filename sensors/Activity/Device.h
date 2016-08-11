@@ -52,6 +52,7 @@ typedef enum
     SENSOR_MODEL,
     SENSOR_PERSISTENT_UNIQUEID,
     SENSOR_CATEGORY,
+    SENSOR_ISPRIMARY,
 
     // These enumeration properties overlap with a subset of the common properties,
     // and facilitate discovery without opening a sensor

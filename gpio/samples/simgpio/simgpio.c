@@ -825,6 +825,19 @@ Return Value:
     ControllerInformation->Flags.MemoryMappedController = TRUE;
 
     //
+    // Indicate that the H/W registers used for I/O can be accessed seperately
+    // from the registers used for interrupt processing.
+    //
+    // N.B.: Setting this flag to TRUE will cause the GPIO class extension
+    // to optimize I/O processing by skipping the acquisition of
+    // interrupt-related locks in I/O paths. Make sure the GPIO controller
+    // H/W can support simultaneous I/O and interrupt processing. Otherwise
+    // unpredictable race conditions may occur!
+    //
+
+    ControllerInformation->Flags.IndependentIoHwSupported = TRUE;
+
+    //
     // Indicate that status register must be cleared explicitly.
     //
 

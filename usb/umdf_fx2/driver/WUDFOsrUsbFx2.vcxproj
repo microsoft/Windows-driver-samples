@@ -19,13 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BCB0C08D-E6FC-4FE6-BFDE-723B3706FA53}</ProjectGuid>
+    <ProjectGuid>{6E5D412E-EF25-4DA4-B64E-6EAE67AF8D98}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>1</UMDF_VERSION_MAJOR>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
+    <SupportsPackaging>false</SupportsPackaging>
+    <RequiresPackageProject>true</RequiresPackageProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{CB79CACC-78FE-4BD1-8CEF-F304F7B06047}</SampleGuid>
+    <SampleGuid>{87BFB278-0771-439F-893D-89376B83F7F0}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -82,11 +84,6 @@
       <WppDllMacro>true</WppDllMacro>
       <WppScanConfigurationData>internal.h</WppScanConfigurationData>
     </ClCompile>
-    <Inf Include="WUDFOsrUsbFx2.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\WUDFOsrUsbFx2.inf</CopyOutput>
-    </Inf>
     <OtherWpp Include="OsrUsbFx2.rc">
       <WppEnabled>true</WppEnabled>
       <WppDllMacro>true</WppDllMacro>
@@ -191,12 +188,15 @@
     </ResourceCompile>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\setupapi.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -205,12 +205,15 @@
     </ResourceCompile>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\setupapi.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -219,12 +222,15 @@
     </ResourceCompile>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\setupapi.lib</AdditionalDependencies>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -233,53 +239,16 @@
     </ResourceCompile>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <ExceptionHandling>
+      </ExceptionHandling>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\setupapi.lib</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <FilesToPackage Include="..\deviceMetadata\B4D697F5-1C56-4807-ACCD-B28C09D37FF0.devicemetadata-ms" />
-    <None Include="..\deviceMetadata\B4D697F5-1C56-4807-ACCD-B28C09D37FF0.devicemetadata-ms" />
-  </ItemGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
-    <ClCompile>
-      <ExceptionHandling>
-      </ExceptionHandling>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-    </Link>
-    <ClCompile>
-      <ExceptionHandling>
-      </ExceptionHandling>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-    </Link>
-    <ClCompile>
-      <ExceptionHandling>
-      </ExceptionHandling>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-    </Link>
-    <ClCompile>
-      <ExceptionHandling>
-      </ExceptionHandling>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="OsrUsbFx2.rc" />
@@ -289,27 +258,9 @@
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="*.txt" Exclude="@(None)" />
-    <None Include="*.htm" Exclude="@(None)" />
-    <None Include="*.html" Exclude="@(None)" />
-    <None Include="*.ico" Exclude="@(None)" />
-    <None Include="*.cur" Exclude="@(None)" />
-    <None Include="*.bmp" Exclude="@(None)" />
-    <None Include="*.dlg" Exclude="@(None)" />
-    <None Include="*.rct" Exclude="@(None)" />
-    <None Include="*.gif" Exclude="@(None)" />
-    <None Include="*.jpg" Exclude="@(None)" />
-    <None Include="*.jpeg" Exclude="@(None)" />
-    <None Include="*.wav" Exclude="@(None)" />
-    <None Include="*.jpe" Exclude="@(None)" />
-    <None Include="*.tiff" Exclude="@(None)" />
-    <None Include="*.tif" Exclude="@(None)" />
-    <None Include="*.png" Exclude="@(None)" />
-    <None Include="*.rc2" Exclude="@(None)" />
-    <None Include="*.def" Exclude="@(None)" />
-    <None Include="*.bat" Exclude="@(None)" />
-    <None Include="*.hpj" Exclude="@(None)" />
-    <None Include="*.asmx" Exclude="@(None)" />
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />

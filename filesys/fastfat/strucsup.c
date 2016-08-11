@@ -574,6 +574,7 @@ Return Value:
         FsRtlSetupAdvancedHeader( &Vcb->VolumeFileHeader,
                                   &Vcb->AdvancedFcbHeaderMutex );
 
+
         //
         //  With the Vcb now set up, set the IrpContext Vcb field.
         //
@@ -794,6 +795,11 @@ Return Value:
         //
 
         ExFreePool( Vcb->Vpb );
+    }
+
+    if (Vcb->VolumeGuidPath.Buffer) {
+        ExFreePool( Vcb->VolumeGuidPath.Buffer );
+        Vcb->VolumeGuidPath.Buffer = NULL;
     }
 
     //
@@ -1211,6 +1217,7 @@ FatCreateFcb (
     IN ULONG DirentOffsetWithinDirectory,
     IN PDIRENT Dirent,
     IN PUNICODE_STRING Lfn OPTIONAL,
+    IN PUNICODE_STRING OrigLfn OPTIONAL,    
     IN BOOLEAN IsPagingFile,
     IN BOOLEAN SingleResource
     )
@@ -1269,6 +1276,8 @@ Return Value:
 
     PAGED_CODE();
 
+    UNREFERENCED_PARAMETER( OrigLfn );
+    
     DebugTrace(+1, Dbg, "FatCreateFcb\n", 0);
 
     try {

@@ -557,6 +557,8 @@ Return Value:
     BOOLEAN ClearWriteThroughOnExit = FALSE;
     BOOLEAN ClearWaitOnExit = FALSE;
 
+    ULONG CorrectedFileSize = 0;
+
     PAGED_CODE();
 
     NT_ASSERT( FatVcbAcquiredExclusive(IrpContext, Dcb->Vcb) );
@@ -642,11 +644,13 @@ Return Value:
                     //
     
                     if ( FlagOn(Fcb->FcbState, FCB_STATE_TRUNCATE_ON_CLOSE) ) {
-    
+
+
                         FatTruncateFileAllocation( IrpContext,
                                                    Fcb,
-                                                   Fcb->Header.FileSize.LowPart,
-                                                   FALSE );
+                                                   Fcb->Header.FileSize.LowPart );
+
+
                     }
     
                     //
@@ -662,12 +666,17 @@ Return Value:
                                               FALSE,
                                               &Dirent,
                                               &DirentBcb );
-    
-                    if (Dirent->FileSize != Fcb->Header.FileSize.LowPart) {
-    
-                        Dirent->FileSize = Fcb->Header.FileSize.LowPart;
-                    }
 
+
+                    CorrectedFileSize = Fcb->Header.FileSize.LowPart; 
+
+                        
+                    if (Dirent->FileSize != CorrectedFileSize) {
+                        
+                        Dirent->FileSize = CorrectedFileSize;
+
+                        
+                    }
 
                     //
                     //  We must unpin the Bcb before the flush since we recursively tear up

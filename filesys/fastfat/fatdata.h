@@ -84,7 +84,6 @@ extern FAST_IO_DISPATCH FatFastIoDispatch;
 
 extern LOGICAL FatDiskAccountingEnabled;
 
-
 //
 // Read ahead amount used for normal data files
 //
@@ -290,7 +289,6 @@ extern LONG FatPerformanceTimerLevel;
 //
 
 extern PVOID FatNull;
-extern NTSTATUS FatInterestingException;
 
 #else
 
@@ -323,7 +321,10 @@ extern NTSTATUS FatInterestingException;
 
 #if DBG
 
-extern NTSTATUS FatAssertNotStatus;
+extern NTSTATUS FatBreakOnInterestingIoCompletion;
+extern NTSTATUS FatBreakOnInterestingExceptionStatus;
+extern NTSTATUS FatBreakOnInterestingIrpCompletion;
+
 extern BOOLEAN FatTestRaisedStatus;
 
 #endif

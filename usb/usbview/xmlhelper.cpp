@@ -340,11 +340,11 @@ HRESULT XmlAddHostController(PSTR hcName, PUSBHOSTCONTROLLERINFO hcInfo)
             }
             else
             {
-                USB_CONTROLLER_FLAVOR flavor = hcInfo->ControllerInfo->ControllerFlavor;
-
                 // If protocol lookup failed based on service name, try Controller flavor
                 if(NULL != hcInfo->ControllerInfo)
                 {
+                    USB_CONTROLLER_FLAVOR flavor = hcInfo->ControllerInfo->ControllerFlavor;
+
                     if(flavor == USB_HcGeneric)
                     {
                         hc->UsbProtocol = gcnew String(USB_GENERIC);
@@ -353,11 +353,11 @@ HRESULT XmlAddHostController(PSTR hcName, PUSBHOSTCONTROLLERINFO hcInfo)
                     {
                         hc->UsbProtocol = gcnew String(USB_1_1);
                     }
-                    else if(flavor >= UHCI_Generic && flavor < EHCI_Generic)
+                    else if(flavor >= UHCI_Generic && flavor <= EHCI_Generic)
                     {
                         hc->UsbProtocol = gcnew String(USB_2_0);
                     }
-                    else if(flavor >= EHCI_Generic)
+                    else if(flavor > EHCI_Generic)
                     {
                         hc->UsbProtocol = gcnew String(USB_3_0);
                     }

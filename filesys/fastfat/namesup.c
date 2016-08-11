@@ -27,6 +27,7 @@ Abstract:
 #pragma alloc_text(PAGE, FatSelectNames)
 #pragma alloc_text(PAGE, FatEvaluateNameCase)
 #pragma alloc_text(PAGE, FatSpaceInName)
+#pragma alloc_text(PAGE, FatUnicodeRestoreShortNameCase)
 #endif
 
 
@@ -1030,6 +1031,80 @@ Return Value:
     }
 
     return FALSE;
+}
+
+VOID
+FatUnicodeRestoreShortNameCase( 
+    IN PUNICODE_STRING ShortNameWithCase,
+    IN BOOLEAN LowerCase8,
+    IN BOOLEAN LowerCase3
+    )
+
+/*++
+
+Routine Description:
+
+    Given an 8.3 filename in a UNICODE_STRING, fix the case of the
+    name given the two 8do3 case flags.
+
+Arguments:
+
+    ShortNameWithCase - the UNICODE_STRING containing the short name.
+    LowerCase8, LowerCase3 - the flag indicating whether to downcase the 8dot3 name component.
+   
+Return Value:
+
+    None.
+
+--*/    
+{
+    USHORT i;
+    UNICODE_STRING DownCaseSeg;
+
+    PAGED_CODE();
+
+    NT_ASSERT( ShortNameWithCase->Length <= 24 );
+    
+    //
+    //  Have to repair the case of the short name
+    //
+
+    for (i = 0; i < (ShortNameWithCase->Length/sizeof(WCHAR)) &&
+                ShortNameWithCase->Buffer[i] != L'.'; i++);
+
+    //
+    //  Now pointing at the '.', or otherwise the end of name component
+    //
+
+    if (LowerCase8) {
+
+        DownCaseSeg.Buffer = ShortNameWithCase->Buffer;
+        DownCaseSeg.MaximumLength = DownCaseSeg.Length = i*sizeof(WCHAR);
+
+        RtlDowncaseUnicodeString(&DownCaseSeg, &DownCaseSeg, FALSE);
+    }
+
+    i++;
+
+    //
+    //  Now pointing at first wchar of the extension.
+    //
+
+    if (LowerCase3) {
+
+        //
+        //  It is not neccesarily the case that we can rely on the flag
+        //  indicating that we really have an extension.
+        //
+
+        if ((i*sizeof(WCHAR)) < ShortNameWithCase->Length) {
+            DownCaseSeg.Buffer = &ShortNameWithCase->Buffer[i];
+            DownCaseSeg.MaximumLength = DownCaseSeg.Length = ShortNameWithCase->Length - i*sizeof(WCHAR);
+
+            RtlDowncaseUnicodeString(&DownCaseSeg, &DownCaseSeg, FALSE);
+        }
+    }
+    
 }
 
 

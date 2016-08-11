@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\60\nprt6wdf.vcxproj">
-      <Project>{85BE7B07-69F5-4BC1-A755-483A9051AAC4}</Project>
+      <Project>{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}</Project>
     </ProjectReference>
     <ProjectReference Include="..\notifyob\ProtNotify.vcxproj">
-      <Project>{9B2221A3-32D0-4769-8092-4F9F98043A63}</Project>
+      <Project>{E92C4A1E-396E-4CAF-A5DB-44901F07C515}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -35,8 +35,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{613FEF0A-2AE9-46B7-994C-69D95973B366}</ProjectGuid>
-    <SampleGuid>{86285A85-2FEA-4AEF-8233-356041B6282B}</SampleGuid>
+    <ProjectGuid>{346D9284-B69E-40A5-9584-084D7BE578B2}</ProjectGuid>
+    <SampleGuid>{9B10F9EB-6405-4756-A5C7-FB9F5A528BE5}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

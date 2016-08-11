@@ -1358,8 +1358,8 @@ Return Value:
     // ISSUE-2000/5/24-henrygab - figure out if there's a way to keep
     //                            removals from happening while doing this.
     //
-
-    for(deviceObject = DriverObject->DeviceObject, unmatchedDiskCount = 0;
+    unmatchedDiskCount = 0;
+    for(deviceObject = DriverObject->DeviceObject;
         deviceObject != NULL;
 #pragma prefast(suppress:28175, "Need to access the opaque field to scan through the list of disks")
         deviceObject = deviceObject->NextDevice) {

@@ -54,6 +54,10 @@ Abstract:
 #define MAX_ULONG ((ULONG)-1)
 #endif
 
+#ifndef MAX_USHORT
+#define MAX_USHORT ((USHORT)-1)
+#endif
+
 //
 //  We must explicitly tag our allocations.
 //
@@ -293,8 +297,7 @@ VOID
 FatTruncateFileAllocation (
     IN PIRP_CONTEXT IrpContext,
     IN PFCB FcbOrDcb,
-    IN ULONG AllocationSize,
-    IN BOOLEAN ForDeletion
+    IN ULONG AllocationSize
     );
 
 _Requires_lock_held_(_Global_critical_region_)
@@ -769,7 +772,7 @@ FatConstructDirent (
     IN BOOLEAN ComponentReallyLowercase,
     IN BOOLEAN ExtensionReallyLowercase,
     IN PUNICODE_STRING Lfn OPTIONAL,
-    IN UCHAR Attributes,
+    IN USHORT Attributes,
     IN BOOLEAN ZeroAndSetTimeFields,
     IN PLARGE_INTEGER SetCreationTime OPTIONAL
     );
@@ -1290,6 +1293,13 @@ FatSpaceInName (
     IN PUNICODE_STRING UnicodeName
     );
 
+VOID
+FatUnicodeRestoreShortNameCase( 
+    IN PUNICODE_STRING ShortNameWithCase,
+    IN BOOLEAN LowerCase8,
+    IN BOOLEAN LowerCase3
+    );
+
 
 //
 //  Resources support routines/macros, implemented in ResrcSup.c
@@ -1653,6 +1663,7 @@ FatCreateFcb (
     IN ULONG DirentOffsetWithinDirectory,
     IN PDIRENT Dirent,
     IN PUNICODE_STRING Lfn OPTIONAL,
+    IN PUNICODE_STRING OrigLfn OPTIONAL,    
     IN BOOLEAN IsPagingFile,
     IN BOOLEAN SingleResource
     );
@@ -2375,6 +2386,23 @@ FatCommonCreate (                       //  implemented in Create.c
     _Inout_ PIRP Irp
     );
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+
+_Requires_lock_held_(_Global_critical_region_)
+NTSTATUS
+FatCommonCreateOnNewStack (        //  implemented in Create.c
+    _Inout_ PIRP_CONTEXT IrpContext,
+    _Inout_ PIRP Irp
+    );
+
+_Requires_lock_held_(_Global_critical_region_)
+VOID
+FatCommonCreateCallout (              //  implemented in Create.c
+    _In_ PFAT_CALLOUT_PARAMETERS CalloutParameters
+    );
+
+#endif
+
 _Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
 FatCommonDirectoryControl (             //  implemented in DirCtrl.c
@@ -2728,6 +2756,7 @@ FatScanForDataTrack(
 //          );
 //
 
+
 #define FatIsFastIoPossible(FCB) ((BOOLEAN)                                     \
     ((((FCB)->FcbCondition != FcbGood) ||                                       \
       (NodeType( (FCB) ) != FAT_NTC_FCB) ||                                     \
@@ -2743,6 +2772,7 @@ FatScanForDataTrack(
         )                                                                       \
     )                                                                           \
 )
+
 
 #if (NTDDI_VERSION >= NTDDI_WIN8)
 
@@ -3006,6 +3036,8 @@ FatInterpretClusterType (
 
 #define BlockAlign(P,V) ((ASSERT( V != 0)), (((P)) + (V-1) & (0-(V))))
 #define BlockAlignTruncate(P,V) ((P) & (0-(V)))
+
+#define IsDirectory(FcbOrDcb) ((NodeType((FcbOrDcb)) == FAT_NTC_DCB) || (NodeType((FcbOrDcb)) == FAT_NTC_ROOT_DCB))
 
 #endif // _FATPROCS_
 

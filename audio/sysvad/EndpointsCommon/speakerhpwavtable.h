@@ -32,11 +32,11 @@ Abstract:
 #define SPEAKERHP_OFFLOAD_MIN_SAMPLE_RATE               44100   // Min Sample Rate
 #define SPEAKERHP_OFFLOAD_MAX_SAMPLE_RATE               48000   // Max Sample Rate
 
-#define SPEAKERHP_LOOPBACK_MAX_CHANNELS                 2       // Max Channels.
-#define SPEAKERHP_LOOPBACK_MIN_BITS_PER_SAMPLE          16      // Min Bits Per Sample
-#define SPEAKERHP_LOOPBACK_MAX_BITS_PER_SAMPLE          16      // Max Bits Per Sample
-#define SPEAKERHP_LOOPBACK_MIN_SAMPLE_RATE              24000   // Min Sample Rate
-#define SPEAKERHP_LOOPBACK_MAX_SAMPLE_RATE              48000   // Max Sample Rate
+#define SPEAKERHP_LOOPBACK_MAX_CHANNELS                 SPEAKERHP_HOST_MAX_CHANNELS          // Must be equal to host pin's Max Channels.
+#define SPEAKERHP_LOOPBACK_MIN_BITS_PER_SAMPLE          SPEAKERHP_HOST_MIN_BITS_PER_SAMPLE   // Must be equal to host pin's Min Bits Per Sample
+#define SPEAKERHP_LOOPBACK_MAX_BITS_PER_SAMPLE          SPEAKERHP_HOST_MAX_BITS_PER_SAMPLE   // Must be equal to host pin's Max Bits Per Sample
+#define SPEAKERHP_LOOPBACK_MIN_SAMPLE_RATE              SPEAKERHP_HOST_MIN_SAMPLE_RATE       // Must be equal to host pin's Min Sample Rate
+#define SPEAKERHP_LOOPBACK_MAX_SAMPLE_RATE              SPEAKERHP_HOST_MAX_SAMPLE_RATE       // Must be equal to host pin's Max Sample Rate
 
 #define SPEAKERHP_DOLBY_DIGITAL_MAX_CHANNELS            2       // Max Channels.
 #define SPEAKERHP_DOLBY_DIGITAL_MIN_BITS_PER_SAMPLE     16      // Min Bits Per Sample
@@ -47,7 +47,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define SPEAKERHP_MAX_INPUT_SYSTEM_STREAMS              2       // Raw + Default streams
+#define SPEAKERHP_MAX_INPUT_SYSTEM_STREAMS              6
 #define SPEAKERHP_MAX_INPUT_OFFLOAD_STREAMS             MAX_INPUT_OFFLOAD_STREAMS
 #define SPEAKERHP_MAX_OUTPUT_LOOPBACK_STREAMS           MAX_OUTPUT_LOOPBACK_STREAMS
 
@@ -392,111 +392,6 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHpOffloadPinSupportedDeviceFormats[] =
     }
 };
 
-static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHpLoopbackPinSupportedDeviceFormats[] =
-{
-    { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                24000,
-                96000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                32000,
-                128000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 2
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                44100,
-                176400,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 3
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                2,
-                48000,
-                192000,
-                4,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_STEREO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    }
-};
-
 //
 // Supported modes (only on streaming pins).
 //
@@ -565,8 +460,8 @@ PIN_DEVICE_FORMATS_AND_MODES SpeakerHpPinDeviceFormatsAndModes[] =
     },
     {
         RenderLoopbackPin,
-        SpeakerHpLoopbackPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(SpeakerHpLoopbackPinSupportedDeviceFormats),
+        SpeakerHpHostPinSupportedDeviceFormats,   // Must support all the formats supported by host pin
+        SIZEOF_ARRAY(SpeakerHpHostPinSupportedDeviceFormats),
         NULL,   // loopback doesn't support modes.
         0
     },

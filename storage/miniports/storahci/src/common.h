@@ -84,6 +84,7 @@ Revision History:
 #define ATA_FLAGS_ACTIVE_REFERENCE      (1 << 10)   // indicates Active Reference needs to be acquired before processing the Srb and released after processing the Srb
 #define ATA_FLAGS_SENSEDATA_SET         (1 << 11)   // indicates sense data has been set to the Srb
 
+
 //
 // helper macros
 //
@@ -860,6 +861,7 @@ AtaReportLunsCommand(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
     _In_ PVOID Context
     );
+
 
 UCHAR
 AtaMapError(

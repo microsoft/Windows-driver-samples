@@ -23,13 +23,19 @@ Environment:
 
 #pragma once
 
+#ifndef _KERNEL_MODE
+// This is a user-mode driver
+#include <windows.h>
+#else
+// This is a kernel-mode driver
 #include <ntddk.h>
+#define NTSTRSAFE_LIB
+#include <ntstrsafe.h>
+#endif
+
 #pragma warning(disable:4201)  // disable nameless struct/union warnings
 #include <wdf.h>
 #pragma warning(default:4201)
-
-#define NTSTRSAFE_LIB
-#include <ntstrsafe.h>
 
 #ifndef MAX_USHORT
 #define MAX_USHORT ((USHORT)-1)

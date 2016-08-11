@@ -81,13 +81,13 @@ AllocateTraceProperties (
         (MAXIMUM_SESSION_NAME * sizeof(WCHAR)); 
 
     if (LoggerName != NULL) {
-        StringCchCopy((LPWSTR)((PCHAR)TraceProperties + TraceProperties->LoggerNameOffset), 
+        StringCchCopyW((LPWSTR)((PCHAR)TraceProperties + TraceProperties->LoggerNameOffset), 
                       MAXIMUM_SESSION_NAME,
                       LoggerName);
     }
 
     if (LogFileName != NULL) {
-        StringCchCopy((LPWSTR)((PCHAR)TraceProperties + TraceProperties->LogFileNameOffset), 
+        StringCchCopyW((LPWSTR)((PCHAR)TraceProperties + TraceProperties->LogFileNameOffset), 
                       MAX_PATH, 
                       LogFileName);
     }
@@ -146,7 +146,7 @@ wmain()
     // Start trace session which can receive events from SystemTraceProvider.
     //
     
-    Status = StartTrace(&SessionHandle, LoggerName, TraceProperties);
+    Status = StartTraceW(&SessionHandle, LoggerName, TraceProperties);
     if (Status != ERROR_SUCCESS) {
         wprintf(L"StartTrace() failed with %lu\n", Status);
         goto Exit;

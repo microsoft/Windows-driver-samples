@@ -91,7 +91,7 @@ Return Value:
     //
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&TransferQueueAttributes, ENDPOINT_QUEUE_CONTEXT);
     TransferQueueAttributes.ExecutionLevel = WdfExecutionLevelPassive;
-    
+
     WDF_IO_QUEUE_CONFIG_INIT(&TransferQueueConfig, WdfIoQueueDispatchManual);
     TransferQueueConfig.AllowZeroLengthRequests = TRUE;
     TransferQueueConfig.EvtIoStop = EndpointQueue_EvtIoStop;
@@ -134,7 +134,7 @@ Return Value:
 
     Status = TransferInitialize(Endpoint);
     CHK_NT_MSG(Status, "Failed to initialize endpoint transfers");
-    
+
     //
     // This can happen if we're handling a SetInterface command.
     //
@@ -182,11 +182,11 @@ Parameters Description:
 
     EpContext = UfxEndpointGetContext(Endpoint);
 
-    TraceInformation("CONFIGURE ENDPOINT: %08X Endpoint (%d)", (ULONG) Endpoint, EpContext->PhysicalEndpoint);
+    TraceInformation("CONFIGURE ENDPOINT: 0x%p Endpoint (%d)", Endpoint, EpContext->PhysicalEndpoint);
 
     //
     // ControllerContext = DeviceGetControllerContext(EpContext->WdfDevice);
-    // 
+    //
     // The USB address is:
     //      EpContext->Descriptor.bEndpointAddress & USB_ENDPOINT_ADDRESS_MASK
     //
@@ -248,12 +248,12 @@ Parameters Description:
     }
 
     Address = EpContext->Descriptor.bEndpointAddress & USB_ENDPOINT_ADDRESS_MASK;
-    
+
     //
     // Configure the endpoint
     //
     UfxEndpointConfigureHardware(Endpoint, Address == 0);
-    
+
     //
     // #### TODO: Insert code to enable the endpoint on the controller ####
     //
@@ -291,7 +291,7 @@ Return Value:
 --*/
 {
     PUFXENDPOINT_CONTEXT EpContext;
-    
+
     TraceEntry();
 
     EpContext = UfxEndpointGetContext(Endpoint);
@@ -383,14 +383,14 @@ Parameters Description:
     Request - The request to be completed, requeued, or suspended.
 
     ActionFlags - Bitmask indicating action to take and if request is cancelable.
-    
+
 --*/
-{   
+{
     UNREFERENCED_PARAMETER(Queue);
     UNREFERENCED_PARAMETER(ActionFlags);
 
     TraceEntry();
-   
+
     TransferRequestCancel(Request, TRUE);
 
     TraceExit();
@@ -420,7 +420,7 @@ Parameters Description:
     InputBufferLength - size of the input buffer.
 
     IoControlCode - IOCTL for the request.
-    
+
 --*/
 
 {
@@ -433,7 +433,7 @@ Parameters Description:
     UNREFERENCED_PARAMETER(InputBufferLength);
 
     TraceEntry();
-    
+
     QueueContext = EndpointQueueGetContext(Queue);
     EpContext = UfxEndpointGetContext(QueueContext->Endpoint);
 
@@ -472,7 +472,7 @@ Parameters Description:
             Status = STATUS_INVALID_DEVICE_REQUEST;
             goto End;
     }
-    
+
 End:
     if (!NT_SUCCESS(Status)) {
         WdfRequestComplete(Request, Status);

@@ -219,7 +219,9 @@ class CAdapterCommon :
             _In_        PENDPOINT_MINIPAIR  MiniportPair,
             _In_opt_    PVOID               DeviceContext,
             _Out_opt_   PUNKNOWN *          UnknownTopology,
-            _Out_opt_   PUNKNOWN *          UnknownWave
+            _Out_opt_   PUNKNOWN *          UnknownWave,
+            _Out_opt_   PUNKNOWN *          UnknownMiniportTopology,
+            _Out_opt_   PUNKNOWN *          UnknownMiniportWave
         );
         
         STDMETHODIMP_(NTSTATUS) RemoveEndpointFilters
@@ -302,6 +304,7 @@ class CAdapterCommon :
             _In_ PUNICODE_STRING SymbolicLinkName
         );
 #endif // SYSVAD_BTH_BYPASS
+
 
     private:
 
@@ -838,15 +841,13 @@ Return Value:
     // This sample supports only one instance of this object.
     // (b/c of CSaveData's static members and Bluetooth HFP logic). 
     //
-    if (CAdapterCommon::m_AdapterInstances != 0)
+    if (InterlockedCompareExchange(&CAdapterCommon::m_AdapterInstances, 1, 0) != 0)
     {
         ntStatus = STATUS_DEVICE_BUSY;
         DPF(D_ERROR, ("NewAdapterCommon failed, only one instance is allowed"));
         goto Done;
     }
     
-    CAdapterCommon::m_AdapterInstances++;
-
     //
     // Allocate an adapter object.
     //
@@ -909,7 +910,7 @@ Return Value:
         m_WdfDevice = NULL;
     }
 
-    CAdapterCommon::m_AdapterInstances--;
+    InterlockedDecrement(&CAdapterCommon::m_AdapterInstances);
     ASSERT(CAdapterCommon::m_AdapterInstances == 0);
 } // ~CAdapterCommon  
 
@@ -1026,6 +1027,8 @@ Return Value:
 #ifdef SYSVAD_BTH_BYPASS
     m_BthHfpEnableCleanup = FALSE;
 #endif // SYSVAD_BTH_BYPASS
+
+
 
     m_pServiceGroupWave     = NULL;
     m_pDeviceObject         = DeviceObject;
@@ -2574,7 +2577,9 @@ CAdapterCommon::InstallEndpointFilters
     _In_        PENDPOINT_MINIPAIR  MiniportPair,
     _In_opt_    PVOID               DeviceContext,
     _Out_opt_   PUNKNOWN *          UnknownTopology,
-    _Out_opt_   PUNKNOWN *          UnknownWave
+    _Out_opt_   PUNKNOWN *          UnknownWave,
+    _Out_opt_   PUNKNOWN *          UnknownMiniportTopology,
+    _Out_opt_   PUNKNOWN *          UnknownMiniportWave
 )
 {
     PAGED_CODE();
@@ -2585,7 +2590,10 @@ CAdapterCommon::InstallEndpointFilters
     PUNKNOWN            unknownWave         = NULL;
     BOOL                bTopologyCreated    = FALSE;
     BOOL                bWaveCreated        = FALSE;
+    PUNKNOWN            unknownMiniTopo     = NULL;
+    PUNKNOWN            unknownMiniWave     = NULL;
 
+    // Initialize output optional parameters if needed
     if (UnknownTopology)
     {
         *UnknownTopology = NULL;
@@ -2595,12 +2603,20 @@ CAdapterCommon::InstallEndpointFilters
     {
         *UnknownWave = NULL;
     }
-
-    ntStatus = GetCachedSubdevice(MiniportPair->TopoName, &unknownTopology, NULL);
-    if (!NT_SUCCESS(ntStatus) || NULL == unknownTopology)
+  
+    if (UnknownMiniportTopology)
     {
-        PUNKNOWN unknownMiniportTopology = NULL;
+        *UnknownMiniportTopology = NULL;
+    }
 
+    if (UnknownMiniportWave)
+    {
+        *UnknownMiniportWave = NULL;
+    }
+
+    ntStatus = GetCachedSubdevice(MiniportPair->TopoName, &unknownTopology, &unknownMiniTopo);
+    if (!NT_SUCCESS(ntStatus) || NULL == unknownTopology || NULL == unknownMiniTopo)
+    {
         bTopologyCreated = TRUE;
 
         // Install SYSVAD topology miniport for the render endpoint.
@@ -2618,21 +2634,17 @@ CAdapterCommon::InstallEndpointFilters
                                     IID_IPortTopology,
                                     NULL,
                                     &unknownTopology,
-                                    &unknownMiniportTopology
+                                    &unknownMiniTopo
                                     );
         if (NT_SUCCESS(ntStatus))
         {
-            ntStatus = CacheSubdevice(MiniportPair->TopoName, unknownTopology, unknownMiniportTopology);
+            ntStatus = CacheSubdevice(MiniportPair->TopoName, unknownTopology, unknownMiniTopo);
         }
-
-        SAFE_RELEASE(unknownMiniportTopology);
     }
 
-    ntStatus = GetCachedSubdevice(MiniportPair->WaveName, &unknownWave, NULL);
-    if (!NT_SUCCESS(ntStatus) || NULL == unknownWave)
+    ntStatus = GetCachedSubdevice(MiniportPair->WaveName, &unknownWave, &unknownMiniWave);
+    if (!NT_SUCCESS(ntStatus) || NULL == unknownWave || NULL == unknownMiniWave)
     {
-        PUNKNOWN unknownMiniportWave     = NULL;
-
         bWaveCreated = TRUE;
 
         // Install SYSVAD wave miniport for the render endpoint.
@@ -2650,15 +2662,13 @@ CAdapterCommon::InstallEndpointFilters
                                     IID_IPortWaveRT,
                                     NULL, 
                                     &unknownWave,
-                                    &unknownMiniportWave
+                                    &unknownMiniWave
                                     );
 
         if (NT_SUCCESS(ntStatus))
         {
-            ntStatus = CacheSubdevice(MiniportPair->WaveName, unknownWave, unknownMiniportWave);
+            ntStatus = CacheSubdevice(MiniportPair->WaveName, unknownWave, unknownMiniWave);
         }
-
-        SAFE_RELEASE(unknownMiniportWave);
     }
 
     if (unknownTopology && unknownWave)
@@ -2691,6 +2701,18 @@ CAdapterCommon::InstallEndpointFilters
             unknownWave->AddRef();
             *UnknownWave = unknownWave;
         }
+        if (UnknownMiniportTopology != NULL && unknownMiniTopo != NULL)
+        {
+            unknownMiniTopo->AddRef();
+            *UnknownMiniportTopology = unknownMiniTopo;
+        }
+
+        if (UnknownMiniportWave != NULL && unknownMiniWave != NULL)
+        {
+            unknownMiniWave->AddRef();
+            *UnknownMiniportWave = unknownMiniWave;
+        }
+
     }
     else
     {
@@ -2707,7 +2729,9 @@ CAdapterCommon::InstallEndpointFilters
         }
     }
    
+    SAFE_RELEASE(unknownMiniTopo);
     SAFE_RELEASE(unknownTopology);
+    SAFE_RELEASE(unknownMiniWave);
     SAFE_RELEASE(unknownWave);
 
     return ntStatus;
@@ -6032,7 +6056,7 @@ Routine Description:
         m_SpeakerMiniports,
         PBTHHFPDEVICECOMMON(this),
         &m_UnknownSpeakerTopology,
-        &m_UnknownSpeakerWave
+        &m_UnknownSpeakerWave, NULL, NULL
         );
     
     IF_FAILED_ACTION_JUMP(
@@ -6045,7 +6069,7 @@ Routine Description:
         m_MicMiniports,
         PBTHHFPDEVICECOMMON(this),
         &m_UnknownMicTopology,
-        &m_UnknownMicWave
+        &m_UnknownMicWave, NULL, NULL
         );
     
     IF_FAILED_ACTION_JUMP(

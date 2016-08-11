@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<catalog xmlns:wbar="http://schemas.microsoft.com/windows/2010/04/wia/barcode">
+    <wbar:BarcodeDetectionReport>
+        <wbar:Count>3</wbar:Count>
+        <wbar:ListOfBarcodes>
+            <wbar:BarcodeInfo>
+                <wbar:Type>0</wbar:Type>
+                <wbar:Page>0</wbar:Page>
+                <wbar:Confidence>5</wbar:Confidence>
+                <wbar:XOffset>0</wbar:XOffset>
+                <wbar:YOffset>0</wbar:YOffset>
+                <wbar:Rotation>90</wbar:Rotation>
+                <wbar:Text>036000291452</wbar:Text>
+            </wbar:BarcodeInfo>
+            <wbar:BarcodeInfo>
+                <wbar:Type>2</wbar:Type>
+                <wbar:Page>0</wbar:Page>
+                <wbar:Confidence>9</wbar:Confidence>
+                <wbar:XOffset>2</wbar:XOffset>
+                <wbar:YOffset>1000</wbar:YOffset>
+                <wbar:Rotation>0</wbar:Rotation>
+                <wbar:Text>3117013206375</wbar:Text>
+            </wbar:BarcodeInfo>
+            <wbar:BarcodeInfo>
+                <wbar:Type>7</wbar:Type>
+                <wbar:Page>0</wbar:Page>
+                <wbar:Confidence>10</wbar:Confidence>
+                <wbar:XOffset>0</wbar:XOffset>
+                <wbar:YOffset>2000</wbar:YOffset>
+                <wbar:Rotation>0</wbar:Rotation>
+                <wbar:Text>This is a Full ASCII Code 39 example</wbar:Text>
+            </wbar:BarcodeInfo>
+        </wbar:ListOfBarcodes>
+    </wbar:BarcodeDetectionReport>
+</catalog>
+

@@ -681,7 +681,18 @@ typedef struct _VCB {
     PIRP SectorCacheIrp;
     KEVENT SectorCacheEvent;
     ERESOURCE SectorCacheResource;
-    
+
+#ifdef CDFS_TELEMETRY_DATA
+
+    //
+    //  An ID that is common across the volume stack used to correlate volume events and for telemetry purposes.
+    //  It may have a different value than the VolumeGuid.
+    //
+
+    GUID VolumeCorrelationId;
+
+#endif // CDFS_TELEMETRY_DATA
+
 #if DBG
     ULONG SecCacheHits;
     ULONG SecCacheMisses;

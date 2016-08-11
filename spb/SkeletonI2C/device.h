@@ -2,13 +2,13 @@
 
 Copyright (c) Microsoft Corporation.  All rights reserved.
 
-Module Name: 
+Module Name:
 
     device.h
 
 Abstract:
 
-    This module contains the function definitions for the 
+    This module contains the function definitions for the
     WDF device.
 
 Environment:
@@ -109,7 +109,7 @@ PbcDeviceGetInterruptMask(
     _In_  PPBC_DEVICE                pDevice
     )
 /*++
- 
+
   Routine Description:
 
     This routine returns the device context's current
@@ -135,7 +135,7 @@ PbcDeviceSetInterruptMask(
     _In_  ULONG                      InterruptMask
     )
 /*++
- 
+
   Routine Description:
 
     This routine sets the device context's current
@@ -153,7 +153,7 @@ PbcDeviceSetInterruptMask(
 --*/
 {
     InterlockedExchange(
-        (PLONG)&pDevice->InterruptMask, 
+        (PLONG)&pDevice->InterruptMask,
         (LONG)InterruptMask);
 }
 
@@ -164,10 +164,10 @@ PbcDeviceAndInterruptMask(
     _In_  ULONG                      InterruptMask
     )
 /*++
- 
+
   Routine Description:
 
-    This routine performs a logical and between the device 
+    This routine performs a logical and between the device
     context's current interrupt mask and the input parameter.
 
   Arguments:
@@ -182,7 +182,7 @@ PbcDeviceAndInterruptMask(
 --*/
 {
     InterlockedAnd(
-        (PLONG)&pDevice->InterruptMask, 
+        (PLONG)&pDevice->InterruptMask,
         (LONG)InterruptMask);
 }
 
@@ -192,10 +192,10 @@ PbcRequestGetInfoRemaining(
    _In_  PPBC_REQUEST  pRequest
    )
 /*++
- 
+
   Routine Description:
 
-    This is a helper routine used to retrieve the 
+    This is a helper routine used to retrieve the
     number of bytes remaining in the current transfer.
 
   Arguments:
@@ -219,10 +219,10 @@ PbcRequestGetByte(
    _Out_ UCHAR*        pByte
    )
 /*++
- 
+
   Routine Description:
 
-    This is a helper routine used to retrieve the 
+    This is a helper routine used to retrieve the
     specified byte of the current transfer descriptor buffer.
 
   Arguments:
@@ -235,7 +235,7 @@ PbcRequestGetByte(
 
   Return Value:
 
-    STATUS_INFO_LENGTH_MISMATCH if invalid index, 
+    STATUS_INFO_LENGTH_MISMATCH if invalid index,
     otherwise STATUS_SUCCESS
 
 --*/
@@ -259,8 +259,8 @@ PbcRequestGetByte(
             if (currentOffset < mdlByteCount)
             {
                 pBuffer = (PUCHAR) MmGetSystemAddressForMdlSafe(
-                    mdl, 
-                    NormalPagePriority);
+                    mdl,
+                    NormalPagePriority | MdlMappingNoExecute);
 
                 if (pBuffer != NULL)
                 {
@@ -296,10 +296,10 @@ PbcRequestSetByte(
    _In_  UCHAR         Byte
    )
 /*++
- 
+
   Routine Description:
 
-    This is a helper routine used to set the 
+    This is a helper routine used to set the
     specified byte of the current transfer descriptor buffer.
 
   Arguments:
@@ -312,7 +312,7 @@ PbcRequestSetByte(
 
   Return Value:
 
-    STATUS_INFO_LENGTH_MISMATCH if invalid index, 
+    STATUS_INFO_LENGTH_MISMATCH if invalid index,
     otherwise STATUS_SUCCESS
 
 --*/
@@ -336,8 +336,8 @@ PbcRequestSetByte(
             if (currentOffset < mdlByteCount)
             {
                 pBuffer = (PUCHAR) MmGetSystemAddressForMdlSafe(
-                    mdl, 
-                    NormalPagePriority);
+                    mdl,
+                    NormalPagePriority | MdlMappingNoExecute);
 
                 if (pBuffer != NULL)
                 {

@@ -18,6 +18,8 @@ Abstract:
 const double TONE_AMPLITUDE = 0.5;  // Scalar value, should be between 0.0 - 1.0
 const double TWO_PI = M_PI * 2;
 
+extern DWORD g_DisableToneGenerator;
+
 //
 // Double to short conversion.
 //
@@ -131,8 +133,10 @@ void ToneGenerator::GenerateSine
     BYTE *          buffer;
     size_t          length;
     size_t          copyBytes;
-    
-    if (m_Mute)
+
+    // if muted, or tone generator disabled via registry,
+    // we deliver silence.
+    if (m_Mute || g_DisableToneGenerator)
     {
         goto ZeroBuffer;
     }

@@ -107,7 +107,13 @@ Return Value:
 
     UNREFERENCED_PARAMETER(RegistryPath);
 
-    DebugPrint(("==>DriverEntry\n"));
+	DebugPrint(("==>DriverEntry\n")); DbgBreakPoint();
+
+    //
+    // Opt-in to using non-executable pool memory on Windows 8 and later.
+    // https://msdn.microsoft.com/en-us/library/windows/hardware/hh920402(v=vs.85).aspx
+    //
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
 
     //
     // Create the device object

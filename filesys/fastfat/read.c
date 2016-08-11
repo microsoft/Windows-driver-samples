@@ -719,6 +719,7 @@ Return Value:
 
             IrpContext->FatIoContext->Wait.Async.FileObject = FileObject;
         }
+
     }
 
 

@@ -114,9 +114,6 @@ Return Value:
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
                        "OSRUSBFX2 Driver Sample - Driver Framework Edition.\n");
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
-                "Built %s %s\n", __DATE__, __TIME__);
-
     //
     // IRP activity ID functions are available on some versions, save them into
     // globals (or NULL if not available)

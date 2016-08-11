@@ -2409,7 +2409,7 @@ Return Value:
                 // Create a new entry if the group does not exist in the zombie group list.
                 //
                 if (groupInZombieList == FALSE) {
-                    newZombieGroup = (PDSM_ZOMBIEGROUP_ENTRY)DsmpAllocatePool(NonPagedPool,
+                    newZombieGroup = (PDSM_ZOMBIEGROUP_ENTRY)DsmpAllocatePool(NonPagedPoolNx,
                                                                               sizeof(DSM_ZOMBIEGROUP_ENTRY),
                                                                               DSM_TAG_ZOMBIEGROUP_ENTRY);
                     if (newZombieGroup != NULL) {

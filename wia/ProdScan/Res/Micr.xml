@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<catalog xmlns:wmicr="http://schemas.microsoft.com/windows/2010/04/wia/micr">
+    <wmicr:MicrDetectionReport>
+        <wmicr:Count>2</wmicr:Count>
+        <wmicr:Placeholder>?</wmicr:Placeholder>
+        <wmicr:ListOfMicrStrings>
+            <wmicr:MicrInfo>
+                <wmicr:Page>0</wmicr:Page>
+                <wmicr:Text>1234567890</wmicr:Text>
+            </wmicr:MicrInfo>
+            <wmicr:MicrInfo>
+                <wmicr:Page>1</wmicr:Page>
+                <wmicr:Text>987?543?10</wmicr:Text>
+            </wmicr:MicrInfo>
+        </wmicr:ListOfMicrStrings>
+    </wmicr:MicrDetectionReport>
+</catalog>

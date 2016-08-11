@@ -377,6 +377,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
  
 
 
@@ -3751,6 +3761,16 @@ class ISCSI_TargetMapping
 
 
                                         
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8051,6 +8071,16 @@ class MSiSCSI_RADIUSConfig
     ] uint8 SharedSecret[];
 
 };
+
+
+
+
+
+
+
+
+
+
 
 
 

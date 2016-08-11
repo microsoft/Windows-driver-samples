@@ -107,12 +107,25 @@ Return Value:
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_PNP,
                 "MaximumTransferLength %d", DevExt->MaximumTransferLength);
 
+#ifndef SIMULATE_MEMORY_FRAGMENTATION
     //
     // Calculate the number of DMA_TRANSFER_ELEMENTS + 1 needed to
     // support the MaximumTransferLength.
     //
     dteCount = BYTES_TO_PAGES((ULONG) ROUND_TO_PAGES(
         DevExt->MaximumTransferLength) + PAGE_SIZE);
+#else
+    //
+    // Each DTE describes a Scatter/Gather list element. When
+    // SIMULATE_MEMORY_FRAGMENTATION is defined, we bounce I/O
+    // request buffers to MDL chains to simulate memory
+    // fragmentation. This means we might deal with larger
+    // S/G lists than we would were the I/O buffer virtually
+    // contiguous, so we need more space to write the DTEs.
+    //
+    dteCount = BYTES_TO_PAGES(((ULONG)
+        ROUND_TO_PAGES(MDL_BUFFER_SIZE) + PAGE_SIZE) * MDL_CHAIN_LENGTH) + 1;
+#endif
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_PNP, "Number of DTEs %d", dteCount);
 
@@ -249,6 +262,40 @@ Return Value:
 
 
     //
+    // Create a new IO Queue for IOCTLs in sequential mode.
+    //
+    WDF_IO_QUEUE_CONFIG_INIT( &queueConfig,
+                              WdfIoQueueDispatchSequential);
+
+    queueConfig.EvtIoDeviceControl = PLxEvtIoDeviceControl;
+
+    status = WdfIoQueueCreate(DevExt->Device,
+                              &queueConfig,
+                              WDF_NO_OBJECT_ATTRIBUTES,
+                              &DevExt->ControlQueue);
+    if(!NT_SUCCESS(status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
+                    "WdfIoQueueCreate failed: %!STATUS!",
+                    status);
+        return status;
+    }
+
+    //
+    // Set the Control Queue forwarding for IOCTL requests.
+    //
+    status = WdfDeviceConfigureRequestDispatching(DevExt->Device,
+                                                  DevExt->ControlQueue,
+                                                  WdfRequestTypeDeviceControl);
+
+    if(!NT_SUCCESS(status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
+                    "WdfDeviceConfigureRequestDispatching failed: %!STATUS!",
+                    status);
+        return status;
+    }
+
+
+    //
     // Create a WDFINTERRUPT object.
     //
     status = PLxInterruptCreate(DevExt);
@@ -264,6 +311,44 @@ Return Value:
     }
 
     return status;
+}
+
+
+VOID
+PlxCleanupDeviceExtension(
+    _In_ PDEVICE_EXTENSION DevExt
+    )
+/*++
+
+Routine Description:
+
+    Frees allocated memory that was saved in the
+    WDFDEVICE's context, before the device object
+    is deleted.
+
+Arguments:
+
+    DevExt - Pointer to our DEVICE_EXTENSION
+
+Return Value:
+
+     None
+
+--*/
+{
+#ifdef SIMULATE_MEMORY_FRAGMENTATION
+    if (DevExt->WriteMdlChain) {
+        DestroyMdlChain(DevExt->WriteMdlChain);
+        DevExt->WriteMdlChain = NULL;
+    }
+
+    if (DevExt->ReadMdlChain) {
+        DestroyMdlChain(DevExt->ReadMdlChain);
+        DevExt->ReadMdlChain = NULL;
+    }
+#else
+    UNREFERENCED_PARAMETER(DevExt);
+#endif
 }
 
 
@@ -486,6 +571,12 @@ Return Value:
         TraceEvents(TRACE_LEVEL_INFORMATION, DBG_PNP,
                     " - The DMA Profile is WdfDmaProfileScatterGather64Duplex");
 
+        //
+        // Opt-in to DMA version 3, which is required by
+        // WdfDmaTransactionSetSingleTransferRequirement
+        //
+        dmaConfig.WdmDmaVersionOverride = 3;
+
         status = WdfDmaEnablerCreate( DevExt->Device,
                                       &dmaConfig,
                                       WDF_NO_OBJECT_ATTRIBUTES,
@@ -497,6 +588,16 @@ Return Value:
                         "WdfDmaEnablerCreate failed: %!STATUS!", status);
             return status;
         }
+
+        //
+        // The PLX device does not have a hard limit on the number of DTEs
+        // it can process for each DMA operation. However, the DTEs are written
+        // to common buffers whose size is the effective upper bound to the
+        // length of the Scatter/Gather lists we can work with.
+        //
+        WdfDmaEnablerSetMaximumScatterGatherElements(
+            DevExt->DmaEnabler,
+            min(DevExt->WriteTransferElements, DevExt->ReadTransferElements));
     }
 
     //
@@ -609,6 +710,27 @@ Return Value:
                     "WdfDmaTransactionCreate(write) failed: %!STATUS!", status);
         return status;
     }
+
+#ifdef SIMULATE_MEMORY_FRAGMENTATION
+    //
+    // Allocate MDL chains that will be used to simulate memory fragmentation.
+    //
+    status = BuildMdlChain(&DevExt->WriteMdlChain);
+    if (!NT_SUCCESS(status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_WRITE,
+                    "BuildMdlChain(Write) failed: %!STATUS!",
+                    status);
+        return status;
+    }
+
+    status = BuildMdlChain(&DevExt->ReadMdlChain);
+    if (!NT_SUCCESS(status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_WRITE,
+                    "BuildMdlChain(Read) failed: %!STATUS!",
+                    status);
+        return status;
+    }
+#endif
 
     return status;
 }

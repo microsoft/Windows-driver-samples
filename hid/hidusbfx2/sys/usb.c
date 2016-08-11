@@ -147,7 +147,7 @@ Return Value:
     attributes.ParentObject = Device;
     status = WdfMemoryCreate(
                              &attributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0,
                              sizeof(USB_DEVICE_DESCRIPTOR),
                              &devContext->DeviceDescriptor,

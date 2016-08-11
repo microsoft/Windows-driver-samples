@@ -818,7 +818,7 @@ MessageId=61300 SymbolicName=MSG_RESCAN_LONG
 Language=English
 Devcon Rescan Command
 Directs Plug and Play to scan for new hardware. Valid on a local or remote computer.
-%1 [-m:\\<machine>]
+%1 [-m:\\<machine>] %2
 <machine>    Specifies a remote computer. 
 .
 MessageId=61301 SymbolicName=MSG_RESCAN_SHORT

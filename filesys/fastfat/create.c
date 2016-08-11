@@ -97,7 +97,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatOpenExistingFcb (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PFCB Fcb,
@@ -106,7 +106,7 @@ FatOpenExistingFcb (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN NoEaKnowledge,
     _In_ BOOLEAN DeleteOnClose,
@@ -132,7 +132,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatOpenExistingDirectory (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Outptr_result_maybenull_ PDCB *Dcb,
@@ -162,12 +162,13 @@ FatOpenExistingFile (
     _In_ ULONG LfnByteOffset,
     _In_ ULONG DirentByteOffset,
     _In_ PUNICODE_STRING Lfn,
+    _In_ PUNICODE_STRING OrigLfn,
     _In_ PACCESS_MASK DesiredAccess,
     _In_ USHORT ShareAccess,
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN IsPagingFile,
     _In_ BOOLEAN NoEaKnowledge,
@@ -180,7 +181,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatCreateNewDirectory (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PDCB ParentDcb,
@@ -190,7 +191,7 @@ FatCreateNewDirectory (
     _In_ USHORT ShareAccess,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ BOOLEAN NoEaKnowledge,
     _In_ BOOLEAN DeleteOnClose,
     _In_ BOOLEAN OpenRequiringOplock
@@ -200,7 +201,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatCreateNewFile (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PDCB ParentDcb,
@@ -211,7 +212,7 @@ FatCreateNewFile (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ PUNICODE_STRING LfnBuffer,
     _In_ BOOLEAN IsPagingFile,
     _In_ BOOLEAN NoEaKnowledge,
@@ -219,6 +220,7 @@ FatCreateNewFile (
     _In_ BOOLEAN OpenRequiringOplock,
     _In_ BOOLEAN TemporaryFile
     );
+
 
 _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
@@ -229,7 +231,7 @@ FatSupersedeOrOverwriteFile (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN NoEaKnowledge
     );
@@ -252,6 +254,12 @@ FatCheckShareAccess (
 #pragma alloc_text(PAGE, FatCheckShareAccess)
 #pragma alloc_text(PAGE, FatCheckSystemSecurityAccess)
 #pragma alloc_text(PAGE, FatCommonCreate)
+
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+#pragma alloc_text(PAGE, FatCommonCreateOnNewStack)
+#pragma alloc_text(PAGE, FatCommonCreateCallout)
+#endif
+
 #pragma alloc_text(PAGE, FatCreateNewDirectory)
 #pragma alloc_text(PAGE, FatCreateNewFile)
 #pragma alloc_text(PAGE, FatFsdCreate)
@@ -337,7 +345,11 @@ Return Value:
 
         IrpContext = FatCreateIrpContext( Irp, TRUE );
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+        Status = FatCommonCreateOnNewStack( IrpContext, Irp );
+#else
         Status = FatCommonCreate( IrpContext, Irp );
+#endif
 
     } except(FatExceptionFilter( IrpContext, GetExceptionInformation() )) {
 
@@ -356,9 +368,9 @@ Return Value:
 
     FsRtlExitFileSystem();
 
-    
+
     //
-    //  Complete the request, unless we had an exception, in which case it 
+    //  Complete the request, unless we had an exception, in which case it
     //  was completed in FatProcessException (and the IrpContext freed).
     //
     //  IrpContext is freed inside FatCompleteRequest.
@@ -367,7 +379,7 @@ Return Value:
     if (!ExceptionCompletedIrp && Status != STATUS_PENDING) {
         FatCompleteRequest( IrpContext, Irp, Status );
     }
-    
+
     //
     //  And return to our caller
     //
@@ -381,6 +393,158 @@ Return Value:
     return Status;
 }
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+_Requires_lock_held_(_Global_critical_region_)
+VOID
+FatCommonCreateCallout (
+    _In_ PFAT_CALLOUT_PARAMETERS CalloutParameters
+    )
+
+/*++
+
+Routine Description:
+
+    This function is the callout routine that will execute on a new stack when
+    processing a create.  It simply calls FatCommonCreate() with the parameters
+    in the context and stores the return value in the context.
+
+Arguments:
+
+    Context - Supplies an opaque pointer to this function's context.  It is actually
+              an FAT_CALLOUT_PARAMETERS structure.
+
+Return Value:
+
+    None.
+
+--*/
+
+{
+    PAGED_CODE();
+
+    //
+    //  Call FatCommonCreate() with the passed parameters and store the result.
+    //  Exceptions cannot be raised across stack boundaries, so we need to catch
+    //  exceptions here and deal with them.
+    //
+
+    try {
+
+        CalloutParameters->IrpStatus = FatCommonCreate( CalloutParameters->Create.IrpContext,
+                                                        CalloutParameters->Create.Irp );
+
+    } except (FatExceptionFilter( CalloutParameters->Create.IrpContext, GetExceptionInformation() )) {
+
+        //
+        //  Return the resulting status.
+        //
+
+        CalloutParameters->ExceptionStatus = GetExceptionCode();
+    }
+
+}
+
+
+_Requires_lock_held_(_Global_critical_region_)
+NTSTATUS
+FatCommonCreateOnNewStack (
+    _In_ PIRP_CONTEXT IrpContext,
+    _In_ PIRP Irp
+    )
+
+/*++
+
+Routine Description:
+
+    This routine sets up a switch to a new stack and call to FatCommonCreate().
+
+Arguments:
+
+    IrpContext - Supplies the context structure for the overall request.
+
+    Irp - Supplies the IRP being processed.
+
+    CreateContext - Supplies a pointer on the old stack that is used to
+                    store context information for the create itself.
+
+Return Value:
+
+    NTSTATUS - The status from FatCommonCreate().
+
+--*/
+{
+    FAT_CALLOUT_PARAMETERS CalloutParameters;
+    NTSTATUS status;
+
+    PAGED_CODE();
+
+    //
+    //  Create requests consume a lot of stack space.  As such, we always switch to a
+    //  new stack when processing a create.  Setup the callout parameters and make the
+    //  call.  Note that this cannot fail, since we pass a stack context for a reserve stack.
+    //
+
+    CalloutParameters.Create.IrpContext = IrpContext;
+    CalloutParameters.Create.Irp = Irp;
+    CalloutParameters.ExceptionStatus = CalloutParameters.IrpStatus = STATUS_SUCCESS;
+
+    //
+    //  Mark that we are swapping the stack
+    //
+
+    SetFlag( IrpContext->Flags, IRP_CONTEXT_FLAG_SWAPPED_STACK );
+
+    status = KeExpandKernelStackAndCalloutEx( FatCommonCreateCallout,
+                                              &CalloutParameters,
+                                              KERNEL_STACK_SIZE,
+                                              FALSE,
+                                              NULL );
+
+    //
+    //  Mark that the stack is no longer swapped.  Note that there are paths
+    //  that may clear this flag before returning.
+    //
+
+    if (status != STATUS_PENDING) {
+
+        ClearFlag( IrpContext->Flags, IRP_CONTEXT_FLAG_SWAPPED_STACK );
+    }
+
+    //
+    // If we had an exception occur, re-raise the exception.
+    //
+
+    if (!NT_SUCCESS( CalloutParameters.ExceptionStatus )) {
+        FatRaiseStatus( IrpContext, CalloutParameters.ExceptionStatus );
+    }
+
+    //
+    //  If the call to KeExpandKernelStackAndCalloutEx returns an error this
+    //  means that the callout routine (FatCommonCreateCallout) was never
+    //  called. Translate that error, and return it.
+    //
+
+    if (!NT_SUCCESS( status )) {
+
+        //
+        //  Translate to an expected error value
+        //
+
+        if (status == STATUS_NO_MEMORY) {
+
+            status = STATUS_INSUFFICIENT_RESOURCES;
+        }
+
+        return status;
+    }
+
+    //
+    // Return the status given to us by the callout.
+    //
+
+    return CalloutParameters.IrpStatus;
+}
+#endif
 
 _Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
@@ -418,7 +582,7 @@ Return Value:
     PFILE_FULL_EA_INFORMATION EaBuffer;
     PACCESS_MASK DesiredAccess;
     ULONG Options;
-    UCHAR FileAttributes;
+    USHORT FileAttributes;
     USHORT ShareAccess;
     ULONG EaLength;
 
@@ -463,11 +627,11 @@ Return Value:
     BOOLEAN FirstLoop = TRUE;
 
     ULONG MatchFlags = 0;
-    
+
     CCB LocalCcb;
     UNICODE_STRING Lfn;
     UNICODE_STRING OrigLfn = {0};
-    
+
     WCHAR LfnBuffer[ FAT_CREATE_INITIAL_NAME_BUF_SIZE];
 
     PAGED_CODE();
@@ -535,7 +699,7 @@ Return Value:
     EaBuffer          = Irp->AssociatedIrp.SystemBuffer;
     DesiredAccess     = &IrpSp->Parameters.Create.SecurityContext->DesiredAccess;
     Options           = IrpSp->Parameters.Create.Options;
-    FileAttributes    = (UCHAR)(IrpSp->Parameters.Create.FileAttributes & ~FILE_ATTRIBUTE_NORMAL);
+    FileAttributes    = IrpSp->Parameters.Create.FileAttributes & ~FILE_ATTRIBUTE_NORMAL;
     ShareAccess       = IrpSp->Parameters.Create.ShareAccess;
     EaLength          = IrpSp->Parameters.Create.EaLength;
 
@@ -560,7 +724,8 @@ Return Value:
     FileAttributes   &= (FILE_ATTRIBUTE_READONLY |
                          FILE_ATTRIBUTE_HIDDEN   |
                          FILE_ATTRIBUTE_SYSTEM   |
-                         FILE_ATTRIBUTE_ARCHIVE );
+                         FILE_ATTRIBUTE_ARCHIVE  |
+                         FILE_ATTRIBUTE_ENCRYPTED);
 
     //
     //  Locate the volume device object and Vcb that we are trying to access
@@ -1296,7 +1461,7 @@ Return Value:
             //
             //  Not and Fcb or a Dcb so we bug check
             //
-            
+
 #pragma prefast( suppress:28159, "this is a serious corruption if it happens" )
             FatBugCheck( NodeType(Fcb), (ULONG_PTR) Fcb, 0 );
         }
@@ -1476,8 +1641,8 @@ Return Value:
 
             if (RemainingPart.Length == 0) {
 
-                
-                break; 
+
+                break;
             }
 
             //
@@ -1505,7 +1670,7 @@ Return Value:
             //
 
             LfnByteOffset = DirentByteOffset -
-                            FAT_LFN_DIRENTS_NEEDED(&Lfn) * sizeof(LFN_DIRENT);
+                            FAT_LFN_DIRENTS_NEEDED(&OrigLfn) * sizeof(LFN_DIRENT);
 
             //
             //  Create a dcb for the new directory
@@ -1554,7 +1719,7 @@ Return Value:
             //
 
             LfnByteOffset = DirentByteOffset -
-                            FAT_LFN_DIRENTS_NEEDED(&Lfn) * sizeof(LFN_DIRENT);
+                            FAT_LFN_DIRENTS_NEEDED(&OrigLfn) * sizeof(LFN_DIRENT);
 
             //
             //  We were able to locate an existing dirent entry, so now
@@ -1593,7 +1758,7 @@ Return Value:
                                                  DeleteOnClose,
                                                  FileNameOpenedDos,
                                                  OpenRequiringOplock );
-                
+
                 Irp->IoStatus.Information = Iosb.Information;
                 try_return( Iosb.Status );
             }
@@ -1626,6 +1791,7 @@ Return Value:
                                         LfnByteOffset,
                                         DirentByteOffset,
                                         &Lfn,
+                                        &OrigLfn,
                                         DesiredAccess,
                                         ShareAccess,
                                         AllocationSize,
@@ -1889,12 +2055,12 @@ Return Value:
             //
 
             SavedFlags = IrpContext->Flags;
-            
+
             SetFlag( IrpContext->Flags, IRP_CONTEXT_FLAG_DISABLE_RAISE |
                                         IRP_CONTEXT_FLAG_DISABLE_WRITE_THROUGH );
-            
+
             FatUnpinRepinnedBcbs( IrpContext );
-           
+
             if ((FinalDcb != NULL) &&
                 (NodeType(FinalDcb) == FAT_NTC_DCB) &&
                 IsListEmpty(&FinalDcb->Specific.Dcb.ParentDcbQueue) &&
@@ -1902,7 +2068,7 @@ Return Value:
                 (FinalDcb->Specific.Dcb.DirectoryFile != NULL)) {
 
                 PFILE_OBJECT DirectoryFileObject;
-            
+
                 DirectoryFileObject = FinalDcb->Specific.Dcb.DirectoryFile;
 
                 FinalDcb->Specific.Dcb.DirectoryFile = NULL;
@@ -1911,7 +2077,7 @@ Return Value:
 
                 ObDereferenceObject( DirectoryFileObject );
             }
-            
+
             IrpContext->Flags = SavedFlags;
         }
 
@@ -1952,7 +2118,7 @@ Return Value:
             }
 
         } else {
-        
+
             FatUnpinRepinnedBcbs( IrpContext );
         }
 
@@ -1981,7 +2147,7 @@ Return Value:
 
             if (IsFileObjectReadOnly(FileObject)) { LocalVcb->ReadOnlyCount -= 1; }
 
-            
+
             //
             //  WinSE #307418 "Occasional data corruption when standby/resume
             //  while copying files to removable FAT formatted media".
@@ -1989,15 +2155,15 @@ Return Value:
             //  operation we should revert the changes we made to the parent
             //  directory and to the allocation table.
             //
-            
+
             if (IrpContext->ExceptionStatus == STATUS_VERIFY_REQUIRED &&
                 NodeType( LocalFcb ) == FAT_NTC_FCB) {
-                
-                FatTruncateFileAllocation( IrpContext, LocalFcb, 0, TRUE );
+
+                FatTruncateFileAllocation( IrpContext, LocalFcb, 0 );
 
                 FatDeleteDirent( IrpContext, LocalFcb, NULL, TRUE );
             }
-            
+
             //
             //  If we leafed out on a new Fcb we should get rid of it at this point.
             //
@@ -2103,7 +2269,6 @@ Return Value:
 
     return Iosb.Status;
 }
-
 
 //
 //  Internal support routine
@@ -2578,7 +2743,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatOpenExistingDcb (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PDCB Dcb,
@@ -2762,66 +2927,66 @@ Return Value:
 #if (NTDDI_VERSION >= NTDDI_WIN8)
 
                 NTSTATUS OplockBreakStatus = STATUS_SUCCESS;
-                
+
                 //
                 //  If we got a sharing violation try to break outstanding handle
                 //  oplocks and retry the sharing check.  If the caller specified
                 //  FILE_COMPLETE_IF_OPLOCKED we don't bother breaking the oplock;
                 //  we just return the sharing violation.
                 //
-                
+
                 if ((Iosb.Status == STATUS_SHARING_VIOLATION) &&
                     !FlagOn( IrpSp->Parameters.Create.Options, FILE_COMPLETE_IF_OPLOCKED )) {
-                
+
                     OplockBreakStatus = FsRtlOplockBreakH( FatGetFcbOplock(Dcb),
                                                            IrpContext->OriginatingIrp,
                                                            0,
                                                            IrpContext,
                                                            FatOplockComplete,
                                                            FatPrePostIrp );
-                
+
                     //
                     //  If FsRtlOplockBreakH returned STATUS_PENDING, then the IRP
                     //  has been posted and we need to stop working.
                     //
-                
+
                     if (OplockBreakStatus == STATUS_PENDING) {
-                
+
                         Iosb.Status = STATUS_PENDING;
                         *OplockPostIrp = TRUE;
                         try_return( NOTHING );
-                
+
                     //
                     //  If FsRtlOplockBreakH returned an error we want to return that now.
                     //
-                
+
                     } else if (!NT_SUCCESS( OplockBreakStatus )) {
-                
+
                         Iosb.Status = OplockBreakStatus;
                         try_return( Iosb );
-                
+
                     //
                     //  Otherwise FsRtlOplockBreakH returned STATUS_SUCCESS, indicating
                     //  that there is no oplock to be broken.  The sharing violation is
                     //  returned in that case.
                     //
-                    
+
                     } else {
-                
+
                         NT_ASSERT( OplockBreakStatus == STATUS_SUCCESS );
-                
+
                         try_return( Iosb );
                     }
-                
+
                 //
                 //  The initial sharing check failed with something other than sharing
                 //  violation (which should never happen, but let's be future-proof),
                 //  or we *did* get a sharing violation and the caller specified
                 //  FILE_COMPLETE_IF_OPLOCKED.  Either way this create is over.
                 //
-                
+
                 } else {
-                
+
                     try_return( Iosb );
                 }
 #else
@@ -2937,7 +3102,7 @@ Return Value:
                 SetFlag( Ccb->Flags, CCB_FLAG_DELETE_ON_CLOSE );
             }
             if (FileNameOpenedDos) {
-                
+
                 SetFlag( Ccb->Flags, CCB_FLAG_OPENED_BY_SHORTNAME );
             }
 
@@ -2998,7 +3163,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatOpenExistingFcb (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PFCB Fcb,
@@ -3007,7 +3172,7 @@ FatOpenExistingFcb (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN NoEaKnowledge,
     _In_ BOOLEAN DeleteOnClose,
@@ -3277,7 +3442,7 @@ Return Value:
             //  FILE_COMPLETE_IF_OPLOCKED we don't bother breaking the oplock;
             //  we just return the sharing violation.
             //
-            
+
             if ((Iosb.Status == STATUS_SHARING_VIOLATION) &&
                 !FlagOn( IrpSp->Parameters.Create.Options, FILE_COMPLETE_IF_OPLOCKED )) {
 
@@ -3313,7 +3478,7 @@ Return Value:
                 //  that there is no oplock to be broken.  The sharing violation is
                 //  returned in that case.
                 //
-                
+
                 } else {
 
                     NT_ASSERT( OplockBreakStatus == STATUS_SUCCESS );
@@ -3609,7 +3774,7 @@ Return Value:
 
                 ClearFlag( *DesiredAccess, AddedAccess );
 
-#pragma prefast( suppress:28931, "it needs to be there for debug assert" );                
+#pragma prefast( suppress:28931, "it needs to be there for debug assert" );
                 Status = IoCheckShareAccess( *DesiredAccess,
                                              ShareAccess,
                                              FileObject,
@@ -3946,7 +4111,7 @@ IO_STATUS_BLOCK
 #pragma warning(suppress:6101) // bug in PREFast means the _Success_ annotation is not correctly applied
 FatOpenExistingDirectory (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Outptr_result_maybenull_ PDCB *Dcb,
@@ -4030,7 +4195,7 @@ Return Value:
     UNREFERENCED_PARAMETER( OpenRequiringOplock );
 #endif
     UNREFERENCED_PARAMETER( IrpSp );
-   
+
     PAGED_CODE();
 
     DebugTrace(+1, Dbg, "FatOpenExistingDirectory...\n", 0);
@@ -4125,7 +4290,7 @@ Return Value:
         if (Iosb.Status != STATUS_SUCCESS) {
 
             NT_ASSERT( Iosb.Status != STATUS_PENDING );
-            
+
             FatRaiseStatus( IrpContext, Iosb.Status );
         }
 #endif
@@ -4138,7 +4303,7 @@ Return Value:
                           ShareAccess,
                           FileObject,
                           &(*Dcb)->ShareAccess );
-        
+
         //
         //  Setup the context and section object pointers, and update
         //  our reference counts
@@ -4195,14 +4360,14 @@ Return Value:
                 (*Dcb)->UncleanCount -= 1;
                 (*Dcb)->OpenCount -= 1;
                 Vcb->OpenFileCount -= 1;
-                if (IsFileObjectReadOnly(FileObject)) { Vcb->ReadOnlyCount -= 1; }                
+                if (IsFileObjectReadOnly(FileObject)) { Vcb->ReadOnlyCount -= 1; }
             }
 
-            if (UnwindDcb != NULL) { 
+            if (UnwindDcb != NULL) {
                 if (ARGUMENT_PRESENT( FileObject )) {
                     FileObject->SectionObjectPointer = NULL;
                 }
-                FatDeleteFcb( IrpContext, &UnwindDcb ); 
+                FatDeleteFcb( IrpContext, &UnwindDcb );
                 *Dcb = NULL;
             }
             if (UnwindCcb != NULL) { FatDeleteCcb( IrpContext, &UnwindCcb ); }
@@ -4231,12 +4396,13 @@ FatOpenExistingFile (
     _In_ ULONG LfnByteOffset,
     _In_ ULONG DirentByteOffset,
     _In_ PUNICODE_STRING Lfn,
+    _In_ PUNICODE_STRING OrigLfn,
     _In_ PACCESS_MASK DesiredAccess,
     _In_ USHORT ShareAccess,
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN IsPagingFile,
     _In_ BOOLEAN NoEaKnowledge,
@@ -4312,7 +4478,7 @@ Return Value:
     IO_STATUS_BLOCK Iosb = {0};
 
     ACCESS_MASK AddedAccess = 0;
-    
+
     PIO_STACK_LOCATION IrpSp = IoGetCurrentIrpStackLocation( IrpContext->OriginatingIrp );
 
     //
@@ -4441,12 +4607,13 @@ Return Value:
                                          DirentByteOffset,
                                          Dirent,
                                          Lfn,
+                                         OrigLfn,
                                          IsPagingFile,
                                          FALSE );
 
-        
+
         (*Fcb)->Header.ValidDataLength.LowPart = (*Fcb)->Header.FileSize.LowPart;
-       
+
         //
         //  If this is a paging file, lookup the allocation size so that
         //  the Mcb is always valid
@@ -4493,7 +4660,7 @@ Return Value:
         if (Iosb.Status != STATUS_SUCCESS) {
 
             NT_ASSERT( Iosb.Status != STATUS_PENDING );
-            
+
             FatRaiseStatus( IrpContext, Iosb.Status );
         }
 #endif
@@ -4645,14 +4812,14 @@ Return Value:
                                                 (KPROCESSOR_MODE)( FlagOn( IrpSp->Flags, SL_FORCE_ACCESS_CHECK ) ?
                                                                    UserMode :
                                                                    IrpContext->OriginatingIrp->RequestorMode ))) {
-                
+
                     SetFlag( Ccb->Flags, CCB_FLAG_MANAGE_VOLUME_ACCESS );
                 }
 
             }
         }
 
-        
+
     } finally {
 
         DebugUnwind( FatOpenExistingFile );
@@ -4663,7 +4830,7 @@ Return Value:
 
         if (AbnormalTermination()) {
 
-            if (CountsIncremented) {                
+            if (CountsIncremented) {
                 (*Fcb)->UncleanCount -= 1;
                 (*Fcb)->OpenCount -= 1;
                 if (FlagOn(FileObject->Flags, FO_NO_INTERMEDIATE_BUFFERING)) {
@@ -4673,14 +4840,14 @@ Return Value:
                 if (IsFileObjectReadOnly(FileObject)) { Vcb->ReadOnlyCount -= 1; }
             }
 
-            if (UnwindFcb != NULL) { 
+            if (UnwindFcb != NULL) {
                 if (ARGUMENT_PRESENT( FileObject )) {
                     FileObject->SectionObjectPointer = NULL;
                 }
                 FatDeleteFcb( IrpContext, &UnwindFcb );
                 *Fcb = NULL;
             }
-            
+
             if (UnwindCcb != NULL) { FatDeleteCcb( IrpContext, &UnwindCcb ); }
         }
 
@@ -4709,7 +4876,7 @@ FatCreateNewDirectory (
     _In_ USHORT ShareAccess,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ BOOLEAN NoEaKnowledge,
     _In_ BOOLEAN DeleteOnClose,
     _In_ BOOLEAN OpenRequiringOplock
@@ -4792,7 +4959,7 @@ Return Value:
 
     BOOLEAN DirentFromPool = FALSE;
 
-    
+
     OEM_STRING ShortName;
     UCHAR ShortNameBuffer[12];
 
@@ -4943,7 +5110,7 @@ Return Value:
                             AllLowerComponent,
                             AllLowerExtension,
                             CreateLfn ? UnicodeName : NULL,
-                            (UCHAR)(FileAttributes | FAT_DIRENT_ATTR_DIRECTORY),
+                            FileAttributes | FAT_DIRENT_ATTR_DIRECTORY,
                             TRUE,
                             NULL );
 
@@ -4977,7 +5144,7 @@ Return Value:
 #if (NTDDI_VERSION >= NTDDI_WIN8)
         //
         //  The next three FsRtl calls are for oplock work.  We deliberately
-        //  do these here so that if either call fails we will be able to 
+        //  do these here so that if either call fails we will be able to
         //  clean up without adding a bunch of code to unwind counts, fix
         //  the file object, etc.
         //
@@ -5014,7 +5181,7 @@ Return Value:
         //  off chance this fails with INSUFFICIENT_RESOURCES we do it here
         //  where we can still tolerate a failure.
         //
-        
+
         if (Iosb.Status == STATUS_SUCCESS) {
 
             Iosb.Status = FsRtlCheckOplockEx( FatGetFcbOplock(ParentDcb),
@@ -5024,7 +5191,7 @@ Return Value:
                                               NULL,
                                               NULL );
         }
-        
+
         //
         //  Get out if any of the oplock calls failed.
         //
@@ -5307,7 +5474,7 @@ Return Value:
                     //  Now zap the allocation backing it.
                     //
 
-                    FatTruncateFileAllocation( IrpContext, Dcb, 0, TRUE );
+                    FatTruncateFileAllocation( IrpContext, Dcb, 0 );
 
                 } except(FatExceptionFilter( IrpContext, GetExceptionInformation() )) {
 
@@ -5370,11 +5537,11 @@ Return Value:
                 //  we have to remove the Dcb and check if we should remove the parent.
                 //  For now we will just leave the parent lying around.
                 //
-                
-#pragma prefast( suppress: 28924, "prefast thinks this test is redundant, but FileObject can be NULL depending on where we raise" )                
+
+#pragma prefast( suppress: 28924, "prefast thinks this test is redundant, but FileObject can be NULL depending on where we raise" )
                 if (ARGUMENT_PRESENT( FileObject )) {
                     FileObject->SectionObjectPointer = NULL;
-                }  
+                }
                 FatDeleteFcb( IrpContext, &Dcb );
             }
         }
@@ -5399,7 +5566,7 @@ _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
 FatCreateNewFile (
     _In_ PIRP_CONTEXT IrpContext,
-    _In_ PIO_STACK_LOCATION IrpSp,    
+    _In_ PIO_STACK_LOCATION IrpSp,
     _Inout_ PFILE_OBJECT FileObject,
     _Inout_ PVCB Vcb,
     _Inout_ PDCB ParentDcb,
@@ -5410,7 +5577,7 @@ FatCreateNewFile (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ PUNICODE_STRING LfnBuffer,
     _In_ BOOLEAN IsPagingFile,
     _In_ BOOLEAN NoEaKnowledge,
@@ -5531,7 +5698,7 @@ Return Value:
     PCCB UnwindCcb = NULL;
 
     ULONG LocalAbnormalTermination = FALSE;
-    
+
 #if (NTDDI_VERSION < NTDDI_WIN7)
     UNREFERENCED_PARAMETER( OpenRequiringOplock );
 #endif
@@ -5731,7 +5898,7 @@ Return Value:
                             AllLowerComponent,
                             AllLowerExtension,
                             CreateLfn ? RealUnicodeName : NULL,
-                            (UCHAR)(FileAttributes | FILE_ATTRIBUTE_ARCHIVE),
+                            (FileAttributes | FILE_ATTRIBUTE_ARCHIVE),
                             TRUE,
                             (HaveTunneledInformation ? &TunneledCreationTime : NULL) );
 
@@ -5763,6 +5930,7 @@ Return Value:
                                         ShortDirentByteOffset,
                                         ShortDirent,
                                         CreateLfn ? RealUnicodeName : NULL,
+                                        CreateLfn ? RealUnicodeName : NULL,
                                         IsPagingFile,
                                         FALSE );
         UnwindDirent = NULL;
@@ -5770,7 +5938,7 @@ Return Value:
 #if (NTDDI_VERSION >= NTDDI_WIN7)
         //
         //  The next three FsRtl calls are for oplock work.  We deliberately
-        //  do these here so that if either call fails we will be able to 
+        //  do these here so that if either call fails we will be able to
         //  clean up without adding a bunch of code to unwind counts, fix
         //  the file object, etc.
         //
@@ -5809,7 +5977,7 @@ Return Value:
         //  off chance this fails with INSUFFICIENT_RESOURCES we do it here
         //  where we can still tolerate a failure.
         //
-        
+
         if (Iosb.Status == STATUS_SUCCESS) {
 
             Iosb.Status = FsRtlCheckOplockEx( FatGetFcbOplock(ParentDcb),
@@ -5841,12 +6009,15 @@ Return Value:
             SetFlag( Fcb->FcbState, FCB_STATE_TEMPORARY );
         }
 
-        
+
         //
         //  Add some initial file allocation
         //
 
+
         FatAddFileAllocation( IrpContext, Fcb, FileObject, AllocationSize );
+
+
         UnwindAllocation = TRUE;
 
         Fcb->FcbState |= FCB_STATE_TRUNCATE_ON_CLOSE;
@@ -5880,7 +6051,7 @@ Return Value:
         if (Fcb->FullFileName.Buffer == NULL) {
             FatSetFullNameInFcb( IrpContext, Fcb, RealUnicodeName );
         }
-        
+
         //
         //  Setup the context and section object pointers, and update
         //  our reference counts
@@ -5965,13 +6136,13 @@ Return Value:
                                             (KPROCESSOR_MODE)( FlagOn( IrpSp->Flags, SL_FORCE_ACCESS_CHECK ) ?
                                                                UserMode :
                                                                IrpContext->OriginatingIrp->RequestorMode ))) {
-            
+
                 SetFlag( UnwindCcb->Flags, CCB_FLAG_MANAGE_VOLUME_ACCESS );
             }
 
         }
 
-        
+
     } finally {
 
         DebugUnwind( FatCreateNewFile );
@@ -6079,7 +6250,7 @@ Return Value:
 
             if (LocalAbnormalTermination) {
                 if (UnwindAllocation) {
-                    FatTruncateFileAllocation( IrpContext, Fcb, 0, TRUE );
+                    FatTruncateFileAllocation( IrpContext, Fcb, 0 );
                 }
             }
 
@@ -6096,11 +6267,11 @@ Return Value:
             } finally {
 
                 if (LocalAbnormalTermination) {
-                    if (UnwindFcb != NULL) { 
+                    if (UnwindFcb != NULL) {
                         if (ARGUMENT_PRESENT( FileObject )) {
                             FileObject->SectionObjectPointer = NULL;
                         }
-                        FatDeleteFcb( IrpContext, &UnwindFcb ); 
+                        FatDeleteFcb( IrpContext, &UnwindFcb );
                     }
                     if (UnwindCcb != NULL) { FatDeleteCcb( IrpContext, &UnwindCcb ); }
                 }
@@ -6140,7 +6311,7 @@ FatSupersedeOrOverwriteFile (
     _In_ ULONG AllocationSize,
     _In_ PFILE_FULL_EA_INFORMATION EaBuffer,
     _In_ ULONG EaLength,
-    _In_ UCHAR FileAttributes,
+    _In_ USHORT FileAttributes,
     _In_ ULONG CreateDisposition,
     _In_ BOOLEAN NoEaKnowledge
     )
@@ -6190,6 +6361,8 @@ Return Value:
     PCCB Ccb;
 
     ULONG NotifyFilter;
+    ULONG HeaderSize = 0;
+    LARGE_INTEGER AllocSize = {0};
 
     //
     //  The following variables are for abnormal termination
@@ -6276,7 +6449,7 @@ Return Value:
         //  off chance this fails with INSUFFICIENT_RESOURCES we do it here
         //  where we can still tolerate a failure.
         //
-        
+
         Iosb.Status = FsRtlCheckOplockEx( FatGetFcbOplock(Fcb->ParentDcb),
                                           IrpContext->OriginatingIrp,
                                           OPLOCK_FLAG_PARENT_OBJECT,
@@ -6303,6 +6476,20 @@ Return Value:
         Fcb->Header.ValidDataLength.LowPart = 0;
         Fcb->ValidDataToDisk = 0;
 
+
+        //
+        // Validate that the allocation size will work.
+        //
+
+        AllocSize.QuadPart = AllocationSize;
+        if (!FatIsIoRangeValid( Fcb->Vcb, AllocSize, 0 )) {
+
+            DebugTrace(-1, Dbg, "Illegal allocation size\n", 0);
+
+            FatRaiseStatus( IrpContext, STATUS_DISK_FULL );
+        }
+
+
         //
         //  Tell the cache manager the size went to zero
         //  This call is unconditional, because MM always wants to know.
@@ -6311,12 +6498,12 @@ Return Value:
         CcSetFileSizes( FileObject,
                         (PCC_FILE_SIZES)&Fcb->Header.AllocationSize );
 
-        FatTruncateFileAllocation( IrpContext, Fcb, AllocationSize, FALSE );
+        FatTruncateFileAllocation( IrpContext, Fcb, AllocationSize+HeaderSize );
 
         ExReleaseResourceLite( Fcb->Header.PagingIoResource );
         ReleasePaging = FALSE;
 
-        FatAddFileAllocation( IrpContext, Fcb, FileObject, AllocationSize );
+        FatAddFileAllocation( IrpContext, Fcb, FileObject, AllocationSize+HeaderSize );
 
         Fcb->FcbState |= FCB_STATE_TRUNCATE_ON_CLOSE;
 
@@ -6346,11 +6533,11 @@ Return Value:
 
         if (CreateDisposition == FILE_SUPERSEDE) {
 
-            Dirent->Attributes = FileAttributes;
+            Dirent->Attributes = (UCHAR)FileAttributes;
 
         } else {
 
-            Dirent->Attributes |= FileAttributes;
+            Dirent->Attributes |= (UCHAR)FileAttributes;
         }
 
         Fcb->DirentFatFlags = Dirent->Attributes;
@@ -6661,7 +6848,7 @@ Return Value:
 
     If the accessor has access to the file, STATUS_SUCCESS is returned.
     Otherwise, STATUS_SHARING_VIOLATION is returned.
-    
+
 --*/
 
 {
@@ -6724,4 +6911,3 @@ FatCallSelfCompletionRoutine (
 
     return STATUS_MORE_PROCESSING_REQUIRED;
 }
-

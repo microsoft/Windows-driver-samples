@@ -700,6 +700,7 @@ PTRANSFER_PACKET DequeueFreeTransferPacketEx(
 }
 
 
+
 /*
  *  SetupReadWriteTransferPacket
  *
@@ -824,6 +825,7 @@ VOID SetupReadWriteTransferPacket(  PTRANSFER_PACKET Pkt,
     Pkt->SyncEventPtr = NULL;
     Pkt->CompleteOriginalIrpWhenLastPacketCompletes = TRUE;
     Pkt->NumIoTimeoutRetries = fdoData->MaxNumberOfIoRetries;
+    Pkt->NumThinProvisioningRetries = 0;
 
 
     if (pCdb) {
@@ -927,6 +929,8 @@ NTSTATUS TransferPktComplete(IN PDEVICE_OBJECT NullFdo, IN PIRP Irp, IN PVOID Co
     BOOLEAN packetDone = FALSE;
     BOOLEAN idleRequest = FALSE;
     ULONG transferLength;
+    LARGE_INTEGER completionTime;
+    ULONGLONG lastIoCompletionTime;
 
     UNREFERENCED_PARAMETER(NullFdo);
 
@@ -938,14 +942,31 @@ NTSTATUS TransferPktComplete(IN PDEVICE_OBJECT NullFdo, IN PIRP Irp, IN PVOID Co
     HISTORYLOGRETURNEDPACKET(pkt);
 
 
+    completionTime = ClasspGetCurrentTime();
+
+    //
+    // Record the time at which the last IO completed while snapping the old
+    // value to be used later. This can occur on multiple threads and hence
+    // could be overwritten with an older value. This is OK because this value
+    // is maintained as a heuristic.
+    //
+
+#ifdef _WIN64
+    lastIoCompletionTime = ReadULong64NoFence((volatile ULONG64*)&fdoData->LastIoCompletionTime.QuadPart);
+    WriteULong64NoFence((volatile ULONG64*)&fdoData->LastIoCompletionTime.QuadPart,
+                        completionTime.QuadPart);
+#else
+    lastIoCompletionTime = InterlockedExchangeNoFence64((volatile LONG64*)&fdoData->LastIoCompletionTime.QuadPart,
+                                                        completionTime.QuadPart);
+#endif
+
     if (fdoData->IdlePrioritySupported == TRUE) {
         idleRequest = ClasspIsIdleRequest(pkt->OriginalIrp);
         if (idleRequest) {
             InterlockedDecrement(&fdoData->ActiveIdleIoCount);
             NT_ASSERT(fdoData->ActiveIdleIoCount >= 0);
         } else {
-            fdoData->LastIoTime = ClasspGetCurrentTime(NULL);
-            fdoData->IdleTicks = 0;
+            fdoData->LastNonIdleIoTime = completionTime;
             InterlockedDecrement(&fdoData->ActiveIoCount);
             NT_ASSERT(fdoData->ActiveIoCount >= 0);
         }
@@ -978,6 +999,7 @@ NTSTATUS TransferPktComplete(IN PDEVICE_OBJECT NullFdo, IN PIRP Irp, IN PVOID Co
          */
         InterlockedExchangeAdd((PLONG)&pkt->OriginalIrp->IoStatus.Information,
                               (LONG)transferLength);
+
 
         if ((pkt->InLowMemRetry) ||
             (pkt->DriverUsesStartIO && pkt->LowMemRetry_remainingBufLen > 0)) {
@@ -1027,6 +1049,7 @@ NTSTATUS TransferPktComplete(IN PDEVICE_OBJECT NullFdo, IN PIRP Irp, IN PVOID Co
         if (pkt->Srb->SrbStatus & SRB_STATUS_QUEUE_FROZEN){
             ClassReleaseQueue(pkt->Fdo);
         }
+
 
         if (NT_SUCCESS(Irp->IoStatus.Status)){
             /*
@@ -1741,7 +1764,6 @@ Return Value:
     Pkt->ContinuationRoutine = ClasspPopulateTokenTransferPacketDone;
     Pkt->ContinuationContext = OffloadReadContext;
 
-
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_IOCTL,
                 "ClasspSetupPopulateTokenTransferPacket (%p): Exiting function with Irp %p\n",
@@ -1838,7 +1860,6 @@ Return Value:
 
     Pkt->ContinuationRoutine = ClasspReceivePopulateTokenInformationTransferPacketDone;
     Pkt->ContinuationContext = OffloadReadContext;
-
 
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_IOCTL,
@@ -1941,7 +1962,6 @@ Return Value:
     Pkt->ContinuationRoutine = ClasspWriteUsingTokenTransferPacketDone;
     Pkt->ContinuationContext = OffloadWriteContext;
 
-
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_IOCTL,
                 "ClasspSetupWriteUsingTokenTransferPacket (%p): Exiting function with Irp %p\n",
@@ -2039,7 +2059,6 @@ Return Value:
 
     Pkt->ContinuationRoutine = ClasspReceiveWriteUsingTokenInformationTransferPacketDone;
     Pkt->ContinuationContext = OffloadWriteContext;
-
 
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_IOCTL,

@@ -284,19 +284,15 @@ Return Value:
 --*/
 
 {
-    ULONG ChangeCount = 0;
     BOOLEAN DevMarkedForVerify;
-    NTSTATUS Status = STATUS_SUCCESS;
-    IO_STATUS_BLOCK Iosb;
 
     PAGED_CODE();
 
     DebugTrace(+1, Dbg, "FatVerifyVcb, Vcb = %p\n", Vcb );
 
     //
-    //  If the media is removable and the verify volume flag in the
-    //  device object is not set then we want to ping the device
-    //  to see if it needs to be verified.
+    //  If the verify volume flag in the device object is set
+    //  this means the media has potentially changed.
     //
     //  Note that we only force this ping for create operations.
     //  For others we take a sporting chance.  If in the end we
@@ -304,65 +300,7 @@ Return Value:
     //
 
     DevMarkedForVerify = BooleanFlagOn(Vcb->Vpb->RealDevice->Flags, DO_VERIFY_VOLUME);
-
-    if (FlagOn(Vcb->VcbState, VCB_STATE_FLAG_REMOVABLE_MEDIA)) {
-
-        Status = FatPerformDevIoCtrl( IrpContext,
-                                      ( Vcb->Vpb->RealDevice->DeviceType == FILE_DEVICE_CD_ROM ?
-                                        IOCTL_CDROM_CHECK_VERIFY :
-                                        IOCTL_DISK_CHECK_VERIFY ),
-                                      Vcb->TargetDeviceObject,
-                                      NULL,
-                                      0,
-                                      &ChangeCount,
-                                      sizeof(ULONG),
-                                      FALSE,
-                                      TRUE,
-                                      &Iosb );
-
-        if (Iosb.Information != sizeof(ULONG)) {
-
-            //
-            //  Be safe about the count in case the driver didn't fill it in
-            //
-
-            ChangeCount = 0;
-        }
-
-        //
-        //  There are four cases when we want to do a verify.  These are the
-        //  first three.
-        //
-        //  1. We are mounted,  and the device has become empty
-        //  2. The device has returned verify required (=> DO_VERIFY_VOL flag is
-        //     set, but could be due to hardware condition)
-        //  3. Media change count doesn't match the one in the Vcb
-        //
-
-        if (((Vcb->VcbCondition == VcbGood) &&
-             FatIsRawDevice( IrpContext, Status ))
-            ||
-            (Status == STATUS_VERIFY_REQUIRED)
-            ||
-            (NT_SUCCESS(Status) &&
-             (Vcb->ChangeCount != ChangeCount))) {
-
-            //
-            //  If we are currently the volume on the device then it is our
-            //  responsibility to set the verify flag.  If we're not on the device,
-            //  then we shouldn't touch the flag.
-            //
-
-            if (!FlagOn( Vcb->VcbState, VCB_STATE_VPB_NOT_ON_DEVICE) &&
-                !DevMarkedForVerify)  {
-
-                DevMarkedForVerify = FatMarkDevForVerifyIfVcbMounted( Vcb);
-            }
-        }
-    }
-
-    //
-    //  This is the 4th verify case.
+    
     //
     //  We ALWAYS force CREATE requests on unmounted volumes through the
     //  verify path.  These requests could have been in limbo between
@@ -393,16 +331,14 @@ Return Value:
     //  Raise any error condition otherwise.
     //
 
-    if (!NT_SUCCESS( Status ) || DevMarkedForVerify) {
+    if (DevMarkedForVerify) {
 
         DebugTrace(0, Dbg, "The Vcb needs to be verified\n", 0);
 
         IoSetHardErrorOrVerifyDevice( IrpContext->OriginatingIrp,
                                       Vcb->Vpb->RealDevice );
 
-        FatNormalizeAndRaiseStatus( IrpContext, DevMarkedForVerify
-                                                ? STATUS_VERIFY_REQUIRED
-                                                : Status );
+        FatNormalizeAndRaiseStatus( IrpContext, STATUS_VERIFY_REQUIRED );
     }
 
     //

@@ -86,6 +86,15 @@ extern "C" {
                                                                     }
 
 
+
+// WPP Recorder -------------------------------------------------------------------------------------------
+//
+// The following two macros are required to enable WPP Recorder functionality for clients of the Sensor Class Extension
+//
+#define WPP_RECORDER_LEVEL_FLAGS_SENSOREXIT_FILTER(LEVEL, FLAGS, status)   WPP_RECORDER_LEVEL_FLAGS_FILTER(LEVEL, FLAGS)
+#define WPP_RECORDER_LEVEL_FLAGS_SENSOREXIT_ARGS(LEVEL, FLAGS, status)     WPP_RECORDER_LEVEL_FLAGS_ARGS(LEVEL, FLAGS)
+
+
 #ifdef __cplusplus
 }
 #endif

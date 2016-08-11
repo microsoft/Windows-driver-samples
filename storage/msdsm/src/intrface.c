@@ -24,8 +24,6 @@ Environment:
 
 --*/
 
-#define DEBUG_MAIN_SOURCE 1
-
 #include "precomp.h"
 
 #ifdef DEBUG_USE_WPP
@@ -36,7 +34,7 @@ Environment:
 
 
 //
-// Flag to indicate whether to NT_ASSERT or ignore a paritcular condition.
+// Flag to indicate whether to NT_ASSERT or ignore a particular condition.
 //
 BOOLEAN DoAssert = TRUE;
 
@@ -451,6 +449,8 @@ Return Value:
                                       &ioStatus);
 
     NT_ASSERT(NT_SUCCESS(ioStatus.Status));
+
+
 
     return;
 }
@@ -2722,6 +2722,22 @@ Return Value:
 
     if (DsmpIsDeviceInitialized(deviceInfo)) {
 
+        if (deviceInfo->Unresponsive) {
+            //
+            // Since the device is marked unresponsive, there
+            // is no point in sending RTPG or TUR down
+            // as that will fail by port driver.
+            // but that doesn't necessarily mean that the path doesn't exist.
+            // Return SUCCESS here so that MPIO doesn't remove
+            // disk in case of failover etc.
+            // If really this path is gone, this should get deleted
+            // as part of pnp removal and then if no other paths are left
+            // disk will be removed
+            //
+            status = STATUS_SUCCESS;
+            return status;
+        }
+
         irql = ExAcquireSpinLockExclusive(&(dsmCtxt->DsmContextLock));
 
         //
@@ -3844,7 +3860,7 @@ Return Value:
                 DsmIds));
 
     //
-    // Determine whether this is a special-case request - PR or QOS.
+    // Determine whether this is a special-case request.
     //
     if (DsmpReservationCommand(Irp, Srb)) {
 

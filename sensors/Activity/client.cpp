@@ -884,7 +884,7 @@ NTSTATUS ActivityDevice::OnSetDataInterval(_In_ SENSOROBJECT sensorInstance, _In
     if (nullptr == pDevice || Act_Default_MinDataInterval_Ms > dataRateMs)
     {
         status = STATUS_INVALID_PARAMETER;
-        TraceError("ACT %!FUNC! Sensor parameter is invalid. Failed %!STATUS!", status);
+        TraceError("ACT %!FUNC! Invalid parameters! %!STATUS!", status);
     }
     else
     {
@@ -977,7 +977,7 @@ NTSTATUS ActivityDevice::OnSetDataThresholds(
     if (nullptr == pDevice)
     {
         status = STATUS_INVALID_PARAMETER;
-        TraceError("ACT %!FUNC! Sensor(%08X) parameter is invalid. Failed %!STATUS!", (INT) sensorInstance, status);
+        TraceError("ACT %!FUNC! Sensor(0x%p) parameter is invalid. Failed %!STATUS!", sensorInstance, status);
     }
     else
     {

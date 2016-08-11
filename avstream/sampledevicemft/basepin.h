@@ -67,9 +67,9 @@ public:
       _Out_opt_ ULONG* pBytesReturned
       )
   {
-      if ( m_Ikscontrol!=nullptr )
+      if ( m_spIkscontrol!=nullptr )
       {
-          return m_Ikscontrol->KsProperty(pProperty,
+          return m_spIkscontrol->KsProperty(pProperty,
               ulPropertyLength,
               pPropertyData,
               ulDataLength,
@@ -123,7 +123,7 @@ public:
         _Inout_opt_  PROPVARIANT* pValue
         )
     {
-        return m_Attributes->GetItem(guidKey, pValue);
+        return m_spAttributes->GetItem(guidKey, pValue);
     }
 
     STDMETHOD(GetItemType)(
@@ -131,7 +131,7 @@ public:
         _Out_ MF_ATTRIBUTE_TYPE* pType
         )
     {
-        return m_Attributes->GetItemType(guidKey, pType);
+        return m_spAttributes->GetItemType(guidKey, pType);
     }
 
     STDMETHOD(CompareItem)(
@@ -140,7 +140,7 @@ public:
         _Out_ BOOL* pbResult
         )
     {
-        return m_Attributes->CompareItem(guidKey, Value, pbResult);
+        return m_spAttributes->CompareItem(guidKey, Value, pbResult);
     }
 
     STDMETHOD(Compare)(
@@ -149,7 +149,7 @@ public:
         _Out_ BOOL* pbResult
         )
     {
-        return m_Attributes->Compare(pTheirs, MatchType, pbResult);
+        return m_spAttributes->Compare(pTheirs, MatchType, pbResult);
     }
 
     STDMETHOD(GetUINT32)(
@@ -157,7 +157,7 @@ public:
         _Out_ UINT32* punValue
         )
     {
-        return m_Attributes->GetUINT32(guidKey, punValue);
+        return m_spAttributes->GetUINT32(guidKey, punValue);
     }
 
     STDMETHOD(GetUINT64)(
@@ -165,7 +165,7 @@ public:
         _Out_ UINT64* punValue
         )
     {
-        return m_Attributes->GetUINT64(guidKey, punValue);
+        return m_spAttributes->GetUINT64(guidKey, punValue);
     }
 
     STDMETHOD(GetDouble)(
@@ -173,7 +173,7 @@ public:
         _Out_ double* pfValue
         )
     {
-        return m_Attributes->GetDouble(guidKey, pfValue);
+        return m_spAttributes->GetDouble(guidKey, pfValue);
     }
 
     STDMETHOD(GetGUID)(
@@ -181,7 +181,7 @@ public:
         _Out_ GUID* pguidValue
         )
     {
-        return m_Attributes->GetGUID(guidKey, pguidValue);
+        return m_spAttributes->GetGUID(guidKey, pguidValue);
     }
 
     STDMETHOD(GetStringLength)(
@@ -189,7 +189,7 @@ public:
         _Out_ UINT32* pcchLength
         )
     {
-        return m_Attributes->GetStringLength(guidKey, pcchLength);
+        return m_spAttributes->GetStringLength(guidKey, pcchLength);
     }
 
     STDMETHOD(GetString)(
@@ -199,7 +199,7 @@ public:
         _Inout_opt_ UINT32* pcchLength
         )
     {
-        return m_Attributes->GetString(guidKey, pwszValue, cchBufSize, pcchLength);
+        return m_spAttributes->GetString(guidKey, pwszValue, cchBufSize, pcchLength);
     }
 
     STDMETHOD(GetAllocatedString)(
@@ -208,7 +208,7 @@ public:
         _Inout_  UINT32* pcchLength
         )
     {
-        return m_Attributes->GetAllocatedString(guidKey, ppwszValue, pcchLength);
+        return m_spAttributes->GetAllocatedString(guidKey, ppwszValue, pcchLength);
     }
 
     STDMETHOD(GetBlobSize)(
@@ -216,7 +216,7 @@ public:
         _Out_ UINT32* pcbBlobSize
         )
     {
-        return m_Attributes->GetBlobSize(guidKey, pcbBlobSize);
+        return m_spAttributes->GetBlobSize(guidKey, pcbBlobSize);
     }
 
     STDMETHOD(GetBlob)(
@@ -226,7 +226,7 @@ public:
         _Inout_  UINT32* pcbBlobSize
         )
     {
-        return m_Attributes->GetBlob(guidKey, pBuf, cbBufSize, pcbBlobSize);
+        return m_spAttributes->GetBlob(guidKey, pBuf, cbBufSize, pcbBlobSize);
     }
 
     STDMETHOD(GetAllocatedBlob)(
@@ -235,7 +235,7 @@ public:
         __RPC__out UINT32* pcbSize
         )
     {
-        return m_Attributes->GetAllocatedBlob(guidKey, ppBuf, pcbSize);
+        return m_spAttributes->GetAllocatedBlob(guidKey, ppBuf, pcbSize);
     }
 
     STDMETHOD(GetUnknown)(
@@ -244,7 +244,7 @@ public:
         __RPC__deref_out_opt LPVOID *ppv
         )
     {
-        return m_Attributes->GetUnknown(guidKey, riid, ppv);
+        return m_spAttributes->GetUnknown(guidKey, riid, ppv);
     }
 
     STDMETHOD(SetItem)(
@@ -252,19 +252,19 @@ public:
         _In_ REFPROPVARIANT Value
         )
     {
-        return m_Attributes->SetItem(guidKey, Value);
+        return m_spAttributes->SetItem(guidKey, Value);
     }
 
     STDMETHOD(DeleteItem)(
         _In_ REFGUID guidKey
         )
     {
-        return m_Attributes->DeleteItem(guidKey);
+        return m_spAttributes->DeleteItem(guidKey);
     }
 
     STDMETHOD(DeleteAllItems)()
     {
-        return m_Attributes->DeleteAllItems();
+        return m_spAttributes->DeleteAllItems();
     }
 
     STDMETHOD(SetUINT32)(
@@ -272,7 +272,7 @@ public:
         _In_ UINT32  unValue
         )
     {
-        return m_Attributes->SetUINT32(guidKey, unValue);
+        return m_spAttributes->SetUINT32(guidKey, unValue);
     }
 
     STDMETHOD(SetUINT64)(
@@ -280,7 +280,7 @@ public:
         _In_ UINT64  unValue
         )
     {
-        return m_Attributes->SetUINT64(guidKey, unValue);
+        return m_spAttributes->SetUINT64(guidKey, unValue);
     }
 
     STDMETHOD(SetDouble)(
@@ -288,7 +288,7 @@ public:
         _In_ double  fValue
         )
     {
-        return m_Attributes->SetDouble(guidKey, fValue);
+        return m_spAttributes->SetDouble(guidKey, fValue);
     }
 
     STDMETHOD(SetGUID)(
@@ -296,7 +296,7 @@ public:
         _In_ REFGUID guidValue
         )
     {
-        return m_Attributes->SetGUID(guidKey, guidValue);
+        return m_spAttributes->SetGUID(guidKey, guidValue);
     }
 
     STDMETHOD(SetString)(
@@ -304,7 +304,7 @@ public:
         _In_ LPCWSTR wszValue
         )
     {
-        return m_Attributes->SetString(guidKey, wszValue);
+        return m_spAttributes->SetString(guidKey, wszValue);
     }
 
     STDMETHOD(SetBlob)(
@@ -313,7 +313,7 @@ public:
         UINT32 cbBufSize
         )
     {
-        return m_Attributes->SetBlob(guidKey, pBuf, cbBufSize);
+        return m_spAttributes->SetBlob(guidKey, pBuf, cbBufSize);
     }
 
     STDMETHOD(SetUnknown)(
@@ -321,24 +321,24 @@ public:
         _In_ IUnknown* pUnknown
         )
     {
-        return m_Attributes->SetUnknown(guidKey, pUnknown);
+        return m_spAttributes->SetUnknown(guidKey, pUnknown);
     }
 
     STDMETHOD(LockStore)()
     {
-        return m_Attributes->LockStore();
+        return m_spAttributes->LockStore();
     }
 
     STDMETHOD(UnlockStore)()
     {
-        return m_Attributes->UnlockStore();
+        return m_spAttributes->UnlockStore();
     }
 
     STDMETHOD(GetCount)(
         _Out_ UINT32* pcItems
         )
     {
-        return m_Attributes->GetCount(pcItems);
+        return m_spAttributes->GetCount(pcItems);
     }
 
     STDMETHOD(GetItemByIndex)(
@@ -347,14 +347,14 @@ public:
         _Inout_ PROPVARIANT* pValue
         )
     {
-        return m_Attributes->GetItemByIndex(unIndex, pguidKey, pValue);
+        return m_spAttributes->GetItemByIndex(unIndex, pguidKey, pValue);
     }
 
     STDMETHOD(CopyAllItems)(
         _In_ IMFAttributes* pDest
         )
     {
-        return m_Attributes->CopyAllItems(pDest);
+        return m_spAttributes->CopyAllItems(pDest);
     }
 
     //
@@ -420,7 +420,7 @@ protected:
         }
         __inline HRESULT setAttributes(_In_ IMFAttributes* _pAttributes)
         {
-            m_Attributes = _pAttributes;
+            m_spAttributes = _pAttributes;
             return S_OK;
         }
         __inline CCritSec& lock()
@@ -428,8 +428,8 @@ protected:
             return m_lock;
         }
         IMFMediaTypeArray        m_listOfMediaTypes;
-        ComPtr<IMFAttributes>   m_Attributes;
-        ComPtr<IKsControl>      m_Ikscontrol;
+        ComPtr<IMFAttributes>   m_spAttributes;
+        ComPtr<IKsControl>      m_spIkscontrol;
 
 private:
     ULONG                        m_StreamId;                  /*Device Stream Id*/
@@ -500,7 +500,7 @@ public:
     }
 
 protected:
-    ComPtr<IMFTransform>        m_pSourceTransform;  /*Source Transform*/
+    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform*/
 private:
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ULONG                       m_activeStreamCount; /*Set when this stream is active*/

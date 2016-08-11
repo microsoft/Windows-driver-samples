@@ -158,7 +158,7 @@ IssueReadLogExtCommand(
     _In_ USHORT PageNumber,
     _In_ USHORT BlockCount,
     _In_ USHORT FeatureField,
-    _In_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
+    _In_opt_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress,
     _In_ PVOID DataBuffer,
     _In_opt_ PSRB_COMPLETION_ROUTINE CompletionRoutine
     );

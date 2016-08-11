@@ -3,25 +3,20 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{73708C87-AE82-4681-9C01-042DF504D5E3}</UniqueIdentifier>
+      <UniqueIdentifier>{6ADEEDAE-2AB9-4FBD-993D-C0F470817801}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{3531B16D-3C4F-4E1C-ABD4-50E16BFD7670}</UniqueIdentifier>
+      <UniqueIdentifier>{B2C965ED-BF4B-4F1D-921B-74C2B133F5BA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{3FD872CD-6DDF-47C5-ADEC-958E7540E672}</UniqueIdentifier>
+      <UniqueIdentifier>{09B8C7CE-5745-42A0-B9A6-997D2EA229B7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{E86BBEC3-C79D-42D9-98BA-B087184AAB24}</UniqueIdentifier>
+      <UniqueIdentifier>{806B75A0-6BB8-4F2E-9280-9B89E9CD3515}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\moufiltr.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="moufiltr.c">

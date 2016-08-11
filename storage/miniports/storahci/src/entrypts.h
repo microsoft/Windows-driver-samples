@@ -267,6 +267,18 @@ typedef struct _SLOT_MANAGER {
 
     ULONG CommandsIssued;
     ULONG CommandsToComplete;
+
+    //
+    // These issued slices are used to determine the type of command
+    // being programmed to adapter.
+    // They are used instead of reading PxCI and PxSACT.
+    //
+    ULONG NCQueueSliceIssued;
+    ULONG NormalQueueSliceIssued;
+    ULONG SingleIoSliceIssued;
+
+    ULONG Reserved;
+
 } SLOT_MANAGER, *PSLOT_MANAGER;
 
 typedef struct _EXECUTION_HISTORY {
@@ -457,9 +469,6 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
     SLOT_MANAGER            SlotManager;
     SLOT_CONTENT            Slot[AHCI_MAX_NCQ_REQUEST_COUNT];
 
-//Port IO Queue
-    STORAHCI_QUEUE          SrbQueue;
-
 //IO Completion Queue and DPC
     STORAHCI_QUEUE          CompletionQueue;
     STOR_DPC                CompletionDpc;
@@ -644,12 +653,6 @@ BOOLEAN
 AhciHwMSIInterrupt (
     _In_ PVOID AdapterExtension,
     _In_ ULONG MessageId
-    );
-
-VOID
-AhciGetNextIos (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ BOOLEAN AtDIRQL
     );
 
 VOID

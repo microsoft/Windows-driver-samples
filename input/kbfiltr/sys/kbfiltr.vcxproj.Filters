@@ -3,25 +3,20 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{BC392AAF-022B-4F26-BED3-9CAECC2514DA}</UniqueIdentifier>
+      <UniqueIdentifier>{69D0BA5C-EFD2-4A08-8829-DABFDD34CCDE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{EE24B2F3-A2C8-487E-A546-D09434A690B9}</UniqueIdentifier>
+      <UniqueIdentifier>{9DBC6F0A-A32B-4824-BE0B-1DF2B8F92760}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{167CCCE9-D380-4055-A99C-40FBD167AAA4}</UniqueIdentifier>
+      <UniqueIdentifier>{2EBD3B86-D170-4C37-8437-0A64E6864AA6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{6B67A3D6-3C6D-4A28-9198-2603047EB5E6}</UniqueIdentifier>
+      <UniqueIdentifier>{A6674166-7336-4066-9782-8BC6F701B19A}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\kbfiltr.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kbfiltr.c">

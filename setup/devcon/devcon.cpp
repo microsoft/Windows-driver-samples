@@ -383,7 +383,7 @@ Return Value:
     int elements;
 
     for(scan = MultiSz, elements = 0; scan[0] ;elements++) {
-        scan += lstrlen(scan)+1;
+        scan += _tcslen(scan)+1;
     }
     array = new LPTSTR[elements+2];
     if(!array) {
@@ -394,7 +394,7 @@ Return Value:
     if(elements) {
         for(scan = MultiSz, elements = 0; scan[0]; elements++) {
             array[elements] = scan;
-            scan += lstrlen(scan)+1;
+            scan += _tcslen(scan)+1;
         }
     }
     array[elements] = NULL;
@@ -426,7 +426,7 @@ Return Value:
     int c;
     if(Array) {
         for(c=0;Array[c];c++) {
-            cchMultiSz+=lstrlen(Array[c])+1;
+            cchMultiSz+=(int)_tcslen(Array[c])+1;
         }
     }
     cchMultiSz+=1; // final Null
@@ -445,17 +445,17 @@ Return Value:
             }
 
 #pragma prefast(suppress:__WARNING_BUFFER_OVERFLOW, "ESP:732")
-            len+=lstrlen(multiSz+len)+1;
+            len+=(int)_tcslen(multiSz+len)+1;
         }
     }
-    
+
     if( len < cchMultiSz ){
         multiSz[len] = TEXT('\0');
     } else {
         // This should never happen!
         multiSz[cchMultiSz-1] = TEXT('\0');
     }
-    
+
     LPTSTR * pRes = GetMultiSzIndexArray(multiSz);
     if(pRes) {
         return pRes;
@@ -690,8 +690,8 @@ Return Value:
             //
             // last portion of match
             //
-            size_t scanlen = lstrlen(scanItem);
-            matchlen = lstrlen(wildMark);
+            size_t scanlen = _tcslen(scanItem);
+            matchlen = _tcslen(wildMark);
             if(scanlen < matchlen) {
                 return FALSE;
             }
@@ -710,9 +710,9 @@ Return Value:
             // to indicate that the return value of the function should be looked
             // at and/or assigned to a variable.  The check return annotation means
             // the return value should always be checked in all code paths.
-            // We assign the return values to variables but the while loop does not 
-            // examine both values in all code paths (e.g. when scanItem[0] == 0, 
-            // neither u nor l will be examined) and it doesn't need to examine 
+            // We assign the return values to variables but the while loop does not
+            // examine both values in all code paths (e.g. when scanItem[0] == 0,
+            // neither u nor l will be examined) and it doesn't need to examine
             // the values in all code paths.
             //
 #pragma warning( suppress: 28193)
@@ -790,9 +790,9 @@ Return Value:
 }
 
 bool SplitCommandLine(
-    _In_ int & argc, 
-    _In_reads_(argc) LPTSTR * & argv, 
-    _Out_ int & argc_right, 
+    _In_ int & argc,
+    _In_reads_(argc) LPTSTR * & argv,
+    _Out_ int & argc_right,
     _Outref_result_buffer_(argc_right) LPTSTR * & argv_right)
 /*++
 
@@ -1135,7 +1135,8 @@ Return Value:
     }
     firstArg++;
     for(dispIndex = 0;DispatchTable[dispIndex].cmd;dispIndex++) {
-        if(_tcsicmp(cmd,DispatchTable[dispIndex].cmd)==0) {
+        if ((_tcsicmp(cmd,DispatchTable[dispIndex].cmd) == 0) &&
+            (argc >= firstArg)) {
             retval = DispatchTable[dispIndex].func(baseName,machine,flags,argc-firstArg,argv+firstArg);
             switch(retval) {
                 case EXIT_USAGE:

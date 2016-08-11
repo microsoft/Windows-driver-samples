@@ -20,6 +20,7 @@ Environment:
 #pragma once
 
 #include <windows.h>
+#include <winioctl.h>
 #include <setupapi.h>
 
 #include <stdio.h>
@@ -52,19 +53,21 @@ typedef struct _THREAD_CONTEXT
 
 } THREAD_CONTEXT, *PTHREAD_CONTEXT;
 
-typedef enum {
+enum {
 
-    MENU_TEST       = 0,
-    READ_TEST       = 1,
-    WRITE_TEST      = 2,
-    READ_WRITE_TEST = 3,
-    THREAD_TEST     = 4,
-    DEVICE_PATH     = 5,
-    SET_SIZE        = 6,
-    COMPARE_BUFFERS = 7,
-    DISPLAY_BUFFERS = 8,
-    THREAD_TIME     = 9,
-    COMMAND_LINE    = 10,
+    MENU_TEST,
+    READ_TEST,
+    WRITE_TEST,
+    READ_WRITE_TEST,
+    THREAD_TEST,
+    DEVICE_PATH,
+    SET_SIZE,
+    COMPARE_BUFFERS,
+    DISPLAY_BUFFERS,
+    THREAD_TIME,
+    SINGLE_TRANSFER_TOGGLE,
+    COMMAND_LINE,
+    MENU_MAX
 
 } COMMAND;
 
@@ -104,6 +107,9 @@ public:
 
     BOOL
     SetBufferSizes(ULONG size);
+
+    BOOL
+    SendSingleTransferIoctl(BOOL* Toggle);
 
     void
     DisplayReadWriteBuffers();

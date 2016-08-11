@@ -1221,16 +1221,12 @@ __inline
 BOOLEAN
 PartialToSlumberTransitionIsAllowed (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ AHCI_COMMAND            CMD,
-    _In_ ULONG                   CI,
-    _In_ ULONG                   SACT
+    _In_opt_ PAHCI_COMMAND       CMD
     )
 {
-    if ( (CI != 0) || (SACT != 0) ) {
-        //device still has request pending
-        return FALSE;
-    }
-    
+    PAHCI_COMMAND   cmdRegister = NULL;
+    AHCI_COMMAND    cmd = {0};
+
     if ((ChannelExtension->LastUserLpmPowerSetting  & 0x3) == 0) {
         //Neither HIPM nor DIPM is allowed. e.g. LastUserLpmPowerSetting --- bit 0: HIPM; bit 1: DIPM
         return FALSE;
@@ -1257,12 +1253,6 @@ PartialToSlumberTransitionIsAllowed (
     }
 
 
-    if ( ( (ChannelExtension->AdapterExtension->CAP.SALP == 0) || (CMD.ALPE == 0) ) &&
-         (!IsDeviceSupportsDIPM(ChannelExtension->DeviceExtension[0].IdentifyDeviceData)) ) {
-        //Neither HIPM nor DIPM is enabled.
-        return FALSE;
-    }
-
     if ( ((ChannelExtension->LastUserLpmPowerSetting  & 0x2) != 0) &&
          (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.DeviceAutoPS == 1) &&
          (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaFeaturesEnabled.DeviceAutoPS == 1) )   {
@@ -1271,10 +1261,26 @@ PartialToSlumberTransitionIsAllowed (
         return FALSE;
     }
 
+    //
+    // Only access PxCMD register when it's needed.
+    //
+    if ((CMD != NULL) && (CMD->AsUlong != 0)) {
+        cmdRegister = CMD;
+    } else {
+        cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
+        cmdRegister = &cmd;
+    }
+
+    if ( ( (ChannelExtension->AdapterExtension->CAP.SALP == 0) || (cmdRegister->ALPE == 0) ) &&
+         (!IsDeviceSupportsDIPM(ChannelExtension->DeviceExtension[0].IdentifyDeviceData)) ) {
+        //Neither HIPM nor DIPM is enabled.
+        return FALSE;
+    }
+
     if ( (ChannelExtension->AdapterExtension->CAP.SALP == 1) &&
-         (CMD.ALPE != 0) &&
-         ( (CMD.ASP == 1) ||
-           ( (ChannelExtension->AdapterExtension->CAP2.APST != 0) && (CMD.APSTE != 0) ) ) ) {
+         (cmdRegister->ALPE != 0) &&
+         ( (cmdRegister->ASP == 1) ||
+           ( (ChannelExtension->AdapterExtension->CAP2.APST != 0) && (cmdRegister->APSTE != 0) ) ) ) {
         // HIPM is enabled. AND
         //     either Host initiates Slumber automatically, OR
         //     Host supports and enabled auto Partial to Slumber.

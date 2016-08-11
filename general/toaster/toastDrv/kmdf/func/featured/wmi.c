@@ -62,7 +62,7 @@ ToasterHelperFunction3(
     );
 
 
-#define ToasterDeviceInformation_SIZE FIELD_OFFSET(ToasterDeviceInformation, VariableData)
+#define ToasterDeviceInformation_SIZE UFIELD_OFFSET(ToasterDeviceInformation, VariableData)
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(ToasterDeviceInformation, ToasterWmiGetData)
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(ToasterControl, ToasterWmiGetControlData)
@@ -356,7 +356,7 @@ EvtWmiInstanceStdDeviceDataSetInstance(
 {
     PAGED_CODE();
 
-    if (InBufferSize < (ULONG)ToasterDeviceInformation_SIZE) {
+    if (InBufferSize < ToasterDeviceInformation_SIZE) {
         return STATUS_BUFFER_TOO_SMALL;
     }
 
@@ -444,9 +444,9 @@ ToasterFireArrivalEvent(
     size = wnodeSize + wnodeInstanceNameSize + wnodeDataBlockSize;
 
     //
-    // Allocate memory for the WNODE from NonPagedPool
+    // Allocate memory for the WNODE from NonPagedPoolNx
     //
-    wnode = ExAllocatePoolWithTag(NonPagedPool, size, TOASTER_POOL_TAG);
+    wnode = ExAllocatePoolWithTag(NonPagedPoolNx, size, TOASTER_POOL_TAG);
 
     if (NULL != wnode) {
         RtlZeroMemory(wnode, size);
@@ -580,14 +580,14 @@ Return Value:
     //
     status = WdfDeviceAllocAndQueryProperty(Device,
                                             DevicePropertyFriendlyName,
-                                            NonPagedPool,
+                                            NonPagedPoolNx,
                                             WDF_NO_OBJECT_ATTRIBUTES,
                                             DeviceName);
 
     if (!NT_SUCCESS(status) && status != STATUS_INSUFFICIENT_RESOURCES) {
         status = WdfDeviceAllocAndQueryProperty(Device,
                                                 DevicePropertyDeviceDescription,
-                                                NonPagedPool,
+                                                NonPagedPoolNx,
                                                 WDF_NO_OBJECT_ATTRIBUTES,
                                                 DeviceName);
 

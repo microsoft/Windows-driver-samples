@@ -3,25 +3,20 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{734E963A-2784-4259-A850-7B527681AB96}</UniqueIdentifier>
+      <UniqueIdentifier>{5F3B1BF3-8AA1-4260-A45B-EC21831E877B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{1C35D44B-4EF9-4C91-A466-1C08A009F227}</UniqueIdentifier>
+      <UniqueIdentifier>{43739221-90B9-4A1F-9CAD-F06ADD55B435}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{8588E893-BBAD-441F-A814-9664F0BBEF97}</UniqueIdentifier>
+      <UniqueIdentifier>{5D93FF77-9BB3-41AF-9463-36BEC1612A7B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{9C5C6D96-ABDC-4238-9471-4DD2FF83DC29}</UniqueIdentifier>
+      <UniqueIdentifier>{54979279-ACEC-4A61-9D03-A14A147693FF}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\wdftoastmon.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="toastmon.c">

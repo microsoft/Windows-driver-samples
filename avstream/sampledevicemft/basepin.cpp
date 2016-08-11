@@ -5,7 +5,7 @@
 #include "basepin.h"
 
 #ifdef MF_WPP
-#include "basepin.tmh"
+#include "basepin.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 /*    -------> New STATE
       |
@@ -17,7 +17,7 @@ DeviceStreamState_Disabled
 */
 
 DeviceStreamState pinStateTransition[4][4] = {
-    { DeviceStreamState_Stop, DeviceStreamState_Stop, DeviceStreamState_Run, DeviceStreamState_Disabled },
+    { DeviceStreamState_Stop, DeviceStreamState_Pause, DeviceStreamState_Run, DeviceStreamState_Disabled },
     { DeviceStreamState_Stop, DeviceStreamState_Pause, DeviceStreamState_Run, DeviceStreamState_Disabled },
     { DeviceStreamState_Stop, DeviceStreamState_Pause, DeviceStreamState_Run, DeviceStreamState_Disabled },
     { DeviceStreamState_Disabled, DeviceStreamState_Disabled, DeviceStreamState_Disabled, DeviceStreamState_Disabled }
@@ -27,8 +27,6 @@ CBasePin::CBasePin( _In_ ULONG id, _In_ CMultipinMft *parent) :
     m_StreamId(id)
     , m_Parent(parent)
     , m_setMediaType(nullptr)
-    , m_Attributes(nullptr)
-    , m_Ikscontrol(nullptr)
 {
     
 }
@@ -42,16 +40,21 @@ CBasePin::~CBasePin()
         SAFE_RELEASE(pMediaType);
     }
     m_listOfMediaTypes.clear();
-    m_Attributes = nullptr;
+    m_spAttributes = nullptr;
 }
 
 HRESULT CBasePin::AddMediaType( _Inout_ DWORD *pos, _In_ IMFMediaType *pMediaType)
 {
     HRESULT hr = S_OK;
-    
+    CAutoLock Lock(lock());
     DMFTCHECKNULL_GOTO(pMediaType, done, E_INVALIDARG);
 
-    m_listOfMediaTypes.push_back( pMediaType );
+    hr = ExceptionBoundary([&]()
+    {
+        m_listOfMediaTypes.push_back(pMediaType);
+    });
+
+    DMFTCHECKHR_GOTO(hr, done);
     pMediaType->AddRef();
 
     if (pos)
@@ -66,7 +69,7 @@ done:
 HRESULT CBasePin::GetMediaTypeAt( _In_ DWORD pos, _Outptr_result_maybenull_ IMFMediaType **ppMediaType )
 {
     HRESULT hr = S_OK;
-
+    CAutoLock Lock(lock());
     DMFTCHECKNULL_GOTO(ppMediaType,done,E_INVALIDARG);
     
     if (pos >= m_listOfMediaTypes.size())
@@ -91,7 +94,7 @@ STDMETHODIMP_(BOOL) CBasePin::IsMediaTypeSupported
 {
     HRESULT hr = S_OK;
     BOOL bFound = FALSE;
-    
+    CAutoLock Lock(lock());
     DMFTCHECKNULL_GOTO(pMediaType,done,E_INVALIDARG);
     if (ppIMFMediaTypeFull)
     {
@@ -185,7 +188,6 @@ CInPin::CInPin(
     _In_ CMultipinMft *pParent)
     :
     CBasePin(ulPinId, pParent),
-    m_pSourceTransform(nullptr),  
     m_stStreamType(GUID_NULL),
     m_activeStreamCount(0),
     m_state(DeviceStreamState_Stop),
@@ -201,7 +203,7 @@ CInPin::CInPin(
 CInPin::~CInPin()
 {
     setAttributes( nullptr );
-    m_pSourceTransform = nullptr;
+    m_spSourceTransform = nullptr;
 
     for (ULONG ulIndex = 0, ulSize = (ULONG)m_outpins.size();
         ulIndex < ulSize;
@@ -228,14 +230,14 @@ STDMETHODIMP CInPin::Init(
     
     DMFTCHECKNULL_GOTO( pTransform, done, E_INVALIDARG );
 
-    m_pSourceTransform = pTransform;
+    m_spSourceTransform = pTransform;
 
     DMFTCHECKHR_GOTO( GetGUID( MF_DEVICESTREAM_STREAM_CATEGORY, &m_stStreamType ), done );
 
     //
     //Get the DevProxy IKSControl.. used to send the KSControls or the device control IOCTLS over to devproxy and finally on to the driver!!!!
     //
-    DMFTCHECKHR_GOTO( m_pSourceTransform.As( &m_Ikscontrol ), done );
+    DMFTCHECKHR_GOTO( m_spAttributes.As( &m_spIkscontrol ), done );
 
     m_waitInputMediaTypeWaiter = CreateEvent( NULL,
         FALSE,
@@ -249,7 +251,7 @@ STDMETHODIMP CInPin::Init(
 done:
     if ( FAILED(hr) )
     {
-        m_pSourceTransform = nullptr;
+        m_spSourceTransform = nullptr;
 
         if ( m_waitInputMediaTypeWaiter )
         {
@@ -271,35 +273,17 @@ STDMETHODIMP CInPin::GenerateMFMediaTypeListFromDevice(
     HRESULT hr = S_OK;
     GUID stSubType = { 0 };
     //This is only called in the begining when the input pin is constructed
-    DMFTCHECKNULL_GOTO( m_pSourceTransform, done, MF_E_TRANSFORM_TYPE_NOT_SET );
+    DMFTCHECKNULL_GOTO( m_spSourceTransform, done, MF_E_TRANSFORM_TYPE_NOT_SET );
     for (UINT iMediaType = 0; SUCCEEDED(hr) ; iMediaType++)
     {
-        ComPtr<IMFMediaType> pMediaType = nullptr;
-        hr = m_pSourceTransform->MFTGetOutputAvailableType( uiStreamId, iMediaType, pMediaType.GetAddressOf() );
+        ComPtr<IMFMediaType> spMediaType;
+        DWORD pos = 0;
+
+        hr = m_spSourceTransform->MFTGetOutputAvailableType(uiStreamId, iMediaType, spMediaType.GetAddressOf());
         if (hr != S_OK)
             break;
-        DMFTCHECKHR_GOTO(pMediaType->GetGUID(MF_MT_SUBTYPE, &stSubType),done);
-
-            if (((stSubType == MFVideoFormat_RGB8) || (stSubType == MFVideoFormat_RGB555) ||
-                (stSubType == MFVideoFormat_RGB565) || (stSubType == MFVideoFormat_RGB24) ||
-                (stSubType == MFVideoFormat_RGB32) || (stSubType == MFVideoFormat_ARGB32) ||
-                (stSubType == MFVideoFormat_AI44) || (stSubType == MFVideoFormat_AYUV) ||
-                (stSubType == MFVideoFormat_I420) || (stSubType == MFVideoFormat_IYUV) ||
-                (stSubType == MFVideoFormat_NV11) || (stSubType == MFVideoFormat_NV12) ||
-                (stSubType == MFVideoFormat_UYVY) || (stSubType == MFVideoFormat_Y41P) ||
-                (stSubType == MFVideoFormat_Y41T) || (stSubType == MFVideoFormat_Y42T) ||
-                (stSubType == MFVideoFormat_YUY2) || (stSubType == MFVideoFormat_YV12) ||
-                (stSubType == MFVideoFormat_P010) || (stSubType == MFVideoFormat_P016) ||
-                (stSubType == MFVideoFormat_P210) || (stSubType == MFVideoFormat_P216) ||
-                (stSubType == MFVideoFormat_v210) || (stSubType == MFVideoFormat_v216) ||
-                (stSubType == MFVideoFormat_v410) || (stSubType == MFVideoFormat_Y210) ||
-                (stSubType == MFVideoFormat_Y216) || (stSubType == MFVideoFormat_Y410) ||
-                (stSubType == MFVideoFormat_Y416)) )
-            {
-                DWORD pos = 0;
-                AddMediaType(&pos, pMediaType.Get());
-            }
-            pMediaType = nullptr;
+     
+        DMFTCHECKHR_GOTO(AddMediaType(&pos, spMediaType.Get()), done);
         }
 done:
     if (hr == MF_E_NO_MORE_TYPES) {
@@ -334,6 +318,7 @@ done:
 
 STDMETHODIMP_(VOID) CInPin::ConnectPin( _In_ CBasePin * poPin )
 {
+    CAutoLock Lock(lock());
     if (poPin!=nullptr)
     {
         m_outpins.push_back(poPin);
@@ -433,9 +418,9 @@ COutPin::COutPin(
     : CBasePin( ulPinId, pparent ),
     m_firstSample( false )
 {
-    HRESULT         hr              = S_OK;
-    CPinState*      pState          = NULL;
-    IMFAttributes   *pAttributes    = nullptr;
+    HRESULT                 hr              = S_OK;
+    CPinState*              pState          = NULL;
+    ComPtr<IMFAttributes>   spAttributes;
 
     for ( ULONG ulIndex = 0; ulIndex <= DeviceStreamState_Disabled; ulIndex++ )
     {
@@ -462,25 +447,22 @@ COutPin::COutPin(
     //
     //Get the input pin IKS control.. the pin IKS control talks to sourcetransform's IKS control
     //
-    m_Ikscontrol = pIksControl;
+    m_spIkscontrol = pIksControl;
 
-    MFCreateAttributes( &pAttributes, 3 ); //Create the space for the attribute store!!
-    setAttributes( pAttributes );
+    MFCreateAttributes( &spAttributes, 3 ); //Create the space for the attribute store!!
+    setAttributes( spAttributes.Get());
     DMFTCHECKHR_GOTO( SetUINT32( MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE, TRUE ), done );
     DMFTCHECKHR_GOTO( SetString( MFT_ENUM_HARDWARE_URL_Attribute, L"Sample_CameraExtensionMft" ),done );
     DMFTCHECKHR_GOTO( SetUINT32( MF_TRANSFORM_ASYNC, TRUE ),done );
-    //Set the pin attribute
-
-    SAFE_RELEASE( pAttributes );
+    
 done:
-    ;
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
 }
 
 COutPin::~COutPin()
 {
     CPinQueue *que = NULL;
-    m_Attributes = nullptr;
+    m_spAttributes = nullptr;
 
     for ( ULONG ulIndex = 0, ulSize = (ULONG)m_queues.size(); ulIndex < ulSize; ulIndex++ )
     {
@@ -513,11 +495,15 @@ STDMETHODIMP COutPin::AddPin(
     //Add a new queue corresponding to the input pin
     //
     HRESULT hr = S_OK;
+    CAutoLock Lock(lock());
 
     CPinQueue *que = new (std::nothrow) CPinQueue(inputPinId);
     DMFTCHECKNULL_GOTO( que, done, E_OUTOFMEMORY );
-
-    (void)m_queues.push_back( que );
+    hr = ExceptionBoundary([&]()
+    {
+        (void)m_queues.push_back(que);
+    });
+    DMFTCHECKHR_GOTO(hr, done);
     //
     //Just ramdonmize media types for odd numbered pins
     //
@@ -850,7 +836,7 @@ STDMETHODIMP COutPin::KsProperty(
     //
     //Route it to input pin
     //
-    return m_Ikscontrol->KsProperty(pProperty,
+    return m_spIkscontrol->KsProperty(pProperty,
         ulPropertyLength,
         pPropertyData,
         ulDataLength,

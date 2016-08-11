@@ -1077,7 +1077,7 @@ Return Value:
     NTSTATUS status;
 
     context = ExAllocatePoolWithTag(
-        NonPagedPool,
+        NonPagedPoolNx,
         sizeof(RMI4_CONTROLLER_CONTEXT),
         TOUCH_POOL_TAG);
 
@@ -1113,9 +1113,10 @@ Return Value:
         Trace(
             TRACE_LEVEL_ERROR,
             TRACE_FLAG_INIT,
-            "Could not allocate controller context - %!STATUS!",
+            "Could not create lock - %!STATUS!",
             status);
 
+        TchFreeContext(context);
         goto exit;
 
     }
@@ -1123,7 +1124,7 @@ Return Value:
     *ControllerContext = context;
 
 exit:
-    
+
     return status;
 }
 

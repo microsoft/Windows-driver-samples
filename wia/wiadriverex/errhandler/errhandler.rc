@@ -1,0 +1,22 @@
+//(C) COPYRIGHT MICROSOFT CORP., 1998-1999
+
+#include <windows.h>
+#include <winver.h>
+#include <ntverp.h>
+
+#include "resource.h"
+
+STRINGTABLE
+BEGIN
+    IDS_MESSAGEBOX_ERRORHANDLE_DIALOG   "Special driver device status error (only for testing purposes). Press 'Ok' to continue. Hitting 'Cancel' will abort the transfer."
+    IDS_MESSAGEBOX_ERRORHANDLE_TITLE     "Driver UI Extension - Handling HANDLED_PRIVATE_STATUS_ERROR_1 message"
+END
+
+
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "WIA ErrHandler DLL"
+#define VER_INTERNALNAME_STR        "errhandler\0"
+#define VER_ORIGINALFILENAME_STR    "errhandler.dll"
+
+#include "common.ver"

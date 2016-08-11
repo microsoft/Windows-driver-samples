@@ -32,4 +32,10 @@ Environment:
 DEFINE_GUID (GUID_PLX_INTERFACE, 
    0x29d2a384, 0x2e47, 0x49b5, 0xae, 0xbf, 0x69, 0x62, 0xc2, 0x2b, 0xd7, 0xc2);
 
+//
+// This IOCTL toggles the driver's DMA Single Transfer Requirement
+// on and off each time it is called.
+//
+#define IOCTL_PLX9X5X_TOGGLE_SINGLE_TRANSFER \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x0, METHOD_BUFFERED, FILE_ANY_ACCESS)
 

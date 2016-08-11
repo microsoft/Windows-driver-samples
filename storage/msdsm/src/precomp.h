@@ -17,6 +17,8 @@ Revision History:
 
 #pragma once
 
+#define DEBUG_MAIN_SOURCE 1
+
 #include <stdio.h>
 #include <stdarg.h>
 

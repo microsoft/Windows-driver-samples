@@ -27,7 +27,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define MICHS_MAX_INPUT_STREAMS             2       // Raw + Default streams
+#define MICHS_MAX_INPUT_STREAMS             4
 
 //=============================================================================
 static 

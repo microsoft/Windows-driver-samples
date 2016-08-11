@@ -27,7 +27,7 @@ Environment:
 #include <stdlib.h>
 #include <string.h>
 #include <strsafe.h>
-#include "sioctl.h"
+#include <sys\sioctl.h>
 
 BOOLEAN
 InstallDriver(

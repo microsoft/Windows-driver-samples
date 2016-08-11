@@ -137,9 +137,16 @@ public:
         _In_opt_    PVOID   Context
     );
 #endif // SYSVAD_BTH_BYPASS
+
+    PVOID GetDeviceContext() { return m_DeviceContext;  }
 };
 
 typedef CMiniportTopology *PCMiniportTopology;
+
+NTSTATUS CMiniportTopology_EventHandler_JackState
+(
+    _In_  PPCEVENT_REQUEST EventRequest
+);
 
 #endif // _SYSVAD_MINTOPO_H_
 

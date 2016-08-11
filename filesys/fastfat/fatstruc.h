@@ -208,6 +208,7 @@ typedef struct {
 
 typedef CLOSE_CONTEXT *PCLOSE_CONTEXT;
 
+
 //
 //  The Vcb (Volume control Block) record corresponds to every volume mounted
 //  by the file system.  They are ordered in a queue off of FatData.VcbQueue.
@@ -242,6 +243,19 @@ typedef struct _VCB {
     //
 
     PDEVICE_OBJECT TargetDeviceObject;
+
+    //
+    //  The volume GUID of the target device object.
+    //
+
+    GUID VolumeGuid;
+
+    //
+    //  The volume GUID path of the target device object.
+    //
+
+    UNICODE_STRING VolumeGuidPath;
+
 
     //
     //  A pointer to the VPB for the volume passed in by the I/O system on
@@ -525,12 +539,14 @@ typedef struct _VCB {
 
     FAST_MUTEX AdvancedFcbHeaderMutex;
 
+
     //
     //  How many close contexts were preallocated on this Vcb
     //
 #if DBG
     ULONG CloseContextCount;
 #endif
+
 } VCB;
 typedef VCB *PVCB;
 
@@ -553,6 +569,7 @@ typedef VCB *PVCB;
 #define VCB_STATE_FLAG_DISMOUNT_IN_PROGRESS (0x00080000)
 #define VCB_STATE_FLAG_BAD_BLOCKS_POPULATED (0x00100000)
 #define VCB_STATE_FLAG_HOTPLUGGABLE         (0x00200000)
+#define VCB_STATE_FLAG_MOUNT_IN_PROGRESS    (0x00800000)
 
 
 //
@@ -1328,6 +1345,12 @@ typedef DCB *PDCB;
 
 #define CCB_FLAG_DENY_DEFRAG             (0x80000)
 
+//
+//  This flag indicates that this CCB wrote to the file.
+//
+
+#define CCB_FLAG_FIRST_WRITE_SEEN       (0x100000)
+
 typedef struct _CCB {
 
     //
@@ -1344,6 +1367,12 @@ typedef struct _CCB {
 
     ULONG Flags:24;
     BOOLEAN ContainsWildCards;
+    
+    //
+    //  Pointer to EDP context.
+    //
+
+    PVOID EncryptionOnCloseContext;
 
     //
     //  Overlay a close context on the data of the CCB.  The remaining
@@ -1536,6 +1565,10 @@ typedef IRP_CONTEXT *PIRP_CONTEXT;
 #define IRP_CONTEXT_FLAG_CLEANUP_BREAKING_OPLOCK    (0x00002000)
 
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+#define IRP_CONTEXT_FLAG_SWAPPED_STACK              (0x00100000)
+#endif
+
 #define IRP_CONTEXT_FLAG_PARENT_BY_CHILD            (0x80000000)
 
 
@@ -1548,6 +1581,13 @@ typedef IRP_CONTEXT *PIRP_CONTEXT;
 //
 
 typedef struct _FAT_IO_CONTEXT {
+
+    //
+    //  A copy of the IrpContext flags preserved for use in
+    //  async I/O completion.
+    //
+    
+    ULONG IrpContextFlags;
 
     //
     //  These two field are used for multiple run Io
@@ -1701,6 +1741,43 @@ typedef enum _CLUSTER_TYPE {
     FatClusterNext
 } CLUSTER_TYPE;
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+// ============================================================================
+// ============================================================================
+//
+//                      Stack Swapping Support
+//
+// ============================================================================
+// ============================================================================
+
+//
+//  This structure is used when doing a callout on a new stack.
+//  It contains the parameters for various functions and a place
+//  to store the return code.
+//
+
+typedef struct _FAT_CALLOUT_PARAMETERS {
+
+    union {
+
+        //
+        //  Parameters for a create request via FatCommonCreate().
+        //
+
+        struct {
+
+            PIRP_CONTEXT IrpContext;
+            PIRP Irp;
+
+        } Create;
+
+    };
+
+    NTSTATUS IrpStatus;
+    NTSTATUS ExceptionStatus;
+
+} FAT_CALLOUT_PARAMETERS, *PFAT_CALLOUT_PARAMETERS;
+#endif
 
 #endif // _FATSTRUC_
 

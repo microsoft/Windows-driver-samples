@@ -1,0 +1,25 @@
+/*++
+
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Module Name:
+
+    resource.rc
+
+Abstract:
+
+    Resources for the binary.
+
+--*/
+
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE              VFT_DRV
+#define VER_FILESUBTYPE           VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR   "USB Connector Manager Sample UCSI Client"
+#define VER_INTERNALNAME_STR      "UcmCxUcsi.sys"
+#define VER_ORIGINALFILENAME_STR  "UcmCxUcsi.sys"
+
+#include "common.ver"

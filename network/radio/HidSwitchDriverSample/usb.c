@@ -66,7 +66,7 @@ HidFx2EvtDevicePrepareHardware(
     WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
     attributes.ParentObject = hDevice;
     status = WdfMemoryCreate(&attributes,
-                             NonPagedPool,
+                             NonPagedPoolNx,
                              0,
                              sizeof(USB_DEVICE_DESCRIPTOR),
                              &pDevContext->hDeviceDescriptor,

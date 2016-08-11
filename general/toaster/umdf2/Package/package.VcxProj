@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\filter\generic\filterum.vcxproj">
-      <Project>{322F1E83-402B-49F0-B206-FD44F046091F}</Project>
+      <Project>{3CC42473-D121-41F4-AE26-1F2F0AC65E82}</Project>
     </ProjectReference>
     <ProjectReference Include="..\func\simple\wdfsimpleum.vcxproj">
-      <Project>{2FB86AE0-CD30-4E4E-93D1-306A8982263C}</Project>
+      <Project>{31C45025-FDA4-4CB5-B55E-81F934382654}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -35,8 +35,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AF4C3FCE-D27E-4E5E-9914-D8D7D1BD5B76}</ProjectGuid>
-    <SampleGuid>{1DF2195C-0F0C-4679-8995-133027CE291F}</SampleGuid>
+    <ProjectGuid>{71F91DD8-7891-4431-8F10-D33D2AA7F7AD}</ProjectGuid>
+    <SampleGuid>{B552060C-CC51-4961-8C6E-74C455A65757}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

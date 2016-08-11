@@ -134,6 +134,8 @@ Return Value:
         SAFE_RELEASE(m_BthHfpDevice);   // IBthHfpDeviceCommon
     }
 #endif // SYSVAD_BTH_BYPASS
+
+
 } // ~CMiniportTopology
 
 //=============================================================================
@@ -728,4 +730,19 @@ Return Value:
 } // PropertyHandler_Topology
 
 #pragma code_seg()
+
+//=============================================================================
+NTSTATUS CMiniportTopology_EventHandler_JackState
+(
+    _In_  PPCEVENT_REQUEST EventRequest
+)
+{
+    CMiniportTopology* miniport = reinterpret_cast<CMiniportTopology*>(EventRequest->MajorTarget);
+    if (EventRequest->Verb == PCEVENT_VERB_ADD)
+    {
+        miniport->AddEventToEventList(EventRequest->EventEntry);
+    }
+    return STATUS_SUCCESS;
+}
+
 

@@ -194,7 +194,7 @@ Return Value:
             break;
         }
 
-        pDst = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority);
+        pDst = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority | MdlMappingNoExecute);
         if (pDst == NULL)
         {
             DEBUGP(DL_FATAL, ("Read: MmGetSystemAddr failed for Request %p, MDL %p\n",
@@ -235,7 +235,7 @@ Return Value:
         while (BytesRemaining && (pMdl != NULL))
         {
             pSrc = NULL;
-            NdisQueryMdl(pMdl, &pSrc, &BytesAvailable, NormalPagePriority);
+            NdisQueryMdl(pMdl, &pSrc, &BytesAvailable, NormalPagePriority | MdlMappingNoExecute);
 
             if (pSrc == NULL)
             {
@@ -380,7 +380,7 @@ Return Value:
                     pMdl,
                     &pEthHeader,
                     &BufferLength,
-                    NormalPagePriority);
+                    NormalPagePriority | MdlMappingNoExecute);
             }
 
             if (pEthHeader == NULL)
@@ -803,7 +803,7 @@ Return Value:
                 pMdl,
                 (PVOID *)&pCopyData,
                 &BufferLength,
-                NormalPagePriority);
+                NormalPagePriority | MdlMappingNoExecute);
 
             NPROT_ASSERT(BufferLength == TotalLength);
 
@@ -980,7 +980,7 @@ Caller IRQL: Must be running at IRQL <= DISPATCH_LEVEL.
             SourceByteCount = BytesRemaining;
         }
 
-        SourceVa = MmGetSystemAddressForMdlSafe(SourceMdl, LowPagePriority);
+        SourceVa = MmGetSystemAddressForMdlSafe(SourceMdl, LowPagePriority | MdlMappingNoExecute);
         if (SourceVa == NULL)
         {
             return STATUS_INSUFFICIENT_RESOURCES;
@@ -994,7 +994,7 @@ Caller IRQL: Must be running at IRQL <= DISPATCH_LEVEL.
 
         TargetByteCount = MmGetMdlByteCount(TargetMdl) - TargetOffset;
 
-        TargetVa = MmGetSystemAddressForMdlSafe(TargetMdl, LowPagePriority);
+        TargetVa = MmGetSystemAddressForMdlSafe(TargetMdl, LowPagePriority | MdlMappingNoExecute);
         if (TargetVa == NULL)
         {
             return STATUS_INSUFFICIENT_RESOURCES;
@@ -1044,7 +1044,7 @@ Caller IRQL: Must be running at IRQL <= DISPATCH_LEVEL.
                 } while(TargetByteCount == 0);
 
                 TargetVa = MmGetSystemAddressForMdlSafe(TargetMdl,
-                                                        LowPagePriority);
+                                                        LowPagePriority | MdlMappingNoExecute);
                 if (TargetVa == NULL)
                 {
                     return STATUS_INSUFFICIENT_RESOURCES;
@@ -1079,7 +1079,7 @@ Caller IRQL: Must be running at IRQL <= DISPATCH_LEVEL.
                     SourceByteCount = BytesRemaining;
                 }
                 SourceVa = MmGetSystemAddressForMdlSafe(SourceMdl,
-                                                        LowPagePriority);
+                                                        LowPagePriority | MdlMappingNoExecute);
                 if (SourceVa == NULL)
                 {
                     return STATUS_INSUFFICIENT_RESOURCES;

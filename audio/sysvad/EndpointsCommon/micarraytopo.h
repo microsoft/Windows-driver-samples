@@ -58,6 +58,11 @@ class CMicArrayMiniportTopology :
         _In_ PPCPROPERTY_REQUEST  PropertyRequest
     );
 
+    NTSTATUS            PropertyHandlerMicProperties
+    (
+        _In_ PPCPROPERTY_REQUEST  PropertyRequest
+    );
+
     NTSTATUS            PropertyHandlerJackDescription
     (
         _In_ PPCPROPERTY_REQUEST  PropertyRequest

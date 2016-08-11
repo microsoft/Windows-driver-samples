@@ -216,6 +216,7 @@ Return Value:
     return ntStatus;
 }
 
+
 //=============================================================================
 NTSTATUS
 PropertyHandler_MicHsTopoFilter

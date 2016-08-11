@@ -892,7 +892,7 @@ Return Value:
 
 {
     PIO_STACK_LOCATION IrpSp = IoGetCurrentIrpStackLocation( IrpContext->OriginatingIrp );
-    NTSTATUS Status;
+    NTSTATUS Status = STATUS_INVALID_PARAMETER;
 
     PBCB BootBcb;
     PPACKED_BOOT_SECTOR BootSector = NULL;
@@ -915,13 +915,15 @@ Return Value:
 
     PLIST_ENTRY Links;
 
-    IO_STATUS_BLOCK Iosb;
+    IO_STATUS_BLOCK Iosb = {0};
     ULONG ChangeCount = 0;
 
     DISK_GEOMETRY Geometry;
 
     PARTITION_INFORMATION_EX PartitionInformation;
     NTSTATUS StatusPartInfo;
+
+    GUID VolumeGuid = {0};
 
 
     PAGED_CODE();
@@ -933,43 +935,50 @@ Return Value:
     NT_ASSERT( FlagOn(IrpContext->Flags, IRP_CONTEXT_FLAG_WAIT) );
     NT_ASSERT( FatDeviceIsFatFsdo( FsDeviceObject));
 
-
     //
-    //  Verify that there is a disk here and pick up the change count.
+    // Only send down IOCTL_DISK_CHECK_VERIFY if it is removable media.
     //
 
-    Status = FatPerformDevIoCtrl( IrpContext,
-                                  IOCTL_DISK_CHECK_VERIFY,
-                                  TargetDeviceObject,
-                                  NULL,
-                                  0,
-                                  &ChangeCount,
-                                  sizeof(ULONG),
-                                  FALSE,
-                                  TRUE,
-                                  &Iosb );
-
-    if (!NT_SUCCESS( Status )) {
+    if (FlagOn(TargetDeviceObject->Characteristics, FILE_REMOVABLE_MEDIA)) {
 
         //
-        //  If we will allow a raw mount then avoid sending the popup.
-        //
-        //  Only send this on "true" disk devices to handle the accidental
-        //  legacy of FAT. No other FS will throw a harderror on empty
-        //  drives.
-        //
-        //  Cmd should really handle this per 9x.
+        //  Verify that there is a disk here and pick up the change count.
         //
 
-        if (!FlagOn( IrpSp->Flags, SL_ALLOW_RAW_MOUNT ) &&
-            Vpb->RealDevice->DeviceType == FILE_DEVICE_DISK) {
+        Status = FatPerformDevIoCtrl( IrpContext,
+                                      IOCTL_DISK_CHECK_VERIFY,
+                                      TargetDeviceObject,
+                                      NULL,
+                                      0,
+                                      &ChangeCount,
+                                      sizeof(ULONG),
+                                      FALSE,
+                                      TRUE,
+                                      &Iosb );
 
-            FatNormalizeAndRaiseStatus( IrpContext, Status );
+        if (!NT_SUCCESS( Status )) {
+
+            //
+            //  If we will allow a raw mount then avoid sending the popup.
+            //
+            //  Only send this on "true" disk devices to handle the accidental
+            //  legacy of FAT. No other FS will throw a harderror on empty
+            //  drives.
+            //
+            //  Cmd should really handle this per 9x.
+            //
+
+            if (!FlagOn( IrpSp->Flags, SL_ALLOW_RAW_MOUNT ) &&
+                Vpb->RealDevice->DeviceType == FILE_DEVICE_DISK) {
+
+                FatNormalizeAndRaiseStatus( IrpContext, Status );
+            }
+
+            return Status;
         }
-
-        return Status;
+        
     }
-
+    
     if (Iosb.Information != sizeof(ULONG)) {
 
         //
@@ -1200,6 +1209,33 @@ Return Value:
             try_return( Status = STATUS_UNRECOGNIZED_VOLUME );
         }
 
+        //
+        //  Initialize the volume guid.
+        //
+
+        if (NT_SUCCESS( IoVolumeDeviceToGuid( Vcb->TargetDeviceObject, &VolumeGuid ))) {
+
+
+            //
+            // Stash a copy away in the VCB.
+            //
+            
+            RtlCopyMemory( &Vcb->VolumeGuid, &VolumeGuid, sizeof(GUID));
+
+        }
+
+
+        //
+        // Stash away a copy of the volume GUID path in our VCB.
+        //
+
+        if (Vcb->VolumeGuidPath.Buffer) {
+            ExFreePool( Vcb->VolumeGuidPath.Buffer );
+            Vcb->VolumeGuidPath.Buffer = NULL;
+            Vcb->VolumeGuidPath.Length = Vcb->VolumeGuidPath.MaximumLength = 0;
+        }
+
+        IoVolumeDeviceToGuidPath( Vcb->TargetDeviceObject, &Vcb->VolumeGuidPath );
 
         //
         //  Unpack the BPB.  We used to do some sanity checking of the FATs at
@@ -1346,7 +1382,19 @@ Return Value:
             //  enough of the Vcb to pull this off.
             //
 
-            FatMarkVolume( IrpContext, Vcb, VolumeDirty );
+	    FatCheckDirtyBit( IrpContext, 
+		              Vcb );
+			
+            //
+            // Set the dirty bit if it is not set already
+            //
+
+            if ( !FlagOn(Vcb->VcbState, VCB_STATE_FLAG_MOUNTED_DIRTY)) {
+				
+                SetFlag( Vcb->VcbState, VCB_STATE_FLAG_MOUNT_IN_PROGRESS );
+                FatMarkVolume( IrpContext, Vcb, VolumeDirty );
+                ClearFlag( Vcb->VcbState, VCB_STATE_FLAG_MOUNT_IN_PROGRESS );
+            }
 
             //
             //  Now keep bailing out ...
@@ -1593,6 +1641,7 @@ Return Value:
                                   0,
                                   0,
                                   &TempDirent,
+                                  NULL,
                                   NULL,
                                   FALSE,
                                   TRUE );
@@ -1841,7 +1890,7 @@ Return Value:
     BOOLEAN LabelFound;
 
     ULONG ChangeCount = 0;
-    IO_STATUS_BLOCK Iosb;
+    IO_STATUS_BLOCK Iosb = {0};
 
     PAGED_CODE();
 
@@ -1944,35 +1993,43 @@ Return Value:
         }
 
         //
-        //  Verify that there is a disk here and pick up the change count.
+        // Only send down IOCTL_DISK_CHECK_VERIFY if it is removable media.
         //
-
-        Status = FatPerformDevIoCtrl( IrpContext,
-                                      IOCTL_DISK_CHECK_VERIFY,
-                                      Vcb->TargetDeviceObject,
-                                      NULL,
-                                      0,
-                                      &ChangeCount,
-                                      sizeof(ULONG),
-                                      FALSE,
-                                      TRUE,
-                                      &Iosb );
-
-        if (!NT_SUCCESS( Status )) {
+        
+        if (FlagOn(Vcb->TargetDeviceObject->Characteristics, FILE_REMOVABLE_MEDIA)) {
 
             //
-            //  If we will allow a raw mount then return WRONG_VOLUME to
-            //  allow the volume to be mounted by raw.
+            //  Verify that there is a disk here and pick up the change count.
             //
 
-            if (AllowRawMount) {
+            Status = FatPerformDevIoCtrl( IrpContext,
+                                          IOCTL_DISK_CHECK_VERIFY,
+                                          Vcb->TargetDeviceObject,
+                                          NULL,
+                                          0,
+                                          &ChangeCount,
+                                          sizeof(ULONG),
+                                          FALSE,
+                                          TRUE,
+                                          &Iosb );
 
-                try_return( Status = STATUS_WRONG_VOLUME );
+            if (!NT_SUCCESS( Status )) {
+
+                //
+                //  If we will allow a raw mount then return WRONG_VOLUME to
+                //  allow the volume to be mounted by raw.
+                //
+
+                if (AllowRawMount) {
+
+                    try_return( Status = STATUS_WRONG_VOLUME );
+                }
+
+                FatNormalizeAndRaiseStatus( IrpContext, Status );
             }
-
-            FatNormalizeAndRaiseStatus( IrpContext, Status );
+            
         }
-
+        
         if (Iosb.Information != sizeof(ULONG)) {
 
             //
@@ -3919,7 +3976,7 @@ Return Value:
 
     } else if (Irp->MdlAddress != NULL) {
 
-        VolumeState = MmGetSystemAddressForMdlSafe( Irp->MdlAddress, LowPagePriority );
+        VolumeState = MmGetSystemAddressForMdlSafe( Irp->MdlAddress, LowPagePriority | MdlMappingNoExecute );
 
         if (VolumeState == NULL) {
 
@@ -5538,9 +5595,11 @@ FatMoveFileNeedsWriteThrough (
     PAGED_CODE();
     
     if (NodeType(FcbOrDcb) == FAT_NTC_FCB) {
-        
+
+
         if (FcbOrDcb->Header.ValidDataLength.QuadPart == 0) {
-            
+
+
             ClearFlag( IrpContext->Flags, IRP_CONTEXT_FLAG_WRITE_THROUGH );
             SetFlag( IrpContext->Flags, IRP_CONTEXT_FLAG_DISABLE_WRITE_THROUGH );        
 
@@ -5810,6 +5869,7 @@ Return Value:
     //
     
     FatMoveFileNeedsWriteThrough(IrpContext, FcbOrDcb, OldWriteThroughFlags);
+
 
     //
     //  Indicate we're getting to parents of this fcb by their child, and that
@@ -8001,6 +8061,8 @@ FatSetZeroOnDeallocate (
 
     if ((TypeOfOpen != UserFileOpen) ||
         (!IrpSp->FileObject->WriteAccess) ) {
+        
+        FatCompleteRequest( IrpContext, Irp, STATUS_ACCESS_DENIED );
         return STATUS_ACCESS_DENIED;
     }
 

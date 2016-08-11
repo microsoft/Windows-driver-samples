@@ -155,6 +155,7 @@ protected:
     PPORTEVENTS                         m_pPortEvents;
     PENDPOINT_MINIPAIR                  m_pMiniportPair;
 
+
 public:
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorSupportedPatterns);
     DECLARE_PROPERTYHANDLER(Set_SoundDetectorPatterns);
@@ -264,7 +265,8 @@ public:
                 }
             }
         }
-        
+
+
 #ifdef SYSVAD_BTH_BYPASS
         if (IsBthHfpDevice())
         {

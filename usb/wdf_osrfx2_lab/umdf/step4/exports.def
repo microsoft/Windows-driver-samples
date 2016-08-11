@@ -1,0 +1,4 @@
+; WudfOsrUsbDriver.def : Declares the module parameters.
+
+EXPORTS
+    DllGetClassObject   PRIVATE

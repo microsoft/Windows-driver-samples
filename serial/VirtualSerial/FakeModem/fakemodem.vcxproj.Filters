@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{47091361-E39C-4D26-B87F-90F3718A64D7}</UniqueIdentifier>
+      <UniqueIdentifier>{1F2A9E59-0673-4608-95E9-CF60343773E6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{C1AA6012-3D25-4230-B45A-9C8B8A699985}</UniqueIdentifier>
+      <UniqueIdentifier>{10F80ED7-1AD5-4B8B-B840-DE4146B936E1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{EDF4A55C-BC2C-477F-9B14-1D736F901B53}</UniqueIdentifier>
+      <UniqueIdentifier>{AA21B933-B73E-406C-AD32-1EC06E712F89}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{23FBCF57-F7A0-4114-AE58-3674DB595114}</UniqueIdentifier>
+      <UniqueIdentifier>{842CBD81-76BE-44AA-80B7-0BE49BE0DE56}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,14 +40,6 @@
     <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FilesToPackage Include=".\Debug\\fakemodem.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
-    <Inf Include="fakemodem.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="fakemodem.rc">

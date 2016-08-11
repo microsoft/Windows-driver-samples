@@ -307,9 +307,10 @@ Return Value:
     // The query table has two entries. One for the supporteddeviceList and
     // the second which is the 'NULL' terminator.
     //
-    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
     queryTable[0].Name = DSM_DISABLE_STATISTICS;
     queryTable[0].EntryContext = StatsGatherChoice;
+    queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
     status = RtlQueryRegistryValues(RTL_REGISTRY_SERVICES,
                                     registryKeyName,
@@ -437,7 +438,7 @@ Return Value:
     // Indicate that there is NO call-back routine, and to give back the MULTI_SZ as
     // one blob, as opposed to individual unicode strings.
     //
-    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_NOEXPAND;
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_NOEXPAND | RTL_QUERY_REGISTRY_TYPECHECK;
 
     //
     // The value to query.
@@ -451,7 +452,7 @@ Return Value:
     // is why we can't use Context->SupportedDevices directly in the call.
     //
     queryTable[0].EntryContext = &inquiryStrings;
-    queryTable[0].DefaultType = REG_MULTI_SZ;
+    queryTable[0].DefaultType  = (REG_MULTI_SZ << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_MULTI_SZ;
     queryTable[0].DefaultData = defaultIDs;
     queryTable[0].DefaultLength = sizeof(defaultIDs);
 
@@ -2921,9 +2922,11 @@ Return Value :
         RtlZeroMemory(queryTable, sizeof(queryTable));
 
         queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                              RTL_QUERY_REGISTRY_REQUIRED;
+                              RTL_QUERY_REGISTRY_REQUIRED | 
+                              RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable[0].Name = DSM_LOAD_BALANCE_POLICY;
         queryTable[0].EntryContext = LoadBalanceType;
+        queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
         status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                         deviceKey,
@@ -3191,9 +3194,11 @@ Return Value :
         RtlZeroMemory(queryTable, sizeof(queryTable));
 
         queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                              RTL_QUERY_REGISTRY_REQUIRED;
+                              RTL_QUERY_REGISTRY_REQUIRED | 
+                              RTL_QUERY_REGISTRY_TYPECHECK;
         queryTable[0].Name = DSM_LOAD_BALANCE_POLICY;
         queryTable[0].EntryContext = LoadBalanceType;
+        queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
         status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                         targetKey,
@@ -3346,9 +3351,11 @@ Return Value :
     RtlZeroMemory(queryTable, sizeof(queryTable));
 
     queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                          RTL_QUERY_REGISTRY_REQUIRED;
+                          RTL_QUERY_REGISTRY_REQUIRED | 
+                          RTL_QUERY_REGISTRY_TYPECHECK;
     queryTable[0].Name = DSM_LOAD_BALANCE_POLICY;
     queryTable[0].EntryContext = LoadBalanceType;
+    queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
     status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                     parametersKey,
@@ -4835,9 +4842,11 @@ Return Value:
             RtlZeroMemory(queryTable, sizeof(queryTable));
 
             queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                                  RTL_QUERY_REGISTRY_REQUIRED;
+                                  RTL_QUERY_REGISTRY_REQUIRED | 
+                                  RTL_QUERY_REGISTRY_TYPECHECK;
             queryTable[0].Name = DSM_PATH_WEIGHT;
             queryTable[0].EntryContext = PathWeight;
+            queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
             pathWeightQueryStatus = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                                            dsmPathKey,
@@ -4860,9 +4869,11 @@ Return Value:
             RtlZeroMemory(queryTable, sizeof(queryTable));
 
             queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                                    RTL_QUERY_REGISTRY_REQUIRED;
+                                    RTL_QUERY_REGISTRY_REQUIRED | 
+                                    RTL_QUERY_REGISTRY_TYPECHECK;
             queryTable[0].Name = DSM_PRIMARY_PATH;
             queryTable[0].EntryContext = PrimaryPath;
+            queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
             status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                             dsmPathKey,
@@ -4878,9 +4889,11 @@ Return Value:
                 RtlZeroMemory(queryTable, sizeof(queryTable));
 
                 queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT |
-                                        RTL_QUERY_REGISTRY_REQUIRED;
+                                        RTL_QUERY_REGISTRY_REQUIRED | 
+                                        RTL_QUERY_REGISTRY_TYPECHECK;
                 queryTable[0].Name = DSM_OPTIMIZED_PATH;
                 queryTable[0].EntryContext = OptimizedPath;
+                queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
                 status = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
                                                 dsmPathKey,
@@ -7746,9 +7759,10 @@ Return Value:
     // The query table has two entries. One for the state transition time and
     // the second which is the 'NULL' terminator.
     //
-    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
     queryTable[0].Name = DSM_MAX_STATE_TRANSITION_TIME_VALUE_NAME;
     queryTable[0].EntryContext = RetryTime;
+    queryTable[0].DefaultType  = (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_NONE;
 
     status = RtlQueryRegistryValues(RTL_REGISTRY_SERVICES,
                                     registryKeyName,
@@ -7833,10 +7847,10 @@ Return Value:
     // The query table has two entries. One for whether to use cache, and
     // and the second which is the 'NULL' terminator.
     //
-    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED;
+    queryTable[0].Flags = RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_REQUIRED | RTL_QUERY_REGISTRY_TYPECHECK;
     queryTable[0].Name = DSM_USE_CACHE_FOR_LEAST_BLOCKS;
     queryTable[0].EntryContext = UseCacheForLeastBlocks;
-    queryTable[0].DefaultType = REG_BINARY;
+    queryTable[0].DefaultType  = (REG_BINARY << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_BINARY;
     queryTable[0].DefaultLength = sizeof(BOOLEAN);
     queryTable[0].DefaultData = &useCacheForLeastBlocksDefault;
 

@@ -172,7 +172,7 @@ Tst3CreateSelfManagedCidRequest (
 
 VOID
 Tst3SelfManagedCidRequestWorkerWrapper (
-    __in WDFWORKITEM WorkItem
+    _In_ WDFWORKITEM WorkItem
     );
 
 VOID
@@ -1476,7 +1476,7 @@ Tst3CreateSelfManagedCidRequestEnd:
 
 VOID
 Tst3SelfManagedCidRequestWorkerWrapper (
-    __in WDFWORKITEM WorkItem
+    _In_ WDFWORKITEM WorkItem
     )
 
 /*++

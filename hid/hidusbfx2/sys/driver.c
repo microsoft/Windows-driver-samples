@@ -86,7 +86,7 @@ Return Value:
     WPP_INIT_TRACING( DriverObject, RegistryPath );
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
-        "HIDUSBFX2 Driver Sample Built %s %s\n", __DATE__, __TIME__);
+        "HIDUSBFX2 Driver Sample\n");
 
     WDF_DRIVER_CONFIG_INIT(&config, HidFx2EvtDeviceAdd);
 

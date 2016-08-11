@@ -970,7 +970,7 @@ Return Value:
 
     status = WdfDeviceAllocAndQueryProperty(Device,
                                             DevicePropertyFriendlyName,
-                                            NonPagedPool,
+                                            NonPagedPoolNx,
                                             &objectAttributes,
                                             &deviceNameMemory);
 
@@ -978,7 +978,7 @@ Return Value:
     {
         status = WdfDeviceAllocAndQueryProperty(Device,
                                                 DevicePropertyDeviceDescription,
-                                                NonPagedPool,
+                                                NonPagedPoolNx,
                                                 &objectAttributes,
                                                 &deviceNameMemory);
     }
@@ -1000,7 +1000,7 @@ Return Value:
 
     status = WdfDeviceAllocAndQueryProperty(Device,
                                             DevicePropertyLocationInformation,
-                                            NonPagedPool,
+                                            NonPagedPoolNx,
                                             WDF_NO_OBJECT_ATTRIBUTES,
                                             &locationMemory);
 

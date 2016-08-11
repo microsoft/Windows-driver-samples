@@ -83,7 +83,7 @@ Return Value:
     }
 
     dst->HardwareIds = (PWCHAR) ExAllocatePoolWithTag(
-        NonPagedPool,
+        NonPagedPoolNx,
         safeMultResult,
         BUS_TAG);
 

@@ -90,6 +90,8 @@ Return Value:
                                             sizeof(BT_PDO_HARDWARE_IDS)/sizeof(WCHAR),
                                             BLUETOOTH_FUNC_IDS );
 
+    WdfObjectDelete(_WorkItem);
+
     DoTrace(LEVEL_INFO, TFLAG_POWER, ("-DeviceEnablePDOWorker %!STATUS!", Status));
 
 }

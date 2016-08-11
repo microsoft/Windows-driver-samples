@@ -81,7 +81,7 @@ Return Value:
         //
         // Try to get a virtual address for the MDL.
         //
-        if (MmGetSystemAddressForMdlSafe(pIrp->MdlAddress, NormalPagePriority) == NULL)
+        if (MmGetSystemAddressForMdlSafe(pIrp->MdlAddress, NormalPagePriority | MdlMappingNoExecute) == NULL)
         {
             DEBUGP(DL_FATAL, ("Read: MmGetSystemAddr failed for IRP %p, MDL %p\n",
                     pIrp, pIrp->MdlAddress));
@@ -314,7 +314,7 @@ Return Value:
         //
         
         pDst = NULL;
-        NdisQueryMdl(pIrp->MdlAddress, &pDst, &BytesRemaining, NormalPagePriority);
+        NdisQueryMdl(pIrp->MdlAddress, &pDst, &BytesRemaining, NormalPagePriority | MdlMappingNoExecute);
         NPROT_ASSERT(pDst != NULL);  // since it was already mapped
         _Analysis_assume_(pDst != NULL);
 
@@ -333,7 +333,7 @@ Return Value:
         while (BytesRemaining && (pMdl != NULL) && SrcTotalLength)
         {
             pSrc = NULL;
-            NdisQueryMdl(pMdl, &pSrc, &BytesAvailable, NormalPagePriority);
+            NdisQueryMdl(pMdl, &pSrc, &BytesAvailable, NormalPagePriority | MdlMappingNoExecute);
 
             if (pSrc == NULL)
             {
@@ -489,7 +489,7 @@ Return Value:
                     pMdl,
                     &pEthHeader,
                     &BufferLength,
-                    NormalPagePriority);
+                    NormalPagePriority | MdlMappingNoExecute);
             }
 
             if (pEthHeader == NULL)
@@ -938,7 +938,7 @@ Return Value:
                 pMdl,
                 (PVOID *)&pCopyData,
                 &BufferLength,
-                NormalPagePriority);
+                NormalPagePriority | MdlMappingNoExecute);
 
             NPROT_ASSERT(BufferLength == TotalLength);
 

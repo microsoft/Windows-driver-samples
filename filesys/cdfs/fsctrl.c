@@ -641,6 +641,7 @@ Return Value:
 
 #ifdef CDFS_TELEMETRY_DATA
     GUID VolumeGuid;
+    GUID VolumeCorrelationId = { 0 };
 #endif
 
     PAGED_CODE();
@@ -896,6 +897,19 @@ Return Value:
             //
 
             RtlCopyMemory( &CdTelemetryData.VolumeGuid, &VolumeGuid, sizeof(GUID) );
+        }
+
+        //
+        // Initialize the correlation ID.
+        //
+
+        if (NT_SUCCESS( FsRtlVolumeDeviceToCorrelationId( Vcb->TargetDeviceObject, &VolumeCorrelationId ) )) {
+
+            //
+            // Stash a copy away in the VCB.
+            //
+
+            RtlCopyMemory( &Vcb->VolumeCorrelationId, &VolumeCorrelationId, sizeof( GUID ) );
         }
 
 #endif // CDFS_TELEMETRY_DATA
@@ -1229,8 +1243,7 @@ Return Value:
     // Send Telemetry
     //
 
-    RtlCopyMemory( &VolumeGuid, &CdTelemetryData.VolumeGuid, sizeof(GUID) );
-    CdTelemetryMountSafe(&VolumeGuid, STATUS_SUCCESS, Vcb);
+    CdTelemetryMountSafe( &VolumeCorrelationId, STATUS_SUCCESS, Vcb );
 
 #endif
 

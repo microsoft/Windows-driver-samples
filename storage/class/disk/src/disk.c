@@ -1550,6 +1550,7 @@ Return Value:
     PIO_STACK_LOCATION  irpSp = NULL;
     PSTOR_ADDR_BTL8 storAddrBtl8;
     PSRBEX_DATA_SCSI_CDB16 srbExDataCdb16;
+    NTSTATUS SyncCacheStatus = STATUS_SUCCESS;
 
     //
     // Fill in the srb fields appropriately
@@ -1623,7 +1624,7 @@ Return Value:
 
         TracePrint((TRACE_LEVEL_VERBOSE, TRACE_FLAG_SCSI, "DiskFlushDispatch: sending sync cache\n"));
 
-        ClassSendSrbSynchronous(Fdo, srb, NULL, 0, TRUE);
+        SyncCacheStatus = ClassSendSrbSynchronous(Fdo, srb, NULL, 0, TRUE);
     }
 
     //
@@ -1669,7 +1670,7 @@ Return Value:
     irpSp->MajorFunction       = IRP_MJ_SCSI;
     irpSp->Parameters.Scsi.Srb = srb;
 
-    IoSetCompletionRoutine(FlushContext->CurrIrp, DiskFlushComplete, NULL, TRUE, TRUE, TRUE);
+    IoSetCompletionRoutine(FlushContext->CurrIrp, DiskFlushComplete, (PVOID)SyncCacheStatus, TRUE, TRUE, TRUE);
 
     TracePrint((TRACE_LEVEL_VERBOSE, TRACE_FLAG_SCSI, "DiskFlushDispatch: sending srb flush on irp %p\n", FlushContext->CurrIrp));
 
@@ -1700,7 +1701,9 @@ Arguments:
 
     Fdo - The device object which requested the completion routine
     Irp - The irp that is being completed
-    Context - The flush group context
+    Context - If disk had write cache enabled and SYNC CACHE command was sent as 1st part of FLUSH processing
+                   then context must carry the completion status of SYNC CACHE request,
+              else context must be set to STATUS_SUCCESS.
 
 Return Value:
 
@@ -1713,8 +1716,7 @@ Return Value:
     NTSTATUS status;
     PFUNCTIONAL_DEVICE_EXTENSION fdoExt;
     PDISK_DATA diskData;
-
-    UNREFERENCED_PARAMETER(Context);
+    NTSTATUS SyncCacheStatus = (NTSTATUS) Context;
 
     TracePrint((TRACE_LEVEL_VERBOSE, TRACE_FLAG_GENERAL, "DiskFlushComplete: %p %p\n", Fdo, Irp));
 
@@ -1740,6 +1742,15 @@ Return Value:
     // Make sure that ClassIoComplete did not decide to retry this request
     //
     NT_ASSERT(status != STATUS_MORE_PROCESSING_REQUIRED);
+
+    //
+    // If sync cache failed earlier, final status of the flush request needs to be failure
+    // even if SRB_FUNCTION_FLUSH srb request succeeded
+    //
+    if (NT_SUCCESS(status) &&
+        (!NT_SUCCESS(SyncCacheStatus))) {
+        Irp->IoStatus.Status = status = SyncCacheStatus;
+    }
 
     //
     // Complete the flush requests tagged to this one

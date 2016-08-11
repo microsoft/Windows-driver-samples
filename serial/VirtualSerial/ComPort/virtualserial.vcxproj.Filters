@@ -3,19 +3,19 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{F92B6BB2-9116-46B1-9D16-A4B81E90515F}</UniqueIdentifier>
+      <UniqueIdentifier>{FD27BABE-0C58-4B98-AF81-08289AA3B68B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{EC2A81F6-5F0F-4504-86F7-2F303B06F301}</UniqueIdentifier>
+      <UniqueIdentifier>{F310CB18-6DEC-47F7-8CA0-21A1439D1363}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{FDACC4A4-3E06-4908-BAF1-FE77087CCD0A}</UniqueIdentifier>
+      <UniqueIdentifier>{52CDBF35-D541-4FFF-A0C5-8C8189885A23}</UniqueIdentifier>
     </Filter>
     <Filter Include="Driver Files">
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
-      <UniqueIdentifier>{9CA0A168-1E88-40BA-9F0E-D3F60623D475}</UniqueIdentifier>
+      <UniqueIdentifier>{51F65D19-3BDF-4759-9AD1-DDA85ACA2524}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,14 +40,6 @@
     <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FilesToPackage Include=".\Debug\\virtualserial.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
-    <Inf Include="virtualserial.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="virtualserial.rc">

@@ -698,7 +698,7 @@ Arguments:
                 //  Inform the cache manager of the change.
                 //
 
-                FatTruncateFileAllocation( IrpContext, Dcb, InitialAllocation, FALSE );
+                FatTruncateFileAllocation( IrpContext, Dcb, InitialAllocation );
 
                 Dcb->Header.FileSize.LowPart =
                     Dcb->Header.AllocationSize.LowPart;
@@ -1642,8 +1642,9 @@ Return Value:
         }
 
         if (!FlagOn( IrpContext->Flags, IRP_CONTEXT_FLAG_DISABLE_RAISE )) {
-            
-            IrpContext->OriginatingIrp->IoStatus = RaiseIosb;
+            if (IrpContext->OriginatingIrp) {
+                IrpContext->OriginatingIrp->IoStatus = RaiseIosb;
+            }            
             FatNormalizeAndRaiseStatus( IrpContext, RaiseIosb.Status );
         }
     }

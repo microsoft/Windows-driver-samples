@@ -138,7 +138,7 @@ Return Value:
     }
 
     preparsedData = (PHIDP_PREPARSED_DATA) ExAllocatePoolWithTag(
-        NonPagedPool, collectionInformation.DescriptorSize, 'ffly');
+        NonPagedPoolNx, collectionInformation.DescriptorSize, 'ffly');
 
     if (preparsedData == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -178,7 +178,7 @@ Return Value:
     // Create a report to send to the device.
     //
     report = (PCHAR) ExAllocatePoolWithTag(
-        NonPagedPool, caps.FeatureReportByteLength, 'ffly');
+        NonPagedPoolNx, caps.FeatureReportByteLength, 'ffly');
 
     if (report == NULL) {
         goto ExitAndFree;

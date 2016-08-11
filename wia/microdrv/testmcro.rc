@@ -1,0 +1,14 @@
+#include "testmcro.rcv"
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+
+IDS_SCAN_BUTTON_NAME   "My Scan Button"
+
+END

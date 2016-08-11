@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExtensionSample", "ExtensionSample", "{7A7BF1F8-8D36-48A9-8217-4210C77777FF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExtensionSample", "ExtensionSample", "{9344DE0C-3F42-4605-A320-733663E320B7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrinterExtensionLibrary", "PrinterExtensionLibrary", "{D39459E3-626A-4D27-9EF1-38705C2CA93F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrinterExtensionLibrary", "PrinterExtensionLibrary", "{721C5039-DB88-43E2-8369-D80B8E5A7643}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterExtensionSample", "ExtensionSample\PrinterExtensionSample.csproj", "{CF554A99-6889-4B86-934F-B6AADBFEFC01}"
 EndProject
@@ -80,7 +80,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CF554A99-6889-4B86-934F-B6AADBFEFC01} = {7A7BF1F8-8D36-48A9-8217-4210C77777FF}
-		{D8DA0C4D-F972-4546-9068-8EB256F222F7} = {D39459E3-626A-4D27-9EF1-38705C2CA93F}
+		{CF554A99-6889-4B86-934F-B6AADBFEFC01} = {9344DE0C-3F42-4605-A320-733663E320B7}
+		{D8DA0C4D-F972-4546-9068-8EB256F222F7} = {721C5039-DB88-43E2-8369-D80B8E5A7643}
 	EndGlobalSection
 EndGlobal

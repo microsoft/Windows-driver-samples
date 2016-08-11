@@ -15,7 +15,7 @@
 #define DH_THIS_FILE DH_DEVPROXY
 
 #ifdef MF_WPP
-#include "mftpeventgenerator.tmh"
+#include "mftpeventgenerator.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 
 CMediaEventGenerator::CMediaEventGenerator () :

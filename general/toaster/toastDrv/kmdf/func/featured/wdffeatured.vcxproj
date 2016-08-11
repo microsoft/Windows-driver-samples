@@ -19,14 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA0E203E-4C96-466F-BF19-24F42DFC0C89}</ProjectGuid>
+    <ProjectGuid>{C0049CDD-7551-4681-9E30-EFE32868F651}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <SupportsPackaging>false</SupportsPackaging>
     <RequiresPackageProject>true</RequiresPackageProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{2EBCE232-7DA0-4C77-9EEA-8DE675F4ADC7}</SampleGuid>
+    <SampleGuid>{64BB8707-3DD7-40D5-A874-E33251334995}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -113,17 +113,17 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </Midl>
     <Link>
@@ -132,17 +132,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </Midl>
     <Link>
@@ -151,17 +151,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </Midl>
     <Link>
@@ -170,17 +170,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc;..\shared</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);TOASTER_FUNC_FEATURED</PreprocessorDefinitions>
     </Midl>
     <Link>

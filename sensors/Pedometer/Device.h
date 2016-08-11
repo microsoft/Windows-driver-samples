@@ -51,6 +51,7 @@ typedef enum
     SENSOR_MODEL,
     SENSOR_PERSISTENT_UNIQUEID,
     SENSOR_CATEGORY,
+    SENSOR_ISPRIMARY,
 
     // These enumeration properties overlap with
     // a subset of the common properties, and
@@ -146,6 +147,7 @@ private:
 
     BOOLEAN                     m_FirstSample;
     ULONG                       m_StartTime;
+    ULONGLONG                   m_SampleCount;
 
     ULONG                       m_CachedThreshold;
     PedometerSample             m_LastSample;

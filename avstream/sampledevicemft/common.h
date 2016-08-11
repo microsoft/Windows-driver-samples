@@ -387,9 +387,8 @@ public:
 //
 //The below guid is used to register the GUID as the Device Transform. This should be adeed to the 
 //HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceClasses\ and under the 
-//GLOBAL#\Device Parameters key, add a CameraPostProcessingPluginCLSID value, and set its value to
-// {0E313280-3169-4F41-A329-9E854169634F} for the Pipeline to pick up the Transform. MFT0 and Device
-// Transforms are exclusive and the presence of this key will lead the MFT0 to not load.
+//GLOBAL#\Device Parameters key, add a CameraDeviceMFTCLSID value, and set its value to
+// {0E313280-3169-4F41-A329-9E854169634F} for the Pipeline to pick up the Transform.
 //
 DEFINE_GUID(CLSID_MultiPinMFT,
     0xe313280, 0x3169, 0x4f41, 0xa3, 0x29, 0x9e, 0x85, 0x41, 0x69, 0x63, 0x4f);
@@ -694,4 +693,25 @@ DEFINE_GUID(AVSTREAM_CUSTOM_PIN_IMAGE,
     return E_NOTIMPL;                              \
 }
 
-
+//
+// Object LifeTime manager. The Class has a global variable which
+// maintains a reference count of the number of objects in the
+// system managed by the DLL. 
+//
+class CDMFTModuleLifeTimeManager{
+public:
+    CDMFTModuleLifeTimeManager()
+    {
+        InterlockedIncrement(&s_lObjectCount);
+    }
+    ~CDMFTModuleLifeTimeManager()
+    {
+        InterlockedDecrement(&s_lObjectCount);
+    }
+    static long GetDMFTObjCount()
+    {
+        return s_lObjectCount;
+    }
+private:
+    static volatile long s_lObjectCount;
+};

@@ -111,6 +111,11 @@ Return Value:
     PDRIVER_CONTEXT        driverContext;
 
     //
+    // Allow NonPagedPool to be mapped to NonPagedPoolNx on WIN8 and newer OS's 
+    //
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
+    //
     // Initialize WPP Tracing
     //
     WPP_INIT_TRACING( DriverObject, RegistryPath );

@@ -101,6 +101,14 @@ Return Value:
 
     KdPrint(("DriverEntry for VHidMini\n"));
 
+#ifdef _KERNEL_MODE
+    //
+    // Opt-in to using non-executable pool memory on Windows 8 and later.
+    // https://msdn.microsoft.com/en-us/library/windows/hardware/hh920402(v=vs.85).aspx
+    //
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+#endif
+
     WDF_DRIVER_CONFIG_INIT(&config, EvtDeviceAdd);
 
     status = WdfDriverCreate(DriverObject,
@@ -1063,7 +1071,8 @@ Return Value:
     WDF_REQUEST_PARAMETERS_INIT(&requestParameters);
     WdfRequestGetParameters(Request, &requestParameters);
 
-    inputValue = (ULONG)requestParameters.Parameters.DeviceIoControl.Type3InputBuffer;
+    inputValue = PtrToUlong(
+        requestParameters.Parameters.DeviceIoControl.Type3InputBuffer);
 
     status = STATUS_SUCCESS;
 

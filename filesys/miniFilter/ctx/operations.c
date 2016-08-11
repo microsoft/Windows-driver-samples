@@ -674,10 +674,11 @@ CtxPreSetInfo (
     //  Ignore the ops we do not care about
     //
     
-    if ((fileInformationClass != FileRenameInformation)) {
+    if ((fileInformationClass != FileRenameInformation) &&
+        (fileInformationClass != FileRenameInformationEx)) {
 
         DebugTrace( DEBUG_TRACE_ALL_IO,
-                    ("[Ctx]: CtxPreSetInfo -> Ignoring SetInfo operations other than FileRenameInformation (Cbd = %p, FileObject = %p)\n",
+                    ("[Ctx]: CtxPreSetInfo -> Ignoring SetInfo operations other than FileRenameInformation/FileRenameInformationEx (Cbd = %p, FileObject = %p)\n",
                      Cbd,
                      FltObjects->FileObject) );
 

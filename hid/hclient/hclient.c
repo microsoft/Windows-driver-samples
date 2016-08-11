@@ -752,7 +752,7 @@ CLM_AsyncRead(
                         FALSE,
                         &asyncDevice))
     {
-        printf("Failed opening the device for synchronous read.\n");
+        printf("Failed opening the device for asynchronous read.\n");
         return;
     }
 
@@ -2328,7 +2328,7 @@ bReadDlgProc(
                     EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
                     EnableWindow(GetDlgItem(hDlg, IDC_READ_SYNCH), FALSE);
                     EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH_ONCE), FALSE);
-                    EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH_CONT), FALSE);                    
+                    EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH_CONT), FALSE);
 
                     Read(&syncDevice);
 
@@ -2379,7 +2379,7 @@ bReadDlgProc(
                                          IDC_READ_ASYNCH_ONCE == LOWORD(wParam));
 
                             EnableWindow(GetDlgItem(hDlg, IDC_READ_ASYNCH_CONT),
-                                         IDC_READ_ASYNCH_CONT == LOWORD(wParam));                                     
+                                         IDC_READ_ASYNCH_CONT == LOWORD(wParam));
 
                             SetWindowText(GetDlgItem(hDlg, LOWORD(wParam)), 
                                           "Stop Asynchronous Read");
@@ -2394,7 +2394,7 @@ bReadDlgProc(
                         
                         readContext.TerminateThread = TRUE;
                         WaitForSingleObject(readThread, INFINITE);
-                    }                        
+                    }
                     break;
                         
                 case IDCANCEL:
@@ -2402,8 +2402,9 @@ bReadDlgProc(
                     WaitForSingleObject(readThread, INFINITE);
                     //Fall through!!!
 
-                case IDOK:                
-                    CloseHidDevice(&asyncDevice);                    
+                case IDOK:
+                    CloseHidDevice(&asyncDevice);
+                    CloseHidDevice(&syncDevice);
                     EndDialog(hDlg,0);
                     break;
             }
@@ -3697,9 +3698,12 @@ AsynchReadThreadProc(
 )
 {
     HANDLE  completionEvent;
-    BOOL    readStatus;
+    BOOL    readResult;
     DWORD   waitStatus;
     ULONG   numReadsDone;
+    OVERLAPPED overlap;
+    DWORD      bytesTransferred;
+
     
     //
     // Create the completion event to send to the the OverlappedRead routine
@@ -3743,10 +3747,10 @@ AsynchReadThreadProc(
         //  exit
         //
 
-        readStatus = ReadOverlapped( Context -> HidDevice, completionEvent );
+        readResult = ReadOverlapped( Context->HidDevice, completionEvent, &overlap );
 
-    
-        if (!readStatus) 
+
+        if (!readResult)
         {
            break;
         }
@@ -3761,11 +3765,12 @@ AsynchReadThreadProc(
 
             //
             // If completionEvent was signaled, then a read just completed
-            //   so let's leave this loop and process the data
+            //   so let's get the status and leave this loop and process the data 
             //
             
             if ( WAIT_OBJECT_0 == waitStatus)
-            { 
+            {
+                readResult = GetOverlappedResult(Context->HidDevice->HidDevice, &overlap, &bytesTransferred, TRUE);
                 break;
             }
         }
@@ -3788,14 +3793,45 @@ AsynchReadThreadProc(
                           Context -> HidDevice -> InputDataLength,
                           Context -> HidDevice -> Ppd);
             
-            if (NULL != Context -> DisplayEvent) 
-            { 
+            if (NULL != Context -> DisplayEvent)
+            {
                 PostMessage(Context -> DisplayWindow,
                             WM_DISPLAY_READ_DATA,
                             0,
                             (LPARAM) Context -> HidDevice);
 
                 WaitForSingleObject( Context -> DisplayEvent, INFINITE );
+            }
+            else if (NULL != Context->DisplayWindow)
+            {
+                CHAR        szTempBuff[1024];
+                PHID_DEVICE pDevice;
+                PHID_DATA   pData;
+                UINT        uLoop;
+
+                pDevice = (PHID_DEVICE)Context->HidDevice;
+
+                //
+                // Display all the data stored in the Input data field for the device
+                //
+                pData = pDevice->InputData;
+
+                SendMessage(GetDlgItem(Context->DisplayWindow, IDC_CALLOUTPUT),
+                    LB_ADDSTRING,
+                    0,
+                    (LPARAM)"-------------------------------------------");
+
+                for (uLoop = 0; uLoop < pDevice->InputDataLength; uLoop++)
+                {
+                    ReportToString(pData, szTempBuff, sizeof(szTempBuff));
+
+                    SendMessage(GetDlgItem(Context->DisplayWindow, IDC_CALLOUTPUT),
+                        LB_ADDSTRING,
+                        0,
+                        (LPARAM)szTempBuff);
+
+                    pData++;
+                }
             }
             else if (NULL == Context -> DisplayWindow)
             {
@@ -3804,9 +3840,10 @@ AsynchReadThreadProc(
                 CLM_PrintInputReport(Context -> HidDevice);
             }
         }
-    } while ( !Context -> TerminateThread &&
+    } while ( readResult &&
+              !Context->TerminateThread &&
               (INFINITE_READS == Context -> NumberOfReads || 
-               numReadsDone < Context -> NumberOfReads));
+              numReadsDone < Context -> NumberOfReads));
 
 
 AsyncRead_End:
@@ -3825,7 +3862,11 @@ SynchReadThreadProc(
     do 
     {
         Read(Context -> HidDevice);
-        
+
+        if (Context->TerminateThread) {
+            break;
+        }
+
         numReadsDone ++;
 
         UnpackReport(Context -> HidDevice -> InputReportBuffer,
@@ -3844,13 +3885,46 @@ SynchReadThreadProc(
 
             WaitForSingleObject( Context -> DisplayEvent, INFINITE );
         }
-        
-        if (INFINITE_READS != Context -> NumberOfReads &&
-            numReadsDone == Context -> NumberOfReads)
+        else if (NULL != Context->DisplayWindow)
         {
-            break;
+            CHAR        szTempBuff[1024];
+            PHID_DEVICE pDevice;
+            PHID_DATA   pData;
+            UINT        uLoop;
+
+            pDevice = (PHID_DEVICE)Context->HidDevice;
+
+            //
+            // Display all the data stored in the Input data field for the device
+            //
+            pData = pDevice->InputData;
+
+            SendMessage(GetDlgItem(Context->DisplayWindow, IDC_CALLOUTPUT),
+                LB_ADDSTRING,
+                0,
+                (LPARAM)"-------------------------------------------");
+
+            for (uLoop = 0; uLoop < pDevice->InputDataLength; uLoop++)
+            {
+                ReportToString(pData, szTempBuff, sizeof(szTempBuff));
+
+                SendMessage(GetDlgItem(Context->DisplayWindow, IDC_CALLOUTPUT),
+                    LB_ADDSTRING,
+                    0,
+                    (LPARAM)szTempBuff);
+
+                pData++;
+            }
         }
-    } while ( !Context -> TerminateThread);
+        else if (NULL == Context->DisplayWindow)
+        {
+            // Running in console mode
+            printf("Read #%d\n", numReadsDone);
+            CLM_PrintInputReport(Context->HidDevice);
+        }
+    } while (!Context->TerminateThread &&
+        (INFINITE_READS == Context->NumberOfReads ||
+        numReadsDone < Context->NumberOfReads));
 
     PostMessage( Context -> DisplayWindow, WM_READ_DONE, 0, 0);
     ExitThread(0);

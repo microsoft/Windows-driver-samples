@@ -1298,7 +1298,7 @@ Return Value:
 
             reqContext->Type3InputBuffer =
                     ExAllocatePoolWithQuotaTag(
-                        NonPagedPool | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
+                        NonPagedPoolNx | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
                         Rs->InSize,
                         POOL_TAG
                         );

@@ -185,6 +185,7 @@ Return Value:
         SAFE_RELEASE(m_BthHfpDevice);
     }
 #endif // SYSVAD_BTH_BYPASS
+
 } // ~CMiniportWaveRT
 
 //=============================================================================
@@ -1293,6 +1294,7 @@ CMiniportWaveRT::PropertyHandlerProposedFormat
     return ntStatus;
 } // PropertyHandlerProposedFormat
 
+
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
@@ -1460,9 +1462,6 @@ CMiniportWaveRT::PropertyHandlerProposedFormat2
     return STATUS_SUCCESS;
 } // PropertyHandlerProposedFormat
 
-
-
-
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
@@ -1483,7 +1482,7 @@ CMiniportWaveRT::PropertyHandlerEffectListRequest
 
     // This specific APO->driver communication example is mainly added to show to this communication is done.
     // It skips the pin id validation and returns pin specific answers to the caller, which a real miniport 
-    // audio driver probably needs to tate care of.
+    // audio driver probably needs to take care of.
 
     // Handle KSPROPERTY_TYPE_BASICSUPPORT query
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
@@ -1535,6 +1534,7 @@ CMiniportWaveRT::PropertyHandlerEffectListRequest
     return STATUS_INVALID_DEVICE_REQUEST;
 
 } // PropertyHandlerEffectListRequest
+
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS

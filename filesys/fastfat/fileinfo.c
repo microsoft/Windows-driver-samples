@@ -2768,19 +2768,26 @@ Return Value:
     ULONG TargetDirentOffset = 0;
     ULONG TargetLfnOffset = 0;
 
+    // NewName comes from the IRP buffer or the TargetFileObject, so we can't 
+    // go around modifying it. Instead we modify NewNameCopy.
     UNICODE_STRING NewName;
+
+    // NB: these five UNICODE_STRINGS are allocated 
+    // from one chopped up pool allocation called UnicodeBuffer.
+    UNICODE_STRING NewNameCopy;
     UNICODE_STRING NewUpcasedName;
     UNICODE_STRING OldName;
     UNICODE_STRING OldUpcasedName;
     UNICODE_STRING TargetLfn;
-    UNICODE_STRING TargetOrigLfn = {0};
-
     PWCHAR UnicodeBuffer;
+
+    UNICODE_STRING TargetOrigLfn = {0};
 
     UNICODE_STRING UniTunneledShortName;
     WCHAR UniTunneledShortNameBuffer[12];
     UNICODE_STRING UniTunneledLongName;
     WCHAR UniTunneledLongNameBuffer[26];
+    
     LARGE_INTEGER TunneledCreationTime;
     ULONG TunneledDataSize;
     BOOLEAN HaveTunneledInformation = FALSE;
@@ -2821,7 +2828,7 @@ Return Value:
     OldOemName.Buffer = (PCHAR)&OemNameBuffer[24];
 
     UnicodeBuffer = FsRtlAllocatePoolWithTag( PagedPool,
-                                              4 * MAX_LFN_CHARACTERS * sizeof(WCHAR),
+                                              5 * MAX_LFN_CHARACTERS * sizeof(WCHAR),
                                               TAG_FILENAME_BUFFER );
 
     NewUpcasedName.Length = 0;
@@ -2840,6 +2847,10 @@ Return Value:
     TargetLfn.MaximumLength = MAX_LFN_CHARACTERS * sizeof(WCHAR);
     TargetLfn.Buffer = &UnicodeBuffer[MAX_LFN_CHARACTERS * 3];
 
+    NewNameCopy.Length = 0;
+    NewNameCopy.MaximumLength = MAX_LFN_CHARACTERS * sizeof(WCHAR);
+    NewNameCopy.Buffer = &UnicodeBuffer[MAX_LFN_CHARACTERS * 4];
+
     UniTunneledShortName.Length = 0;
     UniTunneledShortName.MaximumLength = sizeof(UniTunneledShortNameBuffer);
     UniTunneledShortName.Buffer = &UniTunneledShortNameBuffer[0];
@@ -2847,7 +2858,7 @@ Return Value:
     UniTunneledLongName.Length = 0;
     UniTunneledLongName.MaximumLength = sizeof(UniTunneledLongNameBuffer);
     UniTunneledLongName.Buffer = &UniTunneledLongNameBuffer[0];
-
+    
     //
     //  Remember the name in case we have to modify the name
     //  value in the ea.
@@ -3058,6 +3069,8 @@ Return Value:
                 try_return( Status = STATUS_OBJECT_NAME_INVALID );
             }
 
+            RtlCopyUnicodeString(&NewNameCopy,&NewName);
+
         } else {
 
             //
@@ -3083,6 +3096,9 @@ Return Value:
             //
 
             NewName = *((PUNICODE_STRING)&TargetFileObject->FileName);
+
+            RtlCopyUnicodeString(&NewNameCopy,&NewName);
+            
         }
         
         //
@@ -3192,13 +3208,13 @@ Return Value:
 
         if ((NewOemName.Length == 0) ||
             (FatEvaluateNameCase( IrpContext,
-                                  &NewName,
+                                  &NewNameCopy,
                                   &AllLowerComponent,
                                   &AllLowerExtension,
                                   &CreateLfn ),
              CreateLfn)) {
 
-            DirentsRequired = FAT_LFN_DIRENTS_NEEDED(&NewName) + 1;
+            DirentsRequired = FAT_LFN_DIRENTS_NEEDED(&NewNameCopy) + 1;
 
         } else {
 
@@ -3221,6 +3237,8 @@ Return Value:
                 //
 
                 DirentsRequired = 1;
+
+                
             }
         }
 
@@ -3417,6 +3435,7 @@ Return Value:
 
             ExFreePool( UnicodeBuffer );
             FatUnpinBcb( IrpContext, TargetDirentBcb );
+            
         }
     }
 
@@ -3521,7 +3540,7 @@ Return Value:
             FatSelectNames( IrpContext,
                             TargetDcb,
                             &NewOemName,
-                            &NewName,
+                            &NewNameCopy,
                             &NewOemName,
                             (HaveTunneledInformation ? &UniTunneledShortName : NULL),
                             &AllLowerComponent,
@@ -3531,7 +3550,7 @@ Return Value:
             if (!CreateLfn && UsingTunneledLfn) {
 
                 CreateLfn = TRUE;
-                NewName = UniTunneledLongName;
+                RtlCopyUnicodeString( &NewNameCopy, &UniTunneledLongName );
 
                 //
                 //  Short names are always upcase if an LFN exists
@@ -3610,7 +3629,7 @@ Return Value:
                                 &NewOemName,
                                 AllLowerComponent,
                                 AllLowerExtension,
-                                CreateLfn ? &NewName : NULL,
+                                CreateLfn ? &NewNameCopy : NULL,
                                 Dirent.Attributes,
                                 FALSE,
                                 (HaveTunneledInformation ? &TunneledCreationTime : NULL) );
@@ -4169,7 +4188,7 @@ Return Value:
 
         if (NewAllocationSize+HeaderSize > Fcb->Header.AllocationSize.LowPart) {
 
-            FatAddFileAllocation( IrpContext, Fcb, FileObject, NewAllocationSize);
+            FatAddFileAllocation( IrpContext, Fcb, FileObject, NewAllocationSize+HeaderSize);
 
         } else {
 
@@ -4178,7 +4197,21 @@ Return Value:
             //  paging IO.
             //
 
-            if ( Fcb->Header.FileSize.LowPart > NewAllocationSize ) {
+            if ( Fcb->Header.FileSize.LowPart > NewAllocationSize+HeaderSize ) {
+
+                //
+                //  The way Sections for DataScan are created and used, an AV's
+                //  memory-mapping can come into being after we check it's safe
+                //  to truncate a file while continuing to hold  the file here.
+                //  This leads to data corruption because Purge eventually fails
+                //  (during call to Cc to set file sizes) and stale data continues
+                //  to live in the cache/memory.
+                //
+
+                if (Fcb->PurgeFailureModeEnableCount != 0) {
+
+                    try_return( Status = STATUS_PURGE_FAILED );
+                }
 
                 //
                 //  Before we actually truncate, check to see if the purge
@@ -4222,7 +4255,7 @@ Return Value:
             //  Now that File Size is down, actually do the truncate.
             //
 
-            FatTruncateFileAllocation( IrpContext, Fcb, NewAllocationSize, FALSE );
+            FatTruncateFileAllocation( IrpContext, Fcb, NewAllocationSize+HeaderSize );
 
             //
             //  Now check if we needed to decrease the file size accordingly.
@@ -4557,6 +4590,20 @@ Return Value:
         if (Fcb->Header.FileSize.LowPart != NewFileSize) {
 
             if ( NewFileSize < Fcb->Header.FileSize.LowPart ) {
+
+                //
+                //  The way Sections for DataScan are created and used, an AV's
+                //  memory-mapping can come into being after we check it's safe
+                //  to truncate a file while continuing to hold  the file here.
+                //  This leads to data corruption because Purge eventually fails
+                //  (during call to Cc to set file sizes) and stale data continues
+                //  to live in the cache/memory.
+                //
+
+                if (Fcb->PurgeFailureModeEnableCount != 0) {
+
+                    try_return( Status = STATUS_PURGE_FAILED );
+                }
 
                 //
                 //  Before we actually truncate, check to see if the purge
@@ -5007,4 +5054,103 @@ FatRenameEAs (
 
     return;
 }
+
+_Requires_lock_held_(_Global_critical_region_)
+VOID
+FatDeleteFile (
+    IN PIRP_CONTEXT IrpContext,
+    IN PDCB TargetDcb,
+    IN ULONG LfnOffset,
+    IN ULONG DirentOffset,
+    IN PDIRENT Dirent,
+    IN PUNICODE_STRING Lfn
+    )
+{
+    PFCB Fcb;
+    PLIST_ENTRY Links;
+
+    PAGED_CODE();
+
+    //
+    //  We can do the replace by removing the other Fcb(s) from
+    //  the prefix table.
+    //
+
+    for (Links = TargetDcb->Specific.Dcb.ParentDcbQueue.Flink;
+         Links != &TargetDcb->Specific.Dcb.ParentDcbQueue;
+         Links = Links->Flink) {
+
+        Fcb = CONTAINING_RECORD( Links, FCB, ParentDcbLinks );
+
+        if (FlagOn(Fcb->FcbState, FCB_STATE_NAMES_IN_SPLAY_TREE) &&
+            (Fcb->DirentOffsetWithinDirectory == DirentOffset)) {
+
+            NT_ASSERT( NodeType(Fcb) == FAT_NTC_FCB );
+            NT_ASSERT( Fcb->LfnOffsetWithinDirectory == LfnOffset );
+
+            if ( Fcb->UncleanCount != 0 ) {
+                
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+                FatBugCheck(0,0,0);
+
+            } else {
+
+                PERESOURCE Resource;
+
+                //
+                //  Make this fcb "appear" deleted, synchronizing with
+                //  paging IO.
+                //
+
+                FatRemoveNames( IrpContext, Fcb );
+
+                Resource = Fcb->Header.PagingIoResource;
+
+                (VOID)ExAcquireResourceExclusiveLite( Resource, TRUE );
+
+                SetFlag(Fcb->FcbState, FCB_STATE_DELETE_ON_CLOSE);
+
+                Fcb->ValidDataToDisk = 0;
+                Fcb->Header.FileSize.QuadPart =
+                Fcb->Header.ValidDataLength.QuadPart = 0;
+
+                Fcb->FirstClusterOfFile = 0;
+
+                ExReleaseResourceLite( Resource );
+            }
+        }
+    }
+
+    //
+    //  The file is not currently opened so we can delete the file
+    //  that is being overwritten.  To do the operation we dummy
+    //  up an fcb, truncate allocation, delete the fcb, and delete
+    //  the dirent.
+    //
+
+    Fcb = FatCreateFcb( IrpContext,
+                        TargetDcb->Vcb,
+                        TargetDcb,
+                        LfnOffset,
+                        DirentOffset,
+                        Dirent,
+                        Lfn,
+                        NULL,
+                        FALSE,
+                        FALSE );
+
+    Fcb->Header.FileSize.LowPart = 0;
+
+    try {
+
+        FatTruncateFileAllocation( IrpContext, Fcb, 0 );
+
+        FatDeleteDirent( IrpContext, Fcb, NULL, TRUE );
+
+    } finally {
+
+        FatDeleteFcb( IrpContext, &Fcb );
+    }
+}
+
 

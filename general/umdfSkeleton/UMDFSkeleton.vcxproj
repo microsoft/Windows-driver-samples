@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3434D648-433A-4D74-822F-DDBE22400E6D}</ProjectGuid>
+    <ProjectGuid>{6C720AF2-E419-4BA6-927C-607BE3E771F1}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>1</UMDF_VERSION_MAJOR>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
@@ -27,7 +27,7 @@
     <KMDF_VERSION_MINOR>9</KMDF_VERSION_MINOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{86CA24C3-2AB5-4664-9B33-3D9F1F5CDA36}</SampleGuid>
+    <SampleGuid>{B7203DC7-2002-4983-AB0B-E567DC6BD66C}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -84,16 +84,6 @@
       <WppDllMacro>true</WppDllMacro>
       <WppScanConfigurationData>internal.h</WppScanConfigurationData>
     </ClCompile>
-    <Inf Include="UMDFSkeleton_OSR.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\UMDFSkeleton_OSR.inf</CopyOutput>
-    </Inf>
-    <Inf Include="UMDFSkeleton_Root.inx">
-      <Architecture>$(InfArch)</Architecture>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\UMDFSkeleton_Root.inf</CopyOutput>
-    </Inf>
     <OtherWpp Include="Skeleton.rc">
       <WppEnabled>true</WppEnabled>
       <WppDllMacro>true</WppDllMacro>

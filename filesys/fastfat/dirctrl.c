@@ -289,6 +289,7 @@ Return Value:
     PFILE_ID_BOTH_DIR_INFORMATION IdBothDirInfo;
     PFILE_NAMES_INFORMATION NamesInfo;
 
+    
     PAGED_CODE();
 
     //

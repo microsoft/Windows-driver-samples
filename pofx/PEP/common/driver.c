@@ -52,8 +52,8 @@ DRIVER_INITIALIZE DriverEntry;
 
 NTSTATUS
 DriverEntry (
-    __in PDRIVER_OBJECT DriverObject,
-    __in PUNICODE_STRING RegistryPath
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING RegistryPath
     )
 
 /*++
@@ -289,7 +289,7 @@ DeviceAddEnd:
 
 VOID
 PepEvtDriverUnload (
-    __in WDFDRIVER Driver
+    _In_ WDFDRIVER Driver
     )
 
 /*++

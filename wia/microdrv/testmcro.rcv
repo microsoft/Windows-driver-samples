@@ -1,0 +1,18 @@
+/*****************************************************************/
+/**         Microsoft Windows                                   **/
+/**     Copyright (C) Microsoft Corp., 1996-2000                **/
+/*****************************************************************/
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE            VFT_APP
+#define VER_FILESUBTYPE         VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "TEST Flatbed Scanner Still Image Device Micro Driver DLL"
+#define VER_INTERNALNAME_STR        "TESTMCRO"
+#define VER_ORIGINALFILENAME_STR    "TESTMCRO.DLL"
+
+#include <common.ver>
+
+
+

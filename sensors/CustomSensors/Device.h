@@ -44,6 +44,7 @@ typedef enum
     SENSOR_MODEL,
     SENSOR_PERSISTENT_UNIQUEID,
     SENSOR_CATEGORY,
+    SENSOR_ISPRIMARY,
     SENSOR_VENDOR_DEFINED_TYPE,
     SENSOR_ENUMERATION_PROPERTIES_COUNT
 } SENSOR_ENUMERATION_PROPERTIES_INDEX;
@@ -89,6 +90,7 @@ private:
 
     BOOLEAN                     m_FirstSample;
     ULONG                       m_StartTime;
+    ULONGLONG                   m_SampleCount;
 
     CustomSensorSample          m_LastSample;
 

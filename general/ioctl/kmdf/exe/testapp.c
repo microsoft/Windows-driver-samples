@@ -374,9 +374,9 @@ DoIoctls(
     // Printing Input & Output buffer pointers and size
     //
 
-    printf("InputBuffer Pointer = %p, BufLength = %d\n", InputBuffer,
+    printf("InputBuffer Pointer = %p, BufLength = %Id\n", InputBuffer,
                         sizeof(InputBuffer));
-    printf("OutputBuffer Pointer = %p BufLength = %d\n", OutputBuffer,
+    printf("OutputBuffer Pointer = %p BufLength = %Id\n", OutputBuffer,
                                 sizeof(OutputBuffer));
     //
     // Performing METHOD_BUFFERED

@@ -13,7 +13,7 @@
 
 #pragma comment(lib, "d2d1") 
 #ifdef MF_WPP
-#include "multipinmftutils.tmh"
+#include "multipinmftutils.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 
 // Critical sections
@@ -328,7 +328,10 @@ STDMETHODIMP_(BOOL) IsKnownUncompressedVideoType(_In_ GUID guidSubType)
         guidSubType ==  MFVideoFormat_P016 ||  
         guidSubType ==  MFVideoFormat_v210 ||  
         guidSubType ==  MFVideoFormat_v216 ||  
-        guidSubType ==  MFVideoFormat_v410 )  
+        guidSubType ==  MFVideoFormat_v410 ||
+        guidSubType ==  MFVideoFormat_L8   ||
+        guidSubType ==  MFVideoFormat_L16  ||
+        guidSubType == MFVideoFormat_D16)
     {  
         return( TRUE );  
     }  

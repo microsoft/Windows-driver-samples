@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HostBasedSampleDriver.vcxproj">
-      <Project>{A78FB2A6-2C70-4886-A438-FDA24E741537}</Project>
+      <Project>{9D446972-7555-4D86-9665-CB304793A0C7}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
@@ -32,8 +32,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{24F15521-602D-47EF-ABFE-5765AB32E694}</ProjectGuid>
-    <SampleGuid>{7B686CC4-2BC7-439F-BB22-27DC9D1EE60D}</SampleGuid>
+    <ProjectGuid>{B756657D-AC58-4D5A-A446-1582707D012E}</ProjectGuid>
+    <SampleGuid>{CE9EE2B8-13CF-44F8-9F72-BB9F84A2A645}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

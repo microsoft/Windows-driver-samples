@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{00B26024-D8C5-40FD-A6C7-BA15FD324FD0}</ProjectGuid>
+    <ProjectGuid>{9CE912A5-6210-4EF8-B22D-611D13254D4C}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <SampleGuid>{4DEE9F36-71EC-4057-8531-96C8B4624E91}</SampleGuid>
+    <SampleGuid>{8FEDC4BC-EFA4-4BF4-91B6-E33FA555EB15}</SampleGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -36,12 +36,15 @@
     <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetVersion>Windows10</TargetVersion>
+    <TargetVersion>
+    </TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>
+    </DriverTargetPlatform>
     <DriverType>KMDF</DriverType>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
+    <SupportsPackaging>false</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetVersion>Windows10</TargetVersion>
@@ -98,6 +101,10 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);BINARY_COMPATIBLE=0;NT;UNICODE;_UNICODE;NDIS60;NDIS_SUPPORT_NDIS6;POOL_NX_OPTIN_AUTO</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
+      <WppEnabled>true</WppEnabled>
+      <WppTraceFunction>DoTraceLevelMessage(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppModuleName>StmEdit</WppModuleName>
+      <WppScanConfigurationData>Trace.h</WppScanConfigurationData>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH)</AdditionalIncludeDirectories>
@@ -117,6 +124,10 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);BINARY_COMPATIBLE=0;NT;UNICODE;_UNICODE;NDIS60;NDIS_SUPPORT_NDIS6;POOL_NX_OPTIN_AUTO</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
+      <WppEnabled>true</WppEnabled>
+      <WppTraceFunction>DoTraceLevelMessage(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppModuleName>StmEdit</WppModuleName>
+      <WppScanConfigurationData>Trace.h</WppScanConfigurationData>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH)</AdditionalIncludeDirectories>
@@ -136,6 +147,10 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);BINARY_COMPATIBLE=0;NT;UNICODE;_UNICODE;NDIS60;NDIS_SUPPORT_NDIS6;POOL_NX_OPTIN_AUTO</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
+      <WppTraceFunction>DoTraceLevelMessage(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppEnabled>true</WppEnabled>
+      <WppModuleName>StmEdit</WppModuleName>
+      <WppScanConfigurationData>Trace.h</WppScanConfigurationData>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH)</AdditionalIncludeDirectories>
@@ -155,6 +170,10 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);BINARY_COMPATIBLE=0;NT;UNICODE;_UNICODE;NDIS60;NDIS_SUPPORT_NDIS6;POOL_NX_OPTIN_AUTO</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
+      <WppEnabled>true</WppEnabled>
+      <WppTraceFunction>DoTraceLevelMessage(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppModuleName>StmEdit</WppModuleName>
+      <WppScanConfigurationData>Trace.h</WppScanConfigurationData>
     </ClCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH)</AdditionalIncludeDirectories>
@@ -165,9 +184,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="inline_edit.c" />
-    <ClCompile Include="oob_edit.c" />
-    <ClCompile Include="stream_callout.c" />
+    <ClCompile Include="InlineEdit.c" />
+    <ClCompile Include="LwQueue.c" />
+    <ClCompile Include="OobEdit.c" />
+    <ClCompile Include="StreamEdit.c" />
   </ItemGroup>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />
