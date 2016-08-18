@@ -42,11 +42,18 @@ Create Registry values
 
 You can create and set values for the following registry entries.
 
--   **EditInline** (REG\_DWORD type): 1 for inline editing, 0 for out-of-band editing (the default)
--   **StringToFind** (REG\_SZ type): default = "rainy"
--   **StringToReplace** (REG\_SZ type): default = "sunny"
--   **InspectionPort** (REG\_DWORD type): TCP port (default = 5001)
--   **InspectOutbound** (REG\_DWORD type): TCP port (default = 0)
+-   **StringToFind**	 (REG_SZ, default = "rainy")
+-   **StringX**		 (REG_SZ, default = "cloudy")
+-   **StringToReplace** (REG_SZ, default = "sunny")
+-   **InspectionLocalPort** (REG_DWORD, default = 8888)
+-   **InspectionRemotePort** (REG_DWORD, default = 0)
+            Note: for this sample, a local or remote port is mandatory. Both cannot be zero.
+-   **InspectioDirection** (REG_DWORD, default = 2)
+            possible values : 2 (inbound + outbound), 0 (FWP_DIRECTION_OUTBOUND), 1 (FWP_DIRECTION_INBOUND)
+-   **MultipleCallouts** (REG_DWORD, default = true/1)
+            controls registration of multiple callouts. Set 0 for false, other for TRUE
+-   **BusyThreshold** (REG_DWORD, default = 16KB)
+            BusyThreshold value is in KBs (e.g. a value of 5 means 5KB)
 
 Start the stmedit service
 -------------------------
