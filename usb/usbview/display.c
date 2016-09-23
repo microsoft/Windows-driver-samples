@@ -1404,10 +1404,17 @@ DisplayConnectionInfo (
     case UsbSuperSpeed:
         if(gDoAnnotation)
         {
-            AppendTextBuffer("  -> Device Bus Speed: Super%s\r\n",
-                ConnectionInfoV2->Flags.DeviceIsOperatingAtSuperSpeedPlusOrHigher
-                ? "SpeedPlus"
-                : "Speed");
+            if (ConnectionInfoV2 != NULL)
+            {
+                AppendTextBuffer("  -> Device Bus Speed: Super%s\r\n",
+                    ConnectionInfoV2->Flags.DeviceIsOperatingAtSuperSpeedPlusOrHigher
+                    ? "SpeedPlus"
+                    : "Speed");
+            }
+            else
+            {
+                AppendTextBuffer("  -> Device Bus Speed: Super Speed\r\n");
+            }
         }
         else 
         {
