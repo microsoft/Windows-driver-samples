@@ -169,6 +169,9 @@ namespace Microsoft {
     System::SerializableAttribute, 
     System::Xml::Serialization::XmlTypeAttribute(Namespace=L"USB")]
     public enum class HubTypeType {
+
+        /// <remarks/>
+        UnknownHubType,
         
         /// <remarks/>
         UsbRootHub,
