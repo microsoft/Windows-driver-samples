@@ -409,9 +409,9 @@ Return Value:
         ExInitializeResourceLite( &instanceContext->Resource );
         
         RtlInitializeGenericTable( &instanceContext->FileStateCacheTable,
-                                   (PRTL_GENERIC_COMPARE_ROUTINE) AvCompareEntry,
-                                   (PRTL_GENERIC_ALLOCATE_ROUTINE) AvAllocateGenericTableEntry,
-                                   (PRTL_GENERIC_FREE_ROUTINE) AvFreeGenericTableEntry,
+                                    AvCompareEntry,
+                                    AvAllocateGenericTableEntry,
+                                    AvFreeGenericTableEntry,
                                    NULL );                                
     }
 
