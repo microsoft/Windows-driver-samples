@@ -25,6 +25,7 @@ Environment:
 //
 
 RTL_GENERIC_COMPARE_RESULTS
+NTAPI
 AvCompareEntry (
     _In_ PRTL_GENERIC_TABLE Table,
     _In_ PVOID Lhs,
