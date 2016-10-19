@@ -180,6 +180,10 @@ Windows 10 IoT
 
 <https://developer.microsoft.com/en-us/windows/iot/>
 
+Windows Insider Preview WDK
+
+<https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewWDK>
+
 Microsoft USB Test Tools
 
 <https://msdn.microsoft.com/en-us/library/windows/hardware/dn376873(v=vs.85).aspx>
