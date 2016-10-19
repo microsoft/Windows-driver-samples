@@ -34,15 +34,13 @@ UcmTcpciCx is intended for system port controller drivers. If you are bringing u
 
 This document outlines a procedure for installing and testing a TCPCI implementation for Windows 10 on a Raspberry Pi computer running Windows 10 IoT Core. You will need a Raspberry Pi 2 or 3, your TCPC device, a USB-to-Serial converter for debugging, and 7 jumper wires to connect your TCPC to the Raspberry Pi (3 for the debug board, 4 for the TCPC).
 
-You will also need access to Windows 10 IoT Core builds (either through MSDN download or EEAP release), the IoT tool set and WDK available for download on MSDN, and the UcmTcpciCxClientSample source code available on GitHub.
-
-\[Note: As of October 2016, this feature is supported only in the next update of Windows 10\]
+You will also need the Windows 10 IoT Core Insider Preview builds, the IoT tool set and WDK available for download on MSDN, and the UcmTcpciCxClientSample source code available on GitHub.
 
 ## Setup
 
 ### Operating System
 
-Install the latest available Windows 10 IoT Core image on your Raspberry Pi 2 or 3 per the following instructions:
+Install the latest available Windows 10 IoT Core Insider Preview image on your Raspberry Pi 2 or 3 per the following instructions:
 
 <https://developer.microsoft.com/en-us/windows/iot/GetStarted>
 
