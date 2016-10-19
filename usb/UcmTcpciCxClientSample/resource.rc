@@ -1,0 +1,9 @@
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE              VFT_DRV
+#define VER_FILESUBTYPE           VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR   "Sample driver for USB Connector Manager (Ucm) Type-C Port Controller Interface (Tcpci) Class Extension (Cx) Client"
+#define VER_INTERNALNAME_STR      "UcmTcpciCxClientSample.sys"
+
+#include <common.ver>
