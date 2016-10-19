@@ -40,7 +40,11 @@ You will also need the Windows 10 IoT Core Insider Preview builds, the IoT tool 
 
 ### Operating System
 
-Install the latest available Windows 10 IoT Core Insider Preview image on your Raspberry Pi 2 or 3 per the following instructions:
+Download the latest available Windows 10 IoT Core Insider Preview image here:
+
+<https://www.microsoft.com/en-us/software-download/windowsiot>
+
+Install on your Raspberry Pi 2 or 3 per the following instructions:
 
 <https://developer.microsoft.com/en-us/windows/iot/GetStarted>
 
@@ -175,6 +179,8 @@ Raspberry Pi
 <https://developer.microsoft.com/en-us/windows/iot/Docs/PinMappingsRPi.htm>
 
 Windows 10 IoT
+
+<https://www.microsoft.com/en-us/software-download/windowsiot>
 
 <https://developer.microsoft.com/en-us/windows/iot/>
 
