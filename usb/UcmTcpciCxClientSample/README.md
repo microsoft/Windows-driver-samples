@@ -1,16 +1,16 @@
 # UcmTcpciCx Port Controller Client Driver
 
-This is a skeleton sample driver that shows how to create a Windows USB Type-C port controller driver using the USB Connector Manager Type-C Port Controller Interface class extension driver (UcmTcpciCx). Refer to the UcmTcpciCx documentation for more information.
+This is a skeleton sample driver that shows how to create a Windows USB Type-C port controller driver using the USB Connector Manager Type-C Port Controller Interface class extension driver (UcmTcpciCx). UcmTcpciCx is currently only availble using the Windows Insider program - documentation for UcmTcpciCx will be available at the next release of Windows.
 
 This sample demonstrates the following:
 
--   Registration with the UcmTcpci class extension driver.
+-   Registration with the UcmTcpci class extension driver (UcmTcpciCx).
 -   Initializing the port controller's Type-C and Power Delivery capabilities.
 -   Initializing the I2C communications channel to the port controller hardware.
--   Performing reads/writes over I2C
+-   Performing reads/writes over I2C.
 -   Handling hardware requests from UcmTcpciCx.
 -   Handling alerts from the port controller hardware and notifying UcmTcpciCx of the alert.
--   Power management
+-   Power management.
 -   Platform-level device reset in the case of an unresponsive I2C controller.
 
 ## Customizing the sample for your port controller
@@ -48,7 +48,7 @@ Install on your Raspberry Pi 2 or 3 per the following instructions:
 
 <https://developer.microsoft.com/en-us/windows/iot/GetStarted>
 
-Note, you will only need to complete the first two steps, ì1 Get the toolsî and ì2 Setup your deviceî to proceed with the TCPC validation described here.
+Note, you will only need to complete the first two steps, ‚Äú1 Get the tools‚Äù and ‚Äú2 Setup your device‚Äù to proceed with the TCPC validation described here.
 
 ### PowerShell Connection
 
@@ -122,7 +122,7 @@ On a PC with the Windows 10 WDK installed run the following command on your upda
 
 asl.exe sample.asl
 
-This will produce output file ACPITABL.dat. Copy this file to *C:\\Windows\\System32* on your Raspberry Pi device, and reboot. See the ìVerificationî section in the following link for more information on merging ACPI updates into an IoT image without a full UEFI build:
+This will produce output file ACPITABL.dat. Copy this file to *C:\\Windows\\System32* on your Raspberry Pi device, and reboot. See the ‚ÄúVerification‚Äù section in the following link for more information on merging ACPI updates into an IoT image without a full UEFI build:
 
 <https://msdn.microsoft.com/en-us/windows/uwp/devices-sensors/enable-usermode-access>
 
