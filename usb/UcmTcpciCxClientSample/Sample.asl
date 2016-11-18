@@ -49,7 +49,9 @@ DefinitionBlock("ACPITABL.dat", "SSDT", 5, "MSFT", "TCPCI", 1)
                 Return(RBUF)
             }
 
- //         // Declare PWFR as the reset power rail
+ //         // Declare PWFR as the reset power rail.
+ //         // This is used for platform-level device reset.
+ //         // https://msdn.microsoft.com/en-us/library/windows/hardware/dn928420(v=vs.85).aspx
  //         Name(_PRR, Package(One)
  //         {
  //             \_SB.PWFR
@@ -129,6 +131,9 @@ DefinitionBlock("ACPITABL.dat", "SSDT", 5, "MSFT", "TCPCI", 1)
                             8,                  // Capability type ID of supported PD Alternate Modes.
                             // TODO: If your device supports alternate modes, update this with the SVID
                             // and Mode of the alternate modes.
+                            // If your device does not support any alternate modes, then you may delete this
+                            // package with ID #8. UcmTcpciCx will not enter an alternate mode if this
+                            // package is not present.
                             Package()
                             {
                                 0x1111, 0x22222222
