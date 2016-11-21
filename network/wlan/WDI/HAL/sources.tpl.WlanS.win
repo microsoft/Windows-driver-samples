@@ -1,0 +1,28 @@
+TARGETNAME=hal
+TARGETPATH=.
+TARGETTYPE=LIBRARY
+
+# 2011/11/17 MH Disable temporarily for compatiable with other SW teams.
+PRECOMPILED_INCLUDE= Mp_Precomp.h
+PRECOMPILED_PCH=precomp.pch
+PRECOMPILED_OBJ=precomp.obj
+
+INCLUDES=\
+		.;						\
+		..;						\
+		$(SRC_ROOT)\Header;		\
+		$(SRC_ROOT)\Common;		\
+		$(HAL_INC_DIRS);		\
+		$(OMNIPEEK_INC_DIRS);	\
+
+#
+# OS and Bus dependent setting.
+#
+!include $(SRC_ROOT)\$(PLATFORM_INC)
+
+
+#
+# Because we will copy HAL source file to HALSOURCE. But we can not copy HAL
+# root directory to HALSOURCE, otherwise, WDK6000 warning.
+#
+SOURCES = <!--TAG_REALTEK_SOURCE_FILES-->

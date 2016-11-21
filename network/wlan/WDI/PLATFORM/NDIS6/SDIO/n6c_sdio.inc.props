@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <INCLUDES>
+		$(INCLUDES)
+		$(SRC_ROOT)\Platform\NdisComm;		
+		$(SRC_ROOT)\Platform\NDIS6;			
+		$(SRC_ROOT)\Platform\NDIS6\SDIO;		
+		$(WDKContentRoot)\Include\KM;	
+		$(WDKContentRoot)\Include\KM\wlan\1.0;	
+	</INCLUDES>
+	
+	<KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
+	
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Vista'">7</KMDF_VERSION_MINOR>
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Win7'">9</KMDF_VERSION_MINOR>
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Win8'">11</KMDF_VERSION_MINOR>
+	<!-- WinBlue now only supports v11. It will be 13 later -->
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='WindowsV6.3'">11</KMDF_VERSION_MINOR>
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Windows10'">13</KMDF_VERSION_MINOR>
+	
+	<C_DEFINES Condition="'$(TargetVersion)'=='Vista'">			-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>
+	<C_DEFINES Condition="'$(TargetVersion)'=='Win7'">			-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DNDIS61_MINIPORT=1 -DNDIS620_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>
+	<C_DEFINES Condition="'$(TargetVersion)'=='Win8'">			-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DNDIS61_MINIPORT=1 -DNDIS620_MINIPORT=1 -DNDIS630_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>
+	<C_DEFINES Condition="'$(TargetVersion)'=='WindowsV6.3'">	-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DNDIS61_MINIPORT=1 -DNDIS620_MINIPORT=1 -DNDIS630_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>
+	<C_DEFINES Condition="'$(TargetVersion)'=='Windows10'">	-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DNDIS61_MINIPORT=1 -DNDIS620_MINIPORT=1 -DNDIS630_MINIPORT=1 -DNDIS640_MINIPORT=1  -DNDIS650_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>	
+	
+	<RUN_WPP>$(SOURCES) -km -func:RT_TRACE(COMPID,LEVEL,(MSG,...)) -func:RT_TRACE_F(COMPID,LEVEL,(MSG,...)) -func:RT_TRACE_EX(COMPID,LEVEL,(MSG,...)) -func:RT_TRACE_MAC(COMPID,LEVEL,(MSG,...)) -scan:$(SRC_ROOT)\HEADER\rtwlanwpp.h</RUN_WPP>
+  </PropertyGroup>
+</Project>

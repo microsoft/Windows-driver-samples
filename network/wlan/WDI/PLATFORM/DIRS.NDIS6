@@ -1,0 +1,4 @@
+DIRS=\
+	NdisComm\
+	NDIS6	
+	

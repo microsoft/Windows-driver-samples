@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TARGETNAME>rtwlans</TARGETNAME>
+    <TARGETPATH>$(SolutionDir)\DrvBin\$(Configuration)\$(Platform)\</TARGETPATH>
+    <TARGETTYPE>DRIVER</TARGETTYPE>
+    <PRECOMPILED_INCLUDE>Mp_Precomp.h</PRECOMPILED_INCLUDE>
+    <PRECOMPILED_PCH>precomp.pch</PRECOMPILED_PCH>
+    <PRECOMPILED_OBJ>precomp.obj</PRECOMPILED_OBJ>
+    <INCLUDES>
+		.;
+		$(SRC_ROOT)\Header;
+		$(SRC_ROOT)\COMMON;
+		$(HAL_INC_DIRS);
+	</INCLUDES>
+	<TARGETLIBS Condition="'$(Platform)'=='Win32'">
+		$(DDK_LIB_PATH)\ndis.lib
+		$(DDK_LIB_PATH)\ntoskrnl.lib
+		$(DDK_LIB_PATH)\usbd.lib
+		$(DDK_LIB_PATH)\sdbus.lib
+		$(DDK_LIB_PATH)\wlan\1.0\TlvGeneratorParser.lib
+		$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;
+		$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\Ndiscomm.lib;
+		$(SolutionDir)LIB\x86\rtklibcom.lib;
+		$(SolutionDir)LIB\x86\hal.lib;
+		$(TMP_LIBS)
+	</TARGETLIBS>
+	<TARGETLIBS Condition="'$(Platform)'=='Arm'">
+		$(DDK_LIB_PATH)\ndis.lib
+		$(DDK_LIB_PATH)\ntoskrnl.lib
+		$(DDK_LIB_PATH)\usbd.lib
+		$(DDK_LIB_PATH)\sdbus.lib
+		$(DDK_LIB_PATH)\wlan\1.0\TlvGeneratorParser.lib
+		$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;
+		$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\Ndiscomm.lib;
+		$(SolutionDir)LIB\Arm\rtklibcom.lib;
+		$(SolutionDir)LIB\Arm\hal.lib;
+		$(TMP_LIBS)
+	</TARGETLIBS>
+	<TARGETLIBS Condition="'$(Platform)'=='x64'">
+		$(DDK_LIB_PATH)\ndis.lib
+		$(DDK_LIB_PATH)\ntoskrnl.lib
+		$(DDK_LIB_PATH)\usbd.lib
+		$(DDK_LIB_PATH)\sdbus.lib
+		$(DDK_LIB_PATH)\wlan\1.0\TlvGeneratorParser.lib
+		$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;
+		$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\Ndiscomm.lib;
+		$(SolutionDir)LIB\x64\rtklibcom.lib;
+		$(SolutionDir)LIB\x64\hal.lib;
+		$(TMP_LIBS)
+	</TARGETLIBS>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SOURCES>
+	</SOURCES>
+  </PropertyGroup>
+</Project>

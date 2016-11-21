@@ -1,0 +1,14 @@
+//
+// Command:	+(OS, ...) -(OS, ...) [FILE]
+//		//: Comment at the beginning
+//		OS: * Ebd6 Ebd7 WinXP Vista Win7 Win8 WinBlue
+//		+: Add for OS
+//		-: Remove for OS 
+//
+
++(*) [$(DDK_LIB_PATH)\ndis.lib]
++(*) [$(DDK_LIB_PATH)\ntoskrnl.lib]
++(*) [$(DDK_LIB_PATH)\usbd.lib]
++(*) [$(DDK_LIB_PATH)\sdbus.lib]
++(*) -(WinXP Vista Win7 Win8 WinBlue) [$(DDK_LIB_PATH)\wlan\1.0\TlvGeneratorParser.lib]
++(*) [$(TMP_LIBS)]
