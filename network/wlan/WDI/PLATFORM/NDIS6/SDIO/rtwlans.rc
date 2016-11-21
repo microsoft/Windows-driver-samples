@@ -1,0 +1,48 @@
+/*++
+
+Copyright (c) 2011 Realtek Semiconductor Corporation.
+
+Module Name:
+
+	rtwlans.rc
+
+Abstract:
+
+    Internal resource file for filter.
+
+--*/
+
+#include <windows.h>
+#include <ntverp.h>
+#include "..\..\svn_version.h"
+
+// Undefine the MS company name
+#ifdef VER_COMPANYNAME_STR
+#undef VER_COMPANYNAME_STR
+#endif
+
+#define VER_FILETYPE				VFT_DRV
+#define VER_FILESUBTYPE				VFT2_DRV_NETWORK
+
+#define VER_FILEDESCRIPTION_STR	"Realtek WLAN SDIO NDIS Driver " SVN_VERSION_STR
+
+#define VER_INTERNALNAME_STR		"rtwlans.sys "
+#define VER_ORIGINALFILENAME_STR	"rtwlans.sys "
+#undef VER_PRODUCTNAME_STR
+#define VER_PRODUCTNAME_STR		"Realtek WLAN Wireless SDIO Adapter                                        "
+
+// Also need to change "NIC_VENDOR_DRIVER_VERSION" in Mp_def.h (about in line 51)
+#define VER_FILEVERSION 3008,22,1030,2015
+#define VER_FILEVERSION_STR "3008.22.1030.2015"
+
+#undef VER_PRODUCTVERSION
+#define VER_PRODUCTVERSION			VER_FILEVERSION
+
+#undef VER_PRODUCTVERSION_STR
+#define VER_PRODUCTVERSION_STR	VER_FILEVERSION_STR
+
+#define VER_LEGALCOPYRIGHT_STR	"Copyright (C) 2011 Realtek Semiconductor Corporation                            " 
+#define VER_COMPANYNAME_STR		"Realtek Semiconductor Corporation                           "
+
+#include "common.ver"
+

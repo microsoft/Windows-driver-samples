@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdio", "PLATFORM\NDIS6\SDIO\sdio.vcxproj", "{105EA485-B9B6-48AE-B8B0-96BBEA575973}"
+	ProjectSection(ProjectDependencies) = postProject
+		{956B060D-1055-4584-9CF4-9FE14C428545} = {956B060D-1055-4584-9CF4-9FE14C428545}
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05} = {C0A51792-1338-4294-ADAA-EDC4EE30CF05}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "COMMON\common.vcxproj", "{956B060D-1055-4584-9CF4-9FE14C428545}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NdisComm", "PLATFORM\NdisComm\NdisComm.vcxproj", "{C0A51792-1338-4294-ADAA-EDC4EE30CF05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Win10 Debug|Arm = Win10 Debug|Arm
+		Win10 Debug|Win32 = Win10 Debug|Win32
+		Win10 Debug|x64 = Win10 Debug|x64
+		Win10 Release|Arm = Win10 Release|Arm
+		Win10 Release|Win32 = Win10 Release|Win32
+		Win10 Release|x64 = Win10 Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Arm.ActiveCfg = Win10 Debug|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Arm.Build.0 = Win10 Debug|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Arm.Deploy.0 = Win10 Debug|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Win32.ActiveCfg = Win10 Debug|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Win32.Build.0 = Win10 Debug|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|Win32.Deploy.0 = Win10 Debug|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|x64.ActiveCfg = Win10 Debug|x64
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|x64.Build.0 = Win10 Debug|x64
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Debug|x64.Deploy.0 = Win10 Debug|x64
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Arm.ActiveCfg = Win10 Release|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Arm.Build.0 = Win10 Release|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Arm.Deploy.0 = Win10 Release|Arm
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Win32.ActiveCfg = Win10 Release|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Win32.Build.0 = Win10 Release|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|Win32.Deploy.0 = Win10 Release|Win32
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|x64.ActiveCfg = Win10 Release|x64
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|x64.Build.0 = Win10 Release|x64
+		{105EA485-B9B6-48AE-B8B0-96BBEA575973}.Win10 Release|x64.Deploy.0 = Win10 Release|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Arm.ActiveCfg = Win10 Debug|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Arm.Build.0 = Win10 Debug|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Arm.Deploy.0 = Win10 Debug|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Win32.ActiveCfg = Win10 Debug|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Win32.Build.0 = Win10 Debug|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|Win32.Deploy.0 = Win10 Debug|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|x64.ActiveCfg = Win10 Debug|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|x64.Build.0 = Win10 Debug|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Debug|x64.Deploy.0 = Win10 Debug|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Arm.ActiveCfg = Win10 Release|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Arm.Build.0 = Win10 Release|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Arm.Deploy.0 = Win10 Release|Arm
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Win32.ActiveCfg = Win10 Release|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Win32.Build.0 = Win10 Release|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|Win32.Deploy.0 = Win10 Release|Win32
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|x64.ActiveCfg = Win10 Release|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|x64.Build.0 = Win10 Release|x64
+		{956B060D-1055-4584-9CF4-9FE14C428545}.Win10 Release|x64.Deploy.0 = Win10 Release|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Arm.ActiveCfg = Win10 Debug|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Arm.Build.0 = Win10 Debug|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Arm.Deploy.0 = Win10 Debug|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Win32.ActiveCfg = Win10 Debug|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Win32.Build.0 = Win10 Debug|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|Win32.Deploy.0 = Win10 Debug|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|x64.ActiveCfg = Win10 Debug|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|x64.Build.0 = Win10 Debug|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Debug|x64.Deploy.0 = Win10 Debug|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Arm.ActiveCfg = Win10 Release|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Arm.Build.0 = Win10 Release|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Arm.Deploy.0 = Win10 Release|Arm
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Win32.ActiveCfg = Win10 Release|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Win32.Build.0 = Win10 Release|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|Win32.Deploy.0 = Win10 Release|Win32
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|x64.ActiveCfg = Win10 Release|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|x64.Build.0 = Win10 Release|x64
+		{C0A51792-1338-4294-ADAA-EDC4EE30CF05}.Win10 Release|x64.Deploy.0 = Win10 Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

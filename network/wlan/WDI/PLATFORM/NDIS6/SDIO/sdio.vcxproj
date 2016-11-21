@@ -1,0 +1,751 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Win10 Debug|Arm">
+      <Configuration>Win10 Debug</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Debug|Arm">
+      <Configuration>WinBlue Debug</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Debug|Arm">
+      <Configuration>Win8 Debug</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Release|Arm">
+      <Configuration>Win10 Release</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Release|Arm">
+      <Configuration>WinBlue Release</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Release|Arm">
+      <Configuration>Win8 Release</Configuration>
+      <Platform>Arm</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Debug|Win32">
+      <Configuration>Win10 Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Debug|Win32">
+      <Configuration>WinBlue Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Debug|Win32">
+      <Configuration>Win8 Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Debug|Win32">
+      <Configuration>Win7 Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Vista Debug|Win32">
+      <Configuration>Vista Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Release|Win32">
+      <Configuration>Win10 Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Release|Win32">
+      <Configuration>WinBlue Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Release|Win32">
+      <Configuration>Win8 Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Release|Win32">
+      <Configuration>Win7 Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Vista Release|Win32">
+      <Configuration>Vista Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Debug|x64">
+      <Configuration>Win10 Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Debug|x64">
+      <Configuration>WinBlue Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Debug|x64">
+      <Configuration>Win8 Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Debug|x64">
+      <Configuration>Win7 Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Vista Debug|x64">
+      <Configuration>Vista Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Release|x64">
+      <Configuration>Win10 Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinBlue Release|x64">
+      <Configuration>WinBlue Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win8 Release|x64">
+      <Configuration>Win8 Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Release|x64">
+      <Configuration>Win7 Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Vista Release|x64">
+      <Configuration>Vista Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="PropertySheets">
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <TARGETNAME>rtwlans</TARGETNAME>
+    <Configuration>Win8 Debug</Configuration>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="PropertySheets">
+    <ConversionToolVersion>1.0</ConversionToolVersion>
+    <BUILD_ALT_DIR>$(Configuration.Replace(' ',''))</BUILD_ALT_DIR>
+    <IntDir Condition="'$(Platform)'!='Win32'">$(BUILD_ALT_DIR)\$(Platform)\</IntDir>
+    <IntDir Condition="'$(Platform)'=='Win32'">
+    </IntDir>
+    <OutDir>$(SolutionDir)\DrvBin\$(Configuration)\$(Platform)</OutDir>
+  </PropertyGroup>
+  <ImportGroup Label="PreConfiguration">
+    <Import Project="$(VCTargetsPath)\WDKConversion\PreConfiguration.props" />
+  </ImportGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{105EA485-B9B6-48AE-B8B0-96BBEA575973}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Arm'">
+    <TargetVersion>
+    </TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>true</SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Debug|Arm'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Arm'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Arm'">
+    <TargetVersion>
+    </TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>
+    </SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Release|Arm'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Arm'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>
+    </SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Debug|Win32'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Win32'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">
+    <TargetVersion>Win7</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Vista Debug|Win32'">
+    <TargetVersion>Vista</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>true</SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Release|Win32'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Win32'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">
+    <TargetVersion>Win7</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Vista Release|Win32'">
+    <TargetVersion>Vista</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>true</SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Debug|x64'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|x64'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">
+    <TargetVersion>Win7</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Vista Debug|x64'">
+    <TargetVersion>Vista</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <SupportsPackaging>true</SupportsPackaging>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WinBlue Release|x64'">
+    <TargetVersion>WindowsV6.3</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Release|x64'">
+    <TargetVersion>Win8</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
+    <TargetVersion>Win7</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Vista Release|x64'">
+    <TargetVersion>Vista</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebuggerFlavor Condition="'$(IsKernelModeToolset)'=='true'">DbgengKernelDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition="'$(IsUserModeToolset)'=='true'">DbgengRemoteDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <TargetExt>.sys</TargetExt>
+    <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
+    <EnableInf2cat>true</EnableInf2cat>
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <Inf2CatVerbose>true</Inf2CatVerbose>
+    <Inf2CatNoCatalog>false</Inf2CatNoCatalog>
+    <Inf2CatWindowsVersionList>10_x86;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <ApiValidator_Enable>true</ApiValidator_Enable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
+    <EnableInf2cat>true</EnableInf2cat>
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+    <TargetExt>.sys</TargetExt>
+    <Inf2CatWindowsVersionList>10_X86;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Arm'">
+    <TargetExt>.sys</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(VC_ReferencesPath_arm);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_arm);$(WindowsSDK_LibraryPath_arm);$(NETFXKitsDir)Lib\um\arm</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_arm);</ExcludePath>
+    <EnableInf2cat>false</EnableInf2cat>
+    <Inf2CatWindowsVersionList>6_3_ARM;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Arm'">
+    <TargetExt>.sys</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(VC_ReferencesPath_arm);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_arm);$(WindowsSDK_LibraryPath_arm);$(NETFXKitsDir)Lib\um\arm</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_arm);</ExcludePath>
+    <EnableInf2cat>false</EnableInf2cat>
+    <Inf2CatWindowsVersionList>6_3_Arm;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+    <EnableInf2cat>true</EnableInf2cat>
+    <Inf2CatWindowsVersionList>10_x64;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <TargetExt>.sys</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <TargetExt>.sys</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryWPath>$(WindowsSDK_MetadataPath);</LibraryWPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
+    <EnableInf2cat>true</EnableInf2cat>
+    <Inf2CatWindowsVersionList>10_x64;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\NdisComm.lib;$(SolutionDir)\LIB\x86\hal.lib;$(SolutionDir)\LIB\x86\rtklibcom.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ndis.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x86)km\x86\sdbus.lib;$(WindowsSDK_LibraryPath_x86)km\x86\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+      <Driver>
+      </Driver>
+      <TreatLinkerWarningAsErrors>
+      </TreatLinkerWarningAsErrors>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <LinkStatus>
+      </LinkStatus>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>_X86_;DBG;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <WppEnabled>true</WppEnabled>
+      <WppMinimalRebuildFromTracking>true</WppMinimalRebuildFromTracking>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>_X86_;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <WppEnabled>true</WppEnabled>
+      <DebugInformationFormat>None</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\NdisComm.lib;$(SolutionDir)\LIB\x86\hal.lib;$(SolutionDir)\LIB\x86\rtklibcom.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ndis.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x86)km\x86\sdbus.lib;$(WindowsSDK_LibraryPath_x86)km\x86\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+      <GenerateDebugInformation>
+      </GenerateDebugInformation>
+      <GenerateMapFile>
+      </GenerateMapFile>
+      <AssemblyDebug>
+      </AssemblyDebug>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Arm'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>_ARM_;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <WppEnabled>true</WppEnabled>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\NdisComm.lib;$(SolutionDir)\LIB\Arm\hal.lib;$(SolutionDir)\LIB\Arm\rtklibcom.lib;$(WindowsSDK_LibraryPath_arm)km\arm\ndis.lib;$(WindowsSDK_LibraryPath_arm)km\arm\ntoskrnl.lib;$(WindowsSDK_LibraryPath_arm)km\arm\sdbus.lib;$(WindowsSDK_LibraryPath_arm)km\arm\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Arm'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>_ARM_;DBG;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <WppEnabled>true</WppEnabled>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\NdisComm.lib;$(SolutionDir)\LIB\Arm\hal.lib;$(SolutionDir)\LIB\Arm\rtklibcom.lib;$(WindowsSDK_LibraryPath_arm)km\arm\ndis.lib;$(WindowsSDK_LibraryPath_arm)km\arm\ntoskrnl.lib;$(WindowsSDK_LibraryPath_arm)km\arm\sdbus.lib;$(WindowsSDK_LibraryPath_arm)km\arm\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <ClCompile>
+      <WppEnabled>true</WppEnabled>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>_X64_;DBG;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\NdisComm.lib;$(SolutionDir)\LIB\x64\hal.lib;$(SolutionDir)\LIB\x64\rtklibcom.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ndis.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x64)km\x64\sdbus.lib;$(WindowsSDK_LibraryPath_x64)km\x64\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>_X64_;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+      <UseFullPaths>false</UseFullPaths>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <WppEnabled>true</WppEnabled>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\NdisComm.lib;$(SolutionDir)\LIB\x64\hal.lib;$(SolutionDir)\LIB\x64\rtklibcom.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ndis.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x64)km\x64\sdbus.lib;$(WindowsSDK_LibraryPath_x64)km\x64\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <!-- Needed by any VcxProj -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Label="UserMacros" />
+  <!-- The WrappedTaskItems label is used by the conversion tool to identify the location where items 
+        associated with wrapped tasks will reside.-->
+  <ItemGroup Label="WrappedTaskItems">
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <PackagePath Include="$(OutDir)" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+    </PackagePath>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Arm'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Arm'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\arm\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Arm'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x86\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x86\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Arm'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x86\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- We only add items (e.g. form ClSourceFiles) that do not already exist (e.g in the ClCompile list), this avoids duplication -->
+    <ClCompile Include="..\N62C_AP.c" />
+    <ClCompile Include="..\N62C_Init.c" />
+    <ClCompile Include="..\N62C_Oids.c" />
+    <ClCompile Include="..\N62C_Port.c" />
+    <ClCompile Include="..\N62C_QueryOID.c" />
+    <ClCompile Include="..\N62C_QuerySetOID.c" />
+    <ClCompile Include="..\N62C_SetOID.c" />
+    <ClCompile Include="..\N63C_Oids.c" />
+    <ClCompile Include="..\N63C_SendAction.c" />
+    <ClCompile Include="..\N6C_Init.c" />
+    <ClCompile Include="..\N6C_OidQuery.c" />
+    <ClCompile Include="..\N6C_Oids.c" />
+    <ClCompile Include="..\N6C_OidSet.c" />
+    <ClCompile Include="..\N6C_PlatformDef.c" />
+    <ClCompile Include="..\N6C_Req.c" />
+    <ClCompile Include="..\Ndis6Common.c" />
+    <ClCompile Include="..\new.cpp" />
+    <ClCompile Include="..\WDI_Cmds.c" />
+    <ClCompile Include="..\WDI_Common.c" />
+    <ClCompile Include="..\WDI_Extension.c" />
+    <ClCompile Include="..\WDI_SendAction.c" />
+    <ClCompile Include="..\WDI_Xlat.c" />
+    <ClCompile Include="@(ClSourceFiles)" Exclude="@(ClCompile)" />
+    <ClCompile Include="Mp_Req.c" />
+    <ClCompile Include="N6SdioPlatformWindows.c" />
+    <ClCompile Include="N6Sdio_dbg.c" />
+    <ClCompile Include="N6Sdio_DrvIF.c" />
+    <ClCompile Include="N6Sdio_main.c" />
+    <ClCompile Include="N6Sdio_mechanism.c" />
+    <ClCompile Include="N6Sdio_PlatformSdioWdf.c" />
+    <ClCompile Include="N6Sdio_PlatformSdioWdm.c" />
+    <ClCompile Include="N6Sdio_WdiMain.c" />
+    <ResourceCompile Include="@(RcSourceFiles)" Exclude="@(ResourceCompile)" />
+    <Midl Include="@(IdlSourceFiles)" Exclude="@(Midl)" />
+    <MessageCompile Include="@(McSourceFiles)" Exclude="@(MessageCompile)" />
+    <MASM Include="@(AsmSourceFiles)" Exclude="@(MASM)" />
+    <GenerateBmf Include="@(MofSourceFiles)" Exclude="@(GenerateBmf)" />
+  </ItemGroup>
+  <!-- Set default environment variables, e.g. for stampinf -->
+  <ItemGroup>
+    <BuildMacro Include="SDK_INC_PATH">
+      <Value>$(KIT_SHARED_INC_PATH)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+  <!-- Necessary to pick up propper files from local directory when in the IDE-->
+  <ItemGroup>
+    <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
+    <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
+    <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <!-- /Necessary to pick up propper files from local directory when in the IDE-->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

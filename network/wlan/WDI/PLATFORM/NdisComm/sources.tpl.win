@@ -1,0 +1,29 @@
+TARGETNAME=NdisComm
+TARGETPATH=.
+TARGETTYPE=LIBRARY
+
+PRECOMPILED_INCLUDE=Mp_Precomp.h
+PRECOMPILED_PCH=precomp.pch
+PRECOMPILED_OBJ=precomp.obj
+
+#
+# IC dependent directories are defined in 
+# the environment variable HAL_INC_DIRS.
+#
+INCLUDES=	\
+		.;		\
+		..;		\
+		$(SRC_ROOT)\Header;		\
+		$(SRC_ROOT)\COMMON;		\
+		$(SRC_ROOT)\Platform\NdisComm;		\
+		$(HAL_INC_DIRS);					\
+		$(OMNIPEEK_INC_DIRS);	\
+
+#
+# OS and Bus dependent setting.
+#
+!include $(SRC_ROOT)\$(PLATFORM_INC)
+
+SOURCES = <!--TAG_REALTEK_SOURCE_FILES-->
+	
+
