@@ -4,7 +4,7 @@ These are the official Microsoft Windows Driver Kit (WDK) team driver code sampl
 ## Windows 10 driver development
 Use Visual Studio 2015 and Windows Driver Kit (WDK) 10 to build, test, and deploy your drivers. With Windows 10, the driver development environment is integrated into Visual Studio. To get started, download the driver development kits and tools for Windows 10.
 
-[Download kits and tools for Windows 10](https://msdn.microsoft.com/en-us/windows/hardware/dn913721.aspx "Download kits and tools for Windows 10")
+[Download the WDK, WinDbg, and associated tools](https://developer.microsoft.com/en-us/windows/hardware/windows-driver-kit "Download the WDK, WinDbg, and associated tools for Windows 10")
 
 ### Windows 10 Driver Kit (WDK)
 Take a look at the compilation of the new and changed driver-related content for Windows 10. Areas of improvement include camera, print, display, Near Field Communication (NFC), WLAN, Bluetooth, and more.
