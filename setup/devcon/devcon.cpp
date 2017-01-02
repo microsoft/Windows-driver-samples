@@ -14,6 +14,8 @@ Abstract:
 --*/
 
 #include "devcon.h"
+#include <io.h>
+#include <fcntl.h>
 
 struct IdEntry {
     LPCTSTR String;     // string looking for
@@ -99,7 +101,7 @@ Return Value:
     int c;
 
     for(c=0;c<pad;c++) {
-        fputs("    ",stdout);
+        _fputts(TEXT("    "), stdout);
     }
 }
 
@@ -1076,6 +1078,12 @@ Return Value:
     // -r            - auto reboot
     // -f            - force operation
     //
+
+#ifdef UNICODE
+    _setmode(_fileno(stdout), _O_WTEXT);
+    _setmode(_fileno(stderr), _O_WTEXT);
+#endif
+
     baseName = _tcsrchr(argv[0],TEXT('\\'));
     if(!baseName) {
         baseName = argv[0];

@@ -102,7 +102,7 @@ Return Value:
         for(dispIndex = 0;DispatchTable[dispIndex].cmd;dispIndex++) {
             if(DispatchTable[dispIndex].shortHelp) {
                 FormatToStream(stdout,DispatchTable[dispIndex].shortHelp,DispatchTable[dispIndex].cmd);
-                fputs("\n",stdout);
+                _fputts(TEXT("\n"), stdout);
             }
         }
     }
