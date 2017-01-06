@@ -1,21 +1,21 @@
 
 /**************************************************************************
 
-    A/V Stream Camera Sample
+A/V Stream Camera Sample
 
-    Copyright (c) 2015, Microsoft Corporation.
+Copyright (c) 2015, Microsoft Corporation.
 
-    File:
+File:
 
-        Common.h
+Common.h
 
-    Abstract:
+Abstract:
 
-        Common project header.
+Common project header.
 
-    History:
+History:
 
-        created 02/18/2015
+created 02/18/2015
 
 **************************************************************************/
 
@@ -31,8 +31,6 @@
 #include <unknown.h>
 #include <ks.h>
 #include <ksmedia.h>
-#include <kcom.h>
-#include <stdunk.h>
 #include <ntstrsafe.h>
 #define NOBITMAP
 #include <mmreg.h>
@@ -43,149 +41,144 @@
 #include "CustomProperties.h"
 #include "Dbg.h"
 
+#ifndef _NEW_DELETE_OPERATORS_
+#define _NEW_DELETE_OPERATORS_
+
 /*************************************************
 
-    Add definitions that are missing for C++14.
+Add definitions that are missing for C++14.
 
 *************************************************/
 
+PVOID operator new
+(
+    size_t          iSize,
+    _When_((poolType & NonPagedPoolMustSucceed) != 0,
+        __drv_reportError("Must succeed pool allocations are forbidden. "
+            "Allocation failures cause a system crash"))
+    POOL_TYPE       poolType
+    );
+
+PVOID operator new
+(
+    size_t          iSize,
+    _When_((poolType & NonPagedPoolMustSucceed) != 0,
+        __drv_reportError("Must succeed pool allocations are forbidden. "
+            "Allocation failures cause a system crash"))
+    POOL_TYPE       poolType,
+    ULONG           tag
+    );
+
 /*++
 
 Routine Description:
 
-    Array new() operator for creating objects with a specified allocation tag.
+Array new() operator for creating objects with a specified allocation tag.
 
 Arguments:
 
-    iSize -
-        The size of the entire allocation.
+iSize -
+The size of the entire allocation.
 
-    poolType -
-        The type of allocation.  Ex: PagedPool or NonPagedPoolNx
+poolType -
+The type of allocation.  Ex: PagedPool or NonPagedPoolNx
 
-    tag -
-        A 4-byte allocation identifier.
+tag -
+A 4-byte allocation identifier.
 
 Return Value:
 
-    None
+None
 
 --*/
-inline 
-PVOID 
+PVOID
 operator new[](
-	size_t          iSize,
-	_When_((poolType & NonPagedPoolMustSucceed) != 0,
-		__drv_reportError("Must succeed pool allocations are forbidden. "
-			"Allocation failures cause a system crash"))
-	POOL_TYPE       poolType,
-	ULONG           tag
-)
-{
-	PVOID result = ExAllocatePoolWithTag(poolType, iSize, tag);
-
-	if (result)
-	{
-		RtlZeroMemory(result, iSize);
-	}
-
-	return result;
-}
+    size_t          iSize,
+    _When_((poolType & NonPagedPoolMustSucceed) != 0,
+        __drv_reportError("Must succeed pool allocations are forbidden. "
+            "Allocation failures cause a system crash"))
+    POOL_TYPE       poolType,
+    ULONG           tag
+    );
 
 /*++
 
 Routine Description:
 
-    Array delete() operator.
+Array delete() operator.
 
 Arguments:
 
-    pVoid -
-        The memory to free.
+pVoid -
+The memory to free.
 
 Return Value:
 
-    None
+None
 
 --*/
-inline 
-void 
-__cdecl 
+void
+__cdecl
 operator delete[](
-	PVOID pVoid
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
+    PVOID pVoid
+    );
 
 /*++
 
 Routine Description:
 
-    Sized delete() operator.
+Sized delete() operator.
 
 Arguments:
 
-    pVoid -
-        The memory to free.
+pVoid -
+The memory to free.
 
-    size -
-        The size of the memory to free.
+size -
+The size of the memory to free.
 
 Return Value:
 
-    None
+None
 
 --*/
-inline void __cdecl operator delete
+void __cdecl operator delete
 (
-	void *pVoid,
-	size_t /*size*/
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
+    void *pVoid,
+    size_t /*size*/
+    );
 
 /*++
 
 Routine Description:
 
-    Sized delete[]() operator.
+Sized delete[]() operator.
 
 Arguments:
 
-    pVoid -
-        The memory to free.
+pVoid -
+The memory to free.
 
-    size -
-        The size of the memory to free.
+size -
+The size of the memory to free.
 
 Return Value:
 
-    None
+None
 
 --*/
-inline void __cdecl operator delete[]
+void __cdecl operator delete[]
 (
-	void *pVoid,
-	size_t /*size*/
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
+    void *pVoid,
+    size_t /*size*/
+    );
+
+#endif // _NEW_DELETE_OPERATORS_
+
 
 /*************************************************
 
-    Misc Definitions
+Misc Definitions
 
 *************************************************/
 #pragma warning (disable : 4100 4127 4131 4189 4701 4706)
@@ -349,7 +342,7 @@ DEFINE_GUIDSTRUCT("32595559-0000-0010-8000-00AA00389B71", KSDATAFORMAT_SUBTYPE_Y
 
 /*************************************************
 
-    Externed information
+Externed information
 
 *************************************************/
 //
@@ -373,7 +366,7 @@ AvsCameraFilterDescriptorFFC;
 extern
 const
 GUID
-AvsCameraFilterCategories [CAPTURE_FILTER_CATEGORIES_COUNT];
+AvsCameraFilterCategories[CAPTURE_FILTER_CATEGORIES_COUNT];
 
 //
 // capture.cpp externs:
@@ -400,7 +393,7 @@ ImageCapturePinDispatch;
 
 /*************************************************
 
-    Enums / Typedefs
+Enums / Typedefs
 
 *************************************************/
 
@@ -424,20 +417,20 @@ typedef enum _PIN_MODE
 //Panel surface bits 115:118
 enum AcpiPldRotation
 {
-    AcpiPldRotation0    = 0,
-    AcpiPldRotation45   = 1,
-    AcpiPldRotation90   = 2,
-    AcpiPldRotation135  = 3,
-    AcpiPldRotation180  = 4,
-    AcpiPldRotation225  = 5,
-    AcpiPldRotation270  = 6,
-    AcpiPldRotation315  = 7,
+    AcpiPldRotation0 = 0,
+    AcpiPldRotation45 = 1,
+    AcpiPldRotation90 = 2,
+    AcpiPldRotation135 = 3,
+    AcpiPldRotation180 = 4,
+    AcpiPldRotation225 = 5,
+    AcpiPldRotation270 = 6,
+    AcpiPldRotation315 = 7,
 };
 
 
 /*************************************************
 
-    Class Definitions
+Class Definitions
 
 *************************************************/
 
@@ -456,19 +449,19 @@ struct ISP_FRAME_SETTINGS
     ULONGLONG FlashMode;
     ULONG FlashValue;       //  Adjustable power setting (0-100)
     BOOLEAN bPhotoConfirmation;
-} ;
+};
 
 struct SOC_CAP_WITH_STEPPING
 {
     KSCAMERA_PERFRAMESETTING_CAP_ITEM_HEADER    Hdr;
     KSPROPERTY_STEPPING_LONG                    Stepping;
-} ;
+};
 
 struct SOC_CAP_WITH_STEPPING_LONGLONG
 {
     KSCAMERA_PERFRAMESETTING_CAP_ITEM_HEADER    Hdr;
     KSPROPERTY_STEPPING_LONGLONG                Stepping;
-} ;
+};
 
 //
 //  ICapturePin:
@@ -483,10 +476,10 @@ class ICapturePin
 public:
 
     virtual
-    NTSTATUS
-    CompleteMapping(
-        _In_ PKSSTREAM_POINTER Clone=nullptr
-    ) = 0;
+        NTSTATUS
+        CompleteMapping(
+            _In_ PKSSTREAM_POINTER Clone = nullptr
+        ) = 0;
 
 };
 
@@ -534,9 +527,9 @@ template <class T, class U>
 class CMetaRational : public U
 {
 public:
-    CMetaRational( T Num=1, T Denom=1 )
+    CMetaRational(T Num = 1, T Denom = 1)
     {
-        Set=TRUE;
+        Set = TRUE;
         Numerator = Num;
         Denominator = Denom;
     }
@@ -549,7 +542,7 @@ template <class T, class U>
 class CMetaPrimative : public U
 {
 public:
-    CMetaPrimative( T n )
+    CMetaPrimative(T n)
     {
         Set = TRUE;
         Value = n;
@@ -558,7 +551,7 @@ public:
 
 typedef CMetaPrimative<UINT16, METADATA_UINT16> CMetadataShort;
 typedef CMetaPrimative<UINT32, METADATA_UINT32> CMetadataLong;
-typedef CMetaPrimative<INT64,  METADATA_INT64>  CMetadataLongLong;
+typedef CMetaPrimative<INT64, METADATA_INT64>  CMetadataLongLong;
 typedef CMetaPrimative<UINT64, METADATA_UINT64> CMetadataULongLong;
 
 class CMetadataShortString : public METADATA_SHORTSTRING
@@ -568,8 +561,8 @@ public:
         _In_z_ const CHAR *str
     )
     {
-        Length = (UINT32) min(strlen(str), sizeof(String));
-        strncpy_s( String, str, Length );
+        Length = (UINT32)min(strlen(str), sizeof(String));
+        strncpy_s(String, str, Length);
     }
 };
 
@@ -615,7 +608,7 @@ public:
         _In_    ULONG       FrameIndex,
         _In_    LONGLONG    Time
     )
-        : m_Index( FrameIndex )
+        : m_Index(FrameIndex)
         , m_Time(Time)
         , m_bRequired(TRUE)
     {}
@@ -623,23 +616,23 @@ public:
     PHOTOCONFIRMATION_INFO()
         : m_Index(0)
         , m_Time(0)
-        , m_bRequired( FALSE )
+        , m_bRequired(FALSE)
     {}
 
     BOOL
-    isRequired()
+        isRequired()
     {
         return m_bRequired;
     }
 
     ULONG
-    getIndex()
+        getIndex()
     {
         return m_Index;
     }
 
     LONGLONG
-    getTime()
+        getTime()
     {
         return m_Time;
     }
@@ -652,13 +645,13 @@ private:
 
 /*************************************************
 
-    Global Functions
+Global Functions
 
 *************************************************/
 
 /*************************************************
 
-    Internal Includes
+Internal Includes
 
 *************************************************/
 
