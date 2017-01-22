@@ -118,6 +118,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE /* hInstance */, DWORD dwReason, LPVOID
 
 
 // {secret}
+__control_entrypoint(DllExport)
 STDAPI DllCanUnloadNow(void)
 {
     return _AtlModule.DllCanUnloadNow();
@@ -125,13 +126,15 @@ STDAPI DllCanUnloadNow(void)
 
 
 // {secret}
-STDAPI DllGetClassObject(_In_ REFCLSID rclsid,_In_  REFIID riid, _Outptr_ LPVOID* ppv)
+_Check_return_
+STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID FAR* ppv)
 {
     return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
 
 // {secret}
+__control_entrypoint(DllExport)
 STDAPI DllRegisterServer(void)
 {
     // registers object, typelib and all interfaces in typelib
@@ -141,6 +144,7 @@ STDAPI DllRegisterServer(void)
 
 
 // {secret}
+__control_entrypoint(DllExport)
 STDAPI DllUnregisterServer(void)
 {
     HRESULT hr = _AtlModule.DllUnregisterServer();

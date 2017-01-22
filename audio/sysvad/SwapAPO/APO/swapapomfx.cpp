@@ -881,6 +881,7 @@ HRESULT CSwapAPOMFX::ValidateAndCacheConnectionInfo(UINT32 u32NumInputConnection
     f32InverseChannelCount = 1.0f/m_u32SamplesPerFrame;
     for (UINT16 u16Index=0; u16Index<m_u32SamplesPerFrame; u16Index++)
     {
+#pragma warning(suppress:6386)
         m_pf32Coefficients[u16Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u16Index;
     }
 
