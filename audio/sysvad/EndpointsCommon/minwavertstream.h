@@ -253,9 +253,9 @@ private:
     
     NTSTATUS GetPositions
     (
-        _Out_ ULONGLONG *pullLinearBufferPosition,
-        _Out_ ULONGLONG *pullPresentationPosition,
-        _Out_ LARGE_INTEGER *_pliQPCTime
+        _Out_opt_  ULONGLONG *      _pullLinearBufferPosition, 
+        _Out_opt_  ULONGLONG *      _pullPresentationPosition, 
+        _Out_opt_  LARGE_INTEGER *  _pliQPCTime
     );
 
 #ifdef SYSVAD_BTH_BYPASS

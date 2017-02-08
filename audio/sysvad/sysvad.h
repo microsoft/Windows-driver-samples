@@ -23,6 +23,7 @@ Abstract:
 #include <wdfminiport.h>
 #include <MsApoFxProxy.h>
 #include <Ntstrsafe.h>
+#include "NewDelete.h"
 
 //=============================================================================
 // Defines

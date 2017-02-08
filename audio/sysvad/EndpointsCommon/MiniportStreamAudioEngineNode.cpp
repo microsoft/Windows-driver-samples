@@ -855,9 +855,12 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
 
 //linear and presentation positions
 #pragma code_seg()
-NTSTATUS CMiniportWaveRTStream::GetPositions(_Out_  ULONGLONG *_pullLinearBufferPosition, _Out_  ULONGLONG *_pullPresentationPosition, LARGE_INTEGER *_pliQPCTime)
+NTSTATUS CMiniportWaveRTStream::GetPositions(
+    _Out_opt_  ULONGLONG *      _pullLinearBufferPosition, 
+    _Out_opt_  ULONGLONG *      _pullPresentationPosition, 
+    _Out_opt_  LARGE_INTEGER *  _pliQPCTime
+    )
 {
-    ASSERT (_pullLinearBufferPosition);
     DPF_ENTER(("[CMiniportWaveRTStream::GetPositions]"));
 
     NTSTATUS        ntStatus;
@@ -993,4 +996,3 @@ NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ 
 
     return ntStatus;
 }
-

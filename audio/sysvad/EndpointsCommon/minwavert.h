@@ -58,7 +58,7 @@ public:
     VOID Stop();
 
     _IRQL_requires_min_(DISPATCH_LEVEL)
-    VOID DpcRoutine(_In_ LONGLONG PeformanceCounter, _In_ LONGLONG PerformanceFrequency);
+    VOID DpcRoutine(_In_ LONGLONG PerformanceCounter, _In_ LONGLONG PerformanceFrequency);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
     NTSTATUS GetReadPacket(_In_ ULONG PacketsPerWaveRtBuffer, _In_  ULONG WaveRtBufferSize, _Out_writes_(WaveRtBufferSize) BYTE *WaveRtBuffer, _Out_ ULONG *PacketNumber, _Out_ ULONGLONG *PerformanceCount, _Out_ BOOL *MoreData);
@@ -297,9 +297,9 @@ public:
     );   
 
 public:
-    VOID DpcRoutine(LONGLONG PeformanceCounter, LONGLONG PerformanceFrequency)
+    VOID DpcRoutine(LONGLONG PerformanceCounter, LONGLONG PerformanceFrequency)
     {
-        m_KeywordDetector.DpcRoutine(PeformanceCounter, PerformanceFrequency);
+        m_KeywordDetector.DpcRoutine(PerformanceCounter, PerformanceFrequency);
     }
 
     NTSTATUS PropertyHandlerEffectListRequest
