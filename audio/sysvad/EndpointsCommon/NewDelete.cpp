@@ -124,16 +124,19 @@ void __cdecl operator delete
  *****************************************************************************
  * Basic Delete function.
  */
-void __cdecl operator delete
-(
-    PVOID pVoid
-)
-{
-    if (pVoid)
-    {
-        ExFreePoolWithTag(pVoid, SYSVAD_POOLTAG);
-    }
-}
+/* Commented out as "void __cdecl operator delete(void *) is already defined 
+ * in stdunk.lib
+ */
+// void __cdecl operator delete
+// (
+//     PVOID pVoid
+// )
+// {
+//     if (pVoid)
+//     {
+//         ExFreePoolWithTag(pVoid, SYSVAD_POOLTAG);
+//     }
+// }
 
 
 /*****************************************************************************
@@ -172,3 +175,4 @@ void __cdecl operator delete[]
     }
 }
 
+#endif _NEW_DELETE_OPERATORS_
