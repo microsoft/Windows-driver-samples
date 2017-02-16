@@ -535,6 +535,8 @@ NT status code.
 
     NTSTATUS    ntStatus = STATUS_INVALID_DEVICE_REQUEST;
     ULONG       nPinId = (ULONG)-1;
+    KFLOATING_SAVE saveData;
+    NTSTATUS fstatus;
 
     if (PropertyRequest->InstanceSize >= sizeof(ULONG))
     {
@@ -569,16 +571,27 @@ NT status code.
                         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY)
                         {
                             LONG* micSensitivity = (LONG*)PropertyRequest->Value;
-                            // Return microphone sensitivity information.
-                            *micSensitivity = FloatToFixedPoint16_16(MICARRAY_SENSITIVITY); // convert float dBFS to fixed point arithmetic
+
+                            fstatus = KeSaveFloatingPointState(&saveData);
+                            if (NT_SUCCESS(fstatus))
+                            {
+                                // Return microphone sensitivity information.
+                                *micSensitivity = FloatToFixedPoint16_16(MICARRAY_SENSITIVITY); // convert float dBFS to fixed point arithmetic
+                                KeRestoreFloatingPointState(&saveData);
+                            }
                             PropertyRequest->ValueSize = sizeof(LONG);
                             ntStatus = STATUS_SUCCESS;
                         }
                         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
                         {
                             LONG* micSNR = (LONG*)PropertyRequest->Value;
-                            // Return microphone SNR information.
-                            *micSNR = FloatToFixedPoint16_16(MICARRAY_SNR); // convert float dB to fixed point arithmetic
+                            fstatus = KeSaveFloatingPointState(&saveData);
+                            if (NT_SUCCESS(fstatus))
+                            {
+                                // Return microphone SNR information.
+                                *micSNR = FloatToFixedPoint16_16(MICARRAY_SNR); // convert float dB to fixed point arithmetic
+                                KeRestoreFloatingPointState(&saveData);
+                            }
                             ntStatus = STATUS_SUCCESS;
                         }
                     }
