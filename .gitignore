@@ -193,3 +193,4 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 /audio/sysvad/sysvad.VC.db
+*.opendb
