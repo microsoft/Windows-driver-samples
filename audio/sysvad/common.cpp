@@ -3754,7 +3754,7 @@ BthHfpDevice::Init
         Done);
     
     //
-    // Make a copy of the symbolic link list.
+    // Make a copy of the symbolic link name.
     //
     m_SymbolicLinkName.MaximumLength = SymbolicLinkName->MaximumLength;
     m_SymbolicLinkName.Length = SymbolicLinkName->Length;
