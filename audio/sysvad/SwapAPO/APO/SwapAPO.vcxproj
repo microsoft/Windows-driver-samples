@@ -137,6 +137,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <RuntimeLibrary />
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -149,6 +150,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -159,6 +161,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <RuntimeLibrary />
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -171,6 +174,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -181,6 +185,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <RuntimeLibrary />
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -193,6 +198,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -203,6 +209,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\inc;..\..\</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <RuntimeLibrary />
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -215,6 +222,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

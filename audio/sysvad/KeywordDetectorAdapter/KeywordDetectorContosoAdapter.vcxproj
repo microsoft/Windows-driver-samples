@@ -115,8 +115,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -139,8 +139,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -163,8 +163,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -187,8 +187,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='false'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UseDebugLibraries)'=='true'">MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDLL;_USRDLL;UNICODE;_UNICODE</PreprocessorDefinitions>

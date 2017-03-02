@@ -784,7 +784,6 @@ Done:
 //
 // ISSUE-2014/10/4 Will this work correctly across pause/play?
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetReadPacket
 (
     _Out_ ULONG     *PacketNumber,
@@ -896,7 +895,6 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
 }
 
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::SetWritePacket
 (
     _In_ ULONG      PacketNumber,
@@ -989,7 +987,6 @@ NTSTATUS CMiniportWaveRTStream::SetWritePacket
 
 //=============================================================================
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 (
     _Out_ KSAUDIO_PRESENTATION_POSITION *pPresentationPosition
@@ -1008,7 +1005,6 @@ NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 
 //=============================================================================
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetPacketCount
 (
     _Out_ ULONG *pPacketCount
@@ -1529,8 +1525,6 @@ TimerNotifyRT
 
     _IRQL_limited_to_(DISPATCH_LEVEL);
 
-    qpc = KeQueryPerformanceCounter(&qpcFrequency);
-
     CMiniportWaveRTStream* _this = (CMiniportWaveRTStream*)DeferredContext;
     
     if (NULL == _this)
@@ -1540,6 +1534,9 @@ TimerNotifyRT
 
     KIRQL oldIrql;
     KeAcquireSpinLock(&_this->m_PositionSpinLock, &oldIrql);
+
+    qpc = KeQueryPerformanceCounter(&qpcFrequency);
+
     // Convert ticks to 100ns units.
     LONGLONG  hnsCurrentTime = KSCONVERT_PERFORMANCE_TIME(_this->m_ullPerformanceCounterFrequency.QuadPart, qpc);
 

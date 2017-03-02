@@ -335,7 +335,7 @@ class CAdapterCommon :
     (
         _In_ PCWSTR                                                 ReferenceString,
         _In_ ULONG                                                  cPropertyCount,
-        _In_reads_(cPropertyCount) const SYSVAD_DEVPROPERTY        *pProperties,
+        _In_reads_opt_(cPropertyCount) const SYSVAD_DEVPROPERTY        *pProperties,
         _Out_ _At_(AudioSymbolicLinkName->Buffer, __drv_allocatesMem(Mem)) PUNICODE_STRING AudioSymbolicLinkName
     );
 };
@@ -771,27 +771,30 @@ NTSTATUS SysvadIoSetDeviceInterfacePropertyDataMultiple
 (
     _In_ PUNICODE_STRING                                        SymbolicLinkName,
     _In_ ULONG                                                  cPropertyCount,
-    _In_reads_(cPropertyCount) const SYSVAD_DEVPROPERTY        *pProperties
+    _In_reads_opt_(cPropertyCount) const SYSVAD_DEVPROPERTY        *pProperties
 )
 {
     NTSTATUS ntStatus;
 
     PAGED_CODE();
 
-    for (ULONG i = 0; i < cPropertyCount; i++)
+    if (pProperties)
     {
-        ntStatus = IoSetDeviceInterfacePropertyData(
-            SymbolicLinkName,
-            pProperties[i].PropertyKey,
-            LOCALE_NEUTRAL,
-            PLUGPLAY_PROPERTY_PERSISTENT,
-            pProperties[i].Type,
-            pProperties[i].BufferSize,
-            pProperties[i].Buffer);
-
-        if (!NT_SUCCESS(ntStatus))
+        for (ULONG i = 0; i < cPropertyCount; i++)
         {
-            return ntStatus;
+            ntStatus = IoSetDeviceInterfacePropertyData(
+                SymbolicLinkName,
+                pProperties[i].PropertyKey,
+                LOCALE_NEUTRAL,
+                PLUGPLAY_PROPERTY_PERSISTENT,
+                pProperties[i].Type,
+                pProperties[i].BufferSize,
+                pProperties[i].Buffer);
+
+            if (!NT_SUCCESS(ntStatus))
+            {
+                return ntStatus;
+            }
         }
     }
 
@@ -1885,7 +1888,7 @@ CAdapterCommon::CreateAudioInterfaceWithProperties
 (
     _In_ PCWSTR ReferenceString,
     _In_ ULONG cPropertyCount,
-    _In_reads_(cPropertyCount) const SYSVAD_DEVPROPERTY *pProperties,
+    _In_reads_opt_(cPropertyCount) const SYSVAD_DEVPROPERTY *pProperties,
     _Out_ _At_(AudioSymbolicLinkName->Buffer, __drv_allocatesMem(Mem)) PUNICODE_STRING AudioSymbolicLinkName
 )
 /*++
@@ -3137,6 +3140,8 @@ Return Value:
         goto Done;
     }
     
+    // bthWorkTask->L.Size is set to sizeof(BthHfpWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
     RtlZeroMemory(bthWorkTask, sizeof(*bthWorkTask));
     bthWorkTask->Action = eBthHfpTaskStart;
     InitializeListHead(&bthWorkTask->ListEntry);
@@ -3234,6 +3239,8 @@ Return Value:
         goto Done;
     }
     
+    // bthWorkTask->L.Size is set to sizeof(BthHfpWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
     RtlZeroMemory(bthWorkTask, sizeof(*bthWorkTask));
     bthWorkTask->Action = eBthHfpTaskStop;
     InitializeListHead(&bthWorkTask->ListEntry);
@@ -3747,7 +3754,7 @@ BthHfpDevice::Init
         Done);
     
     //
-    // Make a copy of the symbolic link list.
+    // Make a copy of the symbolic link name.
     //
     m_SymbolicLinkName.MaximumLength = SymbolicLinkName->MaximumLength;
     m_SymbolicLinkName.Length = SymbolicLinkName->Length;
@@ -6160,7 +6167,7 @@ BthHfpDevice::CreateCustomEndpointMinipair
         // Copy base minipair properties to new property list
         if (pBaseMinipair->TopoInterfacePropertyCount > 0)
         {
-            RtlCopyMemory(pProperties, pBaseMinipair->TopoInterfaceProperties, pBaseMinipair->TopoInterfacePropertyCount * sizeof(SYSVAD_DEVPROPERTY));
+            RtlCopyMemory(pProperties, pBaseMinipair->TopoInterfaceProperties, (cProperties - 1) * sizeof(SYSVAD_DEVPROPERTY));
         }
 
         // Add friendly name property to the list

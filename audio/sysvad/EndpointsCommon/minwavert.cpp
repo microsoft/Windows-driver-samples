@@ -2081,6 +2081,7 @@ CKeywordDetector::CKeywordDetector()
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 VOID CKeywordDetector::ResetDetector()
 {
     PAGED_CODE();
@@ -2089,7 +2090,8 @@ VOID CKeywordDetector::ResetDetector()
 }
 
 #pragma code_seg("PAGE")
-VOID CKeywordDetector::DownloadDetectorData(LONGLONG Data)
+_IRQL_requires_max_(PASSIVE_LEVEL)
+VOID CKeywordDetector::DownloadDetectorData(_In_ LONGLONG Data)
 {
     PAGED_CODE();
 
@@ -2097,6 +2099,7 @@ VOID CKeywordDetector::DownloadDetectorData(LONGLONG Data)
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 LONGLONG CKeywordDetector::GetDetectorData()
 {
     PAGED_CODE();
@@ -2105,6 +2108,7 @@ LONGLONG CKeywordDetector::GetDetectorData()
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 VOID CKeywordDetector::ResetFifo()
 {
     PAGED_CODE();
@@ -2122,7 +2126,8 @@ VOID CKeywordDetector::ResetFifo()
 }
 
 #pragma code_seg("PAGE")
-NTSTATUS CKeywordDetector::SetArmed(BOOL Arm)
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSTATUS CKeywordDetector::SetArmed(_In_ BOOL Arm)
 {
     PAGED_CODE();
 
@@ -2138,6 +2143,7 @@ NTSTATUS CKeywordDetector::SetArmed(BOOL Arm)
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 BOOL CKeywordDetector::GetArmed()
 {
     PAGED_CODE();
@@ -2146,6 +2152,7 @@ BOOL CKeywordDetector::GetArmed()
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 VOID CKeywordDetector::Run()
 {
     PAGED_CODE();
@@ -2157,6 +2164,7 @@ VOID CKeywordDetector::Run()
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 VOID CKeywordDetector::Stop()
 {
     PAGED_CODE();
@@ -2165,6 +2173,7 @@ VOID CKeywordDetector::Stop()
 }
 
 #pragma code_seg("PAGE")
+_IRQL_requires_max_(PASSIVE_LEVEL)
 VOID CKeywordDetector::StartBufferingStream()
 {
     LARGE_INTEGER qpc;
@@ -2182,7 +2191,8 @@ VOID CKeywordDetector::StartBufferingStream()
 }
 
 #pragma code_seg()
-VOID CKeywordDetector::DpcRoutine(LONGLONG PerformanceCounter, LONGLONG PerformanceFrequency)
+_IRQL_requires_min_(DISPATCH_LEVEL)
+VOID CKeywordDetector::DpcRoutine(_In_ LONGLONG PerformanceCounter, _In_ LONGLONG PerformanceFrequency)
 {
     LONGLONG currentPacket;
     LONGLONG packetsToQueue;

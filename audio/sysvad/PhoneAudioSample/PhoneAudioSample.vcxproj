@@ -111,7 +111,7 @@
     </ResourceCompile>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
@@ -188,6 +188,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
@@ -210,6 +211,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
@@ -232,6 +234,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
@@ -254,6 +257,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>

@@ -1059,6 +1059,9 @@ Return Value:
     IO_STACK_LOCATION      *stack;
     PortClassDeviceContext *ext;
 
+    // Documented https://msdn.microsoft.com/en-us/library/windows/hardware/ff544039(v=vs.85).aspx
+    // This method will be called in IRQL PASSIVE_LEVEL
+#pragma warning(suppress: 28118)
     PAGED_CODE(); 
 
     ASSERT(_DeviceObject);
