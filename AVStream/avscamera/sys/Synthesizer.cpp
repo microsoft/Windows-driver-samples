@@ -68,13 +68,6 @@ const COLOR g_BotLeft  = RED;
 const COLOR g_BotRight = GREEN;
 
 //
-//  Persistent stats.
-//
-LONGLONG    CSynthesizer::m_RelPts=0;
-LONGLONG    CSynthesizer::m_QpcTime=0;
-ULONG       CSynthesizer::m_Frame=0;
-
-//
 // The following is an 8x8 bitmapped font for use in the text overlay
 // code.
 //
@@ -624,6 +617,8 @@ Return Value:
 {
     PAGED_CODE();
 
+    m_StartTime = KeQueryPerformanceCounter(&m_Frequency).QuadPart;
+
     //  Capture the working palette.
     //  Recast it to a point to an array of primaries.
     if( !(m_Colors = GetPalette()) )
@@ -633,9 +628,10 @@ Return Value:
 
     //  Clear the globals.  This occurs redundantly, but hey ...
     //  ... test output doesn't make sense if we don't do this.
-    m_RelPts=0;
-    m_QpcTime=0;
-    m_Frame=0;
+    for( ULONG i=0; i<MAX_Attribute; i++ )
+    {
+        m_Attrib[i]=0;
+    }
 
     //
     // Allocate a scratch buffer for the synthesizer.
@@ -706,13 +702,18 @@ Return Value:
     SAFE_DELETE_ARRAY( m_Buffer );
     SAFE_DELETE_ARRAY( m_GradientBmp );
 
+    LONGLONG EndTime = KeQueryPerformanceCounter(NULL).QuadPart;
+    LONGLONG FPS = ((LONGLONG)m_SynthesisCount * NANOSECONDS) / ( ConvertPerfTime( m_Frequency.QuadPart, (EndTime - m_StartTime) ) + (NANOSECONDS/2) );
+
     //  Report rendering times.
+    DBG_TRACE( "%s(%d,%d)", m_FormatName, m_Width, m_Height );
     DBG_TRACE( "Synthesis Time - Total = %lld", ConvertPerfTime( m_Frequency.QuadPart, m_SynthesisTime ) );
     DBG_TRACE( "                 Count = %d", m_SynthesisCount );
     DBG_TRACE( "                 Avg   = %lld", ConvertPerfTime( m_Frequency.QuadPart, m_SynthesisCount ? m_SynthesisTime / m_SynthesisCount : 0 ) );
     DBG_TRACE( "   Commit Time - Total = %lld", ConvertPerfTime( m_Frequency.QuadPart, m_CommitTime ) );
     DBG_TRACE( "                 Count = %d", m_CommitCount );
     DBG_TRACE( "                 Avg   = %lld", ConvertPerfTime( m_Frequency.QuadPart, m_CommitCount ? m_CommitTime / m_CommitCount : 0 ) );
+    DBG_TRACE( "                   FPS = %lld", FPS );
 }
 
 NTSTATUS
@@ -1274,11 +1275,11 @@ Return Value:
     ApplyGradient( (3*m_Height)/16, BLUE);
     ApplyGradient( (4*m_Height)/16, WHITE);
 
-    EncodeNumber((5*m_Height)/16, (UINT32)m_Frame, BLACK, WHITE);
-    EncodeNumber((6*m_Height)/16, (UINT32)(m_QpcTime), BLACK, WHITE);
+    EncodeNumber((5*m_Height)/16, (UINT32)m_Attrib[FrameNumber], BLACK, WHITE);
+    EncodeNumber((6*m_Height)/16, (UINT32)m_Attrib[QpcTime], BLACK, WHITE);
 
     CHAR Text [256];
-    RtlStringCbPrintfA(Text, sizeof(Text), "Frame: %ld", m_Frame);
+    (void)RtlStringCbPrintfA(Text, sizeof(Text), "Frame: %lld", m_Attrib[FrameNumber]);
 
     //
     // Overlay the frame # onto the scratch space image.
@@ -1295,7 +1296,7 @@ Return Value:
     //
     // Add a description of the frame type/width/height.
     //
-    RtlStringCbPrintfA(Text, sizeof(Text), "%s (%dx%d)", m_FormatName, m_Width, m_Height);
+    (void)RtlStringCbPrintfA(Text, sizeof(Text), "%s (%dx%d)", m_FormatName, m_Width, m_Height);
     OverlayText (
         0,
         (m_Height - 28),
@@ -1308,9 +1309,9 @@ Return Value:
     //
     // Add a description of the mounting.
     //
-    RtlStringCbPrintfA(Text, sizeof(Text), "%d\370 Mounting", DbgRotation2Degrees(m_Rotation));
-    size_t  len = 0;
-    RtlStringCchLengthA(Text, sizeof(Text), &len);
+    (void)RtlStringCbPrintfA(Text, sizeof(Text), "%d\370 Mounting", DbgRotation2Degrees(m_Rotation));
+    size_t len = 0;
+    (void)RtlStringCchLengthA(Text, sizeof(Text), &len);
     OverlayText (
         (m_Width - (((ULONG)len*8))),    // right-adjust text.
         (m_Height - 28),

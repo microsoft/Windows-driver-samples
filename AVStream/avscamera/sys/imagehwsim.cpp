@@ -1222,7 +1222,7 @@ CompleteCloneList()
 
 NTSTATUS
 CImageHardwareSimulation::
-SetClock(PKSPIN pin)
+SetClock(_In_ PKSPIN pin)
 {
     PAGED_CODE();
 
@@ -1312,9 +1312,9 @@ SetFlashStatus(
 NTSTATUS
 CImageHardwareSimulation::
 SetPFS(
-    _In_    ISP_FRAME_SETTINGS  *pIspSettings,
-    _In_    ULONG               FrameLimit,
-    _In_    ULONG               LoopLimit
+    _In_opt_    ISP_FRAME_SETTINGS  *pIspSettings,
+    _In_        ULONG               FrameLimit,
+    _In_        ULONG               LoopLimit
 )
 {
     PAGED_CODE();

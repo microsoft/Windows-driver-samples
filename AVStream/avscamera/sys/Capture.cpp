@@ -355,6 +355,11 @@ Return Value:
         //
         *m_pBitmapInfoHeader = m_VideoInfoHeader->bmiHeader;
     }
+    else
+    {
+        DBG_TRACE("Connection Format was invalid");
+        return STATUS_INVALID_DEVICE_STATE;
+    }
 
     DBG_TRACE( "+++ AvgTimePerFrame = %lld +++", m_VideoInfoHeader->AvgTimePerFrame );
 
@@ -808,7 +813,7 @@ EmitMetadata(
 NTSTATUS
 CCapturePin::
 CompleteMapping(
-    _In_ PKSSTREAM_POINTER Clone
+    _In_opt_ PKSSTREAM_POINTER Clone
     )
 
 /*++
@@ -1173,8 +1178,8 @@ Return Value:
     //  For debugging...
     UNICODE_STRING  NewFormat;
     UNICODE_STRING  RefFormat;
-    RtlStringFromGUID( Pin->ConnectionFormat->SubFormat, &NewFormat );
-    RtlStringFromGUID( DataRange->SubFormat, &RefFormat );
+    (void)RtlStringFromGUID( Pin->ConnectionFormat->SubFormat, &NewFormat );
+    (void)RtlStringFromGUID( DataRange->SubFormat, &RefFormat );
 
     if( IsEqualGUID( Pin->ConnectionFormat->Specifier, ImageInfoSpecifier ) &&
             Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_IMAGEINFO) )
@@ -1566,6 +1571,14 @@ Return Value:
         if( BufferSize < DataFormatSize )
         {
             return STATUS_BUFFER_TOO_SMALL;
+        }
+
+        //
+        // May only be null for size queries
+        //
+        if (Data == nullptr)
+        {
+            return STATUS_INVALID_PARAMETER;
         }
 
         //

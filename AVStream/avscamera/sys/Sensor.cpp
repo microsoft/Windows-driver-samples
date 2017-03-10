@@ -160,7 +160,7 @@ Initialize()
     m_Synthesizer = new (NonPagedPoolNx, 'sneS') CSynthesizer *[m_PinCount];
     m_CapturePin = new (NonPagedPoolNx, 'sneS') ICapturePin *[m_PinCount];
     m_VideoInfoHeader = new (NonPagedPoolNx, 'sneS') PKS_VIDEOINFOHEADER[m_PinCount];
-    m_InterruptTime = new (NonPagedPoolNx, 'sneS') ULONG[m_PinCount];
+    m_InterruptTime = new (NonPagedPoolNx, 'sneS') LONGLONG[m_PinCount];
     m_LastMappingsCompleted = new (NonPagedPoolNx, 'sneS') ULONG[m_PinCount];
 
     if( !m_HardwareSimulation   ||
@@ -1021,9 +1021,9 @@ SetQPC(
 NTSTATUS
 CSensor::
 SetPFS(
-    _In_    ISP_FRAME_SETTINGS  *pIspSettings,
-    _In_    ULONG               FrameLimit,
-    _In_    ULONG               LoopLimit
+    _In_opt_    ISP_FRAME_SETTINGS  *pIspSettings,
+    _In_        ULONG               FrameLimit,
+    _In_        ULONG               LoopLimit
 )
 /*++
 
@@ -1081,6 +1081,22 @@ Return Value:
     }
 
     return STATUS_SUCCESS;
+}
+
+void
+CSensor::
+SetSynthesizerAttribute( 
+    CSynthesizer::Attribute Attrib, 
+    LONGLONG Info 
+)
+{
+    for( ULONG Pin=0; IsValidIndex(Pin); Pin++ )
+    {
+        if( m_Synthesizer[Pin] )
+        {
+            m_Synthesizer[Pin]->Set( Attrib, Info );
+        }
+    }
 }
 
 /*************************************************/

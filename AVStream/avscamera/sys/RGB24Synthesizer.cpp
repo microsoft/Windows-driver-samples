@@ -35,10 +35,6 @@
 #pragma code_seg()
 #endif // ALLOC_PRAGMA
 
-// suppressed due to Esp:773
-#pragma warning (push)
-#pragma warning( disable:26015 )    // Suppress OACR error.  Seems nonsensical.  TODO: Must revisit.
-#pragma warning( disable:26019 )
 _Success_(return > 0)
 ULONG
 CRGB24Synthesizer::
@@ -110,6 +106,7 @@ Return Value:
                 DWORD   P2 = pSrc[2];
                 DWORD   P3 = pSrc[3];
                 ((PDWORD) pDst)[0] = ((P0      ) & 0x00FFFFFF) | (P1 << 24);
+#pragma warning(suppress: 6386) // TODO: Add OACR bug number once known
                 ((PDWORD) pDst)[1] = ((P1 >>  8) & 0x0000FFFF) | (P2 << 16);
                 ((PDWORD) pDst)[2] = ((P2 >> 16) & 0x000000FF) | (P3 <<  8);
                 pDst += 4 * 3;
@@ -129,5 +126,3 @@ Return Value:
 
     return limit * Stride;
 }
-// suppressed due to Esp:773
-#pragma warning (pop)

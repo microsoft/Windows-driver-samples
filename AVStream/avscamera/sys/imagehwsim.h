@@ -181,9 +181,9 @@ public:
     //  Note: We make a local copy.
     NTSTATUS
     SetPFS(
-        _In_    ISP_FRAME_SETTINGS  *pIspSettings,
-        _In_    ULONG               FrameLimit,
-        _In_    ULONG               LoopLimit
+        _In_opt_    ISP_FRAME_SETTINGS  *pIspSettings,
+        _In_        ULONG               FrameLimit,
+        _In_        ULONG               LoopLimit
     );
 
     //  Advance our frame and loop pointers to the next PFS settings.

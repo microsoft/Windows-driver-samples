@@ -172,7 +172,7 @@ protected:
     //
     // The number of ISR's that have occurred since capture started.
     //
-    ULONG *m_InterruptTime;
+    LONGLONG   *m_InterruptTime;
 
     //
     // The last reading of mappings completed.
@@ -499,9 +499,9 @@ public:
     virtual
     NTSTATUS
     SetPFS(
-        _In_    ISP_FRAME_SETTINGS  *pIspSettings,
-        _In_    ULONG               FrameLimit,
-        _In_    ULONG               LoopLimit
+        _In_opt_    ISP_FRAME_SETTINGS  *pIspSettings,
+        _In_        ULONG               FrameLimit,
+        _In_        ULONG               LoopLimit
     );
 
     virtual
@@ -515,6 +515,9 @@ public:
     {
         m_MountingOrientation = Orientation;
     }
+
+    void
+    SetSynthesizerAttribute( CSynthesizer::Attribute Attrib, LONGLONG Info );
 
 protected:
     LONG

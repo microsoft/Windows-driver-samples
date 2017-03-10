@@ -34,10 +34,10 @@
 #define D_X 320
 #define D_Y 240
 
-#define DMAX_X_OS 728
+#define DMAX_X_OS 768
 #define DMAX_Y_OS 576
-#define D_X_OS     384
-#define D_Y_OS     240
+#define D_X_OS 384
+#define D_Y_OS 288
 
 ///////////////////////////////////////////////////////////////////////////////
 // GUID for primary and FFC cameras
@@ -217,7 +217,7 @@ public:
     virtual
     NTSTATUS
     CompleteMapping(
-        _In_ PKSSTREAM_POINTER Clone=nullptr
+        _In_opt_ PKSSTREAM_POINTER Clone=nullptr
         );
 
     void

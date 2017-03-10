@@ -43,8 +43,12 @@ public:
 
 protected:
     METADATA_PREVIEWAGGREGATION
-    CPreviewHardwareSimulation::
-    GetMetadata();
+        CPreviewHardwareSimulation::
+        GetMetadata();
+
+    VOID GetCaptureStats(
+        _In_ PKSCAMERA_METADATA_CAPTURESTATS pCaptureStats
+    );
 
     //  Inject preview pin-specific metadata.
     virtual

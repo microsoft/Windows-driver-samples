@@ -156,7 +156,7 @@ private:
 
 
 
-STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void *)
+STDAPI_(BOOL) DllMain(_In_ HINSTANCE hinst, DWORD reason, _In_opt_ void *)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
@@ -170,6 +170,7 @@ STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void *)
 // DllCanUnloadNow
 //
 /////////////////////////////////////////////////////////////////////////
+__control_entrypoint(DllExport)
 STDAPI DllCanUnloadNow()
 {
     return (g_cRefModule == 0) ? S_OK : S_FALSE;

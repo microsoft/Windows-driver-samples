@@ -93,52 +93,85 @@ GetMetadata()
     ISP_FRAME_SETTINGS *pSettings = GetIspSettings();
 
     //  Wipe the metadata so all settings will default to "Not Set".
-    RtlZeroMemory( &Metadata, sizeof(Metadata) );
-
-    //  FocusState;
-    m_Sensor->GetFocusState( (KSCAMERA_EXTENDEDPROP_FOCUSSTATE *) &Metadata.FocusState );
-
-    //  ExposureTime;
-    Metadata.ExposureTime =
-        CMetadataLongLong( GetCurrentExposureTime() );
-
-    //  EVCompensation;
-    Metadata.EVCompensation = CMetadataEVCompensation(pSettings->EVCompensation.Mode, pSettings->EVCompensation.Value);
-
-    //  ISOSpeed;
-    Metadata.ISOSpeed = CMetadataLong(GetCurrentISOSpeed());
-    DBG_TRACE("ISO=%d, ISO Flags=0x%016llX", Metadata.ISOSpeed.Value, pSettings->ISOMode);
-
-    //  LensPosition;
-    Metadata.LensPosition = CMetadataLong( pSettings->FocusSetting.VideoProc.Value.ul );
-
-    //  FlashOn;
-    Metadata.FlashOn = CMetadataLong((ULONG) pSettings->FlashMode);
-
-    //  WhiteBalanceMode;
-    Metadata.WhiteBalanceMode = CMetadataLong((ULONG) pSettings->WhiteBalanceMode);
+    RtlZeroMemory(&Metadata, sizeof(Metadata));
 
     //  IsoGains;
     Metadata.IsoAnalogGain =
-        CMetadataSRational( GetRandom( (LONG)5000, (LONG)20000 ), (LONG)10000 );  // Some number from 0.5 to 2.0 - for testing.
+        CMetadataSRational(GetRandom((LONG)5000, (LONG)20000), (LONG)10000);  // Some number from 0.5 to 2.0 - for testing.
     Metadata.IsoDigitalGain =
-        CMetadataSRational( GetRandom( (LONG)5000, (LONG)20000 ), (LONG)10000 );  // Some number from 0.5 to 2.0 - for testing.
-
-    //  SensorFrameRate;
-    ULARGE_INTEGER  FrameRate;
-    FrameRate.LowPart  = 60 * 60 *24;
-    FrameRate.HighPart = (ULONG) ((ONESECOND * FrameRate.LowPart) / m_TimePerFrame);       // compute number of frames per day.
-    Metadata.SensorFrameRate = CMetadataULongLong( FrameRate.QuadPart );
+        CMetadataSRational(GetRandom((LONG)5000, (LONG)20000), (LONG)10000);  // Some number from 0.5 to 2.0 - for testing.
 
     //  WhiteBalanceGains;
     Metadata.WhiteBalanceGain_R =       //  MF_CAPTURE_METADATA_WHITEBALANCE_GAINS
-        CMetadataSRational( GetRandom( (LONG)5000, (LONG)20000 ), (LONG)10000 );  // Some number from 0.5 to 2.0 - for testing.
+        CMetadataSRational(GetRandom((LONG)5000, (LONG)20000), (LONG)10000);  // Some number from 0.5 to 2.0 - for testing.
     Metadata.WhiteBalanceGain_G =       //  MF_CAPTURE_METADATA_WHITEBALANCE_GAINS
-        CMetadataSRational( GetRandom( (LONG)5000, (LONG)20000 ), (LONG)10000 );  // Some number from 0.5 to 2.0 - for testing.
+        CMetadataSRational(GetRandom((LONG)5000, (LONG)20000), (LONG)10000);  // Some number from 0.5 to 2.0 - for testing.
     Metadata.WhiteBalanceGain_B =       //  MF_CAPTURE_METADATA_WHITEBALANCE_GAINS
-        CMetadataSRational( GetRandom( (LONG)5000, (LONG)20000 ), (LONG)10000 );  // Some number from 0.5 to 2.0 - for testing.
+        CMetadataSRational(GetRandom((LONG)5000, (LONG)20000), (LONG)10000);  // Some number from 0.5 to 2.0 - for testing.
 
     return Metadata;
+}
+
+
+VOID
+CPreviewHardwareSimulation::
+GetCaptureStats(
+    _In_ PKSCAMERA_METADATA_CAPTURESTATS pCaptureStats
+    )
+{
+    PAGED_CODE();
+
+    KSCAMERA_METADATA_CAPTURESTATS CaptureStats = {0};
+    ISP_FRAME_SETTINGS *pSettings = GetIspSettings();
+
+    CaptureStats.Flags =
+        (KSCAMERA_METADATA_CAPTURESTATS_FLAG_EXPOSURETIME |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_EXPOSURECOMPENSATION |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_ISOSPEED |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_FOCUSSTATE |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_LENSPOSITION |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_WHITEBALANCE |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_FLASH |
+        KSCAMERA_METADATA_CAPTURESTATS_FLAG_SENSORFRAMERATE);
+    
+    //  ExposureTime;
+    CaptureStats.ExposureTime = GetCurrentExposureTime();
+
+    //  EVCompensation;
+    CaptureStats.ExposureCompensationFlags = pSettings->EVCompensation.Mode;
+    CaptureStats.ExposureCompensationValue = pSettings->EVCompensation.Value;
+
+    //  ISOSpeed;
+    CaptureStats.IsoSpeed = GetCurrentISOSpeed();
+    DBG_TRACE("ISO=%d, ISO Flags=0x%016llX", CaptureStats.IsoSpeed, pSettings->ISOMode);
+
+    //  FocusState;
+    m_Sensor->GetFocusState((KSCAMERA_EXTENDEDPROP_FOCUSSTATE *)&CaptureStats.FocusState);
+
+    //  LensPosition;
+    CaptureStats.LensPosition = pSettings->FocusSetting.VideoProc.Value.ul;
+
+    //  WhiteBalanceMode;
+    CaptureStats.WhiteBalance = (ULONG)pSettings->WhiteBalanceMode;
+
+    //  FlashOn;
+    CaptureStats.Flash = (ULONG) pSettings->FlashMode;
+
+    //  SensorFrameRate;
+    ULARGE_INTEGER  FrameRate = {0};
+    if (m_TimePerFrame)
+    {
+        FrameRate.LowPart = 60 * 60 * 24;
+        FrameRate.HighPart = (ULONG)((ONESECOND * FrameRate.LowPart) / m_TimePerFrame);
+    }
+    CaptureStats.SensorFramerate = FrameRate.QuadPart;
+
+    if (pCaptureStats)
+    {
+        *pCaptureStats = CaptureStats;
+    }
+
+    return;
 }
 
 //
@@ -204,15 +237,81 @@ Return Value:
             DBG_TRACE("Normal frame; no photo confirmation metadata.");
         }
 
-        if( BytesLeft >= sizeof(CAMERA_METADATA_PREVIEWAGGREGATION) )
+        if (BytesLeft >= sizeof(CAMERA_METADATA_PREVIEWAGGREGATION))
         {
             PCAMERA_METADATA_PREVIEWAGGREGATION pPreviewAggregation =
-                (PCAMERA_METADATA_PREVIEWAGGREGATION) (((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
-            pPreviewAggregation->Header.MetadataId = (ULONG) MetadataId_Custom_PreviewAggregation;
+                (PCAMERA_METADATA_PREVIEWAGGREGATION)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            pPreviewAggregation->Header.MetadataId = (ULONG)MetadataId_Custom_PreviewAggregation;
             pPreviewAggregation->Header.Size = sizeof(*pPreviewAggregation);
             pPreviewAggregation->Data = GetMetadata();
             pMetadata->UsedSize += sizeof(*pPreviewAggregation);
             BytesLeft -= sizeof(*pPreviewAggregation);
+        }
+
+        if( BytesLeft >= sizeof(KSCAMERA_METADATA_CAPTURESTATS) )
+        {
+            PKSCAMERA_METADATA_CAPTURESTATS pPreviewCaptureStats =
+                (PKSCAMERA_METADATA_CAPTURESTATS) (((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            GetCaptureStats(pPreviewCaptureStats);
+            pPreviewCaptureStats->Header.MetadataId = (ULONG)MetadataId_CaptureStats;
+            pPreviewCaptureStats->Header.Size = sizeof(*pPreviewCaptureStats);
+            pMetadata->UsedSize += sizeof(*pPreviewCaptureStats);
+            BytesLeft -= sizeof(*pPreviewCaptureStats);
+        }
+
+        if (BytesLeft >= sizeof(CAMERA_METADATA_UVC_HEADER))
+        {
+            PCAMERA_METADATA_UVC_HEADER pPreviewUvcHeader =
+                (PCAMERA_METADATA_UVC_HEADER)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            pPreviewUvcHeader->Header.MetadataId = (ULONG)MetadataId_UsbVideoHeader;
+            pPreviewUvcHeader->Header.Size = sizeof(CAMERA_METADATA_UVC_HEADER);
+
+            pPreviewUvcHeader->Data.StartOfFrameTimestamp.PresentationTimeStamp = 1;
+            pPreviewUvcHeader->Data.EndOfFrameTimestamp.SourceClockReference = 100;
+
+            pMetadata->UsedSize += sizeof(CAMERA_METADATA_UVC_HEADER);
+            BytesLeft -= sizeof(CAMERA_METADATA_UVC_HEADER);
+        }
+
+        if (BytesLeft >= sizeof(CAMERA_METADATA_EXTRINSICS))
+        {
+            PCAMERA_METADATA_EXTRINSICS pPreviewExtrinsics =
+                (PCAMERA_METADATA_EXTRINSICS)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            RtlZeroMemory(pPreviewExtrinsics, sizeof(CAMERA_METADATA_EXTRINSICS));
+
+            pPreviewExtrinsics->Header.MetadataId = (ULONG)MetadataId_CameraExtrinsics;
+            pPreviewExtrinsics->Header.Size = sizeof(CAMERA_METADATA_EXTRINSICS);
+
+            pMetadata->UsedSize += sizeof(CAMERA_METADATA_EXTRINSICS);
+            BytesLeft -= sizeof(CAMERA_METADATA_EXTRINSICS);
+        }
+
+        if (BytesLeft >= sizeof(CAMERA_METADATA_INTRINSICS))
+        {
+            PCAMERA_METADATA_INTRINSICS pPreviewIntrinsics =
+                (PCAMERA_METADATA_INTRINSICS)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            RtlZeroMemory(pPreviewIntrinsics, sizeof(CAMERA_METADATA_INTRINSICS));
+
+            pPreviewIntrinsics->Header.MetadataId = (ULONG)MetadataId_CameraIntrinsics;
+            pPreviewIntrinsics->Header.Size = sizeof(CAMERA_METADATA_INTRINSICS);
+
+            pMetadata->UsedSize += sizeof(CAMERA_METADATA_INTRINSICS);
+            BytesLeft -= sizeof(CAMERA_METADATA_INTRINSICS);
+        }
+
+        if (BytesLeft >= sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION))
+        {
+            PKSCAMERA_METADATA_FRAMEILLUMINATION pPreviewIllumination =
+                (PKSCAMERA_METADATA_FRAMEILLUMINATION)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            RtlZeroMemory(pPreviewIllumination, sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION));
+
+            pPreviewIllumination->Header.MetadataId = (ULONG)MetadataId_FrameIllumination;
+            pPreviewIllumination->Header.Size = sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
+
+            pPreviewIllumination->Flags = KSCAMERA_METADATA_FRAMEILLUMINATION_FLAG_ON;
+
+            pMetadata->UsedSize += sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
+            BytesLeft -= sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
         }
 
         //  MF_CAPTURE_METADATA_HISTOGRAM

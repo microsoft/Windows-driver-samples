@@ -112,6 +112,15 @@ UCHAR   UCHAR4[4];
 class CSynthesizer :
     public CNonCopyable
 {
+public:
+    enum Attribute
+    {
+        RelativePts,
+        QpcTime,
+        FrameNumber,
+        MAX_Attribute
+    };
+
 protected:
 
     static
@@ -119,18 +128,8 @@ protected:
     static
     const COLOR m_ColorBars[8];
 
-    //  These values are used by Synthesize() for display purposes.  They are
-    //  static so that setting the values on the preview pin affects all pins.
-    //
-    //  TODO: Change to references to a shared object.  Use of static values
-    //        could cause confusion if two (or more) cameras are in use at
-    //        the same time.
-    static
-    LONGLONG    m_RelPts;
-    static
-    LONGLONG    m_QpcTime;
-    static
-    ULONG       m_Frame;
+    //  These values are used by Synthesize() for display purposes.
+    LONGLONG    m_Attrib[MAX_Attribute];
 
     //  This value is used to fudge a rotated image.
     enum
@@ -206,6 +205,7 @@ protected:
     ULONG       m_SynthesisCount;
     LONGLONG    m_CommitTime;
     ULONG       m_CommitCount;
+    ULONGLONG   m_StartTime;
 
 public:
 
@@ -234,7 +234,11 @@ public:
         , m_Rotation(AcpiPldRotation0)
     {
         m_Length = Height * m_SynthesisStride;
-        KeQueryPerformanceCounter(&m_Frequency);
+        KeQueryPerformanceCounter(&m_Frequency).QuadPart;
+        for( ULONG i=0; i<MAX_Attribute; i++ )
+        {
+            m_Attrib[i]=0;
+        }
     }
 
     //
@@ -450,21 +454,9 @@ public:
     );
 
     void
-    SetRelativePts( LONGLONG Pts )
+    Set( Attribute Attrib, LONGLONG Info )
     {
-        m_RelPts = Pts;
-    }
-
-    void
-    SetQpcTime( LONGLONG Pts )
-    {
-        m_QpcTime = Pts;
-    }
-
-    void
-    SetFrameNumber( ULONG Frame )
-    {
-        m_Frame = Frame;
+        m_Attrib[Attrib] = Info;
     }
 
     void
