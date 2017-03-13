@@ -304,6 +304,37 @@ Return Value:
         goto Error;
     }
 
+#if (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+    //
+    // Adding Custom Capability:
+    //
+    // Adds a custom capability to device interface instance that allows a Windows
+    // Store device app to access this interface using Windows.Devices.Custom namespace.
+    // This capability can be defined either in INF or here as shown below. In order
+    // to define it from the INF, uncomment the section "OsrUsb Interface installation"
+    // from the INF and remove the block of code below.
+    //
+
+    WDF_DEVICE_INTERFACE_PROPERTY_DATA PropertyData = { 0 };
+    static const wchar_t customCapabilities[] = L"microsoft.hsaTestCustomCapability_q536wpkpf5cy2\0";
+
+    WDF_DEVICE_INTERFACE_PROPERTY_DATA_INIT(&PropertyData,
+                                            &GUID_DEVINTERFACE_OSRUSBFX2,
+                                            &DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities);
+
+    status = WdfDeviceAssignInterfaceProperty(device,
+                                              &PropertyData,
+                                              DEVPROP_TYPE_STRING_LIST,
+                                              sizeof(customCapabilities),
+                                              (PVOID)customCapabilities);
+
+    if (!NT_SUCCESS(status)) {
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
+                    "WdfDeviceAssignInterfaceProperty failed  %!STATUS!\n", status);
+        goto Error;
+    }
+#endif
+
     // 
     // Create the lock that we use to serialize calls to ResetDevice(). As an 
     // alternative to using a WDFWAITLOCK to serialize the calls, a sequential 

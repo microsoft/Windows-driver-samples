@@ -76,7 +76,7 @@ Return Value:
     WDFQUEUE                            queue;
     GUID                                activity;
     UNICODE_STRING                      symbolicLinkName;
-    WDFSTRING                           symbolicLinkString;
+    WDFSTRING                           symbolicLinkString = NULL;
     DEVPROP_BOOLEAN                     isRestricted;
 
     UNREFERENCED_PARAMETER(Driver);
@@ -363,13 +363,40 @@ Return Value:
                                                      sizeof(isRestricted),
                                                      &isRestricted );
 
-        WdfObjectDelete(symbolicLinkString);
-
         if (!NT_SUCCESS(status)) {
            TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
-                     "IoSetDeviceInterfacePropertyData failed  %!STATUS!\n", status);
+                     "IoSetDeviceInterfacePropertyData failed to set restricted property  %!STATUS!\n", status);
             goto Error;
         }
+#if (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+
+        //
+        // Adding Custom Capability:
+        //
+        // Adds a custom capability to device interface instance that allows a Windows
+        // Store device app to access this interface using Windows.Devices.Custom namespace.
+        // This capability can be defined either in INF or here as shown below. In order
+        // to define it from the INF, uncomment the section "OsrUsb Interface installation"
+        // from the INF and remove the block of code below.
+        //
+
+        static const wchar_t customCapabilities[] = L"microsoft.hsaTestCustomCapability_q536wpkpf5cy2\0";
+
+        status = g_pIoSetDeviceInterfacePropertyData(&symbolicLinkName,
+                                                     &DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities,
+                                                     0,
+                                                     0,
+                                                     DEVPROP_TYPE_STRING_LIST,
+                                                     sizeof(customCapabilities),
+                                                     (PVOID)&customCapabilities);
+
+        if (!NT_SUCCESS(status)) {
+            TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
+                        "IoSetDeviceInterfacePropertyData failed to set custom capability property  %!STATUS!\n", status);
+            goto Error;
+        }
+
+#endif
     }
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_PNP, "<-- OsrFxEvtDeviceAdd\n");
@@ -377,6 +404,11 @@ Return Value:
     return status;
 
 Error:
+
+    if(symbolicLinkString != NULL)
+    {
+        WdfObjectDelete(symbolicLinkString);
+    }
 
     //
     // Log fail to add device to the event log
