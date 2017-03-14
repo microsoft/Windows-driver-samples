@@ -19,6 +19,7 @@ Environment:
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (PAGE, OnInterruptPassiveIsr)
+#pragma alloc_text (PAGE, ProcessAndSendAlerts)
 #endif
 
 BOOLEAN

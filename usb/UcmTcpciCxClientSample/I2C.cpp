@@ -28,6 +28,7 @@ Environment:
 #pragma alloc_text (PAGE, I2CReadSynchronously)
 #pragma alloc_text (PAGE, I2CWriteSynchronously)
 #pragma alloc_text (PAGE, I2CPerformDeviceReset)
+#pragma alloc_text (PAGE, I2CReadSynchronouslyMultiple)
 #endif
 
 NTSTATUS
@@ -450,6 +451,10 @@ Return Value:
     NTSTATUS status;
     WDF_REQUEST_REUSE_PARAMS reuseParams;
 
+    // Static analysis cannot figure out the SPB_TRANSFER_LIST_ENTRY
+    // size but using an index variable quiets the warning.
+    ULONG index = 0;
+
     // Store the address.
     DeviceContext->I2CRegisterAddress = RegisterAddress;
 
@@ -484,13 +489,17 @@ Return Value:
     SPB_TRANSFER_LIST_AND_ENTRIES(I2C_TRANSFER_COUNT) transferList;
     SPB_TRANSFER_LIST_INIT(&(transferList.List), I2C_TRANSFER_COUNT);
 
-    transferList.List.Transfers[0] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
+    // Static analysis can't figure out the relationship between the transfer array size
+    // and the transfer count.
+    _Analysis_assume_(ARRAYSIZE(transferList.List.Transfers) == I2C_TRANSFER_COUNT);
+
+    transferList.List.Transfers[index] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
         SpbTransferDirectionToDevice,
         0,
         &DeviceContext->I2CRegisterAddress,
         REGISTER_ADDR_SIZE);
 
-    transferList.List.Transfers[1] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
+    transferList.List.Transfers[index + 1] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
         SpbTransferDirectionFromDevice,
         0,
         DeviceContext->I2CAsyncBuffer,
@@ -582,6 +591,10 @@ Return Value:
     ULONG_PTR bytesTransferred = 0;
     UINT8 transferBuffer[I2C_BUFFER_SIZE];
 
+    // Static analysis cannot figure out the SPB_TRANSFER_LIST_ENTRY
+    // size but using an index variable quiets the warning.
+    ULONG index = 0;
+
     WDFREQUEST request = DeviceContext->OutgoingRequests[RequestSource];
 
     // Reuse the preallocated WDFREQUEST for internal requests.
@@ -613,13 +626,17 @@ Return Value:
     SPB_TRANSFER_LIST_AND_ENTRIES(I2C_TRANSFER_COUNT) transferList;
     SPB_TRANSFER_LIST_INIT(&(transferList.List), I2C_TRANSFER_COUNT);
 
-    transferList.List.Transfers[0] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
+    // Static analysis can't figure out the relationship between the transfer array size
+    // and the transfer count.
+    _Analysis_assume_(ARRAYSIZE(transferList.List.Transfers) == I2C_TRANSFER_COUNT);
+
+    transferList.List.Transfers[index] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
         SpbTransferDirectionToDevice,
         0,
         &RegisterAddress,
         REGISTER_ADDR_SIZE);
 
-    transferList.List.Transfers[1] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
+    transferList.List.Transfers[index + 1] = SPB_TRANSFER_LIST_ENTRY_INIT_SIMPLE(
         SpbTransferDirectionFromDevice,
         0,
         transferBuffer,

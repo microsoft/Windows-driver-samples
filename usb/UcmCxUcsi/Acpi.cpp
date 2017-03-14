@@ -305,6 +305,13 @@ Acpi_EnumChildren (
             goto Exit;
         }
 
+        //
+        // when IOCTL_ACPI_ENUM_CHILDREN returns STATUS_BUFFER_OVERFLOW, the OutputBuffer->NumberOfChildren is set
+        // to the size, in bytes, to hold the whole ACPI_ENUM_CHILDREN_OUTPUT_BUFFER, including the fixed header
+        // and the variable array for child objects
+        //
+        _Analysis_assume_(outputBuf->NumberOfChildren > sizeof(ACPI_ENUM_CHILDREN_OUTPUT_BUFFER));
+
         outputBufSize = outputBuf->NumberOfChildren;
         WdfObjectDelete(outputMem);
         outputMem = WDF_NO_HANDLE;
