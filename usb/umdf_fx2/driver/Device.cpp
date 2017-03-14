@@ -1,5 +1,5 @@
 /*++
- 
+
 Copyright (C) Microsoft Corporation, All Rights Reserved.
 
 Module Name:
@@ -27,7 +27,7 @@ Environment:
 CMyDevice::~CMyDevice(
     )
 {
-    SAFE_RELEASE(m_pIoTargetInterruptPipeStateMgmt); 
+    SAFE_RELEASE(m_pIoTargetInterruptPipeStateMgmt);
 }
 
 HRESULT
@@ -37,10 +37,10 @@ CMyDevice::CreateInstance(
     _Out_ PCMyDevice *Device
     )
 /*++
- 
+
   Routine Description:
 
-    This method creates and initializs an instance of the OSR Fx2 driver's 
+    This method creates and initializs an instance of the OSR Fx2 driver's
     device callback object.
 
   Arguments:
@@ -75,11 +75,11 @@ CMyDevice::CreateInstance(
 
     hr = device->Initialize(FxDriver, FxDeviceInit);
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         *Device = device;
-    } 
-    else 
+    }
+    else
     {
         device->Release();
     }
@@ -93,7 +93,7 @@ CMyDevice::Initialize(
     _In_ IWDFDeviceInitialize * FxDeviceInit
     )
 /*++
- 
+
   Routine Description:
 
     This method initializes the device callback object and creates the
@@ -102,7 +102,7 @@ CMyDevice::Initialize(
     The method should perform any device-specific configuration that:
         *  could fail (these can't be done in the constructor)
         *  must be done before the partner object is created -or-
-        *  can be done after the partner object is created and which aren't 
+        *  can be done after the partner object is created and which aren't
            influenced by any device-level parameters the parent (the driver
            in this case) might set.
 
@@ -121,7 +121,7 @@ CMyDevice::Initialize(
     HRESULT hr = S_OK;
 
     //
-    // TODO: Any per-device initialization which must be done before 
+    // TODO: Any per-device initialization which must be done before
     //       creating the partner object.
     //
 
@@ -132,12 +132,12 @@ CMyDevice::Initialize(
     FxDeviceInit->SetLockingConstraint(None);
 
     //
-    // TODO: If you're writing a filter driver then indicate that here. 
+    // TODO: If you're writing a filter driver then indicate that here.
     //       And then don't claim power policy ownership below
     //
     // FxDeviceInit->SetFilter();
     //
-        
+
     //
     // Set the Fx2 driver as the power policy owner.
     //
@@ -145,17 +145,17 @@ CMyDevice::Initialize(
     FxDeviceInit->SetPowerPolicyOwnership(TRUE);
 
     //
-    // Create a new FX device object and assign the new callback object to 
+    // Create a new FX device object and assign the new callback object to
     // handle any device level events that occur.
     //
 
     //
     // QueryIUnknown references the IUnknown interface that it returns
-    // (which is the same as referencing the device).  We pass that to 
+    // (which is the same as referencing the device).  We pass that to
     // CreateDevice, which takes its own reference if everything works.
     //
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         IUnknown *unknown = this->QueryIUnknown();
         IWDFDevice* device1;
@@ -179,13 +179,13 @@ CMyDevice::Initialize(
     // If that succeeded then set our FxDevice member variable.
     //
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         m_FxDevice = fxDevice;
 
         //
         // Drop the reference we got from CreateDevice.  Since this object
-        // is partnered with the framework object they have the same 
+        // is partnered with the framework object they have the same
         // lifespan - there is no need for an additional reference.
         //
 
@@ -200,11 +200,11 @@ CMyDevice::Configure(
     VOID
     )
 /*++
- 
+
   Routine Description:
 
-    This method is called after the device callback object has been initialized 
-    and returned to the driver.  It would setup the device's queues and their 
+    This method is called after the device callback object has been initialized
+    and returned to the driver.  It would setup the device's queues and their
     corresponding callback objects.
 
   Arguments:
@@ -216,19 +216,19 @@ CMyDevice::Configure(
     status
 
 --*/
-{   
+{
     HRESULT hr = S_OK;
 
     //
     // Get the bus type GUID for the device and confirm that we're attached to
     // USB.
     //
-    // NOTE: Since this device only supports USB we'd normally trust our INF 
+    // NOTE: Since this device only supports USB we'd normally trust our INF
     // to ensure this.
     //
-    // But if the device also supported 1394 then we could 
+    // But if the device also supported 1394 then we could
     // use this to determine which type of bus we were attached to.
-    // 
+    //
 
     hr = GetBusTypeGuid();
 
@@ -251,7 +251,7 @@ CMyDevice::Configure(
     //
     // We use default queue for read/write
     //
-    
+
     hr = m_ReadWriteQueue->Configure();
 
     m_ReadWriteQueue->Release();
@@ -260,14 +260,14 @@ CMyDevice::Configure(
     // Create the control queue and configure forwarding for IOCTL requests.
     //
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         hr = CMyControlQueue::CreateInstance(this, &m_ControlQueue);
 
-        if (SUCCEEDED(hr)) 
+        if (SUCCEEDED(hr))
         {
             hr = m_ControlQueue->Configure();
-            if (SUCCEEDED(hr)) 
+            if (SUCCEEDED(hr))
             {
                 m_FxDevice->ConfigureRequestDispatching(
                                 m_ControlQueue->GetFxQueue(),
@@ -275,7 +275,7 @@ CMyDevice::Configure(
                                 true
                                 );
             }
-            m_ControlQueue->Release();         
+            m_ControlQueue->Release();
         }
     }
 
@@ -290,15 +290,15 @@ CMyDevice::Configure(
                                    FALSE,
                                    FALSE,
                                    &m_SwitchChangeQueue);
-    
+
 
     //
     // Release creation reference as object tree will keep a reference
     //
-    
+
     m_SwitchChangeQueue->Release();
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         hr = m_FxDevice->CreateDeviceInterface(&GUID_DEVINTERFACE_OSRUSBFX2,
                                                NULL);
@@ -341,8 +341,8 @@ CMyDevice::Configure(
 
         if (FAILED(hrSetProp))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Could not set restricted property %!HRESULT!",
                         hrSetProp
                         );
@@ -361,11 +361,11 @@ CMyDevice::QueryInterface(
     _Outptr_ PVOID *Object
     )
 /*++
- 
+
   Routine Description:
 
     This method is called to get a pointer to one of the object's callback
-    interfaces.  
+    interfaces.
 
   Arguments:
 
@@ -384,27 +384,27 @@ CMyDevice::QueryInterface(
     if (IsEqualIID(InterfaceId, __uuidof(IPnpCallbackHardware)))
     {
         *Object = QueryIPnpCallbackHardware();
-        hr = S_OK;    
+        hr = S_OK;
     }
     else if (IsEqualIID(InterfaceId, __uuidof(IPnpCallback)))
     {
         *Object = QueryIPnpCallback();
-        hr = S_OK;    
-    }     
+        hr = S_OK;
+    }
     else if (IsEqualIID(InterfaceId, __uuidof(IPnpCallbackSelfManagedIo)))
     {
         *Object = QueryIPnpCallbackSelfManagedIo();
-        hr = S_OK;    
-    }     
-    else if(IsEqualIID(InterfaceId, __uuidof(IUsbTargetPipeContinuousReaderCallbackReadersFailed))) 
-    {    
+        hr = S_OK;
+    }
+    else if(IsEqualIID(InterfaceId, __uuidof(IUsbTargetPipeContinuousReaderCallbackReadersFailed)))
+    {
         *Object = QueryContinousReaderFailureCompletion();
-        hr = S_OK;  
-    } 
-    else if(IsEqualIID(InterfaceId, __uuidof(IUsbTargetPipeContinuousReaderCallbackReadComplete))) 
-    {    
+        hr = S_OK;
+    }
+    else if(IsEqualIID(InterfaceId, __uuidof(IUsbTargetPipeContinuousReaderCallbackReadComplete)))
+    {
         *Object = QueryContinousReaderCompletion();
-        hr = S_OK;  
+        hr = S_OK;
     }
     else
     {
@@ -423,7 +423,7 @@ CMyDevice::OnPrepareHardware(
 Routine Description:
 
     This routine is invoked to ready the driver
-    to talk to hardware. It opens the handle to the 
+    to talk to hardware. It opens the handle to the
     device and talks to it using the WINUSB interface.
     It invokes WINUSB to discver the interfaces and stores
     the information related to bulk endpoints.
@@ -434,7 +434,7 @@ Arguments:
 
 Return Value:
 
-    HRESULT 
+    HRESULT
 
 --*/
 {
@@ -452,8 +452,8 @@ Return Value:
 
     if (FAILED(hr))
     {
-        TraceEvents(TRACE_LEVEL_ERROR, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_ERROR,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Cannot get device name %!HRESULT!",
                     hr
                     );
@@ -483,8 +483,8 @@ Return Value:
 
         if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Cannot get device name %!HRESULT!",
                         hr
                         );
@@ -493,8 +493,8 @@ Return Value:
 
     if (SUCCEEDED(hr))
     {
-        TraceEvents(TRACE_LEVEL_INFORMATION, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_INFORMATION,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Device name %S",
                     deviceName
                     );
@@ -513,23 +513,23 @@ Return Value:
     {
         ULONG length = sizeof(m_Speed);
 
-        hr = m_pIUsbTargetDevice->RetrieveDeviceInformation(DEVICE_SPEED, 
+        hr = m_pIUsbTargetDevice->RetrieveDeviceInformation(DEVICE_SPEED,
                                                             &length,
                                                             &m_Speed);
-        if (FAILED(hr)) 
+        if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Cannot get usb device speed information %!HRESULT!",
                         hr
                         );
         }
     }
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
-        TraceEvents(TRACE_LEVEL_INFORMATION, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_INFORMATION,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Speed - %x\n",
                     m_Speed
                     );
@@ -550,7 +550,7 @@ Return Value:
 
     //
     //
-    // Clear the seven segement display to indicate that we're done with 
+    // Clear the seven segement display to indicate that we're done with
     // prepare hardware.
     //
 
@@ -594,7 +594,7 @@ Return Value:
     // Delete USB Target Device WDF Object, this will in turn
     // delete all the children - interface and the pipe objects
     //
-    // This makes sure that 
+    // This makes sure that
     //    1. We drain the the pending read which does not come from an I/O queue
     //    2. We remove USB target objects from object tree (and thereby free them)
     //       before any potential subsequent OnPrepareHardware creates new ones
@@ -635,29 +635,29 @@ Return Value:
     IWDFUsbTargetDevice *   pIUsbTargetDevice = NULL;
     IWDFUsbInterface *      pIUsbInterface = NULL;
     IWDFUsbTargetPipe *     pIUsbPipe = NULL;
-    
+
     hr = m_FxDevice->QueryInterface(IID_PPV_ARGS(&pIUsbTargetFactory));
 
     if (FAILED(hr))
     {
-        TraceEvents(TRACE_LEVEL_ERROR, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_ERROR,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Cannot get usb target factory %!HRESULT!",
                     hr
-                    );        
+                    );
     }
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         hr = pIUsbTargetFactory->CreateUsbTargetDevice(
                                                   &pIUsbTargetDevice);
         if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Unable to create USB Device I/O Target %!HRESULT!",
                         hr
-                        );        
+                        );
         }
         else
         {
@@ -666,43 +666,43 @@ Return Value:
             //
             // Release the creation reference as object tree will maintain a reference
             //
-            
-            pIUsbTargetDevice->Release();            
+
+            pIUsbTargetDevice->Release();
         }
     }
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         UCHAR NumInterfaces = pIUsbTargetDevice->GetNumInterfaces();
 
         WUDF_TEST_DRIVER_ASSERT(1 == NumInterfaces);
-        
+
         hr = pIUsbTargetDevice->RetrieveUsbInterface(0, &pIUsbInterface);
         if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Unable to retrieve USB interface from USB Device I/O Target %!HRESULT!",
                         hr
-                        );        
+                        );
         }
         else
         {
             m_pIUsbInterface = pIUsbInterface;
 
-            pIUsbInterface->Release(); //release creation reference                        
+            pIUsbInterface->Release(); //release creation reference
         }
     }
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         NumEndPoints = pIUsbInterface->GetNumEndPoints();
 
         if (NumEndPoints != NUM_OSRUSB_ENDPOINTS) {
             hr = E_UNEXPECTED;
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
-                        "%!FUNC! Has %d endpoints, expected %d, returning %!HRESULT! ", 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
+                        "%!FUNC! Has %d endpoints, expected %d, returning %!HRESULT! ",
                         NumEndPoints,
                         NUM_OSRUSB_ENDPOINTS,
                         hr
@@ -710,21 +710,21 @@ Return Value:
         }
     }
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         for (UCHAR PipeIndex = 0; PipeIndex < NumEndPoints; PipeIndex++)
         {
-            hr = pIUsbInterface->RetrieveUsbPipeObject(PipeIndex, 
+            hr = pIUsbInterface->RetrieveUsbPipeObject(PipeIndex,
                                                   &pIUsbPipe);
 
             if (FAILED(hr))
             {
-                TraceEvents(TRACE_LEVEL_ERROR, 
-                            TEST_TRACE_DEVICE, 
+                TraceEvents(TRACE_LEVEL_ERROR,
+                            TEST_TRACE_DEVICE,
                             "%!FUNC! Unable to retrieve USB Pipe for PipeIndex %d, %!HRESULT!",
                             PipeIndex,
                             hr
-                            );        
+                            );
             }
             else
             {
@@ -743,7 +743,7 @@ Return Value:
                         if (FAILED(hr))
                         {
                             m_pIoTargetInterruptPipeStateMgmt = NULL;
-                        }                        
+                        }
                     }
                     else if ( UsbdPipeTypeBulk == pIUsbPipe->GetType() )
                     {
@@ -752,7 +752,7 @@ Return Value:
                     else
                     {
                         pIUsbPipe->DeleteWdfObject();
-                    }                      
+                    }
                 }
                 else if ( pIUsbPipe->IsOutEndPoint() && (UsbdPipeTypeBulk == pIUsbPipe->GetType()) )
                 {
@@ -762,7 +762,7 @@ Return Value:
                 {
                     pIUsbPipe->DeleteWdfObject();
                 }
-    
+
                 SAFE_RELEASE(pIUsbPipe); //release creation reference
             }
         }
@@ -770,11 +770,11 @@ Return Value:
         if (NULL == m_pIUsbInputPipe || NULL == m_pIUsbOutputPipe)
         {
             hr = E_UNEXPECTED;
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Input or output pipe not found, returning %!HRESULT!",
                         hr
-                        );        
+                        );
         }
     }
 
@@ -808,34 +808,34 @@ Return Value:
     // Set timeout policies for input/output pipes
     //
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         timeout = ENDPOINT_TIMEOUT;
 
-        hr = m_pIUsbInputPipe->SetPipePolicy(PIPE_TRANSFER_TIMEOUT, 
+        hr = m_pIUsbInputPipe->SetPipePolicy(PIPE_TRANSFER_TIMEOUT,
                                              sizeof(timeout),
                                              &timeout);
         if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Unable to set timeout policy for input pipe %!HRESULT!",
                         hr
                         );
         }
     }
-        
-    if (SUCCEEDED(hr)) 
+
+    if (SUCCEEDED(hr))
     {
         timeout = ENDPOINT_TIMEOUT;
 
         hr = m_pIUsbOutputPipe->SetPipePolicy(PIPE_TRANSFER_TIMEOUT,
                                              sizeof(timeout),
                                              &timeout);
-        if (FAILED(hr)) 
+        if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Unable to set timeout policy for output pipe %!HRESULT!",
                         hr
                         );
@@ -850,10 +850,10 @@ CMyDevice::IndicateDeviceReady(
     VOID
     )
 /*++
- 
+
   Routine Description:
 
-    This method lights the period on the device's seven-segment display to 
+    This method lights the period on the device's seven-segment display to
     indicate that the driver's PrepareHardware method has completed.
 
   Arguments:
@@ -876,7 +876,7 @@ CMyDevice::IndicateDeviceReady(
 
     hr = GetSevenSegmentDisplay(&display);
 
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         display.Segments |= 0x08;
 
@@ -891,10 +891,10 @@ CMyDevice::GetBarGraphDisplay(
     _In_ PBAR_GRAPH_STATE BarGraphState
     )
 /*++
- 
+
   Routine Description:
 
-    This method synchronously retrieves the bar graph display information 
+    This method synchronously retrieves the bar graph display information
     from the OSR USB-FX2 device.  It uses the buffers in the FxRequest
     to hold the data it retrieves.
 
@@ -951,10 +951,10 @@ CMyDevice::SetBarGraphDisplay(
     _In_ PBAR_GRAPH_STATE BarGraphState
     )
 /*++
- 
+
   Routine Description:
 
-    This method synchronously sets the bar graph display on the OSR USB-FX2 
+    This method synchronously sets the bar graph display on the OSR USB-FX2
     device using the buffers in the FxRequest as input.
 
   Arguments:
@@ -1004,10 +1004,10 @@ CMyDevice::GetSevenSegmentDisplay(
     _In_ PSEVEN_SEGMENT SevenSegment
     )
 /*++
- 
+
   Routine Description:
 
-    This method synchronously retrieves the bar graph display information 
+    This method synchronously retrieves the bar graph display information
     from the OSR USB-FX2 device.  It uses the buffers in the FxRequest
     to hold the data it retrieves.
 
@@ -1028,7 +1028,7 @@ CMyDevice::GetSevenSegmentDisplay(
     HRESULT hr = S_OK;
 
     //
-    // Zero the output buffer - the device will or in the bits for 
+    // Zero the output buffer - the device will or in the bits for
     // the lights that are set.
     //
 
@@ -1064,10 +1064,10 @@ CMyDevice::SetSevenSegmentDisplay(
     _In_ PSEVEN_SEGMENT SevenSegment
     )
 /*++
- 
+
   Routine Description:
 
-    This method synchronously sets the bar graph display on the OSR USB-FX2 
+    This method synchronously sets the bar graph display on the OSR USB-FX2
     device using the buffers in the FxRequest as input.
 
   Arguments:
@@ -1116,10 +1116,10 @@ CMyDevice::ReadSwitchState(
     _In_ PSWITCH_STATE SwitchState
     )
 /*++
- 
+
   Routine Description:
 
-    This method synchronously retrieves the bar graph display information 
+    This method synchronously retrieves the bar graph display information
     from the OSR USB-FX2 device.  It uses the buffers in the FxRequest
     to hold the data it retrieves.
 
@@ -1140,7 +1140,7 @@ CMyDevice::ReadSwitchState(
     HRESULT hr = S_OK;
 
     //
-    // Zero the output buffer - the device will or in the bits for 
+    // Zero the output buffer - the device will or in the bits for
     // the lights that are set.
     //
 
@@ -1183,12 +1183,12 @@ CMyDevice::SendControlTransferSynchronously(
     HRESULT hrRequest = S_OK;
     IWDFIoRequest *pWdfRequest = NULL;
     IWDFDriver * FxDriver = NULL;
-    IWDFMemory * FxMemory = NULL; 
+    IWDFMemory * FxMemory = NULL;
     IWDFRequestCompletionParams * FxComplParams = NULL;
     IWDFUsbRequestCompletionParams * FxUsbComplParams = NULL;
 
     *LengthTransferred = 0;
-    
+
     hr = m_FxDevice->CreateRequest( NULL, //pCallbackInterface
                                     NULL, //pParentObject
                                     &pWdfRequest);
@@ -1211,8 +1211,8 @@ CMyDevice::SendControlTransferSynchronously(
                                                                    SetupPacket,
                                                                    FxMemory,
                                                                    NULL); //TransferOffset
-    }                                                          
-                        
+    }
+
     if (SUCCEEDED(hr))
     {
         hr = pWdfRequest->Send( m_pIUsbTargetDevice,
@@ -1232,7 +1232,7 @@ CMyDevice::SendControlTransferSynchronously(
         HRESULT hrQI = FxComplParams->QueryInterface(IID_PPV_ARGS(&FxUsbComplParams));
         WUDF_TEST_DRIVER_ASSERT(SUCCEEDED(hrQI));
 
-        WUDF_TEST_DRIVER_ASSERT( WdfUsbRequestTypeDeviceControlTransfer == 
+        WUDF_TEST_DRIVER_ASSERT( WdfUsbRequestTypeDeviceControlTransfer ==
                             FxUsbComplParams->GetCompletedUsbRequestType() );
 
         FxUsbComplParams->GetDeviceControlTransferParameters( NULL,
@@ -1266,14 +1266,14 @@ CMyDevice::GetTargetState(
 
     HRESULT hrQI = pTarget->QueryInterface(IID_PPV_ARGS(&pStateMgmt));
     WUDF_TEST_DRIVER_ASSERT((SUCCEEDED(hrQI) && pStateMgmt));
-    
+
     state = pStateMgmt->GetState();
 
     SAFE_RELEASE(pStateMgmt);
-    
+
     return state;
 }
-    
+
 VOID
 CMyDevice::ServiceSwitchChangeQueue(
     _In_ SWITCH_STATE NewState,
@@ -1281,10 +1281,10 @@ CMyDevice::ServiceSwitchChangeQueue(
     _In_opt_ IWDFFile *SpecificFile
     )
 /*++
- 
+
   Routine Description:
 
-    This method processes switch-state change notification requests as 
+    This method processes switch-state change notification requests as
     part of reading the OSR device's interrupt pipe.  As each read completes
     this pulls all pending I/O off the switch change queue and completes
     each request with the current switch state.
@@ -1308,7 +1308,7 @@ CMyDevice::ServiceSwitchChangeQueue(
 
     HRESULT enumHr = S_OK;
 
-    do 
+    do
     {
         HRESULT hr;
 
@@ -1332,9 +1332,9 @@ CMyDevice::ServiceSwitchChangeQueue(
         // if we got one then complete it.
         //
 
-        if (SUCCEEDED(enumHr)) 
+        if (SUCCEEDED(enumHr))
         {
-            if (SUCCEEDED(CompletionStatus)) 
+            if (SUCCEEDED(CompletionStatus))
             {
                 IWDFMemory *fxMemory;
 
@@ -1344,12 +1344,12 @@ CMyDevice::ServiceSwitchChangeQueue(
 
                 fxRequest->GetOutputMemory(&fxMemory );
 
-                hr = fxMemory->CopyFromBuffer(0, 
-                                              &NewState, 
+                hr = fxMemory->CopyFromBuffer(0,
+                                              &NewState,
                                               sizeof(SWITCH_STATE));
                 fxMemory->Release();
             }
-            else 
+            else
             {
                 hr = CompletionStatus;
             }
@@ -1359,7 +1359,7 @@ CMyDevice::ServiceSwitchChangeQueue(
             // status if that was an error).
             //
 
-            if (SUCCEEDED(hr)) 
+            if (SUCCEEDED(hr))
             {
                 fxRequest->CompleteWithInformation(hr, sizeof(SWITCH_STATE));
             }
@@ -1368,7 +1368,7 @@ CMyDevice::ServiceSwitchChangeQueue(
                 fxRequest->Complete(hr);
             }
 
-            fxRequest->Release();            
+            fxRequest->Release();
         }
     }
     while (SUCCEEDED(enumHr));
@@ -1392,27 +1392,27 @@ CMyDevice::SetPowerManagement(
     None
 
   Return Value:
-    
+
     Status
 
 --*/
-{ 
+{
     HRESULT hr;
 
     //
-    // Enable USB selective suspend on the device.    
-    // 
-    
+    // Enable USB selective suspend on the device.
+    //
+
     hr = m_FxDevice->AssignS0IdleSettings( IdleUsbSelectiveSuspend,
                                 PowerDeviceMaximum,
                                 IDLE_TIMEOUT_IN_MSEC,
                                 IdleAllowUserControl,
-                                WdfUseDefault);                                                                                                   
+                                WdfUseDefault);
 
     if (FAILED(hr))
     {
-        TraceEvents(TRACE_LEVEL_ERROR, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_ERROR,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Unable to assign S0 idle settings for the device %!HRESULT!",
                     hr
                     );
@@ -1427,16 +1427,16 @@ CMyDevice::SetPowerManagement(
         hr = m_FxDevice->AssignSxWakeSettings( PowerDeviceMaximum,
                                     WakeAllowUserControl,
                                     WdfUseDefault);
-                                    
+
         if (FAILED(hr))
         {
-            TraceEvents(TRACE_LEVEL_ERROR, 
-                        TEST_TRACE_DEVICE, 
+            TraceEvents(TRACE_LEVEL_ERROR,
+                        TEST_TRACE_DEVICE,
                         "%!FUNC! Unable to set Sx Wake Settings for the device %!HRESULT!",
                         hr
                         );
         }
-        
+
     }
 
 
@@ -1452,15 +1452,15 @@ CMyDevice::OnD0Entry(
     UNREFERENCED_PARAMETER(pWdfDevice);
     UNREFERENCED_PARAMETER(previousState);
 
-    // 
+    //
     // Start/Stop the I/O target if you support a continuous reader.
-    // The rest of the I/O is fed through power managed queues. The queue 
-    // itself will stop feeding I/O to targets (and will wait for any pending 
-    // I/O to complete before going into low power state), hence targets 
+    // The rest of the I/O is fed through power managed queues. The queue
+    // itself will stop feeding I/O to targets (and will wait for any pending
+    // I/O to complete before going into low power state), hence targets
     // don’t need to be stopped/started. The continuous reader I/O is outside
     // of power managed queues so we need to Stop the I/O target on D0Exit and
-    //  start it on D0Entry. Please note that bulk pipe target doesn't need to 
-    // be stopped/started because I/O submitted to this pipe comes from power 
+    //  start it on D0Entry. Please note that bulk pipe target doesn't need to
+    // be stopped/started because I/O submitted to this pipe comes from power
     // managed I/O queue, which delivers I/O only in power on state.
     //
 
@@ -1535,7 +1535,7 @@ CMyDevice::OnSelfManagedIoFlush(
     //
     // Complete every switch change operation with an error.
     //
-    ServiceSwitchChangeQueue(m_SwitchState, 
+    ServiceSwitchChangeQueue(m_SwitchState,
                              HRESULT_FROM_WIN32(ERROR_DEVICE_REMOVED),
                              NULL);
 
@@ -1619,19 +1619,19 @@ Return Value:
     // Driver must explictly call WdfIoTargetStart to kick start the
     // reader.  In this sample, it's done in D0Entry.
     // By defaut, framework queues two requests to the target
-    // endpoint. Driver can configure up to 10 requests with the 
+    // endpoint. Driver can configure up to 10 requests with the
     // parameter CONCURRENT_READS
-    //    
-    hr = pIUsbInterruptPipe2->ConfigureContinuousReader( sizeof(m_SwitchStateBuffer), 
+    //
+    hr = pIUsbInterruptPipe2->ConfigureContinuousReader( sizeof(m_SwitchStateBuffer),
                                                           0,//header
                                                           0,//trailer
-                                                          CONCURRENT_READS, 
+                                                          CONCURRENT_READS,
                                                           NULL,
                                                           pOnCompletionCallback,
                                                           m_pIUsbInterruptPipe,
                                                           pOnFailureCallback
                                                           );
-               
+
     if (FAILED(hr)) {
         TraceEvents(TRACE_LEVEL_ERROR, TEST_TRACE_DEVICE,
                     "OsrFxConfigContReaderForInterruptEndPoint failed %!HRESULT!",
@@ -1651,17 +1651,17 @@ CMyDevice::OnReaderFailure(
     IWDFUsbTargetPipe * pPipe,
     HRESULT hrCompletion
     )
-{   
+{
     UNREFERENCED_PARAMETER(pPipe);
-    
+
     m_InterruptReadProblem = hrCompletion;
-    TraceEvents(TRACE_LEVEL_INFORMATION, 
-                TEST_TRACE_DEVICE, 
+    TraceEvents(TRACE_LEVEL_INFORMATION,
+                TEST_TRACE_DEVICE,
                 "%!FUNC! Failure completed with %!HRESULT!",
                 hrCompletion
                 );
-    
-    ServiceSwitchChangeQueue(m_SwitchState, 
+
+    ServiceSwitchChangeQueue(m_SwitchState,
                              hrCompletion,
                              NULL);
 
@@ -1675,7 +1675,7 @@ CMyDevice::OnReaderCompletion(
     SIZE_T NumBytesTransferred,
     PVOID Context
     )
-{        
+{
     WUDF_TEST_DRIVER_ASSERT(pPipe ==  (IWDFUsbTargetPipe *)Context);
 
     //
@@ -1685,8 +1685,8 @@ CMyDevice::OnReaderCompletion(
     //
 
     if (NumBytesTransferred == 0) {
-        TraceEvents(TRACE_LEVEL_INFORMATION, 
-                    TEST_TRACE_DEVICE, 
+        TraceEvents(TRACE_LEVEL_INFORMATION,
+                    TEST_TRACE_DEVICE,
                     "%!FUNC! Zero length read occured on the Interrupt Pipe's "
                     "Continuous Reader\n"
                     );
@@ -1694,21 +1694,21 @@ CMyDevice::OnReaderCompletion(
     }
 
     WUDF_TEST_DRIVER_ASSERT(NumBytesTransferred == sizeof(m_SwitchState));
-    
+
     //
     // Get the switch state
     //
-    
+
     PVOID pBuff = pMemory->GetDataBuffer(NULL);
 
     CopyMemory(&m_SwitchState, pBuff, sizeof(m_SwitchState));
-    
-        
+
+
     //
     // Satisfy application request for switch change notification
     //
-    
-    ServiceSwitchChangeQueue(m_SwitchState, 
+
+    ServiceSwitchChangeQueue(m_SwitchState,
                              S_OK,
                              NULL);
 
@@ -1724,11 +1724,11 @@ CMyDevice::GetBusTypeGuid(
     VOID
     )
 /*++
- 
+
   Routine Description:
 
-    This routine gets the device instance ID then invokes SetupDi to 
-    retrieve the bus type guid for the device.  The bus type guid is 
+    This routine gets the device instance ID then invokes SetupDi to
+    retrieve the bus type guid for the device.  The bus type guid is
     stored in object.
 
   Arguments:
@@ -1827,16 +1827,16 @@ CMyDevice::PlaybackFile(
     _In_ IWDFIoRequest *FxRequest
     )
 /*++
- 
+
   Routine Description:
 
-    This method impersonates the caller, opens the file and prints each 
+    This method impersonates the caller, opens the file and prints each
     character to the seven segement display.
 
   Arguments:
 
     PlayInfo - the playback info from the request.
-  
+
     FxRequest - the request (used for impersonation)
 
   Return Value:
@@ -1880,16 +1880,16 @@ CMyDevice::PlaybackFile(
     {
         goto exit;
     }
-    
+
     //
-    // The impersonation callback succeeded - tell code analysis that the 
+    // The impersonation callback succeeded - tell code analysis that the
     // file handle is non-null
     //
 
     _Analysis_assume_(context.FileHandle != NULL);
 
     //
-    // Read from the file one character at a time until we hit 
+    // Read from the file one character at a time until we hit
     // EOF or the request is cancelled.
     //
 
@@ -1911,7 +1911,7 @@ CMyDevice::PlaybackFile(
             BOOL result;
 
             //
-            // Read a character from the file and see if we can 
+            // Read a character from the file and see if we can
             // encode it on the display.
             //
 
@@ -1952,7 +1952,7 @@ CMyDevice::PlaybackFile(
         }
 
     } while(SUCCEEDED(hr));
-    
+
     CloseHandle(context.FileHandle);
 
 exit:
@@ -1966,7 +1966,7 @@ CMyDevice::OnImpersonate(
     _In_ PVOID Context
     )
 /*++
- 
+
   Routine Description:
 
     This routine handles the impersonation for the PLAY FILE I/O control.
@@ -1985,7 +1985,7 @@ CMyDevice::OnImpersonate(
 
     context = (PPLAYBACK_IMPERSONATION_CONTEXT) Context;
 
-    context->FileHandle = CreateFile(context->PlaybackInfo->Path, 
+    context->FileHandle = CreateFile(context->PlaybackInfo->Path,
                                      GENERIC_READ,
                                      FILE_SHARE_READ,
                                      NULL,
@@ -2034,43 +2034,47 @@ CMyDevice::EncodeSegmentValue(
         (SS_LEFT | SS_TOP | SS_CENTER | SS_TOP_RIGHT),                  // p
         (SS_TOP_LEFT | SS_TOP | SS_CENTER | SS_RIGHT),                  // q
         (SS_BOTTOM_LEFT | SS_CENTER),                                   // r
-        (SS_TOP_LEFT | 
-         SS_TOP | SS_CENTER | SS_BOTTOM | 
+        (SS_TOP_LEFT |
+         SS_TOP | SS_CENTER | SS_BOTTOM |
          SS_BOTTOM_RIGHT),                                              // s
         (SS_TOP | SS_RIGHT),                                            // t
         (SS_LEFT | SS_RIGHT | SS_BOTTOM),                               // u
         (SS_BOTTOM_LEFT | SS_BOTTOM | SS_BOTTOM_RIGHT),                 // v
         (SS_LEFT | SS_BOTTOM | SS_BOTTOM_RIGHT),                        // w
         (SS_LEFT | SS_CENTER | SS_RIGHT),                               // x
-        (SS_TOP_LEFT | SS_CENTER | SS_RIGHT),                           // y 
-        (SS_TOP_RIGHT | 
-         SS_TOP | SS_CENTER | SS_BOTTOM | 
+        (SS_TOP_LEFT | SS_CENTER | SS_RIGHT),                           // y
+        (SS_TOP_RIGHT |
+         SS_TOP | SS_CENTER | SS_BOTTOM |
          SS_BOTTOM_LEFT),                                               // z
     };
 
     UCHAR numberMap[] = {
         (SS_LEFT | SS_TOP | SS_BOTTOM | SS_RIGHT | SS_DOT),             // 0
         (SS_RIGHT | SS_DOT),                                            // 1
-        (SS_TOP | 
-         SS_TOP_RIGHT | SS_CENTER | SS_BOTTOM_LEFT | 
+        (SS_TOP |
+         SS_TOP_RIGHT | SS_CENTER | SS_BOTTOM_LEFT |
          SS_BOTTOM | SS_DOT),                                           // 2
         (SS_TOP | SS_CENTER | SS_BOTTOM | SS_RIGHT | SS_DOT),           // 3
         (SS_TOP_LEFT | SS_CENTER | SS_RIGHT | SS_DOT),                  // 4
-        (SS_TOP_LEFT | 
-         SS_TOP | SS_CENTER | SS_BOTTOM | 
+        (SS_TOP_LEFT |
+         SS_TOP | SS_CENTER | SS_BOTTOM |
          SS_BOTTOM_RIGHT | SS_DOT),                                     // 5
-        (SS_TOP | SS_CENTER | SS_BOTTOM | 
+        (SS_TOP | SS_CENTER | SS_BOTTOM |
          SS_LEFT | SS_BOTTOM_RIGHT | SS_DOT),                           // 6
         (SS_TOP | SS_RIGHT | SS_DOT),                                   // 7
-        (SS_TOP | SS_BOTTOM | SS_CENTER | 
+        (SS_TOP | SS_BOTTOM | SS_CENTER |
          SS_LEFT | SS_RIGHT | SS_DOT),                                  // 8
         (SS_TOP_LEFT | SS_TOP | SS_CENTER | SS_RIGHT | SS_DOT),         // 9
     };
 
-    if (((Character >= 'a') && (Character <= 'z')) || 
-        ((Character >= 'A') && (Character <= 'Z')))
+    if ((Character >= 'a') && (Character <= 'z'))
     {
-        SevenSegment->Segments = letterMap[tolower(Character) - 'a'];
+        SevenSegment->Segments = letterMap[Character - 'a'];
+        return true;
+    }
+    else if ((Character >= 'A') && (Character <= 'Z'))
+    {
+        SevenSegment->Segments = letterMap[Character - 'A'];
         return true;
     }
     else if ((Character >= '0') && (Character <= '9'))

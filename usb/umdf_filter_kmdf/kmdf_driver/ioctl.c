@@ -43,7 +43,7 @@ OsrFxEvtIoDeviceControl(
     _In_ WDFREQUEST Request,
     _In_ size_t     OutputBufferLength,
     _In_ size_t     InputBufferLength,
-    _In_ ULONG      IoControlCode    
+    _In_ ULONG      IoControlCode
     )
 /*++
 
@@ -82,6 +82,12 @@ Return Value:
 
     UNREFERENCED_PARAMETER(InputBufferLength);
     UNREFERENCED_PARAMETER(OutputBufferLength);
+
+    //
+    // If your driver is at the top of its driver stack, EvtIoDeviceControl is called
+    // at IRQL = PASSIVE_LEVEL.
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
 
     PAGED_CODE();
 
@@ -384,9 +390,9 @@ StopAllPipes(
     )
 {
     WdfIoTargetStop(WdfUsbTargetPipeGetIoTarget(DeviceContext->InterruptPipe),
-                                 WdfIoTargetCancelSentIo);           
+                                 WdfIoTargetCancelSentIo);
     WdfIoTargetStop(WdfUsbTargetPipeGetIoTarget(DeviceContext->BulkReadPipe),
-                                 WdfIoTargetCancelSentIo);        
+                                 WdfIoTargetCancelSentIo);
     WdfIoTargetStop(WdfUsbTargetPipeGetIoTarget(DeviceContext->BulkWritePipe),
                                  WdfIoTargetCancelSentIo);
 }
@@ -440,9 +446,9 @@ Return Value:
 {
     PDEVICE_CONTEXT pDeviceContext;
     NTSTATUS status;
-    
+
     PAGED_CODE();
- 
+
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL, "--> ResetDevice\n");
 
     pDeviceContext = GetDeviceContext(Device);
@@ -457,17 +463,17 @@ Return Value:
     }
 
     StopAllPipes(pDeviceContext);
-    
+
     status = WdfUsbTargetDeviceResetPortSynchronously(pDeviceContext->UsbDevice);
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL, "ResetDevice failed - 0x%x\n", status);
     }
-    
+
     status = StartAllPipes(pDeviceContext);
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL, "Failed to start all pipes - 0x%x\n", status);
     }
-    
+
     WdfWaitLockRelease(pDeviceContext->ResetDeviceWaitLock);
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL, "<-- ResetDevice\n");
@@ -475,7 +481,7 @@ Return Value:
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 ReenumerateDevice(
     _In_ PDEVICE_CONTEXT DevContext
     )
@@ -499,7 +505,7 @@ Return Value:
     WDF_USB_CONTROL_SETUP_PACKET    controlSetupPacket;
     WDF_REQUEST_SEND_OPTIONS        sendOptions;
     GUID                            activity;
-    
+
     PAGED_CODE();
 
     TraceEvents(TRACE_LEVEL_VERBOSE, DBG_IOCTL,"--> ReenumerateDevice\n");
@@ -513,7 +519,7 @@ Return Value:
                                          &sendOptions,
                                          DEFAULT_CONTROL_TRANSFER_TIMEOUT
                                          );
-              
+
     WDF_USB_CONTROL_SETUP_PACKET_INIT_VENDOR(&controlSetupPacket,
                                         BmRequestHostToDevice,
                                         BmRequestToDevice,
@@ -546,15 +552,15 @@ Return Value:
                                  DevContext->DeviceName,
                                  DevContext->Location,
                                  status);
-   
+
     return status;
 
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 GetBarGraphState(
-    _In_ PDEVICE_CONTEXT DevContext, 
+    _In_ PDEVICE_CONTEXT DevContext,
     _Out_ PBAR_GRAPH_STATE BarGraphState
     )
 /*++
@@ -638,9 +644,9 @@ Return Value:
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 SetBarGraphState(
-    _In_ PDEVICE_CONTEXT DevContext, 
+    _In_ PDEVICE_CONTEXT DevContext,
     _In_ PBAR_GRAPH_STATE BarGraphState
     )
 /*++
@@ -718,9 +724,9 @@ Return Value:
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 GetSevenSegmentState(
-    _In_ PDEVICE_CONTEXT DevContext, 
+    _In_ PDEVICE_CONTEXT DevContext,
     _Out_ PUCHAR SevenSegment
     )
 /*++
@@ -752,7 +758,7 @@ Return Value:
     NTSTATUS status;
     WDF_USB_CONTROL_SETUP_PACKET    controlSetupPacket;
     WDF_REQUEST_SEND_OPTIONS        sendOptions;
-    
+
     WDF_MEMORY_DESCRIPTOR memDesc;
     ULONG    bytesTransferred;
 
@@ -811,9 +817,9 @@ Return Value:
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 SetSevenSegmentState(
-    _In_ PDEVICE_CONTEXT DevContext, 
+    _In_ PDEVICE_CONTEXT DevContext,
     _In_ PUCHAR SevenSegment
     )
 /*++
@@ -892,9 +898,9 @@ Return Value:
 }
 
 _IRQL_requires_(PASSIVE_LEVEL)
-NTSTATUS 
+NTSTATUS
 GetSwitchState(
-    _In_ PDEVICE_CONTEXT DevContext, 
+    _In_ PDEVICE_CONTEXT DevContext,
     _In_ PSWITCH_STATE SwitchState
     )
 /*++
@@ -1034,11 +1040,11 @@ Return Value:
             }
 
             //
-            // Complete the request.  If we failed to get the output buffer then 
+            // Complete the request.  If we failed to get the output buffer then
             // complete with that status.  Otherwise complete with the status from the reader.
             //
-            WdfRequestCompleteWithInformation(request, 
-                                              NT_SUCCESS(status) ? ReaderStatus : status, 
+            WdfRequestCompleteWithInformation(request,
+                                              NT_SUCCESS(status) ? ReaderStatus : status,
                                               bytesReturned);
             status = STATUS_SUCCESS;
 

@@ -154,7 +154,7 @@ Return Value:
     // provide a BusQueryInstanceID. If we don't, system will throw
     // CA bugcheck.
     //
-    status =  RtlUnicodeStringPrintf(&buffer, L"%02d", pDesc->SwitchNumber);
+    status =  RtlUnicodeStringPrintf(&buffer, L"%02u", pDesc->SwitchNumber);
     if (!NT_SUCCESS(status)) {
         return status;
     }
@@ -174,7 +174,7 @@ Return Value:
     // to match with an INF, this text will be displayed in the device manager.
     //
     status = RtlUnicodeStringPrintf(&buffer,
-                                    L"OsrUsbFX2 RawPdo For Switch %02d",
+                                    L"OsrUsbFX2 RawPdo For Switch %02u",
                                     pDesc->SwitchNumber);
     if (!NT_SUCCESS(status)) {
         goto Cleanup;
