@@ -132,7 +132,7 @@ Return Value:
 
     //
     // Register with ETW (unified tracing)
-    // 
+    //
     EventRegisterOSRUSBFX2();
 
     //
@@ -207,6 +207,11 @@ Return Value:
 
 --*/
 {
+    //
+    // EvtCleanupCallback for WDFDRIVER is always called at PASSIVE_LEVEL
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
+
     PAGED_CODE ();
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_INIT,
@@ -215,7 +220,7 @@ Return Value:
     WPP_CLEANUP( WdfDriverWdmGetDriverObject( (WDFDRIVER)Driver ));
 
     UNREFERENCED_PARAMETER(Driver); // For the case when WPP is not being used.
-	
+
     EventUnregisterOSRUSBFX2();
 }
 
