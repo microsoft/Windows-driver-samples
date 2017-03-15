@@ -74,7 +74,7 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES   objectAttribs;
     USBD_PIPE_HANDLE        usbdPipeHandle;
     PDEVICE_CONTEXT         deviceContext;
-    ULONG                   maxTransferSize;
+    ULONG                   maxPacketSize;
     PPIPE_CONTEXT           pipeContext;
 
     UsbSamp_DbgPrint(3, ("UsbSamp_DispatchReadWrite - begins\n"));
@@ -128,7 +128,7 @@ Return Value:
         rwContext->Read = TRUE;
         UsbSamp_DbgPrint(3, ("Read operation\n"));
 
-    } 
+    }
     else {
         status = WdfRequestRetrieveInputWdmMdl(Request, &requestMdl);
         if (!NT_SUCCESS(status)){
@@ -146,12 +146,12 @@ Return Value:
 
     //
     // The transfer request is for totalLength.
-    // We can perform a max of maxTransfersize in each stage.
+    // We can perform a max of maxPacketSize in each stage.
     //
-    maxTransferSize = GetMaxTransferSize(pipe, deviceContext);
+    maxPacketSize = GetMaxPacketSize(pipe, deviceContext);
 
-    if (totalLength > maxTransferSize) {
-        stageLength = maxTransferSize;
+    if (totalLength > maxPacketSize) {
+        stageLength = maxPacketSize;
     }
     else {
         stageLength = totalLength;
@@ -181,7 +181,7 @@ Return Value:
     objectAttribs.ParentObject = Request;
 
     status = WdfUsbTargetDeviceCreateUrb(deviceContext->WdfUsbTargetDevice,
-		                     &objectAttribs,
+                             &objectAttribs,
                              &urbMemory,
                              &urb);
 
@@ -194,9 +194,9 @@ Return Value:
     if(WdfUsbPipeTypeBulk == pipeInfo.PipeType &&
         pipeContext->StreamConfigured == TRUE) {
         //
-        // For super speed bulk pipe with streams, we specify one of its associated 
-        // usbd pipe handles to format an URB for sending or receiving data. 
-        // The usbd pipe handle is returned by the HCD via sucessful open-streams request
+        // For super speed bulk pipe with streams, we specify one of its associated
+        // usbd pipe handles to format an URB for sending or receiving data.
+        // The usbd pipe handle is returned by the HCD via successful open-streams request
         //
         usbdPipeHandle = GetStreamPipeHandleFromBulkPipe(pipe);
     }
@@ -290,7 +290,7 @@ Return Value:
     PURB                    urb;
     PCHAR                   operation;
     ULONG                   bytesReadWritten;
-    ULONG                   maxTransferSize;
+    ULONG                   maxPacketSize;
     PDEVICE_CONTEXT         deviceContext;
 
     rwContext = GetRequestContext(Request);
@@ -298,7 +298,7 @@ Return Value:
 
     if (rwContext->Read) {
         operation = "Read";
-    } 
+    }
     else {
         operation = "Write";
     }
@@ -336,13 +336,13 @@ Return Value:
     UsbSamp_DbgPrint(3, ("Stage next %s transfer...\n", operation));
 
     //
-    // The transfer request is for totalLength. 
-    // We can perform a max of maxTransfersize in each stage.
+    // The transfer request is for totalLength.
+    // We can perform a max of maxPacketSize in each stage.
     //
-    maxTransferSize = GetMaxTransferSize(pipe, deviceContext);
+    maxPacketSize = GetMaxPacketSize(pipe, deviceContext);
 
-    if (rwContext->Length > maxTransferSize) {
-        stageLength = maxTransferSize;
+    if (rwContext->Length > maxPacketSize) {
+        stageLength = maxPacketSize;
     }
     else {
         stageLength = rwContext->Length;
@@ -360,7 +360,7 @@ Return Value:
             UsbSamp_DbgPrint(1, ("WdfRequestRetrieveOutputWdmMdl for Read failed %x\n", status));
             goto End;
         }
-    } 
+    }
     else {
         status = WdfRequestRetrieveInputWdmMdl(Request, &requestMdl);
         if (!NT_SUCCESS(status)){
@@ -478,8 +478,8 @@ Return Value:
     PDEVICE_CONTEXT       deviceContext;
     PPIPE_CONTEXT         pipeContext;
 
-    ULONG                 maxTransferSize;
- 
+    ULONG                 maxPacketSize;
+
     UsbSamp_DbgPrint(3, ("UsbSamp_DispatchReadWrite - begins\n"));
 
     //
@@ -515,7 +515,7 @@ Return Value:
         status = WdfRequestRetrieveOutputBuffer(Request, Length, &virtualAddress, &totalLength);
         rwContext->Read = TRUE;
 
-    } 
+    }
     else { //Write
 
         status = WdfRequestRetrieveInputBuffer(Request, Length, &virtualAddress, &totalLength);
@@ -529,15 +529,15 @@ Return Value:
 
     //
     // The transfer request is for totalLength.
-    // We can perform a max of maxTransfersize in each stage.
+    // We can perform a max of maxPacketSize in each stage.
     //
-    maxTransferSize = GetMaxTransferSize(pipe, deviceContext);
+    maxPacketSize = GetMaxPacketSize(pipe, deviceContext);
 
-    if (totalLength > maxTransferSize) {
-        stageLength = maxTransferSize;
+    if (totalLength > maxPacketSize) {
+        stageLength = maxPacketSize;
     }
     else {
-        stageLength = totalLength;   
+        stageLength = totalLength;
     }
 
     WDF_OBJECT_ATTRIBUTES_INIT(&objectAttribs);
@@ -566,7 +566,7 @@ Return Value:
                                                       Request,
                                                       reqMemory,
                                                       &offset);
-    } 
+    }
     else {
 
         UsbSamp_DbgPrint(3, ("Write operation\n"));
@@ -662,7 +662,7 @@ Return Value:
     PWDF_USB_REQUEST_COMPLETION_PARAMS usbCompletionParams;
     PPIPE_CONTEXT           pipeContext;
     WDF_USB_PIPE_INFORMATION   pipeInfo;
-    ULONG                   maxTransferSize;
+    ULONG                   maxPacketSize;
     PDEVICE_CONTEXT         deviceContext;
 
     usbCompletionParams = CompletionParams->Parameters.Usb.Completion;
@@ -672,7 +672,7 @@ Return Value:
     if (rwContext->Read) {
         operation = "Read";
         bytesReadWritten =  (ULONG)usbCompletionParams->Parameters.PipeRead.Length;
-    } 
+    }
     else {
         operation = "Write";
         bytesReadWritten =  (ULONG)usbCompletionParams->Parameters.PipeWrite.Length;
@@ -712,13 +712,13 @@ Return Value:
     UsbSamp_DbgPrint(3, ("Stage next %s transfer...\n", operation));
 
     //
-    // The transfer request is for totalLength. 
-    // We can perform a max of maxTransfersize in each stage.
+    // The transfer request is for totalLength.
+    // We can perform a max of maxPacketSize in each stage.
     //
-    maxTransferSize = GetMaxTransferSize(pipe, deviceContext);
+    maxPacketSize = GetMaxPacketSize(pipe, deviceContext);
 
-    if (rwContext->Length > maxTransferSize) {
-       stageLength = maxTransferSize;    
+    if (rwContext->Length > maxPacketSize) {
+       stageLength = maxPacketSize;
     }
     else
     {
@@ -738,7 +738,7 @@ Return Value:
             usbCompletionParams->Parameters.PipeRead.Buffer,
             &offset);
 
-    } 
+    }
     else {
 
         status = WdfUsbTargetPipeFormatRequestForWrite(
@@ -842,7 +842,7 @@ QueuePassiveLevelCallback(
 Routine Description:
 
     This routine is used to queue workitems so that the callback
-    functions can be executed at PASSIVE_LEVEL in the conext of
+    functions can be executed at PASSIVE_LEVEL in the context of
     a system thread.
 
 Arguments:
@@ -904,4 +904,3 @@ DbgPrintRWContext(
                          (PVOID)rwContext->VirtualAddress));
     return;
 }
-

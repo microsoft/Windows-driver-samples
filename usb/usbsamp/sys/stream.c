@@ -76,8 +76,8 @@ Return Value:
     //
     // Note: All super speed bulk stream I/O transfers use USBD Handle obtained in
     //       UsbSamp_EvtDeviceAdd. If you call WdfUsbTargetDeviceQueryUsbCapability
-    //       method instead of USBD_QueryUsbCapability here, it will not set stream 
-    //       capabilites for USBD Handle used by stream transfer in which case 
+    //       method instead of USBD_QueryUsbCapability here, it will not set stream
+    //       capabilities for USBD Handle used by stream transfer in which case
     //       the open streams request will fail in this example.
     //
     status = USBD_QueryUsbCapability(pDevContext->UsbdHandle,
@@ -89,11 +89,11 @@ Return Value:
         UsbSamp_DbgPrint(1, ("USBD_QueryUsbCapability %x\n", status));
     }
 
-    return status;    
+    return status;
 }
 
 #if (NTDDI_VERSION >= NTDDI_WIN8)
-                     
+
 NTSTATUS
 InitializePipeContextForSuperSpeedBulkPipe(
     _In_ PDEVICE_CONTEXT            DeviceContext,
@@ -112,7 +112,7 @@ Arguments:
 
     InterfaceNumber - InterfaceNumber of selected interface
 
-    Pipe - Bullk Pipe
+    Pipe - Bulk Pipe
 
 Return Value:
 
@@ -126,13 +126,13 @@ Return Value:
     PUSB_ENDPOINT_DESCRIPTOR    pEndpointDescriptor;
     PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR pEndpointCompanionDescriptor;
 
-    UCHAR               endpointAddress;
-    ULONG               maxStreams;
-    ULONG               supportedStreams;
+    UCHAR                endpointAddress;
+    ULONG                maxStreams;
+    ULONG                supportedStreams;
     PUSBSAMP_STREAM_INFO pStreamInfo;
-    NTSTATUS            status;
-    PURB                pUrb = NULL;
-    ULONG               i;
+    NTSTATUS             status;
+    PURB                 pUrb = NULL;
+    ULONG                i;
 
     PAGED_CODE();
 
@@ -140,12 +140,12 @@ Return Value:
     WdfUsbTargetPipeGetInformation(Pipe, &pipeInfo);
     pipeContext = GetPipeContext(Pipe);
     pStreamInfo = &pipeContext->StreamInfo;
-    
+
     pStreamInfo->NumberOfStreams = 0;
     pStreamInfo->StreamList = NULL;
- 
+
     pipeContext->StreamConfigured = FALSE;
-    
+
     //
     // Validate that the endpoint/pipe is of type BULK.
     // Streams are only allowed on a SS BULK endpoint.
@@ -168,24 +168,24 @@ Return Value:
 
     if (pEndpointDescriptor != NULL &&
         pEndpointCompanionDescriptor != NULL) {
-        
+
         maxStreams = pEndpointCompanionDescriptor->bmAttributes.Bulk.MaxStreams;
 
         if (maxStreams == 0) {
 
             supportedStreams = 0;
-        
+
         } else {
-        
+
             supportedStreams = 1 << maxStreams;
         }
 
     } else {
-    
+
         UsbSamp_DbgPrint(1, ("Endpoint Descriptor or Endpoint Companion Descriptor is NULL.\n"));
         status = STATUS_INVALID_PARAMETER;
         goto End;
-    
+
     }
 
     if (supportedStreams == 0) {
@@ -234,13 +234,13 @@ Return Value:
                                                   Pipe,
                                                   NULL,
                                                   NULL,
-                                                  pUrb                           
+                                                  pUrb
                                                   );
 
     if (NT_SUCCESS(status)) {
 
          pipeContext->StreamConfigured = TRUE;
-  
+
     }
 End:
     if (!NT_SUCCESS(status)) {
@@ -275,7 +275,7 @@ Routine Description:
 
 Arguments:
 
-    Pipe - Bullk Pipe
+    Pipe - Bulk Pipe
 
 Return Value:
 
@@ -291,7 +291,7 @@ Return Value:
 
     pipeContext = GetPipeContext(Pipe);
 
-    if (pipeContext->StreamConfigured == FALSE) 
+    if (pipeContext->StreamConfigured == FALSE)
     {
         streamPipeHandle = NULL;
         goto End;
@@ -327,14 +327,14 @@ ConfigureStreamPipeHandleForRequest(
 
 Routine Description:
 
-    The framework has formated request for super speed bulk pipe. 
+    The framework has formated request for super speed bulk pipe.
     For stream transfer, use the associated stream's PipeHandle for transfer.
 
 Arguments:
-    
+
     Request - Read/Write Request.
 
-    Pipe - Bullk Pipe
+    Pipe - Bulk Pipe
 
 Return Value:
 
@@ -358,8 +358,8 @@ Return Value:
 
     //
     // The framework uses pipe's Pipehandle for data transfer by default.
-    // For stream transfer, we should use the associated stream's PipeHandle of 
-    // the super speed bulk pipe for transfer. Replace the PipeHandle with 
+    // For stream transfer, we should use the associated stream's PipeHandle of
+    // the super speed bulk pipe for transfer. Replace the PipeHandle with
     // its associated stream's PipeHandle .
     //
     urb = irpSp->Parameters.Others.Argument1;
@@ -371,7 +371,7 @@ Return Value:
 #endif
 
 ULONG
-GetMaxTransferSize(
+GetMaxPacketSize(
     _In_ WDFUSBPIPE         Pipe,
     _In_ PDEVICE_CONTEXT    DeviceContext
 )
@@ -382,8 +382,8 @@ Routine Description:
     This routine returns maximum packet size of a bulk pipe
 
 Arguments:
-    
-    Pipe - Bullk Pipe
+
+    Pipe - Bulk Pipe
 
 Return Value:
 
@@ -391,9 +391,9 @@ Return Value:
 
 --*/
 {
-    ULONG           maxTransferSize;
+    ULONG           maxPacketSize;
     PPIPE_CONTEXT   pipeContext;
-    
+
     pipeContext = GetPipeContext(Pipe);
 
     if (pipeContext->StreamConfigured == TRUE) {
@@ -403,31 +403,24 @@ Return Value:
         // MAX_STREAM_VALID_PACKET_SIZE which depends on the implementation
         // of super speed bulk stream endpoint
         //
-        maxTransferSize = MAX_STREAM_VALID_PACKET_SIZE;
+        maxPacketSize = MAX_STREAM_VALID_PACKET_SIZE;
 
     }
     else{
         if (DeviceContext->IsDeviceSuperSpeed == TRUE)
         {
-            maxTransferSize = MAX_SUPER_SPEED_TRANSFER_SIZE;
-        } 
+            maxPacketSize = MAX_SUPER_SPEED_PACKET_SIZE;
+        }
         else if (DeviceContext->IsDeviceHighSpeed == TRUE)
         {
-            maxTransferSize = MAX_HIGH_SPEED_TRANSFER_SIZE;
+            maxPacketSize = MAX_HIGH_SPEED_PACKET_SIZE;
         }
         else
-        {         
-            maxTransferSize = MAX_FULL_SPEED_TRANSFER_SIZE;
+        {
+            maxPacketSize = MAX_FULL_SPEED_PACKET_SIZE;
         }
-            
+
     }
 
-    return maxTransferSize;
+    return maxPacketSize;
 }
-
-
-
-
-  
-
-

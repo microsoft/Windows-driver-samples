@@ -70,9 +70,9 @@ Environment:
 
 #endif
 
-#define MAX_FULL_SPEED_TRANSFER_SIZE   64
-#define MAX_HIGH_SPEED_TRANSFER_SIZE   512
-#define MAX_SUPER_SPEED_TRANSFER_SIZE  1024
+#define MAX_FULL_SPEED_PACKET_SIZE   64
+#define MAX_HIGH_SPEED_PACKET_SIZE   512
+#define MAX_SUPER_SPEED_PACKET_SIZE  1024
 #define MAX_STREAM_VALID_PACKET_SIZE   1024
 #define REMOTE_WAKEUP_MASK 0x20
 
@@ -109,7 +109,7 @@ typedef struct _DEVICE_CONTEXT {
     ULONG                           MaximumTransferSize;
 
     WDFQUEUE                        IsochReadQueue;
-    
+
     WDFQUEUE                        IsochWriteQueue;
 
     BOOLEAN                         IsStaticStreamsSupported;
@@ -118,7 +118,7 @@ typedef struct _DEVICE_CONTEXT {
 
     USBD_HANDLE                     UsbdHandle;
 
- 
+
 } DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_CONTEXT, GetDeviceContext)
@@ -153,8 +153,8 @@ typedef struct _USBSAMP_STREAM_INFO {
 //
 typedef struct _PIPE_CONTEXT {
 
-    ULONG NextFrameNumber;    
-    
+    ULONG NextFrameNumber;
+
     ULONG   TransferSizePerMicroframe;
 
     ULONG   TransferSizePerFrame;
@@ -172,7 +172,7 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(PIPE_CONTEXT, GetPipeContext)
 
 
 //
-// This context is associated with every request recevied by the driver
+// This context is associated with every request received by the driver
 // from the app.
 //
 typedef struct _REQUEST_CONTEXT {
@@ -321,7 +321,7 @@ RetrieveDeviceInformation(
 
 
 USBD_STATUS
-UsbSamp_ValidateConfigurationDescriptor(  
+UsbSamp_ValidateConfigurationDescriptor(
     _In_reads_bytes_(BufferLength) PUSB_CONFIGURATION_DESCRIPTOR ConfigDesc,
     _In_ ULONG BufferLength,
     _Inout_ PUCHAR *Offset
@@ -381,8 +381,8 @@ ConfigureStreamPipeHandleForRequest(
 #endif
 
 ULONG
-GetMaxTransferSize(
-    _In_ WDFUSBPIPE        Pipe, 
+GetMaxPacketSize(
+    _In_ WDFUSBPIPE        Pipe,
     _In_ PDEVICE_CONTEXT   DeviceContext
 );
 
