@@ -21,10 +21,10 @@ Environment:
 
 --*/
 
-            
+
 #include <DriverSpecs.h>
-_Analysis_mode_(_Analysis_code_type_user_code_) 
- 
+_Analysis_mode_(_Analysis_code_type_user_code_)
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -117,6 +117,7 @@ GetDevicePath(
 
     deviceInterfaceList = (PWSTR)malloc(deviceInterfaceListLength * sizeof(WCHAR));
     if (deviceInterfaceList == NULL) {
+        bRet = FALSE;
         printf("Error allocating memory for device interface list.\n");
         goto clean0;
     }
@@ -157,7 +158,9 @@ clean0:
     return bRet;
 }
 
-
+_Check_return_
+_Ret_notnull_
+_Success_(return != INVALID_HANDLE_VALUE)
 HANDLE
 OpenDevice(
     _In_ BOOL Synchronous
@@ -1201,10 +1204,9 @@ exit:
     }
 
     if (hWrite != INVALID_HANDLE_VALUE) {
+        _Analysis_assume_(hWrite != NULL);
         CloseHandle(hWrite);
     }
 
     return retValue;
 }
-
-

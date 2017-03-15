@@ -101,7 +101,7 @@ Return Value:
             WdfUsbTargetPipeSetNoMaximumPacketSizeCheck(pipe);
 
             status = STATUS_SUCCESS;
-        } 
+        }
         else {
             status = STATUS_INVALID_DEVICE_REQUEST;
         }
@@ -160,6 +160,12 @@ Return Value:
     UNREFERENCED_PARAMETER(InputBufferLength);
 
     UsbSamp_DbgPrint(3, ("Entered UsbSamp_DispatchDevCtrl\n"));
+
+    //
+    // If your driver is at the top of its driver stack, EvtIoDeviceControl is called
+    // at IRQL = PASSIVE_LEVEL.
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
 
     PAGED_CODE();
 
@@ -257,6 +263,12 @@ Return Value:
     WDFUSBPIPE              pipe;
     WDF_USB_PIPE_INFORMATION   pipeInfo;
 
+    //
+    // If your driver is at the top of its driver stack, EvtIoRead is called
+    // at IRQL = PASSIVE_LEVEL.
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
+
     PAGED_CODE();
 
     //
@@ -278,7 +290,7 @@ Return Value:
         ReadWriteBulkEndPoints(Queue, Request, (ULONG) Length, WdfRequestTypeRead);
         return;
 
-    } 
+    }
     else if (WdfUsbPipeTypeIsochronous == pipeInfo.PipeType){
 
 #if !defined(BUFFERED_READ_WRITE) // if doing DIRECT_IO
@@ -325,6 +337,12 @@ Return Value:
     WDFUSBPIPE              pipe;
     WDF_USB_PIPE_INFORMATION   pipeInfo;
 
+    //
+    // If your driver is at the top of its driver stack, EvtIoWrite is called
+    // at IRQL = PASSIVE_LEVEL.
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
+
     PAGED_CODE();
 
     //
@@ -346,7 +364,7 @@ Return Value:
         ReadWriteBulkEndPoints(Queue, Request, (ULONG) Length, WdfRequestTypeWrite);
         return;
 
-    } 
+    }
     else if (WdfUsbPipeTypeIsochronous == pipeInfo.PipeType){
 
 #if !defined(BUFFERED_READ_WRITE) // if doing DIRECT_IO
@@ -565,7 +583,7 @@ Return Value:
     PAGED_CODE();
 
     pDeviceContext = GetDeviceContext(Device);
-    
+
     //
     // A reset-device
     // request will be stuck in the USB until the pending transactions
@@ -576,7 +594,7 @@ Return Value:
     // continuous reader (by calling WdfIoTargetStart) after the request completes.
     //
     StopAllPipes(pDeviceContext);
-    
+
     //
     // It may not be necessary to check whether device is connected before
     // resetting the port.
@@ -588,7 +606,7 @@ Return Value:
     }
 
     StartAllPipes(pDeviceContext);
-    
+
     UsbSamp_DbgPrint(3, ("ResetDevice - ends\n"));
 
     return status;

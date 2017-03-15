@@ -116,7 +116,7 @@ MyReAlloc (
     {
         return NULL;
     }
-    
+
     header = (PALLOCHEADER)hMem;
     header--;
 
@@ -135,6 +135,7 @@ MyReAlloc (
             // and the original handle and pointer are still valid.
             // Add the old address back to the allocation list.
             //
+            #pragma prefast(suppress:__WARNING_USING_UNINIT_VAR, "SAL noise")
             InsertTailList(&AllocListHead, &header->ListEntry);
         }
         else

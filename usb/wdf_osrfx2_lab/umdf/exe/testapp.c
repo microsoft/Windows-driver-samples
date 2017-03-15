@@ -211,7 +211,9 @@ GetDevicePath(
 
 }
 
-
+_Check_return_
+_Ret_notnull_
+_Success_(return != INVALID_HANDLE_VALUE)
 HANDLE
 OpenDevice(
     _In_ BOOL Synchronous
@@ -905,7 +907,7 @@ SendFileToDevice(
 {
     HANDLE          deviceHandle;
 
-    struct 
+    struct
     {
         USHORT delay;
         WCHAR buffer[MAX_PATH + 1];
@@ -934,14 +936,14 @@ SendFileToDevice(
     // Convert the file name from relative to absolute.
     //
 
-    bufferCch = GetFullPathName(FileName, 
+    bufferCch = GetFullPathName(FileName,
                                 countof(playback.buffer),
                                 playback.buffer,
                                 NULL);
 
     if (bufferCch == 0)
     {
-        wprintf(L"Error getting full path name for %s - %d\n", 
+        wprintf(L"Error getting full path name for %s - %d\n",
                 FileName,
                 GetLastError());
         goto Error;
@@ -1241,6 +1243,10 @@ Return Value:
             }
 
             pinBuf = malloc(G_ReadLen);
+            if (pinBuf == 0)  {
+                retValue = 1;
+                goto exit;
+            }
         }
 
         if (G_fWrite) {
@@ -1260,6 +1266,10 @@ Return Value:
             }
 
             poutBuf = malloc(G_WriteLen);
+            if (poutBuf == 0)  {
+                retValue = 1;
+                goto exit;
+            }
         }
 
         for (i = 0; i < G_IterationCount; i++) {
@@ -1349,12 +1359,9 @@ exit:
     }
 
     if (hWrite != INVALID_HANDLE_VALUE) {
+        _Analysis_assume_(hWrite != NULL);
         CloseHandle(hWrite);
     }
 
     return retValue;
 }
-
-
-
-

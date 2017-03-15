@@ -200,7 +200,7 @@ Return Value:
     pStreamInfo->NumberOfStreams = supportedStreams;
 
     pStreamInfo->StreamList = ExAllocatePoolWithTag(
-                                    NonPagedPool,
+                                    NonPagedPoolNx,
                                     supportedStreams * sizeof(USBD_STREAM_INFORMATION),
                                     POOL_TAG);
 
@@ -230,6 +230,7 @@ Return Value:
     pUrb->UrbOpenStaticStreams.Streams = pStreamInfo->StreamList;
 
     // Send the URB down the stack
+    #pragma prefast(suppress:__WARNING_WRITE_OVERRUN, "SAL noise")
     status = WdfUsbTargetPipeSendUrbSynchronously(
                                                   Pipe,
                                                   NULL,

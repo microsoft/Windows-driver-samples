@@ -248,7 +248,7 @@ VOID
 DisplayEndpointDescriptor (
     _In_     PUSB_ENDPOINT_DESCRIPTOR
                         EndpointDesc,
-    _In_opt_ PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR 
+    _In_opt_ PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR
                         EpCompDesc,
     _In_opt_ PUSB_SUPERSPEEDPLUS_ISOCH_ENDPOINT_COMPANION_DESCRIPTOR
                         SspIsochCompDesc,
@@ -367,19 +367,19 @@ GetNextDescriptor()
 *****************************************************************************/
 PUSB_COMMON_DESCRIPTOR
 GetNextDescriptor(
-    _In_reads_bytes_(TotalLength) 
+    _In_reads_bytes_(TotalLength)
         PUSB_COMMON_DESCRIPTOR FirstDescriptor,
     _In_
         ULONG TotalLength,
-    _In_ 
+    _In_
         PUSB_COMMON_DESCRIPTOR StartDescriptor,
-    _In_ long 
+    _In_ long
         DescriptorType
     )
 {
     PUSB_COMMON_DESCRIPTOR currentDescriptor = NULL;
     PUSB_COMMON_DESCRIPTOR endDescriptor     = NULL;
-    
+
     endDescriptor = (PUSB_COMMON_DESCRIPTOR)((PUCHAR)FirstDescriptor + TotalLength);
 
     if (StartDescriptor >= endDescriptor ||
@@ -537,7 +537,7 @@ AppendTextBuffer (
 
             return;
             }
-        
+
         TextBufferTmp = REALLOC(TextBuffer, uNewTextBufferLen);
 
         if (TextBufferTmp != NULL)
@@ -639,7 +639,7 @@ ULONG GetEhciDebugPort(ULONG vendorId, ULONG deviceId)
 //
 //  hTreeItem - Handle of selected TreeView item for which information should
 //  be added to the TextBuffer global
-//  
+//
 //  The functions returns error status if AppendTextBuffer() used in Display*() functions
 //  fails. The display text would be missing or truncated in such cases.
 //*****************************************************************************
@@ -703,13 +703,13 @@ UpdateTreeItemDeviceInfo(
         PUSB_NODE_CONNECTION_INFORMATION_EX    ConnectionInfo = NULL;
         PUSB_DESCRIPTOR_REQUEST                ConfigDesc = NULL;
         PSTRING_DESCRIPTOR_NODE                StringDescs = NULL;
-        PUSB_HUB_INFORMATION_EX                HubInfoEx = NULL; 
+        PUSB_HUB_INFORMATION_EX                HubInfoEx = NULL;
         PUSB_HUB_CAPABILITIES_EX               HubCapabilityEx = NULL;
         PUSB_PORT_CONNECTOR_PROPERTIES         PortConnectorProps = NULL;
         PUSB_NODE_CONNECTION_INFORMATION_EX_V2 ConnectionInfoV2 = NULL;
         PUSB_DESCRIPTOR_REQUEST                BosDesc = NULL;
         PDEVICE_INFO_NODE                      DeviceInfoNode = NULL;
-            
+
         // The TextBuffer has the TreeView name; add 2 lines for display
         AppendTextBuffer("\r\n\r\n");
 
@@ -737,10 +737,10 @@ UpdateTreeItemDeviceInfo(
 
                 //
                 // Search for the debug port number.  If running on Win8 or later,
-                // the USB_PORT_CONNECTOR_PROPERTIES structure will contain the 
-                // port number.  If that fails, the list of known host controllers 
+                // the USB_PORT_CONNECTOR_PROPERTIES structure will contain the
+                // port number.  If that fails, the list of known host controllers
                 // with debug ports will be searched.
-                // 
+                //
 
                 AppendTextBuffer("\r\nDebug Port Number:  ");
 
@@ -751,7 +751,7 @@ UpdateTreeItemDeviceInfo(
                     HTREEITEM portItem = NULL;
                     PVOID     portInfo;
 
-                    portItem = TreeView_GetChild(hTreeWnd, rootHubItem); 
+                    portItem = TreeView_GetChild(hTreeWnd, rootHubItem);
 
                     while (portItem != NULL)
                     {
@@ -767,7 +767,7 @@ UpdateTreeItemDeviceInfo(
                         //
                         // Note that an empty port is a port without a device attached
                         // is still a DeviceInfo instance.
-                        // 
+                        //
 
                         if ((*(PUSBDEVICEINFOTYPE)portInfo) == DeviceInfo)
                         {
@@ -778,7 +778,7 @@ UpdateTreeItemDeviceInfo(
                         {
                             ConnectionInfo = ((PUSBEXTERNALHUBINFO)portInfo)->ConnectionInfo;
                             PortConnectorProps = ((PUSBEXTERNALHUBINFO)portInfo)->PortConnectorProps;
-                            
+
                         }
 
                         if (ConnectionInfo != NULL     &&
@@ -787,7 +787,7 @@ UpdateTreeItemDeviceInfo(
                         {
                             dbgPortFound = TRUE;
                             AppendTextBuffer("%d\r\n", ((PUSBDEVICEINFO)portInfo)->ConnectionInfo->ConnectionIndex);
-                            break;                            
+                            break;
                         }
                         portItem = TreeView_GetNextSibling(hTreeWnd, portItem);
                     }
@@ -796,7 +796,7 @@ UpdateTreeItemDeviceInfo(
                     // Resetting ConnectionInfo and PortConnectorProps to NULL so that they won't be erroneously
                     // be displayed below.
                     //
-                    
+
                     ConnectionInfo = NULL;
                     PortConnectorProps = NULL;
                 }
@@ -831,7 +831,7 @@ UpdateTreeItemDeviceInfo(
                                         ((PUSBHOSTCONTROLLERINFO)info)->BusDevice,
                                         ((PUSBHOSTCONTROLLERINFO)info)->BusFunction);
                 }
-                
+
                 // Display the USB Host Controller Power State Info
                 {
                     PUSB_POWER_INFO pUPI = (PUSB_POWER_INFO) &((PUSBHOSTCONTROLLERINFO)info)->USBPowerInfo[0];
@@ -840,7 +840,7 @@ UpdateTreeItemDeviceInfo(
 
                     AppendTextBuffer("\r\nHost Controller Power State Mappings\r\n");
                     AppendTextBuffer("System State\t\tHost Controller\t\tRoot Hub\tUSB wakeup\tPowered\r\n");
-                    for ( ; nPowerState < WdmUsbPowerSystemShutdown; nIndex++, nPowerState++, pUPI++) 
+                    for ( ; nPowerState < WdmUsbPowerSystemShutdown; nIndex++, nPowerState++, pUPI++)
                     {
                         DisplayPowerState(pUPI);
                     }
@@ -935,7 +935,7 @@ UpdateTreeItemDeviceInfo(
 
         if (BosDesc)
         {
-            DisplayBosDescriptor((PUSBDEVICEINFO) info, 
+            DisplayBosDescriptor((PUSBDEVICEINFO) info,
                 (PUSB_BOS_DESCRIPTOR) (BosDesc + 1),
                 StringDescs);
         }
@@ -946,7 +946,7 @@ UpdateTreeItemDeviceInfo(
         FREE(tviName);
     }
 
-    // AppendTextBuffer() which is used in Display*() functions uses GlobalRealloc() which can fail if realloc fails. 
+    // AppendTextBuffer() which is used in Display*() functions uses GlobalRealloc() which can fail if realloc fails.
     // Obtain last error code from GetLastError() and propagate the error to caller.
     hr = HRESULT_FROM_WIN32(GetLastError());
 
@@ -1008,11 +1008,11 @@ DisplayPortConnectorProperties (
     )
 {
     AppendTextBuffer("Is Port User Connectable:         %s\r\n",
-                     PortConnectorProps->UsbPortProperties.PortIsUserConnectable 
+                     PortConnectorProps->UsbPortProperties.PortIsUserConnectable
                      ? "yes" : "no");
-    
+
     AppendTextBuffer("Is Port Debug Capable:            %s\r\n",
-                     PortConnectorProps->UsbPortProperties.PortIsDebugCapable 
+                     PortConnectorProps->UsbPortProperties.PortIsDebugCapable
                      ? "yes" : "no");
     AppendTextBuffer("Companion Port Number:            %d\r\n",
                      PortConnectorProps->CompanionPortNumber);
@@ -1022,17 +1022,17 @@ DisplayPortConnectorProperties (
     {
         AppendTextBuffer("Protocols Supported:\r\n");
         AppendTextBuffer(" USB 1.1:                         %s\r\n",
-                         ConnectionInfoV2->SupportedUsbProtocols.Usb110 
+                         ConnectionInfoV2->SupportedUsbProtocols.Usb110
                          ? "yes" : "no");
         AppendTextBuffer(" USB 2.0:                         %s\r\n",
-                         ConnectionInfoV2->SupportedUsbProtocols.Usb200 
+                         ConnectionInfoV2->SupportedUsbProtocols.Usb200
                          ? "yes" : "no");
         AppendTextBuffer(" USB 3.0:                         %s\r\n",
-                         ConnectionInfoV2->SupportedUsbProtocols.Usb300 
-                         ? "yes" : "no");        
+                         ConnectionInfoV2->SupportedUsbProtocols.Usb300
+                         ? "yes" : "no");
     }
 
-    AppendTextBuffer("\r\n");    
+    AppendTextBuffer("\r\n");
 }
 
 /*****************************************************************************
@@ -1048,7 +1048,7 @@ DisplayDevicePowerState (
     _In_     PDEVICE_INFO_NODE DeviceInfoNode
     )
 {
-    
+
     DEVICE_POWER_STATE powerState;
 
     powerState = AcquireDevicePowerState(DeviceInfoNode);
@@ -1062,8 +1062,8 @@ DisplayDevicePowerState (
     {
         AppendTextBuffer("Invalid Device Power State Value %d\r\n", powerState);
     }
-    
-    AppendTextBuffer("\r\n");    
+
+    AppendTextBuffer("\r\n");
 }
 
 
@@ -1071,7 +1071,7 @@ DisplayDevicePowerState (
 
 DisplayHubDescriptorBase()
 
-HubDescriptor - hub descriptor, could also be PUSB_30_HUB_DESCRIPTOR which has 
+HubDescriptor - hub descriptor, could also be PUSB_30_HUB_DESCRIPTOR which has
                 these field in common at the beginning of the data structure:
 
                 - UCHAR   bLength;
@@ -1158,7 +1158,7 @@ DisplayHubInfo (
         HubInfo->HubIsBusPowered ?
         "Bus Power" : "Self Power");
 
-    if (DisplayDescriptor == TRUE) 
+    if (DisplayDescriptor == TRUE)
     {
         DisplayHubDescriptorBase(&HubInfo->HubDescriptor);
     }
@@ -1179,19 +1179,19 @@ DisplayHubInfoEx (
     )
 {
     AppendTextBuffer("Hub type:                     ");
-    
+
     switch (HubInfoEx->HubType) {
-        
-        case UsbRootHub: 
-            AppendTextBuffer("USB Root Hub\r\n"); 
+
+        case UsbRootHub:
+            AppendTextBuffer("USB Root Hub\r\n");
             break;
-            
-        case Usb20Hub: 
-            AppendTextBuffer("USB 2.0 Hub\r\n"); 
+
+        case Usb20Hub:
+            AppendTextBuffer("USB 2.0 Hub\r\n");
             DisplayHubDescriptorBase((PUSB_HUB_DESCRIPTOR)&HubInfoEx->u.UsbHubDescriptor);
             break;
-            
-        case Usb30Hub: 
+
+        case Usb30Hub:
             AppendTextBuffer("USB 3.0 Hub\r\n");
 
             //
@@ -1199,18 +1199,18 @@ DisplayHubInfoEx (
             // the legacy hub descriptor and the USB 3.0 descriptor which have the same
             // offset
             //
-            
+
             DisplayHubDescriptorBase((PUSB_HUB_DESCRIPTOR)&HubInfoEx->u.UsbHubDescriptor);
             AppendTextBuffer("Packet Header Decode Latency: 0x%x\r\n", HubInfoEx->u.Usb30HubDescriptor.bHubHdrDecLat);
             AppendTextBuffer("Delay:                        0x%x ns\r\n", HubInfoEx->u.Usb30HubDescriptor.wHubDelay);
-                    
+
             break;
-        
-        default: 
+
+        default:
             AppendTextBuffer("ERROR: Unknown hub type %d\r\n", HubInfoEx->HubType);
             break;
     }
-    
+
     AppendTextBuffer("\r\n");
 }
 
@@ -1232,22 +1232,22 @@ DisplayHubCapabilityEx (
     if(HubCapabilityEx != NULL)
     {
        AppendTextBuffer("High speed capable:           %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsHighSpeedCapable 
+                         HubCapabilityEx->CapabilityFlags.HubIsHighSpeedCapable
                          ? "Yes" : "No");
        AppendTextBuffer("High speed:                   %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsHighSpeed 
+                         HubCapabilityEx->CapabilityFlags.HubIsHighSpeed
                          ? "Yes" : "No");
        AppendTextBuffer("Multiple transaction translations capable:                 %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsMultiTtCapable 
+                         HubCapabilityEx->CapabilityFlags.HubIsMultiTtCapable
                          ? "Yes" : "No");
        AppendTextBuffer("Performs multiple transaction translations simultaneously: %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsMultiTt 
+                         HubCapabilityEx->CapabilityFlags.HubIsMultiTt
                          ? "Yes" : "No");
        AppendTextBuffer("Hub wakes when device is connected:                        %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsArmedWakeOnConnect 
+                         HubCapabilityEx->CapabilityFlags.HubIsArmedWakeOnConnect
                          ? "Yes" : "No");
        AppendTextBuffer("Hub is bus powered:           %s\r\n",
-                         HubCapabilityEx->CapabilityFlags.HubIsBusPowered 
+                         HubCapabilityEx->CapabilityFlags.HubIsBusPowered
                          ? "Yes" : "No");
        AppendTextBuffer("Hub is root:                  %s\r\n",
                          HubCapabilityEx->CapabilityFlags.HubIsRoot
@@ -1297,17 +1297,17 @@ DisplayConnectionInfo (
 
     // This is the entry point to the device display functions.
     // First, save this device's PUSBDEVICEINFO address
-    // In a future version of this test, we will keep track of the the 
+    // In a future version of this test, we will keep track of the the
     //  descriptor that we're parsing (# of bytes from beginning of info->configuration descriptor)
     // Then we can linked descriptors by reading forward through the remaining descriptors
     //  while still keeping our place in this main DisplayConnectionInfo() and called
     //  functions.
     //
-    // We also initialize some global flags in uvcview.h that are used to 
+    // We also initialize some global flags in uvcview.h that are used to
     //  verify items in MJPEG, Uncompressed and Vendor Frame descriptors
     //
     InitializePerDeviceSettings(info);
-    
+
     if(gDoAnnotation)
     {
 
@@ -1333,13 +1333,13 @@ DisplayConnectionInfo (
         {
             AppendTextBuffer("  -> Device Bus Speed: Low\r\n");
         }
-        else 
+        else
         {
             AppendTextBuffer("\r\n");
         }
         gDeviceSpeed = UsbLowSpeed;
         break;
-        
+
     case UsbFullSpeed:
         if(gDoAnnotation)
         {
@@ -1364,7 +1364,7 @@ DisplayConnectionInfo (
                 AppendTextBuffer("\r\n");
             }
          }
-        else 
+        else
         {
             AppendTextBuffer("\r\n");
         }
@@ -1394,13 +1394,13 @@ DisplayConnectionInfo (
                 AppendTextBuffer("\r\n");
             }
         }
-        else 
+        else
         {
             AppendTextBuffer("\r\n");
         }
         gDeviceSpeed = UsbHighSpeed;
         break;
-        
+
     case UsbSuperSpeed:
         if(gDoAnnotation)
         {
@@ -1409,7 +1409,7 @@ DisplayConnectionInfo (
                 ? "SpeedPlus"
                 : "Speed");
         }
-        else 
+        else
         {
             AppendTextBuffer("\r\n");
         }
@@ -1428,7 +1428,7 @@ DisplayConnectionInfo (
         AppendTextBuffer("Open Pipes:                          %2d\r\n",
             ConnectInfo->NumberOfOpenPipes);
     }
-    
+
     // No open pipes means the USB stack has not loaded the device
     if (ConnectInfo->NumberOfOpenPipes == 0)
     {
@@ -1443,7 +1443,7 @@ DisplayConnectionInfo (
         //@@TestCase A1.1
         //@@ERROR
         //@@Descriptor Field - bLength
-        //@@The declared length in the device descriptor is not equal to the 
+        //@@The declared length in the device descriptor is not equal to the
         //@@  required length in the USB Device Specification
         AppendTextBuffer("*!*ERROR:  bLength of %d incorrect, should be %d\r\n",
             ConnectInfo->DeviceDescriptor.bLength,
@@ -1468,7 +1468,7 @@ DisplayConnectionInfo (
         ConnectInfo->DeviceDescriptor.bDeviceClass);
 
     // Quit on these device failures
-    if ((ConnectInfo->ConnectionStatus == DeviceFailedEnumeration) || 
+    if ((ConnectInfo->ConnectionStatus == DeviceFailedEnumeration) ||
         (ConnectInfo->ConnectionStatus == DeviceGeneralFailure))
     {
         AppendTextBuffer("\r\n*!*ERROR:  Device enumeration failure\r\n");
@@ -1488,7 +1488,7 @@ DisplayConnectionInfo (
             {
                 AppendTextBuffer("  -> This is a Multi-interface Function Code Device\r\n");
             }
-            else 
+            else
             {
                 AppendTextBuffer("\r\n");
             }
@@ -1499,8 +1499,8 @@ DisplayConnectionInfo (
         }
         // Is this a UVC device?
         g_chUVCversion = IsUVCDevice((PUSBDEVICEINFO) info);
-    } 
-    else 
+    }
+    else
     {
         // this is not an IAD device
         switch (ConnectInfo->DeviceDescriptor.bDeviceClass)
@@ -1590,12 +1590,12 @@ DisplayConnectionInfo (
             if (gDoAnnotation)
             {
                 AppendTextBuffer("  -> This is the Common Class Sub Class\r\n");
-            } else 
+            } else
             {
                 AppendTextBuffer("\r\n");
             }
-        } 
-        else 
+        }
+        else
         {
             //@@TestCase A1.5
             //@@ERROR
@@ -1606,11 +1606,11 @@ DisplayConnectionInfo (
                 USB_COMMON_SUB_CLASS);
             OOPS();
         }
-    } 
-    else 
+    }
+    else
     {
         // Not an IAD device, so all subclass values are invalid
-        if(ConnectInfo->DeviceDescriptor.bDeviceSubClass > 0x00 && 
+        if(ConnectInfo->DeviceDescriptor.bDeviceSubClass > 0x00 &&
             ConnectInfo->DeviceDescriptor.bDeviceSubClass < 0xFF)
         {
             //@@TestCase A1.6
@@ -1620,7 +1620,7 @@ DisplayConnectionInfo (
             AppendTextBuffer("\r\n*!*ERROR:  bDeviceSubClass of %d is invalid\r\n",
                 ConnectInfo->DeviceDescriptor.bDeviceSubClass);
             OOPS();
-        } else 
+        } else
         {
             AppendTextBuffer("\r\n");
         }
@@ -1638,13 +1638,13 @@ DisplayConnectionInfo (
             if (gDoAnnotation)
             {
                 AppendTextBuffer("  -> This is the Interface Association Descriptor protocol\r\n");
-            } 
-            else 
+            }
+            else
             {
                 AppendTextBuffer("\r\n");
             }
-        } 
-        else 
+        }
+        else
         {
             //@@TestCase A1.7
             //@@ERROR
@@ -1655,11 +1655,11 @@ DisplayConnectionInfo (
                 USB_IAD_PROTOCOL);
             OOPS();
         }
-    } 
-    else 
+    }
+    else
     {
         // Not an IAD device, so all subclass values are invalid
-        if(ConnectInfo->DeviceDescriptor.bDeviceProtocol > 0x00 && 
+        if(ConnectInfo->DeviceDescriptor.bDeviceProtocol > 0x00 &&
             ConnectInfo->DeviceDescriptor.bDeviceProtocol < 0xFF && tog==1)
         {
             //@@TestCase A1.8
@@ -1669,7 +1669,7 @@ DisplayConnectionInfo (
             AppendTextBuffer("\r\n*!*ERROR:  bDeviceProtocol of %d is invalid\r\n",
                 ConnectInfo->DeviceDescriptor.bDeviceProtocol);
             OOPS();
-        } 
+        }
         else
         {
             AppendTextBuffer("\r\n");
@@ -1683,8 +1683,8 @@ DisplayConnectionInfo (
     {
         AppendTextBuffer(" = (%d) Bytes\r\n",
             ConnectInfo->DeviceDescriptor.bMaxPacketSize0);
-    } 
-    else 
+    }
+    else
     {
         AppendTextBuffer("\r\n");
     }
@@ -1860,7 +1860,7 @@ Returns the descriptive string for given power state
 *****************************************************************************/
 PCHAR GetPowerStateString(WDMUSB_POWER_STATE powerState)
 {
-    return(GetStringFromList(slPowerState, 
+    return(GetStringFromList(slPowerState,
                         sizeof(slPowerState) / sizeof(STRINGLIST),
                         powerState,
                         STR_INVALID_POWER_STATE));
@@ -1880,9 +1880,9 @@ DisplayPowerState(
     )
 {
     AppendTextBuffer("%s\t%s\t%s%s\t\t%s\r\n",
-                        GetPowerStateString(pUPI->SystemState), 
-                        GetPowerStateString(pUPI->HcDevicePowerState), 
-                        GetPowerStateString(pUPI->RhDevicePowerState), 
+                        GetPowerStateString(pUPI->SystemState),
+                        GetPowerStateString(pUPI->HcDevicePowerState),
+                        GetPowerStateString(pUPI->RhDevicePowerState),
                         pUPI->CanWakeup ? "Yes" : "",
                         pUPI->IsPowered ? "Yes" : ""
                      );
@@ -1938,7 +1938,7 @@ DisplayConfigDesc (
 
     BOOL                            isSS;
 
-    isSS = info->ConnectionInfoV2 
+    isSS = info->ConnectionInfoV2
         && info->ConnectionInfoV2->Flags.DeviceIsOperatingAtSuperSpeedOrHigher
        ? TRUE
        : FALSE;
@@ -1952,7 +1952,7 @@ DisplayConfigDesc (
 
     AppendTextBuffer("\r\n       ---===>Full Configuration Descriptor<===---\r\n");
 
-    do 
+    do
     {
         displayUnknown = FALSE;
 
@@ -1965,7 +1965,7 @@ DisplayConfigDesc (
                 //@@TestCase A2.1
                 //@@ERROR
                 //@@Descriptor Field - bLength
-                //@@The declared length in the device descriptor is not equal to the 
+                //@@The declared length in the device descriptor is not equal to the
                 //@@  required length in the USB Device Specification
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Device Qualifier incorrect, "\
                     "should be %d\r\n",
@@ -1985,7 +1985,7 @@ DisplayConfigDesc (
                 //@@TestCase A2.2
                 //@@ERROR
                 //@@Descriptor Field - bLength
-                //@@The declared length in the device descriptor is not equal to the 
+                //@@The declared length in the device descriptor is not equal to the
                 //@@  required length in the USB Device Specification
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Other Speed Configuration "\
                     "incorrect, should be %d\r\n",
@@ -2007,7 +2007,7 @@ DisplayConfigDesc (
                 //@@TestCase A2.3
                 //@@ERROR
                 //@@Descriptor Field - bLength
-                //@@The declared length in the device descriptor is not equal to the 
+                //@@The declared length in the device descriptor is not equal to the
                 //@@required length in the USB Device Specification
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Configuration incorrect, "\
                     "should be %d\r\n",
@@ -2030,7 +2030,7 @@ DisplayConfigDesc (
                 //@@TestCase A2.4
                 //@@ERROR
                 //@@Descriptor Field - bLength
-                //@@The declared length in the device descriptor is not equal to the 
+                //@@The declared length in the device descriptor is not equal to the
                 //@@required length in the USB Device Specification
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Interface incorrect, "\
                     "should be %d or %d\r\n",
@@ -2046,7 +2046,7 @@ DisplayConfigDesc (
             bInterfaceProtocol = ((PUSB_INTERFACE_DESCRIPTOR)commonDesc)->bInterfaceProtocol;
 
             DisplayInterfaceDescriptor(
-                    (PUSB_INTERFACE_DESCRIPTOR)commonDesc, 
+                    (PUSB_INTERFACE_DESCRIPTOR)commonDesc,
                     StringDescs,
                     info->DeviceInfoNode != NULL? info->DeviceInfoNode->LatestDevicePowerState: PowerDeviceUnspecified);
 
@@ -2058,7 +2058,7 @@ DisplayConfigDesc (
                 PUSB_SUPERSPEEDPLUS_ISOCH_ENDPOINT_COMPANION_DESCRIPTOR
                                                               sspIsochCompDesc = NULL;
 
-                
+
                 //@@DisplayConfigDesc - Endpoint Descriptor
                 if ((commonDesc->bLength != sizeof(USB_ENDPOINT_DESCRIPTOR)) &&
                     (commonDesc->bLength != sizeof(USB_ENDPOINT_DESCRIPTOR2)))
@@ -2066,7 +2066,7 @@ DisplayConfigDesc (
                     //@@TestCase A2.5
                     //@@ERROR
                     //@@Descriptor Field - bLength
-                    //@@The declared length in the device descriptor is not equal to 
+                    //@@The declared length in the device descriptor is not equal to
                     //@@  the required length in the USB Device Specification
                     AppendTextBuffer("*!*ERROR:  bLength of %d for Endpoint incorrect, "\
                         "should be %d or %d\r\n",
@@ -2139,7 +2139,7 @@ DisplayConfigDesc (
                 displayUnknown = TRUE;
                 break;
             }
-            DisplayIADDescriptor((PUSB_IAD_DESCRIPTOR)commonDesc, StringDescs, 
+            DisplayIADDescriptor((PUSB_IAD_DESCRIPTOR)commonDesc, StringDescs,
                     ConfigDesc->bNumInterfaces,
                     info->DeviceInfoNode != NULL? info->DeviceInfoNode->LatestDevicePowerState: PowerDeviceUnspecified);
             break;
@@ -2318,11 +2318,11 @@ DisplayConfigDesc (
         {
             DisplayUnknownDescriptor(commonDesc);
         }
-    } while ((commonDesc = GetNextDescriptor((PUSB_COMMON_DESCRIPTOR)ConfigDesc, 
-                                             ConfigDesc->wTotalLength, 
-                                             commonDesc, 
+    } while ((commonDesc = GetNextDescriptor((PUSB_COMMON_DESCRIPTOR)ConfigDesc,
+                                             ConfigDesc->wTotalLength,
+                                             commonDesc,
                                              -1)) != NULL);
-    
+
 #ifdef H264_SUPPORT
     DoAdditionalErrorChecks();
 #endif
@@ -2551,7 +2551,7 @@ DisplaySuperSpeedCapabilityExtensionDescriptor (
     }
     AppendTextBuffer("wSpeedsSupported:                  0x%02X\r\n",
         ssCapDesc->wSpeedsSupported);
-    
+
     if (ssCapDesc->wSpeedsSupported & USB_DEVICE_CAPABILITY_SUPERSPEED_SPEEDS_SUPPORTED_LOW)
     {
         if(gDoAnnotation)
@@ -2618,7 +2618,7 @@ DisplaySuperSpeedCapabilityExtensionDescriptor (
     {
         AppendTextBuffer("\r\n");
     }
-    
+
     AppendTextBuffer("bU1DevExitLat:                     0x%02X",
         ssCapDesc->bU1DevExitLat);
     if(gDoAnnotation)
@@ -2655,17 +2655,17 @@ DisplaySuperSpeedCapabilityExtensionDescriptor (
     else
     {
         AppendTextBuffer("\r\n");
-    }    
+    }
 }
 
-                
+
 VOID
 DisplayContainerIdCapabilityExtensionDescriptor (
     PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR containerIdCapDesc
     )
 {
     LPGUID pGuid;
-    
+
     AppendTextBuffer("\r\n          ===>Container ID Capability Descriptor<===\r\n");
 
     AppendTextBuffer("bLength:                           0x%02X\r\n",
@@ -2751,7 +2751,7 @@ DisplayBillboardCapabilityDescriptor (
     }
     else
     {
-        switch (billboardCapDesc->VconnPower.VConnPowerNeededForFullFunctionality) 
+        switch (billboardCapDesc->VconnPower.VConnPowerNeededForFullFunctionality)
         {
         case 0:
             AppendTextBuffer("  -> 1W needed by adapter for full functionality\r\n");
@@ -2789,8 +2789,8 @@ DisplayBillboardCapabilityDescriptor (
     for (i = 0; i < bNumAlternateModes; i++)
     {
         alternateModeConfiguration = ((billboardCapDesc->bmConfigured[i / 4]) >> ((i % 4) * 2)) & 0x3;
-        AppendTextBuffer("wSVID - 0x%04X  bAlternateMode - 0x%02X   ->", 
-            billboardCapDesc->AlternateMode[i].wSVID, 
+        AppendTextBuffer("wSVID - 0x%04X  bAlternateMode - 0x%02X   ->",
+            billboardCapDesc->AlternateMode[i].wSVID,
             billboardCapDesc->AlternateMode[i].bAlternateMode,
             billboardCapDesc->AlternateMode[i].iAlternateModeSetting);
 
@@ -2810,7 +2810,7 @@ DisplayBillboardCapabilityDescriptor (
             break;
         }
         AppendTextBuffer("iAlternateModeString - 0x%02X  ", billboardCapDesc->AlternateMode[i].iAlternateModeSetting);
-        if (billboardCapDesc->AlternateMode[i].iAlternateModeSetting && gDoAnnotation) 
+        if (billboardCapDesc->AlternateMode[i].iAlternateModeSetting && gDoAnnotation)
         {
             DisplayStringDescriptor(billboardCapDesc->AlternateMode[i].iAlternateModeSetting,
                 StringDescs,
@@ -2856,9 +2856,9 @@ DisplayBosDescriptor (
 
     commonDesc = (PUSB_COMMON_DESCRIPTOR)BosDesc;
 
-    while ((commonDesc = GetNextDescriptor((PUSB_COMMON_DESCRIPTOR)BosDesc, 
-                                          BosDesc->wTotalLength, 
-                                          commonDesc, 
+    while ((commonDesc = GetNextDescriptor((PUSB_COMMON_DESCRIPTOR)BosDesc,
+                                          BosDesc->wTotalLength,
+                                          commonDesc,
                                           -1)) != NULL)
     {
         switch (commonDesc->bDescriptorType)
@@ -2866,8 +2866,8 @@ DisplayBosDescriptor (
         case USB_DEVICE_CAPABILITY_DESCRIPTOR_TYPE:
 
             capDesc = (PUSB_DEVICE_CAPABILITY_DESCRIPTOR)commonDesc;
-            
-            switch (capDesc->bDevCapabilityType) 
+
+            switch (capDesc->bDevCapabilityType)
             {
             case USB_DEVICE_CAPABILITY_USB20_EXTENSION:
                 DisplayUsb20CapabilityExtensionDescriptor((PUSB_DEVICE_CAPABILITY_USB20_EXTENSION_DESCRIPTOR)capDesc);
@@ -2883,13 +2883,13 @@ DisplayBosDescriptor (
                 break;
             default:
                 AppendTextBuffer("\r\n          ===>Unknown Capability Descriptor<===\r\n");
-            
+
                 AppendTextBuffer("bLength:                           0x%02X\r\n",
-                    capDesc->bLength);            
+                    capDesc->bLength);
                 AppendTextBuffer("bType:                             0x%02X\r\n",
-                    capDesc->bLength);            
+                    capDesc->bLength);
                 AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
-                    capDesc->bDevCapabilityType);    
+                    capDesc->bDevCapabilityType);
 
                 DisplayRemainingUnknownDescriptor((PUCHAR)commonDesc,
                                                   (ULONG)sizeof(USB_DEVICE_CAPABILITY_DESCRIPTOR),
@@ -2897,7 +2897,7 @@ DisplayBosDescriptor (
                 break;
             }
             break;
-            
+
         default:
             DisplayUnknownDescriptor(commonDesc);
             break;
@@ -2920,10 +2920,10 @@ DisplayConfigurationDescriptor (
     )
 {
     UINT    uCount = 0;
-    BOOL    isSS; 
+    BOOL    isSS;
 
 
-    isSS = info->ConnectionInfoV2 
+    isSS = info->ConnectionInfoV2
            && (info->ConnectionInfoV2->Flags.DeviceIsOperatingAtSuperSpeedOrHigher ||
                info->ConnectionInfoV2->Flags.DeviceIsOperatingAtSuperSpeedPlusOrHigher)
            ? TRUE
@@ -3013,7 +3013,7 @@ DisplayConfigurationDescriptor (
                 AppendTextBuffer("  -> Bus Powered\r\n");
             }
         }
-    } 
+    }
     else
     {
         if (ConfigDesc->bmAttributes & USB_CONFIG_SELF_POWERED)
@@ -3036,7 +3036,7 @@ DisplayConfigurationDescriptor (
             OOPS();
         }
     }
-    
+
     if (ConfigDesc->bmAttributes & USB_CONFIG_REMOTE_WAKEUP)
     {
         if(gDoAnnotation)
@@ -3044,7 +3044,7 @@ DisplayConfigurationDescriptor (
             AppendTextBuffer("  -> Remote Wakeup\r\n");
         }
     }
-    
+
     if (ConfigDesc->bmAttributes & USB_CONFIG_RESERVED)
     {
         //@@TestCase A4.4
@@ -3366,10 +3366,10 @@ DisplayInterfaceDescriptor (
         InterfaceDesc->bInterfaceProtocol);
 
     //This is basically the check for PC_PROTOCOL_UNDEFINED
-    if ((InterfaceDesc->bInterfaceClass == USB_DEVICE_CLASS_VIDEO) || 
+    if ((InterfaceDesc->bInterfaceClass == USB_DEVICE_CLASS_VIDEO) ||
         (InterfaceDesc->bInterfaceClass == USB_DEVICE_CLASS_AUDIO))
     {
-        if(InterfaceDesc->bInterfaceProtocol != PC_PROTOCOL_UNDEFINED) 
+        if(InterfaceDesc->bInterfaceProtocol != PC_PROTOCOL_UNDEFINED)
         {
             //@@TestCase A5.10
             //@@WARNING
@@ -3414,9 +3414,9 @@ DisplayEndpointDescriptor()
 
 VOID
 DisplayEndpointDescriptor (
-    _In_     PUSB_ENDPOINT_DESCRIPTOR    
+    _In_     PUSB_ENDPOINT_DESCRIPTOR
                         EndpointDesc,
-    _In_opt_ PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR 
+    _In_opt_ PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR
                         EpCompDesc,
     _In_opt_ PUSB_SUPERSPEEDPLUS_ISOCH_ENDPOINT_COMPANION_DESCRIPTOR
                         SspIsochEpCompDesc,
@@ -3599,7 +3599,7 @@ DisplayEndpointDescriptor (
             }
             break;
         }
-    } 
+    }
     else
     {
         AppendTextBuffer("\r\n");
@@ -3629,7 +3629,7 @@ DisplayEndpointDescriptor (
                     AppendTextBuffer("\r\n");
                 }
                 break;
-                
+
             case USB_ENDPOINT_TYPE_CONTROL:
                 if (EndpointDesc->wMaxPacketSize != USB_ENDPOINT_SUPERSPEED_CONTROL_MAX_PACKET_SIZE)
                 {
@@ -3641,9 +3641,9 @@ DisplayEndpointDescriptor (
                     AppendTextBuffer("\r\n");
                 }
                 break;
-                
+
             case USB_ENDPOINT_TYPE_ISOCHRONOUS:
-                
+
                 if (EpCompDesc != NULL)
                 {
                     if (EpCompDesc->bMaxBurst > 0)
@@ -3673,7 +3673,7 @@ DisplayEndpointDescriptor (
                     AppendTextBuffer("\r\n");
                 }
                 break;
-                
+
             case USB_ENDPOINT_TYPE_INTERRUPT:
 
                 if (EpCompDesc != NULL)
@@ -3707,7 +3707,7 @@ DisplayEndpointDescriptor (
                 break;
             }
             break;
-            
+
         case UsbHighSpeed:
             hsMaxPacket = (PUSB_HIGH_SPEED_MAXPACKET)&EndpointDesc->wMaxPacketSize;
 
@@ -3717,26 +3717,26 @@ DisplayEndpointDescriptor (
             case USB_ENDPOINT_TYPE_INTERRUPT:
                 switch (hsMaxPacket->HSmux) {
                 case 0:
-                    if ((hsMaxPacket->MaxPacket < 1) || (hsMaxPacket->MaxPacket >1024)) 
+                    if ((hsMaxPacket->MaxPacket < 1) || (hsMaxPacket->MaxPacket >1024))
                     {
                         AppendTextBuffer("*!*ERROR:  Invalid maximum packet size, should be between 1 and 1024\r\n");
                     }
                     break;
 
                 case 1:
-                    if ((hsMaxPacket->MaxPacket < 513) || (hsMaxPacket->MaxPacket >1024)) 
+                    if ((hsMaxPacket->MaxPacket < 513) || (hsMaxPacket->MaxPacket >1024))
                     {
                         AppendTextBuffer("*!*ERROR:  Invalid maximum packet size, should be between 513 and 1024\r\n");
                     }
                     break;
 
                 case 2:
-                    if ((hsMaxPacket->MaxPacket < 683) || (hsMaxPacket->MaxPacket >1024)) 
+                    if ((hsMaxPacket->MaxPacket < 683) || (hsMaxPacket->MaxPacket >1024))
                     {
                         AppendTextBuffer("*!*ERROR:  Invalid maximum packet size, should be between 683 and 1024\r\n");
                     }
                     break;
-                        
+
                 case 3:
                     AppendTextBuffer("*!*ERROR:  Bits 12-11 set to Reserved value in wMaxPacketSize\r\n");
                     break;
@@ -3744,14 +3744,14 @@ DisplayEndpointDescriptor (
 
                 AppendTextBuffer(" = %d transactions per microframe, 0x%02X max bytes\r\n", hsMaxPacket->HSmux + 1, hsMaxPacket->MaxPacket);
                 break;
-            
+
             case USB_ENDPOINT_TYPE_BULK:
             case USB_ENDPOINT_TYPE_CONTROL:
                 AppendTextBuffer(" = 0x%02X max bytes\r\n", hsMaxPacket->MaxPacket);
                 break;
             }
             break;
-        
+
         case UsbFullSpeed:
             // full speed
             AppendTextBuffer(" = 0x%02X bytes\r\n",
@@ -3770,12 +3770,12 @@ DisplayEndpointDescriptor (
             break;
         }
     }
-    else 
+    else
     {
         AppendTextBuffer("\r\n");
     }
 
-    if (EndpointDesc->wMaxPacketSize & 0xE000) 
+    if (EndpointDesc->wMaxPacketSize & 0xE000)
     {
         //@@TestCase A6.4
         //@@Priority 1
@@ -3885,7 +3885,7 @@ DisplayEndointCompanionDescriptor (
             {
                 AppendTextBuffer("*!*ERROR:  Control/Interrupt SuperSpeed endpoints do not support streams\r\n");
             }
-            else 
+            else
             {
                 AppendTextBuffer("\r\n");
             }
@@ -3927,7 +3927,7 @@ DisplayEndointCompanionDescriptor (
             }
             else
             {
-                if (EpCompDesc->bMaxBurst != 0)
+                if (EpCompDesc->bMaxBurst != 0 && SspIsochEpCompDesc != NULL)
                 {
                     AppendTextBuffer(" = %d maximum number of packets within a service interval\r\n",
                         (SspIsochEpCompDesc->dwBytesPerInterval*USB_ENDPOINT_SUPERSPEED_ISO_MAX_PACKET_SIZE) /
@@ -3939,7 +3939,7 @@ DisplayEndointCompanionDescriptor (
             {
                 AppendTextBuffer("*!*ERROR:  bmAttributes bits 7-2 should be 0\r\n");
             }
-            else 
+            else
             {
                 AppendTextBuffer("\r\n");
             }
@@ -4081,7 +4081,7 @@ InitializePerDeviceSettings (
     // (Update this in the descriptor parsing routines)
     dwConfigIndex = 0;
 
-    // Flags used in dispvid.c to display default Frame descriptor for MJPEG, 
+    // Flags used in dispvid.c to display default Frame descriptor for MJPEG,
     //  Uncompressed, Vendor and FrameBased Formats
     g_chMJPEGFrameDefault = 0;
     g_chUNCFrameDefault = 0;
@@ -4096,9 +4096,9 @@ InitializePerDeviceSettings (
     g_pStringDescs = NULL;
     g_descEnd      = NULL;
 
-    // 
+    //
     // The GetConfigDescriptor() function in enum.c does not always work
-    // If that fails, the Configuration descriptor will be NULL 
+    // If that fails, the Configuration descriptor will be NULL
     //  and we can only display the device descriptor
     //
     CurrentConfigDesc = NULL;
@@ -4139,11 +4139,11 @@ IsUVCDevice (
     PUCHAR                         descEnd = NULL;
     UINT  uUVCversion = 0;
 
-    // 
+    //
     // The GetConfigDescriptor() function in enum.c does not always work
-    // If that fails, the Configuration descriptor will be NULL 
+    // If that fails, the Configuration descriptor will be NULL
     //  and we can only display the device descriptor
-    // 
+    //
     if (NULL == info)
     {
         return 0;
@@ -4166,10 +4166,10 @@ IsUVCDevice (
     while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
         (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
     {
-        if ((commonDesc->bDescriptorType == CS_INTERFACE) && 
+        if ((commonDesc->bDescriptorType == CS_INTERFACE) &&
             (commonDesc->bLength > sizeof(VIDEO_CONTROL_HEADER_UNIT)))
         {
-            // Right type, size. Now check subtype 
+            // Right type, size. Now check subtype
             PVIDEO_CONTROL_HEADER_UNIT pCSVC = NULL;
             pCSVC = (PVIDEO_CONTROL_HEADER_UNIT) commonDesc;
             if (VC_HEADER == pCSVC->bDescriptorSubtype)
@@ -4203,11 +4203,11 @@ IsIADDevice (
     PUCHAR                         descEnd = NULL;
     UINT  uIADcount = 0;
 
-    // 
+    //
     // The GetConfigDescriptor() function in enum.c does not always work
-    // If that fails, the Configuration descriptor will be NULL 
+    // If that fails, the Configuration descriptor will be NULL
     //  and we can only display the device descriptor
-    // 
+    //
     if (NULL == info)
     {
         return 0;
@@ -4538,7 +4538,7 @@ DisplayIADDescriptor (
     if ((IADDesc->bFunctionClass == USB_DEVICE_CLASS_VIDEO))
     {
         // USB Video Class
-        if(IADDesc->bFunctionProtocol == PC_PROTOCOL_UNDEFINED) 
+        if(IADDesc->bFunctionProtocol == PC_PROTOCOL_UNDEFINED)
         {
             // correct protocol for UVC
             if(gDoAnnotation)
@@ -4586,11 +4586,11 @@ GetConfigurationSize (
     PUSBDEVICEINFO info
     )
 {
-    PUSB_CONFIGURATION_DESCRIPTOR  
+    PUSB_CONFIGURATION_DESCRIPTOR
         ConfigDesc = (PUSB_CONFIGURATION_DESCRIPTOR)(info->ConfigDesc + 1);
-    PUSB_COMMON_DESCRIPTOR         
+    PUSB_COMMON_DESCRIPTOR
         commonDesc = (PUSB_COMMON_DESCRIPTOR)ConfigDesc;
-    PUCHAR                         
+    PUCHAR
         descEnd = (PUCHAR)ConfigDesc + ConfigDesc->wTotalLength;
     UINT  uCount = 0;
 
@@ -4615,7 +4615,7 @@ GetInterfaceCount (
     PUSBDEVICEINFO info
     )
 {
-    // how do we handle composite devices? 
+    // how do we handle composite devices?
     PUSB_CONFIGURATION_DESCRIPTOR
         ConfigDesc = (PUSB_CONFIGURATION_DESCRIPTOR)(info->ConfigDesc + 1);
     PUSB_COMMON_DESCRIPTOR
@@ -4695,7 +4695,7 @@ DisplayUSEnglishStringDescriptor (
         {
             AppendTextBuffer("*!*ERROR:  No String Descriptor for index %d!\r\n", Index);
             OOPS();
-        } 
+        }
         else
         {
             AppendTextBuffer("String Descriptor for index %d not available while device is in low power state.\r\n", Index);
@@ -4760,7 +4760,7 @@ DisplayStringDescriptor (
             }
             memset(pString, 0, 512);
 
-            if (StringDescs->StringDescriptor->bLength > sizeof(USHORT)) 
+            if (StringDescs->StringDescriptor->bLength > sizeof(USHORT))
             {
                  nBytes = WideCharToMultiByte(
                               CP_ACP,     // CodePage
@@ -4771,16 +4771,16 @@ DisplayStringDescriptor (
                               512,
                               NULL,       // lpDefaultChar
                               NULL);      // pUsedDefaultChar
-                 if (nBytes) 
+                 if (nBytes)
                  {
                       AppendTextBuffer("%s\"\r\n", pString);
                  }
-                 else 
+                 else
                  {
                       AppendTextBuffer("\"\r\n");
                  }
             }
-            else 
+            else
             {
                  //
                  // This is NULL string which is invalid
@@ -4797,7 +4797,7 @@ DisplayStringDescriptor (
         {
             AppendTextBuffer("*!*ERROR:  No String Descriptor for index %d!\r\n", Index);
             OOPS();
-        } 
+        }
         else
         {
             AppendTextBuffer("String Descriptor for index %d not available while device is in low power state.\r\n", Index);
@@ -4834,7 +4834,7 @@ DisplayRemainingUnknownDescriptor(
     )
 {
     ULONG i;
-    
+
     for (i = Start; i < Stop; i++)
     {
         AppendTextBuffer("%02X ",
@@ -4932,7 +4932,7 @@ GetStringFromList()
 
 PSTRINGLIST     slList,        - pointer to STRINGLIST used
 
-ULONG ulNumElements, - 
+ULONG ulNumElements, -
     number of elements in that STRINGLIST calc before call with sizeof(slList) / sizeof(STRINGLIST),
 ULONG or ULONGLONG (if H264_SUPPORT is defined)ulFlag -  - flag to look for
 PCHAR           szDefault      - string to return if no match
@@ -4940,9 +4940,9 @@ PCHAR           szDefault      - string to return if no match
 Return a string associated with a value from a stringtable.
 
 example:
-    GetStringFromList(slPowerState, 
+    GetStringFromList(slPowerState,
         sizeof(slPowerState) / sizeof(STRINGLIST),
-        pUPI->SystemState, 
+        pUPI->SystemState,
         "Invalid Power State")
 
 *****************************************************************************/
@@ -4979,4 +4979,4 @@ GetStringFromList(
 
     return szDefault;
 }
- 
+

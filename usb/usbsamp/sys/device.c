@@ -36,7 +36,6 @@ Environment:
 #pragma alloc_text(PAGE, RetrieveDeviceInformation)
 #pragma alloc_text(PAGE, UsbSamp_ValidateConfigurationDescriptor)
 #if (NTDDI_VERSION >= NTDDI_WIN8)
-#pragma alloc_text(PAGE, UsbSamp_EvtPipeContextCleanup)
 #pragma alloc_text(PAGE, InitializePipeContextForSuperSpeedDevice)
 #pragma alloc_text(PAGE, GetEndpointDescriptorForEndpointAddress)
 #pragma alloc_text(PAGE, InitializePipeContextForSuperSpeedIsochPipe)
@@ -199,7 +198,7 @@ Return Value:
 
     //
     // Register I/O callbacks to tell the framework that you are interested
-    // in handling WdfRequestTypeRead, WdfRequestTypeWrite, and 
+    // in handling WdfRequestTypeRead, WdfRequestTypeWrite, and
     // IRP_MJ_DEVICE_CONTROL requests.
     // WdfIoQueueDispatchParallel means that we are capable of handling
     // all the I/O request simultaneously and we are responsible for protecting
@@ -233,12 +232,12 @@ Return Value:
     //
     WDF_IO_QUEUE_CONFIG_INIT(&ioQueueConfig,
                               WdfIoQueueDispatchManual);
-    
+
      WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
      attributes.SynchronizationScope=WdfSynchronizationScopeQueue;
-     
+
      ioQueueConfig.EvtIoStop = UsbSamp_EvtIoStop;
-    
+
      status = WdfIoQueueCreate(device,
                                &ioQueueConfig,
                                &attributes,
@@ -255,7 +254,7 @@ Return Value:
     status = WdfIoQueueReadyNotify(pDevContext->IsochReadQueue,
                                    UsbSamp_EvtIoQueueReadyNotification,
                                    (WDFCONTEXT)pDevContext);
-    
+
     if (!NT_SUCCESS(status)) {
         UsbSamp_DbgPrint(1, ("WdfIoQueueReadyNotify failed  for isoch 0x%x\n", status));
         return status;
@@ -267,12 +266,12 @@ Return Value:
     //
     WDF_IO_QUEUE_CONFIG_INIT(&ioQueueConfig,
                               WdfIoQueueDispatchManual);
-    
+
      WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
      attributes.SynchronizationScope=WdfSynchronizationScopeQueue;
-     
+
      ioQueueConfig.EvtIoStop = UsbSamp_EvtIoStop;
-    
+
      status = WdfIoQueueCreate(device,
                                &ioQueueConfig,
                                &attributes,
@@ -289,12 +288,12 @@ Return Value:
     status = WdfIoQueueReadyNotify(pDevContext->IsochWriteQueue,
                                    UsbSamp_EvtIoQueueReadyNotification,
                                    (WDFCONTEXT)pDevContext);
-    
+
     if (!NT_SUCCESS(status)) {
         UsbSamp_DbgPrint(1, ("WdfIoQueueReadyNotify failed  for isoch 0x%x\n", status));
         return status;
-    }     
-     
+    }
+
     //
     // Register a device interface so that app can find our device and talk to it.
     //
@@ -306,11 +305,11 @@ Return Value:
         return status;
     }
 
-    status = USBD_CreateHandle(WdfDeviceWdmGetDeviceObject(device),    
-                               WdfDeviceWdmGetAttachedDevice(device),   
-                               USBD_CLIENT_CONTRACT_VERSION_602,   
-                               POOL_TAG,   
-                               &pDevContext->UsbdHandle);   
+    status = USBD_CreateHandle(WdfDeviceWdmGetDeviceObject(device),
+                               WdfDeviceWdmGetAttachedDevice(device),
+                               USBD_CLIENT_CONTRACT_VERSION_602,
+                               POOL_TAG,
+                               &pDevContext->UsbdHandle);
     if(!NT_SUCCESS(status)){
         UsbSamp_DbgPrint(1, ("USBD_CreateHandle failed 0x%x", status));
         return status;
@@ -470,10 +469,10 @@ Return Value:
     //
     if (pDeviceContext->WdfUsbTargetDevice == NULL) {
         WDF_USB_DEVICE_CREATE_CONFIG config;
-        
+
         WDF_USB_DEVICE_CREATE_CONFIG_INIT(&config,
                                    USBD_CLIENT_CONTRACT_VERSION_602);
-        
+
         status = WdfUsbTargetDeviceCreateWithParameters(Device,
                                               &config,
                                               WDF_NO_OBJECT_ATTRIBUTES,
@@ -483,14 +482,14 @@ Return Value:
             return status;
         }
     }
-    
+
     WdfUsbTargetDeviceGetDeviceDescriptor(pDeviceContext->WdfUsbTargetDevice,
                                     &pDeviceContext->UsbDeviceDescriptor);
 
     NT_ASSERT(pDeviceContext->UsbDeviceDescriptor.bNumConfigurations);
 
     status = ConfigureDevice(Device);
-    
+
     return status;
 }
 
@@ -572,9 +571,9 @@ Return Value:
 
     //
     // Check if the descriptors are valid
-    // 
+    //
     status = UsbSamp_ValidateConfigurationDescriptor(configurationDescriptor, size , &Offset);
-    
+
     if (!NT_SUCCESS(status)) {
         UsbSamp_DbgPrint(1, ("Descriptor validation failed with Status code %x and at the offset %p\n", status , Offset ));
         return status;
@@ -624,9 +623,9 @@ Return Value:
     //
     // The device has only one interface and the interface may have multiple
     // alternate settings. It will try to use alternate setting zero if it has
-    // non-zero endpoints, otherwise it will try to search an alternate 
+    // non-zero endpoints, otherwise it will try to search an alternate
     // setting with non-zero endpoints.
-    // 
+    //
 
     WDF_USB_DEVICE_SELECT_CONFIG_PARAMS_INIT_SINGLE_INTERFACE( &configParams);
 
@@ -667,7 +666,7 @@ Return Value:
         numberConfiguredPipes = 0;
 
         for (i = 0; i < numberAlternateSettings && numberConfiguredPipes == 0; i++) {
- 
+
             WDF_USB_INTERFACE_SELECT_SETTING_PARAMS_INIT_SETTING(&selectSettingParams, i);
 
             WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&pipeAttributes, PIPE_CONTEXT);
@@ -680,19 +679,19 @@ Return Value:
                                                   &pipeAttributes,
                                                   &selectSettingParams
                                                   );
- 
+
             if (NT_SUCCESS(status)) {
-             
+
                 numberConfiguredPipes = WdfUsbInterfaceGetNumConfiguredPipes(pDeviceContext->UsbInterface);
 
                 if (numberConfiguredPipes > 0){
-                
+
                     pDeviceContext->SelectedAlternateSetting = i;
-                
+
                 }
-            
+
             }
-         
+
         }
 
         pDeviceContext->NumberConfiguredPipes = numberConfiguredPipes;
@@ -711,21 +710,21 @@ Return Value:
             }
             else if (pDeviceContext->IsDeviceHighSpeed) {
                 status = InitializePipeContextForHighSpeedDevice(pipe);
-            } 
+            }
             else {
                 status = InitializePipeContextForFullSpeedDevice(pipe);
             }
 #else
             if (pDeviceContext->IsDeviceHighSpeed) {
                 status = InitializePipeContextForHighSpeedDevice(pipe);
-            } 
+            }
             else {
                 status = InitializePipeContextForFullSpeedDevice(pipe);
             }
 #endif
             if (!NT_SUCCESS(status)) {
                 UsbSamp_DbgPrint(1, ("InitializePipeContext failed %x\n", status));
-                break;        
+                break;
             }
         }
 
@@ -822,7 +821,7 @@ Return Value:
 
     WDF_USB_PIPE_INFORMATION_INIT(&pipeInfo);
     WdfUsbTargetPipeGetInformation(Pipe, &pipeInfo);
-    
+
     //
     // We only use pipe context for super speed isoch and bulk speed bulk endpoints.
     //
@@ -839,9 +838,9 @@ Return Value:
                    Pipe);
 
     }
-    
+
     return status;
-     
+
 }
 
 
@@ -893,11 +892,11 @@ Return Value:
 
     *ppEndpointCompanionDescriptor = NULL;
 
-    // 
+    //
     // Parse the ConfigurationDescriptor (including all Interface and
     // Endpoint Descriptors) and locate a Interface Descriptor which
     // matches the InterfaceNumber, AlternateSetting, InterfaceClass,
-    // InterfaceSubClass, and InterfaceProtocol parameters.  
+    // InterfaceSubClass, and InterfaceProtocol parameters.
     //
     pInterfaceDescriptor = USBD_ParseConfigurationDescriptorEx(
                                 pConfigurationDescriptor,
@@ -919,7 +918,7 @@ Return Value:
     startingPosition = (PUCHAR) pInterfaceDescriptor;
 
     for(index = 0; index < pInterfaceDescriptor->bNumEndpoints; index++) {
-    
+
         pCommonDescriptorHeader = USBD_ParseDescriptors(pConfigurationDescriptor,
                                                         pConfigurationDescriptor->wTotalLength,
                                                         startingPosition,
@@ -929,12 +928,12 @@ Return Value:
 
             UsbSamp_DbgPrint(1, ("USBD_ParseDescriptors failed to retrieve SuperSpeed Endpoint Descriptor unexpectedly\n"));
             goto End;
-        
+
         }
 
         //
         // UsbSamp_ValidateConfigurationDescriptor validates all descriptors.
-        // This means that the descriptor pointed to by pCommonDescriptorHeader( received above ) is completely 
+        // This means that the descriptor pointed to by pCommonDescriptorHeader( received above ) is completely
         // contained within the buffer representing ConfigurationDescriptor and
         // it also verifies that pCommonDescriptorHeader->bLength is equal to sizeof(USB_ENDPOINT_DESCRIPTOR).
         //
@@ -945,18 +944,18 @@ Return Value:
         // Search an Endpoint Descriptor that matches the EndpointAddress
         //
         if (pEndpointDescriptor->bEndpointAddress == EndpointAddress){
-        
+
             found = TRUE;
 
             break;
-        
+
         }
 
         //
         // Skip the current Endpoint Descriptor and search for the next.
         //
         startingPosition = (PUCHAR)pCommonDescriptorHeader + pCommonDescriptorHeader->bLength;
-    
+
     }
 
     if (found) {
@@ -969,26 +968,26 @@ Return Value:
                                                         USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR_TYPE);
 
         if (pCommonDescriptorHeader != NULL) {
-            
+
             //
             // UsbSamp_ValidateConfigurationDescriptor validates all descriptors.
-            // This means that the descriptor pointed to by pCommonDescriptorHeader( received above ) is completely 
+            // This means that the descriptor pointed to by pCommonDescriptorHeader( received above ) is completely
             // contained within the buffer representing ConfigurationDescriptor and
             // it also verifies that pCommonDescriptorHeader->bLength is >= sizeof(USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR)
             //
-                    
-            *ppEndpointCompanionDescriptor = 
+
+            *ppEndpointCompanionDescriptor =
                 (PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR) pCommonDescriptorHeader;
-                
+
         } else {
-        
+
              UsbSamp_DbgPrint(3, ("USBD_ParseDescriptors failed to retrieve SuperSpeed Endpoint Companion Descriptor unexpectedly\n"));
-        
+
         }
 
-    } 
+    }
 
- 
+
 End:
     return pEndpointDescriptor;
 }
@@ -1018,7 +1017,7 @@ Return Value:
 -*/
 {
     WDF_USB_PIPE_INFORMATION    pipeInfo;
-    PPIPE_CONTEXT               pipeContext;    
+    PPIPE_CONTEXT               pipeContext;
     UCHAR                       endpointAddress;
     PUSB_ENDPOINT_DESCRIPTOR    pEndpointDescriptor;
     PUSB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR pEndpointCompanionDescriptor;
@@ -1032,7 +1031,7 @@ Return Value:
 
     WDF_USB_PIPE_INFORMATION_INIT(&pipeInfo);
     WdfUsbTargetPipeGetInformation(Pipe, &pipeInfo);
-    
+
     //
     // We use the pipe context only for isoch endpoints.
     //
@@ -1053,17 +1052,17 @@ Return Value:
                                 &pEndpointCompanionDescriptor);
 
     if (pEndpointDescriptor == NULL || pEndpointCompanionDescriptor == NULL ){
-        
+
         UsbSamp_DbgPrint(1, ("pEndpointDescriptor or pEndpointCompanionDescriptor is invalid (NULL)\n"));
         return STATUS_INVALID_PARAMETER;
-    
+
     }
 
     //
     // For SuperSpeed isoch endpoint, it uses wBytesPerInterval from its
     // endpoint companion descriptor. If bMaxBurst field in its endpoint
     // companion descriptor is greater than zero, wMaxPacketSize must be
-    // 1024. If the value in the bMaxBurst field is set to zero then 
+    // 1024. If the value in the bMaxBurst field is set to zero then
     // wMaxPacketSize can have any value from 0 to 1024.
     //
     wBytesPerInterval = pEndpointCompanionDescriptor->wBytesPerInterval;
@@ -1072,7 +1071,7 @@ Return Value:
     bMult = pEndpointCompanionDescriptor->bmAttributes.Isochronous.Mult;
 
     if (wBytesPerInterval > (wMaxPacketSize * (bMaxBurst + 1) * (bMult + 1))){
-                        
+
         UsbSamp_DbgPrint(1, ("SuperSpeed isochronouse endpoints's wBytesPerInterval value (%d) is greater than wMaxPacketSize * (bMaxBurst+1) * (Mult +1) (%d) \n",
                                 wBytesPerInterval, (wMaxPacketSize * (bMaxBurst + 1) * (bMult + 1))));
         return STATUS_INVALID_PARAMETER;
@@ -1081,13 +1080,13 @@ Return Value:
 
     if (bMaxBurst > 0){
 
-        if (wMaxPacketSize != USB_ENDPOINT_SUPERSPEED_ISO_MAX_PACKET_SIZE){              
-                    
+        if (wMaxPacketSize != USB_ENDPOINT_SUPERSPEED_ISO_MAX_PACKET_SIZE){
+
             UsbSamp_DbgPrint(1, ("SuperSpeed isochronouse endpoints must have wMaxPacketSize value of %d bytes when bMaxpBurst is %d \n",
                                     USB_ENDPOINT_SUPERSPEED_ISO_MAX_PACKET_SIZE, bMaxBurst));
             return STATUS_INVALID_PARAMETER;
 
-        } 
+        }
 
     } else {
 
@@ -1097,24 +1096,24 @@ Return Value:
                                     USB_ENDPOINT_SUPERSPEED_ISO_MAX_PACKET_SIZE, bMaxBurst));
             return STATUS_INVALID_PARAMETER;
 
-        } 
+        }
 
     }
 
- 
+
     //
-    // This sample demos how to use wBytesPerInterval from its Endpoint 
+    // This sample demos how to use wBytesPerInterval from its Endpoint
     // Companion Descriptor. Actaully, for Superspeed isochronous endpoints,
     // MaximumPacketSize in WDF_USB_PIPE_INFORMATION and USBD_PIPE_INFORMATION
     // is returned with the value of wBytesPerInterval in the endpoint
     // companion descriptor. This is different than the true MaxPacketSize of
     // the endpoint descriptor.
     //
-    NT_ASSERT(pipeInfo.MaximumPacketSize == wBytesPerInterval); 
+    NT_ASSERT(pipeInfo.MaximumPacketSize == wBytesPerInterval);
     pipeContext->TransferSizePerMicroframe = wBytesPerInterval;
-         
+
     //
-    // Microsoft USB 3.0 stack only supports bInterval value of 1, 2, 3 and 4 
+    // Microsoft USB 3.0 stack only supports bInterval value of 1, 2, 3 and 4
     // (or polling period of 1, 2, 4 and 8).
     // For super-speed isochronous endpoints, the bInterval value is used as
     // the exponent for a 2^(bInterval-1) value expressed in microframes;
@@ -1157,14 +1156,14 @@ Return Value:
         break;
     }
 
-    UsbSamp_DbgPrint(1, ("MaxPacketSize = %d, bInterval = %d\n", 
+    UsbSamp_DbgPrint(1, ("MaxPacketSize = %d, bInterval = %d\n",
                        pipeInfo.MaximumPacketSize,
                        pipeInfo.Interval));
 
-    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d, TransferSizePerMicroframe = %d\n", 
-                       pipeContext->TransferSizePerFrame, 
-                       pipeContext->TransferSizePerMicroframe));        
-    
+    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d, TransferSizePerMicroframe = %d\n",
+                       pipeContext->TransferSizePerFrame,
+                       pipeContext->TransferSizePerMicroframe));
+
     return STATUS_SUCCESS;
 }
 
@@ -1198,23 +1197,23 @@ Return Value:
 
     WDF_USB_PIPE_INFORMATION_INIT(&pipeInfo);
     WdfUsbTargetPipeGetInformation(Pipe, &pipeInfo);
-    
+
     //
     // We use the pipe context only for isoch endpoints.
     //
     if ((WdfUsbPipeTypeIsochronous != pipeInfo.PipeType)) {
         return STATUS_SUCCESS;
     }
-    
+
     pipeContext = GetPipeContext(Pipe);
-   
+
     if (pipeInfo.MaximumPacketSize == 0) {
         UsbSamp_DbgPrint(1, ("MaximumPacketSize in the pipeInfo is invalid (zero)\n"));
         return STATUS_INVALID_PARAMETER;
     }
-    
+
     //
-    // Universal Serial Bus Specification Revision 2.0 5.6.3 Isochronous Transfer 
+    // Universal Serial Bus Specification Revision 2.0 5.6.3 Isochronous Transfer
     // Packet Size Constraints: High-speed endpoints are allowed up to 1024-byte data
     // payloads per microframe and allowed up to a maximum of 3 transactions per microframe.
     //
@@ -1225,7 +1224,7 @@ Return Value:
     // 10 - 2 additional (3 per microframe)
     // 11 - Reserved.
     //
-    // Note: MaximumPacketSize of WDF_USB_PIPE_INFORMATION is already adjusted to include 
+    // Note: MaximumPacketSize of WDF_USB_PIPE_INFORMATION is already adjusted to include
     // additional transactions if it is a high bandwidth pipe.
     //
 
@@ -1236,7 +1235,7 @@ Return Value:
 
     //
     // Microsoft USB stack only supports bInterval value of 1, 2, 3 and 4 (or polling period of 1, 2, 4 and 8).
-    //    
+    //
     if (pipeInfo.Interval == 0 || pipeInfo.Interval > 4) {
         UsbSamp_DbgPrint(1, ("bInterval value in pipeInfo is invalid (0 or > 4)\n"));
         return STATUS_INVALID_PARAMETER;
@@ -1282,14 +1281,14 @@ Return Value:
         break;
     }
 
-    UsbSamp_DbgPrint(1, ("MaxPacketSize = %d, bInterval = %d\n", 
+    UsbSamp_DbgPrint(1, ("MaxPacketSize = %d, bInterval = %d\n",
                        pipeInfo.MaximumPacketSize,
                        pipeInfo.Interval));
 
-    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d, TransferSizePerMicroframe = %d\n", 
-                       pipeContext->TransferSizePerFrame, 
-                       pipeContext->TransferSizePerMicroframe));        
-    
+    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d, TransferSizePerMicroframe = %d\n",
+                       pipeContext->TransferSizePerFrame,
+                       pipeContext->TransferSizePerMicroframe));
+
     return STATUS_SUCCESS;
 }
 
@@ -1321,14 +1320,14 @@ Return Value:
 
     WDF_USB_PIPE_INFORMATION_INIT(&pipeInfo);
     WdfUsbTargetPipeGetInformation(Pipe, &pipeInfo);
-    
+
     //
     // We use the pipe context only for isoch endpoints.
     //
     if ((WdfUsbPipeTypeIsochronous != pipeInfo.PipeType)) {
         return STATUS_SUCCESS;
     }
-    
+
     pipeContext = GetPipeContext(Pipe);
 
     if (pipeInfo.MaximumPacketSize == 0) {
@@ -1351,7 +1350,7 @@ Return Value:
     //
     // Microsoft USB stack only supports bInterval value of 1 for
     // full-speed isochronous endpoints.
-    //    
+    //
     if (pipeInfo.Interval != 1) {
         UsbSamp_DbgPrint(1, ("bInterval value in endpoint descriptor is invalid\n"));
         return STATUS_INVALID_PARAMETER;
@@ -1360,8 +1359,8 @@ Return Value:
     pipeContext->TransferSizePerFrame = pipeInfo.MaximumPacketSize;
     pipeContext->TransferSizePerMicroframe = 0;
 
-    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d\n", pipeContext->TransferSizePerFrame));        
-    
+    UsbSamp_DbgPrint(1, ("TransferSizePerFrame = %d\n", pipeContext->TransferSizePerFrame));
+
     return STATUS_SUCCESS;
 }
 
@@ -1428,13 +1427,13 @@ RetrieveDeviceInformation(
 
         if (pDeviceContext->IsStaticStreamsSupported) {
              UsbSamp_DbgPrint(3, ("Number of Streams supported by the controller:  %d\n", numberOfStreams));
-        } 
+        }
     }
 
     return STATUS_SUCCESS;
 }
 
-    
+
 NTSTATUS
 ReadFdoRegistryKeyValue(
     _In_  WDFDRIVER   Driver,
@@ -1457,7 +1456,7 @@ Arguments:
 
 Return Value:
 
-    NTSTATUS 
+    NTSTATUS
 
 --*/
 {
@@ -1513,6 +1512,11 @@ Return Value:
     WDFDEVICE device;
     PDEVICE_CONTEXT	pDevContext;
 
+    //
+    // EvtCleanupCallback for WDFDEVICE is always called at PASSIVE_LEVEL
+    //
+    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
+
     PAGED_CODE();
 
     device = (WDFDEVICE)WdfDevice;
@@ -1526,7 +1530,7 @@ Return Value:
 }
 
 USBD_STATUS
-UsbSamp_ValidateConfigurationDescriptor(  
+UsbSamp_ValidateConfigurationDescriptor(
     _In_reads_bytes_(BufferLength) PUSB_CONFIGURATION_DESCRIPTOR ConfigDesc,
     _In_ ULONG BufferLength,
     _Inout_ PUCHAR *Offset
@@ -1539,13 +1543,13 @@ Routine Description:
 
 Parameters:
 
-    ConfigDesc: Pointer to the entire USB Configuration descriptor returned by 
+    ConfigDesc: Pointer to the entire USB Configuration descriptor returned by
         the device
 
     BufferLength: Known size of buffer pointed to by ConfigDesc (Not wTotalLength)
 
     Offset: if the USBD_STATUS returned is not USBD_STATUS_SUCCESS, offet will
-        be set to the address within the ConfigDesc buffer where the failure 
+        be set to the address within the ConfigDesc buffer where the failure
         occured.
 
 Return Value:
@@ -1568,7 +1572,7 @@ Return Value:
     // It also checks for interface numbers, number of endpoints in an interface etc.
     // Please refer to msdn documentation for this function for more information.
     //
-    
+
     status = USBD_ValidateConfigurationDescriptor( ConfigDesc, BufferLength , ValidationLevel , Offset , POOL_TAG );
     if (!(NT_SUCCESS (status)) ){
         return status;
@@ -1576,12 +1580,12 @@ Return Value:
 
     //
     // TODO: You should validate the correctness of other descriptors which are not taken care by USBD_ValidateConfigurationDescriptor
-    // The below code loops through the configuration descriptor and verifies that all instances of 
+    // The below code loops through the configuration descriptor and verifies that all instances of
     // USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR have a size of >= USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR
     // You should put in more validations as per requirement
-    // 
-  
-   
+    //
+
+
     offset = ((PUCHAR)ConfigDesc) + ConfigDesc->bLength;
     end = ((PUCHAR)ConfigDesc) + ConfigDesc->wTotalLength;
 
@@ -1590,12 +1594,12 @@ Return Value:
         //
         // Ensure the descriptor header is in bounds.  We always
         // need to ensure we have enough data to look at the descriptor
-        // header fields.  Sometimes descriptors are zeroed at the end,         
+        // header fields.  Sometimes descriptors are zeroed at the end,
         // this is OK.
         //
         commonDesc = (PUSB_COMMON_DESCRIPTOR)offset;
 
-        
+
         switch(commonDesc->bDescriptorType){
 
             case USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR_TYPE:
@@ -1621,7 +1625,7 @@ Return Value:
     }
 
 ValidateConfigurationDescriptor_Done:
-    
+
     if(!USBD_SUCCESS(status)){
         NT_ASSERT(index);
         *Offset = index;
@@ -1657,8 +1661,6 @@ Return Value:
     PPIPE_CONTEXT	pPipeContext = NULL;
     PUSBSAMP_STREAM_INFO  pStreamInfo = NULL;
 
-    PAGED_CODE();
-
     pipe = (WDFUSBPIPE)WdfObject;
     pPipeContext = GetPipeContext(pipe);
 
@@ -1669,6 +1671,5 @@ Return Value:
         ExFreePool(pStreamInfo->StreamList);
         pStreamInfo->StreamList = NULL;
     }
-
 }
 #endif

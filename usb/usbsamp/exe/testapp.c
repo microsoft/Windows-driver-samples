@@ -21,10 +21,10 @@ Environment:
 
 --*/
 
-  
+
 #include <DriverSpecs.h>
-_Analysis_mode_(_Analysis_code_type_user_code_)  
-       
+_Analysis_mode_(_Analysis_code_type_user_code_)
+
 #include <windows.h>
 
 #include <conio.h>
@@ -37,7 +37,7 @@ _Analysis_mode_(_Analysis_code_type_user_code_)
 #include "public.h"
 #include "strsafe.h"
 
-#pragma warning(disable:4200)  // 
+#pragma warning(disable:4200)  //
 #pragma warning(disable:4201)  // nameless struct/union
 #pragma warning(disable:4214)  // bit field types other than int
 
@@ -48,7 +48,7 @@ _Analysis_mode_(_Analysis_code_type_user_code_)
 #pragma warning(default:4200)
 #pragma warning(default:4201)
 #pragma warning(default:4214)
-  
+
 
 #define NOISY(_x_) printf _x_ ;
 #define MAX_LENGTH 256
@@ -160,8 +160,8 @@ Return Value:
 
 
 HANDLE
-OpenUsbDevice( 
-    _In_ LPGUID  pGuid, 
+OpenUsbDevice(
+    _In_ LPGUID  pGuid,
     _In_ PSTR    outNameBuf
     )
 /*++
@@ -197,10 +197,10 @@ Return Value:
 
    //
    // Open a handle to the plug and play dev node.
-   // SetupDiGetClassDevs() returns a device information set that contains 
+   // SetupDiGetClassDevs() returns a device information set that contains
    // info on all installed devices of a specified class.
    //
-   hardwareDeviceInfo = 
+   hardwareDeviceInfo =
        SetupDiGetClassDevs ( pGuid,
                              NULL, // Define no enumerator (global)
                              NULL, // Define no
@@ -247,10 +247,10 @@ Return Value:
       }
 
       for (; i < NumberDevices; i++) {
-          // SetupDiEnumDeviceInterfaces() returns information about device 
-          // interfaces exposed by one or more devices. Each call returns 
-          // information about one interface; the routine can be called 
-          // repeatedly to get information about several interfaces exposed 
+          // SetupDiEnumDeviceInterfaces() returns information about device
+          // interfaces exposed by one or more devices. Each call returns
+          // information about one interface; the routine can be called
+          // repeatedly to get information about several interfaces exposed
           // by one or more devices.
 
          if (SetupDiEnumDeviceInterfaces (hardwareDeviceInfo,
@@ -285,8 +285,8 @@ Return Value:
 
 
 BOOL
-GetUsbDeviceFileName( 
-    _In_ LPGUID  pGuid, 
+GetUsbDeviceFileName(
+    _In_ LPGUID  pGuid,
     _In_ PSTR    outNameBuf
     )
 /*++
@@ -334,14 +334,14 @@ Return Value:
 
 --*/
 {
-    HANDLE hDEV = OpenUsbDevice( (LPGUID)&GUID_CLASS_USBSAMP_USB, 
+    HANDLE hDEV = OpenUsbDevice( (LPGUID)&GUID_CLASS_USBSAMP_USB,
                                  completeDeviceName);
 
     if (hDEV == INVALID_HANDLE_VALUE) {
         printf("Failed to open (%s) = %u", completeDeviceName, GetLastError());
     } else {
         printf("DeviceName = (%s)\n", completeDeviceName);
-    }           
+    }
 
     return hDEV;
 
@@ -349,7 +349,7 @@ Return Value:
 
 
 HANDLE
-open_file( 
+open_file(
     _In_ PSTR filename
     )
 /*++
@@ -378,7 +378,7 @@ Return Value:
             return  INVALID_HANDLE_VALUE;
     }
 
-    (void) StringCchCat (completeDeviceName, MAX_LENGTH, "\\" );                      
+    (void) StringCchCat (completeDeviceName, MAX_LENGTH, "\\" );
 
     if(FAILED(StringCchCat (completeDeviceName, MAX_LENGTH, filename))) {
         NOISY(("Failed to open handle - possibly long filename\n"));
@@ -400,7 +400,7 @@ Return Value:
         success = 0;
     } else {
         NOISY(("Opened successfully.\n"));
-    }           
+    }
 
     return h;
 }
@@ -445,7 +445,7 @@ Return Value:
 void
 parse(
     _In_ int argc,
-    _In_reads_(argc) char *argv[] 
+    _In_reads_(argc) char *argv[]
     )
 /*++
 Routine Description:
@@ -565,8 +565,8 @@ Return Value:
 
 BOOL
 compare_buffs(
-    _In_reads_bytes_(length) char *buff1, 
-    _In_reads_bytes_(length) char *buff2, 
+    _In_reads_bytes_(length) char *buff1,
+    _In_reads_bytes_(length) char *buff2,
     _In_ int   length
     )
 /*++
@@ -668,29 +668,29 @@ Return Value:
 
         case USB_CONFIGURATION_DESCRIPTOR_TYPE:
                 return "USB_CONFIGURATION_DESCRIPTOR_TYPE";
-                
+
 
         case USB_STRING_DESCRIPTOR_TYPE:
                 return "USB_STRING_DESCRIPTOR_TYPE";
-                
+
 
         case USB_INTERFACE_DESCRIPTOR_TYPE:
                 return "USB_INTERFACE_DESCRIPTOR_TYPE";
-                
+
 
         case USB_ENDPOINT_DESCRIPTOR_TYPE:
                 return "USB_ENDPOINT_DESCRIPTOR_TYPE";
 
         case USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR_TYPE:
                 return "USB_SUPERSPEED_ENDPOINT_COMPANION_DESCRIPTOR_TYPE";
-                
+
 
 #ifdef USB_POWER_DESCRIPTOR_TYPE // this is the older definintion which is actually obsolete
     // workaround for temporary bug in 98ddk, older USB100.h file
         case USB_POWER_DESCRIPTOR_TYPE:
                 return "USB_POWER_DESCRIPTOR_TYPE";
 #endif
-                
+
 #ifdef USB_RESERVED_DESCRIPTOR_TYPE  // this is the current version of USB100.h as in NT5DDK
 
         case USB_RESERVED_DESCRIPTOR_TYPE:
@@ -704,7 +704,7 @@ Return Value:
 #endif // for current nt5ddk version of USB100.h
 
         default:
-                return "??? UNKNOWN!!"; 
+                return "??? UNKNOWN!!";
         }
 }
 
@@ -734,16 +734,16 @@ Return Value:
         return "USB_ENDPOINT_TYPE_INTERRUPT";
 
     case USB_ENDPOINT_TYPE_BULK:
-        return "USB_ENDPOINT_TYPE_BULK";        
+        return "USB_ENDPOINT_TYPE_BULK";
 
     case USB_ENDPOINT_TYPE_ISOCHRONOUS:
-        return "USB_ENDPOINT_TYPE_ISOCHRONOUS"; 
+        return "USB_ENDPOINT_TYPE_ISOCHRONOUS";
 
     case USB_ENDPOINT_TYPE_CONTROL:
-            return "USB_ENDPOINT_TYPE_CONTROL";     
+            return "USB_ENDPOINT_TYPE_CONTROL";
 
     default:
-            return "??? UNKNOWN!!"; 
+            return "??? UNKNOWN!!";
     }
 }
 
@@ -775,13 +775,13 @@ Return Value:
 
         case USB_CONFIG_SELF_POWERED:
                 return "USB_CONFIG_SELF_POWERED";
-                
+
         case USB_CONFIG_REMOTE_WAKEUP:
                 return "USB_CONFIG_REMOTE_WAKEUP";
 
-                
+
         default:
-                return "??? UNKNOWN!!"; 
+                return "??? UNKNOWN!!";
         }
 }
 
@@ -933,7 +933,7 @@ Return Value:
             );
     }
 
-    printf( 
+    printf(
         "bmAttributes= 0x%x ( %s )\n", ed->bmAttributes, usbEndPointTypeString ( ed->bmAttributes )
         );
 
@@ -1024,7 +1024,7 @@ Return Value:
         NOISY(("DEV not open"));
         return;
     }
-    
+
     success = DeviceIoControl(hDEV,
                     IOCTL_USBSAMP_GET_CONFIG_DESCRIPTOR,
                     buf,
@@ -1035,7 +1035,7 @@ Return Value:
                     NULL);
 
     NOISY(("request complete, success = %u nBytes = %d\n", success, nBytes));
-    
+
     if (success) {
 
         UINT  j = 0, k = 0, n;
@@ -1078,7 +1078,7 @@ Return Value:
                     }
                     j = 0;
                     k = 0;
-                    print_USB_INTERFACE_DESCRIPTOR((PUSB_INTERFACE_DESCRIPTOR)commonDesc, n++);                                               
+                    print_USB_INTERFACE_DESCRIPTOR((PUSB_INTERFACE_DESCRIPTOR)commonDesc, n++);
                     break;
 
                 case USB_ENDPOINT_DESCRIPTOR_TYPE:
@@ -1104,7 +1104,7 @@ Return Value:
                 default:
                     displayUnknown = TRUE;
                     break;
-            } 
+            }
 
             if (displayUnknown)
             {
@@ -1113,10 +1113,10 @@ Return Value:
 
 			commonDesc = (PUSB_COMMON_DESCRIPTOR)((PUCHAR)commonDesc + commonDesc->bLength);
 
-        } 
+        }
 
-    } 
- 
+    }
+
     return;
 }
 
@@ -1154,8 +1154,8 @@ Return Value:
 
 
 
-int 
-_cdecl 
+int
+_cdecl
 main(
     _In_ int   argc,
     _In_reads_(argc) char *argv[]
@@ -1212,6 +1212,9 @@ Return Value:
 
             hRead = open_file( inPipe);
             pinBuf = (char*) malloc(ReadLen);
+            if (pinBuf == NULL) {
+                return 0;
+            }
 
         }
 
@@ -1224,6 +1227,9 @@ Return Value:
 
             hWrite = open_file( outPipe);
             poutBuf = (char*)malloc(WriteLen);
+            if (poutBuf == NULL) {
+                return 0;
+            }
         }
 
         for (i=0; i<IterationCount; i++) {
@@ -1254,32 +1260,32 @@ Return Value:
             if (fRead && pinBuf) {
 
                 success = ReadFile(hRead, pinBuf, ReadLen, (PULONG) &nBytesRead, NULL);
-                
-                if (success) {                
+
+                if (success) {
                     printf("<%s> R (%04.4u) : request %06.6d bytes -- %06.6d bytes read\n",
                            inPipe, i, ReadLen, nBytesRead);
-    
+
                     if (fWrite && fCompareData) {
-    
+
                         //
                         // validate the input buffer against what
                         // we sent to the device (loopback test)
                         //
 #pragma warning(suppress: 26053)
                         ok = compare_buffs(pinBuf, poutBuf,  nBytesRead);
-    
+
                         if( fDumpReadData ) {
                             printf("Dumping read buffer\n");
-                            dump( (PUCHAR) pinBuf,  nBytesRead );     
+                            dump( (PUCHAR) pinBuf,  nBytesRead );
                             printf("Dumping write buffer\n");
                             dump( (PUCHAR) poutBuf, nBytesRead );
                         }
                         assert(ok);
-    
+
                         if(ok != 1) {
                             fail++;
                         }
-    
+
                         assert(ReadLen == WriteLen);
                         assert(nBytesRead == ReadLen);
                     }
@@ -1301,7 +1307,7 @@ Return Value:
 
         if(hWrite != INVALID_HANDLE_VALUE)
                 CloseHandle(hWrite);
-    }           
+    }
 
     return 0;
 }

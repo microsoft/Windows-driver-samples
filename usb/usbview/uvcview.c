@@ -200,7 +200,7 @@ AddItemInformationToFile(
 
 DWORD
 DisplayLastError(
-          _Inout_updates_bytes_(count) char    *szString, 
+          _Inout_updates_bytes_(count) char    *szString,
           int     count);
 
 VOID AddItemInformationToXmlView(
@@ -221,7 +221,7 @@ HRESULT SaveAllInformationAsText(LPTSTR lpstrTextFileName, DWORD dwCreationDispo
 HRESULT SaveAllInformationAsXml(LPTSTR lpstrTextFileName , DWORD dwCreationDisposition);
 
 /*****************************************************************************
-G L O B A L S 
+G L O B A L S
 *****************************************************************************/
 BOOL gDoConfigDesc = TRUE;
 BOOL gDoAnnotation = TRUE;
@@ -345,7 +345,7 @@ WinMain (
 
 ProcessCommandLine()
 
-Parses the command line and takes appropriate actions. Returns FALSE If there is no action to 
+Parses the command line and takes appropriate actions. Returns FALSE If there is no action to
 perform
 *****************************************************************************/
 BOOL ProcessCommandLine()
@@ -354,7 +354,7 @@ BOOL ProcessCommandLine()
     LPTSTR szArg = NULL;
     LPTSTR szAnsiArg= NULL;
     BOOL quietMode = FALSE;
-    
+
     HRESULT hr = S_OK;
     DWORD dwCreationDisposition = CREATE_NEW;
     USBVIEW_SAVE_FILE_TYPE fileType = UsbViewNone;
@@ -667,7 +667,7 @@ VOID DisplayMessage(DWORD dwResId, ...)
     }
 
     dwLen = FormatMessage(
-                FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ALLOCATE_BUFFER, 
+                FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ALLOCATE_BUFFER,
                 szFormat,
                 dwResId,
                 0,
@@ -749,7 +749,7 @@ VOID PrintString(LPTSTR lpszString)
         return;
     }
 
-    if (gbConsoleFile) 
+    if (gbConsoleFile)
     {
         // Console has been redirected to a file, ex: `usbview /savexml:xx > test.txt`. We need to use WriteFile instead of
         // WriteConsole for text output.
@@ -1042,7 +1042,7 @@ USBView_OnInitDialog (
 
     ghEditWnd = GetDlgItem(hWnd, IDC_EDIT);
 
-#ifdef H264_SUPPORT  
+#ifdef H264_SUPPORT
     // set the edit control to have a max text limit size
     SendMessage(ghEditWnd, EM_LIMITTEXT, 0 /* USE DEFAULT MAX*/, 0);
 #endif
@@ -1101,7 +1101,7 @@ USBView_OnClose (
 
 AddItemInformationToFile()
 
-Saves the information about the current item to the list 
+Saves the information about the current item to the list
 *****************************************************************************/
 VOID
 AddItemInformationToFile(
@@ -1140,7 +1140,7 @@ SaveAllInformationAsText()
 
 Saves the entire USB tree as a text file
 *****************************************************************************/
-HRESULT 
+HRESULT
 SaveAllInformationAsText(
         LPTSTR lpstrTextFileName,
         DWORD dwCreationDisposition
@@ -1154,7 +1154,7 @@ SaveAllInformationAsText(
             0,
             NULL,
             dwCreationDisposition,
-            FILE_ATTRIBUTE_NORMAL, 
+            FILE_ATTRIBUTE_NORMAL,
             NULL);
 
     if (hf == INVALID_HANDLE_VALUE)
@@ -1702,10 +1702,10 @@ AboutDlgProc (
 
             if (hItem != NULL)
             {
-                hr = StringCbPrintfA(TextBuffer, 
+                hr = StringCbPrintfA(TextBuffer,
                                      sizeof(TextBuffer),
-                                     "USBView version: %d.%d", 
-                                     USBVIEW_MAJOR_VERSION, 
+                                     "USBView version: %d.%d",
+                                     USBVIEW_MAJOR_VERSION,
                                      USBVIEW_MINOR_VERSION);
                 if (SUCCEEDED(hr))
                 {
@@ -1717,10 +1717,10 @@ AboutDlgProc (
 
             if (hItem != NULL)
             {
-                hr = StringCbPrintfA(TextBuffer, 
+                hr = StringCbPrintfA(TextBuffer,
                                      sizeof(TextBuffer),
-                                     "USB Video Class Spec version: %d.%d", 
-                                     UVC_SPEC_MAJOR_VERSION, 
+                                     "USB Video Class Spec version: %d.%d",
+                                     UVC_SPEC_MAJOR_VERSION,
                                      UVC_SPEC_MINOR_VERSION);
                 if (SUCCEEDED(hr))
                 {
@@ -1735,7 +1735,7 @@ AboutDlgProc (
         {
         case IDOK:
         case IDCANCEL:
-            
+
             EndDialog (hwnd, 0);
             break;
         }
@@ -1820,7 +1820,7 @@ AddLeaf (
             tvins.item.iImage = giGoodSsDevice;
             tvins.item.iSelectedImage = giGoodSsDevice;
             break;
-            
+
         case NoSsDeviceIcon:
             tvins.item.iImage = giNoSsDevice;
             tvins.item.iSelectedImage = giNoSsDevice;
@@ -1886,7 +1886,7 @@ WalkTreeTopDown(
         }
         else
         {
-            // If there are no more siblings, we have reached the end of 
+            // If there are no more siblings, we have reached the end of
             // list of child nodes. Call notify function
             if (lpfnTreeNotifyCallback != NULL)
             {
@@ -1959,7 +1959,7 @@ SaveAllInformationAsXML()
 
 Saves the entire USB tree as an XML file
 *****************************************************************************/
-HRESULT 
+HRESULT
 SaveAllInformationAsXml(
         LPTSTR lpstrTextFileName,
         DWORD dwCreationDisposition
@@ -2070,8 +2070,8 @@ DisplayLastError()
 
 DWORD
 DisplayLastError(
-          _Inout_updates_bytes_(count) char *szString, 
-          int count) 
+          _Inout_updates_bytes_(count) char *szString,
+          int count)
 {
     LPVOID lpMsgBuf;
 
@@ -2079,9 +2079,9 @@ DisplayLastError(
     DWORD dwError = GetLastError();
 
     // get the system message for this error code
-    if (FormatMessage( 
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-        FORMAT_MESSAGE_FROM_SYSTEM | 
+    if (FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
         dwError,
@@ -2122,8 +2122,8 @@ Oops
     memset(szBuf, 0, sizeof(szBuf));
 
     // get the system message for this error code
-    if (FormatMessage( 
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+    if (FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM,
         NULL,
         dwGLE,
@@ -2132,14 +2132,14 @@ Oops
         0,
         NULL))
     {
-        StringCchPrintf(szBuf, sizeof(szBuf), 
-            "File: %s, Line %d\r\nGetLastError 0x%x %u %s\n", 
+        StringCchPrintf(szBuf, sizeof(szBuf),
+            "File: %s, Line %d\r\nGetLastError 0x%x %u %s\n",
             File, Line, dwGLE, dwGLE, lpMsgBuf);
     }
     else
     {
-        StringCchPrintf(szBuf, sizeof(szBuf), 
-            "File: %s, Line %d\r\nGetLastError 0x%x %u\r\n", 
+        StringCchPrintf(szBuf, sizeof(szBuf),
+            "File: %s, Line %d\r\nGetLastError 0x%x %u\r\n",
             File, Line, dwGLE, dwGLE);
     }
     OutputDebugString(szBuf);
