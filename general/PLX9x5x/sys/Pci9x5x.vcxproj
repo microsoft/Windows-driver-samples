@@ -22,7 +22,7 @@
     <ProjectGuid>{501DB362-22B7-4447-9F0B-690EE0F83CF3}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
-    <KMDF_VERSION_MINOR>9</KMDF_VERSION_MINOR>
+    <KMDF_VERSION_MINOR>19</KMDF_VERSION_MINOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <SampleGuid>{01A592F9-DDED-4EDB-B96A-3B9061461BE3}</SampleGuid>
@@ -118,6 +118,16 @@
       <PreCompiledHeaderOutputFile>$(IntDir)\precomp.pch</PreCompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="Write.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
+      <WppGenerateUsingTemplateFile>{km-WdfDefault.tpl}*.tmh</WppGenerateUsingTemplateFile>
+      <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreCompiledHeaderFile>precomp.h</PreCompiledHeaderFile>
+      <PreCompiledHeader>Use</PreCompiledHeader>
+      <PreCompiledHeaderOutputFile>$(IntDir)\precomp.pch</PreCompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Control.c">
       <WppEnabled>true</WppEnabled>
       <WppKernelMode>true</WppKernelMode>
       <WppTraceFunction>TraceEvents(LEVEL,FLAGS,MSG,...)</WppTraceFunction>
