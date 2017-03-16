@@ -1987,7 +1987,7 @@ Return Value:
                                    PDevExt->DeviceName.Buffer,
                                    REG_SZ,
                                    pRegName,
-                                   nameSize);
+                                   nameSize + sizeof(WCHAR));
 
     if (!NT_SUCCESS(status)) {
 
