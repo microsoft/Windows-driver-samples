@@ -343,6 +343,9 @@ Return Value:
                                                 OutputBufferLength,
                                                 &Irp->IoStatus,
                                                 Irp );
+                                                
+            IoCompleteRequest( Irp, IO_NO_INCREMENT );
+                                                
             break;
         }
 
