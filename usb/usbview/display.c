@@ -2493,7 +2493,7 @@ DisplayDeviceQualifierDescriptor (
 }
 
 VOID
-DisplayUsb20CapabilityExtensionDescriptor (
+DisplayUsb20ExtensionCapabilityDescriptor (
     PUSB_DEVICE_CAPABILITY_USB20_EXTENSION_DESCRIPTOR extCapDesc
     )
 {
@@ -2528,7 +2528,7 @@ DisplayUsb20CapabilityExtensionDescriptor (
 }
 
 VOID
-DisplaySuperSpeedCapabilityExtensionDescriptor (
+DisplaySuperSpeedCapabilityDescriptor (
     PUSB_DEVICE_CAPABILITY_SUPERSPEED_USB_DESCRIPTOR ssCapDesc
     )
 {
@@ -2667,7 +2667,212 @@ DisplaySuperSpeedCapabilityExtensionDescriptor (
 
 
 VOID
-DisplayContainerIdCapabilityExtensionDescriptor (
+DisplaySuperSpeedPlusCapabilityDescriptor (
+    PUSB_DEVICE_CAPABILITY_SUPERSPEEDPLUS_USB_DESCRIPTOR sspCapDesc
+    )
+{
+    UCHAR i;
+
+    AppendTextBuffer("\r\n          ===>SuperSpeed USB Device Capability Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        sspCapDesc->bLength);
+    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+        sspCapDesc->bDescriptorType);
+    AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
+        sspCapDesc->bDevCapabilityType);
+    AppendTextBuffer("bReserved:                         0x%02X\r\n",
+        sspCapDesc->bReserved);
+    if (sspCapDesc->bReserved != 0)
+    {
+        if(gDoAnnotation)
+        {
+            AppendTextBuffer("*!*ERROR: field is reserved\r\n");
+        }
+    }
+
+    AppendTextBuffer("bmAttributes:                      0x%08X\r\n",
+        sspCapDesc->bmAttributes.AsUlong);
+    AppendTextBuffer("  SublinkSpeedAttrCount:           0x%02X\r\n",
+        sspCapDesc->bmAttributes.SublinkSpeedAttrCount);
+    AppendTextBuffer("  SublinkSpeedIDCount:             0x%02X\r\n",
+        sspCapDesc->bmAttributes.SublinkSpeedIDCount);
+
+    AppendTextBuffer("wFunctionalitySupport:             0x%04X\r\n",
+        sspCapDesc->wFunctionalitySupport.AsUshort);
+    AppendTextBuffer("  SublinkSpeedAttrID:              0x%02X\r\n",
+        sspCapDesc->wFunctionalitySupport.SublinkSpeedAttrID);
+    AppendTextBuffer("  Reserved:                        0x%02X\r\n",
+        sspCapDesc->wFunctionalitySupport.Reserved);
+    if (sspCapDesc->wFunctionalitySupport.Reserved != 0)
+    {
+        if(gDoAnnotation)
+        {
+            AppendTextBuffer("*!*ERROR: field is reserved\r\n");
+        }
+    }
+    AppendTextBuffer("  MinRxLaneCount:                  0x%02X\r\n",
+        sspCapDesc->wFunctionalitySupport.MinRxLaneCount);
+    AppendTextBuffer("  MinTxLaneCount:                  0x%02X\r\n",
+        sspCapDesc->wFunctionalitySupport.MinTxLaneCount);
+
+    AppendTextBuffer("wReserved:                         0x%04X\r\n",
+        sspCapDesc->wReserved);
+    if (sspCapDesc->wReserved != 0)
+    {
+        if(gDoAnnotation)
+        {
+            AppendTextBuffer("*!*ERROR: field is reserved\r\n");
+        }
+    }
+
+    // The array size = SublinkSpeedAttrCount + 1
+    for (i = 0; i <= sspCapDesc->bmAttributes.SublinkSpeedAttrCount; i++)
+    {
+        PUSB_DEVICE_CAPABILITY_SUPERSPEEDPLUS_SPEED speed = &sspCapDesc->bmSublinkSpeedAttr[i];
+
+        AppendTextBuffer("bmSublinkSpeedAttr #:              0x%02X\r\n",
+            i);
+        AppendTextBuffer("  SublinkSpeedAttrID:              0x%02X\r\n",
+            speed->SublinkSpeedAttrID);
+        AppendTextBuffer("  LaneSpeedExponent:               0x%02X",
+            speed->LaneSpeedExponent);
+        if(gDoAnnotation)
+        {
+            switch (speed->LaneSpeedExponent)
+            {
+            case 0:
+                AppendTextBuffer(" -> Bits per second\r\n");
+                break;
+            case 1:
+                AppendTextBuffer(" -> Kb/s\r\n");
+                break;
+            case 2:
+                AppendTextBuffer(" -> Mb/s\r\n");
+                break;
+            case 3:
+                AppendTextBuffer(" -> Gb/s\r\n");
+                break;
+            }
+        }
+        else
+        {
+            AppendTextBuffer("\r\n");
+        }
+        AppendTextBuffer("  SublinkTypeMode:                 0x%02X",
+            speed->SublinkTypeMode);
+        if(gDoAnnotation)
+        {
+            switch (speed->SublinkTypeMode)
+            {
+            case 0:
+                AppendTextBuffer(" -> Symmetric\r\n");
+                break;
+            case 1:
+                AppendTextBuffer(" -> Asymmetric\r\n");
+                break;
+            }
+        }
+        else
+        {
+            AppendTextBuffer("\r\n");
+        }
+        AppendTextBuffer("  SublinkTypeDir:                  0x%02X",
+            speed->SublinkTypeDir);
+        if(gDoAnnotation)
+        {
+            switch (speed->SublinkTypeDir)
+            {
+            case 0:
+                AppendTextBuffer(" -> Receive mode\r\n");
+                break;
+            case 1:
+                AppendTextBuffer(" -> Transmit mode\r\n");
+                break;
+            }
+        }
+        else
+        {
+            AppendTextBuffer("\r\n");
+        }
+        AppendTextBuffer("  Reserved:                        0x%02X\r\n",
+            speed->Reserved);
+        AppendTextBuffer("  LinkProtocol:                    0x%02X",
+            speed->LinkProtocol);
+        if(gDoAnnotation)
+        {
+            switch (speed->LinkProtocol)
+            {
+            case 0:
+                AppendTextBuffer(" -> SuperSpeed\r\n");
+                break;
+            case 1:
+                AppendTextBuffer(" -> SuperSpeedPlus\r\n");
+                break;
+            default:
+                AppendTextBuffer(" -> Reserved\r\n");
+                break;
+            }
+        }
+        else
+        {
+            AppendTextBuffer("\r\n");
+        }
+        AppendTextBuffer("  LaneSpeedMantissa:               0x%04X\r\n",
+            speed->LaneSpeedMantissa);
+    }
+}
+
+
+VOID
+DisplayPlatformCapabilityDescriptor (
+    PUSB_DEVICE_CAPABILITY_PLATFORM_DESCRIPTOR platformCapDesc
+    )
+{
+    LPGUID pGuid;
+
+    AppendTextBuffer("\r\n          ===>Platform Capability Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        platformCapDesc->bLength);
+    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+        platformCapDesc->bDescriptorType);
+    AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
+        platformCapDesc->bDevCapabilityType);
+
+    AppendTextBuffer("bReserved:                         0x%02X\r\n",
+        platformCapDesc->bReserved);
+    if (platformCapDesc->bReserved != 0)
+    {
+        if(gDoAnnotation)
+        {
+            AppendTextBuffer("*!*ERROR: field is reserved\r\n");
+        }
+    }
+
+    pGuid = (LPGUID)&platformCapDesc->PlatformCapabilityUuid;
+    AppendTextBuffer("Platform Capability UUID:          ");
+    AppendTextBuffer("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X\r\n",
+        pGuid->Data1,
+        pGuid->Data2,
+        pGuid->Data3,
+        pGuid->Data4[0],
+        pGuid->Data4[1],
+        pGuid->Data4[2],
+        pGuid->Data4[3],
+        pGuid->Data4[4],
+        pGuid->Data4[5],
+        pGuid->Data4[6],
+        pGuid->Data4[7]);
+
+    DisplayRemainingUnknownDescriptor((PUCHAR)platformCapDesc,
+                                        (ULONG)offsetof(USB_DEVICE_CAPABILITY_PLATFORM_DESCRIPTOR, CapabililityData),
+                                        platformCapDesc->bLength);
+}
+
+
+VOID
+DisplayContainerIdCapabilityDescriptor (
     PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR containerIdCapDesc
     )
 {
@@ -2832,6 +3037,47 @@ DisplayBillboardCapabilityDescriptor (
 }
 
 
+#ifdef USB_DEVICE_CAPABILITY_CONFIGURATION_SUMMARY
+
+VOID
+DisplayConfigurationSummaryCapabilityDescriptor (
+    PUSB_DEVICE_CAPABILITY_CONFIGURATION_SUMMARY_DESCRIPTOR configSummaryCapDesc
+    )
+{
+    UCHAR i;
+    AppendTextBuffer("\r\n          ===>Configuration Summary Capability Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        configSummaryCapDesc->bLength);
+    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+        configSummaryCapDesc->bDescriptorType);
+    AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
+        configSummaryCapDesc->bDevCapabilityType);
+
+    AppendTextBuffer("bcdVersion:                        0x%04X\r\n",
+        configSummaryCapDesc->bcdVersion);
+    AppendTextBuffer("bConfigurationValue:               0x%02X\r\n",
+        configSummaryCapDesc->bConfigurationValue);
+    AppendTextBuffer("bMaxPower:                         0x%02X\r\n",
+        configSummaryCapDesc->bMaxPower);
+    AppendTextBuffer("bNumFunctions:                     0x%02X\r\n",
+        configSummaryCapDesc->bNumFunctions);
+
+    for (i = 0; i < configSummaryCapDesc->bNumFunctions; i++)
+    {
+        AppendTextBuffer("Function #:                        0x%02X\r\n",
+            i);
+        AppendTextBuffer("  bClass:                          0x%02X\r\n",
+            configSummaryCapDesc->Function[i].bClass);
+        AppendTextBuffer("  bSubClass:                       0x%02X\r\n",
+            configSummaryCapDesc->Function[i].bSubClass);
+        AppendTextBuffer("  bProtocol:                       0x%02X\r\n",
+            configSummaryCapDesc->Function[i].bProtocol);
+    }
+}
+
+#endif
+
 /*****************************************************************************
 
 DisplayBosDescriptor()
@@ -2877,17 +3123,28 @@ DisplayBosDescriptor (
             switch (capDesc->bDevCapabilityType)
             {
             case USB_DEVICE_CAPABILITY_USB20_EXTENSION:
-                DisplayUsb20CapabilityExtensionDescriptor((PUSB_DEVICE_CAPABILITY_USB20_EXTENSION_DESCRIPTOR)capDesc);
+                DisplayUsb20ExtensionCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_USB20_EXTENSION_DESCRIPTOR)capDesc);
                 break;
             case USB_DEVICE_CAPABILITY_SUPERSPEED_USB:
-                DisplaySuperSpeedCapabilityExtensionDescriptor((PUSB_DEVICE_CAPABILITY_SUPERSPEED_USB_DESCRIPTOR)capDesc);
+                DisplaySuperSpeedCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_SUPERSPEED_USB_DESCRIPTOR)capDesc);
                 break;
             case USB_DEVICE_CAPABILITY_CONTAINER_ID:
-                DisplayContainerIdCapabilityExtensionDescriptor((PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR)capDesc);
+                DisplayContainerIdCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_CONTAINER_ID_DESCRIPTOR)capDesc);
+                break;
+            case USB_DEVICE_CAPABILITY_PLATFORM:
+                DisplayPlatformCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_PLATFORM_DESCRIPTOR)capDesc);
+                break;
+            case USB_DEVICE_CAPABILITY_SUPERSPEEDPLUS_USB:
+                DisplaySuperSpeedPlusCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_SUPERSPEEDPLUS_USB_DESCRIPTOR)capDesc);
                 break;
             case USB_DEVICE_CAPABILITY_BILLBOARD:
                 DisplayBillboardCapabilityDescriptor((PUSBDEVICEINFO) info, (PUSB_DEVICE_CAPABILITY_BILLBOARD_DESCRIPTOR) capDesc, StringDescs);
                 break;
+#ifdef USB_DEVICE_CAPABILITY_CONFIGURATION_SUMMARY
+            case USB_DEVICE_CAPABILITY_CONFIGURATION_SUMMARY:
+                DisplayConfigurationSummaryCapabilityDescriptor((PUSB_DEVICE_CAPABILITY_CONFIGURATION_SUMMARY_DESCRIPTOR)capDesc);
+                break;
+#endif
             default:
                 AppendTextBuffer("\r\n          ===>Unknown Capability Descriptor<===\r\n");
 
