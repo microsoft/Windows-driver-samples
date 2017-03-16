@@ -3150,6 +3150,8 @@ DisplayBosDescriptor (
 
                 AppendTextBuffer("bLength:                           0x%02X\r\n",
                     capDesc->bLength);
+                AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+                    capDesc->bDescriptorType);
                 AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
                     capDesc->bDevCapabilityType);
 
