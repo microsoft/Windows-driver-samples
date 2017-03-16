@@ -87,7 +87,7 @@ Return Value:
     // If your driver is at the top of its driver stack, EvtIoDeviceControl is called
     // at IRQL = PASSIVE_LEVEL.
     //
-    _Analysis_assume_(KeGetCurrentIrql() == PASSIVE_LEVEL);
+    _IRQL_limited_to_(PASSIVE_LEVEL);
 
     PAGED_CODE();
 

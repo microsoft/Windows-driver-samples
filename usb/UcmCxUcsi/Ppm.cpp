@@ -870,7 +870,7 @@ Ppm_EvtIoInternalDeviceControl (
 
     UNREFERENCED_PARAMETER(OutputBufferLength);
 
-    NT_ANALYSIS_ASSUME(KeGetCurrentIrql() == PASSIVE_LEVEL);
+    _IRQL_limited_to_(PASSIVE_LEVEL);
     PAGED_CODE();
 
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
