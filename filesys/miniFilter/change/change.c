@@ -674,7 +674,7 @@ CgProcessPreviousTransaction (
 
 Routine Description:
 
-    This routine is transaction related implmentation, and is expected to be 
+    This routine is transaction related implementation, and is expected to be 
     invoked at post-create. Note that this function will enlist the newly 
     allocated transaction context via FltEnlistInTransaction if it needs to.
 
