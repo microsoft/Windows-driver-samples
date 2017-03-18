@@ -384,7 +384,7 @@ cleanup:
       flowContext = NULL;
    }
 
-   return (UINT64) flowContext;
+   return (UINT64)(uintptr_t) flowContext;
 }
 
 NTSTATUS MonitorCoInitialize(_Inout_ DEVICE_OBJECT* deviceObject)
