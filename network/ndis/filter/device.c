@@ -183,7 +183,7 @@ FilterDeviceIoControl(
 
             break;
 
-        case IOCTL_FILTER_ENUERATE_ALL_INSTANCES:
+        case IOCTL_FILTER_ENUMERATE_ALL_INSTANCES:
 
             InputBuffer = OutputBuffer = (PUCHAR)Irp->AssociatedIrp.SystemBuffer;
             InputBufferLength = IrpSp->Parameters.DeviceIoControl.InputBufferLength;
