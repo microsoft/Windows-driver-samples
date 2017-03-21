@@ -150,7 +150,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
-      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4217,4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -174,7 +174,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
-      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4217,4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -198,7 +198,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
-      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4217,4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -222,7 +222,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);Kernel32.lib;ole32.lib;oleaut32.lib;advapi32.lib;user32.lib;uuid.lib;AudioBaseProcessingObjectV140.lib;audiomediatypecrt.lib;AudioEng.lib</AdditionalDependencies>
       <ModuleDefinitionFile>SwapAPODll.def</ModuleDefinitionFile>
-      <AdditionalOptions>/ignore:4217 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4217,4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
