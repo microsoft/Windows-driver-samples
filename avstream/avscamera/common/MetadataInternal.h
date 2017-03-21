@@ -116,8 +116,7 @@ typedef struct
 typedef struct _METADATA_PREVIEWAGGREGATION
 {
     //  Mandatory fields
-    UINT32                                  FocusState;
-    UINT32                                  Reserved;
+    METADATA_UINT32                         FocusState;
     METADATA_INT64                          ExposureTime;
     METADATA_EVCOMP                         EVCompensation;
     METADATA_UINT32                         ISOSpeed;
@@ -264,4 +263,93 @@ typedef struct _CAMERA_METADATA_HISTOGRAM
     KSCAMERA_METADATA_ITEMHEADER    Header;
     METADATA_HISTOGRAM              Data;
 } CAMERA_METADATA_HISTOGRAM, *PCAMERA_METADATA_HISTOGRAM;
+
+typedef struct _CAMERA_METADATA_UVC_HEADER
+{
+    KSCAMERA_METADATA_ITEMHEADER    Header;
+    KSSTREAM_UVC_METADATA           Data;
+} CAMERA_METADATA_UVC_HEADER, *PCAMERA_METADATA_UVC_HEADER;
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Extrinsics
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct _KS_FLOAT2
+{
+    FLOAT   x;
+    FLOAT   y;
+} KS_FLOAT2;
+
+typedef struct _KS_FLOAT3
+{
+    FLOAT   x;
+    FLOAT   y;
+    FLOAT   z;
+} KS_FLOAT3;
+
+typedef struct _KS_QUATERNION
+{
+    FLOAT   x;
+    FLOAT   y;
+    FLOAT   z;
+    FLOAT   w;
+} KS_QUATERNION;
+
+typedef struct _KS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM
+{
+    GUID            CalibrationId;
+    KS_FLOAT3       Position;
+    KS_QUATERNION   Orientation;
+} KS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM, *PKS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM;
+
+typedef struct _KS_CAMERA_EXTRINSICS
+{
+    UINT32 TransformCount;
+    KS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM CalibratedTransforms[1];
+} KS_CAMERA_EXTRINSICS, *PKS_CAMERA_EXTRINSICS;
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Intrinsics
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct _KS_CAMERAINTRINSIC_PINHOLECAMERAMODEL
+{
+    KS_FLOAT2   FocalLength;
+    KS_FLOAT2   PrincipalPoint;
+} KS_CAMERAINTRINSIC_PINHOLECAMERAMODEL, *PKS_CAMERAINTRINSIC_PINHOLECAMERAMODEL;
+
+typedef struct _KS_CAMERAINTRINSIC_DISTORTIONMODEL
+{
+    FLOAT Radial_k1;
+    FLOAT Radial_k2;
+    FLOAT Radial_k3;
+    FLOAT Tangential_p1;
+    FLOAT Tangential_p2;
+} KS_CAMERAINTRINSIC_DISTORTIONMODEL, *PKS_CAMERAINTRINSIC_DISTORTIONMODEL;
+
+typedef struct _KS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL
+{
+    UINT32 Width;
+    UINT32 Height;
+    KS_CAMERAINTRINSIC_PINHOLECAMERAMODEL CameraModel;
+    KS_CAMERAINTRINSIC_DISTORTIONMODEL DistortionModel;
+} KS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL, *PKS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL;
+
+typedef struct _KS_CAMERA_INTRINSICS
+{
+    UINT32 IntrinsicModelCount;
+    KS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL IntrinsicModels[1];
+} KS_CAMERA_INTRINSICS, *PKS_CAMERA_INTRINSICS;
+
+typedef struct _CAMERA_METADATA_EXTRINSICS
+{
+    KSCAMERA_METADATA_ITEMHEADER    Header;
+    KS_CAMERA_EXTRINSICS            Data;
+} CAMERA_METADATA_EXTRINSICS, *PCAMERA_METADATA_EXTRINSICS;
+
+typedef struct _CAMERA_METADATA_INTRINSICS
+{
+    KSCAMERA_METADATA_ITEMHEADER    Header;
+    KS_CAMERA_INTRINSICS            Data;
+} CAMERA_METADATA_INTRINSICS, *PCAMERA_METADATA_INTRINSICS;
 

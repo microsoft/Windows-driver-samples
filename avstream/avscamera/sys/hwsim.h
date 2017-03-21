@@ -116,8 +116,8 @@ protected:
     ULONG m_NumMappingsCompleted;
     ULONG m_ScatterGatherMappingsQueued;
     ULONG m_ScatterGatherBytesQueued;
-    ULONG m_NumFramesSkipped;
-    ULONG m_InterruptTime;
+    LONGLONG    m_NumFramesSkipped;
+    LONGLONG    m_InterruptTime;
     LARGE_INTEGER m_StartTime;
 
     CSensor *m_Sensor;
@@ -174,7 +174,7 @@ protected:
 public:
 
     //  Debug helper
-    LONG GetSkippedFrameCount()
+    LONGLONG GetSkippedFrameCount()
     {
         return m_NumFramesSkipped;
     }

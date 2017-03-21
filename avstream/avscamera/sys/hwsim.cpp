@@ -353,7 +353,7 @@ Return Value:
             LARGE_INTEGER UnpauseTime;
 
             KeQuerySystemTime (&UnpauseTime);
-            m_InterruptTime = (ULONG) (
+            m_InterruptTime = (LONGLONG) (
                                   (UnpauseTime.QuadPart - m_StartTime.QuadPart) /
                                   m_TimePerFrame
                               );
@@ -1187,16 +1187,25 @@ Return Value:
     //
     if (m_PinState == PinRunning)
     {
+        LONGLONG Qpc = (LONGLONG) ConvertQPCtoTimeStamp(nullptr);
+        LARGE_INTEGER Now;
+
+        KeQuerySystemTimePrecise( &Now );
         //
         // Generate a "time stamp" just to overlay it onto the capture image.
         // It makes it more exciting than bars that do nothing.
         //
-        ULONGLONG time = ConvertQPCtoTimeStamp(NULL);
-        DBG_TRACE("QPC=0x%016llX", time);
+        //  Only set these values if it's a preview simulation.
+        //  Note: This was simpler than overloading CHardwareSimulation...
+        if( m_Sensor->IsPreviewIndex(m_PinID) )
+        {
+            DBG_TRACE("QPC=0x%016llX", Qpc);
 
-        m_Synthesizer->SetFrameNumber( m_InterruptTime );
-        m_Synthesizer->SetRelativePts( (m_InterruptTime + 1) * m_TimePerFrame );
-        m_Synthesizer->SetQpcTime( time );
+            //  Broadcast the preview pin's info to all pin simulations.
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::FrameNumber, m_InterruptTime);
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::RelativePts, (m_InterruptTime + 1) * m_TimePerFrame );
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::QpcTime, Qpc );
+        }
 
         m_Synthesizer->DoSynthesize();
 
@@ -1212,13 +1221,42 @@ Return Value:
         m_Synthesizer->OverlayText( 0, m_Height-48, 1, Text, TRANSPARENT, TEXT_COLOR );
 
         //
+        //  Add the Missed frame count
+        RtlStringCbPrintfA(Text, sizeof(Text), "%lld Missed", m_NumFramesSkipped);
+        size_t  len = 0;
+        RtlStringCchLengthA(Text, sizeof(Text), &len);
+        m_Synthesizer->OverlayText(
+            (m_Width - (((ULONG)len*8))),    // right-adjust text.
+            (m_Height - 48),
+            1,
+            Text,
+            TRANSPARENT,
+            TEXT_COLOR
+        );
+
+        //
+        //  Add the estimated FPS
+        LONGLONG Target = NANOSECONDS / m_TimePerFrame;
+        LONGLONG FPS = ((LONGLONG)m_InterruptTime * NANOSECONDS) / ( (Now.QuadPart - m_StartTime.QuadPart) + (NANOSECONDS/2) );
+        RtlStringCbPrintfA(Text, sizeof(Text), "%lld/%lld FPS", FPS, Target);
+        len = 0;
+        RtlStringCchLengthA(Text, sizeof(Text), &len);
+        m_Synthesizer->OverlayText (
+            (m_Width - (((ULONG)len*8))),    // right-adjust text.
+            (m_Height - 38),
+            1,
+            Text,
+            TRANSPARENT,
+            TEXT_COLOR
+        );
+
+        //
         // Fill scatter gather buffers
         //
         if (!NT_SUCCESS (FillScatterGatherBuffers ()))
         {
-            InterlockedIncrement (PLONG (&m_NumFramesSkipped));
+            m_NumFramesSkipped++;
         }
-
     }
 
     //

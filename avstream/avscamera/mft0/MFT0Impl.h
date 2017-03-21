@@ -220,8 +220,8 @@ protected:
 
     STDMETHOD(IsMediaTypeSupported)(
         _In_ UINT uiStreamId,
-        _In_ IMFMediaType *pIMFMediaType,
-        _Outptr_result_maybenull_ IMFMediaType **ppIMFMediaTypeFull = NULL
+        _In_opt_ IMFMediaType *pIMFMediaType,
+        _Outptr_opt_result_maybenull_ IMFMediaType **ppIMFMediaTypeFull = NULL
     );
 
     STDMETHOD(GenerateMFMediaTypeListFromDevice)();

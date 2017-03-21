@@ -700,7 +700,7 @@ Return Value:
 
                 // Publish our profile here.
                 uiProfileCount = InitializeDeviceProfiles(fFrontCamera, &pDeviceProfiles);
-                if( uiProfileCount > 0 )
+                if( uiProfileCount > 0 && pDeviceProfiles != nullptr)
                 {
                     if( NT_SUCCESS(KsInitializeDeviceProfile(FilterFactory)) )
                     {
@@ -720,6 +720,10 @@ Return Value:
 
                     ExFreePool(pDeviceProfiles);
                     pDeviceProfiles = NULL;
+                }
+                else
+                {
+                    IFFAILED_EXIT(STATUS_INSUFFICIENT_RESOURCES);
                 }
             }
 

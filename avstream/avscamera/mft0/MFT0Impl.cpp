@@ -1184,8 +1184,8 @@ STDMETHODIMP CSocMft0::GetMediaType(
 //
 STDMETHODIMP CSocMft0::IsMediaTypeSupported(
     _In_ UINT uiStreamId,
-    _In_ IMFMediaType *pIMFMediaType,
-    _Outptr_result_maybenull_ IMFMediaType **ppIMFMediaTypeFull
+    _In_opt_ IMFMediaType *pIMFMediaType,
+    _Outptr_opt_result_maybenull_ IMFMediaType **ppIMFMediaTypeFull
 )
 {
     HRESULT hr = S_OK;
@@ -1549,12 +1549,15 @@ HRESULT CSocMft0::ParseMetadata_PreviewAggregation(
     PCAMERA_METADATA_PREVIEWAGGREGATION pFixedStruct =
         (PCAMERA_METADATA_PREVIEWAGGREGATION)pItem;
 
-    hr = pMetaDataAttributes->SetUINT32(
-             MF_CAPTURE_METADATA_FOCUSSTATE,
-             pFixedStruct->Data.FocusState);
-    if(FAILED(hr))
+    if (pFixedStruct->Data.FocusState.Set)
     {
-        return hr;
+        hr = pMetaDataAttributes->SetUINT32(
+            MF_CAPTURE_METADATA_FOCUSSTATE,
+            pFixedStruct->Data.FocusState.Value);
+        if (FAILED(hr))
+        {
+            return hr;
+        }
     }
 
     if(pFixedStruct->Data.ExposureTime.Set)

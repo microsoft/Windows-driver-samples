@@ -157,11 +157,14 @@ Return Value:
     KWorkItem *Me = (KWorkItem *) Context;
 
     //  Invoke the callback if one exists.
-    if( Me->m_Callback )
+    if (Me)
     {
-        Me->m_Callback( IoObject, Me->m_Context );
-    }
+        if (Me->m_Callback)
+        {
+            Me->m_Callback(IoObject, Me->m_Context);
+        }
 
-    //  Unlock the work item; allow for destruction or re-enqueing.
-    Me->Release();
+        //  Unlock the work item; allow for destruction or re-enqueing.
+        Me->Release();
+    }
 }
