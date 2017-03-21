@@ -14,6 +14,7 @@
 #define IOCTL_FILTER_RESTART_ALL            _NDIS_CONTROL_CODE(0, METHOD_BUFFERED)
 #define IOCTL_FILTER_RESTART_ONE_INSTANCE   _NDIS_CONTROL_CODE(1, METHOD_BUFFERED)
 #define IOCTL_FILTER_ENUERATE_ALL_INSTANCES _NDIS_CONTROL_CODE(2, METHOD_BUFFERED)
+#define IOCTL_FILTER_ENUMERATE_ALL_INSTANCES IOCTL_FILTER_ENUERATE_ALL_INSTANCES
 #define IOCTL_FILTER_QUERY_ALL_STAT         _NDIS_CONTROL_CODE(3, METHOD_BUFFERED)
 #define IOCTL_FILTER_CLEAR_ALL_STAT         _NDIS_CONTROL_CODE(4, METHOD_BUFFERED)
 #define IOCTL_FILTER_SET_OID_VALUE          _NDIS_CONTROL_CODE(5, METHOD_BUFFERED)
@@ -61,10 +62,10 @@ typedef struct _FILTER_QUERY_OID
 
 typedef struct _FILTER_READ_CONFIG
 {
-    _Field_size_bytes_part_(MAX_FILTER_INSTANCE_NAME_LENGTH,InstanceNameLength) 
+    _Field_size_bytes_part_(MAX_FILTER_INSTANCE_NAME_LENGTH,InstanceNameLength)
     WCHAR                   InstanceName[MAX_FILTER_INSTANCE_NAME_LENGTH];
     ULONG                   InstanceNameLength;
-    _Field_size_bytes_part_(MAX_FILTER_CONFIG_KEYWORD_LENGTH,KeywordLength) 
+    _Field_size_bytes_part_(MAX_FILTER_CONFIG_KEYWORD_LENGTH,KeywordLength)
     WCHAR                   Keyword[MAX_FILTER_CONFIG_KEYWORD_LENGTH];
     ULONG                   KeywordLength;
     NDIS_PARAMETER_TYPE     ParameterType;
@@ -74,10 +75,10 @@ typedef struct _FILTER_READ_CONFIG
 
 typedef struct _FILTER_WRITE_CONFIG
 {
-    _Field_size_bytes_part_(MAX_FILTER_INSTANCE_NAME_LENGTH,InstanceNameLength) 
+    _Field_size_bytes_part_(MAX_FILTER_INSTANCE_NAME_LENGTH,InstanceNameLength)
     WCHAR                   InstanceName[MAX_FILTER_INSTANCE_NAME_LENGTH];
     ULONG                   InstanceNameLength;
-    _Field_size_bytes_part_(MAX_FILTER_CONFIG_KEYWORD_LENGTH,KeywordLength) 
+    _Field_size_bytes_part_(MAX_FILTER_CONFIG_KEYWORD_LENGTH,KeywordLength)
     WCHAR                   Keyword[MAX_FILTER_CONFIG_KEYWORD_LENGTH];
     ULONG                   KeywordLength;
     NDIS_PARAMETER_TYPE     ParameterType;
