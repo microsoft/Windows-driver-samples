@@ -86,7 +86,7 @@ typedef union _DF_FILE_REFERENCE {
     } FileId64;
 
     UCHAR           FileId128[16];  //  The 128-bit file ID lives here.
-    
+
 } DF_FILE_REFERENCE, *PDF_FILE_REFERENCE;
 
 #define DfSizeofFileId(FID) (               \
@@ -189,7 +189,7 @@ typedef struct _DF_TRANSACTION_CONTEXT {
     //  notifications.
     //
 
-    LIST_ENTRY DeleteNotifyList;                
+    LIST_ENTRY DeleteNotifyList;
 
     //
     //  ERESOURCE for synchronized access to the DeleteNotifyList.
@@ -637,7 +637,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -786,7 +786,7 @@ Return Value:
 
     return status;
 }
- 
+
 
 NTSTATUS
 DfInstanceQueryTeardown (
@@ -1105,7 +1105,7 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-    
+
     switch (ContextType) {
 
         case FLT_STREAM_CONTEXT:
@@ -1149,10 +1149,10 @@ Routine Description:
     If a context is already attached to Target, it will be returned in
     *Context. If a context is already attached, but *Context points to
     another context, *Context will be released.
-    
+
     If no context is attached, and *Context points to a previously allocated
     context, *Context will be attached to the Target.
-    
+
     Finally, if no previously allocated context is passed to this routine
     (*Context is a NULL pointer), a new Context is created and then attached
     to Target.
@@ -1248,7 +1248,7 @@ Return Value:
         //
         //  If a context was provided by the caller, release it if it's not
         //  the one attached to the target.
-        //  
+        //
 
         //
         //  The caller is not allowed to set the same context on the target
@@ -1593,7 +1593,7 @@ Return Value:
 
             //
             //  ReFS uses 128-bit file IDs.  FileInternalInformation supports 64-
-            //  bit file IDs.  ReFS signals that a particular file ID can only 
+            //  bit file IDs.  ReFS signals that a particular file ID can only
             //  be represented in 128 bits by returning FILE_INVALID_FILE_ID as
             //  the file ID.  In that case we need to use FileIdInformation.
             //
@@ -1636,15 +1636,15 @@ Return Value:
 
                 StreamContext->FileId.FileId64.Value = fileInternalInformation.IndexNumber.QuadPart;
                 StreamContext->FileId.FileId64.UpperZeroes = 0ll;
-                
+
                 //
                 //  Because there's (currently) no support for 128-bit values in
                 //  the compiler we need to ensure the setting of the ID and our
                 //  remembering that the file ID was set occur in the right order.
                 //
-                
+
                 KeMemoryBarrier();
-                
+
                 StreamContext->FileIdSet = TRUE;
             }
         }
@@ -2025,7 +2025,7 @@ DfDetectDeleteByFileId (
 
 Routine Description:
 
-    This helper routine detects a deleted file by attempting to open it using 
+    This helper routine detects a deleted file by attempting to open it using
     its file ID.
 
     If the file is successfully opened this routine closes the file before returning.
@@ -2626,7 +2626,7 @@ Return Value:
 
     if (FlagOn( Data->Iopb->Parameters.Create.Options, FILE_DELETE_ON_CLOSE )) {
 
-        status = DfAllocateContext( FLT_STREAM_CONTEXT, 
+        status = DfAllocateContext( FLT_STREAM_CONTEXT,
                                     &streamContext );
 
         if (NT_SUCCESS( status )) {
@@ -2740,7 +2740,7 @@ Return Value:
     //  If DfGetOrSetContext failed, if will have released streamContext
     //  already, so only release it if status is successful.
     //
-    
+
     if (NT_SUCCESS( status )) {
 
         FltReleaseContext( streamContext );
@@ -2949,20 +2949,20 @@ Return Value:
         //   Using FileDispositionInformation -
         //    Controls only set disposition information behavior. It uses FILE_DISPOSITION_INFORMATION structure.
         //
-        
+
         if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformationEx) {
 
-            ULONG Flags = ((PFILE_DISPOSITION_INFORMATION_EX) Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->Flags;
+            ULONG flags = ((PFILE_DISPOSITION_INFORMATION_EX) Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->Flags;
 
-            if (FlagOn( Flags, FILE_DISPOSITION_ON_CLOSE )) {
+            if (FlagOn( flags, FILE_DISPOSITION_ON_CLOSE )) {
 
-                streamContext->DeleteOnClose = BooleanFlagOn( Flags, FILE_DISPOSITION_DELETE );
-                
+                streamContext->DeleteOnClose = BooleanFlagOn( flags, FILE_DISPOSITION_DELETE );
+
             } else {
 
-                streamContext->SetDisp = BooleanFlagOn( Flags, FILE_DISPOSITION_DELETE );
+                streamContext->SetDisp = BooleanFlagOn( flags, FILE_DISPOSITION_DELETE );
             }
-            
+
         } else {
 
             streamContext->SetDisp = ((PFILE_DISPOSITION_INFORMATION) Data->Iopb->Parameters.SetFileInformation.InfoBuffer)->DeleteFile;

@@ -193,10 +193,10 @@ int __cdecl _tmain(int argc, _In_reads_(argc) LPTSTR argv[])
         PrintUsage();
         return (0);
     }
- 
+
     for (argIndex = 1; argIndex < argc; argIndex++) {
 
-#pragma prefast(suppress:6385, "Previously checked argIndex being less than argc. No buffer overflow.")   
+#pragma prefast(suppress:6385, "Previously checked argIndex being less than argc. No buffer overflow.")
         if( _tcscmp(argv[argIndex], _T("/listdevices")) == 0 ) {
 
             listDevices = TRUE;
@@ -601,7 +601,7 @@ PrintFilters(
     // get the list of filters
     LPTSTR buffer = GetFilters( DeviceInfoSet, DeviceInfoData, UpperFilters );
     LPTSTR filterName;
-    size_t filterPosition;
+    DWORD filterPosition;
 
     if( buffer == NULL )
     {

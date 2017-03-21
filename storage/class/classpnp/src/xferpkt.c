@@ -155,10 +155,10 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
     } else {
 
         // this is Server SKU
-        // Note: the addition max here to make sure we set the min to be at least 
-        // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound no matter what maxOutstandingIOPerLUN 
-        // reported. We shouldn't set this value to be smaller than client system. 
-        // In other words, the minWorkingSetTransferPackets for server will always between 
+        // Note: the addition max here to make sure we set the min to be at least
+        // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound no matter what maxOutstandingIOPerLUN
+        // reported. We shouldn't set this value to be smaller than client system.
+        // In other words, the minWorkingSetTransferPackets for server will always between
         // MIN_WORKINGSET_TRANSFER_PACKETS_Server_LowerBound and MIN_WORKINGSET_TRANSFER_PACKETS_Server_UpperBound
 
         minWorkingSetTransferPackets =
@@ -1578,7 +1578,7 @@ CleanupTransferPacketToWorkingSetSizeWorker(
     _In_ PIO_WORKITEM IoWorkItem
     )
 {
-    ULONG node = (ULONG) Context;
+    ULONG node = (ULONG) (ULONG_PTR)Context;
 
     PAGED_CODE();
 
