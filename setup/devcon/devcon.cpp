@@ -56,20 +56,18 @@ Return Value:
 
     if(locbuffer) {
         if(count) {
-            int c;
-            int back = 0;
-            //
             // strip any trailing "\r\n"s and replace by a single "\n"
-            //
-            while(((c = *CharPrev(locbuffer,locbuffer+count)) == TEXT('\r')) ||
-                  (c == TEXT('\n'))) {
-                count--;
-                back++;
+            LPTSTR p, q;
+            for(p = q = locbuffer; *p != TEXT('\0'); p++) {
+                if(p != q) {
+                    *q = *p;
+                }
+                if(*p != TEXT('\r')) {
+                    q++;
+                }
             }
-            if(back) {
-                locbuffer[count++] = TEXT('\n');
-                locbuffer[count] = TEXT('\0');
-            }
+            *q = TEXT('\0');
+
             //
             // now write to apropriate stream
             //
@@ -99,7 +97,7 @@ Return Value:
     int c;
 
     for(c=0;c<pad;c++) {
-        fputs("    ",stdout);
+        _fputts(TEXT("    "), stdout);
     }
 }
 
@@ -1075,7 +1073,9 @@ Return Value:
     // -m:<machine>  - remote
     // -r            - auto reboot
     // -f            - force operation
+    // -u            - unicode output
     //
+
     baseName = _tcsrchr(argv[0],TEXT('\\'));
     if(!baseName) {
         baseName = argv[0];
@@ -1108,6 +1108,18 @@ Return Value:
                 break;
             } else {
                 flags |= DEVCON_FLAG_FORCE;
+            }
+        } else if((argv[firstArg][1]==TEXT('u')) || (argv[firstArg][1]==TEXT('U'))) {
+            if((argv[firstArg][2]!=TEXT('\0')) ) {
+                //
+                // don't recognize this switch
+                //
+                break;
+            } else {
+#ifdef UNICODE
+                _setmode(_fileno(stdout), _O_WTEXT);
+                _setmode(_fileno(stderr), _O_WTEXT);
+#endif
             }
         } else {
             //

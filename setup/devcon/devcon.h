@@ -25,6 +25,8 @@ Abstract:
 #include <newdev.h>
 #include <objbase.h>
 #include <strsafe.h>
+#include <io.h>
+#include <fcntl.h>
 
 #include "msg.h"
 #include "rc_ids.h"
@@ -63,9 +65,9 @@ extern DispatchEntry DispatchTable[];
 void FormatToStream(_In_ FILE * stream, _In_ DWORD fmt,...);
 void Padding(_In_ int pad);
 bool SplitCommandLine(
-    _In_ int & argc, 
-    _In_reads_(argc) LPTSTR * & argv, 
-    _Out_ int & argc_right, 
+    _In_ int & argc,
+    _In_reads_(argc) LPTSTR * & argv,
+    _Out_ int & argc_right,
     _Outref_result_buffer_(argc_right) LPTSTR * & argv_right);
 int EnumerateDevices(_In_ LPCTSTR BaseName, _In_opt_ LPCTSTR Machine, _In_ DWORD Flags, _In_ int argc, _In_reads_(argc) PWSTR* argv, _In_ CallbackFunc Callback, _In_ LPVOID Context);
 LPTSTR GetDeviceStringProperty(_In_ HDEVINFO Devs, _In_ PSP_DEVINFO_DATA DevInfo, _In_ DWORD Prop);
