@@ -56,20 +56,18 @@ Return Value:
 
     if(locbuffer) {
         if(count) {
-            int c;
-            int back = 0;
-            //
             // strip any trailing "\r\n"s and replace by a single "\n"
-            //
-            while(((c = *CharPrev(locbuffer,locbuffer+count)) == TEXT('\r')) ||
-                  (c == TEXT('\n'))) {
-                count--;
-                back++;
+            LPTSTR p, q;
+            for(p = q = locbuffer; *p != TEXT('\0'); p++) {
+                if(p != q) {
+                    *q = *p;
+                }
+                if(*p != TEXT('\r')) {
+                    q++;
+                }
             }
-            if(back) {
-                locbuffer[count++] = TEXT('\n');
-                locbuffer[count] = TEXT('\0');
-            }
+            *q = TEXT('\0');
+
             //
             // now write to apropriate stream
             //
