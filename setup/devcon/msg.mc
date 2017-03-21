@@ -28,7 +28,8 @@ Language=English
 Device Console Help:
 %1 [-r] [-m:\\<machine>] <command> [<arg>...]
 -r           Reboots the system only when a restart or reboot is required.
-<machine>    Specifies a remote computer. 
+-u           Unicode (UTF-16) output
+<machine>    Specifies a remote computer.
 <command>    Specifies a Devcon command (see command list below).
 <arg>...     One or more arguments that modify a command.
 For help with a specific command, type: %1 help <command>
@@ -221,7 +222,7 @@ Lists hardware resources of devices with the specified hardware or instance ID.
 Valid on local and remote computers.
 %1 [-m:\\<machine>] %2 <id> [<id>...]
 %1 [-m:\\<machine>] %2 =<class> [<id>...]
-<machine>    Specifies a remote computer. 
+<machine>    Specifies a remote computer.
 <class>      Specifies a device setup class.
 Examples of <id>:
 Examples of <id>:
@@ -305,7 +306,7 @@ Language=English
 .
 MessageId=60502 SymbolicName=MSG_ENABLE_TAIL_NONE
 Language=English
-No devices were enabled, either because the devices were not found, 
+No devices were enabled, either because the devices were not found,
 or because the devices could not be enabled.
 .
 MessageId=60503 SymbolicName=MSG_ENABLE_TAIL_REBOOT
@@ -591,7 +592,7 @@ Error retrieving the device's status.
 MessageId=61000 SymbolicName=MSG_INSTALL_LONG
 Language=English
 Devcon Install Command
-Installs the specified device manually. Valid only on the local computer. 
+Installs the specified device manually. Valid only on the local computer.
 (To reboot when necesary, Include -r .)
 %1 [-r] %2 <inf> <hwid>
 <inf>        Specifies an INF file with installation information for the device.
@@ -613,7 +614,7 @@ Device node created. Install is complete when drivers are installed...
 MessageId=61100 SymbolicName=MSG_UPDATE_LONG
 Language=English
 Devcon Update Command
-Updates drivers for all devices with the specified hardware ID (<hwid>). 
+Updates drivers for all devices with the specified hardware ID (<hwid>).
 Valid only on the local computer. (To reboot when necesary, Include -r .)
 %1 [-r] %2 <inf> <hwid>
 -r           Reboots the system only when a restart or reboot is required.
@@ -686,7 +687,7 @@ Language=English
 %1 %2
 Lists the third-party (OEM) driver packages installed on this machine.
 This command will only work on the local machine.
-Values returned from dp_enum can be sent to dp_delete 
+Values returned from dp_enum can be sent to dp_delete
 to be removed from the machine.
 .
 MessageId=61112 SymbolicName=MSG_DPENUM_SHORT
@@ -819,7 +820,7 @@ Language=English
 Devcon Rescan Command
 Directs Plug and Play to scan for new hardware. Valid on a local or remote computer.
 %1 [-m:\\<machine>] %2
-<machine>    Specifies a remote computer. 
+<machine>    Specifies a remote computer.
 .
 MessageId=61301 SymbolicName=MSG_RESCAN_SHORT
 Language=English
@@ -880,14 +881,14 @@ or the machine is rebooted.
 upper        Identifies an upper filter driver.
 lower        Identifies a lower filter driver.
 
-To list the upper/lower filter drivers for a class, 
+To list the upper/lower filter drivers for a class,
 type:  devcon classfilter <class> {upper | lower}
 
-The Devcon classfilter command uses subcommands, which consist of an 
+The Devcon classfilter command uses subcommands, which consist of an
 operator (=, @, -, +, !) and a filter driver name.
 
 The Devcon classfilter command uses a virtual cursor to move through
-the list of filter drivers. The cursor starts at the beginning of the 
+the list of filter drivers. The cursor starts at the beginning of the
 list (before the first filter). Unless returned to the starting position,
 the cursor always moves forward.
 
@@ -905,10 +906,10 @@ Operators
  +       Add after. Insert the specified filter after the filter on which the cursor
          is positioned. If the cursor is not positioned on a filter, Devcon inserts the
          new filter at the end of the list. When the subcommand completes, the cursor
-         cursor is positioned on the newly-added filter.       
+         cursor is positioned on the newly-added filter.
 
- !       Deletes the next occurrence of the specified filter. When the subcommand 
-         completes, the cursor occupies the position of the deleted filter. 
+ !       Deletes the next occurrence of the specified filter. When the subcommand
+         completes, the cursor occupies the position of the deleted filter.
          Subsequent - or + subcommands insert a new filter at the cursor position.
 
 

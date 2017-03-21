@@ -99,10 +99,10 @@ Return Value:
         //
         // enumerate through each command and display short help for each
         //
+        _fputts(TEXT("\n"), stdout);
         for(dispIndex = 0;DispatchTable[dispIndex].cmd;dispIndex++) {
             if(DispatchTable[dispIndex].shortHelp) {
                 FormatToStream(stdout,DispatchTable[dispIndex].shortHelp,DispatchTable[dispIndex].cmd);
-                _fputts(TEXT("\n"), stdout);
             }
         }
     }

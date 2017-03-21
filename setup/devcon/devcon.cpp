@@ -14,8 +14,6 @@ Abstract:
 --*/
 
 #include "devcon.h"
-#include <io.h>
-#include <fcntl.h>
 
 struct IdEntry {
     LPCTSTR String;     // string looking for
@@ -1077,12 +1075,8 @@ Return Value:
     // -m:<machine>  - remote
     // -r            - auto reboot
     // -f            - force operation
+    // -u            - unicode output
     //
-
-#ifdef UNICODE
-    _setmode(_fileno(stdout), _O_WTEXT);
-    _setmode(_fileno(stderr), _O_WTEXT);
-#endif
 
     baseName = _tcsrchr(argv[0],TEXT('\\'));
     if(!baseName) {
@@ -1116,6 +1110,18 @@ Return Value:
                 break;
             } else {
                 flags |= DEVCON_FLAG_FORCE;
+            }
+        } else if((argv[firstArg][1]==TEXT('u')) || (argv[firstArg][1]==TEXT('U'))) {
+            if((argv[firstArg][2]!=TEXT('\0')) ) {
+                //
+                // don't recognize this switch
+                //
+                break;
+            } else {
+#ifdef UNICODE
+                _setmode(_fileno(stdout), _O_WTEXT);
+                _setmode(_fileno(stderr), _O_WTEXT);
+#endif
             }
         } else {
             //
