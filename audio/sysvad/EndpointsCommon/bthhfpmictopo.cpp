@@ -136,7 +136,7 @@ Return Value:
 
     NTSTATUS                ntStatus        = STATUS_INVALID_DEVICE_REQUEST;
     PCMiniportTopology      miniport        = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    PBTHHFPDEVICECOMMON     bthHfpDevice    = NULL;
+    PSIDEBANDDEVICECOMMON     bthHfpDevice    = NULL;
     ULONG                   channel         = (ULONG)-1;
     
     bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.

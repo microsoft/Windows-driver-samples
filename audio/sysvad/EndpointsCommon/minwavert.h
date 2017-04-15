@@ -144,7 +144,7 @@ private:
     union {
         PVOID                           m_DeviceContext;
 #ifdef SYSVAD_BTH_BYPASS
-        PBTHHFPDEVICECOMMON             m_BthHfpDevice;
+        PSIDEBANDDEVICECOMMON             m_pSidebandDevice;
 #endif  // SYSVAD_BTH_BYPASS
     };
 
@@ -268,12 +268,12 @@ public:
 
 
 #ifdef SYSVAD_BTH_BYPASS
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
                 // This ref is released on dtor.
-                m_BthHfpDevice->AddRef(); // strong ref.
+                m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
 #endif // SYSVAD_BTH_BYPASS
@@ -504,8 +504,8 @@ private:
         // Special handling for the SCO bypass endpoint, whose modes are determined at runtime
         if (m_DeviceType == eBthHfpMicDevice)
         {
-            ASSERT(m_BthHfpDevice != NULL);
-            if (m_BthHfpDevice->IsNRECSupported())
+            ASSERT(m_pSidebandDevice != NULL);
+            if (m_pSidebandDevice->IsNRECSupported())
             {
                 modes = BthHfpMicPinSupportedDeviceModesNrec;
                 numModes = ARRAYSIZE(BthHfpMicPinSupportedDeviceModesNrec);
@@ -634,7 +634,7 @@ protected:
 #ifdef SYSVAD_BTH_BYPASS
 public:
 #pragma code_seg("PAGE")
-    BOOL IsBthHfpDevice()
+    BOOL IsSidebandDevice()
     {
         PAGED_CODE();
         return (m_DeviceType == eBthHfpMicDevice ||
@@ -642,21 +642,21 @@ public:
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PBTHHFPDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetBthHfpDevice() 
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
         PAGED_CODE();
 
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
-                bthHfpDevice = m_BthHfpDevice;
+                sidebandDevice = m_pSidebandDevice;
             }
         }
     
-        return bthHfpDevice;
+        return sidebandDevice;
     }
 #pragma code_seg()
 #endif // SYSVAD_BTH_BYPASS

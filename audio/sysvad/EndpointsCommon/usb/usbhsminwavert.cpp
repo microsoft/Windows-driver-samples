@@ -4,14 +4,14 @@ Copyright (c) Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    bthhfpminwavert.cpp
+    usbhsminwavert.cpp
 
 Abstract:
 
     Implementation of wavert miniport.
 
 --*/
-#ifdef SYSVAD_BTH_BYPASS
+//#ifdef SYSVAD_USB_SIDEBAND
 
 #pragma warning (disable : 4127)
 
@@ -26,7 +26,7 @@ Abstract:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-CMiniportWaveRT::PropertyHandler_BthHfpAudioEffectsDiscoveryEffectsList  
+CMiniportWaveRT::PropertyHandler_UsbHsAudioEffectsDiscoveryEffectsList  
 (
     _In_ PPCPROPERTY_REQUEST PropertyRequest
 )
@@ -48,7 +48,7 @@ Return Value:
 {
     PAGED_CODE();
 
-    DPF_ENTER(("[PropertyHandler_BthHfpAudioEffectsDiscoveryEffectsList]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsAudioEffectsDiscoveryEffectsList]"));
 
     NTSTATUS    ntStatus    = STATUS_INVALID_PARAMETER;
     ULONG       nPinId      = (ULONG)-1;
@@ -94,16 +94,10 @@ Return Value:
     {
         ASSERT(m_pSidebandDevice != NULL);
 
-        //
-        // bSidebandNrecPresent is set to TRUE when the HF (remote device) handles NR + EC.
-        // Note that GetNRECDisableStatus() returns TRUE if the HF notified the AG to disable
-        // the NR + EC locally.
-        //
-        BOOL bSidebandNrecPresent = m_pSidebandDevice->IsNRECSupported() && m_pSidebandDevice->GetNRECDisableStatus();
 
-        // If it is HFP render pin (data flow in) or if the NR-EC is not supported, 
+        // If it is render pin (data flow in), 
         // return size 0 effect list
-        if (IsSystemRenderPin(nPinId) || !bSidebandNrecPresent)
+        if (IsSystemRenderPin(nPinId))
         {
             PropertyRequest->ValueSize = 0;
             ntStatus = STATUS_SUCCESS;
@@ -143,7 +137,7 @@ Done:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpWaveFilter
+PropertyHandler_UsbHsWaveFilter
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 )
@@ -189,7 +183,7 @@ Return Value:
         switch(PropertyRequest->PropertyItem->Id)
         {
             case KSPROPERTY_AUDIOEFFECTSDISCOVERY_EFFECTSLIST:
-                ntStatus = waveRt->PropertyHandler_BthHfpAudioEffectsDiscoveryEffectsList(PropertyRequest);
+                ntStatus = waveRt->PropertyHandler_UsbHsAudioEffectsDiscoveryEffectsList(PropertyRequest);
                 break;
         }
     }
@@ -197,10 +191,10 @@ Return Value:
     waveRt->Release();
 
     return ntStatus;
-} // PropertyHandler_BthHfpWaveFilter
+} // PropertyHandler_UsbHsWaveFilter
 
 #pragma code_seg("PAGE")
-#endif  // SYSVAD_BTH_BYPASS
+//#endif  // SYSVAD_USB_SIDEBAND
 
   
 

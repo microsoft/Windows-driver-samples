@@ -4,16 +4,16 @@ Copyright (c) Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    michswavtable.h
+    usbhsmicwavtable.h
 
 Abstract:
 
-    Declaration of wave miniport tables for the mic (external: headset).
+    Declaration of wave miniport tables for the USB Headset Mic (external).
 
 --*/
 
-#ifndef _SYSVAD_MICHSWAVTABLE_H_
-#define _SYSVAD_MICHSWAVTABLE_H_
+#ifndef _SYSVAD_USBHSMICWAVTABLE_H_
+#define _SYSVAD_USBHSMICWAVTABLE_H_
 
 //
 // Function prototypes.
@@ -21,22 +21,22 @@ Abstract:
 NTSTATUS PropertyHandler_UsbHsWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyRequest);
 
 //
-// Mic in (external: headset) range.
+// USB Headset Mic (external) range.
 //
-#define MICHS_DEVICE_MAX_CHANNELS           1       // Max Channels.
-#define MICHS_MIN_BITS_PER_SAMPLE_PCM       16      // Min Bits Per Sample
-#define MICHS_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
-#define MICHS_MIN_SAMPLE_RATE               8000    // Min Sample Rate
-#define MICHS_MAX_SAMPLE_RATE               48000   // Max Sample Rate
+#define USBHSMIC_DEVICE_MAX_CHANNELS           1       // Max Channels.
+#define USBHSMIC_MIN_BITS_PER_SAMPLE_PCM       16      // Min Bits Per Sample
+#define USBHSMIC_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
+#define USBHSMIC_MIN_SAMPLE_RATE               8000    // Min Sample Rate
+#define USBHSMIC_MAX_SAMPLE_RATE               48000   // Max Sample Rate
 
 //
 // Max # of pin instances.
 //
-#define MICHS_MAX_INPUT_STREAMS             4
+#define USBHSMIC_MAX_INPUT_STREAMS             4
 
 //=============================================================================
 static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicHsPinSupportedDeviceFormats[] =
+KSDATAFORMAT_WAVEFORMATEXTENSIBLE UsbHsMicPinSupportedDeviceFormats[] =
 {
     { // 0
         {
@@ -244,23 +244,23 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicHsPinSupportedDeviceFormats[] =
 // Supported modes (only on streaming pins).
 //
 static
-MODE_AND_DEFAULT_FORMAT MicHsPinSupportedDeviceModes[] =
+MODE_AND_DEFAULT_FORMAT UsbHsPinSupportedDeviceModes[] =
 {
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
-        &MicHsPinSupportedDeviceFormats[SIZEOF_ARRAY(MicHsPinSupportedDeviceFormats) - 1].DataFormat, // 48KHz
+        &UsbHsPinSupportedDeviceFormats[SIZEOF_ARRAY(UsbHsPinSupportedDeviceFormats) - 1].DataFormat, // 48KHz
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
-        &MicHsPinSupportedDeviceFormats[SIZEOF_ARRAY(MicHsPinSupportedDeviceFormats) - 1].DataFormat, // 48KHz
+        &UsbHsPinSupportedDeviceFormats[SIZEOF_ARRAY(UsbHsPinSupportedDeviceFormats) - 1].DataFormat, // 48KHz
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_SPEECH,
-        &MicHsPinSupportedDeviceFormats[2].DataFormat, // 16KHz
+        &UsbHsPinSupportedDeviceFormats[2].DataFormat, // 16KHz
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,
-        &MicHsPinSupportedDeviceFormats[4].DataFormat, // 24KHz
+        &UsbHsPinSupportedDeviceFormats[4].DataFormat, // 24KHz
     }
 };
 
@@ -269,7 +269,7 @@ MODE_AND_DEFAULT_FORMAT MicHsPinSupportedDeviceModes[] =
 // descriptor array.
 //
 static 
-PIN_DEVICE_FORMATS_AND_MODES MicHsPinDeviceFormatsAndModes[] = 
+PIN_DEVICE_FORMATS_AND_MODES UsbHsMicPinDeviceFormatsAndModes[] = 
 {
     {
         BridgePin,
@@ -280,16 +280,16 @@ PIN_DEVICE_FORMATS_AND_MODES MicHsPinDeviceFormatsAndModes[] =
     },
     {
         SystemCapturePin,
-        MicHsPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(MicHsPinSupportedDeviceFormats),
-        MicHsPinSupportedDeviceModes,
-        SIZEOF_ARRAY(MicHsPinSupportedDeviceModes)
+        UsbHsPinSupportedDeviceFormats,
+        SIZEOF_ARRAY(UsbHsPinSupportedDeviceFormats),
+        UsbHsPinSupportedDeviceModes,
+        SIZEOF_ARRAY(UsbHsPinSupportedDeviceModes)
     }
 };
 
 //=============================================================================
 static
-KSDATARANGE_AUDIO MicHsPinDataRangesStream[] =
+KSDATARANGE_AUDIO UsbHsMicPinDataRangesStream[] =
 {
     {
         {
@@ -301,24 +301,24 @@ KSDATARANGE_AUDIO MicHsPinDataRangesStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICHS_DEVICE_MAX_CHANNELS,           
-        MICHS_MIN_BITS_PER_SAMPLE_PCM,    
-        MICHS_MAX_BITS_PER_SAMPLE_PCM,    
-        MICHS_MIN_SAMPLE_RATE,            
-        MICHS_MAX_SAMPLE_RATE             
+        USBHSMIC_DEVICE_MAX_CHANNELS,           
+        USBHSMIC_MIN_BITS_PER_SAMPLE_PCM,    
+        USBHSMIC_MAX_BITS_PER_SAMPLE_PCM,    
+        USBHSMIC_MIN_SAMPLE_RATE,            
+        USBHSMIC_MAX_SAMPLE_RATE             
     },
 };
 
 static
-PKSDATARANGE MicHsPinDataRangePointersStream[] =
+PKSDATARANGE UsbHsMicPinDataRangePointersStream[] =
 {
-    PKSDATARANGE(&MicHsPinDataRangesStream[0]),
-    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&UsbHsMicPinDataRangesStream[0]),
+    PKSDATARANGE(&PinDataRangeAttributeList)
 };
 
 //=============================================================================
 static
-KSDATARANGE MicHsPinDataRangesBridge[] =
+KSDATARANGE UsbHsMicPinDataRangesBridge[] =
 {
     {
         sizeof(KSDATARANGE),
@@ -332,14 +332,14 @@ KSDATARANGE MicHsPinDataRangesBridge[] =
 };
 
 static
-PKSDATARANGE MicHsPinDataRangePointersBridge[] =
+PKSDATARANGE UsbHsMicPinDataRangePointersBridge[] =
 {
-    &MicHsPinDataRangesBridge[0]
+    &UsbHsMicPinDataRangesBridge[0]
 };
 
 //=============================================================================
 static
-PCPIN_DESCRIPTOR MicHsWaveMiniportPins[] =
+PCPIN_DESCRIPTOR UsbHsMicWaveMiniportPins[] =
 {
     // Wave In Bridge Pin (Capture - From Topology) KSPIN_WAVE_BRIDGE
     {
@@ -352,8 +352,8 @@ PCPIN_DESCRIPTOR MicHsWaveMiniportPins[] =
             NULL,
             0,
             NULL,
-            SIZEOF_ARRAY(MicHsPinDataRangePointersBridge),
-            MicHsPinDataRangePointersBridge,
+            SIZEOF_ARRAY(UsbHsMicPinDataRangePointersBridge),
+            UsbHsMicPinDataRangePointersBridge,
             KSPIN_DATAFLOW_IN,
             KSPIN_COMMUNICATION_NONE,
             &KSCATEGORY_AUDIO,
@@ -364,8 +364,8 @@ PCPIN_DESCRIPTOR MicHsWaveMiniportPins[] =
   
     // Wave In Streaming Pin (Capture) KSPIN_WAVEIN_HOST
     {
-        MICHS_MAX_INPUT_STREAMS,
-        MICHS_MAX_INPUT_STREAMS,
+        USBHSMIC_MAX_INPUT_STREAMS,
+        USBHSMIC_MAX_INPUT_STREAMS,
         0,
         NULL,
         {
@@ -373,8 +373,8 @@ PCPIN_DESCRIPTOR MicHsWaveMiniportPins[] =
             NULL,
             0,
             NULL,
-            SIZEOF_ARRAY(MicHsPinDataRangePointersStream),
-            MicHsPinDataRangePointersStream,
+            SIZEOF_ARRAY(UsbHsMicPinDataRangePointersStream),
+            UsbHsMicPinDataRangePointersStream,
             KSPIN_DATAFLOW_OUT,
             KSPIN_COMMUNICATION_SINK,
             &KSCATEGORY_AUDIO,
@@ -386,7 +386,7 @@ PCPIN_DESCRIPTOR MicHsWaveMiniportPins[] =
 
 //=============================================================================
 static
-PCNODE_DESCRIPTOR MicHsWaveMiniportNodes[] =
+PCNODE_DESCRIPTOR UsbHsMicWaveMiniportNodes[] =
 {
     // KSNODE_WAVE_ADC
     {
@@ -399,7 +399,7 @@ PCNODE_DESCRIPTOR MicHsWaveMiniportNodes[] =
 
 //=============================================================================
 static
-PCCONNECTION_DESCRIPTOR MicHsWaveMiniportConnections[] =
+PCCONNECTION_DESCRIPTOR UsbHsMicWaveMiniportConnections[] =
 {
     { PCFILTER_NODE,        KSPIN_WAVE_BRIDGE,      KSNODE_WAVE_ADC,     1 },    
     { KSNODE_WAVE_ADC,      0,                      PCFILTER_NODE,       KSPIN_WAVEIN_HOST }
@@ -407,7 +407,7 @@ PCCONNECTION_DESCRIPTOR MicHsWaveMiniportConnections[] =
 
 //=============================================================================
 static
-PCPROPERTY_ITEM PropertiesMicHsWaveFilter[] =
+PCPROPERTY_ITEM PropertiesUsbHsMicWaveFilter[] =
 {
     {
         &KSPROPSETID_General,
@@ -419,28 +419,34 @@ PCPROPERTY_ITEM PropertiesMicHsWaveFilter[] =
         &KSPROPSETID_Pin,
         KSPROPERTY_PIN_PROPOSEDATAFORMAT,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_WaveFilter
+        PropertyHandler_UsbHsWaveFilter
+    },
+    {
+        &KSPROPSETID_AudioEffectsDiscovery,
+        KSPROPERTY_AUDIOEFFECTSDISCOVERY_EFFECTSLIST,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_UsbHsWaveFilter
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationMicHsWaveFilter, PropertiesMicHsWaveFilter);
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationUsbHsMicWaveFilter, PropertiesUsbHsMicWaveFilter);
 
 //=============================================================================
 static
-PCFILTER_DESCRIPTOR MicHsWaveMiniportFilterDescriptor =
+PCFILTER_DESCRIPTOR UsbHsMicWaveMiniportFilterDescriptor =
 {
-    0,                                          // Version
-    &AutomationMicHsWaveFilter,                 // AutomationTable
-    sizeof(PCPIN_DESCRIPTOR),                   // PinSize
-    SIZEOF_ARRAY(MicHsWaveMiniportPins),        // PinCount
-    MicHsWaveMiniportPins,                      // Pins
-    sizeof(PCNODE_DESCRIPTOR),                  // NodeSize
-    SIZEOF_ARRAY(MicHsWaveMiniportNodes),       // NodeCount
-    MicHsWaveMiniportNodes,                     // Nodes
-    SIZEOF_ARRAY(MicHsWaveMiniportConnections), // ConnectionCount
-    MicHsWaveMiniportConnections,               // Connections
-    0,                                          // CategoryCount
-    NULL                                        // Categories  - use defaults (audio, render, capture)
+    0,                                              // Version
+    &AutomationUsbHsMicWaveFilter,                 // AutomationTable
+    sizeof(PCPIN_DESCRIPTOR),                       // PinSize
+    SIZEOF_ARRAY(UsbHsMicWaveMiniportPins),        // PinCount
+    UsbHsMicWaveMiniportPins,                      // Pins
+    sizeof(PCNODE_DESCRIPTOR),                      // NodeSize
+    SIZEOF_ARRAY(UsbHsMicWaveMiniportNodes),       // NodeCount
+    UsbHsMicWaveMiniportNodes,                     // Nodes
+    SIZEOF_ARRAY(UsbHsMicWaveMiniportConnections), // ConnectionCount
+    UsbHsMicWaveMiniportConnections,               // Connections
+    0,                                              // CategoryCount
+    NULL                                            // Categories  - use defaults (audio, render, capture)
 };
 
-#endif // _SYSVAD_MICHSWAVTABLE_H_
+#endif // _SYSVAD_USBHSMICWAVTABLE_H_

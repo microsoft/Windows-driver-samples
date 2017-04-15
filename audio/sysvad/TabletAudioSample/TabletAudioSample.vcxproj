@@ -27,6 +27,7 @@
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <SampleGuid>{2A9A946E-F017-4E0D-BF75-AD81E7E97D64}</SampleGuid>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,7 +184,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -191,12 +192,12 @@
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -206,7 +207,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -214,12 +215,12 @@
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -229,7 +230,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -237,12 +238,12 @@
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -252,7 +253,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -260,12 +261,12 @@
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Midl>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -273,6 +274,7 @@
   <ItemGroup>
     <ClCompile Include="..\adapter.cpp" />
     <ClCompile Include="..\basetopo.cpp" />
+    <ClCompile Include="..\BthhfpDevice.cpp" />
     <ClCompile Include="..\common.cpp" />
     <ClCompile Include="..\hw.cpp" />
     <ClCompile Include="..\kshelper.cpp" />
@@ -294,6 +296,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+    <ClInclude Include="..\BthhfpDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

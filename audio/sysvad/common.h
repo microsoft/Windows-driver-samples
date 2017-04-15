@@ -116,9 +116,10 @@ Abstract:
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-#define MINWAVERT_POOLTAG   'RWNM'
-#define MINTOPORT_POOLTAG   'RTNM'
-#define MINADAPTER_POOLTAG  'uAyS'
+#define MINWAVERT_POOLTAG           'RWNM'
+#define MINTOPORT_POOLTAG           'RTNM'
+#define MINADAPTER_POOLTAG          'uAyS'
+#define USBSIDEBANDTEST_POOLTAG01   '1AyS'
 
 typedef enum
 {
@@ -138,6 +139,8 @@ typedef enum
     eMicHsDevice,
     eFmRxDevice,
     eSpdifRenderDevice,
+    eUsbHsSpeakerDevice,
+    eUsbHsMicDevice,
     eMaxDeviceType
     
 } eDeviceType;
@@ -521,7 +524,7 @@ DEFINE_GUID(IID_IBthHfpDeviceCommon,
 ///////////////////////////////////////////////////////////////////////////////
 // IAdapterCommon
 //
-DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
+DECLARE_INTERFACE_(ISidebandDeviceCommon, IUnknown)
 {
     STDMETHOD_(BOOL,                IsVolumeSupported)
     (
@@ -629,7 +632,7 @@ DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
         THIS_
     ) PURE;
 };
-typedef IBthHfpDeviceCommon *PBTHHFPDEVICECOMMON;
+typedef ISidebandDeviceCommon *PSIDEBANDDEVICECOMMON;
 
 #endif // SYSVAD_BTH_BYPASS
 

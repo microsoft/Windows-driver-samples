@@ -1,6 +1,8 @@
 #include <sysvad.h>
 #include <limits.h>
 #include <ks.h>
+#include <initguid.h>
+#include <USBSidebandAudio.h>
 #include "simple.h"
 #include "minwavert.h"
 #include "minwavertstream.h"
@@ -99,6 +101,10 @@ Return Value:
     
 #ifdef SYSVAD_BTH_BYPASS
     ASSERT(m_ScoOpen == FALSE);
+    if (m_UsbSidebandSymbolicLink.Buffer)
+    {
+        ExFreePoolWithTag(m_UsbSidebandSymbolicLink.Buffer, USBSIDEBANDTEST_POOLTAG01);
+    }
 #endif  // SYSVAD_BTH_BYPASS
 
     DPF_ENTER(("[CMiniportWaveRTStream::~CMiniportWaveRTStream]"));
@@ -320,6 +326,15 @@ Return Value:
     {
         m_bUnregisterStream = TRUE;
     }
+
+    ntStatus = IoRegisterPlugPlayNotification(
+        EventCategoryDeviceInterfaceChange,
+        PNPNOTIFY_DEVICE_INTERFACE_INCLUDE_EXISTING_INTERFACES,
+        (PVOID)&GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HCIBYPASS,
+        m_pMiniport->m_pAdapterCommon->GetDeviceObject()->DriverObject,
+        USBSidebandNotification,
+        this,
+        &m_pUsbSidebandNotificationEntry);
 
     return ntStatus;
 } // Init
@@ -1086,9 +1101,9 @@ NTSTATUS CMiniportWaveRTStream::SetState
 #ifdef SYSVAD_BTH_BYPASS
             if (m_ScoOpen)
             {
-                PBTHHFPDEVICECOMMON bthHfpDevice;
+                PSIDEBANDDEVICECOMMON bthHfpDevice;
                 
-                ASSERT(m_pMiniport->IsBthHfpDevice());
+                ASSERT(m_pMiniport->IsSidebandDevice());
                 bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
                 ASSERT(bthHfpDevice != NULL);
 
@@ -1108,11 +1123,11 @@ NTSTATUS CMiniportWaveRTStream::SetState
 
         case KSSTATE_ACQUIRE:
 #ifdef SYSVAD_BTH_BYPASS
-            if (m_pMiniport->IsBthHfpDevice())
+            if (m_pMiniport->IsSidebandDevice())
             {
                 if (m_ScoOpen == FALSE)
                 {
-                    PBTHHFPDEVICECOMMON bthHfpDevice;
+                    PSIDEBANDDEVICECOMMON bthHfpDevice;
 
                     bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
                     ASSERT(bthHfpDevice != NULL);
@@ -1469,6 +1484,72 @@ Return Value:
 
 //=============================================================================
 #pragma code_seg()
+NTSTATUS
+USBSidebandNotification(
+    _In_ PVOID NotificationStructure,
+    _Inout_opt_ PVOID Context
+)
+{
+    return ((CMiniportWaveRTStream *)Context)->UsbSidebandNotification(NotificationStructure);
+}
+
+NTSTATUS CMiniportWaveRTStream::UsbSidebandNotification(_In_opt_ PVOID NotificationStructure)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+    PDEVICE_INTERFACE_CHANGE_NOTIFICATION Notification  = (PDEVICE_INTERFACE_CHANGE_NOTIFICATION) NotificationStructure;
+
+    if (NULL == Notification)
+    {
+        status = STATUS_INVALID_PARAMETER;
+        goto Exit;
+    }
+
+    if (m_UsbSidebandSymbolicLink.Buffer)
+    {
+        ExFreePoolWithTag(m_UsbSidebandSymbolicLink.Buffer, USBSIDEBANDTEST_POOLTAG01);
+        m_UsbSidebandSymbolicLink.Buffer = NULL;
+        m_UsbSidebandSymbolicLink.Length = 0;
+        m_UsbSidebandSymbolicLink.MaximumLength = 0;
+    }
+
+    //
+    // Make a copy of the symbolic link name.
+    //
+    m_UsbSidebandSymbolicLink.MaximumLength = Notification->SymbolicLinkName->MaximumLength;
+    m_UsbSidebandSymbolicLink.Length = Notification->SymbolicLinkName->Length;
+    m_UsbSidebandSymbolicLink.Buffer = (PWSTR) ExAllocatePoolWithTag(NonPagedPoolNx,
+                                                              Notification->SymbolicLinkName->MaximumLength,
+                                                              USBSIDEBANDTEST_POOLTAG01);
+
+    RtlCopyUnicodeString(&m_UsbSidebandSymbolicLink, Notification->SymbolicLinkName);
+Exit:
+    return status;
+}
+
+NTSTATUS CMiniportWaveRTStream::TestSideband()
+{
+    NTSTATUS status = STATUS_SUCCESS;
+    PIRP irp = NULL;
+    IO_STATUS_BLOCK statusBlock;
+    KEVENT event;
+    KeInitializeEvent(&event, NotificationEvent, FALSE);
+    USBSIDEBANDAUDIO_DEVICE_DESCRIPTOR dd = { 0 };
+
+    irp = IoBuildDeviceIoControlRequest(
+        IOCTL_USBSBAUD_GET_DEVICE_DESCRIPTOR,
+        m_pMiniport->m_pAdapterCommon->GetDeviceObject(),
+        NULL,
+        0,
+        &dd,
+        sizeof(dd),
+        FALSE,
+        &event,
+        &statusBlock);
+
+
+    return status;
+}
+
 NTSTATUS 
 CMiniportWaveRTStream::GetScoStreamNtStatus()
 /*++
@@ -1489,9 +1570,9 @@ Return Value:
         
     if (m_ScoOpen)
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice;
+        PSIDEBANDDEVICECOMMON bthHfpDevice;
         
-        ASSERT(m_pMiniport->IsBthHfpDevice());
+        ASSERT(m_pMiniport->IsSidebandDevice());
         bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
 

@@ -180,9 +180,9 @@ Return Value:
     }
     
 #ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+    if (IsSidebandDevice())
     {
-        SAFE_RELEASE(m_BthHfpDevice);
+        SAFE_RELEASE(m_pSidebandDevice);
     }
 #endif // SYSVAD_BTH_BYPASS
 

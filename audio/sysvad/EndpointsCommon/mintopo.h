@@ -36,7 +36,7 @@ class CMiniportTopology :
     union {
         PVOID               m_DeviceContext;
 #ifdef SYSVAD_BTH_BYPASS
-        PBTHHFPDEVICECOMMON m_BthHfpDevice;
+        PSIDEBANDDEVICECOMMON m_pSidebandDevice;
 #endif // SYSVAD_BTH_BYPASS
     };
 
@@ -56,12 +56,12 @@ public:
       m_DeviceContext(DeviceContext)
     {
 #ifdef SYSVAD_BTH_BYPASS
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
                 // This ref is released on dtor.
-                m_BthHfpDevice->AddRef(); // strong ref.
+                m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
 #endif // SYSVAD_BTH_BYPASS
@@ -87,26 +87,26 @@ public:
     );
     
 #ifdef SYSVAD_BTH_BYPASS
-    BOOL IsBthHfpDevice()
+    BOOL IsSidebandDevice()
     {
         return (m_DeviceType == eBthHfpMicDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PBTHHFPDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetBthHfpDevice() 
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
-                bthHfpDevice = m_BthHfpDevice;
+                sidebandDevice = m_pSidebandDevice;
             }
         }
 
-        return bthHfpDevice;
+        return sidebandDevice;
     }
 
     static

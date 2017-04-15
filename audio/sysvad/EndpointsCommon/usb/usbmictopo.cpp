@@ -4,28 +4,28 @@ Copyright (c) Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    bthhfpspeakertopo.cpp
+    usbhsmictopo.cpp
 
 Abstract:
 
-    Implementation of topology miniport for the Bluetooth Hands-Free Profile speaker (external).
+    Implementation of topology miniport for the mic (external: headphone).
 
 --*/
-#ifdef SYSVAD_BTH_BYPASS
+//#ifdef SYSVAD_USB_SIDEBAND
 
 #pragma warning (disable : 4127)
 
 #include <sysvad.h>
 #include "simple.h"
 #include "mintopo.h"
-#include "bthhfptopo.h"
-#include "bthhfpspeakertopo.h"
-#include "bthhfpspeakertoptable.h"
+#include "usbhstopo.h"
+#include "usbhsmictopo.h"
+#include "usbhsmictoptable.h"
 
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpSpeakerTopoFilter
+PropertyHandler_UsbHsMicTopoFilter
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 )
@@ -49,7 +49,7 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpSpeakerTopoFilter]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsMicTopoFilter]"));
 
     // PropertryRequest structure is filled by portcls. 
     // MajorTarget is a pointer to miniport object for miniports.
@@ -67,48 +67,35 @@ Return Value:
         switch(PropertyRequest->PropertyItem->Id)
         {
             case KSPROPERTY_JACK_DESCRIPTION:
-                ntStatus = PropertyHandler_BthHfpJackDescription(
+                ntStatus = PropertyHandler_UsbHsJackDescription(
                     PropertyRequest,
-                    ARRAYSIZE(BthHfpSpeakerJackDescriptions),
-                    BthHfpSpeakerJackDescriptions);
+                    ARRAYSIZE(UsbHsMicJackDescriptions),
+                    UsbHsMicJackDescriptions);
                 break;
-                
+            
             case KSPROPERTY_JACK_DESCRIPTION2:
-                ntStatus = PropertyHandler_BthHfpJackDescription2(
+                ntStatus = PropertyHandler_UsbHsJackDescription2(
                     PropertyRequest,
-                    ARRAYSIZE(BthHfpSpeakerJackDescriptions),
-                    BthHfpSpeakerJackDescriptions);
+                    ARRAYSIZE(UsbHsMicJackDescriptions),
+                    UsbHsMicJackDescriptions);
                 break;
-                
+            
             case KSPROPERTY_JACK_CONTAINERID:
-                ntStatus = PropertyHandler_BthHfpJackContainerId(
+                ntStatus = PropertyHandler_UsbHsJackContainerId(
                     PropertyRequest,
-                    ARRAYSIZE(BthHfpSpeakerJackDescriptions),
-                    BthHfpSpeakerJackDescriptions);
-                break;
+                    ARRAYSIZE(UsbHsMicJackDescriptions),
+                    UsbHsMicJackDescriptions);
+                break;            
         }
     }
-    else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_BtAudio))
-    {
-        switch(PropertyRequest->PropertyItem->Id)
-        {
-            case KSPROPERTY_ONESHOT_RECONNECT:
-                ntStatus = PropertyHandler_BthHfpOneShotReconnect(PropertyRequest);
-                break;
-                
-            case KSPROPERTY_ONESHOT_DISCONNECT:
-                ntStatus = PropertyHandler_BthHfpOneDisconnect(PropertyRequest);
-                break;
-        }
-    }
-
+    
     return ntStatus;
-} // PropertyHandler_BthHfpSpeakerTopoFilter
+} // PropertyHandler_UsbHsMicTopoFilter
 
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpSpeakerVolumeLevel
+PropertyHandler_UsbHsMicVolumeLevel
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 )
@@ -132,57 +119,56 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpSpeakerVolumeLevel]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsMicVolumeLevel]"));
 
     NTSTATUS                ntStatus        = STATUS_INVALID_DEVICE_REQUEST;
     PCMiniportTopology      miniport        = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    PSIDEBANDDEVICECOMMON     bthHfpDevice    = NULL;
+    PSIDEBANDDEVICECOMMON     usbHsDevice    = NULL;
     ULONG                   channel         = (ULONG)-1;
     
-    bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
-    ASSERT(bthHfpDevice != NULL);
-
-    if (bthHfpDevice->IsVolumeSupported() == FALSE)
+    usbHsDevice = miniport->GetUsbHsDevice(); // weak ref.
+    ASSERT(usbHsDevice != NULL);
+    
+    if (usbHsDevice->IsVolumeSupported() == FALSE)
     {
-       ntStatus = miniport->PropertyHandlerGeneric(PropertyRequest);     
+       ntStatus = miniport->PropertyHandlerGeneric(PropertyRequest); 
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
     {
-        ntStatus = PropertyHandler_BthHfpVolumeLevel_BasicSupport(PropertyRequest);
+        ntStatus = PropertyHandler_UsbHsVolumeLevel_BasicSupport(PropertyRequest);
     }
     else if (PropertyRequest->InstanceSize >= sizeof(ULONG))
     {
-        // Instance is the channel #, Bluetooth HFP supports mono streams.
+        // Instance is the channel #.
         channel = *(PULONG(PropertyRequest->Instance));
 
-        if (channel == 0)
+        ULONG cbNeeded = sizeof(LONG);
+
+        if (PropertyRequest->ValueSize == 0)
         {
-            ULONG cbNeeded = sizeof(LONG);
+            PropertyRequest->ValueSize = cbNeeded;
+            ntStatus = STATUS_BUFFER_OVERFLOW;
+        }
+        else if (PropertyRequest->ValueSize < cbNeeded)
+        {
+            ntStatus = STATUS_BUFFER_TOO_SMALL;
+        }
+        else
+        {
+            LONG* volume = (LONG*)PropertyRequest->Value;
 
-            if (PropertyRequest->ValueSize == 0)
+            if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
             {
-                PropertyRequest->ValueSize = cbNeeded;
-                ntStatus = STATUS_BUFFER_OVERFLOW;
+                //\TODO: Implement Channel specific volume
+                *volume = usbHsDevice->GetMicVolume();
+
+                ntStatus = STATUS_SUCCESS;
+
             }
-            else if (PropertyRequest->ValueSize < cbNeeded)
+            else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
-                ntStatus = STATUS_BUFFER_TOO_SMALL;
-            }
-            else
-            {
-                LONG* volume = (LONG*)PropertyRequest->Value;
-                
-                if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
-                {
-                    *volume = bthHfpDevice->GetSpeakerVolume();
-
-                    ntStatus = STATUS_SUCCESS;
-
-                }
-                else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
-                {
-                    ntStatus = bthHfpDevice->SetSpeakerVolume(*volume);
-                }
+                //\TODO: Implement Channel specific volume
+                ntStatus = usbHsDevice->SetMicVolume(*volume);
             }
         }
     }
@@ -193,7 +179,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpSpeakerTopoNode
+PropertyHandler_UsbHsMicTopoNode
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 )
@@ -217,7 +203,7 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpSpeakerTopoNode]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsMicTopoNode]"));
 
     // PropertryRequest structure is filled by portcls. 
     // MajorTarget is a pointer to miniport object for miniports.
@@ -234,48 +220,48 @@ Return Value:
     {
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_VOLUMELEVEL)
         {
-            ntStatus = PropertyHandler_BthHfpSpeakerVolumeLevel(PropertyRequest);
+            ntStatus = PropertyHandler_UsbHsMicVolumeLevel(PropertyRequest);
         }
     }
 
     return ntStatus;
-} // PropertyHandler_BthHfpSpeakerTopoFilter
+} // PropertyHandler_UsbHsMicTopoFilter
 
 //=============================================================================
 #pragma code_seg()
 NTSTATUS 
-PropertyHandler_BthHfpSpeakerTopoNodeEvent
+PropertyHandler_UsbHsMicTopoNodeEvent
 (
     _In_    PPCEVENT_REQUEST    EventRequest
 )
 {
     ASSERT(EventRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpSpeakerTopoNodeEvent]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsMicTopoNodeEvent]"));
 
     // Validate the node.
     if (EventRequest->Node != KSNODE_TOPO_VOLUME)
         return STATUS_INVALID_PARAMETER;
 
-    return PropertyHandler_BthHfpTopoNodeEvent(EventRequest);
+    return PropertyHandler_UsbHsTopoNodeEvent(EventRequest);
 }
 
 //=============================================================================
 #pragma code_seg()
 NTSTATUS
-PropertyHandler_BthHfpSpeakerTopoFilterEvent
+PropertyHandler_UsbHsMicTopoFilterEvent
 (
     _In_    PPCEVENT_REQUEST    EventRequest
 )
 {
     ASSERT(EventRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpSpeakerTopoFilterEvent]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsMicTopoFilterEvent]"));
 
-    return PropertyHandler_BthHfpTopoNodeEvent(EventRequest);
+    return PropertyHandler_UsbHsTopoNodeEvent(EventRequest);
 }
 
 #pragma code_seg()
-#endif  // SYSVAD_BTH_BYPASS
+//#endif  // SYSVAD_USB_SIDEBAND
 
 

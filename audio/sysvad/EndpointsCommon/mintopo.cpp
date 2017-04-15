@@ -111,27 +111,27 @@ Return Value:
     DPF_ENTER(("[CMiniportTopology::~CMiniportTopology]"));
 
 #ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+    if (IsSidebandDevice())
     {
-        ASSERT(m_BthHfpDevice != NULL);
+        ASSERT(m_pSidebandDevice != NULL);
         
         //
         // Register with BthHfpDevice to get notification events.
         //
         if (m_DeviceType == eBthHfpMicDevice)
         {
-            m_BthHfpDevice->SetMicVolumeHandler(NULL, NULL);
-            m_BthHfpDevice->SetMicConnectionStatusHandler(NULL, NULL);
+            m_pSidebandDevice->SetMicVolumeHandler(NULL, NULL);
+            m_pSidebandDevice->SetMicConnectionStatusHandler(NULL, NULL);
         }
         else 
         {
             ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
             
-            m_BthHfpDevice->SetSpeakerVolumeHandler(NULL, NULL);
-            m_BthHfpDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
+            m_pSidebandDevice->SetSpeakerVolumeHandler(NULL, NULL);
+            m_pSidebandDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
         }
 
-        SAFE_RELEASE(m_BthHfpDevice);   // IBthHfpDeviceCommon
+        SAFE_RELEASE(m_pSidebandDevice);   // ISidebandDeviceCommon
     }
 #endif // SYSVAD_BTH_BYPASS
 
@@ -288,9 +288,9 @@ Return Value:
         Done);
     
 #ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+    if (IsSidebandDevice())
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
         
         bthHfpDevice = GetBthHfpDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);

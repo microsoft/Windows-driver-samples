@@ -60,6 +60,9 @@ protected:
     ULONG                       m_ulNotificationIntervalMs;
     ULONG                       m_ulCurrentWritePosition;
     LONG                        m_IsCurrentWritePositionUpdated;
+
+    UNICODE_STRING              m_UsbSidebandSymbolicLink;
+    PVOID                       m_pUsbSidebandNotificationEntry;
     
 public:
     DECLARE_STD_UNKNOWN();
@@ -260,6 +263,9 @@ private:
 
 #ifdef SYSVAD_BTH_BYPASS
     NTSTATUS GetScoStreamNtStatus();
+    NTSTATUS TestSideband();
+    NTSTATUS UsbSidebandNotification(_In_ PVOID NotificationStructure);
+    friend NTSTATUS USBSidebandNotification(_In_ PVOID NotificationStructure, _Inout_opt_ PVOID Context);
 #endif  // SYSVAD_BTH_BYPASS
     
 };
