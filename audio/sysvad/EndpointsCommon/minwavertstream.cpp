@@ -100,12 +100,15 @@ Return Value:
     }
     
 #ifdef SYSVAD_BTH_BYPASS
-    ASSERT(m_ScoOpen == FALSE);
+    ASSERT(m_SidebandOpen == FALSE);
+#endif  // SYSVAD_BTH_BYPASS
+
+#ifdef SYSVAD_USB_SIDEBAND
     if (m_UsbSidebandSymbolicLink.Buffer)
     {
         ExFreePoolWithTag(m_UsbSidebandSymbolicLink.Buffer, USBSIDEBANDTEST_POOLTAG01);
     }
-#endif  // SYSVAD_BTH_BYPASS
+#endif
 
     DPF_ENTER(("[CMiniportWaveRTStream::~CMiniportWaveRTStream]"));
 } // ~CMiniportWaveRTStream
@@ -188,9 +191,9 @@ Return Value:
     m_bEoSReceived = FALSE;
     m_bLastBufferRendered = FALSE;
 
-#ifdef SYSVAD_BTH_BYPASS
-    m_ScoOpen = FALSE;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    m_SidebandOpen = FALSE;
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
     m_pPortStream = PortStream_;
     InitializeListHead(&m_NotificationList);
@@ -742,13 +745,13 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
 {
     NTSTATUS ntStatus;
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    if (m_SidebandOpen)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
     // Return failure if this is the keyword detector pin
     if (m_pMiniport->m_DeviceFormatsAndModes[m_ulPin].PinType == PINTYPE::KeywordCapturePin)
@@ -775,9 +778,9 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
 
     ntStatus = STATUS_SUCCESS;
     
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 Done:
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     return ntStatus;
 }
 
@@ -1098,53 +1101,53 @@ NTSTATUS CMiniportWaveRTStream::SetState
                 m_SaveData.WaitAllWorkItems();
             }
 
-#ifdef SYSVAD_BTH_BYPASS
-            if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+            if (m_SidebandOpen)
             {
-                PSIDEBANDDEVICECOMMON bthHfpDevice;
+                PSIDEBANDDEVICECOMMON sidebandDevice;
                 
                 ASSERT(m_pMiniport->IsSidebandDevice());
-                bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-                ASSERT(bthHfpDevice != NULL);
+                sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                ASSERT(sidebandDevice != NULL);
 
                 //
                 // Close the SCO connection.
                 //
-                ntStatus = bthHfpDevice->StreamClose();
+                ntStatus = sidebandDevice->StreamClose();
                 if (!NT_SUCCESS(ntStatus))
                 {
                     DPF(D_ERROR, ("SetState: KSSTATE_STOP, StreamClose failed, 0x%x", ntStatus));
                 }
                 
-                m_ScoOpen = FALSE;
+                m_SidebandOpen = FALSE;
             }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
             break;
 
         case KSSTATE_ACQUIRE:
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
             if (m_pMiniport->IsSidebandDevice())
             {
-                if (m_ScoOpen == FALSE)
+                if (m_SidebandOpen == FALSE)
                 {
-                    PSIDEBANDDEVICECOMMON bthHfpDevice;
+                    PSIDEBANDDEVICECOMMON sidebandDevice;
 
-                    bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-                    ASSERT(bthHfpDevice != NULL);
+                    sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                    ASSERT(sidebandDevice != NULL);
 
                     //
                     // Open the SCO connection.
                     //
-                    ntStatus = bthHfpDevice->StreamOpen();
+                    ntStatus = sidebandDevice->StreamOpen();
                     IF_FAILED_ACTION_JUMP(
                         ntStatus,
                         DPF(D_ERROR, ("SetState: KSSTATE_ACQUIRE, StreamOpen failed, 0x%x", ntStatus)),
                         Done);
 
-                    m_ScoOpen = TRUE;
+                    m_SidebandOpen = TRUE;
                 }
             }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
             break;
 
         case KSSTATE_PAUSE:
@@ -1206,9 +1209,9 @@ NTSTATUS CMiniportWaveRTStream::SetState
 
     m_KsState = State_;
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 Done:
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     return ntStatus;
 }
 
@@ -1480,8 +1483,7 @@ Return Value:
     return ntStatus;
 } // SetContentId
 
-#ifdef SYSVAD_BTH_BYPASS
-
+#ifdef SYSVAD_USB_SIDEBAND
 //=============================================================================
 #pragma code_seg()
 NTSTATUS
@@ -1549,14 +1551,19 @@ NTSTATUS CMiniportWaveRTStream::TestSideband()
 
     return status;
 }
+#endif //SYSVAD_USB_SIDEBAND
 
+
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+//=============================================================================
+#pragma code_seg()
 NTSTATUS 
-CMiniportWaveRTStream::GetScoStreamNtStatus()
+CMiniportWaveRTStream::GetSidebandStreamNtStatus()
 /*++
 
 Routine Description:
 
-  Checks if the Bluetooth SCO HFP connection is up, if not, an error is returned.
+  Checks if the Sideband stream connection is up, if not, an error is returned.
 
 Return Value:
 
@@ -1564,19 +1571,19 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveRTStream::GetScoStreamNtStatus]"));
+    DPF_ENTER(("[CMiniportWaveRTStream::GetSidebandStreamNtStatus]"));
 
     NTSTATUS  ntStatus  = STATUS_INVALID_DEVICE_STATE;
         
-    if (m_ScoOpen)
+    if (m_SidebandOpen)
     {
-        PSIDEBANDDEVICECOMMON bthHfpDevice;
+        PSIDEBANDDEVICECOMMON sidebandDevice;
         
         ASSERT(m_pMiniport->IsSidebandDevice());
-        bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
+        sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+        ASSERT(sidebandDevice != NULL);
 
-        if (bthHfpDevice->GetStreamStatus())
+        if (sidebandDevice->GetStreamStatus())
         {
             ntStatus = STATUS_SUCCESS;
         }
@@ -1584,7 +1591,7 @@ Return Value:
 
     return ntStatus;        
 }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 //=============================================================================
 #pragma code_seg()
@@ -1643,15 +1650,15 @@ TimerNotifyRT
         _this->m_llPacketCounter++;
     }
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (_this->m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    if (_this->m_SidebandOpen)
     {
-        if (!NT_SUCCESS(_this->GetScoStreamNtStatus()))
+        if (!NT_SUCCESS(_this->GetSidebandStreamNtStatus()))
         {
             goto End;
         }
     }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  //defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
     _this->m_pMiniport->DpcRoutine(qpc.QuadPart, qpcFrequency.QuadPart);
 

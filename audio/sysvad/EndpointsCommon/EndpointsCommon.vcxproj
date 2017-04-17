@@ -170,6 +170,12 @@
     <ClCompile Include="minwavertstream.cpp" />
     <ClCompile Include="speakerhptopo.cpp" />
     <ClCompile Include="speakertopo.cpp" />
+    <ClCompile Include="usbhsminwavert.cpp" />
+    <ClCompile Include="usbhspmictopo.cpp" />
+    <ClCompile Include="usbhsspeakertopo.cpp" />
+    <ClCompile Include="usbhstopo.cpp" />
+    <ClCompile Include="usbmictopo.cpp" />
+    <ClCompile Include="usbspeakertopo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />

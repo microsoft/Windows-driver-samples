@@ -280,6 +280,7 @@
     <ClCompile Include="..\kshelper.cpp" />
     <ClCompile Include="..\savedata.cpp" />
     <ClCompile Include="..\tonegenerator.cpp" />
+    <ClCompile Include="..\UsbHsDevice.cpp" />
     <ClCompile Include="hdmitopo.cpp" />
     <ClCompile Include="micintopo.cpp" />
     <ClCompile Include="spdiftopo.cpp" />
@@ -297,6 +298,7 @@
   <ItemGroup>
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
     <ClInclude Include="..\BthhfpDevice.h" />
+    <ClInclude Include="..\UsbHsDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

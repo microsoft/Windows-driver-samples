@@ -28,13 +28,12 @@ Abstract:
 #include <devpkey.h>
 #include "bthhfpminipairs.h"
 #include "BthhfpDevice.h"
-
 #endif // SYSVAD_BTH_BYPASS
+
 #ifdef SYSVAD_USB_SIDEBAND
 #include <USBSidebandAudio.h>
-#include "UsbSidebandMinipairs.h"
-#include "UsbSidebandDevice.h"
-
+#include "UsbHsMinipairs.h"
+#include "UsbHsDevice.h"
 #endif // SYSVAD_USB_SIDEBAND
 
 //-----------------------------------------------------------------------------
@@ -52,7 +51,7 @@ class BthHfpDevice;     // Forward declaration.
 #endif // SYSVAD_BTH_BYPASS
 
 #ifdef SYSVAD_USB_SIDEBAND
-class UsbSidebandDevice;     // Forward declaration.
+class UsbHsDevice;     // Forward declaration.
 #endif // SYSVAD_USB_SIDEBAND
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -340,7 +339,7 @@ class CAdapterCommon :
             EVT_WDF_WORKITEM                      EvtUsbSidebandInterfaceWorkItem;
 
     protected:
-        UsbSidebandDevice * UsbSidebandDeviceFind
+        UsbHsDevice * UsbSidebandDeviceFind
         (
             _In_ PUNICODE_STRING SymbolicLinkName
         );
@@ -3213,13 +3212,13 @@ WorkItem    - WDF work-item object.
         return;
     }
 
-    This = GetUsbSidebandWorkItemContext(WorkItem)->Adapter;
+    This = GetUsbHsWorkItemContext(WorkItem)->Adapter;
     ASSERT(This != NULL);
 
     for (;;)
     {
         PLIST_ENTRY         le = NULL;
-        UsbSidebandWorkTask    * task = NULL;
+        UsbHsWorkTask    * task = NULL;
 
         //
         // Retrieve a taask.
@@ -3228,7 +3227,7 @@ WorkItem    - WDF work-item object.
         if (!IsListEmpty(&This->m_UsbSidebandWorkTasks))
         {
             le = RemoveHeadList(&This->m_UsbSidebandWorkTasks);
-            task = CONTAINING_RECORD(le, UsbSidebandWorkTask, ListEntry);
+            task = CONTAINING_RECORD(le, UsbHsWorkTask, ListEntry);
             InitializeListHead(le);
         }
         ExReleaseFastMutex(&This->m_UsbSidebandFastMutex);
@@ -3246,11 +3245,11 @@ WorkItem    - WDF work-item object.
         //
         switch (task->Action)
         {
-        case eUsbSidebandTaskStart:
+        case eUsbHsTaskStart:
             task->Device->Start();
             break;
 
-        case eUsbSidebandTaskStop:
+        case eUsbHsTaskStop:
             task->Device->Stop();
             break;
 
@@ -3274,7 +3273,7 @@ WorkItem    - WDF work-item object.
 
 //=============================================================================
 #pragma code_seg("PAGE")
-UsbSidebandDevice *
+UsbHsDevice *
 CAdapterCommon::UsbSidebandDeviceFind
 (
     _In_ PUNICODE_STRING SymbolicLinkName
@@ -3299,23 +3298,23 @@ UsbSidebandDevice pointer or NULL.
     DPF_ENTER(("[CAdapterCommon::UsbSidebandDeviceFind]"));
 
     PLIST_ENTRY     le = NULL;
-    UsbSidebandDevice  * usbDevice = NULL;
+    UsbHsDevice  * usbDevice = NULL;
 
     ExAcquireFastMutex(&m_UsbSidebandFastMutex);
 
     for (le = m_UsbSidebandDevices.Flink; le != &m_UsbSidebandDevices; le = le->Flink)
     {
-        UsbSidebandDevice  *     tmpUsbDevice = UsbSidebandDevice::GetUsbSidebandDevice(le);
-        ASSERT(tmpUsbDevice != NULL);
+        UsbHsDevice  *     tmpUsbHsDevice = UsbHsDevice::GetUsbHsDevice(le);
+        ASSERT(tmpUsbHsDevice != NULL);
 
-        PUNICODE_STRING     unicodeStr = tmpUsbDevice->GetSymbolicLinkName();
+        PUNICODE_STRING     unicodeStr = tmpUsbHsDevice->GetSymbolicLinkName();
         ASSERT(unicodeStr != NULL);
 
         if (unicodeStr->Length == SymbolicLinkName->Length &&
             0 == wcsncmp(unicodeStr->Buffer, SymbolicLinkName->Buffer, unicodeStr->Length / sizeof(WCHAR)))
         {
             // Found it!
-            usbDevice = tmpUsbDevice;
+            usbDevice = tmpUsbHsDevice;
             usbDevice->AddRef();
             break;
         }
@@ -3353,8 +3352,8 @@ NT status code.
     DPF_ENTER(("[CAdapterCommon::UsbSidebandInterfaceArrival]"));
 
     NTSTATUS            ntStatus = STATUS_SUCCESS;
-    UsbSidebandDevice      * usbDevice = NULL;
-    UsbSidebandWorkTask    * usbWorkTask = NULL;
+    UsbHsDevice         *usbHsDevice = NULL;
+    UsbHsWorkTask       *usbHsWorkTask = NULL;
 
     DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: SymbolicLinkName %wZ", SymbolicLinkName));
 
@@ -3363,11 +3362,11 @@ NT status code.
     // According to the docs it is possible to receive two notifications for the same
     // interface.
     //
-    usbDevice = UsbSidebandDeviceFind(SymbolicLinkName);
-    if (usbDevice != NULL)
+    usbHsDevice = UsbSidebandDeviceFind(SymbolicLinkName);
+    if (usbHsDevice != NULL)
     {
         DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: USB device already present"));
-        SAFE_RELEASE(usbDevice);
+        SAFE_RELEASE(usbHsDevice);
         ntStatus = STATUS_SUCCESS;
         goto Done;
     }
@@ -3375,15 +3374,15 @@ NT status code.
     //
     // Alloc a new structure for this USB device.
     //
-    usbDevice = new (NonPagedPoolNx, MINADAPTER_POOLTAG) UsbSidebandDevice(NULL); // NULL -> OuterUnknown
-    if (NULL == usbDevice)
+    usbHsDevice = new (NonPagedPoolNx, MINADAPTER_POOLTAG) UsbHsDevice(NULL); // NULL -> OuterUnknown
+    if (NULL == usbHsDevice)
     {
         DPF(D_ERROR, ("UsbSidebandInterfaceArrival: unable to allocate UsbSidebandDevice, out of memory"));
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
         goto Done;
     }
 
-    DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: created UsbSidebandDevice 0x%p ", usbDevice));
+    DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: created UsbSidebandDevice 0x%p ", usbHsDevice));
 
     //
     // Basic initialization of the USB Sideband interface.
@@ -3391,14 +3390,14 @@ NT status code.
     // which is invoked asynchronously by a worker thread.
     // UsbSidebandDevice->Init() must be invoked just after the creation of the object.
     //
-    ntStatus = usbDevice->Init(this, SymbolicLinkName);
+    ntStatus = usbHsDevice->Init(this, SymbolicLinkName);
     IF_FAILED_JUMP(ntStatus, Done);
 
     //
     // Get and init a work task.
     //
-    usbWorkTask = (UsbSidebandWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
-    if (NULL == usbWorkTask)
+    usbHsWorkTask = (UsbHsWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
+    if (NULL == usbHsWorkTask)
     {
         DPF(D_ERROR, ("UsbSidebandInterfaceArrival: unable to allocate UsbSidebandWorkTask, out of memory"));
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -3407,24 +3406,24 @@ NT status code.
 
     // usbWorkTask->L.Size is set to sizeof(UsbSidebandWorkTask) in the Look Aside List configuration
 #pragma warning(suppress: 6386)
-    RtlZeroMemory(usbWorkTask, sizeof(*usbWorkTask));
-    usbWorkTask->Action = eUsbSidebandTaskStart;
-    InitializeListHead(&usbWorkTask->ListEntry);
+    RtlZeroMemory(usbHsWorkTask, sizeof(*usbHsWorkTask));
+    usbHsWorkTask->Action = eUsbHsTaskStart;
+    InitializeListHead(&usbHsWorkTask->ListEntry);
     // Note that usbDevice has one reference at this point.
-    usbWorkTask->Device = usbDevice;
+    usbHsWorkTask->Device = usbHsDevice;
 
     ExAcquireFastMutex(&m_UsbSidebandFastMutex);
 
     //
     // Insert this new USB Sideband device in our list.
     //
-    InsertTailList(&m_UsbSidebandDevices, usbDevice->GetListEntry());
+    InsertTailList(&m_UsbSidebandDevices, usbHsDevice->GetListEntry());
 
     //
     // Add a new task for the worker thread.
     //
-    InsertTailList(&m_UsbSidebandWorkTasks, &usbWorkTask->ListEntry);
-    usbDevice->AddRef();    // released when task runs.
+    InsertTailList(&m_UsbSidebandWorkTasks, &usbHsWorkTask->ListEntry);
+    usbHsDevice->AddRef();    // released when task runs.
 
                             //
                             // Schedule a work-item if not already running.
@@ -3437,12 +3436,12 @@ Done:
     if (!NT_SUCCESS(ntStatus))
     {
         // Release the last ref, this will delete the UsbSidebandDevice 
-        SAFE_RELEASE(usbDevice);
+        SAFE_RELEASE(usbHsDevice);
 
-        if (usbWorkTask != NULL)
+        if (usbHsWorkTask != NULL)
         {
-            ExFreeToNPagedLookasideList(&m_UsbSidebandWorkTaskPool, usbWorkTask);
-            usbWorkTask = NULL;
+            ExFreeToNPagedLookasideList(&m_UsbSidebandWorkTaskPool, usbHsWorkTask);
+            usbHsWorkTask = NULL;
         }
     }
 
@@ -3476,16 +3475,16 @@ NT status code.
     DPF_ENTER(("[CAdapterCommon::UsbSidebandInterfaceRemoval]"));
 
     NTSTATUS            ntStatus = STATUS_SUCCESS;
-    UsbSidebandDevice      * usbDevice = NULL;
-    UsbSidebandWorkTask    * usbWorkTask = NULL;
+    UsbHsDevice         *usbHsDevice = NULL;
+    UsbHsWorkTask       *usbHsWorkTask = NULL;
 
     DPF(D_VERBOSE, ("UsbSidebandInterfaceRemoval: SymbolicLinkName %wZ", SymbolicLinkName));
 
     //
     // Check if the USB device is present.
     //
-    usbDevice = UsbSidebandDeviceFind(SymbolicLinkName);
-    if (usbDevice == NULL)
+    usbHsDevice = UsbSidebandDeviceFind(SymbolicLinkName);
+    if (usbHsDevice == NULL)
     {
         // This can happen if the init/start of the UsbSidebandDevice failed.
         DPF(D_VERBOSE, ("UsbSidebandInterfaceRemoval: USB device not found"));
@@ -3496,8 +3495,8 @@ NT status code.
     //
     // Init a work task.
     //
-    usbWorkTask = (UsbSidebandWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
-    if (NULL == usbWorkTask)
+    usbHsWorkTask = (UsbHsWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
+    if (NULL == usbHsWorkTask)
     {
         DPF(D_ERROR, ("UsbSidebandInterfaceRemoval: unable to allocate UsbSidebandWorkTask, out of memory"));
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -3506,25 +3505,25 @@ NT status code.
 
     // usbWorkTask->L.Size is set to sizeof(UsbSidebandWorkTask) in the Look Aside List configuration
 #pragma warning(suppress: 6386)
-    RtlZeroMemory(usbWorkTask, sizeof(*usbWorkTask));
-    usbWorkTask->Action = eUsbSidebandTaskStop;
-    InitializeListHead(&usbWorkTask->ListEntry);
+    RtlZeroMemory(usbHsWorkTask, sizeof(*usbHsWorkTask));
+    usbHsWorkTask->Action = eUsbHsTaskStop;
+    InitializeListHead(&usbHsWorkTask->ListEntry);
     // Work-item callback will release the reference we got above from UsbSidebandDeviceFind.
-    usbWorkTask->Device = usbDevice;
+    usbHsWorkTask->Device = usbHsDevice;
 
     ExAcquireFastMutex(&m_UsbSidebandFastMutex);
 
     //
     // Remove this USB device from our list and release the associated reference.
     //
-    RemoveEntryList(usbDevice->GetListEntry());
-    InitializeListHead(usbDevice->GetListEntry());
-    usbDevice->Release();   // This is not the last ref.
+    RemoveEntryList(usbHsDevice->GetListEntry());
+    InitializeListHead(usbHsDevice->GetListEntry());
+    usbHsDevice->Release();   // This is not the last ref.
 
                             //
                             // Add a new task for the worker thread.
                             //
-    InsertTailList(&m_UsbSidebandWorkTasks, &usbWorkTask->ListEntry);
+    InsertTailList(&m_UsbSidebandWorkTasks, &usbHsWorkTask->ListEntry);
 
     //
     // Schedule a work-item if not already running.
@@ -3543,7 +3542,7 @@ Done:
     if (!NT_SUCCESS(ntStatus))
     {
         // Release the ref we got in find.
-        SAFE_RELEASE(usbDevice);
+        SAFE_RELEASE(usbHsDevice);
     }
 
     return ntStatus;
@@ -3643,18 +3642,18 @@ NT status code.
     NTSTATUS                ntStatus = STATUS_SUCCESS;
     WDF_WORKITEM_CONFIG     wiConfig;
     WDF_OBJECT_ATTRIBUTES   attributes;
-    UsbSidebandWorkItemContext * wiContext;
+    UsbHsWorkItemContext * wiContext;
 
     //
     // Init spin-lock, linked lists, work-item, event, etc.
     // Init all members to default values. This basic init should not fail.
     //
     m_UsbSidebandWorkItem = NULL;
-    m_UsbSidebandificationHandle = NULL;
+    m_UsbSidebandNotificationHandle = NULL;
     ExInitializeFastMutex(&m_UsbSidebandFastMutex);
     InitializeListHead(&m_UsbSidebandWorkTasks);
     InitializeListHead(&m_UsbSidebandDevices);
-    m_UsbSidebandWorkTaskPoolElementSize = sizeof(UsbSidebandWorkTask);
+    m_UsbSidebandWorkTaskPoolElementSize = sizeof(UsbHsWorkTask);
     ExInitializeNPagedLookasideList(&m_UsbSidebandWorkTaskPool,
         NULL,
         NULL,
@@ -3674,7 +3673,7 @@ NT status code.
     WDF_WORKITEM_CONFIG_INIT(&wiConfig, EvtUsbSidebandInterfaceWorkItem);
     wiConfig.AutomaticSerialization = FALSE;
 
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, UsbSidebandWorkItemContext);
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, UsbHsWorkItemContext);
     attributes.ParentObject = GetWdfDevice();
     ntStatus = WdfWorkItemCreate(&wiConfig,
         &attributes,
@@ -3684,7 +3683,7 @@ NT status code.
         DPF(D_ERROR, ("InitUsbSideband: WdfWorkItemCreate failed: 0x%x", ntStatus)),
         Done);
 
-    wiContext = GetUsbSidebandWorkItemContext(m_UsbSidebandWorkItem);
+    wiContext = GetUsbHsWorkItemContext(m_UsbSidebandWorkItem);
     wiContext->Adapter = this; // weak ref.
 
                                //
@@ -3741,8 +3740,8 @@ Cleanup the USB Sideband environment.
     //
     if (m_UsbSidebandNotificationHandle != NULL)
     {
-        (void)IoUnregisterPlugPlayNotificationEx(m_UsbSidebandcoNotificationHandle);
-        m_UsbSidebandcoNotificationHandle = NULL;
+        (void)IoUnregisterPlugPlayNotificationEx(m_UsbSidebandNotificationHandle);
+        m_UsbSidebandNotificationHandle = NULL;
     }
 
     //
@@ -3763,19 +3762,19 @@ Cleanup the USB Sideband environment.
     //
     while (!IsListEmpty(&m_UsbSidebandDevices))
     {
-        UsbSidebandDevice  * usbDevice = NULL;
+        UsbHsDevice  * usbHsDevice = NULL;
         PLIST_ENTRY     le = NULL;
 
         le = RemoveHeadList(&m_UsbSidebandDevices);
 
-        usbDevice = UsbSidebandDevice::GetUsbSidebandDevice(le);
+        usbHsDevice = UsbHsDevice::GetUsbHsDevice(le);
         InitializeListHead(le);
 
         // usbDevice is invalid after this call.
-        usbDevice->Stop();
+        usbHsDevice->Stop();
 
         // This should be the last reference.
-        usbDevice->Release();
+        usbHsDevice->Release();
     }
 
     ASSERT(IsListEmpty(&m_UsbSidebandDevices));

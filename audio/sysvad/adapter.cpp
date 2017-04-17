@@ -29,6 +29,9 @@ Abstract:
 #ifdef SYSVAD_BTH_BYPASS
 #include "bthhfpminipairs.h"
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+#include "usbhsminipairs.h"
+#endif // SYSVAD_USB_SIDEBAND
 
 
 
@@ -256,6 +259,15 @@ DWORD g_DisableToneGenerator = 0;  // default is to generate tones.
 DWORD g_DisableBthScoBypass = 0;   // default is SCO bypass enabled.
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+//
+// This driver listens for arrival/removal of the USB Sideband interfaces by 
+// default. Use the registry value DisableBthScoBypass (DWORD) > 0 to override 
+// this default.
+//
+DWORD g_DisableUsbSideband = 0;   // default is SCO bypass enabled.
+#endif // SYSVAD_USB_SIDEBAND
+
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
@@ -348,7 +360,10 @@ Returns:
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableToneGenerator", &g_DisableToneGenerator, (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableToneGenerator, sizeof(ULONG)},
 #ifdef SYSVAD_BTH_BYPASS
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableBthScoBypass",  &g_DisableBthScoBypass,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableBthScoBypass,  sizeof(ULONG)},
-#endif
+#endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableUsbSideband",  &g_DisableUsbSideband,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableUsbSideband,  sizeof(ULONG)},
+#endif // SYSVAD_USB_SIDEBAND
         { NULL,   0,                                                        NULL,                    NULL,                    0,                                                             NULL,                    0}
     };
 
@@ -396,6 +411,9 @@ Returns:
 #ifdef SYSVAD_BTH_BYPASS
     DPF(D_VERBOSE, ("DisableBthScoBypass: %u", g_DisableBthScoBypass));
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    DPF(D_VERBOSE, ("DisableUsbSideband: %u", g_DisableUsbSideband));
+#endif // SYSVAD_USB_SIDEBAND
 
     //
     // Cleanup.
@@ -563,6 +581,12 @@ Return Value:
     //
     maxObjects += g_MaxBthHfpMiniports * 3; 
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    // 
+    // Allow three (3) Bluetooth hands-free profile devices.
+    //
+    maxObjects += g_MaxSidebandMiniports * 3; 
+#endif // SYSVAD_USB_SIDEBAND
 
     // Tell the class driver to add the device.
     //
@@ -1000,6 +1024,16 @@ Return Value:
         IF_FAILED_JUMP(ntStatus, Exit);
     }
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    if (!g_DisableUsbSideband)
+    {
+        //
+        // Init infrastructure for Bluetooth HFP - SCO Bypass devices.
+        //
+        ntStatus = pAdapterCommon->InitUsbSideband();
+        IF_FAILED_JUMP(ntStatus, Exit);
+    }
+#endif // SYSVAD_USB_SIDEBAND
 
 #ifdef _USE_SingleComponentMultiFxStates
     //

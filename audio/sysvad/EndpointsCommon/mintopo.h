@@ -35,9 +35,9 @@ class CMiniportTopology :
     eDeviceType             m_DeviceType;
     union {
         PVOID               m_DeviceContext;
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         PSIDEBANDDEVICECOMMON m_pSidebandDevice;
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     };
 
 public:
@@ -55,7 +55,7 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
             if (m_pSidebandDevice != NULL)
@@ -64,7 +64,7 @@ public:
                 m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     }
 
     ~CMiniportTopology();
@@ -86,15 +86,17 @@ public:
         _In_        DWORD                                    JackCapabilities
     );
     
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     BOOL IsSidebandDevice()
     {
         return (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
+                m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsMicDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PSIDEBANDDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetSidebandDevice() 
     {
         PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
@@ -136,7 +138,7 @@ public:
     (
         _In_opt_    PVOID   Context
     );
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) defined(SYSVAD_USB_SIDEBAND)
 
     PVOID GetDeviceContext() { return m_DeviceContext;  }
 };

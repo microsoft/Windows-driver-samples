@@ -110,22 +110,22 @@ Return Value:
 
     DPF_ENTER(("[CMiniportTopology::~CMiniportTopology]"));
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     if (IsSidebandDevice())
     {
         ASSERT(m_pSidebandDevice != NULL);
         
         //
-        // Register with BthHfpDevice to get notification events.
+        // Register with BthHfpDevice or UsbHsDevice to get notification events.
         //
-        if (m_DeviceType == eBthHfpMicDevice)
+        if (m_DeviceType == eBthHfpMicDevice || m_DeviceType == eUsbHsMicDevice)
         {
             m_pSidebandDevice->SetMicVolumeHandler(NULL, NULL);
             m_pSidebandDevice->SetMicConnectionStatusHandler(NULL, NULL);
         }
         else 
         {
-            ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
+            ASSERT(m_DeviceType == eBthHfpSpeakerDevice || m_DeviceType == eUsbHsSpeakerDevice);
             
             m_pSidebandDevice->SetSpeakerVolumeHandler(NULL, NULL);
             m_pSidebandDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
@@ -133,7 +133,7 @@ Return Value:
 
         SAFE_RELEASE(m_pSidebandDevice);   // ISidebandDeviceCommon
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 
 } // ~CMiniportTopology
@@ -287,41 +287,41 @@ Return Value:
         DPF(D_ERROR, ("Init: CMiniportTopologySYSVAD::Init failed, 0x%x", ntStatus)),
         Done);
     
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     if (IsSidebandDevice())
     {
-        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
-        bthHfpDevice = GetBthHfpDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
+        sidebandDevice = GetSidebandDevice(); // weak ref.
+        ASSERT(sidebandDevice != NULL);
         
         //
         // Register with BthHfpDevice to get notification events.
         //
-        if (m_DeviceType == eBthHfpMicDevice)
+        if (m_DeviceType == eBthHfpMicDevice || m_DeviceType == eUsbHsMicDevice)
         {
-            bthHfpDevice->SetMicVolumeHandler(
+            sidebandDevice->SetMicVolumeHandler(
                 EvtMicVolumeHandler,                // handler
                 PCMiniportTopology(this));          // context.
             
-            bthHfpDevice->SetMicConnectionStatusHandler(
+            sidebandDevice->SetMicConnectionStatusHandler(
                 EvtMicConnectionStatusHandler,      // handler
                 PCMiniportTopology(this));          // context.
         }
         else 
         {
-            ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
+            ASSERT(m_DeviceType == eBthHfpSpeakerDevice || m_DeviceType == eUsbHsSpeakerDevice);
             
-            bthHfpDevice->SetSpeakerVolumeHandler(
+            sidebandDevice->SetSpeakerVolumeHandler(
                 EvtSpeakerVolumeHandler,            // handler
                 PCMiniportTopology(this));          // context.
             
-            bthHfpDevice->SetSpeakerConnectionStatusHandler(
+            sidebandDevice->SetSpeakerConnectionStatusHandler(
                 EvtSpeakerConnectionStatusHandler,  // handler
                 PCMiniportTopology(this));          // context.
         }
     }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 Done:
     return ntStatus;
@@ -583,7 +583,7 @@ Return Value:
     return ntStatus;
 }
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 //=============================================================================
 #pragma code_seg()
 VOID
@@ -687,7 +687,7 @@ CMiniportTopology::EvtMicConnectionStatusHandler
         FALSE,                              // do not use node ID.
         ULONG(-1));                         // node ID, not used.
 }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 //=============================================================================
 #pragma code_seg("PAGE")

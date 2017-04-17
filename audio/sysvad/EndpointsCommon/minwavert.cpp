@@ -179,12 +179,12 @@ Return Value:
         m_LoopbackStreams = NULL;
     }
     
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     if (IsSidebandDevice())
     {
         SAFE_RELEASE(m_pSidebandDevice);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 } // ~CMiniportWaveRT
 

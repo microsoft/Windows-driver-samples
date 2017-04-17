@@ -129,9 +129,9 @@ protected:
     BOOLEAN                     m_bLastBufferRendered;
     KSPIN_LOCK                  m_PositionSpinLock;
 
-#ifdef SYSVAD_BTH_BYPASS
-    BOOLEAN                     m_ScoOpen;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    BOOLEAN                     m_SidebandOpen;
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 public:
     
@@ -261,12 +261,14 @@ private:
         _Out_opt_  LARGE_INTEGER *  _pliQPCTime
     );
 
-#ifdef SYSVAD_BTH_BYPASS
-    NTSTATUS GetScoStreamNtStatus();
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    NTSTATUS GetSidebandStreamNtStatus();
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#ifdef SYSVAD_USB_SIDEBAND
     NTSTATUS TestSideband();
     NTSTATUS UsbSidebandNotification(_In_ PVOID NotificationStructure);
     friend NTSTATUS USBSidebandNotification(_In_ PVOID NotificationStructure, _Inout_opt_ PVOID Context);
-#endif  // SYSVAD_BTH_BYPASS
+#endif // SYSVAD_USB_SIDEBAND
     
 };
 typedef CMiniportWaveRTStream *PCMiniportWaveRTStream;
