@@ -486,6 +486,11 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
        
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+    STDMETHOD_(NTSTATUS,        InitUsbSideband)();
+
+#endif // SYSVAD_USB_SIDEBAND
+
     STDMETHOD_(VOID, Cleanup)();
 };
 
@@ -516,6 +521,10 @@ typedef VOID (*PFNEVENTNOTIFICATION)(
 
 DEFINE_GUID(IID_IBthHfpDeviceCommon,
 0x576b824a, 0x5248, 0x47b1, 0x82, 0xc5, 0xe4, 0x7b, 0xa7, 0xe2, 0xaf, 0x2b);
+
+DEFINE_GUID(IID_IUsbHsDeviceCommon,
+    0xb57b5547, 0x63f, 0x4a58, 0xb3, 0x7, 0x90, 0xb2, 0xfc, 0x6c, 0x32, 0xdb);
+
 
 //=============================================================================
 // Interfaces

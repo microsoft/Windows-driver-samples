@@ -23,7 +23,7 @@ Abstract:
 
 //#ifdef SYSVAD_USB_SIDEBAND
 #include <limits.h>
-#include <usbhsddi.h>
+#include <bthhfpddi.h>
 #include <wdmguid.h>    // guild-arrival/removal
 #include <devpkey.h>
 #include "usbhsminipairs.h"

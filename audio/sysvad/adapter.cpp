@@ -585,7 +585,7 @@ Return Value:
     // 
     // Allow three (3) Bluetooth hands-free profile devices.
     //
-    maxObjects += g_MaxSidebandMiniports * 3; 
+    maxObjects += g_MaxUsbHsMiniports * 3; 
 #endif // SYSVAD_USB_SIDEBAND
 
     // Tell the class driver to add the device.

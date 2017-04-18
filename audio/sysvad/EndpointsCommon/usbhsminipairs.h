@@ -154,7 +154,7 @@ PENDPOINT_MINIPAIR  g_UsbHsRenderEndpoints[] =
 #define g_cUsbHsRenderEndpoints  (SIZEOF_ARRAY(g_UsbHsRenderEndpoints))
 
 // If the count of Render endpoints changes, update formula below
-C_ASSERT(g_cUsbHsRenderEndpoints == 2);
+C_ASSERT(g_cUsbHsRenderEndpoints == 1);
 
 //=============================================================================
 //
@@ -169,7 +169,7 @@ PENDPOINT_MINIPAIR  g_UsbHsCaptureEndpoints[] =
 #define g_cUsbHsCaptureEndpoints (SIZEOF_ARRAY(g_UsbHsCaptureEndpoints))
 
 // If the count of Capture endpoints changes, update formula below
-C_ASSERT(g_cUsbHsCaptureEndpoints == 2);
+C_ASSERT(g_cUsbHsCaptureEndpoints == 1);
 
 #define g_MaxUsbHsMiniports  ((g_cUsbHsRenderEndpoints + g_cUsbHsCaptureEndpoints))
 
