@@ -397,6 +397,7 @@ Return Value:
         }
 
 #endif
+        WdfObjectDelete(symbolicLinkString);
     }
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_PNP, "<-- OsrFxEvtDeviceAdd\n");
@@ -405,8 +406,7 @@ Return Value:
 
 Error:
 
-    if(symbolicLinkString != NULL)
-    {
+    if(symbolicLinkString != NULL) {
         WdfObjectDelete(symbolicLinkString);
     }
 
