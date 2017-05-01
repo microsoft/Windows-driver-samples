@@ -407,8 +407,7 @@ Return Value:
     return TRUE;
 }
 
-
-UINT DumpDeviceDriversCallback(_In_ PVOID Context, _In_ UINT Notification, _In_ UINT_PTR Param1, _In_ UINT_PTR Param2)
+UINT CALLBACK DumpDeviceDriversCallback(_In_ PVOID Context, _In_ UINT Notification, _In_ UINT_PTR Param1, _In_ UINT_PTR Param2)
 /*++
 
 Routine Description:
