@@ -181,36 +181,17 @@ STDMETHODIMP_(void) CSwapAPOMFX::APOProcess(
                             m_u32SamplesPerFrame, m_pf32Coefficients );
             }
             
-            // copy to the delay buffer
-            if (
-                !IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW) &&
-                m_fEnableDelayMFX
-            )
+            // copy the memory only if there is an output connection, and input/output pointers are unequal
+            if ( (0 != u32NumOutputConnections) &&
+                  (ppOutputConnections[0]->pBuffer != ppInputConnections[0]->pBuffer) )
             {
-                ProcessDelay(pf32OutputFrames, pf32InputFrames,
-                             ppInputConnections[0]->u32ValidFrameCount,
-                             GetSamplesPerFrame(),
-                             m_pf32DelayBuffer,
-                             m_nDelayFrames,
-                             &m_iDelayIndex);
-
-                // we don't try to remember silence
-                ppOutputConnections[0]->u32BufferFlags = BUFFER_VALID;
+                CopyFrames( pf32OutputFrames, pf32InputFrames,
+                            ppInputConnections[0]->u32ValidFrameCount,
+                            GetSamplesPerFrame() );
             }
-            else
-            {
-                // copy the memory only if there is an output connection, and input/output pointers are unequal
-                if ( (0 != u32NumOutputConnections) &&
-                      (ppOutputConnections[0]->pBuffer != ppInputConnections[0]->pBuffer) )
-                {
-                    CopyFrames( pf32OutputFrames, pf32InputFrames,
-                                ppInputConnections[0]->u32ValidFrameCount,
-                                GetSamplesPerFrame() );
-                }
-                
-                // pass along buffer flags
-                ppOutputConnections[0]->u32BufferFlags = ppInputConnections[0]->u32BufferFlags;
-            }
+            
+            // pass along buffer flags
+            ppOutputConnections[0]->u32BufferFlags = ppInputConnections[0]->u32BufferFlags;
 
             // Set the valid frame count.
             ppOutputConnections[0]->u32ValidFrameCount = ppInputConnections[0]->u32ValidFrameCount;
@@ -247,15 +228,8 @@ STDMETHODIMP CSwapAPOMFX::GetLatency(HNSTIME* pTime)
   
     IF_TRUE_ACTION_JUMP(NULL == pTime, hr = E_POINTER, Exit);  
   
-    if (IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW))
-    {
-        *pTime = 0;
-    }
-    else
-    {
-        *pTime = (m_fEnableDelayMFX ? HNS_DELAY : 0);
-    }
-  
+    *pTime = 0;
+
 Exit:  
     return hr;  
 }
@@ -289,29 +263,6 @@ STDMETHODIMP CSwapAPOMFX::LockForProcess(UINT32 u32NumInputConnections,
     hr = CBaseAudioProcessingObject::LockForProcess(u32NumInputConnections,
         ppInputConnections, u32NumOutputConnections, ppOutputConnections);
     IF_FAILED_JUMP(hr, Exit);
-    
-    if (!IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW) && m_fEnableDelayMFX)
-    {
-        m_nDelayFrames = FRAMES_FROM_HNS(HNS_DELAY);
-        m_iDelayIndex = 0;
-
-        m_pf32DelayBuffer.Free();
-
-        // Allocate one second's worth of audio
-        // 
-        // This allocation is being done using CoTaskMemAlloc because the delay is very large
-        // This introduces a risk of glitches if the delay buffer gets paged out
-        //
-        // A more typical approach would be to allocate the memory using AERT_Allocate, which locks the memory
-        // But for the purposes of this APO, CoTaskMemAlloc suffices, and the risk of glitches is not important
-        m_pf32DelayBuffer.Allocate(GetSamplesPerFrame() * m_nDelayFrames);
-        WriteSilence(m_pf32DelayBuffer, m_nDelayFrames, GetSamplesPerFrame());
-        if (nullptr == m_pf32DelayBuffer)
-        {
-            hr = E_OUTOFMEMORY;
-            goto Exit;
-        }
-    }
     
 Exit:
     return hr;
@@ -460,7 +411,6 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
     if (m_spAPOSystemEffectsProperties != NULL)
     {
         m_fEnableSwapMFX = GetCurrentEffectsSetting(m_spAPOSystemEffectsProperties, PKEY_Endpoint_Enable_Channel_Swap_MFX, m_AudioProcessingMode);
-        m_fEnableDelayMFX = GetCurrentEffectsSetting(m_spAPOSystemEffectsProperties, PKEY_Endpoint_Enable_Delay_MFX, m_AudioProcessingMode);
     }
 
     //
@@ -549,7 +499,6 @@ STDMETHODIMP CSwapAPOMFX::GetEffectsList(_Outptr_result_buffer_maybenull_(*pcEff
         EffectControl list[] =
         {
             { SwapEffectId,  m_fEnableSwapMFX  },
-            { DelayEffectId, m_fEnableDelayMFX },
         };
     
         if (!IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW))
@@ -713,7 +662,6 @@ HRESULT CSwapAPOMFX::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERT
 
     // If either the master disable or our APO's enable properties changed...
     if (PK_EQUAL(key, PKEY_Endpoint_Enable_Channel_Swap_MFX) ||
-        PK_EQUAL(key, PKEY_Endpoint_Enable_Delay_MFX) ||
         PK_EQUAL(key, PKEY_AudioEndpoint_Disable_SysFx))
     {
         LONG nChanges = 0;
@@ -730,7 +678,6 @@ HRESULT CSwapAPOMFX::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERT
         KeyControl controls[] =
         {
             { PKEY_Endpoint_Enable_Channel_Swap_MFX, &m_fEnableSwapMFX  },
-            { PKEY_Endpoint_Enable_Delay_MFX,        &m_fEnableDelayMFX },
         };
         
         for (int i = 0; i < ARRAYSIZE(controls); i++)

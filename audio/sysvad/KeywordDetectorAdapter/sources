@@ -1,0 +1,53 @@
+TARGETTYPE=DYNLINK
+TARGETNAME=KeywordDetectorContosoAdapter
+
+DLLENTRY=_DllMainCRTStartup
+DLLDEF=KeywordDetectorContosoAdapter.def
+#USE_ATL=1
+
+
+USE_LIBCMT=1
+
+MSC_WARNING_LEVEL=-W4 \
+                  -WX
+
+C_DEFINES=$(C_DEFINES) \
+          -D_WINDLL \
+          -D_USRDLL \
+          -DUNICODE \
+          -D_UNICODE
+          
+#
+# Indicate to the WDK that this sample only supports Win10[+]
+#
+MINIMUM_NT_TARGET_VERSION=$(_NT_TARGET_VERSION_WINTHRESHOLD)
+
+# Indicate that this DLL must be included in the driver package
+DDK_NO_PACKAGE_PROJECT=0
+DDK_INCLUDE_PACKAGE_PROJECT=1
+
+INCLUDES= \
+          $(DDK_INC_PATH); \
+          ..\inc;..\; \
+
+SOURCES=KeywordDetectorContosoAdapter.idl \
+        KeywordDetectorContosoAdapter.rc \
+        dllmain.cpp \
+        KeywordDetectorContosoAdapter.cpp \
+        stdafx.cpp \
+
+
+TARGETLIBS= \
+           $(SDK_LIB_PATH)\onecore_downlevel.lib \
+           $(SDK_LIB_PATH)\onecore_downlevel.lib \
+           $(SDK_LIB_PATH)\oleaut32.lib \
+            \
+           $(ONECORE_PRIV_SDK_LIB_PATH)\OneCore_Forwarder_user32.lib \
+           $(INTERNAL_SDK_LIB_PATH)\onecoreuapuuid.lib \
+           $(SDK_LIB_PATH)\mfplat.lib \
+           $(SDK_LIB_PATH)\runtimeobject.lib  \
+
+
+
+MUI_VERIFY_NO_LOC_RESOURCE=1 
+

@@ -777,13 +777,13 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWr
     
     NTSTATUS ntStatus;
 
-#if defined(SYSVAD_BTH_BYPASS) || defined (SYSVAD_USB_SIDEBAND)
-    if (m_SidebandOpen)
+#ifdef SYSVAD_BTH_BYPASS
+    if (m_ScoOpen)
     {
-        ntStatus = GetSidebandStreamNtStatus();
+        ntStatus = GetScoStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // defined(SYSVAD_BTH_BYPASS) || defined (SYSVAD_USB_SIDEBAND)
+#endif // SYSVAD_BTH_BYPASS
 
     //
     // Basic validation. WritePosition indicates the position (1-based) of the last valid byte.
@@ -866,13 +866,13 @@ NTSTATUS CMiniportWaveRTStream::GetPositions(
     NTSTATUS        ntStatus;
     LARGE_INTEGER   ilQPC;
     KIRQL           oldIrql;
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-    if (m_SidebandOpen)
+#ifdef SYSVAD_BTH_BYPASS
+    if (m_ScoOpen)
     {
-        ntStatus = GetSidebandStreamNtStatus();
+        ntStatus = GetScoStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#endif // SYSVAD_BTH_BYPASS   
 
     // Update *_pullLinearBufferPosition with the the number of bytes fetched from waveRT ever since a stream got set into RUN
     // state.
@@ -903,9 +903,9 @@ NTSTATUS CMiniportWaveRTStream::GetPositions(
 
     ntStatus = STATUS_SUCCESS;
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#ifdef SYSVAD_BTH_BYPASS
 Done:
-#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#endif // SYSVAD_BTH_BYPASS
     return ntStatus;
 }
 
@@ -996,3 +996,4 @@ NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ 
 
     return ntStatus;
 }
+

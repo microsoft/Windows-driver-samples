@@ -66,11 +66,11 @@ Return Value:
         ULONG                   volumeSettingsSize  = 0;
         PKSPROPERTY_VALUES      volumeSettings;
         PKSPROPERTY_DESCRIPTION propDesc;
-        PSIDEBANDDEVICECOMMON     bthHfpDevice;
+        PBTHHFPDEVICECOMMON     bthHfpDevice;
         ULONG                   cbFullProperty      = sizeof(BTHHFP_VOLUME_VALUES_BLOCK);
         
         propDesc        = PKSPROPERTY_DESCRIPTION(PropertyRequest->Value);
-        bthHfpDevice    = miniport->GetSidebandDevice(); // weak ref.
+        bthHfpDevice    = miniport->GetBthHfpDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
         
         //
@@ -227,11 +227,11 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PSIDEBANDDEVICECOMMON bthHfpDevice    = NULL;
+                        PBTHHFPDEVICECOMMON bthHfpDevice    = NULL;
                         PKSMULTIPLE_ITEM    pMI             = (PKSMULTIPLE_ITEM)PropertyRequest->Value;
                         PKSJACK_DESCRIPTION pDesc           = (PKSJACK_DESCRIPTION)(pMI+1);
 
-                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
+                        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
                         ASSERT(bthHfpDevice != NULL);
                         
                         pMI->Size = cbNeeded;
@@ -437,11 +437,11 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
+                        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
                         
                         GUID* guid = (GUID *)PropertyRequest->Value;
                         
-                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
+                        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
                         ASSERT(bthHfpDevice != NULL);
 
                         *guid = bthHfpDevice->GetContainerId();
@@ -500,9 +500,9 @@ Return Value:
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
-        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
+        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
         
-        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
+        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
 
         ntStatus = bthHfpDevice->Connect();
@@ -555,9 +555,9 @@ Return Value:
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
-        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
+        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
         
-        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
+        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
 
         ntStatus = bthHfpDevice->Disconnect();

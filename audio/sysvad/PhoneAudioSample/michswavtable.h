@@ -16,11 +16,6 @@ Abstract:
 #define _SYSVAD_MICHSWAVTABLE_H_
 
 //
-// Function prototypes.
-//
-NTSTATUS PropertyHandler_UsbHsWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyRequest);
-
-//
 // Mic in (external: headset) range.
 //
 #define MICHS_DEVICE_MAX_CHANNELS           1       // Max Channels.

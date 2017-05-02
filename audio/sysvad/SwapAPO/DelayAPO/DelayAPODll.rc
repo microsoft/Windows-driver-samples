@@ -1,0 +1,24 @@
+#if 0
+Copyright (c) Microsoft Corporation. All Rights Reserved
+#endif
+
+#include "resource.h"
+#include "winres.h"
+#include <ntverp.h>
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "Delay APO"
+#define VER_INTERNALNAME_STR            "DELAYAPODll"
+#define VER_ORIGINALFILENAME_STR        "DelayAPODll.Dll"
+#include <Common.ver>
+
+IDR_DELAYAPODLL          REGISTRY                "DelayAPODll.rgs"
+IDR_DELAYAPOMFX          REGISTRY                "DelayAPOMFX.rgs"
+IDR_DELAYAPOSFX          REGISTRY                "DelayAPOSFX.rgs"
+
+// ICON
+IDI_EFFECT_ICON			RCDATA					"DelayApo.png"
+
+#if 0
+1                       TYPELIB                 "DelayAPODll.tlb"
+#endif

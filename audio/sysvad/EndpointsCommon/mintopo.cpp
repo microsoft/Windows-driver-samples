@@ -110,30 +110,30 @@ Return Value:
 
     DPF_ENTER(("[CMiniportTopology::~CMiniportTopology]"));
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-    if (IsSidebandDevice())
+#ifdef SYSVAD_BTH_BYPASS
+    if (IsBthHfpDevice())
     {
-        ASSERT(m_pSidebandDevice != NULL);
+        ASSERT(m_BthHfpDevice != NULL);
         
         //
-        // Register with BthHfpDevice or UsbHsDevice to get notification events.
+        // Register with BthHfpDevice to get notification events.
         //
-        if (m_DeviceType == eBthHfpMicDevice || m_DeviceType == eUsbHsMicDevice)
+        if (m_DeviceType == eBthHfpMicDevice)
         {
-            m_pSidebandDevice->SetMicVolumeHandler(NULL, NULL);
-            m_pSidebandDevice->SetMicConnectionStatusHandler(NULL, NULL);
+            m_BthHfpDevice->SetMicVolumeHandler(NULL, NULL);
+            m_BthHfpDevice->SetMicConnectionStatusHandler(NULL, NULL);
         }
         else 
         {
-            ASSERT(m_DeviceType == eBthHfpSpeakerDevice || m_DeviceType == eUsbHsSpeakerDevice);
+            ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
             
-            m_pSidebandDevice->SetSpeakerVolumeHandler(NULL, NULL);
-            m_pSidebandDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
+            m_BthHfpDevice->SetSpeakerVolumeHandler(NULL, NULL);
+            m_BthHfpDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
         }
 
-        SAFE_RELEASE(m_pSidebandDevice);   // ISidebandDeviceCommon
+        SAFE_RELEASE(m_BthHfpDevice);   // IBthHfpDeviceCommon
     }
-#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#endif // SYSVAD_BTH_BYPASS
 
 
 } // ~CMiniportTopology
@@ -287,41 +287,41 @@ Return Value:
         DPF(D_ERROR, ("Init: CMiniportTopologySYSVAD::Init failed, 0x%x", ntStatus)),
         Done);
     
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-    if (IsSidebandDevice())
+#ifdef SYSVAD_BTH_BYPASS
+    if (IsBthHfpDevice())
     {
-        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
+        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
         
-        sidebandDevice = GetSidebandDevice(); // weak ref.
-        ASSERT(sidebandDevice != NULL);
+        bthHfpDevice = GetBthHfpDevice(); // weak ref.
+        ASSERT(bthHfpDevice != NULL);
         
         //
         // Register with BthHfpDevice to get notification events.
         //
-        if (m_DeviceType == eBthHfpMicDevice || m_DeviceType == eUsbHsMicDevice)
+        if (m_DeviceType == eBthHfpMicDevice)
         {
-            sidebandDevice->SetMicVolumeHandler(
+            bthHfpDevice->SetMicVolumeHandler(
                 EvtMicVolumeHandler,                // handler
                 PCMiniportTopology(this));          // context.
             
-            sidebandDevice->SetMicConnectionStatusHandler(
+            bthHfpDevice->SetMicConnectionStatusHandler(
                 EvtMicConnectionStatusHandler,      // handler
                 PCMiniportTopology(this));          // context.
         }
         else 
         {
-            ASSERT(m_DeviceType == eBthHfpSpeakerDevice || m_DeviceType == eUsbHsSpeakerDevice);
+            ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
             
-            sidebandDevice->SetSpeakerVolumeHandler(
+            bthHfpDevice->SetSpeakerVolumeHandler(
                 EvtSpeakerVolumeHandler,            // handler
                 PCMiniportTopology(this));          // context.
             
-            sidebandDevice->SetSpeakerConnectionStatusHandler(
+            bthHfpDevice->SetSpeakerConnectionStatusHandler(
                 EvtSpeakerConnectionStatusHandler,  // handler
                 PCMiniportTopology(this));          // context.
         }
     }
-#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#endif  // SYSVAD_BTH_BYPASS
 
 Done:
     return ntStatus;
@@ -583,7 +583,7 @@ Return Value:
     return ntStatus;
 }
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#ifdef SYSVAD_BTH_BYPASS
 //=============================================================================
 #pragma code_seg()
 VOID
@@ -687,7 +687,7 @@ CMiniportTopology::EvtMicConnectionStatusHandler
         FALSE,                              // do not use node ID.
         ULONG(-1));                         // node ID, not used.
 }
-#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#endif  // SYSVAD_BTH_BYPASS
 
 //=============================================================================
 #pragma code_seg("PAGE")

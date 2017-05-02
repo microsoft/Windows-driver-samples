@@ -1,0 +1,13 @@
+!include ..\sources.inc
+
+TARGETNAME=SwapAPO
+DLLDEF=SwapAPODll.def
+
+SOURCES=SwapAPOInterface.idl \
+        SwapAPOMFX.cpp \
+        SwapAPOSFX.cpp \
+        Swap.cpp \
+        SwapAPODll.idl \
+        SwapAPODll.rc \
+        SwapAPODll.cpp \
+

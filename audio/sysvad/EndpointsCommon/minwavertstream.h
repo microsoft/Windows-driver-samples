@@ -60,9 +60,6 @@ protected:
     ULONG                       m_ulNotificationIntervalMs;
     ULONG                       m_ulCurrentWritePosition;
     LONG                        m_IsCurrentWritePositionUpdated;
-
-    UNICODE_STRING              m_UsbSidebandSymbolicLink;
-    PVOID                       m_pUsbSidebandNotificationEntry;
     
 public:
     DECLARE_STD_UNKNOWN();
@@ -128,10 +125,12 @@ protected:
     BOOLEAN                     m_bEoSReceived;
     BOOLEAN                     m_bLastBufferRendered;
     KSPIN_LOCK                  m_PositionSpinLock;
+    AUDIOMODULE *               m_pAudioModules;
+    ULONG                       m_AudioModuleCount;
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-    BOOLEAN                     m_SidebandOpen;
-#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#ifdef SYSVAD_BTH_BYPASS
+    BOOLEAN                     m_ScoOpen;
+#endif  // SYSVAD_BTH_BYPASS
 
 public:
     
@@ -230,10 +229,45 @@ public:
     {
         return m_SignalProcessingMode;
     }
+    
+    NTSTATUS PropertyHandlerModulesListRequest
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerModuleCommand
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
 
 private:
 
+    //
     // Helper functions.
+    //
+
+#pragma code_seg()
+    ULONG
+    GetAudioModuleListCount()
+    {
+        return m_AudioModuleCount;
+    }
+
+    AUDIOMODULE *
+    GetAudioModule(
+        _In_ ULONG Index
+        )
+    {
+        ASSERT(Index < GetAudioModuleListCount());
+        return &m_pAudioModules[Index];
+    }
+
+    AUDIOMODULE *
+    GetAudioModuleList()
+    {
+        return m_pAudioModules;
+    }
+        
     VOID WriteBytes
     (
         _In_ ULONG ByteDisplacement
@@ -261,14 +295,9 @@ private:
         _Out_opt_  LARGE_INTEGER *  _pliQPCTime
     );
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-    NTSTATUS GetSidebandStreamNtStatus();
-#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
-#ifdef SYSVAD_USB_SIDEBAND
-    NTSTATUS TestSideband();
-    NTSTATUS UsbSidebandNotification(_In_ PVOID NotificationStructure);
-    friend NTSTATUS USBSidebandNotification(_In_ PVOID NotificationStructure, _Inout_opt_ PVOID Context);
-#endif // SYSVAD_USB_SIDEBAND
+#ifdef SYSVAD_BTH_BYPASS
+    NTSTATUS GetScoStreamNtStatus();
+#endif  // SYSVAD_BTH_BYPASS
     
 };
 typedef CMiniportWaveRTStream *PCMiniportWaveRTStream;
