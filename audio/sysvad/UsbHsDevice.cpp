@@ -12,6 +12,8 @@ Abstract:
 
 --*/
 
+#ifdef SYSVAD_USB_SIDEBAND
+
 #pragma warning (disable : 4127)
 
 #include <initguid.h>
@@ -21,7 +23,6 @@ Abstract:
 #include "IHVPrivatePropertySet.h"
 #include "simple.h"
 
-//#ifdef SYSVAD_USB_SIDEBAND
 #include <limits.h>
 #include <bthhfpddi.h>
 #include <wdmguid.h>    // guild-arrival/removal
@@ -2912,4 +2913,4 @@ Routine Description:
 
 }
 
-//#endif // SYSVAD_USB_SIDEBAND
+#endif // SYSVAD_USB_SIDEBAND
