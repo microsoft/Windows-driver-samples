@@ -17,6 +17,7 @@ Abstract:
 
 #include "savedata.h"
 #include "tonegenerator.h"
+#include "WaveReader.h"
 
 //
 // Structure to store notifications events in a protected list
@@ -121,16 +122,22 @@ protected:
     ULONG                       m_ulContentId;
     CSaveData                   m_SaveData;
     ToneGenerator               m_ToneGenerator;
+    CWaveReader                 m_WaveReader;
     GUID                        m_SignalProcessingMode;
     BOOLEAN                     m_bEoSReceived;
     BOOLEAN                     m_bLastBufferRendered;
     KSPIN_LOCK                  m_PositionSpinLock;
     AUDIOMODULE *               m_pAudioModules;
     ULONG                       m_AudioModuleCount;
+    DWORD                       m_ulEnableWaveCapture;
+    UNICODE_STRING              m_usHostCaptureFileName;
+    UNICODE_STRING              m_usLoopbackCaptureFileName;
+    UNICODE_STRING              m_usKeywordDetectorFileName;
+    ULONG                       m_ulLoopCount;
 
-#ifdef SYSVAD_BTH_BYPASS
-    BOOLEAN                     m_ScoOpen;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    BOOLEAN                     m_SidebandOpen;
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 public:
     
@@ -245,7 +252,7 @@ private:
     //
     // Helper functions.
     //
-
+    
 #pragma code_seg()
     ULONG
     GetAudioModuleListCount()
@@ -294,12 +301,14 @@ private:
         _Out_opt_  ULONGLONG *      _pullPresentationPosition, 
         _Out_opt_  LARGE_INTEGER *  _pliQPCTime
     );
+    NTSTATUS ReadRegistrySettings();
 
-#ifdef SYSVAD_BTH_BYPASS
-    NTSTATUS GetScoStreamNtStatus();
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    NTSTATUS GetSidebandStreamNtStatus();
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     
 };
 typedef CMiniportWaveRTStream *PCMiniportWaveRTStream;
 #endif // _SYSVAD_MINWAVERTSTREAM_H_
+
 

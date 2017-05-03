@@ -4,23 +4,23 @@ Copyright (c) Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    bthhfptopo.cpp
+    usbhstopo.cpp
 
 Abstract:
 
-    Implementation of topology miniport for the Bluetooth Hands-Free Profile (external).
+    Implementation of topology miniport for the USB Headset (external).
 
 --*/
-#ifdef SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
 
 #pragma warning (disable : 4127)
 
 #include <sysvad.h>
 #include "simple.h"
 #include "mintopo.h"
-#include "bthhfptopo.h"
+#include "usbhstopo.h"
 
-typedef struct _BTHHFP_VOLUME_VALUES_BLOCK
+typedef struct _USBHS_VOLUME_VALUES_BLOCK
 {
     KSPROPERTY_DESCRIPTION      Description;
     KSPROPERTY_MEMBERSHEADER    SteppingHeader;
@@ -28,13 +28,13 @@ typedef struct _BTHHFP_VOLUME_VALUES_BLOCK
     KSPROPERTY_MEMBERSHEADER    DefaultHeader;
     ULONG                       Default[1];
     
-} BTHHFP_VOLUME_VALUES_BLOCK, *PBTHHFP_VOLUME_VALUES_BLOCK;
+} USBHS_VOLUME_VALUES_BLOCK, *PUSBHS_VOLUME_VALUES_BLOCK;
 
 
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpVolumeLevel_BasicSupport
+PropertyHandler_UsbHsVolumeLevel_BasicSupport
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest
 )
@@ -42,7 +42,7 @@ PropertyHandler_BthHfpVolumeLevel_BasicSupport
 
 Routine Description:
 
-  Handles basic support for Bluetooth HFP ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_VOLUMELEVEL )
+  Handles basic support for USB Headset ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_VOLUMELEVEL )
 
 Arguments:
 
@@ -55,7 +55,7 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-    DPF_ENTER(("[PropertyHandler_BthHfpVolumeLevel_BasicSupport]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsVolumeLevel_BasicSupport]"));
 
     NTSTATUS                ntStatus        = STATUS_SUCCESS;
     ASSERT(PropertyRequest);
@@ -66,17 +66,17 @@ Return Value:
         ULONG                   volumeSettingsSize  = 0;
         PKSPROPERTY_VALUES      volumeSettings;
         PKSPROPERTY_DESCRIPTION propDesc;
-        PSIDEBANDDEVICECOMMON   bthHfpDevice;
-        ULONG                   cbFullProperty      = sizeof(BTHHFP_VOLUME_VALUES_BLOCK);
+        PSIDEBANDDEVICECOMMON   usbHsDevice;
+        ULONG                   cbFullProperty      = sizeof(USBHS_VOLUME_VALUES_BLOCK);
         
         propDesc        = PKSPROPERTY_DESCRIPTION(PropertyRequest->Value);
-        bthHfpDevice    = miniport->GetSidebandDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
+        usbHsDevice    = miniport->GetSidebandDevice(); // weak ref.
+        ASSERT(usbHsDevice != NULL);
         
         //
-        // Convert the KSPROPERTY_VALUES into a BTHHFP_VOLUME_VALUES_BLOCK.
+        // Convert the KSPROPERTY_VALUES into a USBHS_VOLUME_VALUES_BLOCK.
         //
-        volumeSettings  = bthHfpDevice->GetVolumeSettings(miniport->m_DeviceType, &volumeSettingsSize);
+        volumeSettings  = usbHsDevice->GetVolumeSettings(miniport->m_DeviceType, &volumeSettingsSize);
         ASSERT(volumeSettings != NULL);
         ASSERT(volumeSettingsSize != 0);
         
@@ -85,7 +85,7 @@ Return Value:
             volumeSettings->MembersList[1].MembersHeader.MembersFlags != KSPROPERTY_MEMBER_VALUES)
         {
             ntStatus = STATUS_NOT_SUPPORTED;
-            DPF(D_ERROR, ("PropertyHandler_BthHfpVolumeLevel_BasicSupport: invalid KSPROPERTY_VALUES settings"));
+            DPF(D_ERROR, ("PropertyHandler_UsbHsVolumeLevel_BasicSupport: invalid KSPROPERTY_VALUES settings"));
             goto Done;
         }
         
@@ -101,7 +101,7 @@ Return Value:
         // if return buffer can also hold a range description, return it too
         if(PropertyRequest->ValueSize >= cbFullProperty)
         {
-            PBTHHFP_VOLUME_VALUES_BLOCK settings = (PBTHHFP_VOLUME_VALUES_BLOCK)propDesc;
+            PUSBHS_VOLUME_VALUES_BLOCK settings = (PUSBHS_VOLUME_VALUES_BLOCK)propDesc;
                 
             //
             // First entry is the range.
@@ -158,7 +158,7 @@ Done:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpJackDescription
+PropertyHandler_UsbHsJackDescription
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest, 
     _In_ ULONG                    cJackDescriptions,
@@ -188,7 +188,7 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpJackDescription]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsJackDescription]"));
 
     NTSTATUS                ntStatus            = STATUS_INVALID_DEVICE_REQUEST;
     ULONG                   nPinId              = (ULONG)-1;
@@ -227,19 +227,19 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PSIDEBANDDEVICECOMMON bthHfpDevice    = NULL;
+                        PSIDEBANDDEVICECOMMON usbHsDevice    = NULL;
                         PKSMULTIPLE_ITEM    pMI             = (PKSMULTIPLE_ITEM)PropertyRequest->Value;
                         PKSJACK_DESCRIPTION pDesc           = (PKSJACK_DESCRIPTION)(pMI+1);
 
-                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
-                        ASSERT(bthHfpDevice != NULL);
+                        usbHsDevice = miniport->GetSidebandDevice(); // weak ref.
+                        ASSERT(usbHsDevice != NULL);
                         
                         pMI->Size = cbNeeded;
                         pMI->Count = 1;
 
                         RtlCopyMemory(pDesc, JackDescriptions[nPinId], sizeof(KSJACK_DESCRIPTION));
 
-                        pDesc->IsConnected = bthHfpDevice->GetConnectionStatus() ? TRUE : FALSE;
+                        pDesc->IsConnected = usbHsDevice->GetConnectionStatus() ? TRUE : FALSE;
                         
                         ntStatus = STATUS_SUCCESS;
                     }
@@ -254,7 +254,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpJackDescription2
+PropertyHandler_UsbHsJackDescription2
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest,
     _In_ ULONG                    cJackDescriptions,
@@ -284,7 +284,7 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpJackDescription2]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsJackDescription2]"));
 
     NTSTATUS                ntStatus = STATUS_INVALID_DEVICE_REQUEST;
     ULONG                   nPinId = (ULONG)-1;
@@ -367,7 +367,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-PropertyHandler_BthHfpJackContainerId
+PropertyHandler_UsbHsJackContainerId
 ( 
     _In_ PPCPROPERTY_REQUEST      PropertyRequest,
     _In_ ULONG                    cJackDescriptions,
@@ -397,7 +397,7 @@ Return Value:
 
     ASSERT(PropertyRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpJackContainerId]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsJackContainerId]"));
 
     NTSTATUS                ntStatus    = STATUS_INVALID_DEVICE_REQUEST;
     PCMiniportTopology      miniport    = (PCMiniportTopology)PropertyRequest->MajorTarget;
@@ -437,14 +437,14 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
+                        PSIDEBANDDEVICECOMMON usbHsDevice = NULL;
                         
                         GUID* guid = (GUID *)PropertyRequest->Value;
                         
-                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
-                        ASSERT(bthHfpDevice != NULL);
+                        usbHsDevice = miniport->GetSidebandDevice(); // weak ref.
+                        ASSERT(usbHsDevice != NULL);
 
-                        *guid = bthHfpDevice->GetContainerId();
+                        *guid = usbHsDevice->GetContainerId();
 
                         ntStatus = STATUS_SUCCESS;
                     }
@@ -457,126 +457,16 @@ Return Value:
 }
 
 //=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-PropertyHandler_BthHfpOneShotReconnect
-( 
-    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
-)
-/*++
-
-Routine Description:
-
-  Handles ( KSPROPSETID_BtAudio, KSPROPERTY_ONESHOT_RECONNECT )
-
-Arguments:
-
-  PropertyRequest - 
-
-Return Value:
-
-  NT status code.
-
---*/
-{
-    PAGED_CODE();
-
-    ASSERT(PropertyRequest);
-
-    DPF_ENTER(("[PropertyHandler_BthHfpOneShotReconnect]"));
-
-    NTSTATUS                ntStatus    = STATUS_INVALID_DEVICE_REQUEST;
-    PCMiniportTopology      miniport    = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    
-    if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
-    {
-        ntStatus = 
-            PropertyHandler_BasicSupport
-            (
-                PropertyRequest,
-                KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_GET,
-                VT_ILLEGAL
-            );
-    }
-    else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
-    {
-        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
-        
-        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
-
-        ntStatus = bthHfpDevice->Connect();
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-PropertyHandler_BthHfpOneDisconnect
-( 
-    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
-)
-/*++
-
-Routine Description:
-
-  Handles ( KSPROPSETID_BtAudio, KSPROPERTY_ONESHOT_DISCONNECT )
-
-Arguments:
-
-  PropertyRequest - 
-
-Return Value:
-
-  NT status code.
-
---*/
-{
-    PAGED_CODE();
-
-    ASSERT(PropertyRequest);
-
-    DPF_ENTER(("[PropertyHandler_BthHfpOneDisconnect]"));
-
-    NTSTATUS                ntStatus    = STATUS_INVALID_DEVICE_REQUEST;
-    PCMiniportTopology      miniport    = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    
-    if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
-    {
-        ntStatus = 
-            PropertyHandler_BasicSupport
-            (
-                PropertyRequest,
-                KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_GET,
-                VT_ILLEGAL
-            );
-    }
-    else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
-    {
-        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
-        
-        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
-
-        ntStatus = bthHfpDevice->Disconnect();
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
 #pragma code_seg()
 NTSTATUS 
-PropertyHandler_BthHfpTopoNodeEvent
+PropertyHandler_UsbHsTopoNodeEvent
 (
     _In_    PPCEVENT_REQUEST    EventRequest
 )
 {
     ASSERT(EventRequest);
 
-    DPF_ENTER(("[PropertyHandler_BthHfpTopoNodeEvent]"));
+    DPF_ENTER(("[PropertyHandler_UsbHsTopoNodeEvent]"));
 
     // The major target is the object pointer to the topology miniport.
     PCMiniportTopology  pMiniport = (PCMiniportTopology)EventRequest->MajorTarget;
@@ -618,7 +508,6 @@ PropertyHandler_BthHfpTopoNodeEvent
 }
 
 #pragma code_seg()
-#endif  // SYSVAD_BTH_BYPASS
-
+#endif //SYSVAD_USB_SIDEBAND
 
 

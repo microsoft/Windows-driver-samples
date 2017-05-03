@@ -193,12 +193,12 @@ Return Value:
         m_pAudioModules = NULL;
     }
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    if (IsSidebandDevice())
     {
-        SAFE_RELEASE(m_BthHfpDevice);
+        SAFE_RELEASE(m_pSidebandDevice);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 } // ~CMiniportWaveRT
 
@@ -2717,4 +2717,5 @@ Exit:
 
     return ntStatus;
 }
+
 

@@ -47,7 +47,6 @@
     <ProjectGuid>{830B14D5-0E32-4F9E-AEFA-4C9F6FC13C2A}</ProjectGuid>
     <SampleGuid>{E9D167E6-E633-4284-8F02-FF86DF3B6D7F}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>

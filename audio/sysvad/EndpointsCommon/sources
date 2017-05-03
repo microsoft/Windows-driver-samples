@@ -11,7 +11,7 @@ INCLUDES= \
         ..
 
 
-C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS
+C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS -DSYSVAD_USB_SIDEBAND
 #C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ 
 
 DDK_TARGET_PLATFORM=Universal
@@ -27,20 +27,22 @@ MINIMUM_NT_TARGET_VERSION=$(_NT_TARGET_VERSION_WINTHRESHOLD)
 KMDF_VERSION_MAJOR=1
 
 
-SOURCES=$(SOURCES)              \
-        mintopo.cpp             \
-        minwavert.cpp           \
-        minwavertstream.cpp     \
-        MiniportAudioEngineNode.cpp\
-        MiniportStreamAudioEngineNode.cpp\
-        micarraytopo.cpp        \
-        speakertopo.cpp         \
-        speakerhptopo.cpp       \
-        bthhfptopo.cpp          \
-        bthhfpmictopo.cpp       \
-        bthhfpspeakertopo.cpp   \
-        bthhfpminwavert.cpp     \
-        AudioModuleHelper.cpp   \
-        
-
+SOURCES=$(SOURCES)                         \
+        AudioModuleHelper.cpp              \
+        bthhfptopo.cpp                     \
+        bthhfpmictopo.cpp                  \
+        bthhfpspeakertopo.cpp              \
+        bthhfpminwavert.cpp                \
+        micarraytopo.cpp                   \
+        MiniportAudioEngineNode.cpp        \
+        MiniportStreamAudioEngineNode.cpp  \
+        mintopo.cpp                        \
+        minwavert.cpp                      \
+        minwavertstream.cpp                \
+        speakertopo.cpp                    \
+        speakerhptopo.cpp                  \
+        usbhstopo.cpp                      \
+        usbhsmictopo.cpp                   \
+        usbhsspeakertopo.cpp               \
+        usbhsminwavert.cpp                 \
 

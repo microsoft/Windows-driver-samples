@@ -27,29 +27,13 @@
     <Midl Include="KeywordDetectorContosoAdapter.idl">
       <Filter>Source Files</Filter>
     </Midl>
+    <None Include="KeywordDetectorContosoAdapter.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KeywordDetectorContosoAdapter.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="*.def;*.bat;*.hpj;*.asmx">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -24,6 +24,9 @@
     <ClCompile Include="Parts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="stdafxsrc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SwapPropPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,140 +39,13 @@
     <Midl Include="CplExt.idl">
       <Filter>Source Files</Filter>
     </Midl>
-    <ClCompile Include="stdafx.cpp">
+    <None Include="PropPageExt.def">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CplExt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-    <ClInclude Include="AdvEndpointPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parts.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SwapPropPage.h" />
-    <ClInclude Include="TopologyExaminers.h" />
-    <ClInclude Include="UIWidgets.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="*.def;*.bat;*.hpj;*.asmx">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

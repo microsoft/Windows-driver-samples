@@ -107,6 +107,7 @@ Abstract:
     }
 
 #define SAFE_RELEASE(p) {if (p) { (p)->Release(); (p) = nullptr; } }
+#define SAFE_DELETE_PTR_WITH_TAG(ptr, tag) if(ptr) { ExFreePoolWithTag((ptr), tag); (ptr) = NULL; }
 
 // JACKDESC_RGB(r, g, b) 
 #define JACKDESC_RGB(r, g, b) \
@@ -116,9 +117,11 @@ Abstract:
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-#define MINWAVERT_POOLTAG   'RWNM'
-#define MINTOPORT_POOLTAG   'RTNM'
-#define MINADAPTER_POOLTAG  'uAyS'
+#define MINWAVERT_POOLTAG           'RWNM'
+#define MINTOPORT_POOLTAG           'RTNM'
+#define MINADAPTER_POOLTAG          'uAyS'
+#define USBSIDEBANDTEST_POOLTAG01   '1AyS'
+#define USBSIDEBANDTEST_POOLTAG02   '2AyS'
 
 typedef enum
 {
@@ -138,6 +141,8 @@ typedef enum
     eMicHsDevice,
     eFmRxDevice,
     eSpdifRenderDevice,
+    eUsbHsSpeakerDevice,
+    eUsbHsMicDevice,
     eMaxDeviceType
     
 } eDeviceType;
@@ -361,7 +366,7 @@ typedef struct _ENDPOINT_MINIPAIR
     PCFILTER_DESCRIPTOR*            WaveDescriptor;
     ULONG                           WaveInterfacePropertyCount;
     const SYSVAD_DEVPROPERTY*       WaveInterfaceProperties;
-    
+
     USHORT                          DeviceMaxChannels;
     PIN_DEVICE_FORMATS_AND_MODES*   PinDeviceFormatsAndModes;
     ULONG                           PinDeviceFormatsAndModesCount;
@@ -608,6 +613,11 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
        
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+    STDMETHOD_(NTSTATUS,        InitUsbSideband)();
+
+#endif // SYSVAD_USB_SIDEBAND
+
     STDMETHOD_(VOID, Cleanup)();
 };
 
@@ -639,23 +649,29 @@ typedef VOID (*PFNEVENTNOTIFICATION)(
 DEFINE_GUID(IID_IBthHfpDeviceCommon,
 0x576b824a, 0x5248, 0x47b1, 0x82, 0xc5, 0xe4, 0x7b, 0xa7, 0xe2, 0xaf, 0x2b);
 
+DEFINE_GUID(IID_IUsbHsDeviceCommon,
+    0xb57b5547, 0x63f, 0x4a58, 0xb3, 0x7, 0x90, 0xb2, 0xfc, 0x6c, 0x32, 0xdb);
+
+
 //=============================================================================
 // Interfaces
 //=============================================================================
 
 ///////////////////////////////////////////////////////////////////////////////
-// IAdapterCommon
+// ISidebandDeviceCommon
 //
-DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
+DECLARE_INTERFACE_(ISidebandDeviceCommon, IUnknown)
 {
     STDMETHOD_(BOOL,                IsVolumeSupported)
     (
         THIS_
+        _In_  eDeviceType deviceType
     ) PURE;
     
     STDMETHOD_(PKSPROPERTY_VALUES,  GetVolumeSettings)
     (
         THIS_
+        _In_  eDeviceType deviceType,
         _Out_ PULONG    Size 
     ) PURE;
 
@@ -699,16 +715,19 @@ DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
     STDMETHOD_(BOOL,                GetStreamStatus)
     (
         THIS_
+        _In_  eDeviceType deviceType
     ) PURE;
 
     STDMETHOD_(NTSTATUS,            StreamOpen)
     (
         THIS_
+        _In_  eDeviceType deviceType
     ) PURE;
 
     STDMETHOD_(NTSTATUS,            StreamClose)
     (
         THIS_
+        _In_  eDeviceType deviceType
     ) PURE;
 
     STDMETHOD_(GUID,                GetContainerId)
@@ -716,30 +735,18 @@ DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
         THIS_
     ) PURE;
 
-    STDMETHOD_(VOID,                SetSpeakerVolumeHandler)
+    STDMETHOD_(VOID,                SetVolumeHandler)
     (
         THIS_
+        _In_        eDeviceType             deviceType,
         _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
         _In_opt_    PVOID                   EventHandlerContext
     ) PURE;
     
-    STDMETHOD_(VOID,                SetSpeakerConnectionStatusHandler)
+    STDMETHOD_(VOID,                SetConnectionStatusHandler)
     (
         THIS_
-        _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-        _In_opt_    PVOID                   EventHandlerContext
-    ) PURE;
-    
-    STDMETHOD_(VOID,                SetMicVolumeHandler)
-    (
-        THIS_
-        _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-        _In_opt_    PVOID                   EventHandlerContext
-    ) PURE;
-    
-    STDMETHOD_(VOID,                SetMicConnectionStatusHandler)
-    (
-        THIS_
+        _In_        eDeviceType             deviceType,
         _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
         _In_opt_    PVOID                   EventHandlerContext
     ) PURE;
@@ -754,9 +761,10 @@ DECLARE_INTERFACE_(IBthHfpDeviceCommon, IUnknown)
         THIS_
     ) PURE;
 };
-typedef IBthHfpDeviceCommon *PBTHHFPDEVICECOMMON;
+typedef ISidebandDeviceCommon *PSIDEBANDDEVICECOMMON;
 
 #endif // SYSVAD_BTH_BYPASS
 
 #endif  //_SYSVAD_COMMON_H_
+
 

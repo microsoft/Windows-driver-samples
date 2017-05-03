@@ -777,13 +777,13 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWr
     
     NTSTATUS ntStatus;
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS) || defined (SYSVAD_USB_SIDEBAND)
+    if (m_SidebandOpen)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined (SYSVAD_USB_SIDEBAND)
 
     //
     // Basic validation. WritePosition indicates the position (1-based) of the last valid byte.
@@ -808,6 +808,13 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
 {
     DPF_ENTER(("[CMiniportWaveRTStream::SetCurrentWritePositionInternal]"));
     
+    ASSERT(m_bEoSReceived == FALSE);
+
+    if (m_bEoSReceived)
+    {
+        return STATUS_INVALID_DEVICE_REQUEST;
+    }
+
     if (_ulCurrentWritePosition > m_ulDmaBufferSize)
     {
         return STATUS_INVALID_DEVICE_REQUEST;
@@ -866,13 +873,13 @@ NTSTATUS CMiniportWaveRTStream::GetPositions(
     NTSTATUS        ntStatus;
     LARGE_INTEGER   ilQPC;
     KIRQL           oldIrql;
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+    if (m_SidebandOpen)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS   
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
     // Update *_pullLinearBufferPosition with the the number of bytes fetched from waveRT ever since a stream got set into RUN
     // state.
@@ -903,9 +910,9 @@ NTSTATUS CMiniportWaveRTStream::GetPositions(
 
     ntStatus = STATUS_SUCCESS;
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 Done:
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     return ntStatus;
 }
 
@@ -978,8 +985,6 @@ NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ 
     DPF_ENTER(("[CMiniportWaveRT::SetStreamCurrentWritePositionForLastBuffer]"));
     NTSTATUS        ntStatus;
     KIRQL           oldIrql;
-
-    ASSERT(m_bEoSReceived == FALSE);
 
     KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
 
