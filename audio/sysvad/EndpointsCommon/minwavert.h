@@ -18,6 +18,9 @@ Abstract:
 #ifdef SYSVAD_BTH_BYPASS
 #include "bthhfpmicwavtable.h"
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+#include "usbhsmicwavtable.h"
+#endif // SYSVAD_USB_SIDEBAND
 
 //=============================================================================
 // Referenced Forward
@@ -143,16 +146,19 @@ private:
 
     union {
         PVOID                           m_DeviceContext;
-#ifdef SYSVAD_BTH_BYPASS
-        PBTHHFPDEVICECOMMON             m_BthHfpDevice;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+        PSIDEBANDDEVICECOMMON           m_pSidebandDevice;
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     };
+
+    AUDIOMODULE *                       m_pAudioModules;
 
 protected:
     PADAPTERCOMMON                      m_pAdapterCommon;
     ULONG                               m_DeviceFlags;
     eDeviceType                         m_DeviceType;
     PPORTEVENTS                         m_pPortEvents;
+    PPORTCLSNOTIFICATIONS               m_pPortClsNotifications;
     PENDPOINT_MINIPAIR                  m_pMiniportPair;
 
 
@@ -162,6 +168,7 @@ public:
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Set_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorMatchResult);
+
 
     NTSTATUS EventHandler_SoundDetectorMatchDetected
     (
@@ -231,7 +238,9 @@ public:
         m_DeviceFormatsAndModes(MiniportPair->PinDeviceFormatsAndModes),
         m_DeviceFormatsAndModesCount(MiniportPair->PinDeviceFormatsAndModesCount),
         m_DeviceFlags(MiniportPair->DeviceFlags),
-        m_pMiniportPair(MiniportPair)
+        m_pMiniportPair(MiniportPair),
+        m_pAudioModules(NULL),
+        m_pPortClsNotifications(NULL)
     {
         PAGED_CODE();
 
@@ -267,16 +276,16 @@ public:
         }
 
 
-#ifdef SYSVAD_BTH_BYPASS
-        if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
                 // This ref is released on dtor.
-                m_BthHfpDevice->AddRef(); // strong ref.
+                m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     }
 
 #pragma code_seg()
@@ -316,6 +325,22 @@ public:
     (
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
+    
+    NTSTATUS PropertyHandlerModulesListRequest
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerModuleCommand
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+    
+    NTSTATUS PropertyHandlerModuleNotificationDeviceId
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
 
     PADAPTERCOMMON GetAdapterCommObj() 
     {
@@ -329,6 +354,12 @@ public:
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
 #endif  // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    NTSTATUS PropertyHandler_UsbHsAudioEffectsDiscoveryEffectsList  
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+#endif  // SYSVAD_USB_SIDEBAND
 
     //---------------------------------------------------------------------------------------------------------
     // volume
@@ -504,8 +535,8 @@ private:
         // Special handling for the SCO bypass endpoint, whose modes are determined at runtime
         if (m_DeviceType == eBthHfpMicDevice)
         {
-            ASSERT(m_BthHfpDevice != NULL);
-            if (m_BthHfpDevice->IsNRECSupported())
+            ASSERT(m_pSidebandDevice != NULL);
+            if (m_pSidebandDevice->IsNRECSupported())
             {
                 modes = BthHfpMicPinSupportedDeviceModesNrec;
                 numModes = ARRAYSIZE(BthHfpMicPinSupportedDeviceModesNrec);
@@ -629,39 +660,104 @@ protected:
         ASSERT(!IsCellularDevice());
         return KSPIN_WAVE_RENDER_SINK_OFFLOAD;
     }
+
 #pragma code_seg()
 
-#ifdef SYSVAD_BTH_BYPASS
+    ULONG
+    GetAudioModuleDescriptorListCount()
+    {
+        return m_pMiniportPair->ModuleListCount;
+    }
+
+    const PAUDIOMODULE_DESCRIPTOR
+    GetAudioModuleDescriptor(
+        _In_ ULONG Index
+        )
+    {
+        ASSERT(Index < GetAudioModuleDescriptorListCount());
+        return &m_pMiniportPair->ModuleList[Index];
+    }
+
+    const PAUDIOMODULE_DESCRIPTOR
+    GetAudioModuleDescriptorList()
+    {
+        return m_pMiniportPair->ModuleList;
+    }
+    
+    ULONG
+    GetAudioModuleListCount()
+    {
+        return GetAudioModuleDescriptorListCount();
+    }
+
+    AUDIOMODULE *
+    GetAudioModule(
+        _In_ ULONG Index
+        )
+    {
+        ASSERT(Index < GetAudioModuleListCount());
+        return &m_pAudioModules[Index];
+    }
+
+    AUDIOMODULE *
+    GetAudioModuleList()
+    {
+        return m_pAudioModules;
+    }
+    
+    const GUID *
+    GetAudioModuleNotificationDeviceId()
+    {
+        return m_pMiniportPair->ModuleNotificationDeviceId;
+    }
+    
+    NTSTATUS
+    AllocStreamAudioModules(
+        _In_ const GUID *       SignalProcessingMode,
+        _Out_ AUDIOMODULE **    AudioModule,
+        _Out_ ULONG *           AudioModuleCount
+        );
+        
+    VOID
+    FreeStreamAudioModules(
+        _In_ AUDIOMODULE *      AudioModule,
+        _In_ ULONG              AudioModuleCount
+        );
+
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 public:
 #pragma code_seg("PAGE")
-    BOOL IsBthHfpDevice()
+    BOOL IsSidebandDevice()
     {
         PAGED_CODE();
         return (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
+                m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsMicDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PBTHHFPDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetSidebandDevice() 
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
         PAGED_CODE();
 
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
-                bthHfpDevice = m_BthHfpDevice;
+                sidebandDevice = m_pSidebandDevice;
             }
         }
     
-        return bthHfpDevice;
+        return sidebandDevice;
     }
 #pragma code_seg()
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 };
 typedef CMiniportWaveRT *PCMiniportWaveRT;
 
 #endif // _SYSVAD_MINWAVERT_H_
+
 

@@ -185,7 +185,10 @@ ENDPOINT_MINIPAIR SpeakerMiniports =
     SIZEOF_ARRAY(SpeakerPinDeviceFormatsAndModes),
     SpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(SpeakerTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_OFFLOAD_SUPPORTED,
+    SpeakerModulesWaveFilter, 
+    SIZEOF_ARRAY(SpeakerModulesWaveFilter),
+    &SpeakerModuleNotificationDeviceId,    
 };
 
 /*********************************************************************
@@ -227,7 +230,8 @@ ENDPOINT_MINIPAIR SpeakerHsMiniports =
     SIZEOF_ARRAY(SpeakerHsPinDeviceFormatsAndModes),
     SpeakerHsTopologyPhysicalConnections,
     SIZEOF_ARRAY(SpeakerHsTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_OFFLOAD_SUPPORTED,
+    NULL, 0, NULL,                          // audio module settings.
 };
 
 //
@@ -271,7 +275,8 @@ ENDPOINT_MINIPAIR MicHsMiniports =
     SIZEOF_ARRAY(MicHsPinDeviceFormatsAndModes),
     MicHsTopologyPhysicalConnections,
     SIZEOF_ARRAY(MicHsTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS
+    ENDPOINT_NO_FLAGS,
+    NULL, 0, NULL,                          // audio module settings.
 };
 
 
@@ -317,7 +322,8 @@ ENDPOINT_MINIPAIR MicArray1Miniports =
     SIZEOF_ARRAY(MicArrayPinDeviceFormatsAndModes),
     MicArray1TopologyPhysicalConnections,
     SIZEOF_ARRAY(MicArray1TopologyPhysicalConnections),
-    ENDPOINT_SOUNDDETECTOR_SUPPORTED
+    ENDPOINT_SOUNDDETECTOR_SUPPORTED,
+    NULL, 0, NULL,                          // audio module settings.
 };
 
 /*********************************************************************
@@ -370,7 +376,8 @@ ENDPOINT_MINIPAIR CellularMiniports =
     SIZEOF_ARRAY(CellularPinDeviceFormatsAndModes),
     CellularTopologyPhysicalConnections,
     SIZEOF_ARRAY(CellularTopologyPhysicalConnections),
-    ENDPOINT_CELLULAR_PROVIDER1
+    ENDPOINT_CELLULAR_PROVIDER1,
+    NULL, 0, NULL,                          // audio module settings.
 };
 
 
@@ -401,7 +408,8 @@ ENDPOINT_MINIPAIR CellularMiniports2 =
     SIZEOF_ARRAY(CellularPinDeviceFormatsAndModes),
     CellularTopologyPhysicalConnections2,
     SIZEOF_ARRAY(CellularTopologyPhysicalConnections2),
-    ENDPOINT_CELLULAR_PROVIDER2
+    ENDPOINT_CELLULAR_PROVIDER2,
+    NULL, 0, NULL,                          // audio module settings.
 };
 
 /*********************************************************************
@@ -443,7 +451,8 @@ ENDPOINT_MINIPAIR HandsetSpeakerMiniports =
     SIZEOF_ARRAY(HandsetSpeakerPinDeviceFormatsAndModes),
     HandsetSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(HandsetSpeakerTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS
+    ENDPOINT_NO_FLAGS,
+    NULL, 0, NULL,                                  // audio module settings.
 };
 
 //
@@ -487,7 +496,8 @@ ENDPOINT_MINIPAIR HandsetMicMiniports =
     SIZEOF_ARRAY(HandsetMicPinDeviceFormatsAndModes),
     HandsetMicTopologyPhysicalConnections,
     SIZEOF_ARRAY(HandsetMicTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS
+    ENDPOINT_NO_FLAGS,
+    NULL, 0, NULL,                                  // audio module settings.
 };
 
 /*********************************************************************
@@ -527,7 +537,8 @@ ENDPOINT_MINIPAIR FmRxMiniports =
     SIZEOF_ARRAY(FmRxPinDeviceFormatsAndModes),
     FmRxTopologyPhysicalConnections,
     SIZEOF_ARRAY(FmRxTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS
+    ENDPOINT_NO_FLAGS,
+    NULL, 0, NULL,                                  // audio module settings.
 };
 
 //=============================================================================

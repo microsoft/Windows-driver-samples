@@ -157,6 +157,7 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioModuleHelper.cpp" />
     <ClCompile Include="bthhfpmictopo.cpp" />
     <ClCompile Include="bthhfpminwavert.cpp" />
     <ClCompile Include="bthhfpspeakertopo.cpp" />
@@ -169,6 +170,10 @@
     <ClCompile Include="minwavertstream.cpp" />
     <ClCompile Include="speakerhptopo.cpp" />
     <ClCompile Include="speakertopo.cpp" />
+    <ClCompile Include="usbhsminwavert.cpp" />
+    <ClCompile Include="usbhsmictopo.cpp" />
+    <ClCompile Include="usbhsspeakertopo.cpp" />
+    <ClCompile Include="usbhstopo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />

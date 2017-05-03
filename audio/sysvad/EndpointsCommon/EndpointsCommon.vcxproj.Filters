@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{CDBBEDA3-98E9-4C7A-BDB1-25EC47D0B087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{FA3DF57E-BA19-4783-831B-CF9D4D594F70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{CB830E4F-01DA-4D35-9789-E7DB0D02A79C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{49F92783-3B39-4D0C-A153-8C346F754749}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioModuleHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bthhfpmictopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bthhfpminwavert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bthhfpspeakertopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bthhfptopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="micarraytopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniportAudioEngineNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniportStreamAudioEngineNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mintopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minwavert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minwavertstream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="speakerhptopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="speakertopo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

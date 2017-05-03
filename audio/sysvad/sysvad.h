@@ -230,10 +230,20 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
 } PortClassDeviceContext;
 
 //
+// Major/MinorTarget to object casting.
+//
+#define MajorTarget_to_Obj(ptr) \
+    reinterpret_cast<CMiniportWaveRT*>(ptr)
+    
+#define MinorTarget_to_Obj(ptr) \
+    static_cast<CMiniportWaveRTStream*>(reinterpret_cast<PMINIPORTWAVERTSTREAM>(ptr))
+
+//
 // Global settings.
 //
 extern DWORD g_DoNotCreateDataFiles;
 extern DWORD g_DisableBthScoBypass;
+extern UNICODE_STRING g_RegistryPath;
 
 //=============================================================================
 // Function prototypes
@@ -255,6 +265,11 @@ NTSTATUS PropertyHandler_WaveFilter
 NTSTATUS PropertyHandler_OffloadPin
 (
     _In_ PPCPROPERTY_REQUEST PropertyRequest
+);
+
+NTSTATUS PropertyHandler_GenericPin
+( 
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 );
 
 // common.h uses some of the above definitions.

@@ -15,6 +15,9 @@ Abstract:
 #ifndef _SYSVAD_SPEAKERHPWAVTABLE_H_
 #define _SYSVAD_SPEAKERHPWAVTABLE_H_
 
+#include "AudioModule0.h"
+#include "AudioModule1.h"
+#include "AudioModule2.h"
 
 // To keep the code simple assume device supports only 48KHz, 16-bit, stereo (PCM and NON-PCM)
 
@@ -579,6 +582,33 @@ PKSDATARANGE SpeakerHpPinDataRangePointersBridge[] =
 //=============================================================================
 
 static
+PCPROPERTY_ITEM PropertiesSpeakerHpHostPin[] =
+{
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_DESCRIPTORS,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_COMMAND,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_NOTIFICATION_DEVICE_ID,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerHpHostPin, PropertiesSpeakerHpHostPin);
+
+//=============================================================================
+
+static
 PCPROPERTY_ITEM PropertiesSpeakerHpOffloadPin[] =
 {
     {
@@ -592,7 +622,25 @@ PCPROPERTY_ITEM PropertiesSpeakerHpOffloadPin[] =
         KSPROPERTY_OFFLOAD_PIN_VERIFY_STREAM_OBJECT_POINTER, // define properties
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_OffloadPin
-    }
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_DESCRIPTORS,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_COMMAND,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_NOTIFICATION_DEVICE_ID,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_GenericPin
+    },
 };
 
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerHpOffloadPin, PropertiesSpeakerHpOffloadPin);
@@ -606,7 +654,7 @@ PCPIN_DESCRIPTOR SpeakerHpWaveMiniportPins[] =
         SPEAKERHP_MAX_INPUT_SYSTEM_STREAMS,
         SPEAKERHP_MAX_INPUT_SYSTEM_STREAMS, 
         0,
-        NULL,
+        &AutomationSpeakerHpHostPin,        // AutomationTable
         {
             0,
             NULL,
@@ -722,8 +770,83 @@ PCPROPERTY_ITEM PropertiesSpeakerHpWaveFilter[] =
         KSPROPERTY_PIN_PROPOSEDATAFORMAT,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_WaveFilter
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_DESCRIPTORS,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_WaveFilter
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_COMMAND,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_WaveFilter
+    },
+    {
+        &KSPROPSETID_AudioModule,
+        KSPROPERTY_AUDIOMODULE_NOTIFICATION_DEVICE_ID,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_WaveFilter
+    },
+};
+
+//
+// Endpoint audio module list.
+//
+static
+AUDIOMODULE_DESCRIPTOR SpeakerHpModulesWaveFilter[] = 
+{
+    { // 0
+        &AudioModule0Id,    // class id.
+        &NULL_GUID,         // generic, mode independent.
+        L"Generic system module",
+        AUDIOMODULE_INSTANCE_ID(0,0),
+        AUDIOMODULE0_MAJOR,
+        AUDIOMODULE0_MINOR,
+        AUDIOMODULE_DESCRIPTOR_FLAG_NONE,
+        sizeof(AUDIOMODULE0_CONTEXT),
+        AudioModule0_InitClass,
+        AudioModule0_InitInstance,
+        AudioModule0_Cleanup,
+        AudioModule0_Handler
+    },    
+    { // 1
+        &AudioModule1Id,    // class id.
+        &AUDIO_SIGNALPROCESSINGMODE_MOVIE, 
+        L"Speaker HP endpoint, EQ effect module, Movie mode", 
+        AUDIOMODULE_INSTANCE_ID(0,0),
+        AUDIOMODULE1_MAJOR,
+        AUDIOMODULE1_MINOR,
+        AUDIOMODULE_DESCRIPTOR_FLAG_NONE,
+        sizeof(AUDIOMODULE1_CONTEXT),
+        AudioModule1_InitClass,
+        AudioModule1_InitInstance,
+        AudioModule1_Cleanup,
+        AudioModule1_Handler
+    },
+    { // 2
+        &AudioModule2Id,    // class id.
+        &AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
+        L"Speaker HP endpoint, Echo Cancellation effect module, Default mode", 
+        AUDIOMODULE_INSTANCE_ID(0,0),
+        AUDIOMODULE2_MAJOR,
+        AUDIOMODULE2_MINOR,
+        AUDIOMODULE_DESCRIPTOR_FLAG_NONE,
+        sizeof(AUDIOMODULE2_CONTEXT),
+        AudioModule2_InitClass,
+        AudioModule2_InitInstance,
+        AudioModule2_Cleanup,
+        AudioModule2_Handler
     }
 };
+
+//
+// Audio module notification device id.
+// NOTE: do not use this guid for real driver, generate a new one.
+//
+const GUID SpeakerHpModuleNotificationDeviceId = 
+{0x3A66BE17,0x5440,0x48E7,0x83,0x76,0xB7,0x5A,0x0B,0x1A,0x92,0x2D};
 
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerHpWaveFilter, PropertiesSpeakerHpWaveFilter);
 

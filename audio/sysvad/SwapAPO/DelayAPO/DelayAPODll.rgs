@@ -1,0 +1,11 @@
+HKCR
+{
+        NoRemove AppID
+        {
+                '%APPID%' = s 'DelayAPODll'
+                'DelayAPODll.DLL'
+                {
+                        val AppID = s '%APPID%'
+                }
+        }
+}

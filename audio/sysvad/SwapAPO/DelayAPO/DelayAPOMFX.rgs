@@ -1,0 +1,13 @@
+HKCR
+{
+        NoRemove CLSID
+        {
+                ForceRemove {b6c7032b-1f17-4cc6-bcdb-fd96deabc8a9} = s 'DelayAPOMFX Class'
+                {
+                        InprocServer32 = s '%MODULE%'
+                        {
+                                val ThreadingModel = s 'Both'
+                        }
+                }
+        }
+}
