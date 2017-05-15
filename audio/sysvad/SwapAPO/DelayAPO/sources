@@ -1,0 +1,12 @@
+!include ..\sources.inc
+
+TARGETNAME=DelayAPO
+DLLDEF=DelayAPODll.def
+
+SOURCES=DelayAPOInterface.idl \
+        DelayAPOMFX.cpp \
+        DelayAPOSFX.cpp \
+        Delay.cpp \
+        DelayAPODll.idl \
+        DelayAPODll.rc \
+        DelayAPODll.cpp \

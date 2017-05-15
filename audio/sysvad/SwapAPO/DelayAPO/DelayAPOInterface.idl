@@ -1,0 +1,29 @@
+//
+// DelayAPOInterface.idl -- Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Description:
+//
+//      The interface and type definitions for Delay APO functionality.
+//
+import "oaidl.idl";
+import "ocidl.idl";
+import "audioenginebaseapo.idl";
+
+[
+    object,
+    uuid(4c0531b4-f2ca-4eae-80cd-020266923bc1),
+    pointer_default(unique)
+]
+interface IDelayAPOMFX : IUnknown
+{
+};
+
+[
+    object,
+    uuid(6269b338-5162-4f14-a94d-8422ee93ec13),
+    pointer_default(unique)
+]
+interface IDelayAPOSFX : IUnknown
+{
+};
+

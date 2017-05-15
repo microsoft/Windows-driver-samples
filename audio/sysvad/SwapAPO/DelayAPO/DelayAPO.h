@@ -1,17 +1,17 @@
 //
-// SwapAPO.h -- Copyright (c) Microsoft Corporation. All rights reserved.
+// DelayAPO.h -- Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Description:
 //
-//   Declaration of the CSwapAPO class.
+//   Declaration of the CDelayAPO class.
 //
 
 #pragma once
 
 #include <audioenginebaseapo.h>
 #include <BaseAudioProcessingObject.h>
-#include <SwapAPOInterface.h>
-#include <SwapAPODll.h>
+#include <DelayAPOInterface.h>
+#include <DelayAPODll.h>
 
 #include <commonmacros.h>
 #include <devicetopology.h>
@@ -27,41 +27,48 @@ _Analysis_mode_(_Analysis_code_type_user_driver_)
 // should use predefined effect types. Only define a new GUID if the effect is
 // truly very different from all predefined types of effects.
 //
-// {B8EC75BA-00ED-434C-A732-064A0F00788E}
-DEFINE_GUID(SwapEffectId,       0xb8ec75ba, 0x00ed, 0x434c, 0xa7, 0x32, 0x06, 0x4a, 0x0f, 0x00, 0x78, 0x8e);
+// {29FBFBB5-9002-4ABC-DCBC-DD45462478C8}
+DEFINE_GUID(DelayEffectId,      0x29FBFBB5, 0x9002, 0x4ABC, 0xDC, 0xBC, 0xDD, 0x45, 0x46, 0x24, 0x78, 0xC8);
+
+// 1000 ms of delay
+#define HNS_DELAY HNS_PER_SECOND
+
+#define FRAMES_FROM_HNS(hns) (ULONG)(1.0 * hns / HNS_PER_SECOND * GetFramesPerSecond() + 0.5)
 
 LONG GetCurrentEffectsSetting(IPropertyStore* properties, PROPERTYKEY pkeyEnable, GUID processingMode);
 
 #pragma AVRT_VTABLES_BEGIN
-// Swap APO class - MFX
-class CSwapAPOMFX :
+// Delay APO class - MFX
+class CDelayAPOMFX :
     public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<CSwapAPOMFX, &CLSID_SwapAPOMFX>,
+    public CComCoClass<CDelayAPOMFX, &CLSID_DelayAPOMFX>,
     public CBaseAudioProcessingObject,
     public IMMNotificationClient,
     public IAudioSystemEffects2,
     // IAudioSystemEffectsCustomFormats may be optionally supported
     // by APOs that attach directly to the connector in the DEFAULT mode streaming graph
     public IAudioSystemEffectsCustomFormats, 
-    public ISwapAPOMFX
+    public IDelayAPOMFX
 {
 public:
     // constructor
-    CSwapAPOMFX()
+    CDelayAPOMFX()
     :   CBaseAudioProcessingObject(sm_RegProperties)
     ,   m_hEffectsChangedEvent(NULL)
     ,   m_AudioProcessingMode(AUDIO_SIGNALPROCESSINGMODE_DEFAULT)
-    ,   m_fEnableSwapMFX(FALSE)
+    ,   m_fEnableDelayMFX(FALSE)
+    ,   m_nDelayFrames(0)
+    ,   m_iDelayIndex(0)
     {
         m_pf32Coefficients = NULL;
     }
 
-    virtual ~CSwapAPOMFX();    // destructor
+    virtual ~CDelayAPOMFX();    // destructor
 
-DECLARE_REGISTRY_RESOURCEID(IDR_SWAPAPOMFX)
+DECLARE_REGISTRY_RESOURCEID(IDR_DELAYAPOMFX)
 
-BEGIN_COM_MAP(CSwapAPOMFX)
-    COM_INTERFACE_ENTRY(ISwapAPOMFX)
+BEGIN_COM_MAP(CDelayAPOMFX)
+    COM_INTERFACE_ENTRY(IDelayAPOMFX)
     COM_INTERFACE_ENTRY(IAudioSystemEffects)
     COM_INTERFACE_ENTRY(IAudioSystemEffects2)
     // IAudioSystemEffectsCustomFormats may be optionally supported
@@ -130,7 +137,7 @@ public:
     STDMETHODIMP GetFormatRepresentation(UINT nFormat, _Outptr_ LPWSTR* ppwstrFormatRep);
 
 public:
-    LONG                                    m_fEnableSwapMFX;
+    LONG                                    m_fEnableDelayMFX;
     GUID                                    m_AudioProcessingMode;
     CComPtr<IPropertyStore>                 m_spAPOSystemEffectsProperties;
     CComPtr<IMMDeviceEnumerator>            m_spEnumerator;
@@ -138,6 +145,10 @@ public:
 
     // Locked memory
     FLOAT32                                 *m_pf32Coefficients;
+
+    CComHeapPtr<FLOAT32>                    m_pf32DelayBuffer;
+    UINT32                                  m_nDelayFrames;
+    UINT32                                  m_iDelayIndex;
 
 private:
     CCriticalSection                        m_EffectsLock;
@@ -150,32 +161,33 @@ private:
 
 
 #pragma AVRT_VTABLES_BEGIN
-// Swap APO class - SFX
-class CSwapAPOSFX :
+// Delay APO class - SFX
+class CDelayAPOSFX :
     public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<CSwapAPOSFX, &CLSID_SwapAPOSFX>,
+    public CComCoClass<CDelayAPOSFX, &CLSID_DelayAPOSFX>,
     public CBaseAudioProcessingObject,
     public IMMNotificationClient,
     public IAudioSystemEffects2,
-    public ISwapAPOSFX
+    public IDelayAPOSFX
 {
 public:
     // constructor
-    CSwapAPOSFX()
+    CDelayAPOSFX()
     :   CBaseAudioProcessingObject(sm_RegProperties)
     ,   m_hEffectsChangedEvent(NULL)
     ,   m_AudioProcessingMode(AUDIO_SIGNALPROCESSINGMODE_DEFAULT)
-    ,   m_fEnableSwapSFX(FALSE)
     ,   m_fEnableDelaySFX(FALSE)
+    ,   m_nDelayFrames(0)
+    ,   m_iDelayIndex(0)
     {
     }
 
-    virtual ~CSwapAPOSFX();    // destructor
+    virtual ~CDelayAPOSFX();    // destructor
 
-DECLARE_REGISTRY_RESOURCEID(IDR_SWAPAPOSFX)
+DECLARE_REGISTRY_RESOURCEID(IDR_DELAYAPOSFX)
 
-BEGIN_COM_MAP(CSwapAPOSFX)
-    COM_INTERFACE_ENTRY(ISwapAPOSFX)
+BEGIN_COM_MAP(CDelayAPOSFX)
+    COM_INTERFACE_ENTRY(IDelayAPOSFX)
     COM_INTERFACE_ENTRY(IAudioSystemEffects)
     COM_INTERFACE_ENTRY(IAudioSystemEffects2)
     COM_INTERFACE_ENTRY(IMMNotificationClient)
@@ -229,7 +241,6 @@ public:
     STDMETHODIMP OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key);
 
 public:
-    LONG                                    m_fEnableSwapSFX;
     LONG                                    m_fEnableDelaySFX;
     GUID                                    m_AudioProcessingMode;
     CComPtr<IPropertyStore>                 m_spAPOSystemEffectsProperties;
@@ -238,30 +249,31 @@ public:
 
     CCriticalSection                        m_EffectsLock;
     HANDLE                                  m_hEffectsChangedEvent;
+
+    CComHeapPtr<FLOAT32>                    m_pf32DelayBuffer;
+    UINT32                                  m_nDelayFrames;
+    UINT32                                  m_iDelayIndex;
 };
 #pragma AVRT_VTABLES_END
 
-OBJECT_ENTRY_AUTO(__uuidof(SwapAPOMFX), CSwapAPOMFX)
-OBJECT_ENTRY_AUTO(__uuidof(SwapAPOSFX), CSwapAPOSFX)
+OBJECT_ENTRY_AUTO(__uuidof(DelayAPOMFX), CDelayAPOMFX)
+OBJECT_ENTRY_AUTO(__uuidof(DelayAPOSFX), CDelayAPOSFX)
 
 //
-//   Declaration of the ProcessSwap routine.
+//   Declaration of the ProcessDelay routine.
 //
-void ProcessSwap(
-    FLOAT32 *pf32OutputFrames,
-    const FLOAT32 *pf32InputFrames,
-    UINT32   u32ValidFrameCount,
-    UINT32   u32SamplesPerFrame);
-
-//
-//   Declaration of the ProcessSwapScale routine.
-//
-void ProcessSwapScale(
-    FLOAT32 *pf32OutputFrames,
-    const FLOAT32 *pf32InputFrames,
-    UINT32   u32ValidFrameCount,
-    UINT32   u32SamplesPerFrame,
-    FLOAT32 *pf32Coefficients );
+void ProcessDelay(
+    _Out_writes_(u32ValidFrameCount * u32SamplesPerFrame)
+        FLOAT32 *pf32OutputFrames,
+    _In_reads_(u32ValidFrameCount * u32SamplesPerFrame)
+        const FLOAT32 *pf32InputFrames,
+    UINT32       u32ValidFrameCount,
+    UINT32       u32SamplesPerFrame,
+    _Inout_updates_(u32DelayFrames * u32SamplesPerFrame)
+        FLOAT32 *pf32DelayBuffer,
+    UINT32       u32DelayFrames,
+    _Inout_
+        UINT32  *pu32DelayIndex );
 
 //
 //   Convenience methods

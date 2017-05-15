@@ -22,6 +22,8 @@ Abstract:
 #include "minwavert.h"
 #include "minwavertstream.h"
 #include "IHVPrivatePropertySet.h"
+#include "AudioModuleHelper.h"
+
 
 //=============================================================================
 // CMiniportWaveRT
@@ -37,7 +39,7 @@ CreateMiniportWaveRTSYSVAD
     _In_opt_        PUNKNOWN                                UnknownOuter,
     _When_((PoolType & NonPagedPoolMustSucceed) != 0,
        __drv_reportError("Must succeed pool allocations are forbidden. "
-			 "Allocation failures cause a system crash"))
+        "Allocation failures cause a system crash"))
     _In_            POOL_TYPE                               PoolType,
     _In_            PUNKNOWN                                UnknownAdapter,
     _In_opt_        PVOID                                   DeviceContext,
@@ -161,6 +163,12 @@ Return Value:
         m_pPortEvents = NULL;
     }
 
+    if (m_pPortClsNotifications)
+    {
+        m_pPortClsNotifications->Release();
+        m_pPortClsNotifications = NULL;
+    }
+    
     if (m_SystemStreams)
     {
         ExFreePoolWithTag( m_SystemStreams, MINWAVERT_POOLTAG );
@@ -178,7 +186,13 @@ Return Value:
         ExFreePoolWithTag( m_LoopbackStreams, MINWAVERT_POOLTAG );
         m_LoopbackStreams = NULL;
     }
-    
+
+    if (m_pAudioModules)
+    {
+        FreeStreamAudioModules(m_pAudioModules, GetAudioModuleListCount());
+        m_pAudioModules = NULL;
+    }
+
 #ifdef SYSVAD_BTH_BYPASS
     if (IsBthHfpDevice())
     {
@@ -391,6 +405,80 @@ Return Value:
     m_ulMixDrmContentId             = 0;
     m_LoopbackProtection            = CONSTRICTOR_OPTION_DISABLE;
     RtlZeroMemory(&m_MixDrmRights, sizeof(m_MixDrmRights));
+
+    // 
+    // For port notification support.
+    //
+    if (!NT_SUCCESS(Port_->QueryInterface(IID_IPortClsNotifications, (PVOID *)&m_pPortClsNotifications)))
+    {
+        m_pPortClsNotifications = NULL;
+    }
+
+    //
+    // Init all the modules associated to this miniport.
+    //
+    ULONG cModules = GetAudioModuleListCount();
+    if (cModules)
+    {
+        //
+        // Module list size.
+        //
+        size = cModules * sizeof(AUDIOMODULE);
+        m_pAudioModules = (AUDIOMODULE *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+        if (m_pAudioModules == NULL)
+        {
+            return STATUS_INSUFFICIENT_RESOURCES;
+        }
+        RtlZeroMemory(m_pAudioModules, size);
+
+        for (ULONG i=0; i<cModules; ++i)
+        {
+            PAUDIOMODULE_DESCRIPTOR moduleDesc = &m_pMiniportPair->ModuleList[i];
+
+            //
+            // Init run-time module element.
+            //
+            m_pAudioModules[i].Descriptor = moduleDesc;
+            m_pAudioModules[i].Context    = NULL;
+            m_pAudioModules[i].InstanceId = moduleDesc->InstanceId;
+            m_pAudioModules[i].Enabled    = TRUE;
+            //
+            // Module context size.
+            //
+            size = moduleDesc->ContextSize;
+            if (size)
+            {
+                m_pAudioModules[i].Context = 
+                    ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+                
+                if (m_pAudioModules[i].Context == NULL)
+                {
+                    return STATUS_INSUFFICIENT_RESOURCES;
+                }
+                RtlZeroMemory(m_pAudioModules[i].Context, size);
+            }
+
+            
+            if (moduleDesc->InitClass)
+            {
+                KSAUDIOMODULE_NOTIFICATION  NotificationHeader;
+                NotificationHeader.ProviderId.DeviceId = *GetAudioModuleNotificationDeviceId();
+                NotificationHeader.ProviderId.ClassId = *moduleDesc->ClassId;
+                NotificationHeader.ProviderId.InstanceId = moduleDesc->InstanceId;
+                
+                ntStatus = moduleDesc->InitClass(moduleDesc,
+                                                 m_pAudioModules[i].Context,
+                                                 size,
+                                                 &NotificationHeader,
+                                                 m_pPortClsNotifications);
+                if (!NT_SUCCESS(ntStatus))
+                {
+                    ASSERT(FALSE);
+                    return ntStatus;
+                }
+            }
+        }
+    }
 
     //
     // Init the audio-engine used by the render devices.
@@ -1294,6 +1382,63 @@ CMiniportWaveRT::PropertyHandlerProposedFormat
     return ntStatus;
 } // PropertyHandlerProposedFormat
 
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRT::PropertyHandlerModulesListRequest
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+{
+    // This specific APO->driver communication example is mainly added to show how this communication is done.
+    // The module list only lives on the wave filter and it can have modules that are for all pins and some that 
+    // are only on specific pins.
+
+    PAGED_CODE();
+
+    DPF_ENTER(("[CMiniportWaveRT::PropertyHandlerModulesListRequest]"));
+
+    return AudioModule_GenericHandler_ModulesListRequest(
+                PropertyRequest,
+                GetAudioModuleList(),
+                GetAudioModuleListCount());
+} // PropertyHandlerModulesListRequest
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRT::PropertyHandlerModuleCommand
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[CMiniportWaveRT::PropertyHandlerModuleCommand]"));
+
+    return AudioModule_GenericHandler_ModuleCommand(
+                PropertyRequest,
+                GetAudioModuleList(),
+                GetAudioModuleListCount());
+} // PropertyHandlerModuleCommand
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRT::PropertyHandlerModuleNotificationDeviceId
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[CMiniportWaveRT::PropertyHandlerModuleNotificationDeviceId]"));
+
+    return AudioModule_GenericHandler_ModuleNotificationDeviceId(
+                PropertyRequest,
+                GetAudioModuleNotificationDeviceId());
+} // PropertyHandlerModuleNotificationDeviceId
+
 
 //=============================================================================
 #pragma code_seg("PAGE")
@@ -1677,6 +1822,203 @@ Return Value:
 
 //=============================================================================
 #pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRT::AllocStreamAudioModules
+(
+    _In_  const GUID *      SignalProcessingMode,
+    _Out_ AUDIOMODULE **    ppAudioModules,
+    _Out_ ULONG *           pAudioModuleCount
+)
+{
+    NTSTATUS        ntStatus = STATUS_INVALID_DEVICE_STATE;
+    AUDIOMODULE *   pAudioModules = NULL;
+    ULONG           cModules = 0;    
+    ULONG           i, j;
+    size_t          size;
+
+    PAGED_CODE();
+    
+    //
+    // Init out parameters.
+    //
+    *ppAudioModules = NULL;
+    *pAudioModuleCount = 0;
+
+    //
+    // Nothing to do if there are no modules.
+    //
+    if (m_pAudioModules == NULL)
+    {
+        ntStatus = STATUS_SUCCESS;
+        goto exit;
+    }
+    
+    //
+    // Find the # of modules associated with this stream.
+    //
+    for (i=0; i<GetAudioModuleListCount(); ++i)
+    {
+        const AUDIOMODULE_DESCRIPTOR * moduleDesc = m_pAudioModules[i].Descriptor;
+        
+        if (IsEqualGUIDAligned(*moduleDesc->ProcessingMode, *SignalProcessingMode) ||
+            IsEqualGUIDAligned(*moduleDesc->ProcessingMode, NULL_GUID))
+        {
+            cModules++;
+        }
+    }
+
+    //
+    // All done if module count is zero.
+    //
+    if (cModules == 0)
+    {
+        ntStatus = STATUS_SUCCESS;
+        goto exit;
+    }
+
+    //
+    // Alloc modules infrastructure.
+    //
+    size = cModules * sizeof(AUDIOMODULE);
+#pragma prefast(suppress:__WARNING_MEMORY_LEAK,"No leaking, stream obj dtor calls FreeStreamAudioModules")
+    pAudioModules = (AUDIOMODULE *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+    if (pAudioModules == NULL)
+    {
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto exit;
+    }
+    RtlZeroMemory(pAudioModules, size);
+    
+    for (i=0, j=0; i<GetAudioModuleListCount() && j<cModules; ++i)
+    {
+        const AUDIOMODULE_DESCRIPTOR * moduleDesc = m_pAudioModules[i].Descriptor;
+    
+        if (IsEqualGUIDAligned(*moduleDesc->ProcessingMode, *SignalProcessingMode) ||
+            IsEqualGUIDAligned(*moduleDesc->ProcessingMode, NULL_GUID))
+        {
+            ULONG CfgInstanceId;
+            
+            //
+            // Init run-time module element.
+            //
+            pAudioModules[j].Descriptor = moduleDesc;
+            pAudioModules[j].Context    = NULL;
+
+            //
+            // Create a unique InstanceId for this module instance.
+            // This sample uses 24bits index which wraps around after 16M 
+            // module instances for a specific class ID/Class config id. 
+            // A real driver should reuse instance ids of deleted module
+            // instances, i.e., the driver should use a mapping between 
+            // index <--> module info.
+            //
+            CfgInstanceId = InterlockedIncrement((LONG*)&m_pAudioModules[i].NextCfgInstanceId);
+            
+            pAudioModules[j].InstanceId = 
+                AUDIOMODULE_INSTANCE_ID(AUDIOMODULE_GET_CLASSCFGID(m_pAudioModules[i].InstanceId),
+                                        CfgInstanceId);
+                                        
+            pAudioModules[j].Enabled = m_pAudioModules[i].Enabled;
+        
+            //
+            // Alloc context for module instance.
+            //
+            size = moduleDesc->ContextSize;
+            if (size)
+            {
+#pragma prefast(suppress:__WARNING_MEMORY_LEAK,"No leaking, stream obj dtor calls FreeStreamAudioModules")
+                pAudioModules[j].Context = 
+                    ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+                
+                if (pAudioModules[j].Context == NULL)
+                {
+                    ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+                    goto exit;
+                }
+                RtlZeroMemory(pAudioModules[j].Context, size);
+            }
+        
+            //
+            // Init this module instance.
+            //
+            if (moduleDesc->InitInstance)
+            {
+                ntStatus = moduleDesc->InitInstance(moduleDesc,
+                                                 m_pAudioModules[i].Context,
+                                                 pAudioModules[j].Context,
+                                                 size,
+                                                 pAudioModules[j].InstanceId);
+                if (!NT_SUCCESS(ntStatus))
+                {
+                    ASSERT(FALSE);
+                    goto exit;
+                }
+            }
+
+            //
+            // Update stream module array index.
+            //
+            j++;
+        }
+    }
+
+    //
+    // Return the list of modules.
+    //
+    *ppAudioModules = pAudioModules;
+    *pAudioModuleCount = cModules;
+
+    ntStatus = STATUS_SUCCESS;
+    
+exit:
+
+    if (!NT_SUCCESS(ntStatus))
+    {
+        if (pAudioModules != NULL)
+        {
+            FreeStreamAudioModules(pAudioModules, cModules);
+            pAudioModules = NULL;
+            cModules = 0;
+        }
+    }
+    
+    return ntStatus;
+}
+
+#pragma code_seg("PAGE")
+VOID
+CMiniportWaveRT::FreeStreamAudioModules
+(
+    _In_ AUDIOMODULE *     pAudioModules,
+    _In_ ULONG             AudioModuleCount
+)
+{
+    PAGED_CODE();
+    
+    if (pAudioModules != NULL)
+    {
+        ASSERT(AudioModuleCount);
+        
+        for (ULONG i=0; i<AudioModuleCount; ++i)
+        {
+            if (pAudioModules[i].Context)
+            {
+                if (pAudioModules[i].Descriptor->Cleanup)
+                {
+                    pAudioModules[i].Descriptor->Cleanup(pAudioModules[i].Context);
+                }
+                
+                ExFreePoolWithTag(pAudioModules[i].Context, MINWAVERT_POOLTAG);
+                pAudioModules[i].Context = NULL;
+            }
+        }
+
+        ExFreePoolWithTag(pAudioModules, MINWAVERT_POOLTAG);
+    }
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
 
 DEFINE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorSupportedPatterns)
 {
@@ -1937,6 +2279,24 @@ Return Value:
                 DPF(D_TERSE, ("[PropertyHandler_WaveFilter: Invalid Device Request]"));
         }
     }
+    else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioModule))
+    {
+        switch (PropertyRequest->PropertyItem->Id)
+        {
+        case KSPROPERTY_AUDIOMODULE_DESCRIPTORS:
+            ntStatus = pWaveHelper->PropertyHandlerModulesListRequest(PropertyRequest);
+            break;
+        case KSPROPERTY_AUDIOMODULE_COMMAND:
+            ntStatus = pWaveHelper->PropertyHandlerModuleCommand(PropertyRequest);
+            break;
+        case KSPROPERTY_AUDIOMODULE_NOTIFICATION_DEVICE_ID:
+            ntStatus = pWaveHelper->PropertyHandlerModuleNotificationDeviceId(PropertyRequest);
+            break;
+
+        default:
+            DPF(D_TERSE, ("[PropertyHandler_WaveFilter: Invalid Device Request]"));
+        }
+    }
     else if ((pWaveHelper->m_DeviceType == eHdmiRenderDevice || 
               pWaveHelper->m_DeviceType == eCellularDevice || 
               pWaveHelper->m_DeviceType == eHandsetSpeakerDevice) &&
@@ -2061,6 +2421,69 @@ PropertyHandler_OffloadPin
     return ntStatus;
 }
 
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+PropertyHandler_GenericPin
+( 
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
+)
+{
+    NTSTATUS                ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    CMiniportWaveRT*        pWave = NULL;
+    CMiniportWaveRTStream * pStream = NULL;
+
+    PAGED_CODE();
+
+    if (PropertyRequest->MajorTarget == NULL ||
+        PropertyRequest->MinorTarget == NULL)
+    {
+        ntStatus = STATUS_INVALID_PARAMETER;
+        goto exit;
+    }
+    
+    //
+    // Get a ref to the miniport.
+    //
+    pWave = MajorTarget_to_Obj(PropertyRequest->MajorTarget);
+    pWave->AddRef();
+
+    //
+    // Get a ref to the stream.
+    //
+    pStream = MinorTarget_to_Obj(PropertyRequest->MinorTarget);
+    pStream->AddRef();
+
+    //
+    // Invoke appropriate handle.
+    //
+    if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioModule))
+    {
+        switch (PropertyRequest->PropertyItem->Id)
+        {
+        case KSPROPERTY_AUDIOMODULE_DESCRIPTORS:
+            ntStatus = pStream->PropertyHandlerModulesListRequest(PropertyRequest);
+            break;
+        case KSPROPERTY_AUDIOMODULE_COMMAND:
+            ntStatus = pStream->PropertyHandlerModuleCommand(PropertyRequest);
+            break;
+        case KSPROPERTY_AUDIOMODULE_NOTIFICATION_DEVICE_ID:
+            // Filter handles this prop.
+            ntStatus = pWave->PropertyHandlerModuleNotificationDeviceId(PropertyRequest);
+            break;
+
+        default:
+            DPF(D_TERSE, ("[PropertyHandler_GenericPin: Invalid Device Request]"));
+        }
+    }
+
+exit:
+
+    SAFE_RELEASE(pStream);
+    SAFE_RELEASE(pWave);
+    
+    return ntStatus;
+}
 
 // ISSUE-2014/10/20 Add synchronization mechanism throughout this class
 // ISSUE-2014/10/20 Add comment headers and commenting throughout

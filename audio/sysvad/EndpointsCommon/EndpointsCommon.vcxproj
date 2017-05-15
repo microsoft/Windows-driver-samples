@@ -157,6 +157,7 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioModuleHelper.cpp" />
     <ClCompile Include="bthhfpmictopo.cpp" />
     <ClCompile Include="bthhfpminwavert.cpp" />
     <ClCompile Include="bthhfpspeakertopo.cpp" />

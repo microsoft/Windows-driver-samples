@@ -996,3 +996,4 @@ NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ 
 
     return ntStatus;
 }
+

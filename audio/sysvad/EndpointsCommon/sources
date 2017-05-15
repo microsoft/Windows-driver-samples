@@ -1,0 +1,46 @@
+
+# Copyright (c) Microsoft Corporation.  All rights reserved.
+
+
+TARGETNAME=EndpointsCommon
+TARGETTYPE=LIBRARY
+KM_LIBRARY=1
+
+INCLUDES= \
+        $(DDK_INC_PATH); \
+        ..
+
+
+C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS
+#C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ 
+
+DDK_TARGET_PLATFORM=Universal
+
+#
+# Indicate to the WDK that this sample only supports Win10[+]
+#
+MINIMUM_NT_TARGET_VERSION=$(_NT_TARGET_VERSION_WINTHRESHOLD)
+
+#
+# Audio driver is a KMDF miniport.
+#
+KMDF_VERSION_MAJOR=1
+
+
+SOURCES=$(SOURCES)              \
+        mintopo.cpp             \
+        minwavert.cpp           \
+        minwavertstream.cpp     \
+        MiniportAudioEngineNode.cpp\
+        MiniportStreamAudioEngineNode.cpp\
+        micarraytopo.cpp        \
+        speakertopo.cpp         \
+        speakerhptopo.cpp       \
+        bthhfptopo.cpp          \
+        bthhfpmictopo.cpp       \
+        bthhfpspeakertopo.cpp   \
+        bthhfpminwavert.cpp     \
+        AudioModuleHelper.cpp   \
+        
+
+

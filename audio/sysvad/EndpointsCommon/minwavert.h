@@ -148,11 +148,14 @@ private:
 #endif  // SYSVAD_BTH_BYPASS
     };
 
+    AUDIOMODULE *                       m_pAudioModules;
+
 protected:
     PADAPTERCOMMON                      m_pAdapterCommon;
     ULONG                               m_DeviceFlags;
     eDeviceType                         m_DeviceType;
     PPORTEVENTS                         m_pPortEvents;
+    PPORTCLSNOTIFICATIONS               m_pPortClsNotifications;
     PENDPOINT_MINIPAIR                  m_pMiniportPair;
 
 
@@ -231,7 +234,9 @@ public:
         m_DeviceFormatsAndModes(MiniportPair->PinDeviceFormatsAndModes),
         m_DeviceFormatsAndModesCount(MiniportPair->PinDeviceFormatsAndModesCount),
         m_DeviceFlags(MiniportPair->DeviceFlags),
-        m_pMiniportPair(MiniportPair)
+        m_pMiniportPair(MiniportPair),
+        m_pAudioModules(NULL),
+        m_pPortClsNotifications(NULL)
     {
         PAGED_CODE();
 
@@ -265,7 +270,6 @@ public:
                 }
             }
         }
-
 
 #ifdef SYSVAD_BTH_BYPASS
         if (IsBthHfpDevice())
@@ -316,6 +320,22 @@ public:
     (
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
+    
+    NTSTATUS PropertyHandlerModulesListRequest
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerModuleCommand
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+    
+    NTSTATUS PropertyHandlerModuleNotificationDeviceId
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
 
     PADAPTERCOMMON GetAdapterCommObj() 
     {
@@ -629,7 +649,69 @@ protected:
         ASSERT(!IsCellularDevice());
         return KSPIN_WAVE_RENDER_SINK_OFFLOAD;
     }
+
 #pragma code_seg()
+
+    ULONG
+    GetAudioModuleDescriptorListCount()
+    {
+        return m_pMiniportPair->ModuleListCount;
+    }
+
+    const PAUDIOMODULE_DESCRIPTOR
+    GetAudioModuleDescriptor(
+        _In_ ULONG Index
+        )
+    {
+        ASSERT(Index < GetAudioModuleDescriptorListCount());
+        return &m_pMiniportPair->ModuleList[Index];
+    }
+
+    const PAUDIOMODULE_DESCRIPTOR
+    GetAudioModuleDescriptorList()
+    {
+        return m_pMiniportPair->ModuleList;
+    }
+    
+    ULONG
+    GetAudioModuleListCount()
+    {
+        return GetAudioModuleDescriptorListCount();
+    }
+
+    AUDIOMODULE *
+    GetAudioModule(
+        _In_ ULONG Index
+        )
+    {
+        ASSERT(Index < GetAudioModuleListCount());
+        return &m_pAudioModules[Index];
+    }
+
+    AUDIOMODULE *
+    GetAudioModuleList()
+    {
+        return m_pAudioModules;
+    }
+    
+    const GUID *
+    GetAudioModuleNotificationDeviceId()
+    {
+        return m_pMiniportPair->ModuleNotificationDeviceId;
+    }
+    
+    NTSTATUS
+    AllocStreamAudioModules(
+        _In_ const GUID *       SignalProcessingMode,
+        _Out_ AUDIOMODULE **    AudioModule,
+        _Out_ ULONG *           AudioModuleCount
+        );
+        
+    VOID
+    FreeStreamAudioModules(
+        _In_ AUDIOMODULE *      AudioModule,
+        _In_ ULONG              AudioModuleCount
+        );
 
 #ifdef SYSVAD_BTH_BYPASS
 public:

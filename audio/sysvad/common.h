@@ -187,6 +187,126 @@ typedef struct _PIN_DEVICE_FORMATS_AND_MODES
 
 } PIN_DEVICE_FORMATS_AND_MODES, *PPIN_DEVICE_FORMATS_AND_MODES;
 
+//
+// Parameter module handler function prototypes.
+//
+static const GUID NULL_GUID = 
+{0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}};
+
+static const GUID MODULETYPE_HWEFFECT =
+{0x2608993c,0x361e,0x488c,{0xa0,0xbc,0x8f,0x3d,0xe7,0xba,0x12,0xb4}};
+
+//
+// Forward declaration.
+//
+struct AUDIOMODULE_DESCRIPTOR;
+typedef AUDIOMODULE_DESCRIPTOR *PAUDIOMODULE_DESCRIPTOR;
+
+typedef struct _AUDIOMODULE_PARAMETER_INFO
+{
+    USHORT      AccessFlags;        // get/set/basic-support attributes.
+    USHORT      Flags;        
+    ULONG       Size;
+    DWORD       VtType;
+    PVOID       ValidSet;
+    ULONG       ValidSetCount;
+} AUDIOMODULE_PARAMETER_INFO, *PAUDIOMODULE_PARAMETER_INFO;
+
+#define AUDIOMODULE_PARAMETER_FLAG_CHANGE_NOTIFICATION  0x00000001
+
+//
+// Module callbacks.
+//
+typedef
+NTSTATUS
+(*FN_AUDIOMODULE_INIT_CLASS)
+(
+    _In_  const AUDIOMODULE_DESCRIPTOR * Module,
+    _Inout_opt_ PVOID           Context,
+    _In_        size_t          Size,
+    _In_        KSAUDIOMODULE_NOTIFICATION * NotificationHeader,
+    _In_opt_    PPORTCLSNOTIFICATIONS PortNotifications
+);
+
+typedef
+NTSTATUS
+(*FN_AUDIOMODULE_INIT_INSTANCE)
+(
+    _In_  const AUDIOMODULE_DESCRIPTOR * Module,
+    _In_opt_    PVOID           TemplateContext,
+    _Inout_opt_ PVOID           Context,
+    _In_        size_t          Size,
+    _In_        ULONG           InstanceId
+);
+
+typedef
+VOID
+(*FN_AUDIOMODULE_CLEANUP)
+(
+    _In_        PVOID           Context
+);
+
+typedef
+NTSTATUS
+(*FN_AUDIOMODULE_HANDLER)
+(
+    _Inout_opt_                          PVOID   Context,
+    _In_reads_bytes_(InBufferCb)         PVOID   InBuffer,
+    _In_                                 ULONG   InBufferCb,
+    _Out_writes_bytes_opt_(*OutBufferCb) PVOID   OutBuffer,
+    _Inout_                              ULONG * OutBufferCb 
+);
+
+//
+// Module description.
+//
+struct AUDIOMODULE_DESCRIPTOR
+{
+    const GUID *                    ClassId; 
+    const GUID *                    ProcessingMode;
+    WCHAR                           Name[AUDIOMODULE_MAX_NAME_CCH_SIZE];
+    ULONG                           InstanceId;
+    ULONG                           VersionMajor;
+    ULONG                           VersionMinor;
+    ULONG                           Flags;
+    size_t                          ContextSize;
+    FN_AUDIOMODULE_INIT_CLASS       InitClass;
+    FN_AUDIOMODULE_INIT_INSTANCE    InitInstance;
+    FN_AUDIOMODULE_CLEANUP          Cleanup;
+    FN_AUDIOMODULE_HANDLER          Handler;
+};
+
+#define AUDIOMODULE_DESCRIPTOR_FLAG_NONE        0x00000000
+
+//
+// Audio module instance defintion.
+// This sample driver generates an instance id by combinding the
+// configuration set # for a class module id with the instance of that 
+// configuration. Real driver should use a more robust scheme, such as
+// an indirect mapping from/to an instance id to/from a configuration set
+// + location in the pipeline + any other info the driver needs.
+//
+#define AUDIOMODULE_CLASS_CFG_ID_MASK           0xFF
+#define AUDIOMODULE_CLASS_CFG_INSTANCE_ID_MASK  0xFFFFFF
+
+#define AUDIOMODULE_INSTANCE_ID(ClassCfgId, ClassCfgInstanceId) \
+    ((ULONG(ClassCfgId & AUDIOMODULE_CLASS_CFG_ID_MASK) << 24) | \
+     (ULONG(ClassCfgInstanceId & AUDIOMODULE_CLASS_CFG_INSTANCE_ID_MASK)))
+
+#define AUDIOMODULE_GET_CLASSCFGID(InstanceId) \
+    (ULONG(InstanceId) >> 24 & AUDIOMODULE_CLASS_CFG_ID_MASK)
+
+//
+// Used to track run-time audio module changes.
+//
+struct AUDIOMODULE
+{
+    const AUDIOMODULE_DESCRIPTOR *  Descriptor;
+    PVOID                           Context;
+    ULONG                           InstanceId;
+    ULONG                           NextCfgInstanceId;  // used by filter modules
+    BOOL                            Enabled;
+};
 
 // forward declaration.
 typedef struct _ENDPOINT_MINIPAIR *PENDPOINT_MINIPAIR;
@@ -252,6 +372,11 @@ typedef struct _ENDPOINT_MINIPAIR
 
     // General endpoint flags (one of more ENDPOINT_<flag-type>, see above)
     ULONG                           DeviceFlags;
+
+    // Static module list description.
+    AUDIOMODULE_DESCRIPTOR *        ModuleList;
+    ULONG                           ModuleListCount;
+    const GUID *                    ModuleNotificationDeviceId;
 } ENDPOINT_MINIPAIR;
 
 //=============================================================================

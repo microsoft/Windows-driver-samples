@@ -5,6 +5,7 @@
 #include "minwavert.h"
 #include "minwavertstream.h"
 #include "UnittestData.h"
+#include "AudioModuleHelper.h"
 #define MINWAVERTSTREAM_POOLTAG 'SRWM'
 
 #pragma warning (disable : 4127)
@@ -34,8 +35,16 @@ Return Value:
 --*/
 {
     PAGED_CODE();
+
     if (NULL != m_pMiniport)
     {
+        if (m_pAudioModules)
+        {
+            m_pMiniport->FreeStreamAudioModules(m_pAudioModules, m_AudioModuleCount);
+            m_pAudioModules = NULL;
+            m_AudioModuleCount = 0;
+        }
+
         if (m_bUnregisterStream)
         {
             m_pMiniport->StreamClosed(m_ulPin, this);
@@ -181,6 +190,8 @@ Return Value:
     m_SignalProcessingMode = SignalProcessingMode;
     m_bEoSReceived = FALSE;
     m_bLastBufferRendered = FALSE;
+    m_pAudioModules = NULL;
+    m_AudioModuleCount = 0;
 
 #ifdef SYSVAD_BTH_BYPASS
     m_ScoOpen = FALSE;
@@ -267,6 +278,17 @@ Return Value:
         return STATUS_INSUFFICIENT_RESOURCES;
     }
     RtlZeroMemory(m_plPeakMeter, m_pWfExt->Format.nChannels * sizeof(LONG));
+
+    //
+    // Allocate stream audio module resources.
+    //
+    ntStatus = m_pMiniport->AllocStreamAudioModules(&SignalProcessingMode,
+                                                    &m_pAudioModules,
+                                                    &m_AudioModuleCount);
+    if (!NT_SUCCESS(ntStatus))
+    {
+        return ntStatus;
+    }
 
     if (m_bCapture)
     {
@@ -784,6 +806,7 @@ Done:
 //
 // ISSUE-2014/10/4 Will this work correctly across pause/play?
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetReadPacket
 (
     _Out_ ULONG     *PacketNumber,
@@ -854,7 +877,7 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
 
     // Compute and return timestamp corresponding to start of the available packet. In a real hardware
     // driver, the timestamp would be computed in a driver and hardware specific manner. In this sample
-    // driver, it is extrapolated from the sample driver's internal simulated position corrleation
+    // driver, it is extrapolated from the sample driver's internal simulated position correlation
     // [m_ullLinearPosition @ m_ullDmaTimeStamp] and the sample's internal 64-bit packet counter, subtracting
     // 1 from the packet counter to compute the time at the start of that last completed packet.
     ULONGLONG linearPositionOfAvailablePacket = (packetCounter - 1) * (m_ulDmaBufferSize / m_ulNotificationsPerBuffer);
@@ -895,6 +918,7 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
 }
 
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::SetWritePacket
 (
     _In_ ULONG      PacketNumber,
@@ -987,6 +1011,7 @@ NTSTATUS CMiniportWaveRTStream::SetWritePacket
 
 //=============================================================================
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 (
     _Out_ KSAUDIO_PRESENTATION_POSITION *pPresentationPosition
@@ -1005,6 +1030,7 @@ NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 
 //=============================================================================
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetPacketCount
 (
     _Out_ ULONG *pPacketCount
@@ -1506,6 +1532,47 @@ Return Value:
 #endif // SYSVAD_BTH_BYPASS
 
 //=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRTStream::PropertyHandlerModulesListRequest
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+{
+    // This specific APO->driver communication example is mainly added to show 
+    // how this communication is done. The instance module list lives on the 
+    // stream object and it can only have modules associated with the underline
+    // stream's pin.
+
+    PAGED_CODE();
+
+    DPF_ENTER(("[CMiniportWaveRTStream::PropertyHandlerModulesListRequest]"));
+
+    return AudioModule_GenericHandler_ModulesListRequest(
+                PropertyRequest,
+                GetAudioModuleList(),
+                GetAudioModuleListCount());
+} // PropertyHandlerModulesListRequest
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportWaveRTStream::PropertyHandlerModuleCommand
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[CMiniportWaveRTStream::PropertyHandlerModuleCommand]"));
+
+    return AudioModule_GenericHandler_ModuleCommand(
+                PropertyRequest,
+                GetAudioModuleList(),
+                GetAudioModuleListCount());
+} // PropertyHandlerModuleCommand
+
+//=============================================================================
 #pragma code_seg()
 void
 TimerNotifyRT
@@ -1550,10 +1617,10 @@ TimerNotifyRT
         goto End;
     }
 
-    // Carry forward the remainder of this division
-    _this->m_hnsDPCTimeCarryForward = (hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward) % 10000;
+    // Carry forward the time greater than notification interval to adjust time to signal next buffer completion event accordingly.
+    _this->m_hnsDPCTimeCarryForward = hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward - (_this->m_ulNotificationIntervalMs * 10000);
     // Save the last time DPC ran at notification interval
-    _this->m_ullLastDPCTimeStamp = (ULONG)hnsCurrentTime;
+    _this->m_ullLastDPCTimeStamp = hnsCurrentTime;
 
     _this->UpdatePosition(qpc);
 

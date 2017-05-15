@@ -1,0 +1,53 @@
+
+# Copyright (c) Microsoft Corporation.  All rights reserved.
+
+
+!include ..\sources.inc
+
+TARGETNAME=TabletAudioSample
+
+TARGETLIBS= \
+    $(TARGETLIBS) \
+    $(OBJ_PATH)\..\EndpointsCommon\$(O)\EndpointsCommon.lib \
+
+
+C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS
+
+
+#C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ 
+#
+# Indicate to the WDK that this sample only supports Win10[+]
+#
+MINIMUM_NT_TARGET_VERSION=$(_NT_TARGET_VERSION_WINTHRESHOLD)
+
+#
+# Audio driver is a KMDF miniport.
+#
+KMDF_VERSION_MAJOR=1
+
+#
+# Uncomment one of the following lines to select the right power management.
+# Note that the single-component/multi-state feature requires also a registry 
+# value set via the INF. The name of the registry value is SingleComponentMultiFxStates.
+# see INF file for more info.
+#
+#C_DEFINES= $(C_DEFINES) -D_USE_IPortClsRuntimePower
+C_DEFINES= $(C_DEFINES) -D_USE_SingleComponentMultiFxStates
+
+INCLUDES= \
+        $(INCLUDES); \
+        ..\EndpointsCommon; \
+
+SOURCES=$(SOURCES)              \
+        hdmitopo.cpp    \
+        spdiftopo.cpp   \
+        micintopo.cpp   \
+
+
+# Indicate that this module must be included in the driver package
+DDK_NO_PACKAGE_PROJECT=0
+DDK_INCLUDE_PACKAGE_PROJECT=1
+
+
+MUI_VERIFY_NO_LOC_RESOURCE=1 
+
