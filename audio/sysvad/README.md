@@ -1,7 +1,7 @@
-Slate Virtual Audio Device Driver Sample
+SysVAD Virtual Audio Device Driver Sample
 ========================================
 
-The Microsoft Slate Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
+The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
 Some of these audio devices are embedded in the system (for example, speakers, microphone arrays) while others are pluggable (like headphones, speakers, microphones, Bluetooth headsets etc.). The driver uses WaveRT and audio offloading for rendering devices. The driver uses a "virtual audio device" instead of an actual hardware-based adapter, and highlights the different aspects of the audio offloading WDM audio driver architecture.
 
@@ -48,11 +48,13 @@ The package should contain these files:
 
 File | Description 
 -----|------------
+TabletAudioSample.sys OR PhoneAudioSample| The driver file.
+SwapAPO.dll | A sample APO. 
+DelayAPO.dll | A sample APO. 
 PropPageExt.dll | A sample driver extension for a property page. 
-SlateAudioSample.sys | The driver file. 
-SwapAPO.dll | A sample driver extension for a UI to manage APOs. 
 sysvad.cat | A signed catalog file, which serves as the signature for the entire package. 
-sysvad.inf | An information (INF) file that contains information needed to install the driver. 
+TabletAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
+PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
 WdfCoinstaller01011.dll | The coinstaller for version 1.xx of KMDF. 
 
 Run the sample
@@ -60,7 +62,7 @@ Run the sample
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from the computer on which you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
-The process of moving the driver package to the target computer and installing the driver is called *deploying* the driver. You can deploy the sample driver, SlateAudioSample, automatically or manually.
+The process of moving the driver package to the target computer and installing the driver is called *deploying* the driver. You can deploy the sample driver, TabletAudioSample or PhoneAudioSample, automatically or manually.
 
 ### Automatic deployment
 
@@ -88,7 +90,7 @@ If you haven't already done so, then preform the steps in the **Build the sample
 
 In Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties** \> **Driver Install** \> **Deployment**.
 
-Check , **Enable deployment** and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter *\*SYSVAD\_SLATEAUDIO* for the hardware ID. Click **OK**.
+Check , **Enable deployment** and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter *\*Root\sysvad_TabletAudioSample* for the hardware ID. Click **OK**.
 
 On the **Build** menu, choose **Deploy Package** or **Build Solution**. This will deploy the sample driver to your target computer.
 
@@ -118,19 +120,19 @@ If you need more detailed instructions for setting up the target computer, see [
 
 **2. Install the driver**
 
-The SlateAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver. Here's the general syntax for the devcon tool that you will use to install the driver:
+The TabletAudioSample or PhoneAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver. Here's the general syntax for the devcon tool that you will use to install the driver:
 
 **devcon install \<*INF file*>\<*hardware ID*\>**
 
-The INF file required for installing this driver is *sysvad.inf*. Here's how to find the hardware ID for installing the *SlateAudioSample.sys* sample: On the target computer, navigate to the folder that contains the files for your driver (for example, *C:\\SysvadDriver*). Then right-click the INF file (*sysvad.inf*) and open it with Notepad. Use Ctrl+F to find the [MicrosoftDS] section. Note that there is a comma-separated element at the end of the row. The element after the comma shows the hardware ID. So for this sample, the hardware ID is \*SYSVAD\_SLATEAUDIO.
+The INF file required for installing this driver is *sysvad.inf*. Here's how to find the hardware ID for installing the *TabletAudioSample.sys or PhoneAudioSample* sample: On the target computer, navigate to the folder that contains the files for your driver (for example, *C:\\SysvadDriver*). Then right-click the INF file (*sysvad.inf*) and open it with Notepad. Use Ctrl+F to find the [MicrosoftDS] section. Note that there is a comma-separated element at the end of the row. The element after the comma shows the hardware ID. So for this sample, the hardware ID is \*ROOT\sysvad_TabletAudioSample.
 
 On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
-**devcon install sysvad.inf \*SYSVAD\_SLATEAUDIO**
+**devcon install sysvad.inf \*ROOT\sysvad_TabletAudioSample*
 
 If you get an error message about *devcon* not being recognized, try adding the path to the *devcon* tool. For example, if you copied it to a folder called *C:\\Tools*, then try using the following command:
 
-**c:\\tools\\devcon install sysvad.inf   \*SYSVAD\_SLATEAUDIO**
+**c:\\tools\\devcon install sysvad.inf   \*ROOT\sysvad_TabletAudioSample**
 
 For more detailed instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698272(v=vs.85).aspx).
 
@@ -138,9 +140,9 @@ After successfully installing the sample driver, you're now ready to test it.
 
 ### Test the driver
 
-On the target computer, in a Command Prompt window, enter **devmgmt** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate *Microsoft Virtual Audio Device (WDM) - Slate Sample*. This is typically under the **Sound, video and game controllers** node.
+On the target computer, in a Command Prompt window, enter **devmgmt** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample*. This is typically under the **Sound, video and game controllers** node.
 
-On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Slate Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
+On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
-Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Slate Sample* driver.
+Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample* driver.
 
