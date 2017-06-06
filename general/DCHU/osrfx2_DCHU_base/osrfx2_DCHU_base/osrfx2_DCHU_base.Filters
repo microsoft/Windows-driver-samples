@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{F15AAD6B-59E8-4958-90A3-552BD48EAFE2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{4DD84A7D-DF53-4EE0-A484-1352320A6750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{EF018331-C5CB-4F90-8D54-2EF10F370E8A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{9A3958FE-0B1F-4C9F-9827-83322770EC8A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="device.c" />
+    <ClCompile Include="ioctl.c" />
+    <ClCompile Include="bulkrwr.c" />
+    <ClCompile Include="Interrupt.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <MessageCompile Include="osrusbfx2.man">
+      <Filter>Resource Files</Filter>
+    </MessageCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+    <ClInclude Include="osrusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="osrfx2_DCHU_base.inx">
+      <Filter>Driver Files</Filter>
+    </Inf>
+  </ItemGroup>
+</Project>
