@@ -31,9 +31,6 @@
     <ProjectReference Include="..\SwapAPO\DelayAPO\DelayAPO.vcxproj">
       <Project>{8851AB85-70B3-4798-A149-BA366DF9EC25}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\SwapAPO\PropPageExtensions\PropPageExt.vcxproj">
-      <Project>{D253C552-154D-49E1-820A-B2CD9D9FF13E}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\TabletAudioSample\TabletAudioSample.vcxproj">
       <Project>{E4DF0EEE-D35B-47F2-A9B1-41EA97C465FF}</Project>
     </ProjectReference>

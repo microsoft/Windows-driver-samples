@@ -3,39 +3,39 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{296F0C2A-85AF-4624-97D4-6D3251998382}</UniqueIdentifier>
+      <UniqueIdentifier>{5f4ff11d-7a0b-4f75-9d79-744ae028cc53}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{655A91B5-15BB-4151-B3B5-8185B5FA1ABB}</UniqueIdentifier>
+      <UniqueIdentifier>{bd103b81-05b2-440e-84e7-0723d7fe4109}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{A9DFA5D3-3035-416E-BBD8-8D0745973136}</UniqueIdentifier>
+      <UniqueIdentifier>{a57b6b78-38ae-4348-ade3-0200e81a3dd7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Swap.cpp">
+    <ClCompile Include="Delay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SwapAPODll.cpp">
+    <ClCompile Include="DelayAPODll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SwapAPOMFX.cpp">
+    <ClCompile Include="DelayAPOMFX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SwapAPOSFX.cpp">
+    <ClCompile Include="DelayAPOSFX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <Midl Include="SwapAPODll.idl">
+    <Midl Include="DelayAPODll.idl">
       <Filter>Source Files</Filter>
     </Midl>
-    <Midl Include="SwapAPOInterface.idl">
+    <Midl Include="DelayAPOInterface.idl">
       <Filter>Source Files</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SwapAPODll.rc">
+    <ResourceCompile Include="DelayAPODll.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -43,11 +43,11 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SwapAPO.h" />
+    <ClInclude Include="DelayAPO.h" />
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SwapAPO.h" />
+    <ClInclude Include="DelayAPO.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">

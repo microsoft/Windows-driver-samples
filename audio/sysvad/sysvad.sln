@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{FA56
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KeywordDetectorAdapter", "KeywordDetectorAdapter", "{DBD14E7B-7F95-4743-86E3-4E16FA43F990}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PropPageExtensions", "PropPageExtensions", "{50D3DF82-019A-4434-B17F-72BBC291415F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SwapAPO", "SwapAPO", "{684FF1CF-64CC-430E-81F7-9D603EF56D59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APO", "APO", "{367FF255-7280-48C4-90AC-767124A8D5F7}"
@@ -22,8 +20,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "package", "package\package.VcxProj", "{830B14D5-0E32-4F9E-AEFA-4C9F6FC13C2A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeywordDetectorContosoAdapter", "KeywordDetectorAdapter\KeywordDetectorContosoAdapter.vcxproj", "{E0F02048-78A4-4FE8-B863-66E6CB6A2C37}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PropPageExt", "SwapAPO\PropPageExtensions\PropPageExt.vcxproj", "{D253C552-154D-49E1-820A-B2CD9D9FF13E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SwapAPO", "SwapAPO\APO\SwapAPO.vcxproj", "{691F1D0F-CA50-46CD-8BBA-A59E9E8EB601}"
 EndProject
