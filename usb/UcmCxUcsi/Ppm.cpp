@@ -54,6 +54,7 @@ Ppm_Initialize (
     WDF_IO_QUEUE_CONFIG queueConfig;
     WDF_IO_TARGET_OPEN_PARAMS openParams;
     WDF_WORKITEM_CONFIG workItemConfig;
+    UCM_MANAGER_CONFIG ucmConfig;
 
     PAGED_CODE();
 
@@ -129,6 +130,14 @@ Ppm_Initialize (
     if (!NT_SUCCESS(status))
     {
         TRACE_ERROR(TRACE_FLAG_PPM, "[Device: 0x%p] WdfWorkItemCreate failed - %!STATUS!", device, status);
+        goto Exit;
+    }
+
+    UCM_MANAGER_CONFIG_INIT(&ucmConfig);
+    status = UcmInitializeDevice(device, &ucmConfig);
+    if (!NT_SUCCESS(status))
+    {
+        TRACE_ERROR(TRACE_FLAG_PPM, "[Device: 0x%p] UcmInitializeDevice failed - %!STATUS!", device, status);
         goto Exit;
     }
 

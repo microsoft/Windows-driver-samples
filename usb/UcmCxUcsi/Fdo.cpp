@@ -27,6 +27,7 @@ EVT_WDF_DEVICE_D0_ENTRY Fdo_EvtDeviceD0Entry;
 EVT_WDF_DEVICE_D0_EXIT Fdo_EvtDeviceD0Exit;
 EVT_WDF_DEVICE_SELF_MANAGED_IO_INIT Fdo_EvtDeviceSelfManagedIoInit;
 EVT_WDF_DEVICE_SELF_MANAGED_IO_RESTART Fdo_EvtDeviceSelfManagedIoRestart;
+EVT_WDF_WORKITEM Fdo_ConnectorAndNotificationWorkItem;
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS
@@ -112,8 +113,11 @@ Fdo_Initialize (
     _In_ PFDO_CONTEXT FdoCtx
     )
 {
+    NTSTATUS status;
     WDFDEVICE device;
     WDF_DEVICE_STATE deviceState;
+    WDF_WORKITEM_CONFIG workItemConfig;
+    WDF_OBJECT_ATTRIBUTES attributes;
 
     PAGED_CODE();
 
@@ -130,7 +134,26 @@ Fdo_Initialize (
     deviceState.NotDisableable = WdfFalse;
     WdfDeviceSetDeviceState(device, &deviceState);
 
+	//
+	// Create a workitem that will create connectors and enable notifications 
+	// so that we don't block D0 Entry and thereby boot sequence of the system. 
+	//
+	
+    WDF_WORKITEM_CONFIG_INIT(&workItemConfig, Fdo_ConnectorAndNotificationWorkItem);
+
+    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+    attributes.ParentObject = device;
+
+    status = WdfWorkItemCreate(&workItemConfig, &attributes, &FdoCtx->ConnectorAndNotificationWorkItem);
+    if (!NT_SUCCESS(status))
+    {
+        TRACE_ERROR(TRACE_FLAG_FDO, "[Device: 0x%p] WdfWorkItemCreate for ConnectorAndNotificationWorkItem failed - %!STATUS!", device, status);
+        goto Exit;
+    }
+
     TRACE_INFO(TRACE_FLAG_FDO, "[Device: 0x%p] FDO initialized", device);
+
+Exit:
 
     TRACE_FUNC_EXIT(TRACE_FLAG_FDO);
 
@@ -304,56 +327,19 @@ Fdo_EvtDeviceSelfManagedIoInit (
     _In_ WDFDEVICE Device
     )
 {
-    NTSTATUS status;
-    PPPM_CONTEXT ppmCtx;
-    UCM_MANAGER_CONFIG ucmConfig;
+    PFDO_CONTEXT fdoCtx;
 
     PAGED_CODE();
 
     TRACE_FUNC_ENTRY(TRACE_FLAG_FDO);
 
-    ppmCtx = &Fdo_GetContext(Device)->PpmCtx;
+    fdoCtx = Fdo_GetContext(Device);
 
-    //
-    // Since the PPM uses a power-managed queue to handle command requests, self-managed I/O init
-    // is when we can start processing commands.
-    //
-
-    UCM_MANAGER_CONFIG_INIT(&ucmConfig);
-
-    //
-    // Initialize our device with UCM.
-    //
-
-    status = UcmInitializeDevice(Device, &ucmConfig);
-    if (!NT_SUCCESS(status))
-    {
-        TRACE_ERROR(TRACE_FLAG_FDO, "[Device: 0x%p] UcmInitializeDevice failed - %!STATUS!", Device, status);
-        goto Exit;
-    }
-
-
-    status = Ucm_CreateConnectors(ppmCtx);
-    if (!NT_SUCCESS(status))
-    {
-        goto Exit;
-    }
-
-    //
-    // Connector objects are ready. Now we can enable all notifications.
-    //
-
-    status = Ppm_EnableNotifications(ppmCtx);
-    if (!NT_SUCCESS(status))
-    {
-        goto Exit;
-    }
-
-Exit:
+    WdfWorkItemEnqueue(fdoCtx->ConnectorAndNotificationWorkItem);
 
     TRACE_FUNC_EXIT(TRACE_FLAG_FDO);
 
-    return status;
+    return STATUS_SUCCESS;
 }
 
 
@@ -382,4 +368,53 @@ Exit:
     TRACE_FUNC_EXIT(TRACE_FLAG_FDO);
 
     return status;
+}
+
+VOID
+Fdo_ConnectorAndNotificationWorkItem(
+    _In_ WDFWORKITEM WorkItem
+)
+{
+    NTSTATUS status;
+    PPPM_CONTEXT ppmCtx;
+    PFDO_CONTEXT fdoCtx;
+    WDFDEVICE device;
+
+    PAGED_CODE();
+
+    TRACE_FUNC_ENTRY(TRACE_FLAG_FDO);
+
+    device = (WDFDEVICE)WdfWorkItemGetParentObject(WorkItem);
+
+    fdoCtx = Fdo_GetContext(device);
+    ppmCtx = &fdoCtx->PpmCtx;
+    status = Ucm_CreateConnectors(ppmCtx);
+    if (!NT_SUCCESS(status))
+    {
+        goto Exit;
+    }
+
+    //
+    // Connector objects are ready. Now we can enable all notifications.
+    //
+    status = Ppm_EnableNotifications(ppmCtx);
+    if (!NT_SUCCESS(status))
+    {
+        goto Exit;
+    }
+
+Exit:
+    //
+    // Failing to create the connectors or enable notifications are both
+    // unrecoverable failures. Attempt to have WDF reload the driver.
+    //
+    if (!NT_SUCCESS(status))
+    {
+        TRACE_ERROR(TRACE_FLAG_FDO, "[Device: 0x%p] Failed to initialize PPM connectors - attempting to restart device.", device);
+        WdfDeviceSetFailed(fdoCtx->WdfDevice, WdfDeviceFailedAttemptRestart);
+    }
+
+    TRACE_INFO(TRACE_FLAG_FDO, "[Device: 0x%p] Work item complete.", device);
+
+    TRACE_FUNC_EXIT(TRACE_FLAG_FDO);
 }

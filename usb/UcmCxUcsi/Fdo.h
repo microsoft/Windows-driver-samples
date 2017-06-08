@@ -26,6 +26,7 @@ typedef struct _FDO_CONTEXT
 
     ACPI_CONTEXT AcpiCtx;
     PPM_CONTEXT PpmCtx;
+    WDFWORKITEM ConnectorAndNotificationWorkItem;
 
 } FDO_CONTEXT, *PFDO_CONTEXT;
 
