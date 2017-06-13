@@ -593,6 +593,9 @@ NTSTATUS ProcessRetrieveStatisticsRequest(_In_ WDFREQUEST Request, _In_ size_t O
         PosValueStatisticsEntry Entries[1];
     } StatisticsData;
 
+    // Initialize statics data so header data are identical for the same requested
+    RtlZeroMemory(&StatisticsData, sizeof(StatisticsData));
+    
     StatisticsData.Header.DataLength = sizeof(StatisticsData);
     wcscpy_s(StatisticsData.Header.DeviceInformation.DeviceCategory, L"MSR");
     wcscpy_s(StatisticsData.Header.DeviceInformation.FirmwareRevision, L"<eg, 1.1>");
@@ -608,9 +611,6 @@ NTSTATUS ProcessRetrieveStatisticsRequest(_In_ WDFREQUEST Request, _In_ size_t O
     wcscpy_s(StatisticsData.Entries[0].EntryName, L"<device specific statistics value>");
     StatisticsData.Entries[0].Value = (LONG)1;
 
-    // Initialize statics data so header data are identical for the same requested
-    RtlZeroMemory(&StatisticsData, sizeof(StatisticsData));
-    
     // This IOCTL is called twice by the Windows.Devices.PointOfService APIs
     // The first time will just retrieve the header to determine how big the buffer needs to be.
     PVOID outputBuffer;
