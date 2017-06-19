@@ -593,6 +593,9 @@ NTSTATUS ProcessRetrieveStatisticsRequest(_In_ WDFREQUEST Request, _In_ size_t O
         PosValueStatisticsEntry Entries[1];
     } StatisticsData;
 
+    // Initialize statics data so header data are identical for the same requested
+    RtlZeroMemory(&StatisticsData, sizeof(StatisticsData));
+    
     StatisticsData.Header.DataLength = sizeof(StatisticsData);
     wcscpy_s(StatisticsData.Header.DeviceInformation.DeviceCategory, L"MSR");
     wcscpy_s(StatisticsData.Header.DeviceInformation.FirmwareRevision, L"<eg, 1.1>");
