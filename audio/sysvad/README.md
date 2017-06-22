@@ -28,7 +28,7 @@ Perform the following steps to build this sample driver.
 
 In Microsoft Visual Studio, Click **File** \> **Open** \> **Project/Solution...** and navigate to the folder that contains the sample files (for example, *C:\Windows-driver-samples\audio\sysvad*). Double-click the *sysvad* solution file.
 
-In Visual Studio locate the Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has four projects. Note that the project titled SwapAPO is actually a folder that contains two projects - APO and PropPageExtensions.
+In Visual Studio locate the Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has four projects.
 
 **2. Set the sample's configuration and platform**
 
@@ -48,14 +48,12 @@ The package should contain these files:
 
 File | Description 
 -----|------------
-TabletAudioSample.sys OR PhoneAudioSample| The driver file.
+TabletAudioSample.sys OR PhoneAudioSample.sys| The driver file.
 SwapAPO.dll | A sample APO. 
 DelayAPO.dll | A sample APO. 
-PropPageExt.dll | A sample driver extension for a property page. 
 sysvad.cat | A signed catalog file, which serves as the signature for the entire package. 
 TabletAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
-PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
-WdfCoinstaller01011.dll | The coinstaller for version 1.xx of KMDF. 
+PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver.
 
 Run the sample
 --------------
