@@ -29,7 +29,7 @@ Environment:
 #define UCSI_MAX_NUM_ALT_MODE 0x80
 #define UCSI_MIN_TIME_TO_RESPOND_WITH_BUSY 0x0A
 #define UCSI_GET_ERROR_STATUS_DATA_LENGTH 0x10
-#define UCSI_MAX_NUM_PDOS 0x32 // Table 6-32 Counter parameters PD 2.0 V1.1
+#define UCSI_MAX_NUM_PDOS 0x7 // PD Rev2.0 Ver1.3: "6.2.1.2 Number of Data Objects" and "6.4.1 Capabilities Message"
 
 
 typedef enum _UCSI_COMMAND
