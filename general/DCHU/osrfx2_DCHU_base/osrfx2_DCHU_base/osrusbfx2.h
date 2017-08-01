@@ -37,7 +37,7 @@ typedef struct _IO_STACK_LOCATION *PIO_STACK_LOCATION;
 #include <prototypes.h>
 #include <initguid.h>
 #include <driverspecs.h>
-#include <trace.h>
+#include "trace.h"
 
 #include "public.h"
 

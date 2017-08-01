@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -35,12 +35,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <Inf Include="..\osrfx2_DCHU_usersvc\osrfx2_DCHU_usersvc.inx" />
     <Inf Include="osrfx2_DCHU_extension.inx" />
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exel" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0588DF70-3923-42E6-8DC9-13C2C0186F20}</ProjectGuid>
     <TemplateGuid>{4605da2c-74a5-4865-98e1-152ef136825f}</TemplateGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>

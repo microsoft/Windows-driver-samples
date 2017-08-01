@@ -38,7 +38,7 @@ osrfx2_DCHU_componentsoftware.exe = 1
 1 = %DiskName%
 
 [DestinationDirs]
-DefaultDestDir = 13 ; copy to driverstore
+OsrFx2Component_CopyFiles = 13 ; copy to driverstore
 
 [OsrFx2Component_Install.NT]
 CopyFiles = OsrFx2Component_CopyFiles
