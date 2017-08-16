@@ -32,7 +32,6 @@ CatalogFile.NTAMD64 = tstamd64.cat
 [DestinationDirs]
 DefaultDestDir = 12
 CoInstaller_CopyFiles = 11
-ToasterClassInstallerCopyFiles = 11
 
 ; ================= Class section =====================
 
@@ -43,11 +42,7 @@ CopyFiles=ToasterClassInstallerCopyFiles
 [ToasterClassReg]
 HKR,,,0,%ClassName%
 HKR,,Icon,,100
-HKR,,Installer32,,"tostrcls.dll,ToasterClassInstaller"
 HKR,,DeviceCharacteristics,0x10001,0x100        ; Use same security checks on relative opens
-
-[ToasterClassInstallerCopyFiles]
-tostrcls.dll
 
 ;*****************************************
 ; Toaster Device  Install Section
@@ -120,7 +115,6 @@ OriginalInfSourcePath = %1%
 [SourceDisksFiles]
 toaster.sys  = 1,,
 tostrco2.dll = 1,,
-tostrcls.dll = 1,,
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
