@@ -24,7 +24,7 @@
    ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
    Provider    = %ProviderString%
    CatalogFile = WFPSamplerCalloutDriver.Cat
-   DriverVer   = 
+   DriverVer   =
 
 [SourceDisksNames.$ARCH$]
    1 = %WFPSamplerCalloutDriverDiskId%,,,""
@@ -33,7 +33,7 @@
    WFPSamplerCalloutDriver.sys = 1,,
 
 [ClassInstall32.nt$ARCH$]
-   AddReg = WFPCalloutsClassReg
+   AddReg = WFPCalloutClassReg
 
 [DestinationDirs]
    DefaultDestDir                      = 12                                                        ;/// %WinDir%\System32\Drivers
