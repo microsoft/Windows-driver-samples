@@ -10,7 +10,7 @@
 
     Abstract:
 
-        AVStream Simulated Hardware Sample header file.  This is the 
+        AVStream Simulated Hardware Sample header file.  This is the
         main header.
 
     History:
@@ -43,6 +43,14 @@ extern "C" {
 #include <unknown.h>
 #include <ks.h>
 #include <ksmedia.h>
+
+// Note: Since VS2015 Update 2 overloaded operator new and operator delete may not
+// be declared inline (Level 1 (/W1) on-by-default, warning C4595).
+// See https://msdn.microsoft.com/en-us/library/mt656697.aspx
+//
+// To mitigate this issue, add "#define _NEW_DELETE_OPERATORS_" before "#include <kcom.h>"
+// and implement non-inline operator new and operator delete locally.
+#define _NEW_DELETE_OPERATORS_
 #include <kcom.h>
 
 /*************************************************
@@ -76,7 +84,7 @@ const DebugLevel = DEBUGLVL_TERSE;
 
 #define ABS(x) ((x) < 0 ? (-(x)) : (x))
 
-#ifndef mmioFOURCC    
+#ifndef mmioFOURCC
 #define mmioFOURCC( ch0, ch1, ch2, ch3 )                \
         ( (DWORD)(BYTE)(ch0) | ( (DWORD)(BYTE)(ch1) << 8 ) |    \
         ( (DWORD)(BYTE)(ch2) << 16 ) | ( (DWORD)(BYTE)(ch3) << 24 ) )
@@ -137,12 +145,12 @@ CaptureFilterCategories [CAPTURE_FILTER_CATEGORIES_COUNT];
 //
 // capture.cpp externs:
 //
-extern 
+extern
 const
 KSALLOCATOR_FRAMING_EX
 CapturePinAllocatorFraming;
 
-extern 
+extern
 const
 KSPIN_DISPATCH
 CapturePinDispatch;
@@ -210,103 +218,38 @@ public:
 };
 
 
-
 /*************************************************
 
     Global Functions
 
 *************************************************/
 
-/*++
-
-Routine Description:
-
-    Array delete() operator.
-
-Arguments:
-
-    pVoid -
-        The memory to free.
-
-Return Value:
-
-    None
-
---*/
-inline 
-void 
-__cdecl 
-operator delete[](
-	PVOID pVoid
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
-
-/*++
-
-Routine Description:
-
-    Sized delete() operator.
-
-Arguments:
-
-    pVoid -
-        The memory to free.
-
-    size -
-        The size of the memory to free.
-
-Return Value:
-
-    None
-
---*/
-inline void __cdecl operator delete
+void __cdecl operator delete[]
 (
-	void *pVoid,
-	size_t /*size*/
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
+    PVOID pVoid
+);
 
-/*++
-
-Routine Description:
-
-    Sized delete[]() operator.
-
-Arguments:
-
-    pVoid -
-        The memory to free.
-
-    size -
-        The size of the memory to free.
-
-Return Value:
-
-    None
-
---*/
-inline void __cdecl operator delete[]
+void __cdecl operator delete
 (
-	void *pVoid,
-	size_t /*size*/
-)
-{
-	if (pVoid)
-	{
-		ExFreePool(pVoid);
-	}
-}
+    void *pVoid,
+    size_t /*size*/
+);
+
+void __cdecl operator delete[]
+(
+    void *pVoid,
+    size_t /*size*/
+);
+
+PVOID operator new
+(
+    size_t          iSize,
+    _When_((poolType & NonPagedPoolMustSucceed) != 0,
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
+    POOL_TYPE       poolType,
+    ULONG           tag
+);
 
 /*************************************************
 
