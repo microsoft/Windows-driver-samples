@@ -1,0 +1,6 @@
+; SensorsComboDriver.def : Declares the module parameters.
+
+LIBRARY SensorsComboDriver
+
+EXPORTS
+

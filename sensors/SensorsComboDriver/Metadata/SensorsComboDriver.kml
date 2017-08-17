@@ -1,0 +1,129 @@
+﻿<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<Content xmlns="http://microsoft.com/schemas/Windows/Kits/Manifest">
+  <ContentGroup
+      BuildArchitecture="x86"
+      BuildType="fre"
+      Destination="Sensors\SensorsComboDriver"
+      Source="..\Driver"
+      >
+    <FeatureReference Name="WDK Samples"/>
+    <TextFile Name="Clients.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="Clients.h">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="SensorsComboDriver.inx">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="SensorsComboDriver.def">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="device.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="driver.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="Driver.h">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="AlsClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="BarClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="GeomagneticOrientationClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="GravityVectorClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="GyrClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="linearaccelerometerclient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="MagClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="PrxClient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="relativefusionclient.cpp">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="SensorsTrace.h">
+      <HSplit
+          Operation="Split"
+          Tag="DDKSPLIT"
+          />
+    </TextFile>
+    <TextFile Name="SensorsComboDriver.vcxproj"/>
+    <TextFile Name="SensorsComboDriver.vcxproj.Filters"/>
+  </ContentGroup>
+  <!-- Gallery.xml - . - Sensors\SensorsComboDriver -->
+  <ContentGroup
+      BuildArchitecture="x86"
+      BuildType="fre"
+      Destination="Sensors\SensorsComboDriver"
+      Source="."
+      >
+    <FeatureReference Name="WDK Samples"/>
+    <TextFile
+        Name="SensorsComboDriver-Gallery.xml"
+        Rename="Gallery.xml"
+        />
+    <TextFile Name="SensorsComboDriver.sln"/>
+  </ContentGroup>
+</Content>

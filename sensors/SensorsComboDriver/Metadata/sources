@@ -1,0 +1,4 @@
+TARGETTYPE = NOTARGET
+
+SOURCES=\
+     SensorsComboDriver.kml \

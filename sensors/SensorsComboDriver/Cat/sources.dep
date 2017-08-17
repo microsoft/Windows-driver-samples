@@ -1,0 +1,2 @@
+BUILD_PASS2_CONSUMES= \
+    drivers\mobilepc\sensors\samples\sensorscombodriver\driver|PASS2 \
