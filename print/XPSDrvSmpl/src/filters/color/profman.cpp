@@ -692,7 +692,7 @@ CProfileManager::GetResURI(
             // Create a unique name for the profile for this print session
             //
             CStringXDW cstrURI;
-            cstrURI.Format(L"/%s_%u%s", cstrFileName, GetUniqueNumber(), cstrFileExt);
+            cstrURI.Format(L"/%s_%u%s", static_cast<LPCWSTR>(cstrFileName), GetUniqueNumber(), static_cast<LPCWSTR>(cstrFileExt));
 
             *pbstrResURI = cstrURI.AllocSysString();
         }

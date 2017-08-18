@@ -363,8 +363,8 @@ CNUpSaxHandler::startElement(
                                    sizePage.Height);
 
                     cstrOut.Format(L"<Canvas RenderTransform=\"%s\" Clip=\"%s\"",
-                                      bstrMatrix,
-                                      strClip);
+                                      static_cast<LPCWSTR>(bstrMatrix),
+                                      static_cast<LPCTSTR>(strClip));
 
                     //
                     // Add additional namespaces from the FixedPage

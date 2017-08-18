@@ -1034,7 +1034,7 @@ CPTManager::GetMergedTicket(
                 {
                     CStringXDA cstrMessage;
                     CStringXDA cstrError(bstrErrorMessage);
-                    cstrMessage.Format("PTMergeAndValidatePrintTicket failed with message: %s\n", cstrError);
+                    cstrMessage.Format("PTMergeAndValidatePrintTicket failed with message: %s\n", static_cast<LPCSTR>(cstrError));
 
                     ERR(cstrMessage.GetBuffer());
                 }

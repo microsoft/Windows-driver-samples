@@ -51,13 +51,163 @@
     <ClCompile Include="wmxps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xdwmark.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="wmflt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+    <ClInclude Include="wmbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wmflt.h" />
+    <ClInclude Include="wmfont.h" />
+    <ClInclude Include="wmimg.h" />
+    <ClInclude Include="wmptprop.h" />
+    <ClInclude Include="wmrast.h" />
+    <ClInclude Include="wmres.h" />
+    <ClInclude Include="wmsax.h" />
+    <ClInclude Include="wmtext.h" />
+    <ClInclude Include="wmvect.h" />
+    <ClInclude Include="wmxps.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Raster1.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="xdwmark.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

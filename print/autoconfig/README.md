@@ -1,4 +1,4 @@
-Print auto-configuration sample
+Print auto-configuration sample test
 ===============================
 
 This sample demonstrates how to implement auto-configuration in v4 print drivers. 

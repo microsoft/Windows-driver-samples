@@ -27,13 +27,65 @@
     <ClCompile Include="XpsFilter.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="FilterSample.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FilterSample.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+    <ClInclude Include="main.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="precomp.hxx" />
+    <ClInclude Include="smartptr.hxx" />
+    <ClInclude Include="StreamFilter.hxx" />
+    <ClInclude Include="trace.hxx" />
+    <ClInclude Include="XpsFilter.hxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FilterSample.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
