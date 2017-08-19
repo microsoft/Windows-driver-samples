@@ -22,7 +22,7 @@
     <ProjectGuid>{26D91630-B8FF-4102-A258-32F7D1C84E20}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>osrfx2_DCHU_componentsoftware</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16245.0</WindowsTargetPlatformVersion>
     <ProjectName>osrfx2_DCHU_componentsoftware</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

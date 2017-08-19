@@ -26,7 +26,7 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <SampleGuid>{F915ED95-7BE9-4CDB-B09A-0D3F4C9657FE}</SampleGuid>
     <ProjectName>osrfx2_DCHU_base</ProjectName>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -42,7 +42,7 @@
     <UseDebugLibraries>True</UseDebugLibraries>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <DriverType>UMDF</DriverType>
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -50,7 +50,7 @@
     <UseDebugLibraries>False</UseDebugLibraries>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <DriverType>UMDF</DriverType>
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -58,12 +58,12 @@
     <UseDebugLibraries>True</UseDebugLibraries>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <DriverType>UMDF</DriverType>
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
-    <OutDir>$(IntDir)</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -137,6 +137,7 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
@@ -162,6 +163,7 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
@@ -187,6 +189,7 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
@@ -212,13 +215,22 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
     </Inf>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_base.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
     <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
@@ -226,7 +238,7 @@
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
@@ -234,11 +246,19 @@
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <Inf Include="osrfx2_DCHU_base.inx" />
-    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <Inf Include="osrfx2_DCHU_base.inx" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />

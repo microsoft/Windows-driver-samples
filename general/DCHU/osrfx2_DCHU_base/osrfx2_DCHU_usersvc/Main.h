@@ -50,6 +50,15 @@ DEFINE_GUID(GUID_DEVINTERFACE_OSRUSBFX2,
 #pragma warning(disable:4201)  // nameless struct/union
 #pragma warning(disable:4214)  // bit field types other than int
 
+typedef struct _HANDLE_CONTEXT {
+    HANDLE DeviceInterfaceHandle;
+    CRITICAL_SECTION Lock;
+    PTP_WORK Work;
+    BOOL Unregister;
+	HCMNOTIFICATION InterfaceNotificationHandle;
+	HCMNOTIFICATION DeviceNotificationHandle;
+} HANDLE_CONTEXT, *PHANDLE_CONTEXT;
+
 //
 // Define the structures that will be used by the IOCTL 
 // interface to the driver
@@ -203,7 +212,7 @@ Return Value:
     VOID
 
 --*/
-VOID SetVariables();
+VOID SetVariables(VOID);
 
 
 /*++
@@ -240,7 +249,7 @@ Return Value:
     VOID
 
 --*/
-VOID ClearAllBars(HANDLE deviceHandle);
+DWORD ClearAllBars(PHANDLE_CONTEXT Context);
 
 
 /*++
@@ -258,4 +267,76 @@ Return Value:
 VOID
 
 --*/
-VOID LightNextBar(HANDLE deviceHandle);
+DWORD LightNextBar(PHANDLE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
+Register for device notifications.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD RegisterDeviceNotifications(PHANDLE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
+Unregister for device notifications.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD UnregisterDeviceNotifications(PHANDLE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
+Initialize the given PHANDLE_CONTEXT.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD InitializeContext(PHANDLE_CONTEXT* Context);
+
+
+/*++
+
+Routine Description:
+
+Clean up the given PHANDLE_CONTEXT.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD CloseContext(PHANDLE_CONTEXT* Context);

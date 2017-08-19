@@ -1,0 +1,54 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    osrfx2_DCHU_extension.INF
+;
+;Abstract:
+;
+;    Extension inf for the OSR FX2 Learning Kit
+;
+;--*/
+
+[Version]
+Signature = "$WINDOWS NT$"
+Class = Extension
+ClassGuid = {e2f84ce7-8efa-411c-aa69-97454ca4cb57}
+Provider = %ManufacturerName%
+ExtensionId = {3846ad8c-dd27-433d-ab89-453654cd542a}
+CatalogFile = osrfx2_DCHU_extension.cat
+DriverVer = 05/16/2017,15.14.36.721
+
+[Manufacturer]
+%ManufacturerName% = OsrFx2Extension, NT$ARCH$
+
+[OsrFx2Extension.NT$ARCH$]
+%OsrFx2.ExtensionDesc% = OsrFx2Extension_Install, USB\Vid_045e&Pid_94aa&mi_00
+%OsrFx2.ExtensionDesc% = OsrFx2Extension_Install, USB\Vid_0547&PID_1002
+
+[OsrFx2Extension_Install.NT]
+; Empty
+
+[OsrFx2Extension_Install.NT.HW]
+AddReg = OsrFx2Extension_AddReg
+
+[OsrFx2Extension_AddReg]
+HKR, OSR, "OperatingParams",, "-Extended"
+HKR, OSR, "OperatingExceptions",, "x86"
+
+[OsrFx2Extension_Install.NT.Components]
+AddComponent = osrfx2_DCHU_component,,OsrFx2Extension_ComponentInstall
+
+[OsrFx2Extension_ComponentInstall]
+ComponentIds=VID_045e&PID_94ab
+
+[Strings]
+ManufacturerName = "Contoso"
+OsrFx2.ExtensionDesc = "OsrFx2 DCHU Device Extension"
