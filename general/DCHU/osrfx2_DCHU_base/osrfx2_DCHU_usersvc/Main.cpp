@@ -678,9 +678,7 @@ DeviceRemoveCompleteAction(
 	PHANDLE_CONTEXT Context
     )
 {
-	__debugbreak();
-
-    DWORD Err = ERROR_SUCCESS;
+	DWORD Err = ERROR_SUCCESS;
 
     EnterCriticalSection(&Context->Lock);
 
