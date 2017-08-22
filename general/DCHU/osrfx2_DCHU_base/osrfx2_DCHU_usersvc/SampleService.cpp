@@ -261,8 +261,6 @@ Return Value:
 VOID
 CSampleService::OnStop()
 {
-	__debugbreak();
-
     //
     // Log a service stop message to the Application log.
     //
