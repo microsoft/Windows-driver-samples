@@ -1,0 +1,3 @@
+LIBRARY        PTPCPLPR
+EXPORTS        DllGetClassObject   PRIVATE
+               DllCanUnloadNow     PRIVATE

@@ -1,0 +1,3 @@
+LIBRARY		WMARKPS
+EXPORTS        DllGetClassObject   PRIVATE
+               DllCanUnloadNow     PRIVATE

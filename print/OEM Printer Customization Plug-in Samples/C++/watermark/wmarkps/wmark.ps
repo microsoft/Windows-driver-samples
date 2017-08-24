@@ -1,0 +1,33 @@
+userdict /DrawWaterMark {
+userdict begin
+/Watermark (%ls) def
+/FontSize %d def
+/Font /Helvetica def
+/WaterMarkColor {%s setrgbcolor} bind def
+/Angle %s def
+
+gsave
+initgraphics
+
+Angle rotate
+
+clippath
+pathbbox /MaxY exch def /MaxX exch def /MinY exch def /MinX exch def
+
+Font findfont FontSize scalefont setfont
+/MarkLen Watermark stringwidth pop 1.20 mul def
+WaterMarkColor
+
+MinY FontSize MaxY
+{
+  MinX MarkLen MaxX
+  {
+    1 index moveto Watermark show
+  } for
+  pop
+} bind for
+grestore
+end
+} bind put
+
+ 
