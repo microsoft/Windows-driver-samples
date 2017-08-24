@@ -39,16 +39,18 @@ a. In the **Solution Explorer**, right click **Driver Files**
 b. Select **Add**, then click **Existing Item**
 c. Navigate to the location to which you downloaded the sample, and select all the files in the install directory, or the equivalent set of non-binary files such as INFs, INIs, GPD, PPD files, etc.
 d. Click **Add**
+
 3. Configure these files to be added into the driver package
 a. In the **Solution Explorer**, right click the Package project and select **Properties**
 b. In the left pane, click **Configuration Properties** > **Driver Install** > **Package Files**.
 c. In the right pane, use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All the data files that you added in **Step 2-c**, except the INF file, should be added.
 **Note**  This configuration is per-architecture, so this configuration must be repeated for each architecture that will be built.
-d. Click **OK** 
+d. Click **OK**
+
 4. Open the INF file and edit it to match the built output
 a. Open the INF file
 b. In the Version section, add a reference to a catalog file that matches the .INF name like this: CatalogFile=XpsDrvSmpl.cat 
-c. In the SourceDisksFiles section, change the location of the DLL files you are building, to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually. 
+c. In the SourceDisksFiles section, change the location of the DLL files you are building, to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually.
 
 At this point, Visual Studio 2017 will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/).
 For more information about how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/building-a-driver).

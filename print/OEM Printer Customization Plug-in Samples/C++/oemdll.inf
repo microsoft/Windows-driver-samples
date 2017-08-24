@@ -21,7 +21,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTamd64, NTia64
+"Microsoft"=Microsoft, NTamd64, NTia64, NTarm64
 
 ;
 ; Model sections. 
@@ -48,6 +48,14 @@ DriverVer=6/07/2001,1.0.0.1
 "OEM UI Customization Sample (Unidrv)" = INSTALL_OEMUI.UNI
 
 [Microsoft.NTia64]
+"PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
+"Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
+"OEM PostScript Customization Sample"  = INSTALL_OEMPS
+"OEM Unidrv Customization Sample"      = INSTALL_OEMUNI
+"OEM UI Customization Sample (PS)"     = INSTALL_OEMUI.PS
+"OEM UI Customization Sample (Unidrv)" = INSTALL_OEMUI.UNI
+
+[Microsoft.NTarm64]
 "PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
 "Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
 "OEM PostScript Customization Sample"  = INSTALL_OEMPS
@@ -190,6 +198,15 @@ wmarkps.dll    = 100,WaterMark\ia64
 wmarkuni.dll   = 100,WaterMarkUni\ia64
 wmarkuniui.dll = 100,WaterMarkUni\ia64
 wmarkui.dll    = 100,WaterMark\ia64
+
+[SourceDisksFiles.arm64]
+oemps.dll      = 100,OEMPS\arm64
+oemui.dll      = 100,OEMUI\arm64
+oemuni.dll     = 100,OEMUNI\arm64
+wmarkps.dll    = 100,WaterMark\arm64
+wmarkuni.dll   = 100,WaterMarkUni\arm64
+wmarkuniui.dll = 100,WaterMarkUni\arm64
+wmarkui.dll    = 100,WaterMark\arm64
 
 [SourceDisksFiles]
 OEM.PPD       = 100

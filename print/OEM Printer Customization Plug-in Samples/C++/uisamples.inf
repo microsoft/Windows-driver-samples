@@ -21,7 +21,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTamd64, NTia64
+"Microsoft"=Microsoft, NTamd64, NTia64, NTarm64
 
 ;
 ; Model sections. 
@@ -40,6 +40,10 @@ DriverVer=6/07/2001,1.0.0.1
 "OEM Custom Help"       = CUSTHELP.UNI
 
 [Microsoft.NTia64]
+"OEM Custom UI Plugin"  = SYNCSET.UNI
+"OEM Custom Help"       = CUSTHELP.UNI
+
+[Microsoft.NTarm64]
 "OEM Custom UI Plugin"  = SYNCSET.UNI
 "OEM Custom Help"       = CUSTHELP.UNI
 
@@ -106,6 +110,10 @@ SYNCSET.DLL   = 100,SyncSet\amd64
 [SourceDisksFiles.ia64]
 CUSTHLP.DLL   = 100,CustHlp\ia64
 SYNCSET.DLL   = 100,SyncSet\ia64
+
+[SourceDisksFiles.arm64]
+CUSTHLP.DLL   = 100,CustHlp\arm64
+SYNCSET.DLL   = 100,SyncSet\arm64
 
 [SourceDisksFiles]
 SYNCSET.GPD   = 100

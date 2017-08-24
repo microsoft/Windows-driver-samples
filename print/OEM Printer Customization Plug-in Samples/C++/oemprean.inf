@@ -20,7 +20,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64
+"Microsoft"=Microsoft, NTx86, NTamd64, NTia64, NTarm64
 
 ;
 ; Model sections. 
@@ -40,6 +40,9 @@ DriverVer=6/07/2001,1.0.0.1
 "OEM Pre-Analysis sample"      = OEM_PREAN
 
 [Microsoft.NTia64]
+"OEM Pre-Analysis sample"      = OEM_PREAN
+
+[Microsoft.NTarm64]
 "OEM Pre-Analysis sample"      = OEM_PREAN
 
 ;
@@ -97,6 +100,9 @@ oemprean.dll    = 100,oemprean\amd64
 
 [SourceDisksFiles.ia64]
 oemprean.dll    = 100,oemprean\ia64
+
+[SourceDisksFiles.arm64]
+oemprean.dll    = 100,oemprean\arm64
 
 [SourceDisksFiles]
 OEMPREAN.GPD       = 100
