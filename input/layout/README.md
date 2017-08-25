@@ -1,3 +1,13 @@
+<!---
+    name: Keyboard Layout Samples
+    platform: Application
+    language: cpp
+    category: HID
+    description: Demonstrates how to generate layouts for various keyboards and locales.
+    samplefwlink: https://aka.ms/rapjms
+--->
+
+
 Keyboard Layout Samples
 =======================
 

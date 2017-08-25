@@ -1,3 +1,13 @@
+<!---
+    name: PLX9x5x PCI Driver
+    platform: KMDF
+    language: cpp
+    category: General PCI WDF
+    description: Demonstrates how to write a driver for a generic PCI device using Windows Driver Frameworks (WDF).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617719
+--->
+
+
 PLX9x5x PCI Driver
 ==================
 

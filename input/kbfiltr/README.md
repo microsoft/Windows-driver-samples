@@ -1,3 +1,13 @@
+<!---
+    name: Keyboard Input WDF Filter Driver (Kbfiltr)
+    platform: KMDF
+    language: cpp
+    category: HID WDF
+    description: A WDF example of a keyboard input filter driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620194
+--->
+
+
 Keyboard Input WDF Filter Driver (Kbfiltr)
 ==========================================
 

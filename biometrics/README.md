@@ -1,3 +1,13 @@
+<!---
+    name: Windows Biometric Driver Samples (UMDF Version 1)
+    platform: UMDF1
+    language: cpp
+    category: Security Biometrics
+    description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620189
+--->
+
+
 Windows Biometric Driver Samples (UMDF Version 1)
 =================================================
 

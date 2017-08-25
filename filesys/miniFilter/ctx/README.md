@@ -1,3 +1,13 @@
+<!---
+    name: Ctx File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter. 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617648
+--->
+
+
 Ctx File System Minifilter Driver
 =================================
 

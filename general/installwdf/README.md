@@ -1,3 +1,13 @@
+<!---
+    name: WDF Installation Package
+    platform: Tool
+    language: cpp
+    category: General WDF
+    description: Demonstrates how to install WDF packages on a system.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617713
+--->
+
+
 WDF Installation Package
 ========================
 

@@ -1,3 +1,12 @@
+<!---
+    name: Driver MFT Sample
+    platform: WDM
+    language: cpp
+    category: Camera
+    description: A driver MFT for use with a camera's Windows Store device app.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617126
+--->
+
 Driver MFT Sample
 =================
 
