@@ -1,7 +1,17 @@
-NDIS Connection-less Protocol Driver Sample
-===========================================
+<!---
+    name: NDIS Connection-less Protocol WDM Driver Sample
+    platform: WDM
+    language: cpp
+    category: Network
+    description:  Demonstrates a connection-less NDIS 6.0 protocol WDM driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617917
+--->
 
-This sample demonstrates a connection-less NDIS 6.0 protocol.The driver supports sending and receiving raw Ethernet frames using `ReadFile`/`WriteFile` calls from user-mode. It only receives frames with a specific EtherType field. As an NDIS protocol, it illustrates how to establish and tear down bindings to Ethernet adapters, i.e. those that export medium type **NdisMedium802\_3**. It shows how to set a packet filter, send and receive data, and handle plug-and-play events.
+
+NDIS Connection-less Protocol WDM Driver Sample
+===============================================
+
+This sample demonstrates a connection-less NDIS 6.0 protocol WDM driver. The driver supports sending and receiving raw Ethernet frames using `ReadFile`/`WriteFile` calls from user-mode. It only receives frames with a specific EtherType field. As an NDIS protocol, it illustrates how to establish and tear down bindings to Ethernet adapters, i.e. those that export medium type **NdisMedium802\_3**. It shows how to set a packet filter, send and receive data, and handle plug-and-play events.
 
 ### INSTALLATION
 

@@ -1,3 +1,13 @@
+<!---
+    name: Power Framework (PoFx) Sample (UMDF Version 2)
+    platform: UMDF2
+    language: cpp
+    category: Power
+    description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617936
+--->
+
+
 Power Framework (PoFx) Sample (UMDF Version 2)
 ==============================================
 

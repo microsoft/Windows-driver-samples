@@ -1,3 +1,14 @@
+<!---
+    name: XPS Rasterization Filter Service Sample
+    platform: DLL
+    language: cpp
+    category: Print
+    description: Implements an XPSDrv filter that rasterizes fixed pages in an XPS document.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617951
+--->
+
+
+
 XPS Rasterization Filter Service Sample
 =======================================
 

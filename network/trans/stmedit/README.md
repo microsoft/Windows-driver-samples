@@ -1,3 +1,13 @@
+<!---
+    name: Windows Filtering Platform Stream Edit Sample
+    platform: KMDF
+    language: cpp
+    category: Network
+    description: Demonstrates replacing a string pattern for a Transmission Control Protocol (TCP) connection using the Windows Filtering Platform (WFP).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617933
+--->
+
+
 Windows Filtering Platform Stream Edit Sample
 =============================================
 
