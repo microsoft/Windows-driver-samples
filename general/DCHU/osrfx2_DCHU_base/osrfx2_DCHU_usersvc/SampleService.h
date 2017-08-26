@@ -171,4 +171,17 @@ private:
     // The handle to wait for a stop event.
     //
     HANDLE m_hStoppedEvent;
+
+    //
+    // The device context to manage notifications with.
+    //
+    // NOTE:
+    // Variables used for device notifications should normally be local.  However,
+    // we must use a global variable here since there is a potential race condition
+    // when the service needs to restart during device installation that could
+    // cause the service to prevent the device from being restarted.  So, this
+    // variable is global so that the service's OnStart and OnStart method can
+    // handle its creation and destruction.
+    //
+    PDEVICE_CONTEXT m_Context;
 };

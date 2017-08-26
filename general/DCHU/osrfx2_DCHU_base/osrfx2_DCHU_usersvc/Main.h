@@ -50,14 +50,17 @@ DEFINE_GUID(GUID_DEVINTERFACE_OSRUSBFX2,
 #pragma warning(disable:4201)  // nameless struct/union
 #pragma warning(disable:4214)  // bit field types other than int
 
-typedef struct _HANDLE_CONTEXT {
+typedef struct _DEVICE_CONTEXT {
     HANDLE DeviceInterfaceHandle;
     CRITICAL_SECTION Lock;
+	BOOL LockEnabled;
     PTP_WORK Work;
     BOOL Unregister;
-	HCMNOTIFICATION InterfaceNotificationHandle;
-	HCMNOTIFICATION DeviceNotificationHandle;
-} HANDLE_CONTEXT, *PHANDLE_CONTEXT;
+    HCMNOTIFICATION InterfaceNotificationHandle;
+	BOOL InterfaceNotificationsEnabled;
+    HCMNOTIFICATION DeviceNotificationHandle;
+	BOOL DeviceNotificationsEnabled;
+} DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
 //
 // Define the structures that will be used by the IOCTL 
@@ -201,6 +204,25 @@ typedef struct _SWITCH_STATE {
 
 Routine Description:
 
+Lights the next bar on the OSRFX2 device.
+
+Arguments:
+
+Context - The device context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD
+ControlDevice(PDEVICE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
     Sets the variables in this service to their default values.
 
 Arguments:
@@ -238,42 +260,6 @@ HANDLE OpenDevice(_In_ BOOL Synchronous);
 
 Routine Description:
 
-    Turns off all of the bar graph lights on the OSR USB FX2 device.
-
-Arguments:
-
-    DeviceHandle - The handle to the OSR USB FX2 device.
-
-Return Value:
-
-    VOID
-
---*/
-DWORD ClearAllBars(PHANDLE_CONTEXT Context);
-
-
-/*++
-
-Routine Description:
-
-  Lights the next bar on the OSR USB FX2 device.
-
-Arguments:
-
-    DeviceHandle - The handle to the OSR USB FX2 device.
-
-Return Value:
-
-VOID
-
---*/
-DWORD LightNextBar(PHANDLE_CONTEXT Context);
-
-
-/*++
-
-Routine Description:
-
 Register for device notifications.
 
 Arguments:
@@ -285,7 +271,7 @@ Return Value:
 A Win32 error code.
 
 --*/
-DWORD RegisterDeviceNotifications(PHANDLE_CONTEXT Context);
+DWORD RegisterDeviceNotifications(PDEVICE_CONTEXT Context);
 
 
 /*++
@@ -303,14 +289,14 @@ Return Value:
 A Win32 error code.
 
 --*/
-DWORD UnregisterDeviceNotifications(PHANDLE_CONTEXT Context);
+DWORD UnregisterDeviceNotifications(PDEVICE_CONTEXT Context);
 
 
 /*++
 
 Routine Description:
 
-Initialize the given PHANDLE_CONTEXT.
+Initialize the given PDEVICE_CONTEXT.
 
 Arguments:
 
@@ -321,14 +307,14 @@ Return Value:
 A Win32 error code.
 
 --*/
-DWORD InitializeContext(PHANDLE_CONTEXT* Context);
+DWORD InitializeContext(PDEVICE_CONTEXT* Context);
 
 
 /*++
 
 Routine Description:
 
-Clean up the given PHANDLE_CONTEXT.
+Clean up the given PDEVICE_CONTEXT.
 
 Arguments:
 
@@ -339,4 +325,4 @@ Return Value:
 A Win32 error code.
 
 --*/
-DWORD CloseContext(PHANDLE_CONTEXT* Context);
+DWORD CloseContext(PDEVICE_CONTEXT Context);

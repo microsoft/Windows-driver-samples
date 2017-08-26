@@ -29,16 +29,6 @@ Environment:
 #include "ThreadPool.h"
 #pragma endregion
 
-//
-// Variables used for device notifications should normally be local.  However,
-// we must use a global variable here since there is a potential race condition
-// when the service needs to restart during device installation that could
-// cause the service to prevent the device from being restarted as well.  So,
-// this variable is global so that the services OnStart and OnStart method can
-// handle its creation and destruction.
-//
-PHANDLE_CONTEXT Context;
-
 /*++
 
 Routine Description:
@@ -151,21 +141,23 @@ CSampleService::OnStart(
     PWSTR *Argv
     )
 {
+	__debugbreak();
+
     //
     // Log a service start message to the Application log.
     //
     WriteToEventLog(L"SampleService in OnStart", 
                     EVENTLOG_INFORMATION_TYPE);
 
-	//
-	// Set up any variables the service needs.
-	//
-	SetVariables();
+    //
+    // Set up any variables the service needs.
+    //
+    SetVariables();
 
-	//
-	// Set up the context, and register for notifications.
-	//
-	InitializeContext(&Context);
+    //
+    // Set up the context, and register for notifications.
+    //
+    InitializeContext(&m_Context);
 
     //
     // Queue the main service function for execution in a worker thread.
@@ -193,8 +185,6 @@ Return Value:
 VOID
 CSampleService::ServiceWorkerThread()
 {
-    DWORD Err = ERROR_SUCCESS;
-
     //
     // Periodically check if the service is stopping.
     //
@@ -204,28 +194,7 @@ CSampleService::ServiceWorkerThread()
         // Perform main service function here...
         //
 
-		//
-		// Wait for the device to arrive.
-		//
-        if (Context->DeviceInterfaceHandle == INVALID_HANDLE_VALUE)
-        {
-            ::Sleep(2000);
-            continue;
-        }
-
-        Err = ClearAllBars(Context);
-
-        if (Err != ERROR_SUCCESS)
-        {
-            continue;
-        }
-
-        Err = LightNextBar(Context);
-
-        if (Err != ERROR_SUCCESS)
-        {
-            continue;
-        }
+        ControlDevice(m_Context);
 
         ::Sleep(2000);  // Simulate some lengthy operations.
     }
@@ -278,8 +247,8 @@ CSampleService::OnStop()
         throw GetLastError();
     }
 
-	//
-	// Clean up the context after the worker thread has finished.
-	//
-	CloseContext(&Context);
+    //
+    // Clean up the context after the worker thread has finished.
+    //
+    CloseContext(m_Context);
 }

@@ -81,32 +81,31 @@ GetDevicePath(
     )
 {
     HRESULT hr = E_FAIL;
-    BOOL Return = FALSE;
-    CONFIGRET Status = CR_SUCCESS;
+    CONFIGRET cr = CR_SUCCESS;
     PWSTR DeviceInterfaceList = NULL;
     ULONG DeviceInterfaceListLength = 0;
     PWSTR NextInterface;
 
-	//
-	// Determine if there are any interfaces that match the OSRFX2 device.
-	//
-    Status = CM_Get_Device_Interface_List_Size(&DeviceInterfaceListLength,
-                                               InterfaceGuid,
-                                               NULL,
-                                               CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
+    //
+    // Determine if there are any interfaces that match the OSRFX2 device.
+    //
+    cr = CM_Get_Device_Interface_List_Size(&DeviceInterfaceListLength,
+                                           InterfaceGuid,
+                                           NULL,
+                                           CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
 
-    if (Status != CR_SUCCESS)
+    if (cr != CR_SUCCESS)
     {
         WriteToErrorLog(L"CM_Get_DeviceInterface_List_Size",
-                        CM_MapCrToWin32Err(Status, ERROR_FILE_NOT_FOUND));
-        goto clean0;
+                        CM_MapCrToWin32Err(cr, ERROR_FILE_NOT_FOUND));
+        goto cleanup;
     }
 
     if (DeviceInterfaceListLength < 1)
     {
         WriteToErrorLog(L"CM_Get_DeviceInterface_List_Size",
-                        CM_MapCrToWin32Err(Status, ERROR_EMPTY));
-        goto clean0;
+                        CM_MapCrToWin32Err(cr, ERROR_EMPTY));
+        goto cleanup;
     }
 
     DeviceInterfaceList = (PWSTR)malloc(DeviceInterfaceListLength * sizeof(WCHAR));
@@ -115,22 +114,20 @@ GetDevicePath(
     {
         WriteToEventLog(L"Failed to allocate memory for the device interface list",
                         TRACE_LEVEL_ERROR);
-        goto clean0;
+        goto cleanup;
     }
 
-    ZeroMemory(DeviceInterfaceList, DeviceInterfaceListLength * sizeof(WCHAR));
+    cr = CM_Get_Device_Interface_List(InterfaceGuid,
+                                      NULL,
+                                      DeviceInterfaceList,
+                                      DeviceInterfaceListLength,
+                                      CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
 
-    Status = CM_Get_Device_Interface_List(InterfaceGuid,
-                                          NULL,
-                                          DeviceInterfaceList,
-                                          DeviceInterfaceListLength,
-                                          CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
-
-    if (Status != CR_SUCCESS)
+    if (cr != CR_SUCCESS)
     {
         WriteToErrorLog(L"CM_Get_Device_Interface_List",
-                        CM_MapCrToWin32Err(Status, ERROR_FILE_NOT_FOUND));
-        goto clean0;
+                        CM_MapCrToWin32Err(cr, ERROR_FILE_NOT_FOUND));
+        goto cleanup;
     }
 
     if (*DeviceInterfaceList == UNICODE_NULL)
@@ -139,11 +136,11 @@ GetDevicePath(
                         TRACE_LEVEL_ERROR);
     }
 
-	//
-	// This sample only expects one interface for the OSRFX2 device.  For other
-	// devices, though, it maybe necessary to sift through the interfaces
-	// from CM_Get_Device_Interface_List in order to find the correct device.
-	//
+    //
+    // This sample only expects one interface for the OSRFX2 device.  For other
+    // devices, though, it maybe necessary to sift through the interfaces
+    // from CM_Get_Device_Interface_List in order to find the correct device.
+    //
     NextInterface = DeviceInterfaceList + wcslen(DeviceInterfaceList) + 1;
 
     if (*NextInterface != UNICODE_NULL)
@@ -158,22 +155,17 @@ GetDevicePath(
     if (FAILED(hr))
     {
         WriteToErrorLog(L"StringCchCopy", HRESULT_CODE(hr));
-        goto clean0;
+        goto cleanup;
     }
 
-clean0:
+cleanup:
 
     if (DeviceInterfaceList != NULL)
     {
         free(DeviceInterfaceList);
     }
 
-    if (Status == CR_SUCCESS)
-    {
-        Return = TRUE;
-    }
-
-    return Return;
+    return (cr == CR_SUCCESS);
 }
 
 
@@ -199,21 +191,21 @@ _Success_(return != INVALID_HANDLE_VALUE)
 HANDLE
 OpenDevice(
     _In_ BOOL Synchronous
-)
+    )
 {
-    HANDLE DeviceHandle;
+    HANDLE DeviceHandle = INVALID_HANDLE_VALUE;
     WCHAR DeviceName[MAX_DEVPATH_LENGTH];
 
     if (!GetDevicePath((LPGUID)&GUID_DEVINTERFACE_OSRUSBFX2,
                        DeviceName,
                        sizeof(DeviceName) / sizeof(DeviceName[0])))
     {
-        return INVALID_HANDLE_VALUE;
+        goto cleanup;
     }
 
-	//
-	// Open a handle to the interface.
-	//
+    //
+    // Open a handle to the interface.
+    //
     if (Synchronous)
     {
         DeviceHandle = CreateFile(DeviceName,
@@ -244,6 +236,8 @@ OpenDevice(
         WriteToEventLog(L"Opened Device Successfully", TRACE_LEVEL_INFORMATION);
     }
 
+cleanup:
+
     return DeviceHandle;
 }
 
@@ -265,7 +259,7 @@ Return Value:
 --*/
 DWORD
 InterfaceArrivalAction(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
@@ -304,7 +298,7 @@ InterfaceArrivalAction(
 
 cleanup:
 
-	LeaveCriticalSection(&Context->Lock);
+    LeaveCriticalSection(&Context->Lock);
 
     return Err;
 }
@@ -320,13 +314,13 @@ Arguments:
 
     hNotify       - The notification that fired the callback
 
-	hContext      - The callback context
+    hContext      - The callback context
 
-	Action        - The type of notification
+    Action        - The type of notification
 
-	EventData     - Additional information about the callback
+    EventData     - Additional information about the callback
 
-	EventDataSize - The size of EventData
+    EventDataSize - The size of EventData
 
 Return Value:
 
@@ -343,15 +337,15 @@ InterfaceCallback(
     )
 {
     DWORD Err = ERROR_SUCCESS;
-	PHANDLE_CONTEXT Context = (PHANDLE_CONTEXT)hContext;
+    PDEVICE_CONTEXT Context = (PDEVICE_CONTEXT)hContext;
 
-	//
-	// Validate Context.
-	//
-	if (Context == NULL)
-	{
-		goto cleanup;
-	}
+    //
+    // Validate Context.
+    //
+    if (Context == NULL)
+    {
+        goto cleanup;
+    }
 
     if (Action == CM_NOTIFY_ACTION_DEVICEINTERFACEARRIVAL)
     {
@@ -369,7 +363,7 @@ cleanup:
 Routine Description:
 
     Registers the service for notifications using the notification handle in
-	Context.
+    Context.
 
 Arguments:
 
@@ -382,17 +376,17 @@ Return Value:
 --*/
 DWORD
 RegisterInterfaceNotifications(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
     CONFIGRET cr;
     CM_NOTIFY_FILTER NotifyFilter = {0};
 
-	if (Context == NULL)
-	{
-		goto cleanup;
-	}
+    if (Context == NULL)
+    {
+        goto cleanup;
+    }
 
     ZeroMemory(&NotifyFilter, sizeof(NotifyFilter));
     NotifyFilter.cbSize = sizeof(NotifyFilter);
@@ -422,7 +416,7 @@ cleanup:
 Routine Description:
 
     Unregister for interface notifications.  Note, this routine deadlocks
-	when called from an interface callback.
+    when called from an interface callback.
 
 Arguments:
 
@@ -435,7 +429,7 @@ Return Value:
 --*/
 DWORD
 UnregisterInterfaceNotifications(
-    PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     CONFIGRET cr;
@@ -468,7 +462,7 @@ Return Value:
 --*/
 DWORD
 DeviceQueryRemoveAction(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
@@ -496,16 +490,16 @@ DeviceQueryRemoveAction(
 Routine Description:
 
     This callback avoids a deadlock when unregistering device notifications.
-	Rather than calling CM_Unregister_Notification from the callback, the
-	callback gives that work to a separate thread to avoid deadlock.
+    Rather than calling CM_Unregister_Notification from the callback, the
+    callback gives that work to a separate thread to avoid deadlock.
 
 Arguments:
 
-	Instance - The thread's callback instance
+    Instance - The thread's callback instance
 
     hContext - The callback context
 
-	pWork    - The thread handle
+    pWork    - The thread handle
 
 Return Value:
 
@@ -520,7 +514,7 @@ UnregisterWorkerThreadCallback(
     _Inout_     PTP_WORK              pWork
     )
 {
-    PHANDLE_CONTEXT Context = (PHANDLE_CONTEXT)hContext;
+    PDEVICE_CONTEXT Context = (PDEVICE_CONTEXT)hContext;
 
     EnterCriticalSection(&Context->Lock);
 
@@ -548,7 +542,7 @@ Routine Description:
 
 Arguments:
 
-	hNotify - The notification that spurred this callback
+    hNotify - The notification that spurred this callback
 
     Context - The callback context
 
@@ -559,8 +553,8 @@ Return Value:
 --*/
 DWORD
 DeviceQueryRemoveFailedAction(
-    HCMNOTIFICATION hNotify,
-    PHANDLE_CONTEXT Context
+    _In_ HCMNOTIFICATION hNotify,
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
@@ -576,32 +570,32 @@ DeviceQueryRemoveFailedAction(
     //
     // Unregister the device callback, and then close the handle
     //
-	if (!Context->Unregister)
-	{
-		Context->Unregister = TRUE;
-		SubmitThreadpoolWork(Context->Work);
-	}
+    if (!Context->Unregister)
+    {
+        Context->Unregister = TRUE;
+        SubmitThreadpoolWork(Context->Work);
+    }
 
     LeaveCriticalSection(&Context->Lock);
 
-	//
-	// Wait for the callback and then re-register the device
-	//
-	WaitForThreadpoolWorkCallbacks(Context->Work, FALSE);
+    //
+    // Wait for the callback and then re-register the device
+    //
+    WaitForThreadpoolWorkCallbacks(Context->Work, FALSE);
 
-	EnterCriticalSection(&Context->Lock);
+    EnterCriticalSection(&Context->Lock);
 
-	if (Context->DeviceInterfaceHandle == INVALID_HANDLE_VALUE)
-	{
-	    Context->DeviceInterfaceHandle = OpenDevice(FALSE);
-	}
+    if (Context->DeviceInterfaceHandle == INVALID_HANDLE_VALUE)
+    {
+        Context->DeviceInterfaceHandle = OpenDevice(FALSE);
+    }
 
-	if (Context->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
-	{
-		RegisterDeviceNotifications(Context);
-	}
+    if (Context->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
+    {
+        RegisterDeviceNotifications(Context);
+    }
 
-	LeaveCriticalSection(&Context->Lock);
+    LeaveCriticalSection(&Context->Lock);
 
     return Err;
 }
@@ -626,11 +620,11 @@ Return Value:
 --*/
 DWORD
 DeviceRemovePendingAction(
-    HCMNOTIFICATION hNotify,
-	PHANDLE_CONTEXT Context
+    _In_ HCMNOTIFICATION hNotify,
+    _In_ PDEVICE_CONTEXT Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
 
     EnterCriticalSection(&Context->Lock);
 
@@ -643,11 +637,11 @@ DeviceRemovePendingAction(
     //
     // Unregister the device callback, and then close the handle
     //
-	if (!Context->Unregister)
-	{
-		Context->Unregister = TRUE;
-		SubmitThreadpoolWork(Context->Work);
-	}
+    if (!Context->Unregister)
+    {
+        Context->Unregister = TRUE;
+        SubmitThreadpoolWork(Context->Work);
+    }
 
     LeaveCriticalSection(&Context->Lock);
 
@@ -674,11 +668,11 @@ Return Value:
 --*/
 DWORD
 DeviceRemoveCompleteAction(
-    HCMNOTIFICATION hNotify,
-	PHANDLE_CONTEXT Context
+    _In_ HCMNOTIFICATION hNotify,
+    _In_ PDEVICE_CONTEXT Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
 
     EnterCriticalSection(&Context->Lock);
 
@@ -691,11 +685,11 @@ DeviceRemoveCompleteAction(
     //
     // Unregister the device callback, and then close the handle
     //
-	if (!Context->Unregister)
-	{
-		Context->Unregister = TRUE;
-		SubmitThreadpoolWork(Context->Work);
-	}
+    if (!Context->Unregister)
+    {
+        Context->Unregister = TRUE;
+        SubmitThreadpoolWork(Context->Work);
+    }
 
     LeaveCriticalSection(&Context->Lock);
 
@@ -715,11 +709,11 @@ Arguments:
 
     hContext      - The callback context
 
-	Action        - The type of callback
+    Action        - The type of callback
 
-	EventData     - Additional information about this callback
+    EventData     - Additional information about this callback
 
-	EventDataSize - The size of EventData
+    EventDataSize - The size of EventData
 
 Return Value:
 
@@ -733,39 +727,37 @@ DeviceCallback(
     _In_ CM_NOTIFY_ACTION      Action,
     _In_ PCM_NOTIFY_EVENT_DATA EventData,
     _In_ DWORD                 EventDataSize
-)
+    )
 {
-	DWORD Err = ERROR_SUCCESS;
-    PHANDLE_CONTEXT Context = (PHANDLE_CONTEXT)hContext;
+    DWORD Err = ERROR_SUCCESS;
+    PDEVICE_CONTEXT Context = (PDEVICE_CONTEXT)hContext;
 
-	//
-	// Validate Context.
-	//
-	if (Context == NULL)
-	{
-		goto cleanup;
-	}
+    //
+    // Validate Context.
+    //
+    if (Context == NULL)
+    {
+        goto cleanup;
+    }
 
-	switch (Action)
-	{
+    switch (Action)
+    {
+    case CM_NOTIFY_ACTION_DEVICEQUERYREMOVE:
+        DeviceQueryRemoveAction(Context);
+        break;
 
-	case CM_NOTIFY_ACTION_DEVICEQUERYREMOVE:
-		DeviceQueryRemoveAction(Context);
-		break;
+    case CM_NOTIFY_ACTION_DEVICEQUERYREMOVEFAILED:
+        DeviceQueryRemoveFailedAction(hNotify, Context);
+        break;
 
-	case CM_NOTIFY_ACTION_DEVICEQUERYREMOVEFAILED:
-		DeviceQueryRemoveFailedAction(hNotify, Context);
-		break;
+    case CM_NOTIFY_ACTION_DEVICEREMOVEPENDING:
+        DeviceRemovePendingAction(hNotify, Context);
+        break;
 
-	case CM_NOTIFY_ACTION_DEVICEREMOVEPENDING:
-		DeviceRemovePendingAction(hNotify, Context);
-		break;
-
-	case CM_NOTIFY_ACTION_DEVICEREMOVECOMPLETE:
-		DeviceRemoveCompleteAction(hNotify, Context);
-		break;
-
-	}
+    case CM_NOTIFY_ACTION_DEVICEREMOVECOMPLETE:
+        DeviceRemoveCompleteAction(hNotify, Context);
+        break;
+    }
 
 cleanup:
 
@@ -790,10 +782,10 @@ Return Value:
 --*/
 DWORD
 RegisterDeviceNotifications(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
     CONFIGRET cr;
     CM_NOTIFY_FILTER NotifyFilter = {0};
 
@@ -813,7 +805,7 @@ RegisterDeviceNotifications(
         goto cleanup;
     }
 
-	Context->Unregister = FALSE;
+    Context->Unregister = FALSE;
 
 cleanup:
 
@@ -838,10 +830,10 @@ Return Value:
 --*/
 DWORD
 UnregisterDeviceNotifications(
-    PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
     CONFIGRET cr;
 
     if (Context->DeviceNotificationHandle != NULL)
@@ -865,7 +857,7 @@ UnregisterDeviceNotifications(
 
 Routine Description:
 
-    Initialize the given PHANDLE_CONTEXT.
+    Initialize the given PDEVICE_CONTEXT.
 
 Arguments:
 
@@ -878,39 +870,49 @@ Return Value:
 --*/
 DWORD
 InitializeContext(
-    _Out_ PHANDLE_CONTEXT* Context
+    _Out_ PDEVICE_CONTEXT *Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
+    BOOL LockInitialized = FALSE;
+    BOOL LockEntered = FALSE;
+    BOOL InterfaceNotificationsInitialized = FALSE;
+    BOOL DeviceNotificationsInitialized = FALSE;
+    PDEVICE_CONTEXT DeviceContext;
 
-    *Context = (PHANDLE_CONTEXT)malloc(sizeof(HANDLE_CONTEXT));
+    DeviceContext = (PDEVICE_CONTEXT)malloc(sizeof(DEVICE_CONTEXT));
 
-    if (*Context == NULL)
+    if (DeviceContext == NULL)
     {
         Err = ERROR_OUTOFMEMORY;
         goto cleanup;
     }
 
-	(*Context)->DeviceInterfaceHandle = INVALID_HANDLE_VALUE;
+    DeviceContext->DeviceInterfaceHandle = INVALID_HANDLE_VALUE;
+	DeviceContext->LockEnabled = FALSE;
+	DeviceContext->InterfaceNotificationsEnabled = FALSE;
+	DeviceContext->DeviceNotificationsEnabled = FALSE;
 
-    InitializeCriticalSection(&(*Context)->Lock);
+    InitializeCriticalSection(&DeviceContext->Lock);
+	DeviceContext->LockEnabled = TRUE;
 
-    (*Context)->Work = CreateThreadpoolWork(UnregisterWorkerThreadCallback, (PVOID)(*Context), NULL);
+    DeviceContext->Work = CreateThreadpoolWork(UnregisterWorkerThreadCallback, (PVOID)DeviceContext, NULL);
 
-    if ((*Context)->Work == NULL)
+    if (DeviceContext->Work == NULL)
     {
-        WriteToErrorLog(L"Could not create worker thread callback", ERROR_OUTOFMEMORY);
+        Err = GetLastError();
+        WriteToErrorLog(L"Could not create worker thread callback", Err);
         goto cleanup;
     }
 
-	(*Context)->DeviceNotificationHandle = NULL;
-	(*Context)->InterfaceNotificationHandle = NULL;
+    DeviceContext->DeviceNotificationHandle = NULL;
+    DeviceContext->InterfaceNotificationHandle = NULL;
 
     //
     // Register for device interface events to open and close the handle to
     // the interface.
     //
-    Err = RegisterInterfaceNotifications(*Context);
+    Err = RegisterInterfaceNotifications(DeviceContext);
 
     if (Err != ERROR_SUCCESS)
     {
@@ -918,27 +920,33 @@ InitializeContext(
         goto cleanup;
     }
 
-	EnterCriticalSection(&(*Context)->Lock);
+	DeviceContext->InterfaceNotificationsEnabled = TRUE;
+
+    EnterCriticalSection(&DeviceContext->Lock);
+    LockEntered = TRUE;
 
     //
     // The interface may already have arrived while registering for
-	// notifications.
+    // notifications.  The lock could be moved earlier, but for sample
+	// purposes this is the proper way to initialize notifications.
     //
-    if ((*Context)->DeviceInterfaceHandle == INVALID_HANDLE_VALUE)
+    if (DeviceContext->DeviceInterfaceHandle == INVALID_HANDLE_VALUE)
     {
-        (*Context)->DeviceInterfaceHandle = OpenDevice(FALSE);
+        DeviceContext->DeviceInterfaceHandle = OpenDevice(FALSE);
     }
 
-	if ((*Context)->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
-	{
-		Err = RegisterDeviceNotifications(*Context);
+    if (DeviceContext->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
+    {
+        Err = RegisterDeviceNotifications(DeviceContext);
 
-		if (Err != ERROR_SUCCESS)
-		{
-			WriteToErrorLog(L"Could not register device notifications", Err);
-			goto cleanup;
-		}
-	}
+        if (Err != ERROR_SUCCESS)
+        {
+            WriteToErrorLog(L"Could not register device notifications", Err);
+            goto cleanup;
+        }
+
+		DeviceContext->DeviceNotificationsEnabled = TRUE;
+    }
 
     //
     // If OpenDevice ends up returning INVALID_HANDLE_VALUE, that's fine
@@ -947,7 +955,18 @@ InitializeContext(
 
 cleanup:
 
-	LeaveCriticalSection(&(*Context)->Lock);
+    if (LockEntered)
+    {
+        LeaveCriticalSection(&DeviceContext->Lock);
+    }
+
+	*Context = DeviceContext;
+	DeviceContext = NULL;
+
+    if (DeviceContext != NULL)
+    {
+		CloseContext(DeviceContext);
+    }
 
     return Err;
 }
@@ -957,7 +976,7 @@ cleanup:
 
 Routine Description:
 
-    Clean up the given PHANDLE_CONTEXT.
+    Clean up the given PDEVICE_CONTEXT.
 
 Arguments:
 
@@ -970,80 +989,83 @@ Return Value:
 --*/
 DWORD
 CloseContext(
-    _In_ PHANDLE_CONTEXT* Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
-	DWORD Err = ERROR_SUCCESS;
+    DWORD Err = ERROR_SUCCESS;
     BOOL Unregister = FALSE;
 
-	if ((Context == NULL) ||
-		(*Context == NULL))
-	{
-		//
-		// Nothing to remove.
-		//
-		goto cleanup;
-	}
+    if (Context == NULL)
+    {
+        //
+        // Nothing to remove.
+        //
+        goto cleanup;
+    }
 
-    EnterCriticalSection(&(*Context)->Lock);
+    EnterCriticalSection(&Context->Lock);
 
-    if (!(*Context)->Unregister)
+    if (!Context->Unregister)
     {
         //
         // Unregister from the callback here.
         //
         Unregister = TRUE;
-        (*Context)->Unregister = TRUE;
+        Context->Unregister = TRUE;
     }
 
-    LeaveCriticalSection(&(*Context)->Lock);
+    LeaveCriticalSection(&Context->Lock);
 
-	//
-	// Unregister from the interface first, so that re-appearance of the interface
-	// doesn't cause us to register device events again.
-	//
-	Err = UnregisterInterfaceNotifications(*Context);
-
-	if (Err != ERROR_SUCCESS)
+    //
+    // Unregister from the interface first, so that re-appearance of the interface
+    // doesn't cause us to register device events again.
+    //
+	if (Context->InterfaceNotificationsEnabled)
 	{
-		WriteToErrorLog(L"Could not unregister interface notifications", Err);
+		Err = UnregisterInterfaceNotifications(Context);
+
+		if (Err != ERROR_SUCCESS)
+		{
+			WriteToErrorLog(L"Could not unregister interface notifications", Err);
+		}
 	}
 
     if (Unregister)
     {
-        Err = UnregisterDeviceNotifications(*Context);
+		if (Context->DeviceNotificationsEnabled)
+		{
+			Err = UnregisterDeviceNotifications(Context);
 
-        if (Err != ERROR_SUCCESS)
-        {
-            WriteToErrorLog(L"Could not unregister device notifications", Err);
-        }
+			if (Err != ERROR_SUCCESS)
+			{
+				WriteToErrorLog(L"Could not unregister device notifications", Err);
+			}
+		}
     }
     else
     {
-        WaitForThreadpoolWorkCallbacks((*Context)->Work, FALSE);
+        WaitForThreadpoolWorkCallbacks(Context->Work, FALSE);
     }
 
-	//
-	// No need to lock here, UnregisterDeviceNotifications will wait for all
-	// outstanding callbacks before returning.
-	//
-    if ((*Context)->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
+    //
+    // No need to lock here, UnregisterDeviceNotifications will wait for all
+    // outstanding callbacks before returning.
+    //
+    if (Context->DeviceInterfaceHandle != INVALID_HANDLE_VALUE)
     {
-        CloseHandle((*Context)->DeviceInterfaceHandle);
+        CloseHandle(Context->DeviceInterfaceHandle);
 
-        (*Context)->DeviceInterfaceHandle = INVALID_HANDLE_VALUE;
+        Context->DeviceInterfaceHandle = INVALID_HANDLE_VALUE;
     }
 
-    if ((*Context)->Work != NULL)
+    if (Context->Work != NULL)
     {
-        CloseThreadpoolWork((*Context)->Work);
+        CloseThreadpoolWork(Context->Work);
     }
 
-    DeleteCriticalSection(&(*Context)->Lock);
+    DeleteCriticalSection(&Context->Lock);
 
-    free(*Context);
-
-	*Context = NULL;
+    free(Context);
 
 cleanup:
 
@@ -1067,7 +1089,7 @@ Return Value:
 --*/
 DWORD
 ClearAllBars(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
@@ -1112,7 +1134,7 @@ Return Value:
 --*/
 DWORD
 LightNextBar(
-    _In_ PHANDLE_CONTEXT Context
+    _In_ PDEVICE_CONTEXT Context
     )
 {
     DWORD Err = ERROR_SUCCESS;
@@ -1145,6 +1167,51 @@ LightNextBar(
     }
 
 cleanup:
+
+    return Err;
+}
+
+/*++
+
+Routine Description:
+
+    Lights the next bar on the OSRFX2 device.
+
+Arguments:
+
+    Context - The device context
+
+Return Value:
+
+    A Win32 error code.
+
+--*/
+DWORD
+ControlDevice(
+    _In_ PDEVICE_CONTEXT Context
+    )
+{
+    DWORD Err = ERROR_SUCCESS;
+
+    EnterCriticalSection(&Context->Lock);
+
+    Err = ClearAllBars(Context);
+
+    if (Err != ERROR_SUCCESS)
+    {
+        goto cleanup;
+    }
+
+    Err = LightNextBar(Context);
+
+    if (Err != ERROR_SUCCESS)
+    {
+        goto cleanup;
+    }
+
+cleanup:
+
+	LeaveCriticalSection(&Context->Lock);
 
     return Err;
 }
