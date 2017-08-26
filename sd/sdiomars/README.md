@@ -1,3 +1,13 @@
+<!---
+    name: SDIO Driver 
+    platform: KMDF
+    language: cpp
+    category: Storage
+    description: A functional KMDF Secure Digital (SD) IO driver for use with a generic mars development board.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617953
+--->
+
+
 Storage SDIO Driver
 ===================
 

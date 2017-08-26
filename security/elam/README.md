@@ -1,3 +1,13 @@
+<!---
+    name: Early Launch Anti-Malware Driver
+    platform: KMDF
+    language: cpp
+    category: Security
+    description: Demonstrates how to receive notifications about the initialization of regular boot start drivers in an Early Launch Anti-Malware driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617954
+--->
+
+
 Early Launch Anti-Malware Driver
 ================================
 

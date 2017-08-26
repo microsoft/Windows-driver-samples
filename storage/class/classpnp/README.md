@@ -1,3 +1,13 @@
+<!---
+    name: ClassPnP Class Driver Library 
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: A library storage class driver used by disk, CDROM, and the tape class drivers.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617978
+--->
+
+
 ClassPnP Storage Class Driver Library
 =====================================
 

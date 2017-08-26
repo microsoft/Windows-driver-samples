@@ -1,3 +1,13 @@
+<!---
+    name: iSCSI WMI Client 
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: A WMI iSCSI miniport that can be tested using the iSCSICLI.exe tool, the iSCSI Initiator Properties page, the WBEMTEST.exe tool, and customized WMI scripts. 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617981
+--->
+
+
 iSCSI WMI Client
 ================
 
