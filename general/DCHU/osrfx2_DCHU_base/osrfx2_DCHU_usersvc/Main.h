@@ -50,6 +50,18 @@ DEFINE_GUID(GUID_DEVINTERFACE_OSRUSBFX2,
 #pragma warning(disable:4201)  // nameless struct/union
 #pragma warning(disable:4214)  // bit field types other than int
 
+typedef struct _DEVICE_CONTEXT {
+    HANDLE DeviceInterfaceHandle;
+    CRITICAL_SECTION Lock;
+	BOOL LockEnabled;
+    PTP_WORK Work;
+    BOOL Unregister;
+    HCMNOTIFICATION InterfaceNotificationHandle;
+	BOOL InterfaceNotificationsEnabled;
+    HCMNOTIFICATION DeviceNotificationHandle;
+	BOOL DeviceNotificationsEnabled;
+} DEVICE_CONTEXT, *PDEVICE_CONTEXT;
+
 //
 // Define the structures that will be used by the IOCTL 
 // interface to the driver
@@ -192,6 +204,25 @@ typedef struct _SWITCH_STATE {
 
 Routine Description:
 
+Lights the next bar on the OSRFX2 device.
+
+Arguments:
+
+Context - The device context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD
+ControlDevice(PDEVICE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
     Sets the variables in this service to their default values.
 
 Arguments:
@@ -203,7 +234,7 @@ Return Value:
     VOID
 
 --*/
-VOID SetVariables();
+VOID SetVariables(VOID);
 
 
 /*++
@@ -229,33 +260,69 @@ HANDLE OpenDevice(_In_ BOOL Synchronous);
 
 Routine Description:
 
-    Turns off all of the bar graph lights on the OSR USB FX2 device.
+Register for device notifications.
 
 Arguments:
 
-    DeviceHandle - The handle to the OSR USB FX2 device.
+Context - The callback context
 
 Return Value:
 
-    VOID
+A Win32 error code.
 
 --*/
-VOID ClearAllBars(HANDLE deviceHandle);
+DWORD RegisterDeviceNotifications(PDEVICE_CONTEXT Context);
 
 
 /*++
 
 Routine Description:
 
-  Lights the next bar on the OSR USB FX2 device.
+Unregister for device notifications.
 
 Arguments:
 
-    DeviceHandle - The handle to the OSR USB FX2 device.
+Context - The callback context
 
 Return Value:
 
-VOID
+A Win32 error code.
 
 --*/
-VOID LightNextBar(HANDLE deviceHandle);
+DWORD UnregisterDeviceNotifications(PDEVICE_CONTEXT Context);
+
+
+/*++
+
+Routine Description:
+
+Initialize the given PDEVICE_CONTEXT.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD InitializeContext(PDEVICE_CONTEXT* Context);
+
+
+/*++
+
+Routine Description:
+
+Clean up the given PDEVICE_CONTEXT.
+
+Arguments:
+
+Context - The callback context
+
+Return Value:
+
+A Win32 error code.
+
+--*/
+DWORD CloseContext(PDEVICE_CONTEXT Context);

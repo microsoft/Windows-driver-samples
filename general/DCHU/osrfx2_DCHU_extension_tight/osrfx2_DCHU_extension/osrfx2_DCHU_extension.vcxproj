@@ -35,23 +35,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="..\osrfx2_DCHU_usersvc\osrfx2_DCHU_usersvc.inx" />
+    <Inf Include="..\osrfx2_DCHU_component\osrfx2_DCHU_component.inx" />
     <Inf Include="osrfx2_DCHU_extension.inx" />
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exel" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      <PackageRelativeDirectory>
-      </PackageRelativeDirectory>
-    </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      <PackageRelativeDirectory>
-      </PackageRelativeDirectory>
-    </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      <PackageRelativeDirectory>
-      </PackageRelativeDirectory>
-    </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(Configuration)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <FilesToPackage Include="C:\Users\mamont\Documents\GitHub\Windows-driver-samples\general\DCHU\osrfx2_DCHU_extension_tight\x64\Release\osrfx2_DCHU_componentsoftware.exe">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
@@ -74,6 +62,7 @@
     <ConfigurationType>Utility</ConfigurationType>
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -82,6 +71,7 @@
     <ConfigurationType>Utility</ConfigurationType>
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -90,6 +80,7 @@
     <ConfigurationType>Utility</ConfigurationType>
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -98,6 +89,7 @@
     <ConfigurationType>Utility</ConfigurationType>
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>

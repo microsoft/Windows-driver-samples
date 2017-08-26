@@ -29,8 +29,6 @@ Environment:
 #include "ThreadPool.h"
 #pragma endregion
 
-HANDLE DeviceHandle;
-
 /*++
 
 Routine Description:
@@ -143,6 +141,8 @@ CSampleService::OnStart(
     PWSTR *Argv
     )
 {
+	__debugbreak();
+
     //
     // Log a service start message to the Application log.
     //
@@ -150,18 +150,14 @@ CSampleService::OnStart(
                     EVENTLOG_INFORMATION_TYPE);
 
     //
-    // Set variables in the base class
+    // Set up any variables the service needs.
     //
+    SetVariables();
 
     //
-    // Open the device
+    // Set up the context, and register for notifications.
     //
-    DeviceHandle = OpenDevice(FALSE);
-
-    if (DeviceHandle == INVALID_HANDLE_VALUE)
-    {
-        return;
-    }
+    InitializeContext(&m_Context);
 
     //
     // Queue the main service function for execution in a worker thread.
@@ -198,8 +194,7 @@ CSampleService::ServiceWorkerThread()
         // Perform main service function here...
         //
 
-        ClearAllBars(DeviceHandle);
-        LightNextBar(DeviceHandle);
+        ControlDevice(m_Context);
 
         ::Sleep(2000);  // Simulate some lengthy operations.
     }
@@ -251,4 +246,9 @@ CSampleService::OnStop()
     {
         throw GetLastError();
     }
+
+    //
+    // Clean up the context after the worker thread has finished.
+    //
+    CloseContext(m_Context);
 }
