@@ -1,3 +1,13 @@
+<!---
+    name: Usbsamp Generic USB Driver
+    platform: KMDF
+    language: cpp
+    category: USB
+    description: Demonstrates how to perform full speed, high speed, and SuperSpeed transfers to and from bulk and isochronous endpoints of a generic USB device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618938
+--->
+
+
 Usbsamp Generic USB Driver
 ==========================
 

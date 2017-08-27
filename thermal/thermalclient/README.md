@@ -1,3 +1,13 @@
+<!---
+    name: SimThermalClient - Simulated Thermal Client Sample Driver
+    platform: KMDF
+    language: cpp
+    category: Thermal Power
+    description: Simulates a device that is a Windows thermal management client.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617992
+--->
+
+
 SimThermalClient: Simulated Thermal Client Sample Driver
 ========================================================
 

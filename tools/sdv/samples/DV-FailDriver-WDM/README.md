@@ -1,3 +1,13 @@
+<!---
+    name: DV-FailDriver-WDM
+    platform: WDM
+    language: cpp
+    category: DriverVerifier Tools
+    description: Demonstrates how Driver Verifier (DV) can find errors in a WDM driver.
+    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856743
+--->
+
+
 DV-FailDriver-WDM
 =================
 
