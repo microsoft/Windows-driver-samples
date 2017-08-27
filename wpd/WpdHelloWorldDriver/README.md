@@ -1,3 +1,13 @@
+<!---
+    name: WPD Hello World Sample 
+    platform: UMDF1
+    language: cpp
+    category: WPD
+    description: Supports four objects: a device object, a storage object, a folder object, and a file object. 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618008
+--->
+
+
 WPDHelloWorld sample driver for portable devices
 ================================================
 
