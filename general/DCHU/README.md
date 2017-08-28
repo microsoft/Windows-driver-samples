@@ -19,9 +19,9 @@ To install these driver packages, make sure that the target machine is in Test M
 Then, use `pnputil /i /a <PATHTOINF>` to install each of the three driver packages.  They should
 be installed in the following order:
 
-    *  `osrfx2_DCHU_base`
-    *  `osrfx2_DCHU_extension`
-    *  `osrfx2_DCHU_component`
+*  `osrfx2_DCHU_base`
+*  `osrfx2_DCHU_extension`
+*  `osrfx2_DCHU_component`
 
 Technically the order of `osrfx2_DCHU_extension` and `osrfx2_DCHU_component` doesn't matter, but the software within `osrfx2_DCHU_component` will read the registry set by the extension to show that an extension INF's settings are applied *after* the base INF's.
                        
