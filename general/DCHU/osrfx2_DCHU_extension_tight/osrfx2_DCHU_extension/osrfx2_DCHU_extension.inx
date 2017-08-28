@@ -22,7 +22,7 @@ Signature = "$WINDOWS NT$"
 Class = Extension
 ClassGuid = {e2f84ce7-8efa-411c-aa69-97454ca4cb57}
 Provider = %ManufacturerName%
-ExtensionId = {3846ad8c-dd27-433d-ab89-453654cd542a}
+ExtensionId = {zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz} ; replace with your own GUID
 CatalogFile = osrfx2_DCHU_extension.cat
 DriverVer = 05/16/2017,15.14.36.721
 
