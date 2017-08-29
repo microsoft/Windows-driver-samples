@@ -811,6 +811,27 @@ MessageId=61204 SymbolicName=MSG_REMOVE_TAIL
 Language=English
 %1!u! device(s) were removed.
 .
+MessageId=61205 SymbolicName=MSG_REMOVEALL_LONG
+Language=English
+Devcon Removeall Command
+Removes devices with the specified hardware or instance ID, including devices
+that are not currently attached. Valid only on the local computer.
+(To reboot when necesary, Include -r .)
+%1 [-r] %2 <id> [<id>...]
+%1 [-r] %2 =<class> [<id>...]
+<class>      Specifies a device setup class.
+Examples of <id>:
+ *              - All devices
+ ISAPNP\PNP0501 - Hardware ID
+ *PNP*          - Hardware ID with wildcards  (* matches anything)
+ @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
+ '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
+                                               including the asterisk.)
+.
+MessageId=61206 SymbolicName=MSG_REMOVEALL_SHORT
+Language=English
+%1!-20s! Remove devices, including those that are not currently attached.
+.
 
 ;//
 ;// RESCAN
