@@ -1,3 +1,13 @@
+<!---
+    name: AddFilter Storage Filter Tool
+    platform: Application
+    language: cpp
+    category: Storage
+    description: A command-line application that adds and removes filter drivers for a given drive or volume.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617980
+--->
+
+
 AddFilter Storage Filter Tool
 =============================
 

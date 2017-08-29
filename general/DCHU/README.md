@@ -1,3 +1,13 @@
+<!---
+    name: DHCU - Driver package installation toolkit for universal drivers 
+    platform: UMDF2
+    language: cpp
+    category: General DHCU
+    description: Illustrates DCHU principles of universal driver design.
+    samplefwlink: https://aka.ms/sceeqq
+--->
+
+
 # Driver package installation toolkit for universal drivers 
 
 This sample illustrates the DCHU principles of universal driver design.  The sample uses the [OSR FX2 learning kit](http://store.osr.com/product/osr-usb-fx2-learning-kit-v2/).  For a detailed code walkthrough, see [Universal Driver Scenarios](https://docs.microsoft.com/windows-hardware/drivers/develop/universal-driver-scenarios).

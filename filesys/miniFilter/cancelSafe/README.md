@@ -1,3 +1,13 @@
+<!---
+    name: CancelSafe File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: A minifilter demonstrating the use of cancel-safe queues.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617645
+--->
+
+
 CancelSafe File System Minifilter Driver
 ========================================
 

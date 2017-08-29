@@ -1,3 +1,13 @@
+<!---
+    name: Serial Port Driver
+    platform: KMDF
+    language: cpp
+    category: Serial
+    description: The Serial (16550-based RS-232) sample driver is a WDF version of the inbox Serial.sys driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617962
+--->
+
+
 Serial Port Driver
 ==================
 

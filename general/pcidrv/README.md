@@ -1,3 +1,13 @@
+<!---
+    name: PCIDRV - WDF Driver for PCI Device
+    platform: KMDF
+    language: cpp
+    category: General PCI WDF
+    description: Demonstrates how to write a KMDF driver for a PCI device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617717
+--->
+
+
 PCIDRV - WDF Driver for PCI Device
 ==================================
 

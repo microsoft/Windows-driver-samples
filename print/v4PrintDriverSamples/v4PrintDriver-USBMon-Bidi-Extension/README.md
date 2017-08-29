@@ -1,3 +1,13 @@
+<!---
+    name: Print Driver USB Monitor and Bidi Sample
+    platform: Utility
+    language: js xml
+    category: Print
+    description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617948
+--->
+
+
 Print Driver USB Monitor and Bidi Sample
 ========================================
 

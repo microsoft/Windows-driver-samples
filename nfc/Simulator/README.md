@@ -1,3 +1,13 @@
+<!---
+    name: NFC Simulator Driver Sample
+    platform: UMDF2
+    language: cpp
+    category: NFC
+    description: Demonstrates how to use UMDF to write a Near-Field Communication (NFC) universal driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620199
+--->
+
+
 NFC Simulator Driver Sample
 ===========================
 This sample demonstrates how to use User-Mode Driver Framework (UMDF) to write a Near-Field Communication (NFC) universal driver along with best practices.

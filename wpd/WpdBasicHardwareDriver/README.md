@@ -1,3 +1,13 @@
+<!---
+    name: WPD Basic Hardware Sample Driver
+    platform: UMDF1
+    language: cpp
+    category: WDP
+    description: Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller.           
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620318
+--->
+
+
 WPD Basic Hardware Sample Driver (UMDF Version 1)
 =================================================
 

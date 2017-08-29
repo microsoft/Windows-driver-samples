@@ -1,3 +1,13 @@
+<!---
+    name: Non-PnP Driver Sample
+    platform: KMDF
+    language: cpp
+    category: General WDF
+    description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework. 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620307
+--->
+
+
 Non-PnP Driver Sample
 ====================
 

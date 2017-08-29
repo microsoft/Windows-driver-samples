@@ -1,3 +1,13 @@
+<!---
+    name: KMDF Power Framework (PoFx) Sample
+    platform: KMDF
+    language: cpp
+    category: Power
+    description: Demonstrate how a KMDF driver can implement F-state-based power management.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617937
+--->
+
+
 KMDF Power Framework (PoFx) Sample
 ==================================
 

@@ -1,3 +1,13 @@
+<!---
+    name: UMDF SocketEcho Sample (UMDF Version 1)
+    platform: UMDF1
+    language: cpp
+    category: General WDF
+    description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices. 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617709
+--->
+
+
 UMDF SocketEcho Sample (UMDF Version 1)
 =======================================
 

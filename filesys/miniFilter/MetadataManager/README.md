@@ -1,3 +1,13 @@
+<!---
+    name: Metadata Manager File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: An example of how to use files for storing metadata that corresponds to minifilters.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617650
+--->
+
+
 Metadata Manager File System Minifilter Driver
 ==============================================
 

@@ -1,3 +1,12 @@
+<!---
+    name: Sample Function Driver for OSR USB-FX2 (UMDF Version 2)
+    platform: UMDF2
+    language: cpp
+    category: USB
+    description: Demomstreates a UMDF version 2 driver for the OSR USB-FX2 device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618003
+--->
+
 Sample Function Driver for OSR USB-FX2 (UMDF Version 2)
 =======================================================
 
@@ -55,7 +64,7 @@ Build the sample using MSBuild
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, umdf2echo.sln. Use the MSBuild command to build the solution. Here is an example:
 
-**msbuild /p:configuration=”Win8 Release” /p:platform=”Win32” umdf2\_fx2.sln**
+**msbuild /p:configuration=ï¿½Win8 Releaseï¿½ /p:platform=ï¿½Win32ï¿½ umdf2\_fx2.sln**
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

@@ -1,3 +1,13 @@
+<!---
+    name: Sample KMDF Bus Driver for OSR USB-FX2
+    platform: KMDF
+    language: cpp
+    category: USB
+    description: Demonstrates how to use KMDF as a bus driver using the OSR USB-FX2 device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618000
+--->
+
+
 Sample KMDF Bus Driver for OSR USB-FX2
 ======================================
 

@@ -1,3 +1,13 @@
+<!---
+    name: WmiSamp WMI Provider
+    platform: KMDF
+    language: cpp
+    category: WMI
+    description: Demonstrates how to register WMI providers in KMDF, create provider instances, and handle WMI queries sent to a device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618007
+--->
+
+
 Sample KMDF Driver Implementing a WMI Data Provider
 ===================================================
 

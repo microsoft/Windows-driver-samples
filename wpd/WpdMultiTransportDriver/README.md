@@ -1,3 +1,13 @@
+<!---
+    name: WPD multi-transport sample driver
+    platform: UMDF1
+    language: cpp
+    category: WPD
+    description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618009
+--->
+
+
 WPD multi-transport sample driver
 =================================
 

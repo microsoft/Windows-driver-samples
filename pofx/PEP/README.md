@@ -1,3 +1,13 @@
+<!---
+    name: Power Engine Plugin (PEP) ACPI Sample
+    platform: KMDF
+    language: cpp
+    category: ACPI Power
+    description: Demonstrates an interface which allows PEP to implement ACPI runtime methods natively via a driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620311
+--->
+
+
 PEP ACPI Sample
 ===============
 
