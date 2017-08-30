@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: An example of using a control device object (CDO) with a minifilter.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617646
 --->
 
 
