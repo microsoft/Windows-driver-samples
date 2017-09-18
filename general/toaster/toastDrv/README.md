@@ -1,6 +1,6 @@
 <!---
     name: Toaster Sample Driver
-    platform: KMDF UDMF1
+    platform: KMDF UMDF1
     language: cpp
     category: General WDF
     description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
