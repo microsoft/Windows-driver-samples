@@ -1,6 +1,6 @@
 <!---
     name: UMDF Driver Skeleton Sample (UMDF version 1)
-    platform: UDMF1
+    platform: UMDF1
     language: cpp
     category: General WDF
     description: Demonstrates how to use UDMF to write a minimal driver.

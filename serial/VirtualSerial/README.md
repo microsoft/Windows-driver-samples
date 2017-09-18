@@ -1,6 +1,6 @@
 <!---
     name: Virtual serial driver sample
-    platform: UDMF1
+    platform: UMDF1
     language: cpp
     category: Serial
     description: Demonstrates a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
