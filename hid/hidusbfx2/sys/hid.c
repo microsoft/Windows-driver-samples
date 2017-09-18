@@ -28,7 +28,7 @@ Revision History:
 
 #define USE_HARDCODED_HID_REPORT_DESCRIPTOR
 
-#include <hidusbfx2.h>
+#include "hidusbfx2.h"
 
 #if defined(EVENT_TRACING)
 #include "hid.tmh"
@@ -53,7 +53,7 @@ HidFx2EvtInternalDeviceControl(
 
 Routine Description:
 
-    This event is called when the framework receives 
+    This event is called when the framework receives
     IRP_MJ_INTERNAL DEVICE_CONTROL requests from the system.
 
 Arguments:
@@ -90,7 +90,7 @@ Return Value:
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL,
         "%s, Queue:0x%p, Request:0x%p\n",
         DbgHidInternalIoctlString(IoControlCode),
-        Queue, 
+        Queue,
         Request
         );
 
@@ -139,14 +139,14 @@ Return Value:
         if(!NT_SUCCESS(status)){
             TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
                 "WdfRequestForwardToIoQueue failed with status: 0x%x\n", status);
-            
+
             WdfRequestComplete(Request, status);
         }
 
         return;
 
 //
-// This feature is only supported on WinXp and later. Compiling in W2K 
+// This feature is only supported on WinXp and later. Compiling in W2K
 // build environment will fail without this conditional preprocessor statement.
 //
     case IOCTL_HID_SEND_IDLE_NOTIFICATION_REQUEST:
@@ -154,16 +154,16 @@ Return Value:
         //
         // Hidclass sends this IOCTL for devices that have opted-in for Selective
         // Suspend feature. This feature is enabled by adding a registry value
-        // "SelectiveSuspendEnabled" = 1 in the hardware key through inf file 
-        // (see hidusbfx2.inf). Since hidclass is the power policy owner for 
-        // this stack, it controls when to send idle notification and when to 
-        // cancel it. This IOCTL is passed to USB stack. USB stack pends it. 
+        // "SelectiveSuspendEnabled" = 1 in the hardware key through inf file
+        // (see hidusbfx2.inf). Since hidclass is the power policy owner for
+        // this stack, it controls when to send idle notification and when to
+        // cancel it. This IOCTL is passed to USB stack. USB stack pends it.
         // USB stack completes the request when it determines that the device is
-        // idle. Hidclass's idle notification callback get called that requests a 
-        // wait-wake Irp and subsequently powers down the device. 
-        // The device is powered-up either when a handle is opened for the PDOs 
+        // idle. Hidclass's idle notification callback get called that requests a
+        // wait-wake Irp and subsequently powers down the device.
+        // The device is powered-up either when a handle is opened for the PDOs
         // exposed by hidclass, or when usb stack completes wait
-        // wake request. In the first case, hidclass cancels the notification 
+        // wake request. In the first case, hidclass cancels the notification
         // request (pended with usb stack), cancels wait-wake Irp and powers up
         // the device. In the second case, an external wake event triggers completion
         // of wait-wake irp and powering up of device.
@@ -173,10 +173,10 @@ Return Value:
         if (!NT_SUCCESS(status)) {
             TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
                 "SendIdleNotification failed with status: 0x%x\n", status);
-            
+
             WdfRequestComplete(Request, status);
-        } 
-        
+        }
+
         return;
 
     case IOCTL_HID_SET_FEATURE:
@@ -187,7 +187,7 @@ Return Value:
         status = HidFx2SetFeature(Request);
         WdfRequestComplete(Request, status);
         return;
-        
+
     case IOCTL_HID_GET_FEATURE:
         //
         // Get a HID class feature report from a top-level collection of
@@ -248,7 +248,7 @@ Routine Description
 
 Arguments:
 
-    Request - Wdf Request 
+    Request - Wdf Request
 
 Return Value:
 
@@ -268,7 +268,7 @@ Return Value:
     TraceEvents(TRACE_LEVEL_VERBOSE, DBG_IOCTL, "HidFx2SetFeature Enter\n");
 
     device = WdfIoQueueGetDevice(WdfRequestGetIoQueue(Request));
-    
+
     WDF_REQUEST_PARAMETERS_INIT(&params);
     WdfRequestGetParameters(Request, &params);
 
@@ -276,7 +276,7 @@ Return Value:
     // IOCTL_HID_SET_FEATURE & IOCTL_HID_GET_FEATURE are not METHOD_NIEHTER
     // IOCTLs. So you cannot retreive UserBuffer from the IRP using Wdf
     // function. As a result we have to escape out to WDM to get the UserBuffer
-    // directly from the IRP. 
+    // directly from the IRP.
     //
     if (params.Parameters.DeviceIoControl.InputBufferLength < sizeof(HID_XFER_PACKET)) {
         status = STATUS_BUFFER_TOO_SMALL;
@@ -321,15 +321,15 @@ Return Value:
 	if (transferPacket->reportId == SEVEN_SEGMENT_REPORT_ID)
 	{
         status = SendVendorCommand(
-            device, 
+            device,
             HIDFX2_SET_7SEGMENT_DISPLAY,
-            &featureUsage 
+            &featureUsage
             );
 	}
 	else if (transferPacket->reportId == BARGRAPH_REPORT_ID)
 	{
         status = SendVendorCommand(
-            device, 
+            device,
             HIDFX2_SET_BARGRAPH_DISPLAY,
             &featureUsage
             );
@@ -360,7 +360,7 @@ Routine Description
 
 Arguments:
 
-    Request - Wdf Request 
+    Request - Wdf Request
 
 	BytesReturned - Size of buffer returned for the request
 
@@ -383,7 +383,7 @@ Return Value:
     *BytesReturned = 0;
 
     device = WdfIoQueueGetDevice(WdfRequestGetIoQueue(Request));
-    
+
     WDF_REQUEST_PARAMETERS_INIT(&params);
     WdfRequestGetParameters(Request, &params);
 
@@ -391,7 +391,7 @@ Return Value:
     // IOCTL_HID_SET_FEATURE & IOCTL_HID_GET_FEATURE are not METHOD_NIEHTER
     // IOCTLs. So you cannot retreive UserBuffer from the IRP using Wdf
     // function. As a result we have to escape out to WDM to get the UserBuffer
-    // directly from the IRP. 
+    // directly from the IRP.
     //
     if (params.Parameters.DeviceIoControl.OutputBufferLength < sizeof(HID_XFER_PACKET)) {
         status = STATUS_BUFFER_TOO_SMALL;
@@ -431,15 +431,15 @@ Return Value:
     if (transferPacket->reportId == SEVEN_SEGMENT_REPORT_ID)
     {
         status = GetVendorData(
-            device, 
+            device,
             HIDFX2_READ_7SEGMENT_DISPLAY,
-            &featureReport->FeatureData 
+            &featureReport->FeatureData
             );
     }
     else if (transferPacket->reportId == BARGRAPH_REPORT_ID)
     {
         status = GetVendorData(
-            device, 
+            device,
             HIDFX2_READ_BARGRAPH_DISPLAY,
             &featureReport->FeatureData
             );
@@ -473,7 +473,7 @@ Routine Description
 
 Arguments:
 
-    Request - Wdf Request 
+    Request - Wdf Request
 
 Return Value:
 
@@ -487,7 +487,7 @@ Return Value:
     WDF_MEMORY_DESCRIPTOR        memDesc;
     WDF_USB_CONTROL_SETUP_PACKET controlSetupPacket;
     WDF_REQUEST_SEND_OPTIONS     sendOptions;
-    
+
     PAGED_CODE();
 
     TraceEvents(TRACE_LEVEL_VERBOSE, DBG_IOCTL, "SendVendorCommand Enter\n");
@@ -495,7 +495,7 @@ Return Value:
     pDevContext = GetDeviceContext(Device);
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL,
-        "SendVendorCommand: Command:0x%x, data: 0x%x\n", 
+        "SendVendorCommand: Command:0x%x, data: 0x%x\n",
         VendorCommand, *CommandData);
 
     //
@@ -503,7 +503,7 @@ Return Value:
     //
     // Send the I/O with a timeout. We do that because we send the
     // I/O in the context of the user thread and if it gets stuck, it would
-    // prevent the user process from existing. 
+    // prevent the user process from existing.
     //
     WDF_REQUEST_SEND_OPTIONS_INIT(&sendOptions,
                                   WDF_REQUEST_SEND_OPTION_TIMEOUT);
@@ -535,7 +535,7 @@ Return Value:
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
             "SendtVendorCommand: Failed to set Segment Display state - 0x%x \n",
             status);
-    } 
+    }
 
     TraceEvents(TRACE_LEVEL_VERBOSE, DBG_IOCTL, "SendVendorCommand Exit\n");
 
@@ -557,7 +557,7 @@ Routine Description
 
 Arguments:
 
-    Request - Wdf Request 
+    Request - Wdf Request
 
 Return Value:
 
@@ -571,7 +571,7 @@ Return Value:
     WDF_MEMORY_DESCRIPTOR        memDesc;
     WDF_USB_CONTROL_SETUP_PACKET controlSetupPacket;
     WDF_REQUEST_SEND_OPTIONS     sendOptions;
-    
+
     PAGED_CODE();
 
     TraceEvents(TRACE_LEVEL_VERBOSE, DBG_IOCTL, "GetVendorData Enter\n");
@@ -579,7 +579,7 @@ Return Value:
     pDevContext = GetDeviceContext(Device);
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL,
-        "GetVendorData: Command:0x%x, data: 0x%x\n", 
+        "GetVendorData: Command:0x%x, data: 0x%x\n",
         VendorCommand, *CommandData);
 
     //
@@ -587,7 +587,7 @@ Return Value:
     //
     // Send the I/O with a timeout. We do that because we send the
     // I/O in the context of the user thread and if it gets stuck, it would
-    // prevent the user process from existing. 
+    // prevent the user process from existing.
     //
     WDF_REQUEST_SEND_OPTIONS_INIT(&sendOptions,
                                   WDF_REQUEST_SEND_OPTION_TIMEOUT);
@@ -619,11 +619,11 @@ Return Value:
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
             "GetVendorData: Failed to get state - 0x%x \n",
             status);
-    } 
+    }
     else
     {
         TraceEvents(TRACE_LEVEL_INFORMATION, DBG_IOCTL,
-            "GetVendorData: Command:0x%x, data after command: 0x%x\n", 
+            "GetVendorData: Command:0x%x, data after command: 0x%x\n",
             VendorCommand, *CommandData);
     }
 
@@ -642,7 +642,7 @@ HidFx2GetHidDescriptor(
 
 Routine Description:
 
-    Finds the HID descriptor and copies it into the buffer provided by the 
+    Finds the HID descriptor and copies it into the buffer provided by the
     Request.
 
 Arguments:
@@ -668,7 +668,7 @@ Return Value:
 
     //
     // This IOCTL is METHOD_NEITHER so WdfRequestRetrieveOutputMemory
-    // will correctly retrieve buffer from Irp->UserBuffer. 
+    // will correctly retrieve buffer from Irp->UserBuffer.
     // Remember that HIDCLASS provides the buffer in the Irp->UserBuffer
     // field irrespective of the ioctl buffer type. However, framework is very
     // strict about type checking. You cannot get Irp->UserBuffer by using
@@ -683,7 +683,7 @@ Return Value:
     }
 
     //
-    // Use hardcoded "HID Descriptor" 
+    // Use hardcoded "HID Descriptor"
     //
     bytesToCopy = G_DefaultHidDescriptor.bLength;
 
@@ -691,9 +691,9 @@ Return Value:
         status = STATUS_INVALID_DEVICE_STATE;
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
             "G_DefaultHidDescriptor is zero, 0x%x\n", status);
-        return status;        
+        return status;
     }
-    
+
     status = WdfMemoryCopyFromBuffer(memory,
                             0, // Offset
                             (PVOID) &G_DefaultHidDescriptor,
@@ -749,7 +749,7 @@ Return Value:
 
     //
     // This IOCTL is METHOD_NEITHER so WdfRequestRetrieveOutputMemory
-    // will correctly retrieve buffer from Irp->UserBuffer. 
+    // will correctly retrieve buffer from Irp->UserBuffer.
     // Remember that HIDCLASS provides the buffer in the Irp->UserBuffer
     // field irrespective of the ioctl buffer type. However, framework is very
     // strict about type checking. You cannot get Irp->UserBuffer by using
@@ -772,9 +772,9 @@ Return Value:
         status = STATUS_INVALID_DEVICE_STATE;
         TraceEvents(TRACE_LEVEL_ERROR, DBG_IOCTL,
             "G_DefaultHidDescriptor's reportLenght is zero, 0x%x\n", status);
-        return status;        
+        return status;
     }
-    
+
     status = WdfMemoryCopyFromBuffer(memory,
                             0,
                             (PVOID) G_DefaultReportDescriptor,
@@ -828,7 +828,7 @@ Return Value:
 
     //
     // This IOCTL is METHOD_NEITHER so WdfRequestRetrieveOutputMemory
-    // will correctly retrieve buffer from Irp->UserBuffer. 
+    // will correctly retrieve buffer from Irp->UserBuffer.
     // Remember that HIDCLASS provides the buffer in the Irp->UserBuffer
     // field irrespective of the ioctl buffer type. However, framework is very
     // strict about type checking. You cannot get Irp->UserBuffer by using
@@ -890,7 +890,7 @@ Return Value:
     BOOLEAN                    sendStatus = FALSE;
     WDF_REQUEST_SEND_OPTIONS   options;
     WDFIOTARGET                nextLowerDriver;
-    WDFDEVICE                  device;  
+    WDFDEVICE                  device;
     PIO_STACK_LOCATION         currentIrpStack = NULL;
     IO_STACK_LOCATION          nextIrpStack;
 
@@ -900,7 +900,7 @@ Return Value:
     //
     // Convert the request to corresponding USB Idle notification request
     //
-    if (currentIrpStack->Parameters.DeviceIoControl.InputBufferLength < 
+    if (currentIrpStack->Parameters.DeviceIoControl.InputBufferLength <
         sizeof(HID_SUBMIT_IDLE_NOTIFICATION_CALLBACK_INFO)) {
 
         status = STATUS_BUFFER_TOO_SMALL;
@@ -909,7 +909,7 @@ Return Value:
         return status;
     }
 
-    ASSERT(sizeof(HID_SUBMIT_IDLE_NOTIFICATION_CALLBACK_INFO) 
+    ASSERT(sizeof(HID_SUBMIT_IDLE_NOTIFICATION_CALLBACK_INFO)
         == sizeof(USB_IDLE_CALLBACK_INFO));
 
     #pragma warning(suppress :4127)  // conditional expression is constant warning
@@ -925,15 +925,15 @@ Return Value:
     // prepare next stack location
     //
     RtlZeroMemory(&nextIrpStack, sizeof(IO_STACK_LOCATION));
-    
+
     nextIrpStack.MajorFunction = currentIrpStack->MajorFunction;
     nextIrpStack.Parameters.DeviceIoControl.InputBufferLength =
         currentIrpStack->Parameters.DeviceIoControl.InputBufferLength;
     nextIrpStack.Parameters.DeviceIoControl.Type3InputBuffer =
         currentIrpStack->Parameters.DeviceIoControl.Type3InputBuffer;
-    nextIrpStack.Parameters.DeviceIoControl.IoControlCode = 
+    nextIrpStack.Parameters.DeviceIoControl.IoControlCode =
         IOCTL_INTERNAL_USB_SUBMIT_IDLE_NOTIFICATION;
-    nextIrpStack.DeviceObject = 
+    nextIrpStack.DeviceObject =
         WdfIoTargetWdmGetTargetDeviceObject(WdfDeviceGetIoTarget(device));
 
     //
@@ -954,7 +954,7 @@ Return Value:
                                   );
 
     nextLowerDriver = WdfDeviceGetIoTarget(device);
-    
+
     sendStatus = WdfRequestSend(
         Request,
         nextLowerDriver,

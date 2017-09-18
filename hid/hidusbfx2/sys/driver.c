@@ -26,7 +26,7 @@ Revision History:
 
 --*/
 
-#include <hidusbfx2.h>
+#include "hidusbfx2.h"
 
 #if defined(EVENT_TRACING)
 //
@@ -110,7 +110,7 @@ Return Value:
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, DBG_INIT,
             "WdfDriverCreate failed with status 0x%x\n", status);
-        
+
         WPP_CLEANUP(DriverObject);
     }
 
@@ -160,7 +160,7 @@ Return Value:
         "HidFx2EvtDeviceAdd called\n");
 
     //
-    // Tell framework this is a filter driver. Filter drivers by default are  
+    // Tell framework this is a filter driver. Filter drivers by default are
     // not power policy owners. This works well for this driver because
     // HIDclass driver is the power policy owner for HID minidrivers.
     //
@@ -202,7 +202,7 @@ Return Value:
     }
 
     devContext = GetDeviceContext(hDevice);
-    
+
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&queueConfig, WdfIoQueueDispatchParallel);
     queueConfig.EvtIoInternalDeviceControl = HidFx2EvtInternalDeviceControl;
 
@@ -246,7 +246,7 @@ Return Value:
     }
 
     //
-    // Create a timer to handle debouncing of switchpack 
+    // Create a timer to handle debouncing of switchpack
     //
     WDF_TIMER_CONFIG_INIT(
                           &timerConfig,

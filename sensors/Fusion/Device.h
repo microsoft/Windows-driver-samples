@@ -19,11 +19,7 @@
 #include <SensorsCx.h>
 #include <SensorsUtils.h>
 #include <Math3DHelper.h>
-#include <SensorsCx.h>
 #include <SensorsDef.h>
-#include <SensorsTrace.h>
-#include <SensorsUtils.h>
-#include <Math3DHelper.h>
 
 #define SENSOR_POOL_TAG_FUSIONSENSOR 'esuF'
 

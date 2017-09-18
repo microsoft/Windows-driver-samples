@@ -1123,7 +1123,7 @@ CWMPTHandler::GetTxtPropTypeAndValue(
                 case FontColor:
                 {
                     cstrType = SCHEMA_STRING;
-                    cstrValue.Format(L"%s", pWmData->txtData.bstrFontColor);
+                    cstrValue.Format(L"%s", static_cast<LPCWSTR>(pWmData->txtData.bstrFontColor));
                 }
                 break;
 
@@ -1137,7 +1137,7 @@ CWMPTHandler::GetTxtPropTypeAndValue(
                 case Text:
                 {
                     cstrType = SCHEMA_STRING;
-                    cstrValue.Format(L"%s", pWmData->txtData.bstrText);
+                    cstrValue.Format(L"%s", static_cast<LPCWSTR>(pWmData->txtData.bstrText));
                 }
                 break;
 

@@ -2159,13 +2159,13 @@ Return Value:
 
         group->LBPolicySelection = DSM_DEFAULT_LB_POLICY_LUN_EXPLICIT;
     }
-    
+
     if (!explicitlySet && !vidpidPolicySet && !overallPolicySet) {
 
         group->LBPolicySelection = DSM_DEFAULT_LB_POLICY_ALUA_CAPABILITY;
 
-    }    
-    
+    }
+
     //
     // If ALUA is enabled and the load balance policy is set to Round Robin,
     // we need to set it to Round Robin with Subset instead.
@@ -2466,7 +2466,7 @@ Return Value:
     KIRQL irql;
     BOOLEAN retVal;
     ULONG SpecialHandlingFlag = 0;
-    
+
     //
     //  1. If PR and reserved by this node, register the PR keys.
     //  2. Find the FOG for the passed in PathId
@@ -2714,29 +2714,13 @@ Return Value:
     PDSM_FOG_DEVICELIST_ENTRY fogDeviceListEntry = NULL;
     PDSM_GROUP_ENTRY group = deviceInfo->Group;
     ULONG SpecialHandlingFlag = 0;
-    
+
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_PNP,
                 "DsmPathVerify (DevInfo %p): Entering function.\n",
                 DsmId));
 
     if (DsmpIsDeviceInitialized(deviceInfo)) {
-
-        if (deviceInfo->Unresponsive) {
-            //
-            // Since the device is marked unresponsive, there
-            // is no point in sending RTPG or TUR down
-            // as that will fail by port driver.
-            // but that doesn't necessarily mean that the path doesn't exist.
-            // Return SUCCESS here so that MPIO doesn't remove
-            // disk in case of failover etc.
-            // If really this path is gone, this should get deleted
-            // as part of pnp removal and then if no other paths are left
-            // disk will be removed
-            //
-            status = STATUS_SUCCESS;
-            return status;
-        }
 
         irql = ExAcquireSpinLockExclusive(&(dsmCtxt->DsmContextLock));
 
@@ -2974,11 +2958,11 @@ Return Value:
         // Initialize all the entries to indicate that they haven't been processed.
         //
         for (entry = failGroup->ZombieGroupList.Flink; entry != &(failGroup->ZombieGroupList); entry = entry->Flink) {
-        
+
             group = CONTAINING_RECORD(entry, DSM_ZOMBIEGROUP_ENTRY, ListEntry);
             group->Processed = FALSE;
         }
-        
+
         //
         // Since we need to drop the spin lock while processing an entry, it is possible
         // that a removal in parallel frees up this entry during that time, thus making it
@@ -2988,7 +2972,7 @@ Return Value:
         // of the list, skipping over the already processed ones.
         //
         entry = failGroup->ZombieGroupList.Flink;
-        
+
         while (entry != &(failGroup->ZombieGroupList)) {
 
             group = CONTAINING_RECORD(entry, DSM_ZOMBIEGROUP_ENTRY, ListEntry);
@@ -3165,7 +3149,7 @@ Return Value:
     BOOLEAN adminRequest = FALSE;
     PDSM_GROUP_ENTRY group = NULL;
     ULONG SpecialHandlingFlag = 0;
-    
+
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_WMI,
                 "DsmMoveDevice (DsmIds %p): Entering function - DsmContext %p MPIOPath (%p) SuggestedPath %p.\n",
@@ -3613,7 +3597,7 @@ Return Value:
         cdb = SrbGetCdb(Srb);
         if (cdb) {
             opCode = cdb->AsByte[0];
-            
+
         }
     }
 
@@ -3739,7 +3723,7 @@ Return Value:
             // 2. If the old path was supposed to be removed, check if there are
             //    no more requests are outstanding, and if yes, remove the path
             //
-                
+
             irpStack = IoGetCurrentIrpStackLocation(irp);
             oldPath = irpStack->Parameters.Others.Argument3;
 
@@ -3788,7 +3772,7 @@ Return Value:
         }
 
     } else {
-    
+
         *Status = STATUS_NO_SUCH_DEVICE;
 
 
@@ -3796,7 +3780,7 @@ Return Value:
                     TRACE_FLAG_RW,
                     "DsmLBGetPath (DsmIds %p): Failed to get FO group in LBGetPath.\n",
                     DsmList));
-    
+
 
     }
 
@@ -4101,16 +4085,16 @@ Return Value:
 
 __Exit_DsmSrbDeviceControl:
     if (status != STATUS_PENDING) {
-    
+
         //
         // Set-up the Irp status for mpio's completion of the request.
         // If it was IRP_MJ_SCSI, one of the helper routines set Srb->SrbStatus
         // already.
         //
         if ((irpStack->MajorFunction == IRP_MJ_SCSI) &&
-            (Srb != NULL) && 
+            (Srb != NULL) &&
             (Srb->SrbStatus == SRB_STATUS_PENDING)) {
-            
+
             Srb->SrbStatus = SRB_STATUS_ERROR;
         }
 
@@ -4694,7 +4678,7 @@ Return Value:
                                         handled = TRUE;
 
                                         break;
-                                }                                
+                                }
                             }
                         }
                     }
@@ -4884,7 +4868,7 @@ Return Value:
                 break;
             }
 
-            
+
             default: {
 
                 if ((scsiStatus == SCSISTAT_CHECK_CONDITION) &&
@@ -4998,7 +4982,7 @@ Return Value:
 
     if (failover) {
         ULONG SpecialHandlingFlag = 0;
-        
+
         //
         // If ALUA is supported, then it is possible that we may need to send
         // down an STPG so build an IRP and fill in the SRB for STPG and send it down.
@@ -5072,7 +5056,7 @@ Return Value:
                             deviceInfo->Group->PathToBeUsed));
             }
         }
-    } 
+    }
 
 
     *Retry = retry;

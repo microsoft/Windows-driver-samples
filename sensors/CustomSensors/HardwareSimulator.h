@@ -14,7 +14,7 @@
 #include <windows.h>
 #include <wdf.h>
 
-#include <SensorsTrace.h>
+#include "SensorsTrace.h"
 #include <SensorsCx.h>
 
 #define SIMULATOR_HARDWARE_INTERVAL_MS  (100) // 100ms

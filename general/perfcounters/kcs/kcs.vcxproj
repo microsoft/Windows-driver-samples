@@ -151,7 +151,7 @@
     <PropertyGroup>
       <CTRPP_ODIR>$([System.IO.Path]::GetDirectoryName($(ProjectDir)\$(IntDir)))</CTRPP_ODIR>
     </PropertyGroup>
-    <Exec Command="&quot;$(WDKContentRoot)\bin\x86\ctrpp.exe&quot; kcs.man  -prefix Kcs -o &quot;$(CTRPP_ODIR)\KcsCounters.h&quot; -ch &quot;$(CTRPP_ODIR)\KcsCounters_counters.h&quot; -rc &quot;$(CTRPP_ODIR)\KcsCounters.rc&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="&quot;ctrpp.exe&quot; kcs.man  -prefix Kcs -o &quot;$(CTRPP_ODIR)\KcsCounters.h&quot; -ch &quot;$(CTRPP_ODIR)\KcsCounters_counters.h&quot; -rc &quot;$(CTRPP_ODIR)\KcsCounters.rc&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
   <ItemGroup>
     <ClCompile Include="Kcs.c" />
