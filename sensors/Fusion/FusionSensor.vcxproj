@@ -107,8 +107,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
@@ -150,8 +149,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
