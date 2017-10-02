@@ -1,3 +1,13 @@
+<!---
+    name: Virtual serial driver sample (UMDF version 2)
+    platform: UMDF2
+    language: cpp
+    category: Serial
+    description: Demonstrates UMDF version 2 serial drivers and includes a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617965
+--->
+
+
 Virtual serial driver sample
 ============================
 

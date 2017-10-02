@@ -1,3 +1,12 @@
+<!---
+    name: Kernel mode display-only miniport driver (KMDOD) sample
+    platform: WDM
+    language: cpp
+    category: Video
+    description: Implements most DDIs that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620317
+--->
+
 Kernel mode display-only miniport driver (KMDOD) sample
 =======================================================
 

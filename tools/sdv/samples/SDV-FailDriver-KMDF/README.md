@@ -1,3 +1,13 @@
+<!---
+    name: SDV-FailDriver-KMDF
+    platform: KMDF
+    language: cpp
+    category: StaticDriverVerifier Tools
+    description: Demonstrates how Static Driver Verifier (SDV) can find errors in a KMDF driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617993
+--->
+
+
 SDV-FailDriver-KMDF
 ===================
 

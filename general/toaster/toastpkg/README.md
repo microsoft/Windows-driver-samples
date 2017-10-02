@@ -1,5 +1,15 @@
-Toaster Sample Driver
-=====================
+<!---
+    name: Toaster Package Sample Driver
+    platform: WDM
+    language: cpp
+    category: General
+    description: Simulates hardware-first and software-first installation of the toaster sample driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617723
+--->
+
+
+Toaster Package Sample Driver
+=============================
 The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for both Kernel-Mode Driver Framework (KMDF) and User-Mode Driver Framework (UMDF) version 1.
 
 All the samples work with a hypothetical toaster bus, over which toaster devices can be connected to a PC.

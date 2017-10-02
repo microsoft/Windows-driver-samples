@@ -577,6 +577,8 @@
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\NdisComm.lib;$(SolutionDir)\LIB\x64\hal.lib;$(SolutionDir)\LIB\x64\rtklibcom.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ndis.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x64)km\x64\sdbus.lib;$(WindowsSDK_LibraryPath_x64)km\x64\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
+      <!-- warning LNK4099: PDB 'rtklibcom.pdb' was not found with 'rtklibcom.lib(multichannels.obj)' -->
+      <AdditionalOptions>$(AdditionalOptions) /IGNORE:4099</AdditionalOptions>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -636,7 +638,7 @@
   <!-- Needed by any VcxProj -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup Label="UserMacros" />
-  <!-- The WrappedTaskItems label is used by the conversion tool to identify the location where items 
+  <!-- The WrappedTaskItems label is used by the conversion tool to identify the location where items
         associated with wrapped tasks will reside.-->
   <ItemGroup Label="WrappedTaskItems">
     <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">

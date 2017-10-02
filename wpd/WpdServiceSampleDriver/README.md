@@ -1,11 +1,17 @@
-WPD multi-transport sample driver
+<!---
+    name: WPD service sample driver
+    platform: UMDF1
+    language: cpp
+    category: WPD
+    description: Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618010
+--->
+
+
+WPD service sample driver
 =================================
 
-The WpdMultiTransportDriver sample demonstrates how you could extend the WpdHelloWorldDriver for a device that supports multiple transports. A transport is a protocol over which a portable device communicates with a computer. Example transports include Internet Protocol (IP), Bluetooth, and USB.
-
-A number of portable devices now support multiple transports. For example, a number of cell phones support both Bluetooth and USB. Windows supports a multitransport driver model that ensures that only one node appears for each device.
-
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD MultiTransport Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597709) description in the Windows Driver Kit documentation.
+Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service.
 
 Related topics
 --------------

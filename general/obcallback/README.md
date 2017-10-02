@@ -1,3 +1,13 @@
+<!---
+    name: ObCallback Callback Registration Driver
+    platform: WDM
+    language: cpp
+    category: General
+    description: Demonstrates the use of registered callbacks for process protection.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617716
+--->
+
+
 ObCallback Callback Registration Driver
 =======================================
 

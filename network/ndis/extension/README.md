@@ -1,3 +1,13 @@
+<!---
+    name: Hyper-V Extensible Switch extension filter driver
+    platform: WDM
+    language: cpp
+    category: Network
+    description: A base library used to implement a Hyper-V Extensible Switch extension filter driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617913
+--->
+
+
 Hyper-V Extensible Switch extension filter driver
 =================================================
 

@@ -1,4 +1,4 @@
-#include <RadioSwitchHidUsbFx2.h>
+#include "RadioSwitchHidUsbFx2.h"
 #pragma warning(disable:28252)
 #pragma warning(disable:28253)
 #include "driver.tmh"
@@ -39,7 +39,7 @@ NTSTATUS DriverEntry (_In_ PDRIVER_OBJECT pDriverObject, _In_ PUNICODE_STRING ps
                              &config,          // Driver Config Info
                              WDF_NO_HANDLE
                             );
-    if (!NT_SUCCESS(status)) 
+    if (!NT_SUCCESS(status))
     {
         TraceErr(DBG_INIT, "(%!FUNC!)WdfDriverCreate failed with status %!STATUS!\n", status);
         WPP_CLEANUP(pDriverObject);
@@ -64,7 +64,7 @@ void HidFx2EvtDriverContextCleanup(_In_ WDFOBJECT hDriver)
 
 
 
-//HidFx2EvtDeviceAdd is called by the framework in response to AddDevicecall from the PnP manager. 
+//HidFx2EvtDeviceAdd is called by the framework in response to AddDevicecall from the PnP manager.
 //We create and initialize a WDF device object to represent a new instance of  device.
 //
 NTSTATUS HidFx2EvtDeviceAdd(_In_ WDFDRIVER hDriver, _Inout_ PWDFDEVICE_INIT pDeviceInit)
@@ -111,7 +111,7 @@ NTSTATUS HidFx2EvtDeviceAdd(_In_ WDFDRIVER hDriver, _Inout_ PWDFDEVICE_INIT pDev
     }
 
     pDevContext = GetDeviceContext(hDevice);
-    
+
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&queueConfig, WdfIoQueueDispatchParallel);
     queueConfig.EvtIoInternalDeviceControl = HidFx2EvtInternalDeviceControl;
 
@@ -136,7 +136,7 @@ NTSTATUS HidFx2EvtDeviceAdd(_In_ WDFDRIVER hDriver, _Inout_ PWDFDEVICE_INIT pDev
         return status;
     }
 
-    // Create a timer to handle debouncing of switchpack 
+    // Create a timer to handle debouncing of switchpack
     WDF_TIMER_CONFIG_INIT(&timerConfig, HidFx2EvtTimerFunction);
     timerConfig.AutomaticSerialization = FALSE;
 

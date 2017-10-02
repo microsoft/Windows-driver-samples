@@ -4281,6 +4281,7 @@ BthHfpDevice::GetBthHfpCodecId(_Out_ UCHAR * CodecId)
 
     ASSERT(CodecId != NULL);
 
+#if !defined(NTDDI_WIN10_RS3)
     typedef enum _HFP_BYPASS_CODEC_ID_VERSION {
         REQ_HFP_BYPASS_CODEC_ID_V1 = 1,
     } HFP_BYPASS_CODEC_ID_VERSION, *PHFP_BYPASS_CODEC_ID_VERSION;
@@ -4288,6 +4289,7 @@ BthHfpDevice::GetBthHfpCodecId(_Out_ UCHAR * CodecId)
     typedef struct _HFP_BYPASS_CODEC_ID_V1 {
         UCHAR CodecId;
     } HFP_BYPASS_CODEC_ID_V1, *PHFP_BYPASS_CODEC_ID_V1;
+#endif
 
     NTSTATUS ntStatus = STATUS_SUCCESS;
 

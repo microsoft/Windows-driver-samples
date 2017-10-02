@@ -1,3 +1,13 @@
+<!---
+    name: NDIS MUX Intermediate Driver and Notify Object
+    platform: WDM
+    language: cpp
+    category: Network
+    description: An NDIS 6.0 driver that demonstrates the operation of an N:1 MUX driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617916
+--->
+
+
 NDIS MUX Intermediate Driver and Notify Object
 ==============================================
 

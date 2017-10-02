@@ -1,3 +1,13 @@
+<!---
+    name: NDIS Virtual Miniport Driver
+    platform: WDM
+    language: cpp
+    category: Network
+    description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617918
+--->
+
+
 NDIS Virtual Miniport Driver
 ============================
 

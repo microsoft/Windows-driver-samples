@@ -1,3 +1,13 @@
+<!---
+    name: Bindview Network Configuration Utility
+    platform: Application
+    language: cpp
+    category: Network
+    description: An application that demonstrates how to use INetCfg APIs to enumerate, install, uninstall, bind and unbind network components.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617732
+--->
+
+
 Bindview Network Configuration Utility
 ======================================
 

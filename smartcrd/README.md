@@ -1,3 +1,13 @@
+<!---
+    name: PCMCIA Smart Card Driver
+    platform: KMDF
+    language: cpp
+    category: SmartCard
+    description: Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617968
+--->
+
+
 PCMCIA Smart Card Driver
 ========================
 

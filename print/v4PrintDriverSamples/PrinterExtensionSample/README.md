@@ -1,3 +1,13 @@
+<!---
+    name: Printer Extension Sample
+    platform: Application
+    language: cs
+    category: Print
+    description: Demonstrates how to use .NET to build a customized, desktop UI for a v4 print driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617945
+--->
+
+
 Printer Extension Sample
 ========================
 

@@ -266,7 +266,7 @@ CNUpSaxHandler::startElement(
                                     if (sizePage.Width < 1.f)
                                     {
                                         //
-                                        // According to the Xps Specification, 
+                                        // According to the Xps Specification,
                                         // FixedPage Width must be >= 1.0
                                         //
                                         hr = E_FAIL;
@@ -364,7 +364,7 @@ CNUpSaxHandler::startElement(
 
                     cstrOut.Format(L"<Canvas RenderTransform=\"%s\" Clip=\"%s\"",
                                       static_cast<LPCWSTR>(bstrMatrix),
-                                      static_cast<LPCTSTR>(strClip));
+                                      static_cast<LPCWSTR>(strClip));
 
                     //
                     // Add additional namespaces from the FixedPage

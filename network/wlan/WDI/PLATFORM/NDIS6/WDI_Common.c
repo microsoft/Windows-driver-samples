@@ -24,7 +24,7 @@ wdi_UnsolicitedIndication(
 	NDIS_OID_REQUEST		*req = NULL;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==>wdi_UnsolicitedIndication(): status indication code = %x, length=%d\n", Indication, Length));
-	
+
 	indic = (NDIS_STATUS_INDICATION *)pInput;
 	wdiHdr = (WDI_MESSAGE_HEADER *)(pInput + sizeof(*indic));
 
@@ -59,12 +59,12 @@ wdi_UnsolicitedIndication(
 		pAdapter->pNdisCommon->hNdisAdapter,
 		indic
 		);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== wdi_UnsolicitedIndication()\n"));
 }
 
 //
-// The following helper functions are used to determined if a 
+// The following helper functions are used to determined if a
 // BSS has the capability of specific wireless mode.
 // 2005.01.13, by rcnjko.
 //
@@ -106,7 +106,7 @@ WDIWithWirelessG(
 	{
 		return FALSE;
 	}
-	
+
 	// Check supported rates.
 	for(i = 0; i < pRtBss->bdSupportRateEXLen; i++)
 	{
@@ -119,12 +119,12 @@ WDIWithWirelessG(
 	}
 
 	// Check if it contains ERP information element.
-	// <NOTE> Some AP, WAG-302, will not always claim OFDM rates in their ProbeRsp or Beacon 
+	// <NOTE> Some AP, WAG-302, will not always claim OFDM rates in their ProbeRsp or Beacon
 	// but it is in G mode. 2005.08.23, by rcnjko.
 	if(pRtBss->bERPInfoValid)
 	{
 		return TRUE;
-	}	
+	}
 
 	return FALSE;
 }
@@ -158,7 +158,7 @@ WDIWithWirelessA(
 
 ////
 // This routine determine if we should report the BSS scanned
-// to upper layer. 
+// to upper layer.
 // 2005.01.13, by rcnjko.
 //
 BOOLEAN
@@ -169,19 +169,19 @@ WDIFilterRtBss(
 {
 	PRT_NDIS6_COMMON pNdisCommon = Adapter->pNdisCommon;
 	BOOLEAN bAcceptable = TRUE;
-	BOOLEAN bHasB, bHasG, bHasA; 
+	BOOLEAN bHasB, bHasG, bHasA;
 
 	// Determine the capability of wireless mode of the BSS.
 	bHasB = WDIWithWirelessB(pRtBss);
 	bHasG = WDIWithWirelessG(pRtBss);
 	bHasA = WDIWithWirelessA(pRtBss);
-	
-	// <RJ_TODO> 
-	// 1. Maybe we may need to use a table in the future. 
+
+	// <RJ_TODO>
+	// 1. Maybe we may need to use a table in the future.
 	// 2. Currently, we only consider B/G case.
 	if( bHasB && !bHasG && !bHasA )
 	{ // The BSS is pure B.
-		if( pNdisCommon->RegWirelessMode4ScanList == WIRELESS_MODE_G || 
+		if( pNdisCommon->RegWirelessMode4ScanList == WIRELESS_MODE_G ||
 			pNdisCommon->RegWirelessMode4ScanList == WIRELESS_MODE_A )
 		{ // We are pure A or pure G.
 			bAcceptable = FALSE;
@@ -219,7 +219,7 @@ wdiext_IndicateP2PDeviceFound(
 	// get info of last rx frame
 	if(RTIsListEmpty(&dev->rxFrameQ))
 		return;
-	
+
 	if(!pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest)
 		return;
 
@@ -280,13 +280,13 @@ wdiext_IndicateP2PDeviceFound(
 
 	// Gen tlv
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationBssEntryList(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 		return;
 
-	wdi_UnsolicitedIndication(pAdapter, 
+	wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							(PVOID)req->RequestId,
 							NDIS_STATUS_WDI_INDICATION_BSS_ENTRY_LIST,
@@ -302,7 +302,7 @@ wdiext_IndicateP2PDeviceFound(
 
 VOID
 wdiext_IndicateP2PActionFrameReceived(
-	IN	VOID 			*pvP2PInfo, 
+	IN	VOID 			*pvP2PInfo,
 	IN	u4Byte 			eid,
 	IN	MEMORY_BUFFER 	*info
 	)
@@ -346,22 +346,22 @@ wdiext_IndicateP2PActionFrameReceived(
 			param.FrameInfo.FrameParams.ActionFrameType = WDI_P2P_ACTION_FRAME_INVITATION_RESPONSE;
 		else
 			return;
-		
+
 		cpMacAddr(param.FrameInfo.FrameParams.PeerDeviceAddress.Address, evtData->Packet.Buffer + FRAME_OFFSET_ADDRESS2);
 		param.FrameInfo.FrameParams.DialogToken = *(evtData->Packet.Buffer + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
 		param.FrameInfo.FrameIEs.ElementCount = evtData->Packet.Length - ieOffset;
 		param.FrameInfo.FrameIEs.pElements = evtData->Packet.Buffer + ieOffset;
 	}
-	
+
 	// gen TLV
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationP2pActionFrameReceived(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 		return;
 
-	wdi_UnsolicitedIndication(pAdapter, 
+	wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							NULL,
 							NDIS_STATUS_WDI_INDICATION_P2P_ACTION_FRAME_RECEIVED,
@@ -371,7 +371,7 @@ wdiext_IndicateP2PActionFrameReceived(
 
 	// cleanup
 	FreeGenerated((UINT8 *)buf);
-	
+
 	FunctionOut(COMP_OID_SET);
 
 	return;
@@ -394,7 +394,7 @@ wdiext_IndicateBSSEntry(
 	WDI_MESSAGE_HEADER 						*reqWdiHdr = NULL;
 	u4Byte										devSpecCtx = 0x07060504;
 	LARGE_INTEGER	CurrentTime;
-	
+
 	if(!pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest)
 		return;
 
@@ -417,7 +417,7 @@ wdiext_IndicateBSSEntry(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("Indicate actual scan result of BSS list\n"));
 		MgntActQuery_802_11_BSSID_LIST(pAdapter, &RtBssList, TRUE);
 #endif
-	}				
+	}
 
 	req = pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest;
 	reqWdiHdr = (WDI_MESSAGE_HEADER *)req->DATA.METHOD_INFORMATION.InformationBuffer;
@@ -468,7 +468,7 @@ wdiext_IndicateBSSEntry(
 		else
 		{
 			FunctionOut(COMP_MLME);
-			return;		
+			return;
 		}
 
 		// WDI_SIGNAL_INFO_CONTAINER SignalInfo
@@ -487,23 +487,23 @@ wdiext_IndicateBSSEntry(
 		entry.DeviceSpecificContext.pElements = (UINT8 *)&devSpecCtx;
 
 		NdisGetCurrentSystemTime(&CurrentTime);
-		
+
 		// WDI_AGE_INFO_CONTAINER EntryAgeInfo
 		entry.EntryAgeInfo.HostTimeStamp = CurrentTime.QuadPart;// [SDIO-482] in JIRA
 		entry.EntryAgeInfo.CachedInformation = 0;
 
 		// Gen tlv
 		if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationBssEntryList(
-			&param, 
-			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-			&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+			&param,
+			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+			&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 			&buflen, &((UINT8 *)buf)))
 		{
 			FunctionOut(COMP_MLME);
 			return;
 		}
-		
-		wdi_UnsolicitedIndication(pAdapter, 
+
+		wdi_UnsolicitedIndication(pAdapter,
 								FALSE,
 								(PVOID)req->RequestId,
 								NDIS_STATUS_WDI_INDICATION_BSS_ENTRY_LIST,
@@ -516,7 +516,7 @@ wdiext_IndicateBSSEntry(
 	}
 
 	FunctionOut(COMP_MLME);
-	
+
 	return;
 }
 
@@ -539,7 +539,7 @@ wdiext_IndicateBSSEntryBySSID(
 	u4Byte										devSpecCtx = 0x07060504;
 	BOOL										bWildCardSSID = TRUE;
 	LARGE_INTEGER	CurrentTime;
-	
+
 	if(!pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest)
 		return;
 
@@ -565,7 +565,7 @@ wdiext_IndicateBSSEntryBySSID(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("Indicate actual scan result of BSS list\n"));
 		MgntActQuery_802_11_BSSID_LIST(pAdapter, &RtBssList, TRUE);
 #endif
-	}				
+	}
 
 	req = pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest;
 	reqWdiHdr = (WDI_MESSAGE_HEADER *)req->DATA.METHOD_INFORMATION.InformationBuffer;
@@ -626,7 +626,7 @@ wdiext_IndicateBSSEntryBySSID(
 		else
 		{
 			FunctionOut(COMP_MLME);
-			return;		
+			return;
 		}
 
 		// WDI_SIGNAL_INFO_CONTAINER SignalInfo
@@ -645,23 +645,23 @@ wdiext_IndicateBSSEntryBySSID(
 		entry.DeviceSpecificContext.pElements = (UINT8 *)&devSpecCtx;
 
 		NdisGetCurrentSystemTime(&CurrentTime);
-		
+
 		// WDI_AGE_INFO_CONTAINER EntryAgeInfo
 		entry.EntryAgeInfo.HostTimeStamp = CurrentTime.QuadPart;// [SDIO-482] in JIRA
 		entry.EntryAgeInfo.CachedInformation = 0;
 
 		// Gen tlv
 		if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationBssEntryList(
-			&param, 
-			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-			&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+			&param,
+			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+			&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 			&buflen, &((UINT8 *)buf)))
 		{
 			FunctionOut(COMP_MLME);
 			return;
 		}
-		
-		wdi_UnsolicitedIndication(pAdapter, 
+
+		wdi_UnsolicitedIndication(pAdapter,
 								FALSE,
 								(PVOID)req->RequestId,
 								NDIS_STATUS_WDI_INDICATION_BSS_ENTRY_LIST,
@@ -674,7 +674,7 @@ wdiext_IndicateBSSEntryBySSID(
 	}
 
 	FunctionOut(COMP_MLME);
-	
+
 	return;
 }
 
@@ -720,7 +720,7 @@ wdiext_IndicateAssociationResult(
 		else
 			AssocComeBackTime = 0;
 	}
-	else 
+	else
 		AssocComeBackTime = 0;
 	if(pMgntInfo->dot11CurrentChannelNumber < 36)
 		BandID = WDI_BAND_ID_2400;
@@ -736,7 +736,7 @@ wdiext_IndicateAssociationResult(
 		case WIRELESS_MODE_A:
 			PhyType = WDI_PHY_TYPE_OFDM;
 			break;
-			
+
 		case WIRELESS_MODE_G:
 			PhyType = WDI_PHY_TYPE_ERP;
 			break;
@@ -757,7 +757,7 @@ wdiext_IndicateAssociationResult(
 			PhyType = WDI_PHY_TYPE_VHT;
 			break;
 
-			
+
 	}
 
 	PlatformZeroMemory(&AsocResult, sizeof(WDI_ASSOCIATION_RESULT_CONTAINER));
@@ -787,12 +787,14 @@ wdiext_IndicateAssociationResult(
 	AsocResult.Optional.BeaconProbeResponse_IsPresent = TRUE;
 	AsocResult.BeaconProbeResponse.ElementCount = MMPDU_BODY_LEN(pMgntInfo->AsocInfo.BeaconLength);
 	AsocResult.BeaconProbeResponse.pElements = MMPDU_BODY(pMgntInfo->AsocInfo.Beacon);
+#if 0
 	AsocResult.Optional.ActivePhyTypeList_IsPresent = TRUE;
+#endif
 	AsocResult.ActivePhyTypeList.ElementCount = 1;
 	AsocResult.ActivePhyTypeList.pElements = &PhyType;
 
 	ndisStatus = GenerateWdiIndicationAssociationResult(
-					&AsocResultList, 
+					&AsocResultList,
 					sizeof(NDIS_STATUS_INDICATION)+sizeof(WDI_MESSAGE_HEADER),
 					&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 					&length,
@@ -802,10 +804,10 @@ wdiext_IndicateAssociationResult(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("GenerateWdiIndicationAssociationResult(): return length %d\n", length));
 		RT_PRINT_DATA(COMP_MLME, DBG_TRACE, ("buffer\n"), pOutput, length);
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("SendUnsolictedIndication(): EthertypeEncapTable_IsPresent %d\n", AsocResult.Optional.EthertypeEncapTable_IsPresent));
-		
+
 		ndisStatus = WDI_AddDatapathPeer(pAdapter, AsocResult.BSSID.Address);
-		
-		wdi_UnsolicitedIndication(pAdapter, 
+
+		wdi_UnsolicitedIndication(pAdapter,
 								FALSE,
 								(PVOID)pAdapter->pPortCommonInfo->WdiData.TaskHandle.pNdisRequest->RequestId,
 								NDIS_STATUS_WDI_INDICATION_ASSOCIATION_RESULT,
@@ -833,7 +835,7 @@ wdiext_IndicateAssociationResult(
 //
 RT_STATUS
 wdiext_IndicateFtAssocNeeded(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 	)
 {
 	RT_STATUS											rtStatus = RT_STATUS_SUCCESS;
@@ -851,18 +853,18 @@ wdiext_IndicateFtAssocNeeded(
 		{
 			RT_TRACE_F(COMP_INDIC, DBG_WARNING, ("Too short of AuthSeq2Length = %d\n", pMgntInfo->AsocInfo.AuthSeq1Length));
 			rtStatus = RT_STATUS_INVALID_DATA;
-			break;			
+			break;
 		}
 
 		if(pMgntInfo->AsocInfo.AuthSeq2Length < sMacHdrLng)
 		{
 			RT_TRACE_F(COMP_INDIC, DBG_WARNING, ("Too short of AuthSeq2Length = %d\n", pMgntInfo->AsocInfo.AuthSeq2Length));
 			rtStatus = RT_STATUS_INVALID_DATA;
-			break;			
+			break;
 		}
 
 		cpMacAddr(param.BssId.Address, pMgntInfo->Bssid);
-	
+
 		param.AuthRequest.ElementCount = MMPDU_BODY_LEN(pMgntInfo->AsocInfo.AuthSeq1Length);
 		param.AuthRequest.pElements = MMPDU_BODY(pMgntInfo->AsocInfo.AuthSeq1);
 
@@ -870,21 +872,21 @@ wdiext_IndicateFtAssocNeeded(
 		param.AuthResponse.pElements = MMPDU_BODY(pMgntInfo->AsocInfo.AuthSeq2);
 
 		// Gen tlv
-		if(NDIS_STATUS_SUCCESS != (ndisStatus = 
+		if(NDIS_STATUS_SUCCESS != (ndisStatus =
 			GenerateWdiIndicationFtAssocParamsNeeded(
-				&param, 
-				sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-				&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+				&param,
+				sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+				&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 				&indicBufLen,
 				&((UINT8 *)pIndicBuf))))
 		{
 			RT_TRACE_F(COMP_INDIC, DBG_SERIOUS, ("Fail (ndisStatus = 0x%08X) from GenerateWdiIndicationFtAssocParamsNeeded()\n", ndisStatus));
 			rtStatus = RT_STATUS_OS_API_FAILED;
-			break;			
+			break;
 		}
 
 		RT_PRINT_DATA(COMP_INDIC, DBG_LOUD, "NDIS_STATUS_WDI_INDICATION_FT_ASSOC_PARAMS_NEEDED:\n", pIndicBuf, indicBufLen);
-		wdi_UnsolicitedIndication(pAdapter, 
+		wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							NULL,
 							NDIS_STATUS_WDI_INDICATION_FT_ASSOC_PARAMS_NEEDED,
@@ -930,8 +932,8 @@ wdiext_IndicateDisassociation(
 	param.Optional.NeedPeerStateCleanup_IsPresent = FALSE;
 
 	cpMacAddr(param.DisconnectIndicationParameters.MacAddress.Address, addr);
-	param.DisconnectIndicationParameters.DisassociationWABIReason = bDisassoc 
-		? WDI_ASSOC_STATUS_PEER_DISASSOCIATED 
+	param.DisconnectIndicationParameters.DisassociationWABIReason = bDisassoc
+		? WDI_ASSOC_STATUS_PEER_DISASSOCIATED
 		: WDI_ASSOC_STATUS_PEER_DEAUTHENTICATED;
 
 	if(frameLen)
@@ -947,23 +949,23 @@ wdiext_IndicateDisassociation(
 			param.DeauthFrame.pElements = frame + sMacHdrLng;
 		}
 	}
-	
+
 	// Gen tlv
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationDisassociation(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 		return;
 
-	wdi_UnsolicitedIndication(pAdapter, 
+	wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							NULL,
 							NDIS_STATUS_WDI_INDICATION_DISASSOCIATION,
 							NDIS_STATUS_SUCCESS,
 							buf,
 							buflen);
-	
+
 	// cleanup
 	FreeGenerated((UINT8 *)buf);
 
@@ -987,24 +989,24 @@ wdiext_IndicateRadioStatus(
 	Params.RadioState.HardwareState = (pMgntInfo->RfOffReason&RF_CHANGE_BY_HW)?0:1;
 
 	RT_TRACE(COMP_RF, DBG_LOUD, ("wdiext_IndicateRadioStatus(): Params.RadioState.SoftwareState is %d, Params.RadioState.HardwareState is %d\n", Params.RadioState.SoftwareState, Params.RadioState.HardwareState));
-	
+
 	ndisStatus = GenerateWdiIndicationRadioStatus(
 				&Params,
-				sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
+				sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
 				&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 				&length,
 				&pOutput);
 
 	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
-		wdi_UnsolicitedIndication(pAdapter, 
+		wdi_UnsolicitedIndication(pAdapter,
 							TRUE,
 							NULL,
 							NDIS_STATUS_WDI_INDICATION_RADIO_STATUS,
 							NDIS_STATUS_SUCCESS,
 							pOutput,
 							length);
-	
+
 		FreeGenerated(pOutput);
 		pOutput = NULL;
 	}
@@ -1023,7 +1025,7 @@ wdiext_IndicateLinkStateChanged(
 	PUCHAR											pOutput = NULL;
 	ULONG											length = 0;
 	NDIS_STATUS										ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	if (pMgntInfo->mAssoc || pMgntInfo->mIbss)
 	{
 		Params.LinkStateChangeParameters.LinkQuality = GetSignalQuality(pAdapter);
@@ -1044,7 +1046,7 @@ wdiext_IndicateLinkStateChanged(
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("wdiext_IndicateLinkStateChanged(): Params.LinkStateChangeParameters.TxLinkSpeed is %d\n", Params.LinkStateChangeParameters.TxLinkSpeed));
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("wdiext_IndicateLinkStateChanged(): Params.LinkStateChangeParameters.RxLinkSpeed is %d\n", Params.LinkStateChangeParameters.RxLinkSpeed));
-	
+
 	ndisStatus = GenerateWdiIndicationLinkStateChange(
 				&Params,
 				sizeof(NDIS_STATUS_INDICATION)+sizeof(WDI_MESSAGE_HEADER),
@@ -1080,7 +1082,7 @@ wdiext_IndicateRoamingNeeded(
 	NDIS_STATUS										ndisStatus = NDIS_STATUS_SUCCESS;
 
 	pMgntInfo->bPrepareRoaming = TRUE;
-	
+
 	Params.RoamingReason = IndicationReason;
 	RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Params.RoamingReason %d\n", Params.RoamingReason));
 
@@ -1143,20 +1145,20 @@ wdiext_IndicateP2POpChnl(
 
 	// Gen tlv
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationP2pGroupOperatingChannel(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 		return;
 
-	wdi_UnsolicitedIndication(pAdapter, 
+	wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							(PVOID)req->RequestId,
 							NDIS_STATUS_WDI_INDICATION_P2P_GROUP_OPERATING_CHANNEL,
 							NDIS_STATUS_SUCCESS,
 							buf,
 							buflen);
-	
+
 	// cleanup
 	FreeGenerated((UINT8 *)buf);
 
@@ -1173,7 +1175,7 @@ wdi_FindGroupPeerByPort(
 	PADAPTER			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PRT_PEER_ENTRY		pPeerEntry = NULL;
 	u1Byte				i;
-	
+
 	for(i = 0; i < MP_DEFAULT_NUMBER_OF_PORT; i++)
 	{
 		pPeerEntry = &pDefaultAdapter->RxPeerTable[i];
@@ -1185,7 +1187,7 @@ wdi_FindGroupPeerByPort(
 			}
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -1198,24 +1200,24 @@ wdi_FindPeerByAddr(
 	PADAPTER		pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PRT_PEER_ENTRY	pPeerEntry = NULL;
 	u1Byte			i = 0, count = 0;
-	
+
 	count = pDefaultAdapter->RxPeerUsedCount;
 	for(i = MP_DEFAULT_NUMBER_OF_PORT; i < MAX_PEER_NUM; i++)
 	{
 		if( count == 0 )
 			break;
-		
+
 		pPeerEntry = &pDefaultAdapter->RxPeerTable[i];
 		if( pPeerEntry->bUsed == TRUE )
 		{
-			count--;	
+			count--;
 			if( PlatformCompareMemory(pPeerEntry->PeerAddr, pAddr, 6) == 0 )
 			{
 				return (PVOID)pPeerEntry;
 			}
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -1230,18 +1232,18 @@ wdi_GetAvailablePeer(
 	PRT_PEER_ENTRY	pCurPeerEntry = NULL, pPeerEntry = NULL;
 	u1Byte			i = 0, UnusedIndex = 0, count = 0;
 	BOOLEAN			bFound = FALSE;
-	
+
 	FunctionIn(COMP_MLME);
-	
+
 	count = pDefaultAdapter->RxPeerUsedCount;
-	
+
 	for(i = MP_DEFAULT_NUMBER_OF_PORT; i < MAX_PEER_NUM; i++)
 	{
 		if( (count == 0) && (bFound == TRUE) )
 			break;
-		
+
 		pPeerEntry = &pDefaultAdapter->RxPeerTable[i];
-		
+
 		if( (pPeerEntry->bUsed == FALSE) && (bFound == FALSE) )
 		{
 			bFound = TRUE;
@@ -1252,32 +1254,32 @@ wdi_GetAvailablePeer(
 			count--;
 			if( PlatformCompareMemory(pPeerEntry->PeerAddr, pAddr, 6) == 0 )
 			{
-				RT_TRACE(COMP_MLME, DBG_WARNING, ("wdi_GetAvailablePeer: The addres [%2x:%2x:%2x:%2x:%2x:%2x] had associated with specified Peer %d\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], pPeerEntry->uPeerId));	
+				RT_TRACE(COMP_MLME, DBG_WARNING, ("wdi_GetAvailablePeer: The addres [%2x:%2x:%2x:%2x:%2x:%2x] had associated with specified Peer %d\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], pPeerEntry->uPeerId));
 				FunctionOut(COMP_MLME);
 				return (PVOID)pPeerEntry;
 			}
 		}
 	}
-	
+
 	if( (i == MAX_PEER_NUM) && (bFound == FALSE) )
 	{
-		RT_TRACE(COMP_MLME, DBG_WARNING, ("wdi_GetAvailablePeer: Peer is already full, so cannot find an unused peer to associate [%2x:%2x:%2x:%2x:%2x:%2x]\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5]));	
+		RT_TRACE(COMP_MLME, DBG_WARNING, ("wdi_GetAvailablePeer: Peer is already full, so cannot find an unused peer to associate [%2x:%2x:%2x:%2x:%2x:%2x]\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5]));
 		FunctionOut(COMP_MLME);
 		return NULL;
 	}
-	
+
 	pDefaultAdapter->RxPeerUsedCount++;
-	
+
 	pCurPeerEntry = &pDefaultAdapter->RxPeerTable[UnusedIndex];
 	pCurPeerEntry->bUsed = TRUE;
 	pCurPeerEntry->uPeerId = UnusedIndex;
 	pCurPeerEntry->uPortId = (u2Byte)PortId;
 	PlatformMoveMemory(pCurPeerEntry->PeerAddr, pAddr, 6);
 
-	RT_TRACE(COMP_MLME, DBG_LOUD, ("wdi_GetAvailablePeer: Port %d associate the addres [%2x:%2x:%2x:%2x:%2x:%2x] at Peer %d\n", (u2Byte)PortId, pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], UnusedIndex));	
-	
+	RT_TRACE(COMP_MLME, DBG_LOUD, ("wdi_GetAvailablePeer: Port %d associate the addres [%2x:%2x:%2x:%2x:%2x:%2x] at Peer %d\n", (u2Byte)PortId, pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], UnusedIndex));
+
 	FunctionOut(COMP_MLME);
-	
+
 	return (PVOID)pCurPeerEntry;
 }
 
@@ -1299,17 +1301,17 @@ wdi_NotifyPeerData(
 	WDI_EXTENDED_TID	ExtendTid = (WDI_EXTENDED_TID)ExTid;
 	KIRQL				Irql = 0;
 	BOOLEAN				bLackResource = FALSE;
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_RX_CONTROL_SPINLOCK);
 	if( (pNdisCommon->bRxControlState != RT_RX_STOP) && (pDefaultNdisCommon->bRxDataPathState != RT_RX_PAUSE) )
-	{		
+	{
 		pNdisCommon->bRxControlState = RT_RX_NOTIFYING;
 		PlatformReleaseSpinLock(pAdapter, RT_RX_CONTROL_SPINLOCK);
-		
+
 		PlatformAcquireSpinLock(pAdapter, RT_RX_SPINLOCK);
 		bLackResource = RxCheckResource(pAdapter)?FALSE:TRUE;
 		PlatformReleaseSpinLock(pAdapter, RT_RX_SPINLOCK);
-		
+
 		if( bLackResource )
 			RT_TRACE(COMP_RECV, DBG_WARNING, ("wdi_NotifyPeerData(): RFD is less than lower bound (%d)\n", RFD_LOWER_BOUND));
 
@@ -1349,7 +1351,7 @@ wdi_NotifyPeerData(
 				}
 				pTempAdapter = GetNextExtAdapter(pTempAdapter);
 			}while(pTempAdapter != NULL );
-			
+
 			PlatformReleaseSpinLock(pAdapter, RT_RX_CONTROL_SPINLOCK);
 			RT_TRACE(COMP_INIT, DBG_WARNING, ("Driver call RxStopConfirm for Rx manager\n"));
 			pWdi->WdiDataApi.RxStopConfirm(pWdi->DataPathHandle);
@@ -1395,23 +1397,23 @@ WDI_Initialize(
 
 	// WorkAround for 0x9F BSOD
 	pMChars->ResetHandlerEx 				= N6SdioReset;
-	
+
 	RtlZeroMemory(&WdiChar, sizeof(WdiChar));
 
 	WdiChar.WdiVersion				= WDI_VERSION_LATEST;
 
 	WdiChar.Header.Type				= NDIS_OBJECT_TYPE_MINIPORT_WDI_CHARACTERISTICS,
 	WdiChar.Header.Size				= NDIS_SIZEOF_MINIPORT_WDI_CHARACTERISTICS_REVISION_1;
-	WdiChar.Header.Revision			= NDIS_MINIPORT_DRIVER_WDI_CHARACTERISTICS_REVISION_1;    
+	WdiChar.Header.Revision			= NDIS_MINIPORT_DRIVER_WDI_CHARACTERISTICS_REVISION_1;
 
 	WdiChar.AllocateAdapterHandler  = N6SdioWdi_AllocateAdapter;
 	WdiChar.FreeAdapterHandler      = N6SdioWdi_FreeAdapter;
-	WdiChar.OpenAdapterHandler      = N6SdioWdi_OpenAdapter;    
-	WdiChar.CloseAdapterHandler     = N6SdioWdi_CloseAdapter;    
+	WdiChar.OpenAdapterHandler      = N6SdioWdi_OpenAdapter;
+	WdiChar.CloseAdapterHandler     = N6SdioWdi_CloseAdapter;
 	WdiChar.TalTxRxInitializeHandler    = N6SdioWdi_TalTxRxInitialize;
 	WdiChar.TalTxRxDeinitializeHandler  = N6SdioWdi_TalTxRxDeinitialize;
 
-	WdiChar.HangDiagnoseHandler		= N6SdioWdi_HangDiagnose; 
+	WdiChar.HangDiagnoseHandler		= N6SdioWdi_HangDiagnose;
 
 	// Optional handler
 	WdiChar.StartOperationHandler       = N6SdioWdi_StartOperation;
@@ -1432,7 +1434,7 @@ WDI_Initialize(
 
 
 VOID
-WDI_DeInitialize(	
+WDI_DeInitialize(
 	IN  NDIS_HANDLE			DriverHandle
 	)
 {
@@ -1440,7 +1442,7 @@ WDI_DeInitialize(
 }
 
 VOID
-WDI_InitRxQueue(	
+WDI_InitRxQueue(
 	IN  PADAPTER		pAdapter
 	)
 {
@@ -1463,14 +1465,14 @@ WDI_InitRxQueue(
 }
 
 VOID
-WDI_DeInitRxQueue(	
+WDI_DeInitRxQueue(
 	IN  PADAPTER		pAdapter
 	)
 {
 	PADAPTER			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	u2Byte				index = 0;
 	PNET_BUFFER_LIST	pNetBufferList=NULL;
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("[WDI], WDI_DeInitRxQueue() ==> \n"));
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
 	for(index=0; index<MAX_PEER_NUM; index++)
@@ -1491,12 +1493,12 @@ WDI_DeInitRxQueue(
 
 
 VOID
-WDI_PnPNotiry(	
+WDI_PnPNotiry(
 	IN  PADAPTER				pAdapter
 	)
 {
 	PWDI_DATA_STRUCT		pWdi = &(pAdapter->pPortCommonInfo->WdiData);
-	
+
 	if( pWdi->TaskHandle.Status & RT_OID_HANDLER_STATUS_SET )
 	{
 		OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_TASK);
@@ -1541,11 +1543,11 @@ WdiExt_IndicateApAssocReqReceived(
 
 	PlatformZeroMemory(&param, sizeof(param));
 
-	cpMacAddr(param.IncomingRequestInfo.AssocRequestParams.PeerMacAddress.Address, 
+	cpMacAddr(param.IncomingRequestInfo.AssocRequestParams.PeerMacAddress.Address,
 		assocReq + FRAME_OFFSET_ADDRESS2
 		);
 
-	param.IncomingRequestInfo.AssocRequestParams.IsReassociationRequest = 
+	param.IncomingRequestInfo.AssocRequestParams.IsReassociationRequest =
 		(Type_Reasoc_Req == GET_80211_HDR_TYPE(assocReq)) ? TRUE : FALSE;
 
 	FillOctetString(osAssocReq, assocReq, (u2Byte)assocReqLen);
@@ -1561,20 +1563,20 @@ WdiExt_IndicateApAssocReqReceived(
 
 	// Gen tlv
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationApAssociationRequestReceived(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 		return;
 
-	wdi_UnsolicitedIndication(pAdapter, 
+	wdi_UnsolicitedIndication(pAdapter,
 							FALSE,
 							NULL,
 							NDIS_STATUS_WDI_INDICATION_AP_ASSOCIATION_REQUEST_RECEIVED,
 							NDIS_STATUS_SUCCESS,
 							buf,
 							buflen);
-	
+
 	// cleanup
 	FreeGenerated((UINT8 *)buf);
 
@@ -1593,16 +1595,16 @@ WdiExt_IndicateApAssocRspSent(
 
 	if(FALSE == OidHandle_VerifyTask(pAdapter, OID_WDI_TASK_SEND_AP_ASSOCIATION_RESPONSE))
 	{
-		RT_TRACE(COMP_OID_SET, DBG_WARNING, 
+		RT_TRACE(COMP_OID_SET, DBG_WARNING,
 			("WdiExt_IndicateApAssocRspSent(): skip indication because OidHandle_VerifyTask() returns FALSE\n"));
 		return;
 	}
-	
+
 	if(task->pvCtx)
 	{
 		if(WDI_CMD_SendApAssociationResponseComplete(
-				pAdapter, 
-				(NDIS_OID_REQUEST *)task->pvCtx, 
+				pAdapter,
+				(NDIS_OID_REQUEST *)task->pvCtx,
 				StatusCode_success == status ? RT_STATUS_SUCCESS : RT_STATUS_FAILURE))
 		{// set pvCtx to NULL only when it is freed in WDI_CMD_SendApAssociationResponseComplete
 			task->pvCtx = NULL;
@@ -1621,18 +1623,18 @@ WDIAllocateMetaData(
 {
 	PWDI_DATA_STRUCT	pWdi = &(pAdapter->pPortCommonInfo->WdiData);
 	PWDI_FRAME_METADATA	pWdiFrameMeta = NULL;
-	
+
 	pWdiFrameMeta = pWdi->WdiDataApi.AllocateWiFiFrameMetaData(pWdi->DataPathHandle);
 	if( pWdiFrameMeta == NULL )
 		return RT_STATUS_FAILURE;
 
 	pWdiFrameMeta->u.rxMetaData.PayloadType = WDI_FRAME_MSDU;
 	pWdiFrameMeta->pNBL = pNBL;
-	
+
 	RT_TRACE(COMP_RECV, DBG_TRACE, ("PayloadType %d\n", pWdiFrameMeta->u.rxMetaData.PayloadType));
 
 	MP_SET_PACKET_RFD_RESERVED_0(pNBL, pWdiFrameMeta);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -1673,7 +1675,7 @@ WDI_InsertDataInQueue(
 	FillOctetString(osMpdu, pRfd->Buffer.VirtualAddress + pRfd->FragOffset, pRfd->FragLength);
 
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 /****************************************************************************************************
 * 20150707 Sinda
 * We insert frames in queue as below rules
@@ -1694,12 +1696,12 @@ WDI_InsertDataInQueue(
 		else
 			PeerId = pPeerEntry->uPeerId;
 	}
-	
+
 	if(pPeerEntry->bUsed == TRUE)
 	{
 		RT_TRACE(COMP_RECV, DBG_TRACE, ("WDI_InsertDataInQueue: Port %d, PeerId %d\n", PortNumber, PeerId));
 		for (pCurrNetBufferList = pNBL; pCurrNetBufferList != NULL; pCurrNetBufferList = pNextNetBufferList)
-		{					
+		{
 			pNextNetBufferList = NET_BUFFER_LIST_NEXT_NBL(pCurrNetBufferList);
 			NET_BUFFER_LIST_NEXT_NBL(pCurrNetBufferList) = NULL;
 			N6CAddNblWaitQueue(&pDefaultAdapter->RxPeerQueue[PeerId], pCurrNetBufferList, FALSE);
@@ -1808,7 +1810,7 @@ WDI_IndicateBssListBySSID(
 }
 
 VOID
-WDI_IndicateConnectionComplete(	
+WDI_IndicateConnectionComplete(
 	PADAPTER		pAdapter,
 	RT_STATUS		status
 	)
@@ -1817,7 +1819,7 @@ WDI_IndicateConnectionComplete(
 
 	if(FALSE == OidHandle_VerifyTask(pAdapter, OID_WDI_TASK_CONNECT))
 		return;
-	
+
 	OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_TASK);
 }
 
@@ -1827,7 +1829,7 @@ WDI_IndicateAssociationComplete(
 	PADAPTER		pAdapter,
 	RT_STATUS		status
 	)
-{	
+{
 	if( status == RT_STATUS_SUCCESS )
 	{
 		wdiext_IndicateAssociationResult(pAdapter);
@@ -1837,17 +1839,17 @@ WDI_IndicateAssociationComplete(
 
 
 VOID
-WDI_IndicateDisassociation(	
+WDI_IndicateDisassociation(
 	PADAPTER	pAdapter,
 	u2Byte		reason,
 	pu1Byte		pAddr
 )
 {
 	PMGNT_INFO	pMgntInfo = &(pAdapter->MgntInfo);
-	
+
 	if(ACTING_AS_AP(pAdapter))
 	{// AP mode
-		RT_WLAN_STA *sta = pMgntInfo->pCurrentSta;		
+		RT_WLAN_STA *sta = pMgntInfo->pCurrentSta;
 
 		RT_ASSERT(sta, ("%s(): sta is NULL!!!\n", __FUNCTION__));
 
@@ -1856,7 +1858,7 @@ WDI_IndicateDisassociation(
 			RT_TRACE_F(COMP_AP, DBG_SERIOUS, ("pMgntInfo->pCurrentSta is NULL!\n"));
 			return;
 		}
-		
+
 		wdiext_IndicateDisassociation(pAdapter, sta->MacAddr, 0, NULL, TRUE, reason);
 	}
 	else
@@ -1876,17 +1878,17 @@ WDI_IndicateNLODiscovery(
 	)
 {
 	WDI_INDICATION_NLO_DISCOVERY_PARAMETERS		param;
-	PWDI_BSS_ENTRY_CONTAINER					pEntry;	
+	PWDI_BSS_ENTRY_CONTAINER					pEntry;
 
 	PRT_NLO_INFO			pNLOInfo	= &(pAdapter->MgntInfo.NLOInfo);
 	PRT_WLAN_BSS			pRtBss 		= NULL;
-	RT_802_11_BSSID_LIST 	RtBssList	= {0};	
+	RT_802_11_BSSID_LIST 	RtBssList	= {0};
 	u4Byte					i 			= 0;
 	u4Byte					j 			= 0;
-	u4Byte					nBss		= 0;	
+	u4Byte					nBss		= 0;
 	ULONG					buflen 		= 0;
-	pu1Byte					buf 		= NULL;	
-	pu1Byte					pBssList	= NULL;	
+	pu1Byte					buf 		= NULL;
+	pu1Byte					pBssList	= NULL;
 	u4Byte					devSpecCtx 	= 0x07060504;
 	BOOLEAN					Hit			= FALSE;
 	LARGE_INTEGER			CurrentTime;
@@ -1898,15 +1900,15 @@ WDI_IndicateNLODiscovery(
 
 	// zero
 	PlatformZeroMemory(&param, sizeof(param));
-	
+
 	//Get scan list
 	RtBssList.NumberOfItems = 0;
 	RtBssList.pbssidentry = pAdapter->bssDescList;
-	
+
 	MgntActQuery_802_11_BSSID_LIST(pAdapter, &RtBssList, FALSE);
 
-	PlatformAllocateMemoryWithZero(pAdapter, (PVOID *)&pEntry, sizeof(WDI_BSS_ENTRY_CONTAINER)*RtBssList.NumberOfItems);	
-	
+	PlatformAllocateMemoryWithZero(pAdapter, (PVOID *)&pEntry, sizeof(WDI_BSS_ENTRY_CONTAINER)*RtBssList.NumberOfItems);
+
 	param.DeviceDescriptor.pElements = pEntry;
 	nBss = 0;
 
@@ -1922,14 +1924,14 @@ WDI_IndicateNLODiscovery(
 		}
 
 		pRtBss = &(RtBssList.pbssidentry[i]);
-		
+
 		// Determine if we shall report the BSS found by RegWirelessMode4ScanList.
 		if(!WDIFilterRtBss(pAdapter, pRtBss))
 		{
 			// Skip this BSS.
 			continue;
 		}
-		
+
 		for( j=0 ; j<pNLOInfo->NumDot11OffloadNetwork ; ++j )
 		{
 			// Compare to check whether it is what we desired or not
@@ -1942,7 +1944,7 @@ WDI_IndicateNLODiscovery(
 
 		if( !Hit )	// This BSS is not we desired.
 			continue;
-				
+
 		// WIFI_MAC_ADDRESS_CONTAINER BSSID
 		cpMacAddr(pEntry->BSSID.Address, pRtBss->bdBssIdBuf);
 
@@ -1963,7 +1965,7 @@ WDI_IndicateNLODiscovery(
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Unknown BssPacketType: %u\n", pRtBss->BssPacketType));
 			FunctionOut(COMP_POWER);
-			return;		
+			return;
 		}
 
 		// WDI_SIGNAL_INFO_CONTAINER SignalInfo
@@ -1975,9 +1977,9 @@ WDI_IndicateNLODiscovery(
 		pEntry->ChannelInfo.ChannelNumber = (UINT32)pRtBss->ChannelNumber;
 		pEntry->ChannelInfo.BandId = (pRtBss->ChannelNumber < 36) ? WDI_BAND_ID_2400 : WDI_BAND_ID_5000;
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("pRtBss->ChannelNumber=%d, ", pRtBss->ChannelNumber));
-		RT_TRACE(COMP_POWER, DBG_LOUD, ("%x:%x:%x:%x:%x:%x, ", 
-			pEntry->BSSID.Address[0], pEntry->BSSID.Address[1], 
-			pEntry->BSSID.Address[2], pEntry->BSSID.Address[3], 
+		RT_TRACE(COMP_POWER, DBG_LOUD, ("%x:%x:%x:%x:%x:%x, ",
+			pEntry->BSSID.Address[0], pEntry->BSSID.Address[1],
+			pEntry->BSSID.Address[2], pEntry->BSSID.Address[3],
 			pEntry->BSSID.Address[4], pEntry->BSSID.Address[5]));
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("SSID: %s\n", pRtBss->bdSsIdBuf));
 
@@ -1988,7 +1990,7 @@ WDI_IndicateNLODiscovery(
 
 		// Get current timestamp
 		NdisGetCurrentSystemTime(&CurrentTime);
-		
+
 		// WDI_AGE_INFO_CONTAINER EntryAgeInfo
 		pEntry->EntryAgeInfo.HostTimeStamp = CurrentTime.QuadPart;  // [SDIO-482] in JIRA
 		pEntry->EntryAgeInfo.CachedInformation = 0;
@@ -2007,17 +2009,17 @@ WDI_IndicateNLODiscovery(
 
 	// Gen tlv
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationNloDiscovery(
-		&param, 
-		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-		&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+		&param,
+		sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+		&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 		&buflen, &((UINT8 *)buf)))
 	{
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("WDI_IndicateNLODiscovery(): GenerateWdiIndicationNloDiscovery Failed\n"));
 		FunctionOut(COMP_POWER);
 		return;
 	}
-		
-	wdi_UnsolicitedIndication(	pAdapter, 
+
+	wdi_UnsolicitedIndication(	pAdapter,
 								FALSE,
 								NULL,
 								NDIS_STATUS_WDI_INDICATION_NLO_DISCOVERY,
@@ -2026,8 +2028,8 @@ WDI_IndicateNLODiscovery(
 								buflen);
 
 	// cleanup
-	FreeGenerated((UINT8 *)buf);	
-	
+	FreeGenerated((UINT8 *)buf);
+
 	FunctionOut(COMP_POWER);
 }
 
@@ -2042,7 +2044,7 @@ WDI_IndicateCurrentPhyStatus(
 
 
 VOID
-WDI_IndicateP2PEvent(	
+WDI_IndicateP2PEvent(
 	VOID 			*pvP2PInfo,
 	u4Byte 			EventID,
 	MEMORY_BUFFER	*pInformation
@@ -2051,7 +2053,7 @@ WDI_IndicateP2PEvent(
 {
 	P2P_INFO				*pP2PInfo = (P2P_INFO *)pvP2PInfo;
 	RT_OID_HANDLER			*task = &pP2PInfo->pAdapter->pPortCommonInfo->WdiData.TaskHandle;
-	
+
 	if(P2P_EVENT_DEV_FOUND == EventID)
 	{
 		wdiext_IndicateP2PDeviceFound(pP2PInfo->pAdapter, pInformation->Buffer);
@@ -2060,8 +2062,8 @@ WDI_IndicateP2PEvent(
 		|| P2P_EVENT_RECEIVED_GO_NEGOTIATION_REQUEST == EventID
 		|| P2P_EVENT_RECEIVED_INVITATION_REQUEST == EventID
 		)
-	{// rx req action 
-		WDI_CMD_PreIndicateRxP2pActionFrameCb(pvP2PInfo, EventID, pInformation);	
+	{// rx req action
+		WDI_CMD_PreIndicateRxP2pActionFrameCb(pvP2PInfo, EventID, pInformation);
 		wdiext_IndicateP2PActionFrameReceived(pvP2PInfo, EventID, pInformation);
 		WDI_CMD_PostIndicateRxP2pActionFrameCb(pvP2PInfo, EventID, pInformation);
 	}
@@ -2072,10 +2074,10 @@ WDI_IndicateP2PEvent(
 		)
 	{// rx rsp action
 		WDI_CMD_PreIndicateRxP2pActionFrameCb(pvP2PInfo, EventID, pInformation);
-		
+
 		// indicate in the corresp. OffChnlTx complete cb
 		//wdiext_IndicateP2PActionFrameReceived(pvP2PInfo, EventID, pInformation);
-		
+
 		WDI_CMD_PostIndicateRxP2pActionFrameCb(pvP2PInfo, EventID, pInformation);
 	}
 	else if(P2P_EVENT_GO_OPERATING_CHANNEL == EventID)
@@ -2083,7 +2085,7 @@ WDI_IndicateP2PEvent(
 		wdiext_IndicateP2POpChnl(pP2PInfo->pAdapter, pP2PInfo);
 	}
 
-	return;		
+	return;
 }
 
 
@@ -2105,7 +2107,7 @@ WDI_CompleteCreateDeleteMac(
 }
 
 VOID
-WDI_IndicateLinkStateChanged(	
+WDI_IndicateLinkStateChanged(
 	PADAPTER		pAdapter,
 	BOOLEAN			bForceLinkQuality,
 	u1Byte			ucLinkQuality
@@ -2122,14 +2124,14 @@ WDI_IndicateActionFrame(
 {
 	NDIS_STATUS_INDICATION		*indic = NULL;
 	WDI_MESSAGE_HEADER			*wdiHdr = NULL;
-	
+
 	u1Byte						*buf = NULL;
 	ULONG						buflen = 0;
 
 	WDI_INDICATION_ACTION_FRAME_RECEIVED_PARAMETERS param = {0};
 
 	RT_TRACE(COMP_OID_SET, DBG_WARNING, ("WDI_IndicateActionFrame +\n"));
-	
+
 
 	// TODO: fill the valid info into param
 	PlatformMoveMemory(param.SourceAddress.Address,Frame_pSaddr(*posMpdu),6);
@@ -2137,13 +2139,13 @@ WDI_IndicateActionFrame(
 	param.ActionFrameBody.ElementCount = posMpdu->Length;
 
 	// TODO: double check here to make sure channel correct
-	param.ChannelInfo.ChannelNumber = RT_GetChannelNumber(pAdapter);	
+	param.ChannelInfo.ChannelNumber = RT_GetChannelNumber(pAdapter);
 	param.ChannelInfo.BandId = WDI_BAND_ID_2400;
 
 	if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationActionFrameReceived(
-			&param, 
-			sizeof(*indic) + sizeof(*wdiHdr), 
-			&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+			&param,
+			sizeof(*indic) + sizeof(*wdiHdr),
+			&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 			&buflen, &((UINT8 *)buf)))
 	{
 		RT_TRACE(COMP_OID_SET, DBG_WARNING, ("ActionFrame generate tlv failed\n"));
@@ -2173,7 +2175,7 @@ WDI_IndicateActionFrame(
 	NdisMIndicateStatusEx(pAdapter->pNdisCommon->hNdisAdapter, indic);
 
 	FreeGenerated((UINT8 *)buf);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -2184,12 +2186,12 @@ WDI_IndicateWakeReason(
 	IN pu1Byte		pBuffer,
 	IN u2Byte		BufferLen
 	)
-{	
+{
 	WDI_INDICATION_WAKE_REASON_PARAMETERS		param;
 
 	PMGNT_INFO					pMgntInfo 	= &(pAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL		pPSC		= GET_POWER_SAVE_CONTROL(pMgntInfo);
-	pu1Byte						pWakePktbuf	= NULL;	
+	pu1Byte						pWakePktbuf	= NULL;
 	BOOLEAN						bIndicate 	= TRUE;
 	u1Byte						*buf 		= NULL;
 	ULONG						buflen 		= 0;
@@ -2207,7 +2209,7 @@ WDI_IndicateWakeReason(
 			RT_TRACE(COMP_POWER, DBG_SERIOUS, ("WDI_IndicateWakeReason(): Unknown pPSC->WakeUpReason(%#x)\n", pPSC->WakeUpReason));
 		}
 
-		param.WakeEventCode = WDI_WAKE_REASON_CODE_PACKET;		
+		param.WakeEventCode = WDI_WAKE_REASON_CODE_PACKET;
 		param.WakePacketPatternId = pPSC->MagicPacketPatternId;
 
 		PlatformAllocateMemoryWithZero(pAdapter, (PVOID *)&pWakePktbuf, BufferLen);
@@ -2241,47 +2243,47 @@ WDI_IndicateWakeReason(
 			bIndicate = FALSE;
 		}
 	}
-	
+
 	if(bIndicate)
 	{
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("WDI_IndicateWakeReason(): WakeEventCode(%#X)\n", param.WakeEventCode));
 
 		// Gen tlv
 		if(NDIS_STATUS_SUCCESS != GenerateWdiIndicationWakeReasonFromIhv(
-			&param, 
-			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER), 
-			&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+			&param,
+			sizeof(NDIS_STATUS_INDICATION) + sizeof(WDI_MESSAGE_HEADER),
+			&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 			&buflen, &((UINT8 *)buf)))
 		{
 				RT_TRACE(COMP_POWER, DBG_LOUD, ("WDI_IndicateWakeReason(): GenerateWdiIndicationWakeReasonFromIhv Failed\n"));
 				return;
 		}
-		
-		wdi_UnsolicitedIndication(pAdapter, 
+
+		wdi_UnsolicitedIndication(pAdapter,
 								FALSE,
 								NULL,
 								NDIS_STATUS_WDI_INDICATION_WAKE_REASON,
 								NDIS_STATUS_SUCCESS,
 								buf,
 								buflen);
-		
+
 		// cleanup
 		FreeGenerated((UINT8 *)buf);
-	}	
-	
+	}
+
 }
 
 
 VOID
-WDI_IndicateRoamingNeeded(	
+WDI_IndicateRoamingNeeded(
 	PADAPTER				pAdapter,
 	RT_PREPARE_ROAM_TYPE	IndicationReason
 	)
 {
 	PMGNT_INFO	pMgntInfo = &(pAdapter->MgntInfo);
-	
+
 	pMgntInfo->PrepareRoamState = IndicationReason;
-		
+
 	switch(IndicationReason)
 	{
 		case RT_PREPARE_ROAM_DEAUTH_DISASSOC:
@@ -2299,7 +2301,7 @@ WDI_IndicateRoamingNeeded(
 }
 
 VOID
-WDI_IndicateRoamingComplete(	
+WDI_IndicateRoamingComplete(
 	PADAPTER		pAdapter
 	)
 {
@@ -2307,11 +2309,11 @@ WDI_IndicateRoamingComplete(
 
 	if(FALSE == OidHandle_VerifyTask(pAdapter, OID_WDI_TASK_ROAM))
 		return;
-	
+
 	OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_TASK);
 }
 
-VOID 
+VOID
 WDI_AddGroupPeer(
 	IN  PADAPTER 	pAdapter,
 	IN  u2Byte		PortNumber
@@ -2319,44 +2321,44 @@ WDI_AddGroupPeer(
 {
 	PADAPTER			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PWDI_DATA_STRUCT	pWdi = &(pAdapter->pPortCommonInfo->WdiData);
-	WDI_MAC_ADDRESS	PeerAddr = {0};	
+	WDI_MAC_ADDRESS	PeerAddr = {0};
 	PRT_PEER_ENTRY		pPeerEntry = NULL;
 	u1Byte				i = 0;
-	
+
 	FunctionIn(COMP_INIT);
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
 	for(i = 0; i < MP_DEFAULT_NUMBER_OF_PORT; i++)
 	{
 		pPeerEntry = &pDefaultAdapter->RxPeerTable[i];
 		if( pPeerEntry->bUsed == FALSE )
 		{
-			RT_TRACE(COMP_INIT, DBG_LOUD, ("WDI_AddGroupPeer: create group peer %d for port %d\n", i, PortNumber));	
+			RT_TRACE(COMP_INIT, DBG_LOUD, ("WDI_AddGroupPeer: create group peer %d for port %d\n", i, PortNumber));
 			break;
 		}
 	}
-	
+
 	if( i == MP_DEFAULT_NUMBER_OF_PORT )
 	{
-		RT_TRACE(COMP_INIT, DBG_WARNING, ("WDI_AddGroupPeer: there is no available group peer for port %d\n", PortNumber));	
+		RT_TRACE(COMP_INIT, DBG_WARNING, ("WDI_AddGroupPeer: there is no available group peer for port %d\n", PortNumber));
 		FunctionOut(COMP_INIT);
 		PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
 		return ;
 	}
-	
+
 	pPeerEntry->bUsed = TRUE;
 	pPeerEntry->uPeerId = i;
 	pPeerEntry->uPortId = PortNumber;
 	PlatformMoveMemory(pPeerEntry->PeerAddr, MAC_BROADCAST_ADDR, 6);
 	PlatformMoveMemory(PeerAddr.Address, pPeerEntry->PeerAddr, 6);
 	pWdi->WdiDataApi.PeerCreateIndication(pWdi->DataPathHandle, (WDI_PORT_ID)pPeerEntry->uPortId, (WDI_PEER_ID)pPeerEntry->uPeerId, PeerAddr);
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	FunctionOut(COMP_INIT);
 }
 
-VOID 
+VOID
 WDI_DeleteGroupPeer(
 	IN  PADAPTER 	pAdapter,
 	IN  u2Byte		PortNumber
@@ -2368,15 +2370,15 @@ WDI_DeleteGroupPeer(
 	WDI_PEER_ID			PeerId = 0;
 	PRT_PEER_ENTRY		pPeerEntry = NULL;
 	u1Byte				i;
-	
+
 	FunctionIn(COMP_INIT);
 
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	pPeerEntry = (PRT_PEER_ENTRY)wdi_FindGroupPeerByPort(pAdapter, PortNumber);
 	if( pPeerEntry == NULL )
 	{
-		RT_TRACE(COMP_INIT, DBG_WARNING, ("wdi_FindPeerByAddr: Cannot find group peer of port %d\n", PortNumber));	
+		RT_TRACE(COMP_INIT, DBG_WARNING, ("wdi_FindPeerByAddr: Cannot find group peer of port %d\n", PortNumber));
 		FunctionOut(COMP_INIT);
 		PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
 		return ;
@@ -2385,23 +2387,23 @@ WDI_DeleteGroupPeer(
 	{
 		PeerId = (WDI_PEER_ID)pPeerEntry->uPeerId;
 		pPeerEntry->bUsed = FALSE;
-		
-		PlatformZeroMemory(pPeerEntry->PeerAddr, 6);	
-		
+
+		PlatformZeroMemory(pPeerEntry->PeerAddr, 6);
+
 		pWdi->WdiDataApi.PeerDeleteIndication(pWdi->DataPathHandle, (WDI_PORT_ID)PortNumber, PeerId, &ndisStatus);
-		
+
 		WDI_FreeRxFrame(pAdapter, (PNET_BUFFER_LIST)N6CGetHeadNblWaitQueue(pDefaultAdapter->RxPeerQueue[PeerId]));
 		RTInitializeSListHead(&pDefaultAdapter->RxPeerQueue[PeerId]);
-		
+
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("WDI_DeleteGroupPeer: delete group peer %d of port %d, Status: %d\n", PeerId, PortNumber, ndisStatus));
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	FunctionOut(COMP_INIT);
 }
 
-NDIS_STATUS 
+NDIS_STATUS
 WDI_AddDatapathPeer(
 	IN	PADAPTER 	pAdapter,
 	IN	pu1Byte		pAddr)
@@ -2412,28 +2414,28 @@ WDI_AddDatapathPeer(
 	WDI_PORT_ID		PortId = (WDI_PORT_ID)pAdapter->pNdis62Common->PortNumber;
 	WDI_MAC_ADDRESS	PeerAddr = {0};
 	PRT_PEER_ENTRY		pPeerEntry = NULL;
-	
+
 	FunctionIn(COMP_MLME);
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	pPeerEntry = (PRT_PEER_ENTRY)wdi_GetAvailablePeer(pAdapter, pAddr);
 	if( pPeerEntry != NULL )
-	{			
+	{
 		PlatformMoveMemory(PeerAddr.Address, pPeerEntry->PeerAddr, 6);
 		pWdi->WdiDataApi.PeerCreateIndication(pWdi->DataPathHandle, (WDI_PORT_ID)pPeerEntry->uPortId, (WDI_PEER_ID)pPeerEntry->uPeerId, PeerAddr);
-		
+
 		PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-		
+
 		FunctionOut(COMP_MLME);
-		
+
 		return NDIS_STATUS_SUCCESS;
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	FunctionOut(COMP_MLME);
-	
+
 	return NDIS_STATUS_FAILURE;
 }
 
@@ -2448,11 +2450,11 @@ void WDI_DeleteDatapathPeer(
 	NDIS_STATUS 		ndisStatus = NDIS_STATUS_SUCCESS;
 	WDI_PEER_ID			PeerId = 0;
 	PRT_PEER_ENTRY		pPeerEntry = NULL;
-	
+
 	FunctionIn(COMP_MLME);
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	pPeerEntry = (PRT_PEER_ENTRY)wdi_FindPeerByAddr(pAdapter, pAddr);
 	if( pPeerEntry == NULL )
 	{
@@ -2461,23 +2463,23 @@ void WDI_DeleteDatapathPeer(
 		PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
 		return ;
 	}
-	RT_TRACE(COMP_INIT, DBG_LOUD, ("WDI_DeleteDatapathPeer: Find the addres [%2x:%2x:%2x:%2x:%2x:%2x] associated at Peer %d\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], pPeerEntry->uPeerId));	
-	
+	RT_TRACE(COMP_INIT, DBG_LOUD, ("WDI_DeleteDatapathPeer: Find the addres [%2x:%2x:%2x:%2x:%2x:%2x] associated at Peer %d\n", pAddr[0], pAddr[1], pAddr[2], pAddr[3], pAddr[4], pAddr[5], pPeerEntry->uPeerId));
+
 	pDefaultAdapter->RxPeerUsedCount--;
 	PeerId = (WDI_PEER_ID)pPeerEntry->uPeerId;
 	PortId = (WDI_PORT_ID)pPeerEntry->uPortId;
 	pPeerEntry->bUsed = FALSE;
-	PlatformZeroMemory(pPeerEntry->PeerAddr, 6);	
-	
+	PlatformZeroMemory(pPeerEntry->PeerAddr, 6);
+
 	pWdi->WdiDataApi.PeerDeleteIndication(pWdi->DataPathHandle, PortId, PeerId, &ndisStatus);
-	
+
 	WDI_FreeRxFrame(pAdapter, (PNET_BUFFER_LIST)N6CGetHeadNblWaitQueue(pDefaultAdapter->RxPeerQueue[PeerId]));
 	RTInitializeSListHead(&pDefaultAdapter->RxPeerQueue[PeerId]);
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("WDI_DeleteDatapathPeer: delete peer %d, Status: %d\n", PeerId, ndisStatus));
-	
+
 	FunctionOut(COMP_MLME);
 }
 
@@ -2491,7 +2493,7 @@ WDI_FetchNBLByPort(
 	PADAPTER				pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	u2Byte					index = 0;
 	PRT_SINGLE_LIST_ENTRY	pFirst = NULL, pTemp = NULL;
-	
+
 	*ppNetBufferList = NULL;
 
 	RT_TRACE(COMP_RECV, DBG_LOUD, ("WDI_FetchNBLByPort: fetch frames of all peers at port %d\n", Port_ID));
@@ -2505,7 +2507,7 @@ WDI_FetchNBLByPort(
 			{
 				if(N6CIsNblWaitQueueEmpty(pDefaultAdapter->RxPeerQueue[index]))
 					continue;
-				
+
 				pTemp = RTGetHeadSList(&pDefaultAdapter->RxPeerQueue[index]);
 				if( pFirst == NULL )
 				{
@@ -2518,7 +2520,7 @@ WDI_FetchNBLByPort(
 				RTInitializeSListHead(&pDefaultAdapter->RxPeerQueue[index]);
 			}
 		}
-		
+
 		if( pFirst != NULL )
 		{
 			*ppNetBufferList = RT_GET_NBL_FROM_QUEUE_LINK(pFirst);
@@ -2534,7 +2536,7 @@ WDI_FetchNBLByPort(
 			{
 				if(N6CIsNblWaitQueueEmpty(pDefaultAdapter->RxPeerQueue[index]))
 					continue;
-				
+
 				pTemp = RTGetHeadSList(&pDefaultAdapter->RxPeerQueue[index]);
 				if( pFirst == NULL )
 				{
@@ -2547,7 +2549,7 @@ WDI_FetchNBLByPort(
 				RTInitializeSListHead(&pDefaultAdapter->RxPeerQueue[index]);
 			}
 		}
-		
+
 		if( pFirst != NULL )
 		{
 			*ppNetBufferList = RT_GET_NBL_FROM_QUEUE_LINK(pFirst);
@@ -2577,11 +2579,11 @@ WDI_FreeRxFrame(
 		FunctionOut(COMP_RECV);
 		return;
 	}
-	
+
 	do
-	{		
+	{
 		//Get next NBL
-		pNextNBL = NET_BUFFER_LIST_NEXT_NBL(pNetBufferList);	
+		pNextNBL = NET_BUFFER_LIST_NEXT_NBL(pNetBufferList);
 
 		//Get RFD from NBL
 		pRfd = MP_GET_PACKET_RFD(pNetBufferList);
@@ -2617,22 +2619,22 @@ WDI_FreeRxFrame(
 		//Assign NextNBL pointer
 		pNetBufferList = pNextNBL;
 	}while(pNetBufferList!=NULL);
-	
+
 	if (Count == 0)
 	{
 		NdisSetEvent(&pNdisCommon->AllPacketReturnedEvent);
 
-		if(pAdapter->MgntInfo.NdisVersion >= RT_NDIS_VERSION_6_20)		
-		{		
+		if(pAdapter->MgntInfo.NdisVersion >= RT_NDIS_VERSION_6_20)
+		{
 			PADAPTER pTempAdapter = GetFirstExtAdapter(pAdapter);
 			while(pTempAdapter != NULL)
 			{
 				NdisSetEvent(&pTempAdapter->pNdisCommon->AllPacketReturnedEvent);
-				pTempAdapter = GetNextExtAdapter(pTempAdapter);				
-			}		
+				pTempAdapter = GetNextExtAdapter(pTempAdapter);
+			}
 		}
 	}
-	
+
 	FunctionOut(COMP_RECV);
 }
 
@@ -2641,7 +2643,7 @@ WDI_IndicateTKIPMICFailure(
 	PADAPTER		pAdapter
 	)
 {
-	PMGNT_INFO				pMgntInfo;		
+	PMGNT_INFO				pMgntInfo;
 	pMgntInfo = &(pAdapter->MgntInfo);
 	PUCHAR											pOutput = NULL;
 	ULONG											length = 0;
@@ -2650,13 +2652,13 @@ WDI_IndicateTKIPMICFailure(
 
 	FunctionIn(COMP_SEC);
 
-	
+
 	Params.FailureInfo.DefaultKeyFailure = FALSE;
 	Params.FailureInfo.KeyIndex=0;
 	//WDI_TKIPFailureParam.PeerMacAddress=pMgntInfo->Bssid;
 	cpMacAddr(Params.FailureInfo.PeerMacAddress.Address, pMgntInfo->Bssid);
-	
-	
+
+
 
 	ndisStatus = GenerateWdiIndicationTkipMicFailure(
 				&Params,
@@ -2696,7 +2698,7 @@ WDI_TxCreditCheck(
 	GLWdiTxRxStatistics.monitorTxPauseReason = pWdi->txPauseReason;
 
 	// First check if we have pause indication before.
-	// not to acquire tx lock frequently, so we do not acquire tx lock when read, but remember 
+	// not to acquire tx lock frequently, so we do not acquire tx lock when read, but remember
 	// we should acquire tx lock when need to change the pause reason.
 	if(pWdi->txPauseReason)
 	{
@@ -2704,26 +2706,26 @@ WDI_TxCreditCheck(
 
 		txCredit = *Get_NUM_IDLE_TCB(pAdapter);
 		preTxPauseReason = pWdi->txPauseReason;
-		
+
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("[WDI], WDI_TxCreditCheck(): txCredit=%d\n", txCredit));
-		
+
 		if(txCredit > (pAdapter->RT_TCB_NUM/4))
 		{
 			GLWdiTxRxStatistics.numTxResourceAvailable++;
-			
+
 			if( (preTxPauseReason&WDI_TX_PAUSE_REASON_CREDIT) == WDI_TX_PAUSE_REASON_CREDIT)
 			{
-				RT_TRACE(COMP_INIT, DBG_LOUD, ("[WDI], WDI_TxCreditCheck(): TxPauseReason = 0x%x!!!\n", preTxPauseReason));				
+				RT_TRACE(COMP_INIT, DBG_LOUD, ("[WDI], WDI_TxCreditCheck(): TxPauseReason = 0x%x!!!\n", preTxPauseReason));
 				GLWdiTxRxStatistics.numWdiTxRestartIndicate++;
 				RT_TRACE(COMP_INIT, DBG_LOUD, ("[WDI], WDI_TxCreditCheck(): TxSendRestart: %d times!!!\n",
 					GLWdiTxRxStatistics.numWdiTxRestartIndicate));
-		
+
 				pWdi->txPauseReason &= ~WDI_TX_PAUSE_REASON_CREDIT;
 				PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 				// Before indicate to WDI, release the tx lock.
-				pWdi->WdiDataApi.TxSendRestartIndication(pWdi->DataPathHandle, 
-														WDI_PORT_ANY, 
+				pWdi->WdiDataApi.TxSendRestartIndication(pWdi->DataPathHandle,
+														WDI_PORT_ANY,
 														WDI_PEER_ANY,
 	    													WDI_EXT_TID_UNKNOWN,
 	    													WDI_TX_PAUSE_REASON_CREDIT);
@@ -2749,10 +2751,10 @@ WDI_IndicateFWStalled(
 	PWDI_DATA_STRUCT			pWdi = &(pAdapter->pPortCommonInfo->WdiData);
 	NDIS_STATUS_INDICATION		statusIndication = {0};
 	WDI_MESSAGE_HEADER			WdiHeader = {0};
-	
+
 	if(!pWdi->bWdiLEPLDR)
 		return;
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> WDI_IndicateFWStalled\n"));
 
 	N6_ASSIGN_OBJECT_HEADER(
@@ -2818,7 +2820,7 @@ WDI_IndicateGeneralEvent(
 	)
 {
 	RT_STATUS	rtStatus = RT_STATUS_SUCCESS;
-	
+
 	switch(Event)
 	{
 	default:

@@ -1,3 +1,13 @@
+<!---
+    name: Sample UMDF Filter above KMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
+    platform: KMDF
+    language: cpp
+    category: USB
+    description: Demonstrates how to load a UMDF filter driver as an upper filter driver above the kmdf_fx2 sample driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620316
+--->
+
+
 Sample UMDF Filter above KMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
 ==============================================================================
 

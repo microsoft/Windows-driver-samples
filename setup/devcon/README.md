@@ -1,3 +1,13 @@
+<!---
+    name: Device Console (DevCon) Tool
+    platform: Tool
+    language: cpp
+    category: Setup
+    description: DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers.
+    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856741
+--->
+
+
 Device Console (DevCon) Tool
 ============================
 

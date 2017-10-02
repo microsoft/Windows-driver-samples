@@ -12,7 +12,7 @@
 #include <wdf.h>
 #include <math.h>
 
-#include <SensorsTrace.h>
+#include "SensorsTrace.h"
 #include <SensorsCx.h>
 #include <SensorsUtils.h>
 

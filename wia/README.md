@@ -1,4 +1,14 @@
-﻿Windows Image Acquisition (WIA) Driver Samples
+﻿<!---
+    name: Windows Image Acquisition (WIA) Driver Samples
+    platform: WDM
+    language: cpp
+    category: Image Scan
+    description: Contains samples and test tools for Windows Image Acquisition (WIA), a driver architecture and user interface for acquiring images from still image devices such as scanners.
+    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856747
+--->
+
+
+Windows Image Acquisition (WIA) Driver Samples
 ==============================================
 
 The Windows Image Acquisition driver sample set contains samples and test tools for Windows Image Acquisition (WIA), a driver architecture and user interface for acquiring images from still image devices such as scanners.
