@@ -11,15 +11,21 @@ rem   $1 - sub-folder name
 rem   $2 - full path to the sub-folder
 rem
 :check_folder
-pushd %1
+set name=%1
+set fullpath=%2
+set name=%name:"=%
+set fullpath=%fullpath:"=%
+pushd "%name%"
 if exist *.sln (
-    echo %2
-    echo === %2 >> %logfile%
+    echo %fullpath%
+    echo === %fullpath% >> %logfile%
 
     for /f %%i in ('dir /b *.sln') do (
         msbuild /nologo /v:q /m /t:rebuild %%i >> %logfile%
     )
 ) else (
-    for /f %%i in ('dir /b /ad') do call :check_folder %%i %2/%%i
+    for /d %%i in (*) do (
+        call :check_folder "%%i" "%fullpath%/%%i"
+    )
 )
 popd
