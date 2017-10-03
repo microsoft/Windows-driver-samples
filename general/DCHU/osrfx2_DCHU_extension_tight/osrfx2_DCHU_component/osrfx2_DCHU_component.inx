@@ -1,0 +1,64 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    osrfx2_DCHU_component.INF
+;
+;Abstract:
+;
+;    Installation inf for one of the OSR FX2 Learning Kit's
+;    AddComponent directives
+;
+;--*/
+
+[Version]
+Signature = "$Windows NT$"
+Class = SoftwareComponent
+ClassGuid = {5c4c3332-344d-483c-8739-259e934c9cc8}
+Provider = %ManufacturerName%
+CatalogFile = osrfx2_DCHU_component.cat
+
+[Manufacturer]
+%ManufacturerName% = OsrFx2Component, NT$ARCH$
+
+[OsrFx2Component.NT$ARCH$]
+%DeviceName% = OsrFx2Component_Install, SWC\VID_045e&PID_94ab
+
+[SourceDisksFiles]
+osrfx2_DCHU_componentsoftware.exe = 1
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[DestinationDirs]
+OsrFx2Component_CopyFiles = 13 ; copy to driverstore
+
+[OsrFx2Component_Install.NT]
+CopyFiles = OsrFx2Component_CopyFiles
+
+[OsrFx2Component_Install.NT.Services]
+AddService = , 0x00000002
+
+[OsrFx2Component_Install.NT.Software]
+AddSoftware = osrfx2_DCHU_componentsoftware,, OsrFx2Component_SoftwareInstall
+
+[OsrFx2Component_SoftwareInstall]
+SoftwareType = 1
+SoftwareBinary = osrfx2_DCHU_componentsoftware.exe
+SoftwareArguments = <<DeviceInstanceId>>
+SoftwareVersion = 1.0.0.0
+
+[OsrFx2Component_CopyFiles]
+osrfx2_DCHU_componentsoftware.exe
+
+[Strings]
+ManufacturerName = "Contoso"
+DiskName = "OsrFx2 DCHU Component Installation Disk"
+DeviceName = "OsrFx2 DCHU Component Device"

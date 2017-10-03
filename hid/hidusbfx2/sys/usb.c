@@ -26,7 +26,7 @@ Revision History:
 
 --*/
 
-#include <hidusbfx2.h>
+#include "hidusbfx2.h"
 
 #if defined(EVENT_TRACING)
 #include "usb.tmh"
@@ -84,7 +84,7 @@ Return Value:
         "HidFx2EvtDevicePrepareHardware Enter\n");
 
     devContext = GetDeviceContext(Device);
-   
+
     //
     // Create a WDFUSBDEVICE object. WdfUsbTargetDeviceCreate obtains the
     // USB device descriptor and the first USB configuration descriptor from
@@ -95,8 +95,8 @@ Return Value:
     // object. The driver cannot change this parent, and the ParentObject
     // member or the WDF_OBJECT_ATTRIBUTES structure must be NULL.
     //
-    // We only create device the first time PrepareHardware is called. If 
-    // the device is restarted by pnp manager for resource rebalance, we 
+    // We only create device the first time PrepareHardware is called. If
+    // the device is restarted by pnp manager for resource rebalance, we
     // will use the same device handle but then select the interfaces again
     // because the USB stack could reconfigure the device on restart.
     //
@@ -104,7 +104,7 @@ Return Value:
         status = WdfUsbTargetDeviceCreate(Device,
                                           WDF_NO_OBJECT_ATTRIBUTES,
                                           &devContext->UsbDevice);
-  
+
         if (!NT_SUCCESS(status)) {
             TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
                 "WdfUsbTargetDeviceCreate failed 0x%x\n", status);
@@ -113,7 +113,7 @@ Return Value:
 
         //
         // TODO: If you are fetching configuration descriptor from device for
-        // selecting a configuration or to parse other descriptors, call 
+        // selecting a configuration or to parse other descriptors, call
         // HidFx2ValidateConfigurationDescriptor
         // to do basic validation on the descriptors before you access them.
         //
@@ -332,7 +332,7 @@ Return Value:
                     );
         return;
     }
-    
+
     switchState = WdfMemoryGetBuffer(Buffer, NULL);
 
     currentSwitchState = *switchState;
@@ -812,8 +812,8 @@ Return Value:
     // USBD_ValidateConfigurationDescriptor validates that all descriptors are completely contained within the configuration descriptor buffer.
     // It also checks for interface numbers, number of endpoints in an interface etc.
     // Please refer to msdn documentation for this function for more information.
-    //  
-   
+    //
+
     status = USBD_ValidateConfigurationDescriptor( ConfigDesc, BufferLength , ValidationLevel , Offset , POOL_TAG );
     if (!(NT_SUCCESS (status)) ){
         return status;
@@ -821,10 +821,10 @@ Return Value:
 
     //
     // TODO: You should validate the correctness of other descriptors which are not taken care by USBD_ValidateConfigurationDescriptor
-    // Check that all such descriptors have size >= sizeof(the descriptor they point to) 
-    // Check for any association between them if required 
-    // 
-   
+    // Check that all such descriptors have size >= sizeof(the descriptor they point to)
+    // Check for any association between them if required
+    //
+
     return status;
 }
 

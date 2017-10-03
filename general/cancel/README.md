@@ -1,3 +1,13 @@
+<!---
+    name: Cancel-Safe IRP Queue Sample
+    platform: WDM
+    language: cpp
+    category: General
+    description: Demonstrates the use of the cancel-safe queue routines.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617705
+--->
+
+
 Cancel-Safe IRP Queue Sample
 ============================
 

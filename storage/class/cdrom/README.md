@@ -1,3 +1,13 @@
+<!---
+    name: CDROM Storage Class Driver
+    platform: KMDF
+    language: cpp
+    category: Storage
+    description: Provide access to CD, DVD and Blu-ray drives, supports Plug and Play, Power Management, and AutoRun (media change notification). 
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617971
+--->
+
+
 CDROM Storage Class Driver
 ==========================
 

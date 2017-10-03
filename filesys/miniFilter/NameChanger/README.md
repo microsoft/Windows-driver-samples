@@ -1,3 +1,13 @@
+<!---
+    name: NameChanger File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617652
+--->
+
+
 NameChanger File System Minifilter Driver
 =========================================
 

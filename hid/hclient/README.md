@@ -1,3 +1,13 @@
+<!---
+    name:  HClient sample application
+    platform: WDM
+    language: cpp
+    category: HID
+    description: Demonstrates how to write a user-mode client application that communicates with HID devices.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617730
+--->
+
+
 HClient sample application
 ==========================
 

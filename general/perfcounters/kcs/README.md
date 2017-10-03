@@ -1,3 +1,13 @@
+<!---
+    name: Kernel Counter Sample (Kcs)
+    platform: WDM
+    language: cpp
+    category: General
+    description: Demonstrates the use of the kernel-mode performance library.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617718
+--->
+
+
 Kernel Counter Sample (Kcs)
 ===========================
 

@@ -14,7 +14,7 @@
 #include <windows.h>
 #include <wdf.h>
 
-#include <SensorsTrace.h>
+#include "SensorsTrace.h"
 #include <SensorsCx.h>
 #include <windows.devices.sensors.h>
 

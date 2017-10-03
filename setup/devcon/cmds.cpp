@@ -1551,6 +1551,78 @@ Return Value:
     return failcode;
 }
 
+int cmdRemoveAll(_In_ LPCTSTR BaseName, _In_opt_ LPCTSTR Machine, _In_ DWORD Flags, _In_ int argc, _In_reads_(argc) PTSTR argv[])
+/*++
+
+Routine Description:
+
+REMOVEALL
+remove devices
+like remove, but also remove not-present devices
+
+Arguments:
+
+BaseName  - name of executable
+Machine   - machine name, must be NULL
+argc/argv - remaining parameters
+
+Return Value:
+
+EXIT_xxxx
+
+--*/
+{
+    GenericContext context;
+    TCHAR strRemove[80];
+    TCHAR strReboot[80];
+    TCHAR strFail[80];
+    int failcode = EXIT_FAIL;
+
+    UNREFERENCED_PARAMETER(Flags);
+
+    if (!argc) {
+        //
+        // arguments required
+        //
+        return EXIT_USAGE;
+    }
+    if (Machine) {
+        //
+        // must be local machine as we need to involve class/co installers
+        //
+        return EXIT_USAGE;
+    }
+    if (!LoadString(NULL, IDS_REMOVED, strRemove, ARRAYSIZE(strRemove))) {
+        return EXIT_FAIL;
+    }
+    if (!LoadString(NULL, IDS_REMOVED_REBOOT, strReboot, ARRAYSIZE(strReboot))) {
+        return EXIT_FAIL;
+    }
+    if (!LoadString(NULL, IDS_REMOVE_FAILED, strFail, ARRAYSIZE(strFail))) {
+        return EXIT_FAIL;
+    }
+
+    context.reboot = FALSE;
+    context.count = 0;
+    context.strReboot = strReboot;
+    context.strSuccess = strRemove;
+    context.strFail = strFail;
+    failcode = EnumerateDevices(BaseName, Machine, 0, argc, argv, RemoveCallback, &context);
+
+    if (failcode == EXIT_OK) {
+
+        if (!context.count) {
+            FormatToStream(stdout, MSG_REMOVE_TAIL_NONE);
+        } else if (!context.reboot) {
+            FormatToStream(stdout, MSG_REMOVE_TAIL, context.count);
+        } else {
+            FormatToStream(stdout, MSG_REMOVE_TAIL_REBOOT, context.count);
+            failcode = EXIT_REBOOT;
+        }
+    }
+    return failcode;
+}
+
 int cmdRescan(_In_ LPCTSTR BaseName, _In_opt_ LPCTSTR Machine, _In_ DWORD Flags, _In_ int argc, _In_reads_(argc) PTSTR argv[])
 /*++
 
@@ -2389,6 +2461,7 @@ DispatchEntry DispatchTable[] = {
     { TEXT("listclass"),    cmdListClass,   MSG_LISTCLASS_SHORT,   MSG_LISTCLASS_LONG },
     { TEXT("reboot"),       cmdReboot,      MSG_REBOOT_SHORT,      MSG_REBOOT_LONG },
     { TEXT("remove"),       cmdRemove,      MSG_REMOVE_SHORT,      MSG_REMOVE_LONG },
+    { TEXT("removeall"),    cmdRemoveAll,   MSG_REMOVEALL_SHORT,   MSG_REMOVEALL_LONG },
     { TEXT("rescan"),       cmdRescan,      MSG_RESCAN_SHORT,      MSG_RESCAN_LONG },
     { TEXT("resources"),    cmdResources,   MSG_RESOURCES_SHORT,   MSG_RESOURCES_LONG },
     { TEXT("restart"),      cmdRestart,     MSG_RESTART_SHORT,     MSG_RESTART_LONG },

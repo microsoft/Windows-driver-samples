@@ -1,3 +1,13 @@
+<!---
+    name: Radio Switch Test Driver for OSR USB-FX2 Development Board
+    platform: KMDF
+    language: cpp
+    category: Network Radio
+    description: Demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617919
+--->
+
+
 Radio Switch Test Driver for OSR USB-FX2 Development Board
 ==========================================================
 

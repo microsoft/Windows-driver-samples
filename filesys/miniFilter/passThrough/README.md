@@ -1,3 +1,13 @@
+<!---
+    name: PassThrough File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: Demonstrates how to specify callback functions for different types of I/O requests.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617654
+--->
+
+
 PassThrough File System Minifilter Driver
 =========================================
 

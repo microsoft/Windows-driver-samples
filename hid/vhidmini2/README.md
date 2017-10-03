@@ -1,4 +1,13 @@
-HID Minidriver Sample (UMDF V2)
+<!---
+    name: HID Minidriver Sample (UMDF version 2)
+    platform: UMDF2
+    language: cpp
+    category: HID
+    description: Demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617731
+--->
+
+HID Minidriver Sample (UMDF version 2)
 ======================================
 The *HID minidriver* sample demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
 

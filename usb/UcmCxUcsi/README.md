@@ -1,3 +1,13 @@
+<!---
+    name: UcmTcpciCx Port Controller Client Driver
+    platform: KMDF
+    language: cpp
+    category: USB
+    description: Demonstrates how to create a Windows USB Type-C port controller driver using the USB Connector Manager class extension driver (UcmCx).
+    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856744
+--->
+
+
 # UcmTcpciCx Port Controller Client Driver
 
 This is a sample driver that shows how to create a Windows USB Type-C port controller driver using the USB Connector Manager class extension driver (UcmCx). The sample is a driver for an embedded controller which is complient with the [USB Type-C Connector System Software Interface (UCSI)](http://www.intel.com/content/www/us/en/io/universal-serial-bus/usb-type-c-ucsi-spec.html).

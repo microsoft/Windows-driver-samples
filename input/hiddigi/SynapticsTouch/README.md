@@ -1,3 +1,13 @@
+<!---
+    name: Synaptics Touch Sample
+    platform: KMDF
+    language: cpp
+    category: HID Touch
+    description: Demonstrates how to write a HID miniport driver for the Synaptics 3202 touch controller.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620196
+--->
+
+
 Synaptics Touch Sample
 ======================
 
@@ -15,15 +25,6 @@ Related technologies
 [Human Interface Devices](http://msdn.microsoft.com/en-us/library/windows/hardware/jj126202)
 
 [Windows Pointer Device](http://msdn.microsoft.com/en-us/library/windows/hardware/jj151570)
-
-
-##System requirements
--------------------
-**Client:** Windows 10 Technical Preview
-
-**Server:** Windows 10 Technical Preview
-
-**Phone:**  Windows 10 Technical Preview
 
 
 File Manifest

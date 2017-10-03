@@ -1,3 +1,13 @@
+<!---
+    name: Print Pipeline Simple Filter
+    platform: DLL
+    language: cpp
+    category: Print
+    description: This sample shows how to use the print pipeline's filter interfaces.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617944
+--->
+
+
 Print Pipeline Simple Filter
 ============================
 

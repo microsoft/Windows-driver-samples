@@ -1,3 +1,12 @@
+<!---
+    name: AVStream filter-centric simulated capture sample driver (Avssamp)
+    platform: WDM
+    language: cpp
+    category: Camera
+    description: An AVStream filter-centric simulated capture sample driver with functional audio.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620186
+--->
+
 AVStream filter-centric simulated capture sample driver (Avssamp)
 =================================================================
 

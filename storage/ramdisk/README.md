@@ -1,3 +1,13 @@
+<!---
+    name: RAMDisk Storage Driver Sample
+    platform: KMDF
+    language: cpp
+    category: Storage
+    description: Demonstrates how to write a RAM disk software-only function driver using KMDF.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617988
+--->
+
+
 RAMDisk Storage Driver Sample
 =============================
 

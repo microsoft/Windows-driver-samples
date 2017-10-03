@@ -1,3 +1,13 @@
+<!---
+    name: Windows Filtering Platform Traffic Inspection Sample
+    platform: KMDF
+    language: cpp
+    category: Network
+    description: Demonstrates the traffic inspection capabilities of the Windows Filtering Platform (WFP).
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617931
+--->
+
+
 Windows Filtering Platform Traffic Inspection Sample
 ====================================================
 

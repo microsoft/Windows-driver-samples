@@ -1,3 +1,13 @@
+<!---
+    name: Super Floppy (sfloppy) Storage Class Driver
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: A smaple class driver for Super Floppy disk drives.     
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617989
+--->
+
+
 Super Floppy (sfloppy) Storage Class Driver
 ===========================================
 

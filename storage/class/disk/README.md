@@ -1,3 +1,13 @@
+<!---
+    name: Disk Class Driver
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: A class driver for disk devices.  
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617979
+--->
+
+
 Disk Class Driver
 =================
 

@@ -1,3 +1,13 @@
+<!---
+    name: System DMA sample
+    platform: WDM
+    language: cpp
+    category: General
+    description: Demonstrates how a driver could use a system DMA controller to write data to a hardware location using V3 System DMA.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617722
+--->
+
+
 System DMA
 ==========
 

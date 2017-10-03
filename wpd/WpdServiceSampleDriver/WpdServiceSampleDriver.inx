@@ -65,6 +65,7 @@ ServiceBinary=%12%\WUDFRd.sys
 
 [DestinationDirs]
 System32Copy=12,UMDF ; copy to system32\drivers\umdf
+CoInstallers_CopyFiles= 11
 
 [System32Copy]
 WpdServiceSampleDriver.dll

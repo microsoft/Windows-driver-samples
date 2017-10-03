@@ -1,4 +1,4 @@
-#include <RadioSwitchHidUsbFx2.h>
+#include "RadioSwitchHidUsbFx2.h"
 #include "usb.tmh"
 
 
@@ -39,7 +39,7 @@ HidFx2EvtDevicePrepareHardware(
     // The parent of each USB device object is the driver's framework driver object. The driver cannot change this parent, and the ParentObject
     // member or the WDF_OBJECT_ATTRIBUTES structure must be NULL.
     //
-    // We only create device the first time PrepareHardware is called. If the device is restarted by pnp manager for resource rebalance, we 
+    // We only create device the first time PrepareHardware is called. If the device is restarted by pnp manager for resource rebalance, we
     // will use the same device handle but then select the interfaces again because the USB stack could reconfigure the device on restart.
     if (pDevContext->hUsbDevice == NULL)
     {
@@ -162,7 +162,7 @@ void HidFx2EvtUsbInterruptPipeReadComplete(
     }
 
 
-    // Make sure that there is data in the read packet. 
+    // Make sure that there is data in the read packet.
     // Depending on the device specification, it is possible for it to return a 0 length read in certain conditions.
     if (cNumBytesTransferred == 0)
     {
@@ -269,7 +269,7 @@ void HidFx2EvtTimerFunction(_In_ WDFTIMER hTimer)
 
             WdfRequestCompleteWithInformation(hRequest, status, cBytesReturned);
 
-        } 
+        }
         else if (status != STATUS_NO_MORE_ENTRIES)
         {
             TraceErr(DBG_IOCTL, "(%!FUNC!) WdfIoQueueRetrieveNextRequest status %!STATUS!\n", status);
@@ -340,7 +340,7 @@ NTSTATUS HidFx2GetSwitchState(_In_ WDFDEVICE hDevice, _Out_ unsigned char *pbSwi
 
 // EvtDeviceD0Entry event callback must perform any operations that are necessary before the specified device is used.
 // Called every time the hardware needs to be initialized/reinitialized.
-// This function is not marked pageable because this function is in the device power up path. 
+// This function is not marked pageable because this function is in the device power up path.
 // This function runs at PASSIVE_LEVEL, even though it is not paged.
 //
 NTSTATUS HidFx2EvtDeviceD0Entry(_In_  WDFDEVICE hDevice, _In_ WDF_POWER_DEVICE_STATE previousState)
@@ -412,7 +412,7 @@ stopped, when it is removed, and when it is powered off.
 
 The device is still in D0 when this callback is invoked, which means that  the driver can still touch hardware in this routine.
 
-EvtDeviceD0Exit event callback must perform any operations that are necessary before the specified device is moved out of the D0 state.  
+EvtDeviceD0Exit event callback must perform any operations that are necessary before the specified device is moved out of the D0 state.
 If the  driver needs to save hardware state before the device is powered down, then that should be done here.
 
 This function runs at PASSIVE_LEVEL, though it is generally not paged.  A  driver can optionally make this function pageable if DO_POWER_PAGABLE is set.

@@ -1,3 +1,13 @@
+<!---
+    name: System Trace Control
+    platform: Application
+    language: cpp
+    category: General Tracing
+    description: Demonstrates how to use event tracing control APIs to collect events from the system trace provider.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617725
+--->
+
+
 SystemTraceProvider
 ===================
 

@@ -1259,7 +1259,7 @@ Note:
 
     The annotation for pbstrValue is intended to express that the BSTR may
     be NULL when S_FALSE is returned, but not when S_OK is returned.
-    
+
     In any case, when a failure HRESULT is returned, all out parameter
     annotations are ignored.
 

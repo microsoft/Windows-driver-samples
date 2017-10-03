@@ -1,3 +1,13 @@
+<!---
+    name: WSK TCP Echo Server
+    platform: WDM
+    language: cpp
+    category: Network
+    description: A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617935
+--->
+
+
 WSK TCP Echo Server
 ===================
 

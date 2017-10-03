@@ -1,3 +1,13 @@
+<!---
+    name: LSI_U3 StorPort Miniport Driver
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: An adapter driver for use with Parallel SCSI Host Bus Adapters or on-motherboard solutions that use the LSI 53C1010 SCSI ASIC.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617982
+--->
+
+
 LSI\_U3 StorPort Miniport Driver
 ================================
 
