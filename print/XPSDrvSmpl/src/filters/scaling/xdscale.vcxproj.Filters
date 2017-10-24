@@ -58,15 +58,21 @@
     <ClInclude Include="pgscptprop.h" />
     <ClInclude Include="scaleflt.h" />
     <ClInclude Include="scalesax.h" />
-    <ClInclude Include="pagescale.h">
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pgscptprop.h" />
-    <ClInclude Include="scaleflt.h" />
-    <ClInclude Include="scalesax.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="xdscale.def">
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -71,16 +71,24 @@
     <ClInclude Include="nupsax.h" />
     <ClInclude Include="nuptprps.h" />
     <ClInclude Include="nupxform.h" />
-    <ClInclude Include="nupflt.h">
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nuppage.h" />
-    <ClInclude Include="nupsax.h" />
-    <ClInclude Include="nuptprps.h" />
-    <ClInclude Include="nupxform.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="xdnup.def">
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
