@@ -1,0 +1,3 @@
+LIBRARY        PSUIREP
+EXPORTS        DllGetClassObject   PRIVATE
+               DllCanUnloadNow     PRIVATE

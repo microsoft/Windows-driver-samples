@@ -63,13 +63,267 @@
     <ClCompile Include="wictobmscn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="XDColMan.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="cmflt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="bmpconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpdata.h" />
+    <ClInclude Include="cmflt.h" />
+    <ClInclude Include="cmimg.h" />
+    <ClInclude Include="cmsax.h" />
+    <ClInclude Include="colchan.h" />
+    <ClInclude Include="colconv.h" />
+    <ClInclude Include="dictionary.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="profman.h" />
+    <ClInclude Include="scaniter.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="wcsapiconv.h" />
+    <ClInclude Include="wictobmscn.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

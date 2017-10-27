@@ -497,7 +497,7 @@ CPTQueryBuilder::AddOption(
                 SUCCEEDED(hr = m_bstrQuery.Append(cstrQueryRoot)))
             {
                 cstrOptionQuery.Format(szPTQOptionLH, static_cast<LPCWSTR>(m_bstrFrameworkNS),
-                        static_cast<LPCWSTR>(bstrKeywordNS), static_cast<LPCWSTR>(m_bstrFrameworkNS));
+                                       static_cast<LPCWSTR>(bstrKeywordNS), static_cast<LPCWSTR>(m_bstrFrameworkNS));
                 hr = m_bstrQuery.Append(cstrOptionQuery);
             }
         }

@@ -43,4 +43,121 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="xps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xpsarch.h" />
+    <ClInclude Include="xpsfd.h" />
+    <ClInclude Include="xpsfds.h" />
+    <ClInclude Include="xpsfiler.h" />
+    <ClInclude Include="xpsfilew.h" />
+    <ClInclude Include="xpsproc.h" />
+    <ClInclude Include="xpsrels.h" />
+    <ClInclude Include="xpstype.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

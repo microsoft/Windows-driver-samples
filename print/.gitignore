@@ -1,0 +1,5 @@
+## Ignore build results
+*Debug/
+*Release/
+x64/
+ARM64/

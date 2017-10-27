@@ -33,4 +33,38 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CPSUIDAT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPSUISAM.H" />
+    <ClInclude Include="DEBUG.H" />
+    <ClInclude Include="PRECOMP.H" />
+    <ClInclude Include="CPSUIDAT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPSUISAM.H" />
+    <ClInclude Include="DEBUG.H" />
+    <ClInclude Include="PRECOMP.H" />
+    <ClInclude Include="CPSUIDAT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPSUISAM.H" />
+    <ClInclude Include="DEBUG.H" />
+    <ClInclude Include="PRECOMP.H" />
+    <ClInclude Include="CPSUIDAT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPSUISAM.H" />
+    <ClInclude Include="DEBUG.H" />
+    <ClInclude Include="PRECOMP.H" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CPSUISAM.DLG">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="CPSUISAM.DEF">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

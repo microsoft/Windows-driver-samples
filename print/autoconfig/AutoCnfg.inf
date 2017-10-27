@@ -21,7 +21,7 @@ CatalogFile=AutoCnfg.cat
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-%ManufacturerName%=Standard, NTx86, NTamd64, NTia64
+%ManufacturerName%=Standard, NTx86, NTamd64, NTia64, NTarm64
 
 ;
 ; Model sections.
@@ -42,6 +42,9 @@ CatalogFile=AutoCnfg.cat
 "Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
+[Standard.NTarm64]
+"Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
+"PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
 
 ;

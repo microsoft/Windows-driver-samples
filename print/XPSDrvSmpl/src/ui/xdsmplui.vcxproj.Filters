@@ -72,13 +72,540 @@
     <ClCompile Include="xdsmplui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xdsmplui.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="xdsmpldlg.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="bkdmptcnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colctrls.h" />
+    <ClInclude Include="coldmptcnv.h" />
+    <ClInclude Include="colppg.h" />
+    <ClInclude Include="devmode.h" />
+    <ClInclude Include="docppg.h" />
+    <ClInclude Include="ftrctrls.h" />
+    <ClInclude Include="ftrdmptcnv.h" />
+    <ClInclude Include="ftrppg.h" />
+    <ClInclude Include="nupptcnv.h" />
+    <ClInclude Include="pgscdmptcnv.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="uictrl.h" />
+    <ClInclude Include="uiproperties.h" />
+    <ClInclude Include="wmctrls.h" />
+    <ClInclude Include="wmdmptcnv.h" />
+    <ClInclude Include="wmppg.h" />
+    <ClInclude Include="xdsmplcf.h" />
+    <ClInclude Include="xdsmplptprov.h" />
+    <ClInclude Include="xdsmplui.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
