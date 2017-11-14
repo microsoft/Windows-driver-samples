@@ -26,7 +26,7 @@ DefaultDestDir = 12
 ; ================= Device Install section =====================
 
 [Manufacturer]
-%MSFT%=MSFT,NTx86, NTamd64, NTARM, NTARM64
+%ManufacturerString%=MSFT,NTx86, NTamd64, NTARM, NTARM64
 
 ; For XP and later
 [MSFT.NTx86]
@@ -81,6 +81,7 @@ defect_toastmon.sys=1
 1 = %DISK_NAME%,,,
 
 [Strings]
+ManufacturerString = "Sample Manufacturer"
 ClassName = "Sample Drivers"
 Defect_ToastMon.SVCDESC = "Sample ToastMon Buggy Service"
 Defect_ToastMon.DRVDESC = "Sample ToastMon Buggy Driver"
