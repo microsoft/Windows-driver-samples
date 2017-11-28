@@ -1,3 +1,13 @@
+<!---
+    name: SimSensor - Simulated Temperature Sensor Sample Driver
+    platform: KMDF
+    language: cpp
+    category: Thermal Power
+    description: Demonstrates a simulated temperature sensor device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617991
+--->
+
+
 SimSensor: Simulated Temperature Sensor Sample Driver
 =====================================================
 

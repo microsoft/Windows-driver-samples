@@ -699,7 +699,7 @@ CPageScaling::GetOpenTagXML(
         if (SUCCEEDED(hr = CreateTransform(&bstrMatrixXForm)))
         {
             CStringXDW cstrCanvas;
-            cstrCanvas.Format(L"<Canvas RenderTransform=\"%s\"", bstrMatrixXForm);
+            cstrCanvas.Format(L"<Canvas RenderTransform=\"%s\"", static_cast<LPCWSTR>(bstrMatrixXForm));
             *pbstrXML = cstrCanvas.AllocSysString();
         }
     }

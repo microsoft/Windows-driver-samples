@@ -1,3 +1,13 @@
+<!---
+    name: Windows Radio Management Sample
+    platform: WDM
+    language: cpp
+    category: Network Radio
+    description: Demonstrates how to structure a Radio Manager for use with the Windows Radio Management APIs.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617920
+--->
+
+
 Windows Radio Management Sample
 ===============================
 

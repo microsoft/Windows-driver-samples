@@ -16,7 +16,27 @@ Abstract:
 #define _SYSVAD_H_
 
 #include <portcls.h>
+
+// Note: Since VS2015 Update 2 overloaded operator new and operator delete may not
+// be declared inline (Level 1 (/W1) on-by-default, warning C4595).
+// See https://msdn.microsoft.com/en-us/library/mt656697.aspx
+//
+// To mitigate this issue, add "#define _NEW_DELETE_OPERATORS_" before "#include <stdunk.h>"
+// and implement non-inline operator new and operator delete locally.
+//
+#define _NEW_DELETE_OPERATORS_
 #include <stdunk.h>
+// non-inline operator new and operator delete are implemented in common.cpp
+PVOID operator new
+(
+    size_t          iSize,
+    _When_((poolType & NonPagedPoolMustSucceed) != 0,
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
+    POOL_TYPE       poolType,
+    ULONG           tag
+);
+
 #include <ksdebug.h>
 #include <ntintsafe.h>
 #include <wdf.h>
@@ -42,7 +62,7 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 #define PID_SYSVAD DEFINE_GUIDNAMED(PID_SYSVAD)
 
 // Pool tag used for SYSVAD allocations
-#define SYSVAD_POOLTAG               'DVSM'  
+#define SYSVAD_POOLTAG               'DVSM'
 
 // Debug module name
 #define STR_MODULENAME              "SYSVAD: "
@@ -50,9 +70,9 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 // Debug utility macros
 #define D_FUNC                      4
 #define D_BLAB                      DEBUGLVL_BLAB
-#define D_VERBOSE                   DEBUGLVL_VERBOSE        
-#define D_TERSE                     DEBUGLVL_TERSE          
-#define D_ERROR                     DEBUGLVL_ERROR          
+#define D_VERBOSE                   DEBUGLVL_VERBOSE
+#define D_TERSE                     DEBUGLVL_TERSE
+#define D_ERROR                     DEBUGLVL_ERROR
 #define DPF                         _DbgPrintF
 #define DPF_ENTER(x)                DPF(D_FUNC, x)
 
@@ -67,7 +87,7 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 #define KSPROPERTY_TYPE_ALL         KSPROPERTY_TYPE_BASICSUPPORT | \
                                     KSPROPERTY_TYPE_GET | \
                                     KSPROPERTY_TYPE_SET
-                                    
+
 // Specific node numbers
 #define DEV_SPECIFIC_VT_BOOL        9
 #define DEV_SPECIFIC_VT_I4          10
@@ -90,7 +110,7 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 
 #define VALUE_NORMALIZE(v, step) \
     ((v) > 0 ? VALUE_NORMALIZE_P((v), (step)) : -(VALUE_NORMALIZE_P(-(v), (step))))
-    
+
 #define VALUE_NORMALIZE_IN_RANGE_EX(v, min, max, step) \
     ((v) > (max) ? (max) : \
      (v) < (min) ? (min) : \
@@ -216,7 +236,7 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
     ULONG_PTR m_pulReserved1[2];                    // 0-7      0-15    First two pointers are reserved.
     PDEVICE_OBJECT m_DoNotUsePhysicalDeviceObject;  // 8-11     16-23   Reserved pointer to our Physical Device Object (PDO).
     PVOID m_pvReserved2;                            // 12-15    24-31   Reserved pointer to our Start Device function.
-    PVOID m_pvReserved3;                            // 16-19    32-39   "Out Memory" according to DDK.  
+    PVOID m_pvReserved3;                            // 16-19    32-39   "Out Memory" according to DDK.
     IAdapterCommon* m_pCommon;                      // 20-23    40-47   Pointer to our adapter common object.
 #ifdef _USE_SingleComponentMultiFxStates
     POHANDLE m_poHandle;                            // 24-27    48-55   PoFxDevice handle.
@@ -234,7 +254,7 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
 //
 #define MajorTarget_to_Obj(ptr) \
     reinterpret_cast<CMiniportWaveRT*>(ptr)
-    
+
 #define MinorTarget_to_Obj(ptr) \
     static_cast<CMiniportWaveRTStream*>(reinterpret_cast<PMINIPORTWAVERTSTREAM>(ptr))
 
@@ -250,8 +270,8 @@ extern DWORD g_DisableBthScoBypass;
 
 // Generic topology handler
 NTSTATUS PropertyHandler_Topology
-( 
-    _In_  PPCPROPERTY_REQUEST PropertyRequest 
+(
+    _In_  PPCPROPERTY_REQUEST PropertyRequest
 );
 
 // Default WaveFilter automation table.
@@ -267,8 +287,8 @@ NTSTATUS PropertyHandler_OffloadPin
 );
 
 NTSTATUS PropertyHandler_GenericPin
-( 
-    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
+(
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest
 );
 
 // common.h uses some of the above definitions.

@@ -86,7 +86,7 @@ Return Value:
     // with the same lock.
     //
     queueAttributes.SynchronizationScope = WdfSynchronizationScopeQueue;
-    
+
     queueAttributes.EvtDestroyCallback = EchoEvtIoQueueContextDestroy;
 
     status = WdfIoQueueCreate(
@@ -155,11 +155,11 @@ Return Value:
     PAGED_CODE();
 
     //
-    // Create a WDFTIMER object
+    // Create a periodic timer.
+    //
+    // WDF_TIMER_CONFIG_INIT_PERIODIC sets AutomaticSerialization to TRUE by default.
     //
     WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, EchoEvtTimerFunc, Period);
-
-    timerConfig.AutomaticSerialization = FALSE;
 
     WDF_OBJECT_ATTRIBUTES_INIT(&timerAttributes);
     timerAttributes.ParentObject = Queue; // Synchronize with the I/O Queue

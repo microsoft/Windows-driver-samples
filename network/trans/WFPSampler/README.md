@@ -1,3 +1,13 @@
+<!---
+    name: Windows Filtering Platform Sample
+    platform: KMDF
+    language: cpp
+    category: Network
+    description: A sample firewall that has a command-line interface which allows adding filters at various WFP layers.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620198
+--->
+
+
 Windows Filtering Platform Sample
 =================================
 

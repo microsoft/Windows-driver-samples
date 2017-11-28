@@ -42,13 +42,137 @@
     <ClCompile Include="xpsrasfilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xpsrasfilter.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="xpsrasfilter.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="filtertypes.h" />
+    <ClInclude Include="OMConvertor.h" />
+    <ClInclude Include="precomp.h" />
+    <ClInclude Include="PThandler.h" />
+    <ClInclude Include="rasinterface.h" />
+    <ClInclude Include="UnknownBase.h" />
+    <ClInclude Include="WppTrace.h" />
+    <ClInclude Include="xpsrasfilter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="xpsrasfilter.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

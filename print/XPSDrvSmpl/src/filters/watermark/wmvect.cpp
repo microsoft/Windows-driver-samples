@@ -159,7 +159,8 @@ CVectorWatermark::CreateXMLElement(
             try
             {
                 CStringXDW strOpenCanvas;
-                strOpenCanvas.Format(L"<Canvas Opacity=\"%s\" RenderTransform=\"%s\">", bstrWMOpacity, bstrMatrixXForm);
+                strOpenCanvas.Format(L"<Canvas Opacity=\"%s\" RenderTransform=\"%s\">",
+                                     static_cast<LPCWSTR>(bstrWMOpacity), static_cast<LPCWSTR>(bstrMatrixXForm));
 
                 IStream* pStream;
                 CComBSTR bstrContent;

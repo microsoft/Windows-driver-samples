@@ -1,3 +1,13 @@
+<!---
+    name: SDV-FailDriver-NDIS
+    platform: WDM
+    language: cpp
+    category: StaticDriverVerifier Network
+    description: Demonstrates how Static Driver Verifier (SDV) can find errors in a NDIS driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617995
+--->
+
+
 SDV-FailDriver-NDIS
 ===================
 

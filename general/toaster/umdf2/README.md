@@ -1,3 +1,13 @@
+<!---
+    name: Toaster Sample (UMDF version 2)
+    platform: UMDF2
+    language: cpp
+    category: General WDF
+    description: An iterative series of samples that demonstrate driver development using UMDF version 2.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620310
+--->
+
+
 Toaster Sample (UMDF Version 2)
 ===============================
 The Toaster (UMDF version 2) sample is an iterative series of samples that demonstrate fundamental aspects of Windows driver development.

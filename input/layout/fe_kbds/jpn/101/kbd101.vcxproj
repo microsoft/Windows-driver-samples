@@ -161,6 +161,7 @@
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbd101.def</ModuleDefinitionFile>
       <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);FE_SB;FE_IME</PreprocessorDefinitions>
@@ -186,11 +187,13 @@
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbd101.def</ModuleDefinitionFile>
       <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);FE_SB;FE_IME</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);JAPAN</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
@@ -211,6 +214,7 @@
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbd101.def</ModuleDefinitionFile>
       <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);FE_SB;FE_IME</PreprocessorDefinitions>
@@ -236,11 +240,13 @@
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbd101.def</ModuleDefinitionFile>
       <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);FE_SB;FE_IME</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);JAPAN</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>

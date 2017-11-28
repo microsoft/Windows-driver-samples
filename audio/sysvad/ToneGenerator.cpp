@@ -21,6 +21,14 @@ const double TWO_PI = M_PI * 2;
 extern DWORD g_DisableToneGenerator;
 
 //
+// Double to long conversion.
+//
+long ConvertToLong(double Value)
+{
+    return (long)(Value * _I32_MAX);
+};
+
+//
 // Double to short conversion.
 //
 short ConvertToShort(double Value)
@@ -97,10 +105,22 @@ VOID ToneGenerator::InitNewFrame
             unsigned char *dataBuffer = reinterpret_cast<unsigned char *>(Frame);
              dataBuffer[i] = ConvertToUChar(sinValue);
         }
-        else // 16 bits per sample
+        else if (m_BitsPerSample == 16)
         {
             short *dataBuffer = reinterpret_cast<short *>(Frame);
             dataBuffer[i] = ConvertToShort(sinValue);
+        }
+        else if (m_BitsPerSample == 24)
+        {
+            BYTE *dataBuffer = Frame;
+            long val = ConvertToLong(sinValue);
+            val = val >> 8;
+            RtlCopyMemory(dataBuffer, &val, 3);
+        }
+        else if (m_BitsPerSample == 32)
+        {
+            long *dataBuffer = reinterpret_cast<long *>(Frame);
+            dataBuffer[i] = ConvertToLong(sinValue);
         }
     }
 
@@ -120,7 +140,6 @@ VOID ToneGenerator::InitNewFrame
 //  Buffer - Buffer to hold the samples
 //  BufferLength - Length of the buffer.
 //
-//  Note: this function supports 16bit and 8bit samples only.
 //
 void ToneGenerator::GenerateSine
 (
@@ -210,13 +229,11 @@ NTSTATUS ToneGenerator::Init
     KFLOATING_SAVE  saveData;
     
     //
-    // This sample supports PCM 16bit formats only. 
+    // This sample supports PCM formats only. 
     //
     if ((WfExt->Format.wFormatTag != WAVE_FORMAT_PCM &&
         !(WfExt->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE &&
-          IsEqualGUIDAligned(WfExt->SubFormat, KSDATAFORMAT_SUBTYPE_PCM))) ||
-        (WfExt->Format.wBitsPerSample != 16 &&
-         WfExt->Format.wBitsPerSample != 8))
+          IsEqualGUIDAligned(WfExt->SubFormat, KSDATAFORMAT_SUBTYPE_PCM))))
     {
         status = STATUS_NOT_SUPPORTED;
     }

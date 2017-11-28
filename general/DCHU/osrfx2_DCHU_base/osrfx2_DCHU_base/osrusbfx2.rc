@@ -1,0 +1,13 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DLL
+#define VER_FILESUBTYPE             VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR     "WDF Sample Driver for OSR USB-FX2 Learning Kit"
+#define VER_INTERNALNAME_STR        "osrusbfx2um.dll"
+#define VER_ORIGINALFILENAME_STR    "osrusbfx2um.dll"
+
+#include "common.ver"
+
+#include "fx2Events.rc"

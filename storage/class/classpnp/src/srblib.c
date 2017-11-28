@@ -22,7 +22,7 @@ Revision History:
 --*/
 
 
-#include <classp.h>
+#include "classp.h"
 
 PVOID
 DefaultStorageRequestBlockAllocateRoutine(

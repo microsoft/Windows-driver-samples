@@ -1,0 +1,6 @@
+; FusionSensor.def : Declares the module parameters.
+
+LIBRARY FusionSensor
+
+EXPORTS
+

@@ -537,7 +537,7 @@ CColorManagedImage::GetResURI(
                 // Create a unique name for the bitmap for this print session
                 //
                 CStringXDW cstrURI;
-                cstrURI.Format(L"%s_%u.wdp", cstrFileName, GetUniqueNumber());
+                cstrURI.Format(L"%s_%u.wdp", static_cast<LPCWSTR>(cstrFileName), GetUniqueNumber());
 
                 SysFreeString(*pbstrResURI);
                 *pbstrResURI = cstrURI.AllocSysString();

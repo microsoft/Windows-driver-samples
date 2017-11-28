@@ -21,8 +21,8 @@ Abstract:
 #define MICARRAY_RAW_CHANNELS                   2       // Channels for raw mode
 #define MICARRAY_PROCESSED_CHANNELS             1       // Channels for default mode
 #define MICARRAY_DEVICE_MAX_CHANNELS            2       // Max channels overall
-#define MICARRAY_MIN_BITS_PER_SAMPLE_PCM        16      // Min Bits Per Sample
-#define MICARRAY_MAX_BITS_PER_SAMPLE_PCM        16      // Max Bits Per Sample
+#define MICARRAY_16_BITS_PER_SAMPLE_PCM         16      // 16 Bits Per Sample
+#define MICARRAY_32_BITS_PER_SAMPLE_PCM         32      // 32 Bits Per Sample
 #define MICARRAY_RAW_SAMPLE_RATE                48000   // Raw sample rate
 #define MICARRAY_PROCESSED_MIN_SAMPLE_RATE      8000    // Min Sample Rate
 #define MICARRAY_PROCESSED_MAX_SAMPLE_RATE      48000   // Max Sample Rate
@@ -253,7 +253,7 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicArrayPinSupportedDeviceFormats[] =
         }
     },
     // 8 - Note the ENDPOINT_MINIPAIR structures for the mic arrays use this last element as the proposed RAW format
-    // 48 KHz 16-bit 2 channels
+    // 48 KHz 32-bit 2 channels
     {
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
@@ -269,12 +269,12 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicArrayPinSupportedDeviceFormats[] =
                 WAVE_FORMAT_EXTENSIBLE,
                 2,
                 48000,
-                192000,
-                4,
-                16,
+                384000,
+                8,
+                32,
                 sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
             },
-            16,
+            32,
             0,                                      // No channel configuration for unprocessed mic array
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
         }
@@ -398,8 +398,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesRawStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_RAW_CHANNELS,           
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,    
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,    
+        MICARRAY_32_BITS_PER_SAMPLE_PCM,    
+        MICARRAY_32_BITS_PER_SAMPLE_PCM,    
         MICARRAY_RAW_SAMPLE_RATE,            
         MICARRAY_RAW_SAMPLE_RATE             
     },
@@ -419,8 +419,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         MICARRAY_PROCESSED_MIN_SAMPLE_RATE,
         MICARRAY_PROCESSED_MIN_SAMPLE_RATE
     },
@@ -435,8 +435,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         11025,
         11025
     },
@@ -451,8 +451,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         16000,
         16000
     },
@@ -467,8 +467,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         22050,
         22050
     },
@@ -483,8 +483,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         24000,
         24000
     },
@@ -499,8 +499,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         32000,
         32000
     },
@@ -515,8 +515,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         44100,
         44100
     },
@@ -531,8 +531,8 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
         MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_MIN_BITS_PER_SAMPLE_PCM,
-        MICARRAY_MAX_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY_16_BITS_PER_SAMPLE_PCM,
         MICARRAY_PROCESSED_MAX_SAMPLE_RATE,
         MICARRAY_PROCESSED_MAX_SAMPLE_RATE
     },

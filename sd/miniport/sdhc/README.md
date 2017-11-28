@@ -1,5 +1,15 @@
+<!---
+    name: Standard SD Host Controller Miniport
+    platform: WDM
+    language: cpp
+    category: Storage
+    description: Provides a functional miniport implementation for a standard SD host controller.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617952
+--->
+
+
 Standard SD Host Controller Miniport
-===================
+====================================
 
 This is a sample for a Secure Digital (SD) Host Controller miniport driver. The driver works in conjunction with sdport.sys, which implements SD/SDIO/eMMC protocol and WDM interfaces, to provide the host register interface.
 

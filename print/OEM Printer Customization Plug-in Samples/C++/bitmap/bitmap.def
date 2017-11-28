@@ -1,0 +1,4 @@
+LIBRARY     bitmap
+EXPORTS        DllGetClassObject   PRIVATE
+               DllCanUnloadNow     PRIVATE
+

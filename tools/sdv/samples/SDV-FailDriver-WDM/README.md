@@ -1,3 +1,13 @@
+<!---
+    name: SDV-FailDriver-WDM
+    platform: WDM
+    language: cpp
+    category: StaticDriverVerifier
+    description: Demonstrates how Static Driver Verifier (SDV) can find errors in a WDM driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617999
+--->
+
+
 SDV-FailDriver-WDM
 ==================
 

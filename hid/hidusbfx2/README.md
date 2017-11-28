@@ -1,3 +1,14 @@
+<!---
+    name: HIDUSBFX2 sample driver
+    platform: KMDF
+    language: cpp
+    category: HID
+    description: Demonstrates mapping of a non-HID USB device to a HID device.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620190
+--->
+
+
+
 HIDUSBFX2 sample driver
 =======================
 The HIDUSBFX2 sample driver (hidusbfx2.sys) demonstrates how to map a non-HID USB device to a HID device.

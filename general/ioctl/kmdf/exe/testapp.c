@@ -198,7 +198,8 @@ GetCoinstallerVersion(
     VOID
     )
 {
-    if (FAILED( StringCchPrintf(G_coInstallerVersion,
+    if (!G_versionSpecified &&
+        FAILED( StringCchPrintf(G_coInstallerVersion,
                                 MAX_VERSION_SIZE,
                                 "%02d%03d",    // for example, "01009"
                                 KMDF_VERSION_MAJOR,

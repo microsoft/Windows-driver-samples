@@ -36,13 +36,60 @@
     <ClCompile Include="precompsrc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xdnup.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nupflt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="nupflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nuppage.h" />
+    <ClInclude Include="nupsax.h" />
+    <ClInclude Include="nuptprps.h" />
+    <ClInclude Include="nupxform.h" />
+    <ClInclude Include="nupflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nuppage.h" />
+    <ClInclude Include="nupsax.h" />
+    <ClInclude Include="nuptprps.h" />
+    <ClInclude Include="nupxform.h" />
+    <ClInclude Include="nupflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nuppage.h" />
+    <ClInclude Include="nupsax.h" />
+    <ClInclude Include="nuptprps.h" />
+    <ClInclude Include="nupxform.h" />
+    <ClInclude Include="nupflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nuppage.h" />
+    <ClInclude Include="nupsax.h" />
+    <ClInclude Include="nuptprps.h" />
+    <ClInclude Include="nupxform.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

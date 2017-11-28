@@ -36,6 +36,7 @@ __user_driver
 #include <cstring>
 #include <intsafe.h>
 #include <new>
+#include <memory>
 
 // STL
 #include <vector>

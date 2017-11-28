@@ -1,3 +1,13 @@
+<!---
+    name: Print Driver Constraints Sample
+    platform: Utility
+    language: js
+    category: Print
+    description: Demonstrates how to implement advanced constraint handling and PrintTicket/PrintCapabilities handling using JavaScript.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617946
+--->
+
+
 Print Driver Constraints Sample
 ===============================
 

@@ -1,3 +1,13 @@
+<!---
+    name: WDF Sample Driver Learning Lab for OSR USB-FX2
+    platform: UMDF1 KMDF
+    language: cpp
+    category: USB
+    description: Contains a console test application and a series of iterative drivers for both KMDF and UMDF version 1.
+    samplefwlink: https://go.microsoft.com/fwlink/?linkid=856746
+--->
+
+
 WDF Sample Driver Learning Lab for OSR USB-FX2
 ==============================================
 

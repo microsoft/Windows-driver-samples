@@ -1,3 +1,13 @@
+<!---
+    name: AvScan File System Minifilter Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: This filter is a transaction-aware file scanner that examines data in files.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617644
+--->
+
+
 AvScan File System Minifilter Driver
 ====================================
 

@@ -30,13 +30,36 @@
     <ClCompile Include="precompsrc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xdbook.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="bkflt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bkflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bkprps.h" />
+    <ClInclude Include="bksax.h" />
+    <ClInclude Include="bkflt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bkprps.h" />
+    <ClInclude Include="bksax.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

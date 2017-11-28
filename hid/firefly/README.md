@@ -1,3 +1,13 @@
+<!---
+    name: KMDF filter driver for a HID device
+    platform: KMDF
+    language: cpp
+    category: HID
+    description: Illustrates using remote I/O target interfaces to open a HID collection in kernel-mode and send IOCTL requests to set and get feature reports.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620192
+--->
+
+
 KMDF filter driver for a HID device
 ===================================
 Firefly is a KMDF-based filter driver for a HID device. Along with illustrating how to write a filter driver, this sample shows how to use remote I/O target interfaces to open a HID collection in kernel-mode and send IOCTL requests to set and get feature reports, as well as how an application can use WMI interfaces to send commands to a filter driver.

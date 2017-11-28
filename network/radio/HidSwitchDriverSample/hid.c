@@ -1,4 +1,4 @@
-#include <RadioSwitchHidUsbFx2.h>
+#include "RadioSwitchHidUsbFx2.h"
 #include "hid.tmh"
 
 // Radio Management Collection - Scenario 1 control collection (Button only)
@@ -223,7 +223,7 @@ NTSTATUS HidFx2GetInput(_In_ WDFREQUEST hRequest)
     TraceVerbose(DBG_IOCTL, "(%!FUNC!) Enter\n");
 
     hDevice = WdfIoQueueGetDevice(WdfRequestGetIoQueue(hRequest));
-    
+
     WDF_REQUEST_PARAMETERS_INIT(&params);
     WdfRequestGetParameters(hRequest, &params);
 
@@ -296,7 +296,7 @@ NTSTATUS HidFx2SetOutput(_In_ WDFREQUEST hRequest)
     TraceVerbose(DBG_IOCTL, "(%!FUNC!) Enter\n");
 
     hDevice = WdfIoQueueGetDevice(WdfRequestGetIoQueue(hRequest));
-    
+
     WDF_REQUEST_PARAMETERS_INIT(&params);
     WdfRequestGetParameters(hRequest, &params);
 
@@ -335,7 +335,7 @@ NTSTATUS HidFx2SetOutput(_In_ WDFREQUEST hRequest)
         TraceErr(DBG_IOCTL, "(%!FUNC!) Incorrect report ID, %!STATUS!\n", status);
         return status;
     }
-    
+
     pOutputReport = (PHIDFX2_IO_REPORT)pTransferPacket->reportBuffer;
 
     if (pOutputReport->bData == 0)
@@ -471,7 +471,7 @@ NTSTATUS HidFx2GetHidDescriptor(_In_ WDFDEVICE hDevice, _In_ WDFREQUEST hRequest
             TraceErr(DBG_IOCTL, "(%!FUNC!) c_DefaultHidDescriptor is zero, %!STATUS!\n", status);
             return status;
         }
-        
+
     }
     else // WdfRequestRetrieveOutputMemory failed
     {

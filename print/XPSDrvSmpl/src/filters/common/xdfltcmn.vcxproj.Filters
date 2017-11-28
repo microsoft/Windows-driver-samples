@@ -43,4 +43,121 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="clasfact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptmanage.h" />
+    <ClInclude Include="rescache.h" />
+    <ClInclude Include="rescpy.h" />
+    <ClInclude Include="saxhndlr.h" />
+    <ClInclude Include="widetoutf8.h" />
+    <ClInclude Include="xdrchflt.h" />
+    <ClInclude Include="xdsmplflt.h" />
+    <ClInclude Include="xdstrmflt.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

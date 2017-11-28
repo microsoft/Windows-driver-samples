@@ -133,7 +133,7 @@ CPSHandler::CPSHandler(
                             cstrNSPrefix.Delete(iIndex, 1) > 0)
                         {
                             CStringXDW cstrOrgNamespaces;
-                            cstrOrgNamespaces.Format(szNSSelection, cstrNSPrefix, FRAMEWORK_URI);
+                            cstrOrgNamespaces.Format(szNSSelection, static_cast<LPCWSTR>(cstrNSPrefix), FRAMEWORK_URI);
 
                             hr = m_pPrintDocument->setProperty(CComBSTR(szSelectNS), CComVariant(cstrOrgNamespaces));
                         }
@@ -1259,7 +1259,7 @@ Note:
 
     The annotation for pbstrValue is intended to express that the BSTR may
     be NULL when S_FALSE is returned, but not when S_OK is returned.
-    
+
     In any case, when a failure HRESULT is returned, all out parameter
     annotations are ignored.
 
@@ -1593,7 +1593,7 @@ CPSHandler::GetPrefixFromURI(
             // Construct the Root Query string
             //
             CStringXDW cstrRootQuery;
-            cstrRootQuery.Format(szPTRootQuery, szTmpNS, m_bstrDocumentType);
+            cstrRootQuery.Format(szPTRootQuery, szTmpNS, static_cast<LPCWSTR>(m_bstrDocumentType));
 
             //
             // Find the PrintSchema element so we can retrieve the private namespace prefix

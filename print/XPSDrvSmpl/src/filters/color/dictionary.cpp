@@ -273,7 +273,7 @@ CRemoteDictionary::GetResURI(
             // Create a unique name for the dictionary for this print session
             //
             CStringXDW cstrURI;
-            cstrURI.Format(L"%s_%u.dict", m_bstrDictionaryURI, GetUniqueNumber());
+            cstrURI.Format(L"%s_%u.dict", static_cast<LPCWSTR>(m_bstrDictionaryURI), GetUniqueNumber());
 
             *pbstrResURI = cstrURI.AllocSysString();
         }

@@ -1,3 +1,13 @@
+<!---
+    name: XPSDrv Driver and Filter Sample
+    platform: DLL
+    language: cpp
+    category: Print
+    description: Provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617950
+--->
+
+
 XPSDrv Driver and Filter Sample
 ===============================
 

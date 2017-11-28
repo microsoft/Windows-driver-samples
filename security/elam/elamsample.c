@@ -20,7 +20,7 @@
 //     Kernel mode only.
 //
 
-#include <elamsample.h>
+#include "elamsample.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)

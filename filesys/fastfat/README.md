@@ -1,3 +1,14 @@
+<!---
+    name: fastfat File System Driver
+    platform: WDM
+    language: cpp
+    category: FileSystem
+    description: A file system driver based on the Windows inbox FastFAT file system used as a model for new file systems.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620305
+--->
+
+
+
 fastfat File System Driver
 ==========================
 

@@ -236,7 +236,7 @@ CPTQueryBuilder::AddFeature(
             if (SUCCEEDED(hr))
             {
                 CStringXDW cstrFeatureQuery;
-                cstrFeatureQuery.Format(szPTQFeature, m_bstrFrameworkNS, bstrKeyword);
+                cstrFeatureQuery.Format(szPTQFeature, static_cast<LPCWSTR>(m_bstrFrameworkNS), static_cast<LPCWSTR>(bstrKeyword));
 
                 hr = m_bstrQuery.Append(cstrFeatureQuery);
             }
@@ -305,7 +305,7 @@ CPTQueryBuilder::AddProperty(
             if (SUCCEEDED(hr))
             {
                 CStringXDW cstrPropertyQuery;
-                cstrPropertyQuery.Format(szPTQProperty, m_bstrFrameworkNS, bstrKeyword);
+                cstrPropertyQuery.Format(szPTQProperty, static_cast<LPCWSTR>(m_bstrFrameworkNS), static_cast<LPCWSTR>(bstrKeyword));
 
                 hr = m_bstrQuery.Append(cstrPropertyQuery);
             }
@@ -369,7 +369,7 @@ CPTQueryBuilder::AddScoredProperty(
             if (SUCCEEDED(hr))
             {
                 CStringXDW cstrScoredPropertyQuery;
-                cstrScoredPropertyQuery.Format(szPTQScoredProperty, m_bstrFrameworkNS, bstrKeyword);
+                cstrScoredPropertyQuery.Format(szPTQScoredProperty, static_cast<LPCWSTR>(m_bstrFrameworkNS), static_cast<LPCWSTR>(bstrKeyword));
 
                 hr = m_bstrQuery.Append(cstrScoredPropertyQuery);
             }
@@ -437,7 +437,7 @@ CPTQueryBuilder::AddParamRef(
             if (SUCCEEDED(hr))
             {
                 CStringXDW cstrParamRefQuery;
-                cstrParamRefQuery.Format(szPTQParamRef, m_bstrFrameworkNS, bstrKeyword);
+                cstrParamRefQuery.Format(szPTQParamRef, static_cast<LPCWSTR>(m_bstrFrameworkNS), static_cast<LPCWSTR>(bstrKeyword));
 
                 hr = m_bstrQuery.Append(cstrParamRefQuery);
             }
@@ -490,13 +490,14 @@ CPTQueryBuilder::AddOption(
         {
             CStringXDW cstrQueryRoot(m_bstrQuery);
             CStringXDW cstrOptionQuery;
-            cstrOptionQuery.Format(szPTQOptionSH, m_bstrFrameworkNS);
+            cstrOptionQuery.Format(szPTQOptionSH, static_cast<LPCWSTR>(m_bstrFrameworkNS));
 
             if (SUCCEEDED(hr = m_bstrQuery.Append(cstrOptionQuery)) &&
                 SUCCEEDED(hr = m_bstrQuery.Append(szPTQOrNodes)) &&
                 SUCCEEDED(hr = m_bstrQuery.Append(cstrQueryRoot)))
             {
-                cstrOptionQuery.Format(szPTQOptionLH, m_bstrFrameworkNS, bstrKeywordNS, m_bstrFrameworkNS);
+                cstrOptionQuery.Format(szPTQOptionLH, static_cast<LPCWSTR>(m_bstrFrameworkNS),
+                                       static_cast<LPCWSTR>(bstrKeywordNS), static_cast<LPCWSTR>(m_bstrFrameworkNS));
                 hr = m_bstrQuery.Append(cstrOptionQuery);
             }
         }

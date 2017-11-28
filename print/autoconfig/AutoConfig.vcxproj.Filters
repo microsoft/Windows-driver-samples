@@ -18,4 +18,16 @@
       <UniqueIdentifier>{4E1D1476-C128-41DB-8AC6-44D5C6CD9B08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Inf Include="AutoCnfg.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AutoCnfg.GPD" />
+    <None Include="ACnfgUni.GDL" />
+    <None Include="AutoCnfg.PPD" />
+    <None Include="ACnfgPS.gdl" />
+    <None Include="AutoConfig.htm" />
+  </ItemGroup>
 </Project>

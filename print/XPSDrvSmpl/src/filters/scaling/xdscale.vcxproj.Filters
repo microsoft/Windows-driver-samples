@@ -33,13 +33,47 @@
     <ClCompile Include="scalesax.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="xdscale.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scaleflt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pagescale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pgscptprop.h" />
+    <ClInclude Include="scaleflt.h" />
+    <ClInclude Include="scalesax.h" />
+    <ClInclude Include="pagescale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pgscptprop.h" />
+    <ClInclude Include="scaleflt.h" />
+    <ClInclude Include="scalesax.h" />
+    <ClInclude Include="pagescale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pgscptprop.h" />
+    <ClInclude Include="scaleflt.h" />
+    <ClInclude Include="scalesax.h" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

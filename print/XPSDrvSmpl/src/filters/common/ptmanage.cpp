@@ -178,9 +178,9 @@ CPTManager::Initialise(
                 //
                 // We couldn't revert the security context. The filter pipeline
                 // manager will clean up the thread when operation is complete,
-                // when it is determined that the security context was not 
-                // reverted. Since there are no security implications with 
-                // running this filter in an elevated context, we can 
+                // when it is determined that the security context was not
+                // reverted. Since there are no security implications with
+                // running this filter in an elevated context, we can
                 // continue to run.
                 //
             }
@@ -589,7 +589,7 @@ CPTManager::GetCapabilities(
                     {
                     }
                 }
-            
+
                 //
                 // Always revert back to the default security context
                 //
@@ -598,9 +598,9 @@ CPTManager::GetCapabilities(
                     //
                     // We couldn't revert the security context. The filter pipeline
                     // manager will clean up the thread when operation is complete,
-                    // when it is determined that the security context was not 
-                    // reverted. Since there are no security implications with 
-                    // running this filter in an elevated context, we can 
+                    // when it is determined that the security context was not
+                    // reverted. Since there are no security implications with
+                    // running this filter in an elevated context, we can
                     // continue to run.
                     //
                 }
@@ -1034,7 +1034,7 @@ CPTManager::GetMergedTicket(
                 {
                     CStringXDA cstrMessage;
                     CStringXDA cstrError(bstrErrorMessage);
-                    cstrMessage.Format("PTMergeAndValidatePrintTicket failed with message: %s\n", cstrError);
+                    cstrMessage.Format("PTMergeAndValidatePrintTicket failed with message: %s\n", static_cast<LPCSTR>(cstrError));
 
                     ERR(cstrMessage.GetBuffer());
                 }
@@ -1047,9 +1047,9 @@ CPTManager::GetMergedTicket(
                     //
                     // We couldn't revert the security context. The filter pipeline
                     // manager will clean up the thread when operation is complete,
-                    // when it is determined that the security context was not 
-                    // reverted. Since there are no security implications with 
-                    // running this filter in an elevated context, we can 
+                    // when it is determined that the security context was not
+                    // reverted. Since there are no security implications with
+                    // running this filter in an elevated context, we can
                     // continue to run.
                     //
                 }

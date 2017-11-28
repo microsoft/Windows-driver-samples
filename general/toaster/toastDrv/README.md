@@ -1,3 +1,13 @@
+<!---
+    name: Toaster Sample Driver
+    platform: KMDF UMDF1
+    language: cpp
+    category: General WDF
+    description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620309
+--->
+
+
 Toaster Sample Driver
 =====================
 The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for both Kernel-Mode Driver Framework (KMDF) and User-Mode Driver Framework (UMDF) version 1.

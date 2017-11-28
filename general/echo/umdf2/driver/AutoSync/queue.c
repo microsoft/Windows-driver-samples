@@ -79,7 +79,7 @@ Return Value:
     // with the same lock.
     //
     queueAttributes.SynchronizationScope = WdfSynchronizationScopeQueue;
-    
+
     queueAttributes.EvtDestroyCallback = EchoEvtIoQueueContextDestroy;
 
     status = WdfIoQueueCreate(
@@ -145,21 +145,18 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES  timerAttributes;
 
     //
-    // Create a WDFTIMER object
+    // Create a non-periodic timer since WDF does not allow periodic timer
+    // at passive level, which is the level UMDF callbacks are invoked at.
+    // The workaround is to always restart the timer in the timer callback.
+    //
+    // WDF_TIMER_CONFIG_INIT sets AutomaticSerialization to TRUE by default.
     //
     WDF_TIMER_CONFIG_INIT(&timerConfig, EchoEvtTimerFunc);
 
-    //
-    // WDF_OBJECT_ATTRIBUTES_INIT sets AutomaticSerialization to TRUE by default
-    //
     WDF_OBJECT_ATTRIBUTES_INIT(&timerAttributes);
     timerAttributes.ParentObject = Queue; // Synchronize with the I/O Queue
-    timerAttributes.ExecutionLevel = WdfExecutionLevelPassive; 
+    timerAttributes.ExecutionLevel = WdfExecutionLevelPassive;
 
-    //
-    // Create a non-periodic timer since WDF does not allow periodic timer 
-    // with autosynchronization at passive level
-    //
     Status = WdfTimerCreate(&timerConfig,
                              &timerAttributes,
                              Timer     // Output handle
@@ -530,7 +527,7 @@ Return Value:
     }
 
     //
-    // Restart the Timer since WDF does not allow periodic timer 
+    // Restart the Timer since WDF does not allow periodic timer
     // with autosynchronization at passive level
     //
     WdfTimerStart(Timer, WDF_REL_TIMEOUT_IN_MS(TIMER_PERIOD));
