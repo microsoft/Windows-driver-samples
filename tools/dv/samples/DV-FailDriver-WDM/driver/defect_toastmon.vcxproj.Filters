@@ -19,11 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include="..\defect_toastmon.inf">
-      <Filter>Driver Files</Filter>
-    </FilesToPackage>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\defect_toastmon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,5 +30,10 @@
     <ResourceCompile Include="..\defect_toastmon.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="*.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>

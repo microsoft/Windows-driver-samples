@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{50D75FD5-F47F-4289-98ED-B4AF87F5074D}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
-    <SupportsPackaging>false</SupportsPackaging>
+    <SupportsPackaging>true</SupportsPackaging>
     <RequiresPackageProject>true</RequiresPackageProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
@@ -90,7 +90,7 @@
     <TargetName>defect_toastmon</TargetName>
   </PropertyGroup>
   <ItemGroup>
-    <FilesToPackage Include="..\defect_toastmon.inf" />
+    <FilesToPackage Include=".\defect_toastmon.inf" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
