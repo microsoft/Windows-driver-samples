@@ -1,6 +1,6 @@
 ;/*++
 ;
-;Copyright (c) 1990-2015 Microsoft Corporation All rights Reserved
+;Copyright (c) 1990-2017 Microsoft Corporation All rights Reserved
 ;
 ;Module Name:
 ;
@@ -16,7 +16,7 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider="Sample Provider"
-DriverVer=07/29/2015,10.0.0.0
+DriverVer=12/12/2017,10.0.0.1
 CatalogFile=Defect_Toastmon.cat
 
 [DestinationDirs]
@@ -26,19 +26,19 @@ DefaultDestDir = 12
 ; ================= Device Install section =====================
 
 [Manufacturer]
-%ManufacturerString%=MSFT,NTx86, NTamd64, NTARM, NTARM64
+%ManufacturerString%=Sample_Manufacturer,NTx86, NTamd64, NTARM, NTARM64
 
 ; For XP and later
-[MSFT.NTx86]
+[Sample_Manufacturer.NTx86]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
 
-[MSFT.NTARM]
+[Sample_Manufacturer.NTARM]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
 
-[MSFT.NTARM64]
+[Sample_Manufacturer.NTARM64]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
 
-[MSFT.NTamd64]
+[Sample_Manufacturer.NTamd64]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
 
 [Defect_ToastMon_Inst.NT]
