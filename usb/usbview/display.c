@@ -4920,13 +4920,10 @@ DisplayUSEnglishStringDescriptor (
     CHAR  pString[512];
 
     //@@DisplayUSEnglishStringDescriptor - String Descriptor
-    while (USStringDescs)
+    for (; USStringDescs; USStringDescs = USStringDescs->Next)
     {
-        if (USStringDescs->DescriptorIndex == Index)
+        if (USStringDescs->DescriptorIndex == Index && USStringDescs->LanguageID == 0x0409)
         {
-            if (USStringDescs->LanguageID != 0x0409)
-                continue;
-
             FoundMatchingString = TRUE;
 
             AppendTextBuffer("English product name: \"");
@@ -4946,7 +4943,6 @@ DisplayUSEnglishStringDescriptor (
                 AppendTextBuffer("\"\r\n", pString);
             return;
         }
-        USStringDescs = USStringDescs->Next;
     }
 
     //@@TestCase A8.1
