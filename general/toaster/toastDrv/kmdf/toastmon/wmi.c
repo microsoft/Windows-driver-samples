@@ -22,44 +22,11 @@ Environment:
 
     Kernel mode
 
-
 --*/
 
 #include "toastmon.h"
 #include "public.h"
 #include <wmistr.h>
-
-//
-// These typedefs required to avoid compilation errors in Win2K build environment.
-//
-typedef
-VOID
-(*WMI_NOTIFICATION_CALLBACK)( // Copied from WDM.H
-    PVOID Wnode,
-    PVOID Context
-    );
-
-typedef
-NTSTATUS
-(*PFN_IO_WMI_OPEN_BLOCK)(
-    IN  GUID   * DataBlockGuid,
-    IN  ULONG    DesiredAccess,
-    OUT PVOID  * DataBlockObject
-    );
-
-typedef
-NTSTATUS
-(*PFN_IO_WMI_SET_NOTIFICATION_CALLBACK)(
-    IN PVOID                      Object,
-    IN WMI_NOTIFICATION_CALLBACK  Callback,
-    IN PVOID                      Context
-    );
-
-NTSTATUS
-GetTargetFriendlyName(
-    WDFIOTARGET Target,
-    IN WDFMEMORY* TargetName
-    );
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(PAGE, RegisterForWMINotification)
@@ -68,7 +35,6 @@ GetTargetFriendlyName(
 #pragma alloc_text(PAGE, WmiNotificationCallback)
 #endif
 
-
 NTSTATUS
 RegisterForWMINotification(
     PDEVICE_EXTENSION DeviceExt
@@ -76,36 +42,8 @@ RegisterForWMINotification(
 {
     NTSTATUS           status = STATUS_SUCCESS;
     GUID               wmiGuid;
-    UNICODE_STRING     funcName;
-
-    PFN_IO_WMI_OPEN_BLOCK                 WmiOpenBlock;
-    PFN_IO_WMI_SET_NOTIFICATION_CALLBACK  WmiSetNotificationCallback;
 
     PAGED_CODE();
-
-    //
-    // APIs  to open WMI interfaces are available on XP and beyond, so let us
-    // first check to see whether there are exported in the kernel we are
-    // running before using them.
-    //
-    RtlInitUnicodeString(&funcName, L"IoWMIOpenBlock");
-
-    WmiOpenBlock =
-        (PFN_IO_WMI_OPEN_BLOCK) (ULONG_PTR)
-            MmGetSystemRoutineAddress(&funcName);
-
-    RtlInitUnicodeString(&funcName, L"IoWMISetNotificationCallback");
-
-    WmiSetNotificationCallback =
-        (PFN_IO_WMI_SET_NOTIFICATION_CALLBACK) (ULONG_PTR)
-            MmGetSystemRoutineAddress(&funcName);
-
-    if(WmiOpenBlock == NULL || WmiSetNotificationCallback == NULL) {
-        //
-        // Not available.
-        //
-        return STATUS_NOT_SUPPORTED;
-    }
 
     //
     // Check to make sure we are not called multiple times.
@@ -117,7 +55,7 @@ RegisterForWMINotification(
     //
     wmiGuid = TOASTER_NOTIFY_DEVICE_ARRIVAL_EVENT;
 
-    status = WmiOpenBlock(
+    status = IoWMIOpenBlock(
                  &wmiGuid,
                  WMIGUID_NOTIFICATION,
                  &DeviceExt->WMIDeviceArrivalNotificationObject
@@ -129,7 +67,7 @@ RegisterForWMINotification(
 
     } else {
 
-        status = WmiSetNotificationCallback(
+        status = IoWMISetNotificationCallback(
                      DeviceExt->WMIDeviceArrivalNotificationObject,
                      WmiNotificationCallback,
                      DeviceExt
@@ -148,7 +86,7 @@ RegisterForWMINotification(
 VOID
 UnregisterForWMINotification(
     PDEVICE_EXTENSION DeviceExt
-)
+    )
 {
     PAGED_CODE();
 
@@ -158,11 +96,11 @@ UnregisterForWMINotification(
     }
 }
 
-
+_Use_decl_annotations_
 NTSTATUS
 GetTargetFriendlyName(
     WDFIOTARGET Target,
-    IN WDFMEMORY* TargetName
+    WDFMEMORY*  TargetName
     )
 /*++
 
@@ -210,8 +148,8 @@ Return Value:
 
 VOID
 WmiNotificationCallback(
-    IN PVOID Wnode,
-    IN PVOID Context
+    PVOID Wnode,
+    PVOID Context
     )
 /*++
 
@@ -232,15 +170,15 @@ Return Value:
 
 --*/
 {
-    PWNODE_SINGLE_INSTANCE wnode = (PWNODE_SINGLE_INSTANCE) Wnode;
-    WDFMEMORY memory;
-    UNICODE_STRING deviceName;
-    PDEVICE_OBJECT devobj;
-    NTSTATUS status;
-    PDEVICE_EXTENSION deviceExt = Context;
-    WDFCOLLECTION hCollection = deviceExt->TargetDeviceCollection;
-    WDFIOTARGET ioTarget;
-    ULONG i;
+    PWNODE_SINGLE_INSTANCE  wnode = (PWNODE_SINGLE_INSTANCE) Wnode;
+    WDFMEMORY               memory;
+    UNICODE_STRING          deviceName;
+    PDEVICE_OBJECT          devobj;
+    NTSTATUS                status;
+    PDEVICE_EXTENSION       deviceExt = Context;
+    WDFCOLLECTION           hCollection = deviceExt->TargetDeviceCollection;
+    WDFIOTARGET             ioTarget;
+    ULONG                   i;
 
     PAGED_CODE();
 
@@ -296,7 +234,3 @@ Return Value:
 
     WdfWaitLockRelease(deviceExt->TargetDeviceCollectionLock);
 }
-
-
-
-
