@@ -178,6 +178,7 @@ Return Value:
     PDEVICE_EXTENSION       deviceExt = Context;
     WDFCOLLECTION           hCollection = deviceExt->TargetDeviceCollection;
     WDFIOTARGET             ioTarget;
+    WDF_IO_TARGET_STATE     ioTargetState;
     ULONG                   i;
 
     PAGED_CODE();
@@ -193,7 +194,8 @@ Return Value:
         // The WdfIoTargetWdmGetXxxDeviceObject APIs can only be called while the target is opened, otherwise
         // they can return undefined values.
         //
-        if (GetTargetDeviceInfo(ioTarget)->Opened == FALSE) {
+        ioTargetState = WdfIoTargetGetState(ioTarget);
+        if (ioTargetState != WdfIoTargetStarted) {
             KdPrint(("WDFIOTARGET %p not in an opened state.\n", ioTarget));
             continue;
         }

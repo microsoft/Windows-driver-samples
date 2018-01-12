@@ -44,14 +44,6 @@ typedef struct  _TARGET_DEVICE_INFO {
     WDFREQUEST        WriteRequest;
     WDFTIMER          TimerForPostingRequests;
 
-    //
-    // Set to TRUE while the target is opened. Will be set to FALSE at query remove (for a graceful remove)
-    // or removal complete (surprise removal of the target). Can be set back to TRUE if the graceful remove
-    // fails and the query remove is canceled.
-    //
-    // Guarded by DeviceExtension->TargetDeviceCollectionLock
-    //
-    BOOLEAN           Opened;
 } TARGET_DEVICE_INFO, *PTARGET_DEVICE_INFO;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(TARGET_DEVICE_INFO, GetTargetDeviceInfo)
@@ -71,6 +63,8 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(TIMER_CONTEXT, GetTimerContext)
 DRIVER_INITIALIZE                       DriverEntry;
 EVT_WDF_DRIVER_DEVICE_ADD               ToastMon_EvtDeviceAdd;
 EVT_WDF_DEVICE_CONTEXT_CLEANUP          ToastMon_EvtDeviceContextCleanup;
+EVT_WDF_DEVICE_D0_ENTRY                 ToastMon_EvtDeviceD0Entry;
+EVT_WDF_DEVICE_D0_EXIT                  ToastMon_EvtDeviceD0Exit;
 EVT_WDF_IO_TARGET_QUERY_REMOVE          ToastMon_EvtIoTargetQueryRemove;
 EVT_WDF_IO_TARGET_REMOVE_CANCELED       ToastMon_EvtIoTargetRemoveCanceled;
 EVT_WDF_IO_TARGET_REMOVE_COMPLETE       ToastMon_EvtIoTargetRemoveComplete;
