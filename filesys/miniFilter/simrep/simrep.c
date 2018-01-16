@@ -9,43 +9,43 @@ Module Name:
 Abstract:
 
 The Simulate Reparse Sample demonstrates how to return STATUS_REPARSE
-on precreates. This allows the filter to redirect opens down one path 
-to another path. The Precreate path is complicated by network query opens 
+on precreates. This allows the filter to redirect opens down one path
+to another path. The Precreate path is complicated by network query opens
 which come down as Fast IO. Fast IO cannot be redirected with Status Reparse
-because reparse only works on IRP based IO. 
+because reparse only works on IRP based IO.
 
-Simulating reparse points requires that the filter replace the name in the 
+Simulating reparse points requires that the filter replace the name in the
 file object. This will cause Driver Verifier to complain that the filter is
 leaking pool and will prevent it from being unloaded. To solve this issue
 SimRep attempts to use a Windows 7 Function called IoReplaceFileObjectName
 which will allow IO Mgr to replace the name for us with the correct pool tag.
-However, on downlevel OS Versions SimRep will go ahead and replace the name 
+However, on downlevel OS Versions SimRep will go ahead and replace the name
 itself.
 
-It is important to note that SimRep only demonstrates how to return 
+It is important to note that SimRep only demonstrates how to return
 STATUS_REPARSE, not how to deal with file names on NT. SimRep uses two strings
 to act as a mapping. When the file open name starts with the "old name mapping"
 string the filter replaces it with the "new name mapping" string. This does not
 take short names into account.
 
-SimRep can also be configured to redirect renames and creation of hardlinks. 
-This functionality is demonstrated in the code and can be turned on with a 
+SimRep can also be configured to redirect renames and creation of hardlinks.
+This functionality is demonstrated in the code and can be turned on with a
 registry key value indicated in the inf file. To correctly handle rename and
-set link operations: 
+set link operations:
 1.  SimRep has to reparse opens with the SL_OPEN_TARGET_DIRECTORY flag set in
     the pre-create, since this is the create that IoManager uses to open the
     target of the rename.
 2.  SimRep implements a "pass-through" name provider. It needs to do this so
-    that the creates issued to resolve normalized name queries will be seen by 
-    SimRep and it can redirect them correctly, so as to provide consistent names 
+    that the creates issued to resolve normalized name queries will be seen by
+    SimRep and it can redirect them correctly, so as to provide consistent names
     to other filters.
-3.  SimRep has to monitor IRP_MJ_SET_INFORMATION for rename and set link 
-    operations and re-issue them for the correct destination so that filters 
+3.  SimRep has to monitor IRP_MJ_SET_INFORMATION for rename and set link
+    operations and re-issue them for the correct destination so that filters
     below SimRep are made aware of this redirection.
 
-Note that SimRep simply redirects creates (and optionally renames and set 
-hardlink) operations. It makes no attempt to virtualize the namespace for 
-filters above SimRep. So the layers above SimRep will be aware of the 
+Note that SimRep simply redirects creates (and optionally renames and set
+hardlink) operations. It makes no attempt to virtualize the namespace for
+filters above SimRep. So the layers above SimRep will be aware of the
 redirection if they query the name of the file once the create, rename or set
 hardlink operation is complete.
 
@@ -119,8 +119,8 @@ typedef struct _MAPPING_ENTRY {
 
 
 //
-//  Starting with windows 7, the IO Manager provides IoReplaceFileObjectName, 
-//  but old versions of Windows will not have this function. Rather than just 
+//  Starting with windows 7, the IO Manager provides IoReplaceFileObjectName,
+//  but old versions of Windows will not have this function. Rather than just
 //  writing our own function, and forfeiting future windows functionality, we can
 //  use MmGetRoutineAddr, which will allow us to dynamically import IoReplaceFileObjectName
 //  if it exists. If not it allows us to implement the function ourselves.
@@ -164,31 +164,31 @@ typedef struct _SIMREP_GLOBAL_DATA {
     MAPPING_ENTRY Mapping;
 
     //
-    //  Pointer to the function we will use to 
+    //  Pointer to the function we will use to
     //  replace file names.
     //
 
     PReplaceFileObjectName ReplaceFileNameFunction;
 
     //
-    //  Pointer to the function we will use to 
+    //  Pointer to the function we will use to
     //  query directory file.
     //
-    
+
     PFltQueryDirectoryFile QueryDirectoryFileFunction;
 
     //
     // Flag to control if the filter remaps renames
     //
-    
+
     BOOLEAN RemapRenamesAndLinks;
-    
+
 #if DBG
 
     //
     // Field to control nature of debug output
     //
-    
+
     ULONG DebugLevel;
 #endif
 
@@ -243,8 +243,8 @@ DriverEntry (
     _In_ PUNICODE_STRING RegistryPath
     );
 
-NTSTATUS 
-SimRepSetConfiguration( 
+NTSTATUS
+SimRepSetConfiguration(
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -434,11 +434,11 @@ FLT_REGISTRATION FilterRegistration = {
     NULL,                                           //  Filename generation support callback
     NULL,                                           //  Filename normalization support callback
     NULL,                                           //  Normalize name component cleanup callback
-#if SIMREP_VISTA    
+#if SIMREP_VISTA
     NULL,                                           //  Transaction notification callback
-    NULL                                            //  Filename normalization support callback   
-    
-#endif // SIMREP_VISTA    
+    NULL                                            //  Filename normalization support callback
+
+#endif // SIMREP_VISTA
 };
 
 
@@ -461,7 +461,7 @@ FLT_OPERATION_REGISTRATION CallbacksWithRename[] = {
     { IRP_MJ_SET_INFORMATION,
         FLTFL_OPERATION_REGISTRATION_SKIP_PAGING_IO,
         SimRepPreSetInformation,
-        NULL },  
+        NULL },
 
     { IRP_MJ_OPERATION_END }
 };
@@ -486,11 +486,11 @@ FLT_REGISTRATION FilterRegistrationWithRename = {
     SimRepGenerateFileName,                         //  Filename generation support callback
     SimRepNormalizeNameComponent,                   //  Filename normalization support callback
     NULL,                                           //  Normalize name component cleanup callback
-#if SIMREP_VISTA    
+#if SIMREP_VISTA
     NULL,                                           //  Transaction notification callback
-    SimRepNormalizeNameComponentEx                  //  Filename normalization support callback   
-    
-#endif // SIMREP_VISTA    
+    SimRepNormalizeNameComponentEx                  //  Filename normalization support callback
+
+#endif // SIMREP_VISTA
 };
 
 
@@ -544,7 +544,7 @@ DriverEntry (
 
 Routine Description:
 
-    This is the initialization routine for this filter driver. It registers 
+    This is the initialization routine for this filter driver. It registers
     itself with the filter manager and initializes all its global data structures.
 
 Arguments:
@@ -568,7 +568,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -576,7 +576,7 @@ Return Value:
     //
 
 #if DBG
-            
+
     Globals.DebugLevel = DEBUG_TRACE_ALL;
 
 #endif
@@ -602,9 +602,9 @@ Return Value:
     //
     //  If available (Windows Vista or later), use the FltQueryDirectoryFile API.
     //
-    
+
     Globals.QueryDirectoryFileFunction = FltGetRoutineAddress( REPLACE_QUERY_DIRECTORY_FILE_ROUTINE_NAME_STRING );
-    
+
     //
     //  Set the filter configuration based on registry keys
     //
@@ -618,9 +618,9 @@ Return Value:
 
         goto DriverEntryCleanup;
     }
-    
+
     //
-    //  Register with the filter manager. If the filter is not 
+    //  Register with the filter manager. If the filter is not
     //  configured to remap renames and hardlink creation do not
     //  register name provider or SetInformation callbacks.
     //
@@ -664,8 +664,8 @@ DriverEntryCleanup:
 }
 #pragma warning(pop)
 
-NTSTATUS 
-SimRepSetConfiguration( 
+NTSTATUS
+SimRepSetConfiguration(
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -725,9 +725,9 @@ Return Value:
     //
     // Query the debug level
     //
-        
+
     RtlInitUnicodeString( &valueName, L"DebugLevel" );
-        
+
     status = ZwQueryValueKey( driverRegKey,
                               &valueName,
                               KeyValuePartialInformation,
@@ -746,14 +746,14 @@ Return Value:
     //
     // Query the remap rename flag
     //
-        
+
     RtlInitUnicodeString( &valueName, L"RemapRenamesAndLinks" );
-        
+
     status = ZwQueryValueKey( driverRegKey,
                               &valueName,
                               KeyValuePartialInformation,
                               value,
-                              valueLength,                              
+                              valueLength,
                               &resultLength );
 
     if (NT_SUCCESS( status )) {
@@ -764,7 +764,7 @@ Return Value:
     //
     //  Query the length of the old mapping.
     //
-    
+
     RtlInitUnicodeString( &valueName, L"OldMapping" );
 
     status = ZwQueryValueKey( driverRegKey,
@@ -821,11 +821,11 @@ Return Value:
         goto SimRepSetConfigurationCleanup;
     }
 
-    //   
-    //  The length which we receive from ZwQueryValueKey contains size for   
-    //  the NULL termination as well. Since we are dealing with unicode   
-    //  string we'll chop off the null termination in the length.   
-    //   
+    //
+    //  The length which we receive from ZwQueryValueKey contains size for
+    //  the NULL termination as well. Since we are dealing with unicode
+    //  string we'll chop off the null termination in the length.
+    //
 
     Globals.Mapping.OldName.Length = (USHORT)mappingValue->DataLength - sizeof( UNICODE_NULL );
 
@@ -836,7 +836,7 @@ Return Value:
     //
     //  Query the length of the new mapping.
     //
-    
+
     RtlInitUnicodeString( &valueName, L"NewMapping" );
 
     status = ZwQueryValueKey( driverRegKey,
@@ -847,7 +847,7 @@ Return Value:
                               &mappingValueLength );
 
     if (!NT_SUCCESS( status )) {
-        
+
         if (status!=STATUS_BUFFER_TOO_SMALL && status!=STATUS_BUFFER_OVERFLOW) {
 
             goto SimRepSetConfigurationCleanup;
@@ -863,8 +863,8 @@ Return Value:
 
             status = STATUS_INSUFFICIENT_RESOURCES;
             goto SimRepSetConfigurationCleanup;
-        }        
-        
+        }
+
     }
 
     //
@@ -883,7 +883,7 @@ Return Value:
         goto SimRepSetConfigurationCleanup;
     }
 
-    
+
     if (mappingValue->Type != REG_SZ) {
 
         status = STATUS_INVALID_PARAMETER;
@@ -891,7 +891,7 @@ Return Value:
     }
 
     Globals.Mapping.NewName.MaximumLength = (USHORT) mappingValue->DataLength;
-    
+
     status = SimRepAllocateUnicodeString( &Globals.Mapping.NewName );
 
     if (!NT_SUCCESS( status )) {
@@ -899,11 +899,11 @@ Return Value:
         goto SimRepSetConfigurationCleanup;
     }
 
-    //   
-    //  The length which we receive from ZwQueryValueKey contains size for   
-    //  the NULL termination as well. Since we are dealing with unicode   
-    //  string we'll chop off the null termination in the length.   
-    //   
+    //
+    //  The length which we receive from ZwQueryValueKey contains size for
+    //  the NULL termination as well. Since we are dealing with unicode
+    //  string we'll chop off the null termination in the length.
+    //
 
     Globals.Mapping.NewName.Length = (USHORT)mappingValue->DataLength - sizeof( UNICODE_NULL );
 
@@ -943,11 +943,11 @@ SimRepSetConfigurationCleanup:
     }
 
     if (!NT_SUCCESS( status )) {
-        
+
         SimRepFreeUnicodeString( &Globals.Mapping.NewName );
         SimRepFreeUnicodeString( &Globals.Mapping.OldName );
     }
-    
+
     return status;
 }
 
@@ -984,8 +984,8 @@ SimRepUnload (
 
 Routine Description:
 
-    This is the unload routine for this filter driver. This is called 
-    when the minifilter is about to be unloaded. SimRep can unload 
+    This is the unload routine for this filter driver. This is called
+    when the minifilter is about to be unloaded. SimRep can unload
     easily because it does not own any IOs. When the filter is unloaded
     existing reparsed creates will continue to work, but new creates will
     not be reparsed. This is fine from the filter's perspective, but could
@@ -1050,7 +1050,7 @@ Return Value:
 
 --*/
 {
-    
+
     UNREFERENCED_PARAMETER( FltObjects );
     UNREFERENCED_PARAMETER( Flags );
     UNREFERENCED_PARAMETER( VolumeDeviceType );
@@ -1076,9 +1076,9 @@ Return Value:
     //  Attach on manual attachment.
     //
 
-    DebugTrace( DEBUG_TRACE_INSTANCES, 
+    DebugTrace( DEBUG_TRACE_INSTANCES,
                 ("[SimRep]: Instance setup started (Volume = %p, Instance = %p)\n",
-                 FltObjects->Volume, 
+                 FltObjects->Volume,
                  FltObjects->Instance) );
 
 
@@ -1097,7 +1097,7 @@ Routine Description:
 
     This is called when an instance is being manually deleted by a
     call to FltDetachVolume or FilterDetach thereby giving us a
-    chance to fail that detach request. SimRep only implements it 
+    chance to fail that detach request. SimRep only implements it
     because otherwise calls to FltDetachVolume or FilterDetach would
     fail to detach.
 
@@ -1137,11 +1137,11 @@ SimRepPreNetworkQueryOpen (
 
 Routine Description:
 
-    Because network query opens are FastIo operations, they cannot be reparsed. 
-    This means network query opens which need to be redirected must be failed 
-    with FLT_PREOP_DISALLOW_FASTIO. This will cause the Io Manager to reissue 
+    Because network query opens are FastIo operations, they cannot be reparsed.
+    This means network query opens which need to be redirected must be failed
+    with FLT_PREOP_DISALLOW_FASTIO. This will cause the Io Manager to reissue
     the open as a regular IRP based open. To prevent performance regression,
-    only fail network query opens which need to be reparsed. 
+    only fail network query opens which need to be reparsed.
 
     This is pageable because it can not be called on the paging path
 
@@ -1167,12 +1167,12 @@ Return Value:
     FLT_PREOP_CALLBACK_STATUS callbackStatus;
     BOOLEAN match;
     PIO_STACK_LOCATION irpSp;
-    
+
     UNREFERENCED_PARAMETER( FltObjects );
     UNREFERENCED_PARAMETER( CompletionContext );
-        
+
     PAGED_CODE();
-    
+
     DebugTrace( DEBUG_TRACE_ALL_IO,
                 ("[SimRep]: SimRepQueryOpen -> Enter (Cbd = %p, FileObject = %p)\n",
                  Cbd,
@@ -1184,7 +1184,7 @@ Return Value:
 
     status = STATUS_SUCCESS;
     callbackStatus = FLT_PREOP_SUCCESS_NO_CALLBACK; // pass through - default is no post op callback
-    
+
     //
     // We only registered for this IRP, so thats all we better get!
     //
@@ -1210,10 +1210,10 @@ Return Value:
     }
 
     //
-    //  We are not allowing volume opens to be reparsed in the sample. 
-    // 
+    //  We are not allowing volume opens to be reparsed in the sample.
+    //
 
-    if (FlagOn( Cbd->Iopb->TargetFileObject->Flags, FO_VOLUME_OPEN )) { 
+    if (FlagOn( Cbd->Iopb->TargetFileObject->Flags, FO_VOLUME_OPEN )) {
 
         DebugTrace( DEBUG_TRACE_ALL_IO,
                     ("[SimRep]: SimRepPreNetworkQueryOpen -> Ignoring volume open (Cbd = %p, FileObject = %p)\n",
@@ -1225,10 +1225,10 @@ Return Value:
     }
 
     //
-    //  Don't reparse an open by ID because it is not possible to determine create path intent. 
+    //  Don't reparse an open by ID because it is not possible to determine create path intent.
     //
 
-    if (FlagOn( irpSp->Parameters.Create.Options, FILE_OPEN_BY_FILE_ID )) {     
+    if (FlagOn( irpSp->Parameters.Create.Options, FILE_OPEN_BY_FILE_ID )) {
 
         goto SimRepPreNetworkQueryOpenCleanup;
     }
@@ -1260,20 +1260,20 @@ Return Value:
                  &nameInfo->Name,
                  Cbd,
                  FltObjects->FileObject) );
-    
+
     //
     //  Parse the filename information
     //
 
     status = FltParseFileNameInformation( nameInfo );
     if (!NT_SUCCESS( status )) {
-    
+
         DebugTrace( DEBUG_TRACE_REPARSE_OPERATIONS | DEBUG_TRACE_ERROR,
                     ("[SimRep]: SimRepPreNetworkQueryOpen -> Failed to parse name information for file %wZ (Cbd = %p, FileObject = %p)\n",
                      &nameInfo->Name,
                      Cbd,
                      FltObjects->FileObject) );
-    
+
         goto SimRepPreNetworkQueryOpenCleanup;
     }
 
@@ -1304,25 +1304,25 @@ Return Value:
         //
 
         //
-        // We can't return STATUS_REPARSE because it is FastIO. Return 
+        // We can't return STATUS_REPARSE because it is FastIO. Return
         // FLT_PREOP_DISALLOW_FASTIO, so it will be reissued down the slow path.
         //
 
-        DebugTrace(DEBUG_TRACE_REPARSED_REISSUE, 
+        DebugTrace(DEBUG_TRACE_REPARSED_REISSUE,
                     ("[SimRep]: Disallow fast IO that is to a mapped path! %wZ\n",
                      &nameInfo->Name) );
 
         callbackStatus = FLT_PREOP_DISALLOW_FASTIO;
 
     }
-        
+
 
 SimRepPreNetworkQueryOpenCleanup:
-    
+
     //
     //  Release the references we have acquired
-    //    
-    
+    //
+
     if (nameInfo != NULL) {
 
         FltReleaseFileNameInformation( nameInfo );
@@ -1337,7 +1337,7 @@ SimRepPreNetworkQueryOpenCleanup:
         DebugTrace( DEBUG_TRACE_ERROR,
                     ("[SimRep]: SimRepPreCreate -> Failed with status 0x%x \n",
                     status) );
-            
+
         Cbd->IoStatus.Status = status;
         callbackStatus = FLT_PREOP_COMPLETE;
     }
@@ -1362,14 +1362,14 @@ SimRepPreCreate (
 
 Routine Description:
 
-    This routine does the work for SimRep sample. SimRepPreCreate is called in 
-    the pre-operation path for IRP_MJ_CREATE and IRP_MJ_NETWORK_QUERY_OPEN. 
+    This routine does the work for SimRep sample. SimRepPreCreate is called in
+    the pre-operation path for IRP_MJ_CREATE and IRP_MJ_NETWORK_QUERY_OPEN.
     The function queries the requested file name for  the create and compares
-    it to the mapping path. If the file is down the "old mapping path", the 
+    it to the mapping path. If the file is down the "old mapping path", the
     filter checks to see if the request is fast io based. If it is we cannot
-    reparse the create because fast io does not support STATUS_REPARSE. 
-    Instead we return FLT_PREOP_DISALLOW_FASTIO to force the io to be reissued 
-    on the IRP path. If the create is IRP based, then we replace the file 
+    reparse the create because fast io does not support STATUS_REPARSE.
+    Instead we return FLT_PREOP_DISALLOW_FASTIO to force the io to be reissued
+    on the IRP path. If the create is IRP based, then we replace the file
     object's file name field with a new path based on the "new mapping path".
 
     This is pageable because it could not be called on the paging path
@@ -1395,12 +1395,12 @@ Return Value:
     NTSTATUS status;
     FLT_PREOP_CALLBACK_STATUS callbackStatus;
     UNICODE_STRING newFileName;
-    
+
     UNREFERENCED_PARAMETER( FltObjects );
     UNREFERENCED_PARAMETER( CompletionContext );
-        
+
     PAGED_CODE();
-    
+
     DebugTrace( DEBUG_TRACE_ALL_IO,
                 ("[SimRep]: SimRepPreCreate -> Enter (Cbd = %p, FileObject = %p)\n",
                  Cbd,
@@ -1415,7 +1415,7 @@ Return Value:
     callbackStatus = FLT_PREOP_SUCCESS_NO_CALLBACK; // pass through - default is no post op callback
 
     RtlInitUnicodeString( &newFileName, NULL );
-    
+
     //
     // We only registered for this irp, so thats all we better get!
     //
@@ -1438,10 +1438,10 @@ Return Value:
     }
 
     //
-    //  We are not allowing volume opens to be reparsed in the sample. 
+    //  We are not allowing volume opens to be reparsed in the sample.
     //
 
-    if (FlagOn( Cbd->Iopb->TargetFileObject->Flags, FO_VOLUME_OPEN )) { 
+    if (FlagOn( Cbd->Iopb->TargetFileObject->Flags, FO_VOLUME_OPEN )) {
 
         DebugTrace( DEBUG_TRACE_ALL_IO,
                     ("[SimRep]: SimRepPreCreate -> Ignoring volume open (Cbd = %p, FileObject = %p)\n",
@@ -1453,18 +1453,18 @@ Return Value:
     }
 
     //
-    //  SimRep does not honor the FILE_OPEN_REPARSE_POINT create option. For a 
+    //  SimRep does not honor the FILE_OPEN_REPARSE_POINT create option. For a
     //  symbolic the caller would pass this flag, for example, in order to open
-    //  the link for deletion. There is no concept of deleting the mapping for 
-    //  this filter so it is not clear what the purpose of honoring this flag 
+    //  the link for deletion. There is no concept of deleting the mapping for
+    //  this filter so it is not clear what the purpose of honoring this flag
     //  would be.
     //
 
     //
-    //  Don't reparse an open by ID because it is not possible to determine create path intent. 
+    //  Don't reparse an open by ID because it is not possible to determine create path intent.
     //
 
-    if (FlagOn( Cbd->Iopb->Parameters.Create.Options, FILE_OPEN_BY_FILE_ID )) {     
+    if (FlagOn( Cbd->Iopb->Parameters.Create.Options, FILE_OPEN_BY_FILE_ID )) {
 
         goto SimRepPreCreateCleanup;
     }
@@ -1477,7 +1477,7 @@ Return Value:
         //  is NOT configured to filter these operations. To perform the operation
         //  successfully and in a consistent manner this create must not trigger
         //  a reparse. Pass through the create without attempting any redirection.
-        //  
+        //
 
         goto SimRepPreCreateCleanup;
 
@@ -1496,7 +1496,7 @@ Return Value:
         //  will not include the final component. We need the full path in order
         //  to compare the name to our mapping.
         //
-            
+
         ClearFlag( Cbd->Iopb->OperationFlags, SL_OPEN_TARGET_DIRECTORY );
 
         DebugTrace( DEBUG_TRACE_RENAME_REDIRECTION_OPERATIONS,
@@ -1507,7 +1507,7 @@ Return Value:
 
 
         //
-        //  Get the filename as it appears below this filter. Note that we use 
+        //  Get the filename as it appears below this filter. Note that we use
         //  FLT_FILE_NAME_QUERY_FILESYSTEM_ONLY when querying the filename
         //  so that the filename as it appears below this filter does not end up
         //  in filter manager's name cache.
@@ -1518,19 +1518,19 @@ Return Value:
                                             &nameInfo );
 
         //
-        //  Restore the SL_OPEN_TARGET_DIRECTORY flag so the create will proceed 
-        //  for the target. The file systems depend on this flag being set in 
-        //  the target create in order for the subsequent SET_INFORMATION 
+        //  Restore the SL_OPEN_TARGET_DIRECTORY flag so the create will proceed
+        //  for the target. The file systems depend on this flag being set in
+        //  the target create in order for the subsequent SET_INFORMATION
         //  operation to proceed correctly.
         //
 
         SetFlag( Cbd->Iopb->OperationFlags, SL_OPEN_TARGET_DIRECTORY );
 
-        
+
     } else {
 
         //
-        //  Note that we use FLT_FILE_NAME_QUERY_DEFAULT when querying the 
+        //  Note that we use FLT_FILE_NAME_QUERY_DEFAULT when querying the
         //  filename. In the precreate the filename should not be in filter
         //  manager's name cache so there is no point looking there.
         //
@@ -1557,20 +1557,20 @@ Return Value:
                  &nameInfo->Name,
                  Cbd,
                  FltObjects->FileObject) );
-    
+
     //
     //  Parse the filename information
     //
 
     status = FltParseFileNameInformation( nameInfo );
     if (!NT_SUCCESS( status )) {
-    
+
         DebugTrace( DEBUG_TRACE_REPARSE_OPERATIONS | DEBUG_TRACE_ERROR,
                     ("[SimRep]: SimRepPreCreate -> Failed to parse name information for file %wZ (Cbd = %p, FileObject = %p)\n",
                      &nameInfo->Name,
                      Cbd,
                      FltObjects->FileObject) );
-    
+
         goto SimRepPreCreateCleanup;
     }
 
@@ -1583,17 +1583,17 @@ Return Value:
     status = SimRepMungeName( nameInfo,
                               &Globals.Mapping.OldName,
                               &Globals.Mapping.NewName,
-                              !FlagOn( Cbd->Iopb->OperationFlags, SL_CASE_SENSITIVE ),                             
+                              !FlagOn( Cbd->Iopb->OperationFlags, SL_CASE_SENSITIVE ),
                               FALSE,
                               &newFileName);
-    
+
     if (!NT_SUCCESS( status )) {
 
         if (status == STATUS_NOT_FOUND) {
             status = STATUS_SUCCESS;
         }
 
-        goto SimRepPreCreateCleanup;        
+        goto SimRepPreCreateCleanup;
     }
 
     DebugTrace( DEBUG_TRACE_REPARSE_OPERATIONS,
@@ -1640,15 +1640,15 @@ Return Value:
                  Cbd,
                  FltObjects->FileObject,
                  &newFileName) );
-        
+
 SimRepPreCreateCleanup:
-    
+
     //
     //  Release the references we have acquired
-    //    
+    //
 
     SimRepFreeUnicodeString( &newFileName );
-    
+
     if (nameInfo != NULL) {
 
         FltReleaseFileNameInformation( nameInfo );
@@ -1663,7 +1663,7 @@ SimRepPreCreateCleanup:
         Cbd->IoStatus.Status = STATUS_REPARSE;
         Cbd->IoStatus.Information = IO_REPARSE;
         callbackStatus = FLT_PREOP_COMPLETE;
-        
+
     } else if (!NT_SUCCESS( status )) {
 
         //
@@ -1673,7 +1673,7 @@ SimRepPreCreateCleanup:
         DebugTrace( DEBUG_TRACE_ERROR,
                     ("[SimRep]: SimRepPreCreate -> Failed with status 0x%x \n",
                     status) );
-            
+
         Cbd->IoStatus.Status = status;
         callbackStatus = FLT_PREOP_COMPLETE;
     }
@@ -1698,7 +1698,7 @@ SimRepPreSetInformation (
 
 Routine Description:
 
-    Pre callback for handling SetInformation. 
+    Pre callback for handling SetInformation.
 
 Arguments:
 
@@ -1717,7 +1717,7 @@ Return Value:
 
 --*/
 {
-    FLT_PREOP_CALLBACK_STATUS returnStatus = FLT_PREOP_SUCCESS_NO_CALLBACK; 
+    FLT_PREOP_CALLBACK_STATUS returnStatus = FLT_PREOP_SUCCESS_NO_CALLBACK;
     NTSTATUS status = STATUS_SUCCESS;
     PVOID buffer = NULL;
     ULONG bufferLength = 0;
@@ -1733,20 +1733,20 @@ Return Value:
         HANDLE RootDirectory;
         ULONG FileNameLength;
         PWSTR FileName;
-    } setInfo;        
-    
+    } setInfo;
+
     PAGED_CODE();
-    
+
     UNREFERENCED_PARAMETER( CompletionContext );
 
     RtlInitUnicodeString(&newFileName, NULL);
-    
+
     NT_ASSERT( Globals.RemapRenamesAndLinks );
 
-    fileInfoClass = Cbd->Iopb->Parameters.SetFileInformation.FileInformationClass;    
+    fileInfoClass = Cbd->Iopb->Parameters.SetFileInformation.FileInformationClass;
 
     switch (fileInfoClass) {
-        
+
         case FileRenameInformation:
         case FileRenameInformationEx:
 
@@ -1776,14 +1776,14 @@ Return Value:
             linkInfo = Cbd->Iopb->Parameters.SetFileInformation.InfoBuffer;
 
             //  Accessing ReplaceIfExists - linkInfo->ReplaceIfExists
-            
+
             setInfo.RootDirectory = linkInfo->RootDirectory;
             setInfo.FileNameLength = linkInfo->FileNameLength;
             setInfo.FileName = linkInfo->FileName;
-        
+
             break;
 
-        case FileDirectoryInformation:       // 1            
+        case FileDirectoryInformation:       // 1
         case FileFullDirectoryInformation:   // 2
         case FileBothDirectoryInformation:   // 3
         case FileBasicInformation:           // 4  wdm
@@ -1824,34 +1824,34 @@ Return Value:
         case FileDispositionInformationEx:   // 64
 
             goto SimRepPreSetInformationCleanup;
-        
+
         default:
 
             //
             //  It is risky to pass through information classes that we don't
             //  know about. Try to catch new or invalid classes in testing.
             //
-            
+
             NT_ASSERTMSG("SimRep passing through unknown information class\n", FALSE);
             goto SimRepPreSetInformationCleanup;
     }
 
     //
-    //    When this filter is configured to remap renames and hardlinks we need 
-    //    to ensure other filters see a consistent destination for the 
+    //    When this filter is configured to remap renames and hardlinks we need
+    //    to ensure other filters see a consistent destination for the
     //    operation. The FileName buffer will not match the actual rename path
-    //    when a reparse is involved and if lower filters pass it to 
+    //    when a reparse is involved and if lower filters pass it to
     //    FltGetDestinationFileNameInformation they will get back the wrong
-    //    destination. To fix this we'll need to munge the FileName buffer 
+    //    destination. To fix this we'll need to munge the FileName buffer
     //    explicitly.
-    // 
+    //
     //    The reason FltGetDestinationFileNameInformation gives the correct
-    //    destination here is because we send it to ourselves (the current 
-    //    provider) and, as a name provider, our filter will get the creates 
+    //    destination here is because we send it to ourselves (the current
+    //    provider) and, as a name provider, our filter will get the creates
     //    issued for the parent directory name normalization and perform the
     //    reparse.
     //
-    
+
     status = FltGetDestinationFileNameInformation( FltObjects->Instance,
                                                    FltObjects->FileObject,
                                                    setInfo.RootDirectory,
@@ -1868,11 +1868,11 @@ Return Value:
 
         goto SimRepPreSetInformationCleanup;
     }
-    
+
     status = FltParseFileNameInformation( nameInfo );
-    
+
     if (!NT_SUCCESS( status )) {
-        
+
         goto SimRepPreSetInformationCleanup;
     }
 
@@ -1880,12 +1880,12 @@ Return Value:
     //  Stream operations are already consistent regardless of whether the file
     //  is redirected so there is nothing to do.
     //
-    
+
     if (nameInfo->Stream.Length != 0) {
 
         goto SimRepPreSetInformationCleanup;
     }
-    
+
     //
     //  If the operation destion overlaps the new mapping get a new filename
     //  string to send in the request.
@@ -1901,9 +1901,9 @@ Return Value:
     if (status == STATUS_NOT_FOUND) {
 
         //
-        //  If the operation destination overlaps the old mapping exactly, get 
-        //  a new filename string munged with the new mapping to send in the 
-        //  request. This is a special case where our name provider will not 
+        //  If the operation destination overlaps the old mapping exactly, get
+        //  a new filename string munged with the new mapping to send in the
+        //  request. This is a special case where our name provider will not
         //  perform the reparse during name resolution because the parent
         //  directories don't overlap the mapping.
         //
@@ -1915,23 +1915,23 @@ Return Value:
                                   TRUE,
                                   &newFileName );
     }
-        
+
     if (!NT_SUCCESS( status )) {
 
         //
         //  The rename doesn't overlap the mapping at all. No need to munge
         //
-        
+
         if (status == STATUS_NOT_FOUND) {
             status = STATUS_SUCCESS;
         }
 
         goto SimRepPreSetInformationCleanup;
     }
-        
+
     //
-    //  Explicitly set the munged the name in the set information structure so 
-    //  lower filters who see this operation will see the correct 
+    //  Explicitly set the munged the name in the set information structure so
+    //  lower filters who see this operation will see the correct
     //  destination from FLT_GET_DESTINATION_FILE_NAME_INFORMATION.
     //
 
@@ -1940,41 +1940,41 @@ Return Value:
 
          bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
 
-         buffer = ExAllocatePoolWithTag( PagedPool, SIMREP_STRING_TAG, bufferLength );
+         buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
          if (buffer == NULL) {
-         
+
              status = STATUS_INSUFFICIENT_RESOURCES;
              goto SimRepPreSetInformationCleanup;
          }
 
          newRenameInfo = (PFILE_RENAME_INFORMATION)buffer;
-         
+
          newRenameInfo->Flags = renameInfo->Flags;
          newRenameInfo->RootDirectory = NULL;
          newRenameInfo->FileNameLength = newFileName.Length;
 
          RtlCopyMemory( &newRenameInfo->FileName, newFileName.Buffer, newFileName.Length );
-    
+
      } else if (fileInfoClass == FileLinkInformation) {
 
         bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
-        
-        buffer = ExAllocatePoolWithTag( PagedPool, SIMREP_STRING_TAG, bufferLength );
-        
+
+        buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
+
         if (buffer == NULL) {
-        
+
             status = STATUS_INSUFFICIENT_RESOURCES;
             goto SimRepPreSetInformationCleanup;
         }
-        
+
         newLinkInfo = (PFILE_LINK_INFORMATION)buffer;
 
         newLinkInfo->ReplaceIfExists = linkInfo->ReplaceIfExists;
         newLinkInfo->RootDirectory = NULL;
         newLinkInfo->FileNameLength = newFileName.Length;
 
-        RtlCopyMemory( &newLinkInfo->FileName, newFileName.Buffer, newFileName.Length ); 
+        RtlCopyMemory( &newLinkInfo->FileName, newFileName.Buffer, newFileName.Length );
 
     }
 
@@ -1989,25 +1989,25 @@ Return Value:
         DebugTrace( DEBUG_TRACE_RENAME_REDIRECTION_OPERATIONS | DEBUG_TRACE_ERROR,
                     ("[SimRep]: SimRepPreSetInformation -> Failed sending FltSetInformationFile (Cbd = %p, FileObject = %p)\n",
                      Cbd,
-                     FltObjects->FileObject) );                
-        
+                     FltObjects->FileObject) );
+
         goto SimRepPreSetInformationCleanup;
     }
 
     Cbd->IoStatus.Status = status;
 
     returnStatus = FLT_PREOP_COMPLETE;
-           
+
 
 SimRepPreSetInformationCleanup:
 
     if (nameInfo) {
-        
+
         FltReleaseFileNameInformation( nameInfo );
     }
 
     if (buffer) {
-        
+
         ExFreePoolWithTag( buffer, SIMREP_STRING_TAG );
     }
 
@@ -2021,7 +2021,7 @@ SimRepPreSetInformationCleanup:
 
         Cbd->IoStatus.Status = status;
 
-        returnStatus = FLT_PREOP_COMPLETE;            
+        returnStatus = FLT_PREOP_COMPLETE;
     }
 
     return returnStatus;
@@ -2048,14 +2048,14 @@ Arguments:
 
     Size - the size in bytes needed for the string buffer
 
-    String - supplies the size of the string to be allocated in the MaximumLength field 
+    String - supplies the size of the string to be allocated in the MaximumLength field
              return the unicode string
 
 Return Value:
 
     STATUS_SUCCESS                  - success
     STATUS_INSUFFICIENT_RESOURCES   - failure
-  
+
 --*/
 {
 
@@ -2092,11 +2092,11 @@ Routine Description:
 
 Arguments:
 
-    String - supplies the string to be freed 
+    String - supplies the string to be freed
 
 Return Value:
 
-    None    
+    None
 
 --*/
 {
@@ -2124,10 +2124,10 @@ SimRepReplaceFileObjectName (
 Routine Description:
 
     This routine is used to replace a file object's name
-    with a provided name. This should only be called if 
+    with a provided name. This should only be called if
     IoReplaceFileObjectName is not on the system.
     If this function is used and verifier is enabled
-    the filter will fail to unload due to a false 
+    the filter will fail to unload due to a false
     positive on the leaked pool test.
 
 Arguments:
@@ -2209,7 +2209,7 @@ SimRepMungeName(
 Routine Description:
 
     This routine will create a new path by munginging a new subpath
-    over and existing subpath. 
+    over and existing subpath.
 
 Arguments:
 
@@ -2235,16 +2235,16 @@ Return Value:
     NTSTATUS status = STATUS_NOT_FOUND;
     BOOLEAN match;
     BOOLEAN exactMatch;
-    USHORT length;  
-    
+    USHORT length;
+
     PAGED_CODE();
-    
+
     match = SimRepCompareMapping( NameInfo, SubPath, IgnoreCase, &exactMatch );
 
     if (match) {
 
         if (ExactMatch && !exactMatch) {
-   
+
             goto SimRepMungeNameCleanup;
         }
 
@@ -2257,44 +2257,44 @@ Return Value:
         MungedPath->MaximumLength = (USHORT)length;
 
         status = SimRepAllocateUnicodeString( MungedPath );
-    
+
         if (!NT_SUCCESS( status )) {
-                        
+
             goto SimRepMungeNameCleanup;
         }
-        
+
         //
         //  Copy the volume portion of the name (part of the name preceding the matching part)
         //
-            
+
         RtlCopyUnicodeString( MungedPath, &NameInfo->Volume );
-                          
+
         //
         //  Copy the new file name in place of the matching part of the name
         //
-     
+
         status = RtlAppendUnicodeStringToString( MungedPath, NewSubPath );
-        
+
         NT_ASSERT( NT_SUCCESS( status ) );
-        
+
         //
         //  Copy the portion of the name following the matching part of the name
         //
-        
-        RtlCopyMemory( Add2Ptr( MungedPath->Buffer, NameInfo->Volume.Length + NewSubPath->Length ), 
-                       Add2Ptr( NameInfo->Name.Buffer, NameInfo->Volume.Length + SubPath->Length ), 
+
+        RtlCopyMemory( Add2Ptr( MungedPath->Buffer, NameInfo->Volume.Length + NewSubPath->Length ),
+                       Add2Ptr( NameInfo->Name.Buffer, NameInfo->Volume.Length + SubPath->Length ),
                        NameInfo->Name.Length - NameInfo->Volume.Length - SubPath->Length );
-        
+
         //
         //  Compute the final length of the new name
         //
-            
+
         MungedPath->Length = length;
-                
+
     }
 
 SimRepMungeNameCleanup:
-    
+
     return status;
 }
 
@@ -2327,7 +2327,7 @@ Arguments:
 Return Value:
 
     TRUE - the file matches the mapping path
-    
+
     FALSE - the file is not in the mapping path
 
 --*/
@@ -2335,13 +2335,13 @@ Return Value:
     UNICODE_STRING fileName;
     BOOLEAN match;
     BOOLEAN exactMatch;
-    
+
     PAGED_CODE();
-    
+
     //
     //  The NameInfo parameter is assumed to have been parsed
     //
-    
+
     NT_ASSERT (FlagOn(NameInfo->NamesParsed, FLTFL_FILE_NAME_PARSED_FINAL_COMPONENT) &&
                FlagOn(NameInfo->NamesParsed, FLTFL_FILE_NAME_PARSED_EXTENSION) &&
                FlagOn(NameInfo->NamesParsed, FLTFL_FILE_NAME_PARSED_STREAM) &&
@@ -2374,7 +2374,7 @@ Return Value:
             //
 
             match = TRUE;
-            
+
             exactMatch = TRUE;
 
         } else if (fileName.Buffer[(MappingPath->Length/sizeof( WCHAR ))] == OBJ_NAME_PATH_SEPARATOR) {
@@ -2382,7 +2382,7 @@ Return Value:
             //
             //  This path is a child of the mapping
             //
-            
+
             match = TRUE;
         }
 
@@ -2390,9 +2390,9 @@ Return Value:
         //  No match here means the path simply overlaps the mapping like
         //  \a\b\c overlaps \a\b\cd.txt
         //
-        
+
     }
-    
+
     if (ARGUMENT_PRESENT( ExactMatch )) {
         *ExactMatch = exactMatch;
     }
@@ -2405,7 +2405,7 @@ Return Value:
 //  In order to remap renames and hard links correctly SimRep needs
 //  to be called as part of name resolution. To achieve this SimRep
 //  must be a name provider, albeit a simple "pass through" provider.
-//  SimRep is is only demonstrating how to simulate reparse points, 
+//  SimRep is is only demonstrating how to simulate reparse points,
 //  not how to virtualize a namespace. Hence the name provider does
 //  not munge the names but simply passes the name queries through.
 //
@@ -2430,7 +2430,7 @@ Routine Description:
 
 Arguments:
 
-    Instance - Opaque instance pointer for the minifilter driver instance that 
+    Instance - Opaque instance pointer for the minifilter driver instance that
     this callback routine is registered for.
 
     FileObject - The fileobject for which the name is being requested.
@@ -2438,13 +2438,13 @@ Arguments:
     Cbd - If non-NULL, the CallbackData structure defining the operation
         we are in the midst of processing when this name is queried.
 
-    NameOptions - value that specifies the name format, query method, and flags 
+    NameOptions - value that specifies the name format, query method, and flags
     for this file name information query
 
-    CacheFileNameInformation - A pointer to a Boolean value specifying whether 
-    this name can be cached. 
+    CacheFileNameInformation - A pointer to a Boolean value specifying whether
+    this name can be cached.
 
-    FileName - A pointer to a filter manager-allocated FLT_NAME_CONTROL 
+    FileName - A pointer to a filter manager-allocated FLT_NAME_CONTROL
     structure to receive the file name on output
 
 Return Value:
@@ -2464,7 +2464,7 @@ Return Value:
     //
     //  Clear FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER from the name options
     //  We pass the same name options when we issue a name query to satisfy this
-    //  name query. We want that name query to be targeted below simrep.sys and 
+    //  name query. We want that name query to be targeted below simrep.sys and
     //  not recurse into simrep.sys
     //
 
@@ -2474,10 +2474,10 @@ Return Value:
 
 
         //
-        //  This file object has not yet been opened.  We will query the filter 
+        //  This file object has not yet been opened.  We will query the filter
         //  manager for the name and return that name. We must use the original
-        //  NameOptions we received in the query. If we were to swallow flags 
-        //  such as FLT_FILE_NAME_QUERY_FILESYSTEM_ONLY or 
+        //  NameOptions we received in the query. If we were to swallow flags
+        //  such as FLT_FILE_NAME_QUERY_FILESYSTEM_ONLY or
         //  FLT_FILE_NAME_DO_NOT_CACHE we could corrupt the name cache.
         //
 
@@ -2495,26 +2495,26 @@ Return Value:
     } else {
 
         //
-        //  The file has been opened. If the call is not in the context of an IO 
-        //  operation (we don't have a callback data), we have to get the 
+        //  The file has been opened. If the call is not in the context of an IO
+        //  operation (we don't have a callback data), we have to get the
         //  filename with FltGetFilenameInformationUnsafe using the fileobject.
-        //  Note, the only way we won't have a callback is if someone called 
+        //  Note, the only way we won't have a callback is if someone called
         //  FltGetFileNameInformationUnsafe already.
         //
-        
+
         if (ARGUMENT_PRESENT( Cbd )) {
 
             status = FltGetFileNameInformation( Cbd,
                                                 NameOptions,
                                                 &userFileNameInfo );
-            
+
         } else {
-                    
+
             status = FltGetFileNameInformationUnsafe( FileObject,
                                                       Instance,
                                                       NameOptions,
                                                       &userFileNameInfo );
-            
+
         }
 
         if (!NT_SUCCESS( status )) {
@@ -2537,8 +2537,8 @@ Return Value:
     RtlCopyUnicodeString( &FileName->Name, userFileName );
 
     //
-    //  If the file object is unopened then the name of the stream represented by 
-    //  the file object may change from pre-create to post-create. 
+    //  If the file object is unopened then the name of the stream represented by
+    //  the file object may change from pre-create to post-create.
     //  For example, the name being opened could actually be a symbolic link
     //
 
@@ -2551,9 +2551,9 @@ SimRepGenerateFileNameCleanup:
 
         FltReleaseFileNameInformation( userFileNameInfo );
     }
- 
+
     if (!NT_SUCCESS( status )) {
-        
+
         DebugTrace( DEBUG_TRACE_NAME_OPERATIONS | DEBUG_TRACE_ERROR,
                     ("SimRepGenerateFileName: failed %x\n",
                     status) );
@@ -2582,30 +2582,30 @@ Routine Description:
 
 Arguments:
 
-    Instance - Opaque instance pointer for the minifilter driver instance that 
+    Instance - Opaque instance pointer for the minifilter driver instance that
     this callback routine is registered for.
 
-    ParentDirectory - Pointer to a UNICODE_STRING structure that contains the 
-    name of the parent directory for this name component. 
+    ParentDirectory - Pointer to a UNICODE_STRING structure that contains the
+    name of the parent directory for this name component.
 
-    VolumeNameLength - Length, in bytes, of the parent directory name that is 
-    stored in the structure that the ParentDirectory parameter points to. 
+    VolumeNameLength - Length, in bytes, of the parent directory name that is
+    stored in the structure that the ParentDirectory parameter points to.
 
-    Component - Pointer to a UNICODE_STRING structure that contains the name 
-    component to be expanded. 
+    Component - Pointer to a UNICODE_STRING structure that contains the name
+    component to be expanded.
 
-    ExpandComponentName - Pointer to a FILE_NAMES_INFORMATION structure that 
-    receives the expanded (normalized) file name information for the name component. 
+    ExpandComponentName - Pointer to a FILE_NAMES_INFORMATION structure that
+    receives the expanded (normalized) file name information for the name component.
 
-    ExpandComponentNameLength - Length, in bytes, of the buffer that the 
-    ExpandComponentName parameter points to. 
+    ExpandComponentNameLength - Length, in bytes, of the buffer that the
+    ExpandComponentName parameter points to.
 
-    Flags - Name normalization flags. 
+    Flags - Name normalization flags.
 
-    NormalizationContext - Pointer to minifilter driver-provided context 
-    information to be passed in any subsequent calls to this callback routine 
+    NormalizationContext - Pointer to minifilter driver-provided context
+    information to be passed in any subsequent calls to this callback routine
     that are made to normalize the remaining components in the same file name
-    path. 
+    path.
 
 Return Value:
 
@@ -2619,7 +2619,7 @@ Return Value:
     PFILE_OBJECT directoryFileObject = NULL;
     OBJECT_ATTRIBUTES objAttributes;
     IO_STATUS_BLOCK ioStatusBlock;
-    BOOLEAN ignoreCase = !BooleanFlagOn( Flags, 
+    BOOLEAN ignoreCase = !BooleanFlagOn( Flags,
                                          FLTFL_NORMALIZE_NAME_CASE_SENSITIVE );
 
     UNREFERENCED_PARAMETER( NormalizationContext );
@@ -2637,8 +2637,8 @@ Return Value:
     }
 
     InitializeObjectAttributes( &objAttributes,
-                                (PUNICODE_STRING)ParentDirectory,                               
-                                OBJ_KERNEL_HANDLE 
+                                (PUNICODE_STRING)ParentDirectory,
+                                OBJ_KERNEL_HANDLE
                                   | (ignoreCase ? OBJ_CASE_INSENSITIVE : 0),
                                 NULL,
                                 NULL );
@@ -2650,7 +2650,7 @@ Return Value:
                             &objAttributes,
                             &ioStatusBlock,
                             NULL,                              // AllocationSize
-                            FILE_ATTRIBUTE_DIRECTORY 
+                            FILE_ATTRIBUTE_DIRECTORY
                               | FILE_ATTRIBUTE_NORMAL,         // FileAttributes
                             FILE_SHARE_READ
                               | FILE_SHARE_WRITE
@@ -2667,7 +2667,7 @@ Return Value:
 
         goto SimRepNormalizeNameComponentCleanup;
     }
-            
+
     status = ObReferenceObjectByHandle( directoryHandle,
                                         FILE_LIST_DIRECTORY | SYNCHRONIZE, // DesiredAccess
                                         *IoFileObjectType,
@@ -2777,15 +2777,15 @@ Return Value:
     PFILE_OBJECT directoryFileObject = NULL;
     OBJECT_ATTRIBUTES objAttributes;
     IO_STATUS_BLOCK ioStatusBlock;
-    BOOLEAN ignoreCase = !BooleanFlagOn( Flags, 
+    BOOLEAN ignoreCase = !BooleanFlagOn( Flags,
                                          FLTFL_NORMALIZE_NAME_CASE_SENSITIVE );
     IO_DRIVER_CREATE_CONTEXT createContext;
-    TXN_PARAMETER_BLOCK txnBlock;   
+    TXN_PARAMETER_BLOCK txnBlock;
     PTXN_PARAMETER_BLOCK originalTxnBlock;
 
     UNREFERENCED_PARAMETER( NormalizationContext );
     UNREFERENCED_PARAMETER( DeviceNameLength );
-    
+
     PAGED_CODE();
 
     //
@@ -2798,8 +2798,8 @@ Return Value:
     }
 
     InitializeObjectAttributes( &objAttributes,
-                                (PUNICODE_STRING)ParentDirectory,                               
-                                OBJ_KERNEL_HANDLE 
+                                (PUNICODE_STRING)ParentDirectory,
+                                OBJ_KERNEL_HANDLE
                                   | (ignoreCase ? OBJ_CASE_INSENSITIVE : 0),
                                 NULL,
                                 NULL );
@@ -2809,7 +2809,7 @@ Return Value:
     //
     //  On Vista and beyond, we need to query the normalized name in the context
     //  of the same transaction as the name query
-    // 
+    //
 
     IoInitializeDriverCreateContext( &createContext );
 
@@ -2821,7 +2821,7 @@ Return Value:
         //  Do not propagate the miniversion for the parent open
         //  as directories don't have a miniversion.
         //
-                   
+
         txnBlock.Length = sizeof( txnBlock );
         txnBlock.TransactionObject = originalTxnBlock->TransactionObject;
         txnBlock.TxFsContext = TXF_MINIVERSION_DEFAULT_VIEW;
@@ -2837,7 +2837,7 @@ Return Value:
                                &objAttributes,
                                &ioStatusBlock,
                                NULL,                              // AllocationSize
-                               FILE_ATTRIBUTE_DIRECTORY 
+                               FILE_ATTRIBUTE_DIRECTORY
                                  | FILE_ATTRIBUTE_NORMAL,         // FileAttributes
                                FILE_SHARE_READ
                                  | FILE_SHARE_WRITE
@@ -2850,7 +2850,7 @@ Return Value:
                                0,                                 // EaLength
                                IO_IGNORE_SHARE_ACCESS_CHECK,      // Flags
                                &createContext );
-                               
+
 
     if (!NT_SUCCESS( status )) {
 
@@ -2923,15 +2923,15 @@ Arguments:
         changed about the file.
 
     ReturnSingleEntry - If this parameter is TRUE, SimRepQueryDirectoryFile
-    returns only the first entry that is found. 
+    returns only the first entry that is found.
 
-    FileName - An optional pointer to a caller-allocated Unicode string 
+    FileName - An optional pointer to a caller-allocated Unicode string
     containing the name of a file (or multiple files, if wildcards are used)
     within the directory specified by FileHandle. This parameter is optional
-    and can be NULL. 
+    and can be NULL.
 
-    RestartScan - Set to TRUE if the scan is to start at the first entry in 
-    the directory. Set to FALSE if resuming the scan from a previous call. 
+    RestartScan - Set to TRUE if the scan is to start at the first entry in
+    the directory. Set to FALSE if resuming the scan from a previous call.
 
 
 Return Value:
