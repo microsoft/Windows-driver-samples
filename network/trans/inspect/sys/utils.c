@@ -127,7 +127,7 @@ IsMatchingConnectPacket(
       return FALSE;
    }
 
-   if (inFixedValues->incomingValue[protocolIndex].value.uint8 != 
+   if (inFixedValues->incomingValue[protocolIndex].value.uint8 !=
        pendedPacket->protocol)
    {
       return FALSE;
@@ -149,11 +149,11 @@ IsMatchingConnectPacket(
 
    if (addressFamily == AF_INET)
    {
-      UINT32 ipv4LocalAddr = 
+      UINT32 ipv4LocalAddr =
          RtlUlongByteSwap(
             inFixedValues->incomingValue[localAddrIndex].value.uint32
             );
-      UINT32 ipv4RemoteAddr = 
+      UINT32 ipv4RemoteAddr =
       // Prefast thinks we are ignoring this return value.
       // If driver is unloading, we give up and ignore it on purpose.
       // Otherwise, we put the pointer onto the list, but we make it opaque
@@ -174,7 +174,7 @@ IsMatchingConnectPacket(
    else
    {
       if (RtlCompareMemory(
-            inFixedValues->incomingValue[localAddrIndex].value.byteArray16, 
+            inFixedValues->incomingValue[localAddrIndex].value.byteArray16,
             &pendedPacket->localAddr,
             sizeof(FWP_BYTE_ARRAY16)) !=  sizeof(FWP_BYTE_ARRAY16))
       {
@@ -182,7 +182,7 @@ IsMatchingConnectPacket(
       }
 
       if (RtlCompareMemory(
-            inFixedValues->incomingValue[remoteAddrIndex].value.byteArray16, 
+            inFixedValues->incomingValue[remoteAddrIndex].value.byteArray16,
             &pendedPacket->remoteAddr,
             sizeof(FWP_BYTE_ARRAY16)) !=  sizeof(FWP_BYTE_ARRAY16))
       {
@@ -217,11 +217,11 @@ FillNetwork5Tuple(
 
    if (addressFamily == AF_INET)
    {
-      packet->ipv4LocalAddr = 
+      packet->ipv4LocalAddr =
          RtlUlongByteSwap( /* host-order -> network-order conversion */
             inFixedValues->incomingValue[localAddrIndex].value.uint32
             );
-      packet->ipv4RemoteAddr = 
+      packet->ipv4RemoteAddr =
          RtlUlongByteSwap( /* host-order -> network-order conversion */
             inFixedValues->incomingValue[remoteAddrIndex].value.uint32
             );
@@ -240,11 +240,11 @@ FillNetwork5Tuple(
          );
    }
 
-   packet->localPort = 
+   packet->localPort =
       RtlUshortByteSwap(
          inFixedValues->incomingValue[localPortIndex].value.uint16
          );
-   packet->remotePort = 
+   packet->remotePort =
       RtlUshortByteSwap(
          inFixedValues->incomingValue[remotePortIndex].value.uint16
          );
@@ -320,13 +320,13 @@ AllocateAndInitializePendedPacket(
       pendedPacket->netBufferList = layerData;
 
       //
-      // Reference the net buffer list to make it accessible outside of 
+      // Reference the net buffer list to make it accessible outside of
       // classifyFn.
       //
       FwpsReferenceNetBufferList(pendedPacket->netBufferList, TRUE);
    }
 
-   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                          FWPS_METADATA_FIELD_COMPARTMENT_ID));
    pendedPacket->compartmentId = inMetaValues->compartmentId;
 
@@ -334,14 +334,14 @@ AllocateAndInitializePendedPacket(
        (layerData != NULL))
    {
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-                  inMetaValues, 
+                  inMetaValues,
                   FWPS_METADATA_FIELD_TRANSPORT_ENDPOINT_HANDLE));
       pendedPacket->endpointHandle = inMetaValues->transportEndpointHandle;
 
       pendedPacket->remoteScopeId = inMetaValues->remoteScopeId;
 
       if (FWPS_IS_METADATA_FIELD_PRESENT(
-            inMetaValues, 
+            inMetaValues,
             FWPS_METADATA_FIELD_TRANSPORT_CONTROL_DATA))
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
@@ -376,16 +376,16 @@ AllocateAndInitializePendedPacket(
          &subInterfaceIndexIndex
          );
 
-      pendedPacket->interfaceIndex = 
+      pendedPacket->interfaceIndex =
          inFixedValues->incomingValue[interfaceIndexIndex].value.uint32;
-      pendedPacket->subInterfaceIndex = 
+      pendedPacket->subInterfaceIndex =
          inFixedValues->incomingValue[subInterfaceIndexIndex].value.uint32;
-      
+
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_IP_HEADER_SIZE));
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE));
       pendedPacket->ipHeaderSize = inMetaValues->ipHeaderSize;
       pendedPacket->transportHeaderSize = inMetaValues->transportHeaderSize;
@@ -400,10 +400,10 @@ AllocateAndInitializePendedPacket(
             &packetInfo
             );
 
-         pendedPacket->ipSecProtected = 
+         pendedPacket->ipSecProtected =
             (BOOLEAN)packetInfo.ipsecInformation.inbound.isSecure;
 
-         pendedPacket->nblOffset = 
+         pendedPacket->nblOffset =
             NET_BUFFER_DATA_OFFSET(\
                NET_BUFFER_LIST_FIRST_NB(pendedPacket->netBufferList));
       }
@@ -427,8 +427,8 @@ BOOLEAN
 IsTrafficPermitted(void)
 {
    NTSTATUS status;
-
-   DECLARE_CONST_UNICODE_STRING(valueName, L"PermitTraffic");
+   BOOLEAN permitTraffic = TRUE;
+   DECLARE_CONST_UNICODE_STRING(valueName, L"BlockTraffic");
    ULONG result;
 
    status = WdfRegistryQueryULong(
@@ -437,12 +437,12 @@ IsTrafficPermitted(void)
                &result
                );
 
-   if (!NT_SUCCESS(status))
+   if (NT_SUCCESS(status) && result != 0)
    {
-      result = 1;
+      permitTraffic = FALSE;
    }
 
-   return (result != 0);
+   return permitTraffic;
 }
 
 
