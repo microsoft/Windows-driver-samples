@@ -21,8 +21,8 @@
 
 [Version]
 signature="$WINDOWS NT$"
-Class=Media
-ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Class=Camera
+ClassGuid={ca3e7ab9-b4c3-4ae6-8251-579ef933890f}
 Provider=%ProviderName%
 Catalogfile=avshws.cat
 DriverVer=08/31/2006,6.0.5600.0

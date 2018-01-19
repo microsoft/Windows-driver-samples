@@ -14,8 +14,8 @@
 
 [Version]
 Signature="$Windows NT$"
-Class=MEDIA
-ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Class=Camera
+ClassGuid={ca3e7ab9-b4c3-4ae6-8251-579ef933890f}
 Provider=%ProviderName%
 CatalogFile=avssamp.cat
 DriverVer=09/30/2004,1.0.0.0

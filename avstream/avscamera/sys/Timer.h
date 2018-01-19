@@ -133,7 +133,7 @@ private:
         _Inout_opt_ PVOID   Arg2
     ) ;
 
-    TIMER_TYPE  GetType()
+    TIMER_TYPE  GetType() const
     {
         return m_type;
     }

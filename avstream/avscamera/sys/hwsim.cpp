@@ -1107,7 +1107,7 @@ Return Value:
 
 **************************************************************************/
 
-PCCHAR
+const CHAR *
 DVS_Text( ULONGLONG Flags )
 {
     PAGED_CODE();
@@ -1123,12 +1123,12 @@ DVS_Text( ULONGLONG Flags )
             CHAR buffer[32];
 
             RtlStringCbPrintfA(buffer, sizeof(buffer), "Unknown [0x%016llX]", Flags);
-            return (PCCHAR) buffer;
+            return (const CHAR *) buffer;
         }
     }
 }
 
-PCCHAR
+const CHAR *
 OIS_Text( ULONGLONG Flags )
 {
     PAGED_CODE();
@@ -1144,7 +1144,7 @@ OIS_Text( ULONGLONG Flags )
             CHAR buffer[32];
 
             RtlStringCbPrintfA(buffer, sizeof(buffer), "Unknown [0x%016llX]", Flags);
-            return (PCCHAR) buffer;
+            return (const CHAR *) buffer;
         }
     }
 }

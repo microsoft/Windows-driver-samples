@@ -3029,8 +3029,7 @@ SetVFR(
             pVFR->isValid() &&
             pVFR->Capability == 0 &&
             (KSCAMERA_EXTENDEDPROP_VFR_OFF == pVFR->Flags ||
-             KSCAMERA_EXTENDEDPROP_VFR_ON  == pVFR->Flags ||
-             KSCAMERA_EXTENDEDPROP_VIDEOHDR_AUTO == pVFR->Flags ) )
+             KSCAMERA_EXTENDEDPROP_VFR_ON  == pVFR->Flags) )
     {
         //Set the current VFR state
         Status = m_Sensor->SetVFR( pVFR );
@@ -3366,6 +3365,69 @@ SetVideoStabilization(
     }
     DBG_TRACE("pVideoStab = %p, PinId = %u, m_sensor->VideoIndex = %u, Flags = %llu, Version = %u",
               pVideoStab, pVideoStab->PinId, m_Sensor->GetNextVideoIndex(), pVideoStab->Flags, pVideoStab->Version);
+
+    return Status;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING.
+NTSTATUS
+CCaptureFilter::
+GetVideoTemporalDenoising(
+    _Inout_ CExtendedProperty *pVideoTemporalDenoising
+)
+{
+    PAGED_CODE();
+    NTSTATUS Status = STATUS_INVALID_PARAMETER;
+
+    // Call must come for filter scope only
+    if (pVideoTemporalDenoising->isValid() &&
+        pVideoTemporalDenoising->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE)
+    {
+        //Get the current state
+        Status = m_Sensor->GetVideoTemporalDenoising(pVideoTemporalDenoising);
+    }
+
+    DBG_TRACE("pVideoTemporalDenoising = %p, PinId = %u, Flags = %llu, Version = %u",
+        pVideoTemporalDenoising, pVideoTemporalDenoising->PinId, pVideoTemporalDenoising->Flags, pVideoTemporalDenoising->Version);
+
+    return Status;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING.
+NTSTATUS
+CCaptureFilter::
+SetVideoTemporalDenoising(
+    _In_ CExtendedProperty *pVideoTemporalDenoising
+)
+{
+    PAGED_CODE();
+
+    NTSTATUS Status = STATUS_INVALID_PARAMETER;
+
+    // Call must come for filter scope only and flags must be supported and mutually exclusive
+    if (pVideoTemporalDenoising->isValid() && 
+        pVideoTemporalDenoising->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE &&
+        !(pVideoTemporalDenoising->Capability & KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL) &&
+        (KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_AUTO == pVideoTemporalDenoising->Flags ||
+            KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_OFF == pVideoTemporalDenoising->Flags ||
+            KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_ON == pVideoTemporalDenoising->Flags))
+    {
+        CExtendedProperty Caps(*pVideoTemporalDenoising);
+        Status = m_Sensor->GetVideoTemporalDenoising(&Caps);
+
+        if (NT_SUCCESS(Status))
+        {
+            //  Assume an invalid parameter.
+            Status = STATUS_INVALID_PARAMETER;
+
+            if (pVideoTemporalDenoising->Flags == (pVideoTemporalDenoising->Flags & Caps.Capability))
+            {
+                Status = m_Sensor->SetVideoTemporalDenoising(pVideoTemporalDenoising);
+            }
+        }
+    }
+    DBG_TRACE("pVideoTemporalDenoising = %p, PinId = %u, Flags = %llu, Version = %u",
+        pVideoTemporalDenoising, pVideoTemporalDenoising->PinId, pVideoTemporalDenoising->Flags, pVideoTemporalDenoising->Version);
 
     return Status;
 }
@@ -4077,4 +4139,177 @@ GetVideoControlCaps(
                pCaps->StreamIndex, pCaps->VideoControlCaps, Status );
     return Status;
 }
+
+NTSTATUS
+CCaptureFilter::GetExtrinsic(
+    _In_opt_    KS_CAMERA_EXTRINSICS *Data,
+    _In_        ULONG   PinId,
+    _Inout_     ULONG   *Length)
+{
+    PAGED_CODE();
+
+    if( PinId < m_pKSFilter->Descriptor->PinDescriptorsCount )
+    {
+        CCameraExtrinsics_2Transforms Extrinsics( PinId );     // Parameters are just identification for now.
+        if( Data )
+        {
+            RtlCopyMemory(Data, &Extrinsics, sizeof(Extrinsics));
+        }
+
+        *Length = sizeof(Extrinsics);
+        return STATUS_SUCCESS;
+    }
+    return STATUS_INVALID_PARAMETER;
+}
+
+NTSTATUS
+CCaptureFilter::GetIntrinsic(
+    _In_opt_    KS_CAMERA_INTRINSICS *Data,
+    _In_        ULONG   PinId,
+    _Inout_     ULONG   *Length)
+{
+    PAGED_CODE();
+
+    if( PinId < m_pKSFilter->Descriptor->PinDescriptorsCount )
+    {
+        CCameraIntrinsics_2Models Intrinsics;
+        if( Data )
+        {
+            RtlCopyMemory(Data, &Intrinsics, sizeof(Intrinsics));
+        }
+
+        *Length = sizeof(Intrinsics);
+        return STATUS_SUCCESS;
+    }
+    return STATUS_INVALID_PARAMETER;
+}
+
+//  Get KSPROPERTY_CAMERA_ATTRIBUTES_EXTRINSICS
+NTSTATUS
+CCaptureFilter::GetExtrinsics(
+    _In_    PIRP            pIrp,
+    _In_    PKSP_PIN        pProperty,
+    _Inout_ PVOID           pData
+)
+{
+    PAGED_CODE();
+
+    NT_ASSERT(pIrp);
+    NT_ASSERT(pProperty);
+
+    CCaptureFilter *pFilter = reinterpret_cast <CCaptureFilter *>(KsGetFilterFromIrp(pIrp)->Context);
+    PIO_STACK_LOCATION pIrpStack = IoGetCurrentIrpStackLocation(pIrp);
+    ULONG ulOutputBufferLength = pIrpStack->Parameters.DeviceIoControl.OutputBufferLength;
+    ULONG RequiredLength = 0;
+
+    NTSTATUS Status =
+        pFilter->GetExtrinsic( nullptr, pProperty->PinId, &RequiredLength );
+
+    // Note: We may want to determine capabilities at runtime in the future.
+
+    //  We only handle GETs
+    if( NT_SUCCESS(Status) )
+    {
+        RequiredLength += sizeof(KSCAMERA_ATTRIBUTES_HEADER);
+
+        if (ulOutputBufferLength == 0)
+        {
+            pIrp->IoStatus.Information = RequiredLength;
+            Status = STATUS_BUFFER_OVERFLOW;
+        }
+        else if (ulOutputBufferLength < RequiredLength)
+        {
+            Status = STATUS_BUFFER_TOO_SMALL;
+        }
+        else if (pData && ulOutputBufferLength >= RequiredLength)
+        {
+            PKSCAMERA_ATTRIBUTES_HEADER pHdr = (PKSCAMERA_ATTRIBUTES_HEADER) pData;
+            PKS_CAMERA_EXTRINSICS pExtrinsic = (PKS_CAMERA_EXTRINSICS) (pHdr + 1);
+            ULONG Size=0;
+
+            Status =
+                pFilter->GetExtrinsic(
+                    pExtrinsic,
+                    pProperty->PinId, 
+                    &Size );
+
+            if( NT_SUCCESS(Status) )
+            {
+                pHdr->Size = RequiredLength;
+                pHdr->PinId = pProperty->PinId;
+                pIrp->IoStatus.Information = RequiredLength;
+            }
+        }
+        else
+        {
+            Status = STATUS_INVALID_PARAMETER;
+        }
+    }
+    return Status;
+}
+
+//  Get KSPROPERTY_CAMERA_ATTRIBUTES_INTRINSICS
+NTSTATUS
+CCaptureFilter::GetIntrinsics(
+    _In_    PIRP            pIrp,
+    _In_    PKSP_PIN        pProperty,
+    _Inout_ PVOID           pData
+)
+{
+    PAGED_CODE();
+
+    NT_ASSERT(pIrp);
+    NT_ASSERT(pProperty);
+
+    CCaptureFilter *pFilter = reinterpret_cast <CCaptureFilter *>(KsGetFilterFromIrp(pIrp)->Context);
+    PIO_STACK_LOCATION pIrpStack = IoGetCurrentIrpStackLocation(pIrp);
+    ULONG ulOutputBufferLength = pIrpStack->Parameters.DeviceIoControl.OutputBufferLength;
+    ULONG RequiredLength = 0;
+
+    NTSTATUS Status =
+        pFilter->GetIntrinsic( nullptr, pProperty->PinId, &RequiredLength );
+
+    // Note: We may want to determine capabilities at runtime in the future.
+
+    //  We only handle GETs
+    if( NT_SUCCESS(Status) )
+    {
+        RequiredLength += sizeof(KSCAMERA_ATTRIBUTES_HEADER);
+
+        if (ulOutputBufferLength == 0)
+        {
+            pIrp->IoStatus.Information = RequiredLength;
+            Status = STATUS_BUFFER_OVERFLOW;
+        }
+        else if (ulOutputBufferLength < RequiredLength)
+        {
+            Status = STATUS_BUFFER_TOO_SMALL;
+        }
+        else if (pData && ulOutputBufferLength >= RequiredLength)
+        {
+            PKSCAMERA_ATTRIBUTES_HEADER pHdr = (PKSCAMERA_ATTRIBUTES_HEADER) pData;
+            PKS_CAMERA_INTRINSICS pIntrinsic = (PKS_CAMERA_INTRINSICS) (pHdr + 1);
+            ULONG Size=0;
+
+            Status =
+                pFilter->GetIntrinsic(
+                    pIntrinsic,
+                    pProperty->PinId, 
+                    &Size );
+
+            if( NT_SUCCESS(Status) )
+            {
+                pHdr->Size = RequiredLength;
+                pHdr->PinId = pProperty->PinId;
+                pIrp->IoStatus.Information = RequiredLength;
+            }
+        }
+        else
+        {
+            Status = STATUS_INVALID_PARAMETER;
+        }
+    }
+    return Status;
+}
+
 

@@ -1,20 +1,20 @@
 /**************************************************************************
 
-AVStream Filter-Centric Sample
+    AVStream Filter-Centric Sample
 
-Copyright (c) 1999 - 2001, Microsoft Corporation
+    Copyright (c) 1999 - 2001, Microsoft Corporation
 
-File:
+    File:
 
-avssamp.cpp
+        avssamp.cpp
 
-Abstract:
+    Abstract:
 
-This is the main file for the filter-centric sample.
+        This is the main file for the filter-centric sample.
 
-History:
+    History:
 
-created 6/18/01
+        created 6/18/01
 
 **************************************************************************/
 
@@ -22,26 +22,26 @@ created 6/18/01
 
 /**************************************************************************
 
-INITIALIZATION CODE
+    INITIALIZATION CODE
 
 **************************************************************************/
 
-
+ 
 extern "C" DRIVER_INITIALIZE DriverEntry;
 
 PVOID operator new
 (
     size_t          iSize,
     _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
     POOL_TYPE       poolType
-    )
+)
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, 'wNCK');
+    PVOID result = ExAllocatePoolWithTag(poolType,iSize,'wNCK');
 
     if (result) {
-        RtlZeroMemory(result, iSize);
+        RtlZeroMemory(result,iSize);
     }
 
     return result;
@@ -51,16 +51,16 @@ PVOID operator new
 (
     size_t          iSize,
     _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
     POOL_TYPE       poolType,
     ULONG           tag
-    )
+)
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, tag);
+    PVOID result = ExAllocatePoolWithTag(poolType,iSize,tag);
 
     if (result) {
-        RtlZeroMemory(result, iSize);
+        RtlZeroMemory(result,iSize);
     }
 
     return result;
@@ -70,23 +70,23 @@ PVOID operator new
 
 Routine Description:
 
-Array delete() operator.
+    Array delete() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
-void
-__cdecl
+void 
+__cdecl 
 operator delete[](
     PVOID pVoid
-    )
+)
 {
     if (pVoid)
     {
@@ -98,19 +98,19 @@ operator delete[](
 
 Routine Description:
 
-Sized delete() operator.
+    Sized delete() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
-size -
-The size of the memory to free.
+    size -
+        The size of the memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
 void __cdecl operator delete
@@ -129,26 +129,26 @@ void __cdecl operator delete
 
 Routine Description:
 
-Sized delete[]() operator.
+    Sized delete[]() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
-size -
-The size of the memory to free.
+    size -
+        The size of the memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
 void __cdecl operator delete[]
 (
     void *pVoid,
     size_t /*size*/
-    )
+)
 {
     if (pVoid)
     {
@@ -156,31 +156,41 @@ void __cdecl operator delete[]
     }
 }
 
+void __cdecl operator delete
+(
+    PVOID pVoid
+    )
+{
+    if (pVoid) {
+        ExFreePool(pVoid);
+    }
+}
+
 extern "C"
 NTSTATUS
-DriverEntry(
+DriverEntry (
     IN PDRIVER_OBJECT DriverObject,
     IN PUNICODE_STRING RegistryPath
-)
+    )
 
 /*++
 
 Routine Description:
 
-Driver entry point.  Pass off control to the AVStream initialization
-function (KsInitializeDriver) and return the status code from it.
+    Driver entry point.  Pass off control to the AVStream initialization
+    function (KsInitializeDriver) and return the status code from it.
 
 Arguments:
 
-DriverObject -
-The WDM driver object for our driver
+    DriverObject -
+        The WDM driver object for our driver
 
-RegistryPath -
-The registry path for our registry info
+    RegistryPath -
+        The registry path for our registry info
 
 Return Value:
 
-As from KsInitializeDriver
+    As from KsInitializeDriver
 
 --*/
 
@@ -193,17 +203,17 @@ As from KsInitializeDriver
     // here.
     //
     return
-        KsInitializeDriver(
+        KsInitializeDriver (
             DriverObject,
             RegistryPath,
             &CaptureDeviceDescriptor
-        );
+            );
 
 }
 
 /**************************************************************************
 
-DESCRIPTOR AND DISPATCH LAYOUT
+    DESCRIPTOR AND DISPATCH LAYOUT
 
 **************************************************************************/
 
@@ -213,7 +223,7 @@ DESCRIPTOR AND DISPATCH LAYOUT
 // The table of filter descriptors that this device supports.  Each one of
 // these will be used as a template to create a filter-factory on the device.
 //
-DEFINE_KSFILTER_DESCRIPTOR_TABLE(FilterDescriptors) {
+DEFINE_KSFILTER_DESCRIPTOR_TABLE (FilterDescriptors) {
     &CaptureFilterDescriptor
 };
 
@@ -236,7 +246,7 @@ CaptureDeviceDescriptor = {
     // by AVStream will be quite sufficient.
     //
     NULL,
-    SIZEOF_ARRAY(FilterDescriptors),
+    SIZEOF_ARRAY (FilterDescriptors),
     FilterDescriptors,
     KSDEVICE_DESCRIPTOR_VERSION
 };

@@ -8,19 +8,20 @@
 #ifdef MF_WPP
 #include "multipinmfthelpers.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
+
+#define MF_DEVICEMFT_ASYNCPIN_NEEDED 1
+
 class CMediaTypePrinter;
 //
 //Queue implementation
 //
 
-CPinQueue::CPinQueue( _In_ DWORD _InpinId )
+CPinQueue::CPinQueue( _In_ DWORD dwPinId )
 :   m_teer(0),
-    m_discotinuity(0),
-    m_sampleCount(0),
-    m_dwInPinId(_InpinId)
+    m_dwInPinId(dwPinId)
     /*
     Description
-    _InpinId is the input pin Id to which this queue corresponds
+    dwPinId is the input pin Id to which this queue corresponds
     */
 {
 }
@@ -47,21 +48,20 @@ STDMETHODIMP_(VOID) CPinQueue::InsertInternal( _In_ IMFSample *pSample )
     }
 }
 
-STDMETHODIMP_(BOOL) CPinQueue::Insert( _In_ IMFSample *pSample )
+STDMETHODIMP CPinQueue::Insert( _In_ IMFSample *pSample )
 //
 //m_teer is the wraptee.. this could be a null tee which is a passthrough, an xvp tee, which inserts an xvp into the queue
 //
 {
-    return SUCCEEDED( m_teer->PassThrough( pSample, this ) );
+    return m_teer->PassThrough( pSample, this );
 }
-
 
 /*++
 Description:
     This extracts the first sample from the queue. called from Pin's ProcessOutput 
 --*/
 
-STDMETHODIMP_(BOOL) CPinQueue::Remove( _Outptr_result_maybenull_ IMFSample **ppSample)
+STDMETHODIMP CPinQueue::Remove( _Outptr_result_maybenull_ IMFSample **ppSample)
 {
     HRESULT hr = S_OK;
     DMFTCHECKNULL_GOTO( ppSample, done,E_INVALIDARG );
@@ -73,12 +73,9 @@ STDMETHODIMP_(BOOL) CPinQueue::Remove( _Outptr_result_maybenull_ IMFSample **ppS
     }
 
     DMFTCHECKNULL_GOTO( *ppSample, done, MF_E_TRANSFORM_NEED_MORE_INPUT );
-    
-    (*ppSample)->Release( );
-    
     m_sampleList.erase( m_sampleList.begin() );
 done:
-    return SUCCEEDED( hr ) ? TRUE : FALSE;
+    return hr;
 }
 
 /*++
@@ -87,11 +84,11 @@ Description:
 --*/
 VOID CPinQueue::Clear( )
 {
-    IMFSample* pSample = nullptr;
+    
     while ( !Empty() )
     {
-        Remove( &pSample );
-        SAFE_RELEASE( pSample );
+        ComPtr<IMFSample> spSample;
+        Remove( spSample.GetAddressOf());
     }
 }
 
@@ -147,17 +144,40 @@ done:
     }
     return hr;
 }
-
-//
-//State implementation
-//
-CPinOpenState::CPinOpenState(CBasePin *_pin) 
-:CPinState(DeviceStreamState_Run), m_pin(_pin)
+#ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
+STDMETHODIMP CPinQueueWithGrayScale::RecreateTee( _In_  IMFMediaType *inMediatype,
+    _In_ IMFMediaType *outMediatype,
+    _In_opt_ IUnknown* punkManager)
 {
-   
+    HRESULT hr = S_OK;
+    
+    GUID      gInputSubType = GUID_NULL;
+    DMFTCHECKNULL_GOTO(inMediatype, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(outMediatype, done, E_INVALIDARG);
+    DMFTCHECKHR_GOTO(CPinQueue::RecreateTee(inMediatype,
+        outMediatype,
+        punkManager),done);
+    DMFTCHECKNULL_GOTO(m_teer, done, E_UNEXPECTED);
+    // Wrap the media type with Gray scale tee only if the input media type is a YUY2, UYVY or NV12
+    DMFTCHECKHR_GOTO(inMediatype->GetGUID(MF_MT_SUBTYPE, &gInputSubType), done);
+    if (IsEqualCLSID(gInputSubType, MFVideoFormat_NV12)
+        ||IsEqualCLSID(gInputSubType, MFVideoFormat_YUY2)
+        ||IsEqualCLSID(gInputSubType, MFVideoFormat_UYVY)
+        ||IsEqualCLSID(gInputSubType, MFVideoFormat_RGB32))
+    {
+        CGrayTee *pTee = NULL;
+        pTee = new CGrayTee(m_teer);
+        DMFTCHECKHR_GOTO(pTee->SetMediaTypes(inMediatype, outMediatype), done);
+        m_teer = dynamic_cast< Ctee* >(pTee);
+    }
+    else
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Skipping Gray scale Effect");
+    }
+done:
+    return hr;
 }
-
-
+#endif
 
 /*++
 Description:
@@ -240,18 +260,19 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
     //
     //Since we are streaming in the software mode we will create a new sample
     //
-    HRESULT                hr = S_OK,pohr = S_OK;
-    MFT_OUTPUT_DATA_BUFFER outputSample;
-    MFT_OUTPUT_STREAM_INFO StreamInfo;
-    IMFSample*             spXVPOutputSample    = nullptr;
-    IMFMediaType*          pOutMediaType        = nullptr;
-    ComPtr <IMFMediaBuffer> spIMFMediaBuffer    = nullptr;
+    HRESULT                  hr = S_OK,pohr = S_OK;
+    MFT_OUTPUT_DATA_BUFFER   outputSample;
+    MFT_OUTPUT_STREAM_INFO   StreamInfo;
+    ComPtr <IMFSample>       spXVPOutputSample;
+    ComPtr <IMFMediaType>    spOutMediaType;
+    ComPtr <IMFMediaBuffer>  spIMFMediaBuffer;
     GUID  guidOutputSubType = GUID_NULL;
-    pOutMediaType = getOutMediaType();
+    
+    spOutMediaType.Attach(getOutMediaType());
 
     DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
 
-    DMFTCHECKHR_GOTO(pOutMediaType->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
+    DMFTCHECKHR_GOTO(spOutMediaType->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
     
     BOOL isDx = false;
 
@@ -270,31 +291,25 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
         //
         DMFTCHECKHR_GOTO(MFCreateSample(&spXVPOutputSample), done);
 
-        DMFTCHECKHR_GOTO(pSample->CopyAllItems(spXVPOutputSample), done);
-
-        outputSample.pSample = spXVPOutputSample;
-        
+        DMFTCHECKHR_GOTO(pSample->CopyAllItems(spXVPOutputSample.Get()), done);
 
         DMFTCHECKHR_GOTO(Transform()->MFTGetOutputStreamInfo(0, &StreamInfo), done);
 
         if (!m_isOutPutImage)
         {
-            DMFTCHECKHR_GOTO(MFGetAttributeSize(pOutMediaType, MF_MT_FRAME_SIZE, &m_uWidth, &m_uHeight), done);
+            DMFTCHECKHR_GOTO(MFGetAttributeSize(spOutMediaType.Get(), MF_MT_FRAME_SIZE, &m_uWidth, &m_uHeight), done);
             hr = MFCreate2DMediaBuffer(
                 m_uWidth,
                 m_uHeight,
                 guidOutputSubType.Data1,
                 FALSE, // top-down buffer (DX compatible)
-                &spIMFMediaBuffer);
+                spIMFMediaBuffer.GetAddressOf());
             if (FAILED(hr))
             {
-                spIMFMediaBuffer = nullptr;
-                spXVPOutputSample->Release();
-
                 DMFTCHECKHR_GOTO(MFCreateAlignedMemoryBuffer(
                     StreamInfo.cbSize,
                     StreamInfo.cbAlignment,
-                    &spIMFMediaBuffer), done);
+                    spIMFMediaBuffer.GetAddressOf()), done);
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! XVP Configured without DX, Created a 1D buffer");
 
             }
@@ -303,10 +318,10 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! XVP Configured with DX, Created a 2D buffer");
             }
             DMFTCHECKHR_GOTO(spXVPOutputSample->AddBuffer(spIMFMediaBuffer.Get()), done);
+
+            outputSample.pSample = spXVPOutputSample.Detach();
         }
     }
-     
-
     //
     //Start streaming the xvp transform..
     //
@@ -323,14 +338,13 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
     if (FAILED(pohr))
     {
         DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! XVP ProcessOutput,failure %x sample =%p", pohr, &outputSample);
-        SAFERELEASE(spXVPOutputSample);
     }
 
     DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0), done); // Flush the stream
     DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0), done); // Notify end of stream
     DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0), done); // Notify end of streaming
 
-    spXVPOutputSample = outputSample.pSample;
+    spXVPOutputSample.Attach(outputSample.pSample);
 
     if ( SUCCEEDED(pohr) )
     {
@@ -344,7 +358,7 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
         spXVPOutputSample->SetSampleTime(hnsSampleTime);
     }
 
-    *pOutSample = spXVPOutputSample;
+    *pOutSample = spXVPOutputSample.Detach();
     //
     //Release the Sample back to the pipeline
     //
@@ -359,7 +373,7 @@ done:
 Description:
     Set the D3D Manager on the XVP
 --*/
-STDMETHODIMP_(VOID) CXvptee::SetD3DManager(IUnknown* pUnk)
+STDMETHODIMP_(VOID) CXvptee::SetD3DManager( _In_opt_ IUnknown* pUnk)
 {
     m_spDeviceManagerUnk = pUnk;
 }
@@ -412,7 +426,7 @@ STDMETHODIMP CXvptee::Configure(
     DMFTCHECKHR_GOTO( inMediaType->GetMajorType( &inMajorType ),done );
     DMFTCHECKHR_GOTO( outMediaType->GetMajorType( &outMajorType ), done );
     //
-    //Configuring DX Manager in SW mode. We will look to make it DX complaint in the next phase
+    //Configuring DX Manager in SW mode. 
     //
     if ( !IsEqualGUID(MFMediaType_Video, outMajorType ) )
     {
@@ -521,155 +535,120 @@ CXvptee::~CXvptee()
     m_spDeviceManagerUnk = nullptr;
 }
 
-//To be implemented..Not needed for the sample!!
-/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
-STDMETHODIMP CDecoderTee::Do(_In_ IMFSample* pSample, _Out_ IMFSample **pOutSample )
+CGrayTee::CGrayTee(_In_ Ctee *tee) : CWrapTee(tee),m_transformfn(nullptr)
 {
-    UNREFERENCED_PARAMETER(pSample);
-    UNREFERENCED_PARAMETER(pOutSample);
-    return S_OK;
 }
-STDMETHODIMP CDecoderTee::Configure( _In_opt_ IMFMediaType *inMediaType, _In_opt_ IMFMediaType *outMediaType, _Outptr_ IMFTransform** ppTransform)
+STDMETHODIMP CGrayTee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample)
 {
-    HRESULT hr              = S_OK;
-    GUID    guidcategory    = GUID_NULL;
-    BOOL    IsDecoder       = true;
-    UINT32  unFlags         = 0;
-    MFT_REGISTER_TYPE_INFO in;
-    MFT_REGISTER_TYPE_INFO out;
-    UINT32                 cActivates = 0;
-    UINT32                 unMFTFlags = 0;
-    ComPtr<IMFMediaType>  pInputMediaType   = nullptr;
-    ComPtr<IMFMediaType>  pOutputMediaType  = nullptr;
-    IMFActivate             **ppActivates   = nullptr; 
-    DWORD dwInputStreams;
-    DWORD dwOutputStreams;
-    UNREFERENCED_PARAMETER(outMediaType);
-    UNREFERENCED_PARAMETER(inMediaType);
-    UNREFERENCED_PARAMETER(ppTransform);
+    HRESULT                 hr = S_OK;
+    ComPtr<IMFSample>       spOutputSample;
+    ComPtr<IMFMediaType>    spMediaType = getOutMediaType();
+    ComPtr <IMFMediaBuffer> spMediaBufInput, spMediaBufOutput;
+    LONG                    lDefaultStride = 0,    lSrcStride = 0,lDestStride = 0;
+    
+    GUID                    guidOutputSubType = GUID_NULL;
+    LONGLONG                hnsDuration, hnsTime = 0;
+    DWORD dwTotalLength = 0;
+    DMFTCHECKHR_GOTO(pSample->GetTotalLength(&dwTotalLength), done);
 
-    guidcategory = (IsDecoder)?MFT_CATEGORY_VIDEO_DECODER : MFT_CATEGORY_VIDEO_ENCODER;
+    DMFTCHECKNULL_GOTO(ppOutSample, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pSample, done, E_INVALIDARG);
+    *ppOutSample = nullptr;
+    DMFTCHECKHR_GOTO(pSample->ConvertToContiguousBuffer(spMediaBufInput.GetAddressOf()), done);
+    DMFTCHECKHR_GOTO(getOutMediaType()->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
+    DMFTCHECKHR_GOTO(MFGetStrideForBitmapInfoHeader(guidOutputSubType.Data1, m_rect.right, &lDefaultStride), done);
 
-    if (IsDecoder)
+    DMFTCHECKHR_GOTO(MFCreateSample(spOutputSample.GetAddressOf()), done);
+    DMFTCHECKHR_GOTO(pSample->CopyAllItems(spOutputSample.Get()), done);
+    // Create the MediaBuffer for the new sample
+    hr = MFCreate2DMediaBuffer(
+        m_rect.right,
+        m_rect.bottom,
+        guidOutputSubType.Data1,
+        FALSE, // top-down buffer (DX compatible)
+        &spMediaBufOutput);
+    if (FAILED(hr))
     {
-        DMFTCHECKHR_GOTO(pInputMediaType->GetGUID(MF_MT_MAJOR_TYPE, &in.guidMajorType), done);
-        DMFTCHECKHR_GOTO(pInputMediaType->GetGUID(MF_MT_SUBTYPE, &in.guidSubtype), done);
+        spMediaBufOutput = nullptr;
+        DMFTCHECKHR_GOTO(MFCreateAlignedMemoryBuffer(
+            dwTotalLength,
+            MF_1_BYTE_ALIGNMENT,
+            &spMediaBufOutput), done);
     }
-    else
+    // Add the media buffer to the output sample
+    DMFTCHECKHR_GOTO(spOutputSample->AddBuffer(spMediaBufOutput.Get()), done);
     {
-        DMFTCHECKHR_GOTO(pOutputMediaType->GetGUID(MF_MT_MAJOR_TYPE, &out.guidMajorType), done);
-        DMFTCHECKHR_GOTO(pOutputMediaType->GetGUID(MF_MT_SUBTYPE, &out.guidSubtype), done);
-    }
-
-    //
-    //Use all possible plugins
-    //
-
-    unFlags = MFT_ENUM_FLAG_ASYNCMFT | MFT_ENUM_FLAG_SYNCMFT | MFT_ENUM_FLAG_SORTANDFILTER | MFT_ENUM_FLAG_SORTANDFILTER_WEB_ONLY;
-    DMFTCHECKHR_GOTO(MFTEnumEx(guidcategory,
-        unFlags,
-        IsDecoder ? &in : NULL,
-        IsDecoder ? NULL : &out,
-        &ppActivates,
-        &cActivates
-        ),done);
-    if (cActivates!=0)
-    {
-        DMFTCHECKHR_GOTO(MF_E_TOPO_CODEC_NOT_FOUND, done);
-    }
-    for (DWORD dwIndex = 0; dwIndex < cActivates; dwIndex++)
-    {
-        //
-        //Check if this MFT requires an unlocking.. skip if it does
-        //
-        unMFTFlags = MFGetAttributeUINT32(ppActivates[dwIndex], MF_TRANSFORM_FLAGS_Attribute, 0);
-        if (unMFTFlags & MFT_ENUM_FLAG_FIELDOFUSE)
+        BYTE                    *pDest = NULL, *pSrc = NULL;
+        DWORD                    cbBuffer = 0;
+        VideoBufferLock inputLock(spMediaBufInput.Get());
+        VideoBufferLock outputLock(spMediaBufOutput.Get());
+        DMFTCHECKHR_GOTO(inputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pSrc, &lSrcStride,&cbBuffer), done);
+        DMFTCHECKHR_GOTO(outputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pDest, &lDestStride,&cbBuffer,FALSE), done);
+        if (m_transformfn)
         {
-            //
-            //If you have the unlocking key set MFT_FIELDOFUSE_UNLOCK_Attribute on the activate
-            //
-            continue;
-        }
-       
-        hr = ppActivates[dwIndex]->ActivateObject(IID_PPV_ARGS(ppTransform));
-        if (FAILED(hr))
-            continue; //hope the next activate is activable
-        ppActivates[dwIndex]->DetachObject();
-
-        hr = (*ppTransform)->MFTGetStreamCount(&dwInputStreams, &dwOutputStreams);
-        
-        if (FAILED(hr) || dwInputStreams != 1 || dwOutputStreams > 127)//remove the hardcoding
-        {
-            //
-            //Exception.. we can't use a stream that doesn't give us an idea about it's streams
-            //
-            continue;
-        }
-         if (IsDecoder)
-        {
-            hr = ConfigureDecoder(*ppTransform);
-        }
-        else
-        {
-            hr = ConfigureEncoder(*ppTransform);
-        }
-        if (FAILED(hr))
-        {
-            SAFE_RELEASE(*ppTransform);
+            m_transformfn(m_rect, pDest, lDestStride, pSrc, lSrcStride, m_rect.right, m_rect.bottom);
         }
     }
+    if (SUCCEEDED(pSample->GetSampleDuration(&hnsDuration)))
+    {
+        DMFTCHECKHR_GOTO(spOutputSample->SetSampleDuration(hnsDuration),done);
+    }
+    if (SUCCEEDED(pSample->GetSampleTime(&hnsTime)))
+    {
+        DMFTCHECKHR_GOTO(spOutputSample->SetSampleTime(hnsTime),done);
+    }
+    if (SUCCEEDED(spMediaBufInput->GetCurrentLength(&dwTotalLength)))
+    {
+        DMFTCHECKHR_GOTO(spMediaBufOutput->SetCurrentLength(dwTotalLength),done);
+    }
 
+    *ppOutSample = spOutputSample.Detach();
+    pSample->Release();
 done:
     return hr;
 }
 
-/*++
-    
---*/
-
-STDMETHODIMP CDecoderTee::ConfigureEncoder( _In_ IMFTransform *pTransform ) 
+HRESULT CGrayTee::Configure(
+    _In_ IMFMediaType* pInMediaType,
+    _In_ IMFMediaType* pOutMediaType,
+    _In_opt_ IMFTransform** ppTransform)
 {
     HRESULT hr = S_OK;
-    //
-    //Set the input media type and the output media type and that should be pretty much it
-    //
-    ComPtr<IMFMediaType> pInputType  = nullptr;
-    ComPtr<IMFMediaType> pOutputType = nullptr;
-    
-    pInputType =  getInMediaType();
-    pOutputType = getOutMediaType();
-    
-    if (pInputType && pOutputType)
+    DWORD dwFlags = 0;
+    UINT32 ulWidth = 0, ulHeight = 0;
+    GUID   guidOutputSubType = GUID_NULL;
+    UNREFERENCED_PARAMETER(ppTransform);
+    DMFTCHECKNULL_GOTO(pInMediaType, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutMediaType, done, E_INVALIDARG);
+    DMFTCHECKHR_GOTO((pInMediaType->IsEqual(pOutMediaType, &dwFlags)), done);
+    DMFTCHECKHR_GOTO(pInMediaType->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
+    if (IsEqualCLSID(guidOutputSubType, MFVideoFormat_YUY2))
     {
-        //We should be good by now
-        DMFTCHECKHR_GOTO( pTransform->MFTSetInputType( 0,pInputType.Get(), 0), done);
-        //If we have D3D enabled then try again with D3D disabled and see the result
-        //
-        DMFTCHECKHR_GOTO(pTransform->MFTSetOutputType(0,pOutputType.Get(), 0), done);
-        //
-        //If the above operation fails and we are allowing partial media types then
-        //we have to find the full media type and then check again
+        m_transformfn = TransformImage_YUY2;
     }
-    else
+    else if (IsEqualCLSID(guidOutputSubType, MFVideoFormat_UYVY))
     {
-        hr = E_FAIL;
+        m_transformfn = TransformImage_UYVY;
     }
+    else if (IsEqualCLSID(guidOutputSubType, MFVideoFormat_NV12))
+    {
+        m_transformfn = TransformImage_NV12;
+    }
+    else if (IsEqualCLSID(guidOutputSubType, MFVideoFormat_RGB32))
+    {
+        m_transformfn = TransformImage_RGB32;
+    }
+    DMFTCHECKHR_GOTO(MFGetAttributeSize(pInMediaType, MF_MT_FRAME_SIZE, &ulWidth, &ulHeight), done);
+    m_rect = { 0, 0, (LONG)ulWidth, (LONG)ulHeight };
 done:
     return hr;
-}
-
-STDMETHODIMP CDecoderTee::ConfigureDecoder( _In_ IMFTransform *pTransform)
-{
-    UNREFERENCED_PARAMETER( pTransform );
-    return S_OK;
 }
 
 /*++
 Descrtiption:
     Handles events sent by the pipeline
  --*/
-STDMETHODIMP CDMFTEventHandler::KSEvent(
+HRESULT CDMFTEventHandler::KSEvent(
     _In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
     _In_ ULONG ulEventLength,
     _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
@@ -826,7 +805,7 @@ Descrtiption:
  will not send a reset or a clear for one shot events
 --*/
 
-STDMETHODIMP CDMFTEventHandler::SetOneShot( ULONG ulEventId )
+HRESULT CDMFTEventHandler::SetOneShot( ULONG ulEventId )
 {
     HRESULT hr = S_OK;
     hr = ExceptionBoundary([&]()
@@ -872,7 +851,7 @@ Descrtiption:
     until the pipeline explicitly needs the event to be unset.
 --*/
 
-STDMETHODIMP CDMFTEventHandler::SetRegularEvent(ULONG ulEventId)
+HRESULT CDMFTEventHandler::SetRegularEvent(ULONG ulEventId)
 {
     BOOL bEvtFound = FALSE;
     HRESULT hr = ExceptionBoundary([&]()
@@ -912,7 +891,7 @@ Descrtiption:
     Duplicates the handle passed.
 --*/
 
-STDMETHODIMP CDMFTEventHandler::Dupe(_In_ HANDLE hEventHandle, _Outptr_ LPHANDLE lpTargetHandle)
+HRESULT CDMFTEventHandler::Dupe(_In_ HANDLE hEventHandle, _Outptr_ LPHANDLE lpTargetHandle)
 {
     HRESULT hr = S_OK;
     DMFTCHECKNULL_GOTO(hEventHandle, done, E_INVALIDARG);
@@ -942,7 +921,7 @@ Descrtiption:
  Cleans the event lists, both the Single shot and the Regular ones
 
 --*/
-STDMETHODIMP CDMFTEventHandler::Clear()
+HRESULT CDMFTEventHandler::Clear()
 {
     HRESULT hr = S_OK;
     hr = ExceptionBoundary([&]()
@@ -986,3 +965,117 @@ STDMETHODIMP CDMFTEventHandler::Clear()
 done:
     return hr;
 }
+
+HRESULT CPinCreationFactory::CreatePin(_In_ ULONG ulInputStreamId, /* The Input stream Id*/
+    _In_ ULONG ulOutStreamId, /*The output stream Id*/
+    _In_ type_pin type, /*Input Pin or the ourput pin*/
+    _Outptr_ CBasePin** ppPin, /*Output*/
+    _In_ BOOL& isCustom)
+{
+    HRESULT hr = S_OK;
+    ComPtr<IMFAttributes> spAttributes;
+    GUID    streamCategory = GUID_NULL;
+    DMFTCHECKNULL_GOTO(ppPin, done, E_INVALIDARG);
+    *ppPin = nullptr;
+    isCustom = FALSE;
+    DMFTCHECKHR_GOTO(m_spDeviceTransform->Parent()->GetOutputStreamAttributes(ulInputStreamId, &spAttributes),done);
+    if (type == DMFT_PIN_INPUT)
+    {
+        CInPin  *pInPin = nullptr;
+        DMFTCHECKHR_GOTO(spAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &streamCategory), done);
+        // Create Cutom Pin
+        if (IsEqualCLSID(streamCategory, AVSTREAM_CUSTOM_PIN_IMAGE))
+        {
+            pInPin = new CCustomPin(spAttributes.Get(), ulInputStreamId, static_cast<CMultipinMft*> (m_spDeviceTransform.Get()));
+            isCustom = TRUE;
+        }
+        else
+        {
+#if defined MF_DEVICEMFT_ASYNCPIN_NEEDED
+            pInPin = new CAsyncInPin(spAttributes.Get(), ulInputStreamId, m_spDeviceTransform.Get()); // Asynchronous PIn, if you need it
+#else
+            pInPin = new CInPin(spAttributes.Get(), ulInputStreamId, m_spDeviceTransform.Get());
+#endif
+        }
+        DMFTCHECKNULL_GOTO(pInPin, done, E_OUTOFMEMORY);
+        *ppPin = pInPin;
+
+    }
+    else if(type == DMFT_PIN_OUTPUT)
+    {
+        COutPin* pOutPin            = nullptr;
+        ComPtr<IKsControl>  spKscontrol;
+        CInPin*             pInPin  = nullptr;
+        GUID                pinGuid = GUID_NULL;
+        UINT32              uiFrameSourceType = 0;
+
+        pInPin = static_cast<CInPin*>(m_spDeviceTransform->GetInPin(ulInputStreamId));              // Get the Input Pin connected to the Output pin
+        DMFTCHECKNULL_GOTO(pInPin, done, E_INVALIDARG);
+        DMFTCHECKHR_GOTO(pInPin->QueryInterface(IID_PPV_ARGS(spKscontrol.GetAddressOf())), done);   // Grab the IKSControl off the input pin
+        DMFTCHECKHR_GOTO(pInPin->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &pinGuid), done);         // Get the Stream Category. Advertise on the output pin
+
+
+        pOutPin = new COutPin(ulOutStreamId, m_spDeviceTransform.Get(), spKscontrol.Get());         // Create the output pin
+        DMFTCHECKNULL_GOTO(pOutPin, done, E_OUTOFMEMORY);
+        
+        *ppPin = pOutPin;
+        DMFTCHECKHR_GOTO(pOutPin->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, pinGuid), done);         // Advertise the Stream category to the Pipeline
+        DMFTCHECKHR_GOTO(pOutPin->SetUINT32(MF_DEVICESTREAM_STREAM_ID, ulOutStreamId), done);       // Advertise the stream Id to the Pipeline
+        if (SUCCEEDED(pInPin->GetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, &uiFrameSourceType)))
+        {
+            DMFTCHECKHR_GOTO(pOutPin->SetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, uiFrameSourceType),done);   // Copy over the Frame Source Type.
+        }
+
+#if defined (MF_DEVICEMFT_ALLOW_MFT0_LOAD) && defined (MFT_UNIQUE_METHOD_NAMES)
+        //
+        // If we wish to load MFT0 as well as Device MFT then we should be doing the following
+        // Copy over the GUID attribute MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID from the input
+        // pin to the output pin. This is because Device MFT is the new face of the filter now
+        // and MFT0 will now get loaded for the output pins exposed from Device MFT rather than
+        // DevProxy!
+        //
+
+        GUID        guidMFT0 = GUID_NULL;
+        if (SUCCEEDED(pInPin->GetGUID(MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID, &guidMFT0)))
+        {
+            //
+            // This stream has an MFT0 .. Attach the GUID to the Outpin pin attribute
+            // The downstream will query this attribute  on the pins exposed from device MFT
+            //
+            DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! setting Mft0 guid on pin %d", ulOutStreamId);
+
+            DMFTCHECKHR_GOTO(pOutPin->SetGUID(MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID, guidMFT0), done);
+
+            DMFTCHECKHR_GOTO(pOutPin->SetUnknown(MF_DEVICESTREAM_EXTENSION_PLUGIN_CONNECTION_POINT,
+                static_cast< IUnknown* >(static_cast < IKsControl * >(m_spDeviceTransform.Get()))), done);
+
+        }
+#endif
+    }
+    else
+    {
+        DMFTCHECKHR_GOTO(E_INVALIDARG, done);
+    }
+
+done:
+    return hr;
+}
+
+HRESULT CheckImagePin( _In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin )
+{
+    HRESULT hr = S_OK;
+    DMFTCHECKNULL_GOTO(pAttributes, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pbIsImagePin, done, E_INVALIDARG);
+    {
+        GUID pinClsid = GUID_NULL;
+        *pbIsImagePin = FALSE;
+        if (SUCCEEDED(pAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &pinClsid))
+            && ((IsEqualCLSID(pinClsid, PINNAME_IMAGE)) || IsEqualCLSID(pinClsid, PINNAME_VIDEO_STILL)))
+        {
+            *pbIsImagePin = TRUE;
+        }
+    }
+done:
+    return hr;
+}
+

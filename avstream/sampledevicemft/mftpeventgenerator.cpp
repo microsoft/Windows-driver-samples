@@ -11,8 +11,6 @@
 #include "mftpeventgenerator.h"
 
 
-#define TP_SCOPE_TRACE TP_NORMAL
-#define DH_THIS_FILE DH_DEVPROXY
 
 #ifdef MF_WPP
 #include "mftpeventgenerator.tmh"    //--REF_ANALYZER_DONT_REMOVE--
@@ -72,10 +70,7 @@ STDMETHODIMP CMediaEventGenerator::QueryInterface(
     else
     {
         hr = E_NOINTERFACE;
-        DMFTCHECKHR_GOTO(hr, done);
     }
-
-done:
 
     return hr;
 }
@@ -89,7 +84,6 @@ STDMETHODIMP CMediaEventGenerator::BeginGetEvent(
     )
 {
     HRESULT hr = S_OK;
-    //MFWMITRACE(DH_THIS_FILE, TP_NORMAL, __FUNCTION__ " : MultiPinMFT BeginGetEvent called");
     m_critSec.Lock();
 
     hr = CheckShutdown();
@@ -110,7 +104,6 @@ STDMETHODIMP CMediaEventGenerator::EndGetEvent(
     )
 {
     HRESULT hr = S_OK;
-    //MFWMITRACE(DH_THIS_FILE, TP_NORMAL, __FUNCTION__ " : MultiPinMFT EndGetEvent called");
     m_critSec.Lock();
 
     hr = CheckShutdown();
@@ -135,7 +128,6 @@ STDMETHODIMP CMediaEventGenerator::GetEvent(
     // a slightly different locking strategy.
     //
     HRESULT hr = S_OK;
-    //MFWMITRACE(DH_THIS_FILE, TP_NORMAL, __FUNCTION__ " : MultiPinMFT GetEvent called");
     IMFMediaEventQueue *pQueue = NULL;
 
     m_critSec.Lock();
@@ -168,7 +160,6 @@ STDMETHODIMP CMediaEventGenerator::QueueEvent(
     )
 {
     HRESULT hr = S_OK;
-    //MFWMITRACE(DH_THIS_FILE, TP_NORMAL, __FUNCTION__ " : MultiPinMFT QueueEvent called");
     m_critSec.Lock();
     
     hr = CheckShutdown();
@@ -195,7 +186,6 @@ STDMETHODIMP CMediaEventGenerator::ShutdownEventGenerator(
 {
     HRESULT hr = S_OK;
 
-   // MFWMITRACE( DH_THIS_FILE, TP_LOWEST, __FUNCTION__ " : entering ...");
 
     m_critSec.Lock();
     
@@ -206,14 +196,11 @@ STDMETHODIMP CMediaEventGenerator::ShutdownEventGenerator(
         if (m_pQueue)
         {
             hr = m_pQueue->Shutdown();
-            //MFWMITRACE( DH_THIS_FILE, TP_NORMAL, __FUNCTION__ "Event Generator Queue shutdown hr = %x", hr);
         }
         SAFE_RELEASE(m_pQueue);
         m_bShutdown = TRUE;
     }
     m_critSec.Unlock();
-
-   // MFWMITRACE( DH_THIS_FILE, TP_LOWEST, __FUNCTION__ " : exiting...");
 
     return hr;
 }
@@ -223,7 +210,6 @@ STDMETHODIMP CMediaEventGenerator::QueueEvent(
     )
 {
     HRESULT hr = S_OK;
-    //MFWMITRACE(DH_THIS_FILE, TP_LOWEST, __FUNCTION__ " : QueueEvent 1 ...");
     m_critSec.Lock();
     
     hr = CheckShutdown();
@@ -245,6 +231,4 @@ CMediaEventGenerator::~CMediaEventGenerator (
     )
 {
     ShutdownEventGenerator();
-    //MFASSERT(m_bShutdown);
-    //MFASSERT(m_nRefCount == 0);
 }

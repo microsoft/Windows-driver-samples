@@ -12,23 +12,9 @@
 #include "multipinmft.tmh"    //--REF_ANALYZER_DONT_REMOVE--
 #endif
 //
-//Note since MFT_UNIQUE_METHOD_NAMES is defined all the functions of IMFTransform have the Mft suffix..
+// Note since MFT_UNIQUE_METHOD_NAMES is defined all the functions of IMFTransform have the Mft suffix..
 //
 extern const CLSID CLSID_HwMFTActivate;
-
-#if _NEED_MFTLOCKING_
-#define MFTLOCKED() {\
-    UINT32 punValue = FALSE; \
-    hr = GetUINT32(MF_TRANSFORM_ASYNC_UNLOCK, &punValue);\
-if (FAILED(hr) || punValue == FALSE){\
-    return MF_E_TRANSFORM_ASYNC_LOCKED; \
-}\
-}
-#else
-
-#define MFTLOCKED() 
-
-#endif
 
 CMultipinMft::CMultipinMft()
 :   m_nRefCount( 0 ),
@@ -38,41 +24,41 @@ CMultipinMft::CMultipinMft()
     m_lWorkQueuePriority ( 0 ),
     m_spAttributes( nullptr ),
     m_spSourceTransform( nullptr ),
-    m_PhotoTriggerSent(false),
-    m_filterHasIndependentPin( false ),
-    m_FilterInPhotoSequence( false ),
     m_filterInWarmStart(false)
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
    , m_spPhotoConfirmationCallback(nullptr)
 #endif
 {
+    HRESULT hr = S_OK;
     ComPtr<IMFAttributes> pAttributes = nullptr;
     MFCreateAttributes( &pAttributes, 0 );
-    pAttributes->SetUINT32( MF_TRANSFORM_ASYNC, TRUE );
-    pAttributes->SetUINT32( MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE, TRUE );
-    pAttributes->SetUINT32( MF_SA_D3D_AWARE, TRUE );
-    pAttributes->SetString( MFT_ENUM_HARDWARE_URL_Attribute, L"SampleMultiPinMft" );
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32( MF_TRANSFORM_ASYNC, TRUE ),done);
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32( MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE, TRUE ),done);
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32( MF_SA_D3D_AWARE, TRUE ), done);
+    DMFTCHECKHR_GOTO(pAttributes->SetString( MFT_ENUM_HARDWARE_URL_Attribute, L"SampleMultiPinMft" ),done);
     m_spAttributes = pAttributes;
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
     m_guidPhotoConfirmationSubtype = MFVideoFormat_NV12;
 #endif
+done:
+    if (FAILED(hr))
+    {
+
+    }
 }
 
 CMultipinMft::~CMultipinMft( )
 {
-    CBasePin *pioPin = NULL;
+    
 
     for ( ULONG ulIndex = 0, ulSize = (ULONG) m_InPins.size(); ulIndex < ulSize; ulIndex++ )
     {
-        pioPin = m_InPins[ ulIndex ];
-        SAFERELEASE( pioPin );
+        SAFERELEASE(m_InPins[ ulIndex ]);
     }
     m_InPins.clear();
-
     for (ULONG ulIndex = 0, ulSize = (ULONG) m_OutPins.size(); ulIndex < ulSize; ulIndex++)
     {
-        pioPin = m_OutPins[ ulIndex ];
-        SAFERELEASE( pioPin );
+        SAFERELEASE(m_OutPins[ ulIndex ]);
     }
     m_OutPins.clear();
     m_spSourceTransform = nullptr;
@@ -111,58 +97,46 @@ STDMETHODIMP CMultipinMft::QueryInterface(
     if ((iid == __uuidof(IMFDeviceTransform)) || (iid == __uuidof(IUnknown)))
     {
         *ppv = static_cast< IMFDeviceTransform* >(this);
-        AddRef();
     }
-    else
-    if ( iid == __uuidof( IMFMediaEventGenerator ) )
+    else if ( iid == __uuidof( IMFMediaEventGenerator ) )
     {
         *ppv = static_cast< IMFMediaEventGenerator* >(this);
-        AddRef();
     }
-    else
-    if ( iid == __uuidof( IMFShutdown ) )
+    else if ( iid == __uuidof( IMFShutdown ) )
     {
         *ppv = static_cast< IMFShutdown* >( this );
-        AddRef();
     }
 #if defined (MF_DEVICEMFT_ALLOW_MFT0_LOAD) && defined (MFT_UNIQUE_METHOD_NAMES)
-    else
-    if (iid == __uuidof(IMFTransform))
+    else if (iid == __uuidof(IMFTransform))
     {
         *ppv = static_cast< IMFTransform* >(this);
-        AddRef();
     }
 #endif
-    else
-    if ( iid == __uuidof( IKsControl ) )
+    else if ( iid == __uuidof( IKsControl ) )
     {
         *ppv = static_cast< IKsControl* >( this );
-        AddRef();
     }
-    else
-    if ( iid == __uuidof( IMFRealTimeClientEx ) )
+    else if ( iid == __uuidof( IMFRealTimeClientEx ) )
     {
         *ppv = static_cast< IMFRealTimeClientEx* >( this );
-        AddRef();
     }
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
-    else
-    if (iid == __uuidof(IMFCapturePhotoConfirmation))
+    else if (iid == __uuidof(IMFCapturePhotoConfirmation))
     {
         *ppv = static_cast< IMFCapturePhotoConfirmation* >(this);
-        AddRef();
     }
-    else
-    if (iid == __uuidof(IMFGetService))
+    else if (iid == __uuidof(IMFGetService))
     {
         *ppv = static_cast< IMFGetService* >(this);
-        AddRef();
     }
 #endif
     else
     {
         hr = E_NOINTERFACE;
+        goto done;
     }
+    AddRef();
+done:
     return hr;
 }
 
@@ -193,12 +167,13 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
     DWORD                   outputStreams   = 0;
     GUID*                   outGuids        = NULL;
     GUID                    streamCategory  = GUID_NULL;
-    
+    ULONG                   ulOutPinIndex   = 0;
+    CPinCreationFactory*    pPinFactory = new CPinCreationFactory(this);
     DMFTCHECKNULL_GOTO( pAttributes, done, E_INVALIDARG );
     //
-    //The attribute passed with MF_DEVICEMFT_CONNECTED_FILTER_KSCONTROL is the source transform. This generally represents a filter
-    //This needs to be stored so that we know the device properties. We cache it. We query for the IKSControl which is used to send
-    //controls to the driver.
+    // The attribute passed with MF_DEVICEMFT_CONNECTED_FILTER_KSCONTROL is the source transform. This generally represents a filter
+    // This needs to be stored so that we know the device properties. We cache it. We query for the IKSControl which is used to send
+    // controls to the driver.
     //
     DMFTCHECKHR_GOTO( pAttributes->GetUnknown( MF_DEVICEMFT_CONNECTED_FILTER_KSCONTROL,IID_PPV_ARGS( &spFilterUnk ) ),done );
     
@@ -233,174 +208,69 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
         
         for ( ULONG ulIndex = 0; ulIndex < outputStreams; ulIndex++ )
         {           
-            ComPtr<IMFAttributes> pInAttributes = nullptr;
-            
-            DMFTCHECKHR_GOTO( m_spSourceTransform->GetOutputStreamAttributes(pcOutputStreams[ulIndex], pInAttributes.GetAddressOf()), done);
-            
-            DMFTCHECKHR_GOTO( pInAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &streamCategory), done);
-            
-            if ( IsEqualCLSID( streamCategory, PINNAME_IMAGE ) )
+            ComPtr<IMFAttributes>   pInAttributes   = nullptr;
+            BOOL                    bCustom         = FALSE;
+            CInPin                  *pInPin         = nullptr;
+
+            DMFTCHECKHR_GOTO(pPinFactory->CreatePin(
+                pcOutputStreams[ulIndex], /*Input Pin ID as advertised by the pipeline*/
+                0, /*This is not needed for Input Pin*/
+                CPinCreationFactory::DMFT_PIN_INPUT, /*Input Pin*/
+                (CBasePin**)&pInPin,
+                bCustom), done);
+            if (bCustom)
             {
-                //We have independent pins..
-                m_filterHasIndependentPin = true;
-            }
-            CInPin *pInPin = nullptr;
-            if (IsEqualCLSID(streamCategory, AVSTREAM_CUSTOM_PIN_IMAGE))
-            {
-                pInPin = new CCustomPin( pInAttributes.Get(), pcOutputStreams[ulIndex], this);
-                DMFTCHECKNULL_GOTO( pInPin, done, E_OUTOFMEMORY);
-                //
-                // Since the custom pin is an input pin too we will push it
-                // in the input pins list. This is however not being connected
-                // to the output in this sample.
                 m_CustomPinCount++;
             }
-            else
-            {
-                pInPin = new CInPin( pInAttributes.Get(), pcOutputStreams[ulIndex], this);
-                DMFTCHECKNULL_GOTO(pInPin, done, E_OUTOFMEMORY);
-            }
-
             hr = ExceptionBoundary([this,pInPin]()
             {
                 m_InPins.push_back(pInPin);
             });
-
             DMFTCHECKHR_GOTO(hr, done);
             DMFTCHECKHR_GOTO( pInPin->Init(m_spSourceTransform.Get() ), done);
-            
-            
             pInPin->AddRef();
-
         }
+        
         //
-        // If we have just one output stream exposed off the source transform create a one to three pin
+        // Create one on one mapping
         //
-        if ( ( outputStreams == 1 ) && IsEqualGUID( streamCategory, PINNAME_VIDEO_CAPTURE ) )
+        for (ULONG ulIndex = 0; ulIndex < m_InPins.size(); ulIndex++)
         {
-            outputStreams = 3;
-            outGuids =  new GUID [ outputStreams ];
-            DMFTCHECKNULL_GOTO(outGuids, done, E_OUTOFMEMORY);
             
-            m_OutPins.resize(outputStreams, nullptr);
-
-            CInPin  *piPin = (CInPin *)m_InPins[0];
-
-            *outGuids           = PINNAME_VIDEO_CAPTURE;
-            *( outGuids + 1 )   = PINNAME_VIDEO_PREVIEW;
-            *(outGuids + 2)     = PINNAME_IMAGE;    //PINNAME_IMAGE for independent pin and PINNAME_VIDEO_STILL for dependent pin!!
-
-            for ( ULONG ulIndex = 0; ulIndex < outputStreams; ulIndex++ )
-            {
-                ComPtr<IKsControl> pKsControl = NULL;
-                COutPin *poPin = nullptr;
-                
-                DMFTCHECKHR_GOTO( piPin->QueryInterface(IID_PPV_ARGS( &pKsControl ) ), done);
-                
-                hr = ExceptionBoundary([&]()
-                {
-                    poPin = new COutPin(ulIndex, this, pKsControl.Get());
-                });
-                
-                DMFTCHECKHR_GOTO(hr, done);
-
-                DMFTCHECKNULL_GOTO( poPin,done, E_OUTOFMEMORY );
-
-                DMFTCHECKHR_GOTO( BridgeInputPinOutputPin( piPin, poPin ),done );
-
-                DMFTCHECKHR_GOTO( poPin->SetGUID( MF_DEVICESTREAM_STREAM_CATEGORY, outGuids[ ulIndex ] ),done );
-                
-                DMFTCHECKHR_GOTO( poPin->SetUINT32( MF_DEVICESTREAM_STREAM_ID, ulIndex ),done );
-                
-                m_OutPins[ ulIndex ] = poPin;
-                poPin->AddRef();
-
-            }
-        }
-        else
-        {
-            //
-            //Create one on one mapping
-            //
+            COutPin *poPin = nullptr;
+            BOOL     bCustom = FALSE;
+            CInPin  *piPin = ( CInPin * )m_InPins[ ulIndex ];
             
-            for (ULONG ulIndex = 0; ulIndex < m_InPins.size(); ulIndex++)
+            if (piPin)
             {
-                ULONG  ulPinIndex               = 0;
-                GUID   pinGuid                  = GUID_NULL;
-                ComPtr< IKsControl > pKsControl = nullptr;
-
-                CInPin  *piPin = ( CInPin * )m_InPins[ ulIndex ];
-
-                if (piPin)
+                BOOL isCustom = false;
+                if ( SUCCEEDED( CheckCustomPin( piPin, &isCustom )) && ( isCustom ) )
                 {
-                    BOOL isCustom = false;
-                    if ( SUCCEEDED( CheckCustomPin( piPin, &isCustom )) && ( isCustom ) )
-                    {
-                        //
-                        // In this sample we are not connecting the custom pin to the output
-                        // This is because we really have no way of testing the custom pin with the
-                        // pipeline. 
-                        // This however can be changed if the custom media type is converted here in
-                        // the device MFT and later exposed to the pipeline..
-                        //
-                        continue;
-                    }
-                    ulPinIndex = piPin->streamId();
-
-                    DMFTCHECKHR_GOTO(piPin->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &pinGuid), done);
-
-                    DMFTCHECKHR_GOTO(piPin->QueryInterface(IID_PPV_ARGS(&pKsControl)), done);
-
-                    COutPin *poPin = new COutPin(ulPinIndex, this, pKsControl.Get());
-
-                    DMFTCHECKNULL_GOTO(poPin, done, E_OUTOFMEMORY);
-
-                    DMFTCHECKHR_GOTO(poPin->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, pinGuid), done);
-
-                    DMFTCHECKHR_GOTO(poPin->SetUINT32(MF_DEVICESTREAM_STREAM_ID, ulPinIndex), done);
-
-#if defined (MF_DEVICEMFT_ALLOW_MFT0_LOAD) && defined (MFT_UNIQUE_METHOD_NAMES)
                     //
-                    // If we wish to load MFT0 as well as Device MFT then we should be doing the following
-                    // Copy over the GUID attribute MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID from the input
-                    // pin to the output pin. This is because Device MFT is the new face of the filter now
-                    // and MFT0 will now get loaded for the output pins exposed from Device MFT rather than
-                    // DevProxy!
+                    // In this sample we are not connecting the custom pin to the output
+                    // This is because we really have no way of testing the custom pin with the
+                    // pipeline. 
+                    // This however can be changed if the custom media type is converted here in
+                    // the device MFT and later exposed to the pipeline..
                     //
+                    continue;
+                }
 
-                    GUID        guidMFT0 = GUID_NULL;
-
-                    hr = piPin->GetGUID(MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID, &guidMFT0);
-
-                    if (SUCCEEDED(hr))
-                    {
-                        //
-                        // This stream has an MFT0 .. Attach the GUID to the Outpin pin attribute
-                        // The downstream will query this attribute  on the pins exposed from device MFT
-                        //
-                        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! setting Mft0 guid on pin %d", ulIndex);
-
-                        DMFTCHECKHR_GOTO(poPin->SetGUID(MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID, guidMFT0), done);
-
-                        DMFTCHECKHR_GOTO(poPin->SetUnknown(MF_DEVICESTREAM_EXTENSION_PLUGIN_CONNECTION_POINT,
-                            static_cast< IUnknown* >(static_cast < IKsControl * >(this))), done);
-
-                    }
-                    else
-                    {
-                        // Reset Error.. MFT0 absence should not be an error
-                        hr = S_OK;
-                    }
-#endif
+                    DMFTCHECKHR_GOTO(pPinFactory->CreatePin(piPin->streamId(), /*Input Pin connected to the Output Pin*/
+                        ulOutPinIndex, /*Output pin Id*/
+                        CPinCreationFactory::DMFT_PIN_OUTPUT, /*Output pin */
+                        (CBasePin**)&poPin,
+                        bCustom), done);
                     DMFTCHECKHR_GOTO(BridgeInputPinOutputPin(piPin, poPin), done);
-                    hr = ExceptionBoundary([&]()
+                    DMFTCHECKHR_GOTO(ExceptionBoundary([&]()
                     {
                         m_OutPins.push_back(poPin);
-                    });
-                    DMFTCHECKHR_GOTO(hr, done);
+                    }),done);
+                    poPin->AddRef();
+                    ulOutPinIndex++;
                 }
            }
-        }
+ 
     }
     
     m_InputPinCount =  ULONG ( m_InPins.size() );
@@ -422,6 +292,7 @@ done:
     {
         delete [] ( outGuids );
     }
+    SAFE_DELETE(pPinFactory);
     if ( FAILED( hr ) )
     {
         //Release the pins and the resources acquired
@@ -482,17 +353,17 @@ STDMETHODIMP  CMultipinMft::GetStreamCount(
 {
     HRESULT hr = S_OK;
     CAutoLock   lock(m_critSec);
-    
-  
+    DMFTCHECKNULL_GOTO(pdwInputStreams, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pdwOutputStreams, done, E_INVALIDARG);
     *pdwInputStreams     = m_InputPinCount;
     *pdwOutputStreams    = m_OutputPinCount;
-
     DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr );
+done:
     return hr;
 }
 
 //
-//Doesn't striclt conform to GetStreamIDs on IMFTransform Interface!
+//Doesn't strictly conform to the GetStreamIDs on IMFTransform Interface!
 //
 STDMETHODIMP  CMultipinMft::GetStreamIDs(
     _In_                                    DWORD  dwInputIDArraySize,
@@ -508,9 +379,6 @@ STDMETHODIMP  CMultipinMft::GetStreamIDs(
 {
     HRESULT hr = S_OK;
     CAutoLock   lock(m_critSec);
-    
-    MFTLOCKED();
-    
     if ( ( dwInputIDArraySize < m_InputPinCount ) && ( dwOutputIDArraySize < m_OutputPinCount ) )
     {
         hr = MF_E_BUFFERTOOSMALL;
@@ -550,15 +418,13 @@ index dwTypeIndex.
 STDMETHODIMP  CMultipinMft::GetInputAvailableType(
     _In_        DWORD           dwInputStreamID,
     _In_        DWORD           dwTypeIndex,
-    _Out_ IMFMediaType**  ppMediaType
+    _Out_ IMFMediaType**        ppMediaType
     )
 {
     HRESULT hr = S_OK;
-    MFTLOCKED();
-
-    
-    CInPin *piPin = ( CInPin* )GetInPin( dwInputStreamID );
-
+        
+    CInPin *piPin = GetInPin( dwInputStreamID );
+    DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO( piPin, done, MF_E_INVALIDSTREAMNUMBER );
     
     *ppMediaType = nullptr;
@@ -571,7 +437,6 @@ STDMETHODIMP  CMultipinMft::GetInputAvailableType(
             dwInputStreamID,
             dwTypeIndex,
             hr);
-
     }
 
 done:
@@ -593,17 +458,15 @@ STDMETHODIMP CMultipinMft::GetOutputAvailableType(
 --*/
 {
     HRESULT hr = S_OK;
-    MFTLOCKED();
     
-    DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
+    ComPtr<COutPin> spoPin = GetOutPin( dwOutputStreamID );
 
-    COutPin*poPin = ( COutPin* )GetOutPin( dwOutputStreamID );
-    
-    DMFTCHECKNULL_GOTO( poPin, done, MF_E_INVALIDSTREAMNUMBER );
+    DMFTCHECKNULL_GOTO( spoPin.Get(), done, MF_E_INVALIDSTREAMNUMBER );
+    DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
 
     *ppMediaType = nullptr;
 
-    hr = poPin->GetOutputAvailableType( dwTypeIndex, ppMediaType );
+    hr = spoPin->GetOutputAvailableType( dwTypeIndex, ppMediaType );
 
     if ( FAILED( hr ) )
     {
@@ -628,9 +491,9 @@ STDMETHODIMP  CMultipinMft::GetInputCurrentType(
 --*/
 {
     //
-    //The input current types will not come to this transform.
-    //The outputs of this transform matter. The DTM manages the
-    //output of this transform and the inptuts of the source transform
+    // The input current types will not come to this transform.
+    // The outputs of this transform matter. The DTM manages the
+    // output of this transform and the inptuts of the source transform
     //
     UNREFERENCED_PARAMETER(dwInputStreamID);
     UNREFERENCED_PARAMETER(ppMediaType);
@@ -650,14 +513,13 @@ STDMETHODIMP  CMultipinMft::GetOutputCurrentType(
 --*/
 {
     HRESULT hr = S_OK;
-    MFTLOCKED();
     CAutoLock lock( m_critSec );
 
     DMFTCHECKNULL_GOTO( ppMediaType, done, E_INVALIDARG );
     
     *ppMediaType = nullptr;
 
-    COutPin *poPin = ( COutPin* )GetOutPin( dwOutputStreamID );
+    COutPin *poPin = GetOutPin( dwOutputStreamID );
 
     DMFTCHECKNULL_GOTO( poPin, done, MF_E_INVALIDSTREAMNUMBER );
 
@@ -703,7 +565,6 @@ STDMETHODIMP  CMultipinMft::ProcessMessage(
 --*/
 {
     HRESULT hr = S_OK;
-    MFTLOCKED();
 
     UNREFERENCED_PARAMETER(ulParam);
     
@@ -715,18 +576,18 @@ STDMETHODIMP  CMultipinMft::ProcessMessage(
     {
     case MFT_MESSAGE_COMMAND_FLUSH:
         //
-        //This is MFT wide flush.. Flush all output pins
+        // This is MFT wide flush.. Flush all output pins
         //
         (VOID)FlushAllStreams();
         break;
     case MFT_MESSAGE_COMMAND_DRAIN:
         //
-        //There is no draining for Device MFT. Just kept here for reference
+        // There is no draining for Device MFT. Just kept here for reference
         //
         break;
     case MFT_MESSAGE_NOTIFY_START_OF_STREAM:
         //
-        //No op for device MFTs
+        // No op for device MFTs
         //
         break;
     case MFT_MESSAGE_SET_D3D_MANAGER:
@@ -808,11 +669,9 @@ STDMETHODIMP  CMultipinMft::ProcessInput(
 {
     HRESULT     hr = S_OK;
     UNREFERENCED_PARAMETER( dwFlags );
-
-    MFTLOCKED();
-
-    CInPin *inPin = ( CInPin* )GetInPin( dwInputStreamID );
-    DMFTCHECKNULL_GOTO( inPin, done, E_INVALIDARG );
+    
+    CInPin *inPin = GetInPin( dwInputStreamID );
+    DMFTCHECKNULL_GOTO( inPin, done, MF_E_INVALIDSTREAMNUMBER);
 
     if ( !IsStreaming() )
     {
@@ -820,11 +679,7 @@ STDMETHODIMP  CMultipinMft::ProcessInput(
     }
 
     DMFTCHECKHR_GOTO( inPin->SendSample( pSample ), done );
-
-    QueueEvent( METransformHaveOutput, GUID_NULL, S_OK, NULL );
-   
 done:
-    SAFERELEASE( pSample );
     DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr );
     return hr;
 
@@ -848,7 +703,6 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
 {
     HRESULT     hr      = S_OK;
     BOOL       gotOne   = false;
-    MFTLOCKED();
     UNREFERENCED_PARAMETER( dwFlags );
 
     if (cOutputBufferCount > m_OutputPinCount )
@@ -861,13 +715,30 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     {
         DWORD dwStreamID = pOutputSamples[i].dwStreamID;
 
-        COutPin *poPin = ( COutPin * )GetOutPin( dwStreamID );
+        COutPin *poPin = GetOutPin( dwStreamID );
+        GUID     pinGuid = GUID_NULL;
         DMFTCHECKNULL_GOTO( poPin, done, E_INVALIDARG );
 
         if ( SUCCEEDED( poPin->ProcessOutput( dwFlags, &pOutputSamples[i],
             pdwStatus ) ) )
         {
             gotOne = true;
+            // Do photo confirmation if enabled
+#if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
+            BOOL pIsImagePin = FALSE;
+            if (pOutputSamples[i].pSample &&
+                IsPhotoConfirmationEnabled() &&
+                (SUCCEEDED(CheckImagePin(static_cast<IMFAttributes*>(poPin), &pIsImagePin)) && pIsImagePin))
+            {
+                ComPtr<IMFMediaType> spMediaType;
+                if (SUCCEEDED(poPin->getMediaType(spMediaType.GetAddressOf())))
+                {
+                    // Do Photo confirmation
+                    ProcessCapturePhotoConfirmationCallBack(spMediaType.Get(), pOutputSamples[i].pSample);
+                }
+            }
+#endif
+
         }
     }
     if (gotOne)
@@ -893,12 +764,11 @@ STDMETHODIMP  CMultipinMft::GetInputStreamAttributes(
 --*/
 {
     HRESULT hr = S_OK;
-    MFTLOCKED();
 
     DMFTCHECKNULL_GOTO( ppAttributes, done, E_INVALIDARG );
     *ppAttributes = nullptr;
 
-    CInPin *piPin = static_cast<CInPin*>(GetInPin( dwInputStreamID ));
+    CInPin *piPin = GetInPin( dwInputStreamID );
 
     DMFTCHECKNULL_GOTO( piPin, done, E_INVALIDARG );
 
@@ -922,12 +792,11 @@ STDMETHODIMP  CMultipinMft::GetOutputStreamAttributes(
 --*/
 {
     HRESULT hr = S_OK;
-    MFTLOCKED(); 
-
+ 
     DMFTCHECKNULL_GOTO(ppAttributes, done, E_INVALIDARG);
     *ppAttributes = nullptr;
 
-    COutPin *poPin = (COutPin *)GetOutPin(dwOutputStreamID);
+    COutPin *poPin = GetOutPin(dwOutputStreamID);
 
     DMFTCHECKNULL_GOTO( poPin, done, E_INVALIDARG );
 
@@ -958,7 +827,7 @@ STDMETHODIMP CMultipinMft::SetInputStreamState(
     --*/
 {
     HRESULT hr = S_OK;
-    CInPin *piPin = (CInPin*)GetInPin(dwStreamID);
+    CInPin *piPin = GetInPin(dwStreamID);
     DMFTCHECKNULL_GOTO(piPin, done, MF_E_INVALIDSTREAMNUMBER);
     
     DMFTCHECKHR_GOTO(piPin->SetInputStreamState(pMediaType, value, dwFlags),done);
@@ -974,7 +843,7 @@ STDMETHODIMP CMultipinMft::GetInputStreamState(
     )
 {
     HRESULT hr = S_OK;
-    CInPin *piPin = (CInPin*)GetInPin(dwStreamID);
+    ComPtr<CInPin> piPin = GetInPin(dwStreamID);
 
     DMFTCHECKNULL_GOTO(piPin, done, MF_E_INVALIDSTREAMNUMBER);
     
@@ -1010,7 +879,7 @@ STDMETHODIMP CMultipinMft::SetOutputStreamState(
 {
     HRESULT hr = S_OK;
     UNREFERENCED_PARAMETER(dwFlags);
-     CAutoLock Lock(m_critSec);
+    CAutoLock Lock(m_critSec);
 
     DMFTCHECKHR_GOTO(ChangeMediaTypeEx(dwStreamID, pMediaType, state),done);
    
@@ -1021,7 +890,7 @@ done:
 
 STDMETHODIMP CMultipinMft::GetOutputStreamState(
     _In_    DWORD               dwStreamID,
-    _Out_   DeviceStreamState   *value
+    _Out_   DeviceStreamState   *pState
     )
     /*++
     Description:
@@ -1034,10 +903,10 @@ STDMETHODIMP CMultipinMft::GetOutputStreamState(
     HRESULT hr = S_OK;
     CAutoLock lock(m_critSec);
 
-    COutPin *poPin = (COutPin *)GetOutPin(dwStreamID);
+    COutPin *poPin = GetOutPin(dwStreamID);
+    DMFTCHECKNULL_GOTO(pState, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(poPin, done, MF_E_INVALIDSTREAMNUMBER);
-    
-    *value = poPin->GetState();
+    *pState = poPin->GetState();
 done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
@@ -1059,10 +928,10 @@ STDMETHODIMP CMultipinMft::GetInputStreamPreferredState(
     --*/
 {
     HRESULT hr = S_OK;
-    CInPin *piPin = (CInPin*)GetInPin(dwStreamID);
+    CInPin *piPin = GetInPin(dwStreamID);
+    DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(piPin, done, MF_E_INVALIDSTREAMNUMBER);
-
-    piPin->GetInputStreamPreferredState(value, ppMediaType);
+    hr = piPin->GetInputStreamPreferredState(value, ppMediaType);
 done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
    return hr;
@@ -1101,20 +970,10 @@ STDMETHODIMP CMultipinMft::FlushOutputStream(
     UNREFERENCED_PARAMETER(dwFlags);
     CAutoLock Lock(m_critSec);
 
-    COutPin *poPin = (COutPin*)GetOutPin(dwStreamIndex);
+    COutPin *poPin = GetOutPin(dwStreamIndex);
     DMFTCHECKNULL_GOTO(poPin, done, E_INVALIDARG);
-    
     DeviceStreamState oldState = poPin->SetState(DeviceStreamState_Disabled);
-    
-    hr = poPin->FlushQueues();
-    
-    if (FAILED(hr))
-    {
-        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! failed %x = %!HRESULT!", hr, hr);
-    }
-    //
-    //Restore state
-    //
+    DMFTCHECKHR_GOTO(poPin->FlushQueues(),done);
     poPin->SetState(oldState);
 done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
@@ -1133,6 +992,7 @@ STDMETHODIMP_(VOID) CMultipinMft::FlushAllStreams(
     )
 {
     DeviceStreamState oldState;
+    CAutoLock Lock(m_critSec);
     for ( DWORD dwIndex = 0, dwSize = (DWORD)m_OutPins.size(); dwIndex < dwSize; dwIndex++ )
     {
         COutPin *poPin = (COutPin *)m_OutPins[dwIndex];
@@ -1177,103 +1037,48 @@ STDMETHODIMP CMultipinMft::KsProperty(
     if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl)
         && (pProperty->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART))
     {
+#if MF_DEVICEMFT_WARMSTART_HANDLING
         DMFTCHECKHR_GOTO(WarmStartHandler(pProperty,
             ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned),done);
         goto done;
+#endif
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Warm Start Control %d Passed ", pProperty->Id);
     }
 
-    if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl)
-        && (pProperty->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTHUMBNAIL))
-    {
-        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Thumbnail sent %d",pProperty->Flags);
-    }
-    if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl)
-        &&(!filterHasIndependentPin()))
+    if (IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl))
     {
         DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Extended Control %d Passed ",pProperty->Id);
-        switch (pProperty->Id)
-        {
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE:
-            hr = ExtendedPhotoModeHandler(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE:
-            hr = ExtendedPhotoMaxFrameRate(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_MAXVIDFPS_PHOTORES:
-            hr = MaxVidFPS_PhotoResHandler(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTRIGGERTIME:
-            hr = QPCTimeHandler(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOFRAMERATE:
-            hr = PhotoFrameRateHandler(pProperty,
-                ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned);
-            goto done;
-            break;
-
-        }
     }
-    else
-    if ((IsEqualCLSID(pProperty->Set, PROPSETID_VIDCAP_VIDEOCONTROL)) &&
-        (pProperty->Id == KSPROPERTY_VIDEOCONTROL_MODE))
+    else if ((IsEqualCLSID(pProperty->Set, PROPSETID_VIDCAP_VIDEOCONTROL)) && (pProperty->Id == KSPROPERTY_VIDEOCONTROL_MODE))
     {
-        //
-        //A photo trigger was sent!!!
-        //We need to set the event haveoutput
-        //
-        PKSPROPERTY_VIDEOCONTROL_MODE_S VideoControl = NULL;
+        // A function illustrating how we can capture and service photos from the device MFT. This block shows how we can
+        // intercept Photo triggers going down to the pipeline
+        
         if (sizeof(KSPROPERTY_VIDEOCONTROL_MODE_S) == ulDataLength)
         {
-            VideoControl = (PKSPROPERTY_VIDEOCONTROL_MODE_S)pvPropertyData;
+            PKSPROPERTY_VIDEOCONTROL_MODE_S VideoControl = (PKSPROPERTY_VIDEOCONTROL_MODE_S)pvPropertyData;
             m_PhotoModeIsPhotoSequence = false;
-
             if (VideoControl->Mode == KS_VideoControlFlag_StartPhotoSequenceCapture)
             {
-                //
-                //Signalling start of photo sequence
-                //
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Starting PhotoSequence Trigger");
                 m_PhotoModeIsPhotoSequence = true;
-                setPhotoTriggerSent(true);
             }
-            else
-            if (VideoControl->Mode == KS_VideoControlFlag_StopPhotoSequenceCapture)
+            else if (VideoControl->Mode == KS_VideoControlFlag_StopPhotoSequenceCapture)
             {
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Stopping PhotoSequence Trigger");
                 m_PhotoModeIsPhotoSequence = false;
-                setPhotoTriggerSent(false);
             }
             else
             {
-                //
-                //Normal trigger sent for single photo acquisition!
-                //
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Take Single Photo Trigger");
-                setPhotoTriggerSent(true);
             }
-            
-        }
-        
-        if (!filterHasIndependentPin())
-        {
-            goto done;
         }
     }
-    hr = m_spIkscontrol->KsProperty(pProperty,
+    DMFTCHECKHR_GOTO(m_spIkscontrol->KsProperty(pProperty,
         ulPropertyLength,
         pvPropertyData,
         ulDataLength,
-        pulBytesReturned);
- 
-    
+        pulBytesReturned),done);
 done:
     LPSTR guidStr = DumpGUIDA(pProperty->Set);
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! g:%s p:%d exiting %x = %!HRESULT!", guidStr, pProperty->Id, hr, hr);
@@ -1291,7 +1096,7 @@ STDMETHODIMP CMultipinMft::KsMethod(
     /*++
     Description:
 
-    Implements IKSProperty::KsMethod function.
+    Implements IKSProperty::KsMethod function. We can trap ksmethod calls here.
     --*/
 {
     return m_spIkscontrol->KsMethod(
@@ -1318,6 +1123,7 @@ STDMETHODIMP CMultipinMft::KsEvent(
 {
 
     HRESULT hr = S_OK;
+#if MF_DEVICEMFT_WARMSTART_HANDLING
     if (pEvent && (pEvent->Set == KSEVENTSETID_ExtendedCameraControl) &&
         (pEvent->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART))
     {
@@ -1331,52 +1137,20 @@ STDMETHODIMP CMultipinMft::KsEvent(
             ulDataLength,
             pBytesReturned
             );
-       goto done;
     }
-     
-    if ((pEvent && (pEvent->Set == KSEVENTSETID_ExtendedCameraControl))
-        && (!filterHasIndependentPin()))
+    else
+#endif
     {
+
         //
-        // Important: Extended controls will send events which are strictly 
-        // One shot. The event comes first where it should be duped and stored,
-        // the control comes next. The event should be set after control completes
-        // and it should be then closed.
-        // The below code handles only certain events needed for
-        // implementing photo sequence. For a complete exhaustive
-        // list refer documentation.
+        // All the Events we don't handle should be sent to the driver!
         //
-        switch (pEvent->Id)
-        {
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE:
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE:
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_MAXVIDFPS_PHOTORES:
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTRIGGERTIME:
-        case KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOFRAMERATE:
-            {
-                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Acquiring Event for Async Extended Control"); 
-                 //
-                 // Let the event handler handle the event
-                 //
-                 DMFTCHECKHR_GOTO(m_eventHandler.KSEvent(pEvent,
-                     ulEventLength,
-                     pEventData,
-                     ulDataLength,
-                     pBytesReturned
-                     ),done);
-                 goto done;
-            }
-        }
+        hr = m_spIkscontrol->KsEvent(pEvent,
+            ulEventLength,
+            pEventData,
+            ulDataLength,
+            pBytesReturned);
     }
-    //
-    // All the Events we don't handle should be sent to the driver!
-    //
-    hr = m_spIkscontrol->KsEvent(pEvent,
-        ulEventLength,
-        pEventData,
-        ulDataLength,
-        pBytesReturned);
-done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
 }
@@ -1483,16 +1257,17 @@ done:
 }
 #endif
 
-
-
-
 //
-//HELPER FUNCTIONS
+// HELPER FUNCTIONS
 //
 
-STDMETHODIMP_(CBasePin*) CMultipinMft::GetInPin( 
+//
+// A lock here could mean a deadlock because this will be called when the lock is already held
+// in another thread.
+//
+CInPin* CMultipinMft::GetInPin( 
     _In_ DWORD dwStreamId
-    )
+)
 {
     CInPin *inPin = NULL;
     for (DWORD dwIndex = 0, dwSize = (DWORD)m_InPins.size(); dwIndex < dwSize; dwIndex++)
@@ -1507,12 +1282,12 @@ STDMETHODIMP_(CBasePin*) CMultipinMft::GetInPin(
     return inPin;
 }
 
-STDMETHODIMP_(CBasePin*) CMultipinMft::GetOutPin(
+COutPin* CMultipinMft::GetOutPin(
     _In_ DWORD dwStreamId
     )
 {
     COutPin *outPin = NULL;
-
+    CAutoLock Lock(m_critSec);
     for ( DWORD dwIndex = 0, dwSize = (DWORD) m_OutPins.size(); dwIndex < dwSize; dwIndex++ )
     {
         outPin = ( COutPin * )m_OutPins[ dwIndex ];
@@ -1528,224 +1303,117 @@ STDMETHODIMP_(CBasePin*) CMultipinMft::GetOutPin(
     return outPin;
 }
 
-/*++
-Description:
-This is a critical function which changes the state on an output pin
-This should be called under the control lock of the DT.
-Here the 
---*/
-STDMETHODIMP CMultipinMft::ChangeMediaTypeEx(
-    _In_ ULONG pinId,
-    _In_opt_ IMFMediaType *pMediaType,
-    _In_ DeviceStreamState reqState
-    )
+HRESULT CMultipinMft::GetConnectedInpin(_In_ ULONG ulOutpin, _Out_ ULONG &ulInPin)
 {
-    HRESULT                 hr                  = S_OK;
-    DeviceStreamState       oldOutPinState;
-    DeviceStreamState       newOutStreamState;
-    ComPtr<IMFMediaType>   pFullType           = nullptr;
-
-    COutPin *poPin = static_cast<COutPin*>( GetOutPin(pinId) );
-    
-    MMFTMMAPITERATOR inputPinPos;
-
-    DMFTCHECKNULL_GOTO( poPin, done, E_INVALIDARG );
-    //
-    //Check if the media type requested is a supported type
-    //
-    if ( pMediaType )
+    HRESULT hr = S_OK;
+    map<int, int>::iterator it = m_outputPinMap.find(ulOutpin);
+    if (it != m_outputPinMap.end())
     {
-        if ( !poPin->IsMediaTypeSupported( pMediaType, &pFullType ) )
+        ulInPin = it->second;
+    }
+    else
+    {
+        hr = MF_E_INVALIDSTREAMNUMBER;
+    }
+    return hr;
+}
+
+//
+// The Below function changes media type on the pins exposed by device MFT
+//
+__requires_lock_held(m_critSec)
+HRESULT CMultipinMft::ChangeMediaTypeEx(
+    _In_        ULONG              pinId,
+    _In_opt_    IMFMediaType       *pMediaType,
+    _In_        DeviceStreamState  reqState
+)
+{
+    HRESULT hr = S_OK;
+    COutPin *poPin =        GetOutPin(pinId);
+    DeviceStreamState       oldOutPinState, oldInputStreamState, newOutStreamState, newRequestedInPinState;
+    ComPtr<IMFMediaType>    pFullType, pInputMediaType;
+    ULONG                   ulInPinId       = 0;
+    DWORD                   dwFlags         = 0;
+    
+    DMFTCHECKNULL_GOTO(poPin, done, E_INVALIDARG);
+    {
+        //
+        // dump the media types to the logs
+        //
+       ComPtr<IMFMediaType> spOldMediaType;
+       (VOID)poPin->getMediaType(spOldMediaType.GetAddressOf());
+       CMediaTypePrinter newType(pMediaType);
+       CMediaTypePrinter oldType(spOldMediaType.Get());
+       if (WPP_LEVEL_ENABLED(DMFT_GENERAL))
+       {
+           DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, " Pin:%d old MT:[%s] St:%d", pinId, oldType.ToString(), reqState);
+           DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, " Pin:%d new MT:[%s] St:%d", pinId, newType.ToString(), reqState);
+       }
+    }
+    if (pMediaType)
+    {
+        if (!poPin->IsMediaTypeSupported(pMediaType, &pFullType))
         {
             DMFTCHECKHR_GOTO(MF_E_INVALIDMEDIATYPE, done);
         }
     }
-    //
-    //First step disable the output pin. store the old state
-    //
-    oldOutPinState = poPin->SetState( DeviceStreamState_Disabled );
+ 
+    DMFTCHECKHR_GOTO(GetConnectedInpin(pinId, ulInPinId), done);
+    CInPin *pinPin = GetInPin(ulInPinId); // Get the input pin
+  
+    (VOID)pinPin->getMediaType(&pInputMediaType);
+    oldInputStreamState = pinPin->SetState(DeviceStreamState_Disabled); // Disable input pin
+    oldOutPinState      = poPin->SetState(DeviceStreamState_Disabled);  // Disable output pin
+    (void)pinPin->FlushQueues(); // Flush the input queues
+    (void)poPin->FlushQueues();  // Flush the output queues
+    newOutStreamState = pinStateTransition[oldOutPinState][reqState];  // New state needed  
     
-    (void)poPin->FlushQueues();
-
-    newOutStreamState = pinStateTransition[oldOutPinState][reqState];  //New state needed
-    
-    //
-    //Go through the output pins' maps that has the conencted input pin to the output pin
-    //
-    inputPinPos = m_outputPinMap.equal_range( pinId );
-    
-	for (std::multimap<int, int>::iterator piterator = inputPinPos.first; piterator != inputPinPos.second;piterator++)
+    // The Old input and the output pin states should be the same
+    newRequestedInPinState = newOutStreamState;
+   
+    if ((newOutStreamState != oldOutPinState) /*State change*/
+        ||((pFullType.Get() != nullptr) && (pInputMediaType.Get()!=nullptr) && (S_OK != (pFullType->IsEqual(pInputMediaType.Get(), &dwFlags)))) /*Media Types dont match*/
+        ||((pFullType == nullptr)||(pInputMediaType == nullptr))/*Either one of the mediatypes is null*/
+        )
     {
         //
-        //Get the output pins connected to the input pin. The input pin map consists of the output pins connected 
+        // State has change or media type has changed so we need to change the media type on the 
+        // underlying kernel pin
         //
-        ULONG connectedInputPin             = (*piterator).second;
-        BOOL isAnyConnectedOutPinActive     = false;
-        BOOL isAnyConnectedOutPinPaused     = false;
-        BOOL isAnyConnectedOutPinRunning    = false;
-        BOOL doWeWaitForSetInput            = false;
-        DeviceStreamState oldInputStreamState;
-        MF_TRANSFORM_XVP_OPERATION operation = DeviceMftTransformXVPIllegal;
-        ComPtr<IMFMediaType> pInputMediaType = nullptr;
-        CInPin *pconnectedInPin = (CInPin*)GetInPin( connectedInputPin );
-        oldInputStreamState = pconnectedInPin->SetState( DeviceStreamState_Disabled );
-        DeviceStreamState newRequestedInPinState = pinStateTransition[oldInputStreamState][newOutStreamState];
-        
-        if (pFullType)
-        {
-            pconnectedInPin->getMediaType( &pInputMediaType );
-        }
-        
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Changing Mediatype on the input ");
+        pinPin->setPreferredMediaType(pFullType.Get());
+        pinPin->setPreferredStreamState(newRequestedInPinState);
+        // Let the pipline know that the input needs to be changed. 
+        SendEventToManager(METransformInputStreamStateChanged, GUID_NULL, pinPin->streamId());
         //
-        // Check if we need an  XVP to be inserted between this input and output pins.
+        //  The media type will be set on the input pin by the time we return from the wait
+        //          
+        DMFTCHECKHR_GOTO(pinPin->WaitForSetInputPinMediaChange(), done);
+        // Change the media type on the output..
+        DMFTCHECKHR_GOTO(poPin->ChangeMediaTypeFromInpin(pFullType.Get(), pFullType.Get(), reqState), done);
         //
-        CompareMediaTypesForXVP( pInputMediaType.Get(), pFullType.Get(), &operation );
-        DMFTCHECKHR_GOTO( GetConnectOutPinStatus( connectedInputPin,
-            pinId,                          // pinId = stream which should be excluded from the search. This function searches if 
-            &isAnyConnectedOutPinPaused,    // there are any other output pins connected other than the ouput pin (on which the change media type is requested)
-            &isAnyConnectedOutPinRunning,   //, which is streaming, paused. This way if the output pin is requested to go to Pause, Stop and if any of the
-            &isAnyConnectedOutPinActive ),done ); //other connected output pins are active, then input it not deactivated
-
+        // Notify the pipeline that the output stream media type has changed
         //
-        //Check if we are asked to go to an active state
-        //Check for the new media type. if 
-        //
-        if ( !IsPinStateInActive( newRequestedInPinState ) )
-        {
-            //
-            //We are being told to go active
-            //We will request a change in input stream state.
-            //
-            DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! %p Going active IN: %d OUT: %d ", this, connectedInputPin, pinId );
-            doWeWaitForSetInput = true;
-            if ( !pFullType ) 
-            {
-                DMFTCHECKHR_GOTO(MF_E_INVALIDMEDIATYPE, done);
-            }
-            if ( (! pInputMediaType ) || ( operation == DeviceMftTransformXVPDisruptiveIn ) )
-            {
-                pInputMediaType = pFullType;
-            }
-            if ( newRequestedInPinState == DeviceStreamState_Pause && isAnyConnectedOutPinRunning )
-            {
-                newRequestedInPinState = DeviceStreamState_Run;
-            }
-        }
-        else
-        {
-            //
-            //We have been requested to go inactive
-            //
-            DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! %p Going Inactive IN: %d OUT: %d ", this, connectedInputPin, pinId );
-
-            if ( operation == DeviceMftTransformXVPDisruptiveIn )
-            {
-                //
-                //Only where we recieve a disruptive media type change and a media type along with it, which is unlikely!!
-                //
-                pInputMediaType = pFullType;
-                doWeWaitForSetInput = true;
-            }
-            if ( isAnyConnectedOutPinActive )
-            {
-                newRequestedInPinState = ( isAnyConnectedOutPinRunning ) ? DeviceStreamState_Run : DeviceStreamState_Pause;
-            }
-            else
-            {
-                //Switch over to the new media type.. 
-                pInputMediaType = pFullType;
-                if ( !IsPinStateInActive( oldInputStreamState ) )
-                {
-                    //It was originall active.. now going down
-                    doWeWaitForSetInput = true;
-                }
-            }
-        }
-
-        //
-        // This will happen if we need a change in Input media type, We will send an event
-        // METransformInputStreamStateChanged to the Device transform manager. This will result
-        // in the Device Transform manager calling us back in getprefferedinputstate where
-        // we will give it back the state of the input and the media type to be set. 
-        // All this happens when we are holding a lock here in Change output media type. Hence during the
-        // input media type change we don't hold a lock. THE DTM takes care not to send you any more media
-        // type change operations that can cause a deadlock.
-        //
-
-        if ( doWeWaitForSetInput )
-        {
-            pconnectedInPin->setPreferredMediaType( pInputMediaType.Get() );
-            pconnectedInPin->setPreferredStreamState( newRequestedInPinState );
-            SendEventToManager( METransformInputStreamStateChanged, GUID_NULL, pconnectedInPin->streamId() );
-            //
-            //The media type will be set on the input pin by the time we return from the wait
-            //          
-            DMFTCHECKHR_GOTO( pconnectedInPin->WaitForSetInputPinMediaChange(), done );
-        }
-        else
-        {
-            pconnectedInPin->SetState( oldInputStreamState );
-            pconnectedInPin->setMediaType( pInputMediaType.Get() );
-        }
-        
-        //Now the input type is all set..
-        pInputMediaType = nullptr;
-        (VOID)pconnectedInPin->getMediaType( &pInputMediaType );
-        //
-        //Now propogate the media type change to the output pins
-        //
-        MMFTMMAPITERATOR outputPinPos = m_inputPinMap.equal_range(pconnectedInPin->streamId());
-        for ( std::multimap<int, int>::iterator poutPinsIterator = outputPinPos.first;
-            poutPinsIterator != outputPinPos.second;
-            poutPinsIterator++ )
-        {
-            ComPtr<IMFMediaType> pOutMediatype = nullptr;
-            DeviceStreamState     outPinState;
-            ULONG connectedoutPin = (*poutPinsIterator).second;
-            COutPin* pIoPin = static_cast<COutPin*>( GetOutPin ( connectedoutPin ) );
-
-            (VOID)pIoPin->getMediaType( &pOutMediatype );
-            outPinState = pIoPin->GetState();
-
-            if ( pIoPin->streamId() != pinId)
-            {
-                //
-                //This is the pin other than the output pin where the original change media type was recieved.
-                //
-
-                if ( pInputMediaType != nullptr && pOutMediatype != nullptr )
-                {
-                    DMFTCHECKHR_GOTO( pIoPin->ChangeMediaTypeFromInpin(pconnectedInPin, pInputMediaType.Get(),
-                        pOutMediatype.Get(),
-                        outPinState ),done);
-                }
-            }
-            else
-            {
-                //
-                //Change the media type of the requested output pin
-                //
-                DMFTCHECKHR_GOTO( pIoPin->ChangeMediaTypeFromInpin(pconnectedInPin, pInputMediaType.Get(), pFullType.Get(), newOutStreamState), done);
-                //Also signal to the manager that a stream state change has happened
-                SendEventToManager( MEUnknown, MEDeviceStreamCreated, pIoPin->streamId());
-                //
-                //Set the First Sample Flag. this will get reset when the first sample comes in. We will signal the discontinuity 
-                //when we get a Processoutput from the Device Transform Manager
-                //
-                pIoPin->SetFirstSample(TRUE);
-
-            }
-            pOutMediatype = nullptr;
-        }
-
+        DMFTCHECKHR_GOTO(SendEventToManager(MEUnknown, MEDeviceStreamCreated, poPin->streamId()), done);
+        poPin->SetFirstSample(TRUE);
+    }
+    else
+    {
+        // Restore back old states as we have nothing to do
+        pinPin->SetState(oldInputStreamState);
+        poPin->SetState(oldOutPinState);
     }
     
+
 done:
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::SendEventToManager(
+//
+// The below function sends events to the pipeline.
+//
+
+HRESULT CMultipinMft::SendEventToManager(
         _In_ MediaEventType eventType,
         _In_ REFGUID        pGuid,
         _In_ UINT32         context
@@ -1765,67 +1433,19 @@ STDMETHODIMP CMultipinMft::SendEventToManager(
 
          return hr;
     }
-
-
-STDMETHODIMP CMultipinMft::GetConnectOutPinStatus(
-    _In_ ULONG              ulPinId,
-    _In_ ULONG              ulOutPinId,
-    _Inout_ PBOOL          pAnyInPauseState,
-    _Inout_ PBOOL          pAnyInRunState,
-    _Inout_ PBOOL          pAnyActive
-    )
-    /*++
-    Description:
-
-    This function gets the statuses of the output pins other than the one specified
-    The arguments are as follows
-    ulPinId: The input pins which are connected to the ouput pin ulOutPinId
-    ulOutPinId: The pin to be excluded from the check i.e. the input pin from which the request is usually sent.
-    --*/
-{
-    HRESULT hr = S_OK;
-    MMFTMMAPITERATOR outputPinPos;
-    CInPin *pconnectedInPin = (CInPin*)GetInPin(ulPinId);
-    DMFTCHECKNULL_GOTO( pconnectedInPin, done, E_INVALIDARG );
-
-    outputPinPos = m_inputPinMap.equal_range( pconnectedInPin->streamId() );
-    DMFTCHECKNULL_GOTO( pconnectedInPin, done, E_FAIL );
-
-    *pAnyActive = *pAnyInPauseState = *pAnyInRunState =  false;
-    
-    for ( std::multimap<int, int>::iterator poutPosIterator = outputPinPos.first;
-        poutPosIterator != outputPinPos.second;
-        poutPosIterator++ )
-    {
-        ULONG    connectedoutPin = (*poutPosIterator).second;
-        COutPin* pconnectedOutPin   = ( COutPin * )GetOutPin( connectedoutPin );
-
-        if (pconnectedOutPin->streamId() != ulOutPinId)
-        {
-            //This is excluding the outpin which requested pin state change
-            *pAnyActive         |= !IsPinStateInActive( pconnectedOutPin->GetState() );
-            *pAnyInPauseState   |= ( pconnectedOutPin->GetState() == DeviceStreamState_Pause );
-            *pAnyInRunState     |= ( pconnectedOutPin->GetState() == DeviceStreamState_Run );
-        }
-
-    }
-    done:
-    return S_OK;
-}
-
-
 /*++
 Description:
 This function connects the input and output pins.
 Any media type filtering can  happen here
 --*/
-STDMETHODIMP CMultipinMft::BridgeInputPinOutputPin(
+HRESULT CMultipinMft::BridgeInputPinOutputPin(
     _In_ CInPin* piPin,
     _In_ COutPin* poPin
     )
 {
-    HRESULT hr               = S_OK;
-    ULONG   ulIndex          = 0;
+    HRESULT hr                      = S_OK;
+    ULONG   ulIndex                 = 0;
+    ULONG   ulAddedMediaTypeCount   = 0;
     ComPtr<IMFMediaType> pMediaType = nullptr;
 
     DMFTCHECKNULL_GOTO( piPin, done, E_INVALIDARG );
@@ -1844,9 +1464,15 @@ STDMETHODIMP CMultipinMft::BridgeInputPinOutputPin(
         if ( IsKnownUncompressedVideoType( subType ) )
         {
             DMFTCHECKHR_GOTO( poPin->AddMediaType(NULL, pMediaType.Get() ), done );
+            ulAddedMediaTypeCount++;
         }
 
         pMediaType = nullptr;
+    }
+    if (ulAddedMediaTypeCount == 0)
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Make Sure Pin %d has one media type exposed ", piPin->streamId());
+        DMFTCHECKHR_GOTO( MF_E_INVALID_STREAM_DATA, done ); 
     }
     //
     //Add the Input Pin to the output Pin
@@ -1854,16 +1480,15 @@ STDMETHODIMP CMultipinMft::BridgeInputPinOutputPin(
     DMFTCHECKHR_GOTO(poPin->AddPin(piPin->streamId()), done);
     hr = ExceptionBoundary([&](){
         //
-        //Add the output pin to the input pin. 
+        // Add the output pin to the input pin. 
+        // Create the pin map. So that we know which pin input pin is connected to which output pin
         //
         piPin->ConnectPin(poPin);
+        m_outputPinMap.insert(std::pair< int, int >(poPin->streamId(), piPin->streamId()));
     });
-    DMFTCHECKHR_GOTO(hr, done);
-    //
-    //Create the map. This will be useful when we have to decide the state transitions of the pins
-    //
-    m_inputPinMap.insert  ( std::pair< int,int >( piPin->streamId(), poPin->streamId())  );
-    m_outputPinMap.insert ( std::pair< int, int >( poPin->streamId(), piPin->streamId()) );
+    
+    
+    
 done:
     //
     //Failed adding media types
@@ -1875,370 +1500,11 @@ done:
     return hr;
 }
 
-
 //
-//The below routines are used to implement the extended controls needed to implement the photo sequence
-//The photo sequence is enabled for cameras with no independent image pins
-//The extended controls needed to enable photo sequence are discussed in detail in the photo sequence document
+// Look at the below code only if we need to handle an extended property in Device MFT
 //
 
-/*++
-Extended Photo Mode handler is the extended property handler dealing with the photosequence and single mode capabilities of the camera
---*/
-STDMETHODIMP CMultipinMft::ExtendedPhotoModeHandler(
-_In_       PKSPROPERTY Property,
-_In_       ULONG       ulPropertyLength,
-_In_       LPVOID      pData,
-_In_       ULONG       ulOutputBufferLength,
-_Inout_    PULONG      pulBytesReturned
-)
-
-{
-    HRESULT              hr = S_OK;
-    UNREFERENCED_PARAMETER( ulPropertyLength );
-
-    if ( Property->Flags & KSPROPERTY_TYPE_SET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE );
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        else if ( ulOutputBufferLength < sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE ) )
-        {
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        else if ( pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE ) )
-        {
-            PBYTE pPayload = ( PBYTE )pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-            //
-            //Use the below structure to make changes to the Property and thus affect the configuration
-            //PKSCAMERA_EXTENDEDPROP_PHOTOMODE pExtendedValue = (PKSCAMERA_EXTENDEDPROP_PHOTOMODE)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
-            //
-            m_FilterInPhotoSequence = pExtendedHeader->Flags & KSCAMERA_EXTENDEDPROP_PHOTOMODE_SEQUENCE;
-            DMFTCHECKHR_GOTO(m_eventHandler.SetOneShot(KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE), done);
-        }
-        else
-        {
-            DMFTCHECKHR_GOTO(E_INVALIDARG, done);
-        }
-    }
-    else if ( Property->Flags & KSPROPERTY_TYPE_GET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE );
-            hr = HRESULT_FROM_WIN32(ERROR_MORE_DATA);
-        }
-        else if ( pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE ) )
-        {
-            PBYTE pPayload = (PBYTE)pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader   = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-            PKSCAMERA_EXTENDEDPROP_PHOTOMODE pExtendedValue = ( PKSCAMERA_EXTENDEDPROP_PHOTOMODE )( pPayload + sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) );
-
-            pExtendedHeader->Capability     = ( KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL | KSCAMERA_EXTENDEDPROP_PHOTOMODE_SEQUENCE );
-            pExtendedHeader->Flags          = ( m_FilterInPhotoSequence ) ? KSCAMERA_EXTENDEDPROP_PHOTOMODE_SEQUENCE : KSCAMERA_EXTENDEDPROP_PHOTOMODE_NORMAL;
-            pExtendedHeader->Result         = 0;
-            pExtendedHeader->Size           = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE );
-            pExtendedHeader->Version        = 1;
-
-            pExtendedValue->MaxHistoryFrames        = 10;
-            pExtendedValue->RequestedHistoryFrames  = 0 ;
-            pExtendedValue->SubMode                 = 0 ;
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_PHOTOMODE );
-        }
-        else
-        {
-            DMFTCHECKHR_GOTO( E_INVALIDARG, done );
-        }
-    }
-
-done:
-    DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-
-    return hr;
-}
-
-/*++
-The Extended Max Frame rate is self explanatory
---*/
-STDMETHODIMP CMultipinMft::ExtendedPhotoMaxFrameRate(
-    _In_       PKSPROPERTY Property,
-    _In_       ULONG       ulPropertyLength,
-    _In_       LPVOID      pData,
-    _In_       ULONG       ulOutputBufferLength,
-    _Inout_    PULONG      pulBytesReturned
-    )
-
-{
-    HRESULT hr = S_OK;
-    UNREFERENCED_PARAMETER( ulPropertyLength );
-
-    if ( Property->Flags & KSPROPERTY_TYPE_SET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if (ulOutputBufferLength < sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_EXTENDEDPROP_VALUE))
-        {
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if (pData && ulOutputBufferLength >= sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_EXTENDEDPROP_VALUE))
-        {
-            //
-            //This is for setting the Max frame rate..
-            //
-            //PBYTE pPayload = (PBYTE)pData;
-            //PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = (PKSCAMERA_EXTENDEDPROP_HEADER)(pPayload);
-            //PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue = (PKSCAMERA_EXTENDEDPROP_VALUE)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
-            //
-            DMFTCHECKHR_GOTO(m_eventHandler.SetOneShot(KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE), done);
-        }
-        else
-        {
-            DMFTCHECKHR_GOTO(E_INVALIDARG, done);
-        }
-    }
-    else if ( Property->Flags & KSPROPERTY_TYPE_GET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            hr = HRESULT_FROM_WIN32( ERROR_MORE_DATA );
-        }
-        else if ( pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE ))
-        {
-            PBYTE pPayload = ( PBYTE )pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader   = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-            PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue     = ( PKSCAMERA_EXTENDEDPROP_VALUE )( pPayload + sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) );
-            pExtendedHeader->Capability = KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL;
-            pExtendedHeader->Flags      = 0;
-            pExtendedHeader->Result     = 0;
-            pExtendedHeader->Size       = sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_EXTENDEDPROP_VALUE);
-            pExtendedHeader->Version    = 1;
-            pExtendedValue->Value.ratio.HighPart    = 30;
-            pExtendedValue->Value.ratio.LowPart     = 1;
-            *pulBytesReturned = sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_EXTENDEDPROP_VALUE);
-        }
-        else
-        {
-            DMFTCHECKHR_GOTO(E_INVALIDARG, done);
-        }
-    }
-
-done:
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-
-    return hr;
-}
-
-
-STDMETHODIMP CMultipinMft::MaxVidFPS_PhotoResHandler(
-    _In_       PKSPROPERTY Property,
-    _In_       ULONG       ulPropertyLength,
-    _In_       LPVOID      pData,
-    _In_       ULONG       ulOutputBufferLength,
-    _Inout_    PULONG      pulBytesReturned
-    )
-{
-    HRESULT hr = S_OK;
-    UNREFERENCED_PARAMETER( ulPropertyLength );
-    if ( Property->Flags & KSPROPERTY_TYPE_SET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+ sizeof( KSCAMERA_MAXVIDEOFPS_FORPHOTORES );
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if ( ulOutputBufferLength < sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+ sizeof( KSCAMERA_MAXVIDEOFPS_FORPHOTORES ) )
-        {
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        else if (pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_MAXVIDEOFPS_FORPHOTORES ))
-        {
-            PBYTE pPayload = (PBYTE)pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-            //
-            //Use the extended value to make changes to the property.. refer documentation
-            //PKSCAMERA_MAXVIDEOFPS_FORPHOTORES pExtendedValue = (PKSCAMERA_MAXVIDEOFPS_FORPHOTORES)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
-            //
-            pExtendedHeader->Capability = 0;
-            pExtendedHeader->Flags = 0;
-            pExtendedHeader->Result = 0;
-            pExtendedHeader->Size = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            pExtendedHeader->Version = 1;
-
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_MAXVIDEOFPS_FORPHOTORES );
-        }
-
-        else
-        {
-            hr = E_INVALIDARG;
-        }
-    }
-    else if (Property->Flags & KSPROPERTY_TYPE_GET)
-    {
-        if (ulOutputBufferLength == 0)
-        {
-            *pulBytesReturned = sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_MAXVIDEOFPS_FORPHOTORES);
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if (ulOutputBufferLength < sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_MAXVIDEOFPS_FORPHOTORES))
-        {
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if (pData && ulOutputBufferLength >= sizeof(KSCAMERA_EXTENDEDPROP_HEADER)+sizeof(KSCAMERA_MAXVIDEOFPS_FORPHOTORES))
-        {
-            PBYTE pPayload = (PBYTE)pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = ( PKSCAMERA_EXTENDEDPROP_HEADER )(pPayload );
-            PKSCAMERA_MAXVIDEOFPS_FORPHOTORES pExtendedValue = (PKSCAMERA_MAXVIDEOFPS_FORPHOTORES)(pPayload + sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
-            pExtendedHeader->Capability = 0;
-            pExtendedHeader->Flags = 0;
-            pExtendedHeader->Result = 0;
-            pExtendedHeader->Size = sizeof(KSCAMERA_EXTENDEDPROP_HEADER) + sizeof(PKSCAMERA_MAXVIDEOFPS_FORPHOTORES);
-            pExtendedHeader->Version = 1;
-
-            pExtendedValue->PreviewFPSNum = 30;
-            pExtendedValue->PreviewFPSDenom = 1;
-            pExtendedValue->CaptureFPSNum = 30;
-            pExtendedValue->CaptureFPSDenom = 1;
-            pExtendedValue->PhotoResHeight  =   240;
-            pExtendedValue->PhotoResWidth   =   320;
-
-            *pulBytesReturned = sizeof(KSCAMERA_EXTENDEDPROP_HEADER) + sizeof(KSCAMERA_MAXVIDEOFPS_FORPHOTORES);
-        }
-        else
-        {
-            hr = E_INVALIDARG;
-        }
-    }
-done:
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-    return hr;
-}
-
-
-STDMETHODIMP CMultipinMft::QPCTimeHandler(
-    _In_       PKSPROPERTY Property,
-    _In_       ULONG       ulPropertyLength,
-    _In_       LPVOID      pData,
-    _In_       ULONG       ulOutputBufferLength,
-    _Inout_    PULONG      pulBytesReturned
-    )
-{
-    HRESULT hr = S_OK;
-    UNREFERENCED_PARAMETER( ulPropertyLength );
-
-    if ( Property->Flags & KSPROPERTY_TYPE_SET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        else if ( ulOutputBufferLength < sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE ) )
-        {
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if ( pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE ) )
-        {
-            //PBYTE pPayload = (PBYTE)pData;
-            //
-            //If the payload is to be used.. use the below structures
-            //
-            //PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = (PKSCAMERA_EXTENDEDPROP_HEADER)(pPayload);
-            //Use the extended value to make changes to the property.. refer documentation
-            //PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue = (PKSCAMERA_EXTENDEDPROP_VALUE)(pPayload +sizeof(KSCAMERA_EXTENDEDPROP_HEADER));
-            //
-            *pulBytesReturned = sizeof( PKSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-        }
-        else
-        {
-            hr = E_INVALIDARG;
-        }
-    }
-    else if ( Property->Flags & KSPROPERTY_TYPE_GET )
-    {
-        if ( ulOutputBufferLength == 0 )
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
-        }
-        else if ( ulOutputBufferLength < sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) + sizeof( KSCAMERA_EXTENDEDPROP_VALUE ) )
-        {
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        else if ( pData && ulOutputBufferLength >= sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) + sizeof( KSCAMERA_EXTENDEDPROP_VALUE ) )
-        {
-            PBYTE pPayload = (PBYTE)pData;
-            PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-            PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue = ( PKSCAMERA_EXTENDEDPROP_VALUE )( pPayload + sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) );
-            pExtendedHeader->Capability = 0;
-            pExtendedHeader->Flags = KSPROPERTY_CAMERA_PHOTOTRIGGERTIME_SET;
-            pExtendedHeader->Result = 0;
-            pExtendedHeader->Size = sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) + sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            pExtendedHeader->Version = 1;
-            pExtendedValue->Value.ull = 0;
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+ sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-        }
-        else
-        {
-            hr = E_INVALIDARG;
-        }
-    }
-done:
-    DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr );
-    return hr;
-}
-
-STDMETHODIMP CMultipinMft::PhotoFrameRateHandler(
-    _In_       PKSPROPERTY Property,
-    _In_       ULONG       ulPropertyLength,
-    _In_       LPVOID      pData,
-    _In_       ULONG       ulOutputBufferLength,
-    _Inout_   PULONG       pulBytesReturned
-    )
-{
-    HRESULT hr = S_OK;
-   
-    UNREFERENCED_PARAMETER( ulPropertyLength );
-    if ( Property->Flags & KSPROPERTY_TYPE_SET )
-    {
-        //
-        //This is a read only property!!!
-        //
-        hr = E_INVALIDARG;
-    }
-    else if ( Property->Flags & KSPROPERTY_TYPE_GET )
-    {
-        if ( ulOutputBufferLength < sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE ))
-        {
-            *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-            DMFTCHECKHR_GOTO( HRESULT_FROM_WIN32( ERROR_MORE_DATA ), done );
-        }
-        PBYTE pPayload = (PBYTE)pData;
-        PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = ( PKSCAMERA_EXTENDEDPROP_HEADER )( pPayload );
-        PKSCAMERA_EXTENDEDPROP_VALUE pExtendedValue = ( PKSCAMERA_EXTENDEDPROP_VALUE )( pPayload + sizeof( KSCAMERA_EXTENDEDPROP_HEADER ) );
-        pExtendedHeader->Capability = 0;
-        pExtendedHeader->Flags = 0;
-        pExtendedHeader->Result = 0;
-        pExtendedHeader->Size = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-        pExtendedHeader->Version = 1;
-        pExtendedValue->Value.ratio.HighPart = 30;
-        pExtendedValue->Value.ratio.LowPart = 1;
-        *pulBytesReturned = sizeof( KSCAMERA_EXTENDEDPROP_HEADER )+sizeof( KSCAMERA_EXTENDEDPROP_VALUE );
-        
-    }
-done:
-    DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr );
-    return hr;
-}
-
-
-STDMETHODIMP CMultipinMft::WarmStartHandler(
+HRESULT CMultipinMft::WarmStartHandler(
     _In_       PKSPROPERTY Property,
     _In_       ULONG       ulPropertyLength,
     _In_       LPVOID      pData,
@@ -2345,6 +1611,14 @@ STDMETHODIMP CMultipinMft::Shutdown(
 {
     CAutoLock Lock(m_critSec);
     (VOID) m_eventHandler.Clear();
+
+    for (ULONG ulIndex = 0, ulSize = (ULONG)m_InPins.size(); ulIndex < ulSize; ulIndex++ )
+    {
+        CInPin *pInPin = static_cast<CInPin *>(m_InPins[ulIndex]);
+
+        // Deref on the connected outpins to break reference loop
+        pInPin->ReleaseConnectedPins();
+    }
     return ShutdownEventGenerator();
 }
 
@@ -2426,7 +1700,7 @@ done:
 // Only worry about this if you have customs pins defined in the driver
 //
 
-STDMETHODIMP CMultipinMft::SetStreamingStateCustomPins(
+HRESULT CMultipinMft::SetStreamingStateCustomPins(
     DeviceStreamState State
     )
 {
@@ -2444,10 +1718,30 @@ STDMETHODIMP CMultipinMft::SetStreamingStateCustomPins(
             if ( SUCCEEDED( CheckCustomPin(pInPin, &isCustom) )
                 && ( isCustom ) )
             {
-                pInPin->SetState(State);
-            }
+                // Start the custom stream here. This will involve sending an event to the pipeline about the stream needing a state change
+                ComPtr<IMFMediaType> spMediaType;
+                if ( State == DeviceStreamState_Run )
+                {
+                    // Only get the media type if we are going into run state
+                    DMFTCHECKHR_GOTO(pInPin->GetMediaTypeAt(0, spMediaType.GetAddressOf()), done);
+                }
+                pInPin->SetState(DeviceStreamState_Disabled);
+                pInPin->setPreferredMediaType(spMediaType.Get());
+                pInPin->setPreferredStreamState(State);
+                //
+                // Let the pipline know that the input needs to be changed on the custom pin
+                //
+                SendEventToManager(METransformInputStreamStateChanged, GUID_NULL, pInPin->streamId());
+                //
+                // The media type will be set on the input pin by the time we return from the wait.
+                // For a custom pin, which is often the stats pin we can skip the wait as this will 
+                // simply make the pipeline wait
+                //
+                DMFTCHECKHR_GOTO(pInPin->WaitForSetInputPinMediaChange(), done);
+              }
         }
     }
+done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
 }

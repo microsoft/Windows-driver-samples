@@ -37,3 +37,5 @@ using namespace std;
 #include <wrl\client.h>
 using namespace ABI::Windows::Foundation;
 using namespace Microsoft::WRL;
+
+#define MF_DEVICEMFT_ADD_GRAYSCALER_ 1  // remore this to remove the grayscaler

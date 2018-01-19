@@ -688,7 +688,7 @@ Return Value:
                                                      LOCALE_NEUTRAL,
                                                      PLUGPLAY_PROPERTY_PERSISTENT,
                                                      DEVPROP_TYPE_BINARY,
-                                                     sizeof(ACPI_PLD_BUFFER),
+                                                     sizeof(pld),
                                                      (PVOID)&pld)
                 );
 

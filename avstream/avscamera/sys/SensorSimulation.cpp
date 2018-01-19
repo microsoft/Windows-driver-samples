@@ -299,6 +299,7 @@ Return Value:
     m_VideoStabilization = KSCAMERA_EXTENDEDPROP_VIDEOSTABILIZATION_OFF;
     m_Histogram = KSCAMERA_EXTENDEDPROP_HISTOGRAM_OFF;
     m_OpticalImageStabilization = KSCAMERA_EXTENDEDPROP_OIS_AUTO;
+    m_VideoTemporalDenoising = KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_AUTO;
 
     m_AdvancedPhoto.PinId = GetNextStillIndex();
     m_AdvancedPhoto.Flags = KSCAMERA_EXTENDEDPROP_ADVANCEDPHOTO_OFF;
@@ -1770,6 +1771,38 @@ SetOpticalImageStabilization(
     KScopedMutex    lock(m_SensorMutex);
 
     m_OpticalImageStabilization = pProperty->Flags;
+    return STATUS_SUCCESS;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING.
+NTSTATUS
+CSensorSimulation::
+GetVideoTemporalDenoising(
+    _Inout_ CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    pProperty->Flags = m_VideoTemporalDenoising;
+    pProperty->Capability = KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_AUTO |
+                            KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_OFF |
+                            KSCAMERA_EXTENDEDPROP_VIDEOTEMPORALDENOISING_ON;
+
+    return STATUS_SUCCESS;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING.
+NTSTATUS
+CSensorSimulation::
+SetVideoTemporalDenoising(
+    _In_    CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    m_VideoTemporalDenoising = pProperty->Flags;
     return STATUS_SUCCESS;
 }
 

@@ -239,18 +239,6 @@ protected:
         return m_spSample != NULL;
     }
 
-    // IsValidInputStream: Returns TRUE if dwInputStreamID is a valid input stream identifier.
-    BOOL IsValidInputStream(DWORD dwInputStreamID) const
-    {
-        return dwInputStreamID == 0;
-    }
-
-    // IsValidOutputStream: Returns TRUE if dwOutputStreamID is a valid output stream identifier.
-    BOOL IsValidOutputStream(DWORD dwOutputStreamID) const
-    {
-        return dwOutputStreamID == 0;
-    }
-
     HRESULT CreateOutputSample(
         _Outptr_result_maybenull_ IMFSample **ppSample
     );

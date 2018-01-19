@@ -59,7 +59,7 @@ public:
 
     //Default constructor
     CYUVSynthesizer (
-        PCCHAR Name="[Something YUV]",
+        const CHAR *Name="[Something YUV]",
         ULONG Width=0,
         ULONG Height=0
     )

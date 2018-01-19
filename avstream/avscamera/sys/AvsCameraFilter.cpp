@@ -229,7 +229,8 @@ DEFINE_KSPROPERTY_TABLE(ExtendedPropertyItems)
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_HISTOGRAM, CExtendedProperty, Histogram ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_OIS, CExtendedProperty, OpticalImageStabilization ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ADVANCEDPHOTO, CExtendedProperty, AdvancedPhoto ),
-    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE, CExtendedProfile, CameraProfile )
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE, CExtendedProfile, CameraProfile ),
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING, CExtendedProperty, VideoTemporalDenoising)
 };
 
 //  Front-facing cameras often have limited capabilities.  One way to express that is to use a restricted automation table such as this one.

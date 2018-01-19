@@ -301,6 +301,8 @@ CreateSynthesizer(
 // Create the necessary type of image synthesizer.
 //
 {
+    PAGED_CODE();
+
     NTSTATUS    Status = STATUS_SUCCESS;
     LONG        Width = VideoInfoHeader->bmiHeader.biWidth;
     LONG        Height = VideoInfoHeader->bmiHeader.biHeight;
@@ -1053,6 +1055,7 @@ Return Value:
 --*/
 {
     PAGED_CODE();
+
     KScopedMutex    Lock(m_SensorMutex);
 
     //  Set the current ISP settings and free any prior.
@@ -1090,6 +1093,8 @@ SetSynthesizerAttribute(
     LONGLONG Info 
 )
 {
+    PAGED_CODE();
+
     for( ULONG Pin=0; IsValidIndex(Pin); Pin++ )
     {
         if( m_Synthesizer[Pin] )
@@ -1344,6 +1349,7 @@ DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, OpticalImageStabilization)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, OptimizationHint)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, AdvancedPhoto)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedVidProcSetting, FaceDetection)
+DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, VideoTemporalDenoising)
 
 DEFINE_NULL_PROPERTY(CSensor, KSPROPERTY_CAMERACONTROL_VIDEOSTABILIZATION_MODE_S, VideoStabMode)
 

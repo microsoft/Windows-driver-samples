@@ -574,6 +574,7 @@ public:
     DECLARE_PROPERTY( CExtendedProperty, OptimizationHint );
     DECLARE_PROPERTY( CExtendedProperty, AdvancedPhoto );
     DECLARE_PROPERTY( CExtendedVidProcSetting, FaceDetection );
+    DECLARE_PROPERTY( CExtendedProperty, VideoTemporalDenoising);
 
     DECLARE_PROPERTY_VARSIZE_ASYNC( CRoiProperty, Roi );
 

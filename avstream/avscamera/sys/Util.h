@@ -123,7 +123,8 @@ BoundsCheck(
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
-    if( ((Value - T(Bounds.Min) ) % T(Bounds.Step)) != 0 ||
+    if( (Bounds.Step==0 && Bounds.Min!=Bounds.Max) ||
+        (Bounds.Step!=0 && ((Value - T(Bounds.Min) ) % T(Bounds.Step)) != 0) ||
             Value > T(Bounds.Max) ||
             Value < T(Bounds.Min) )
     {
@@ -152,7 +153,8 @@ BoundsCheckSigned(
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
-    if( ((Value - Bounds.Bounds.SignedMinimum) % Bounds.SteppingDelta) != 0 ||
+    if( (Bounds.SteppingDelta==0 &&  Bounds.Bounds.SignedMinimum!=Bounds.Bounds.SignedMaximum) ||
+        (Bounds.SteppingDelta!=0 && (Value - Bounds.Bounds.SignedMinimum) % Bounds.SteppingDelta) != 0 ||
             Value > Bounds.Bounds.SignedMaximum ||
             Value < Bounds.Bounds.SignedMinimum )
     {
@@ -171,7 +173,8 @@ BoundsCheckSigned(
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
-    if( ((Value - Bounds.Bounds.SignedMinimum) % Bounds.SteppingDelta) != 0 ||
+    if( (Bounds.SteppingDelta==0 && Bounds.Bounds.SignedMinimum!=Bounds.Bounds.SignedMaximum) ||
+        (Bounds.SteppingDelta!=0 && ((Value - Bounds.Bounds.SignedMinimum) % Bounds.SteppingDelta) != 0) ||
             Value > Bounds.Bounds.SignedMaximum ||
             Value < Bounds.Bounds.SignedMinimum )
     {
@@ -193,7 +196,8 @@ BoundsCheckUnsigned(
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
-    if( ((Value - Bounds.Bounds.UnsignedMinimum) % Bounds.SteppingDelta) != 0 ||
+    if( (Bounds.SteppingDelta==0 && Bounds.Bounds.UnsignedMinimum!=Bounds.Bounds.UnsignedMaximum) ||
+        (Bounds.SteppingDelta!=0 && ((Value - Bounds.Bounds.UnsignedMinimum) % Bounds.SteppingDelta) != 0) ||
             Value > Bounds.Bounds.UnsignedMaximum ||
             Value < Bounds.Bounds.UnsignedMinimum )
     {
@@ -212,7 +216,8 @@ BoundsCheckUnsigned(
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
-    if( ((Value - Bounds.Bounds.UnsignedMinimum) % Bounds.SteppingDelta) != 0 ||
+    if( (Bounds.SteppingDelta==0 && Bounds.Bounds.UnsignedMinimum!=Bounds.Bounds.UnsignedMaximum) ||
+        (Bounds.SteppingDelta!=0 && ((Value - Bounds.Bounds.UnsignedMinimum) % Bounds.SteppingDelta) != 0) ||
             Value > Bounds.Bounds.UnsignedMaximum ||
             Value < Bounds.Bounds.UnsignedMinimum )
     {
@@ -266,6 +271,30 @@ int
 DbgRotation2Degrees( 
     AcpiPldRotation r 
 );
+
+//  Create a definition that self-initialize a KS_CAMERA_EXTRINSIC structure.
+class CCameraExtrinsics_2Transforms : public KS_CAMERA_EXTRINSICS
+{
+public:
+    KS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM    CalibratedTransform2;
+
+public:
+    CCameraExtrinsics_2Transforms()
+    {
+        RtlZeroMemory(this, sizeof(*this));
+    }
+    CCameraExtrinsics_2Transforms( ULONG Seed );
+};
+
+//  Create a definition that self-initialize a KS_CAMERA_EXTRINSIC structure.
+class CCameraIntrinsics_2Models : public KS_CAMERA_INTRINSICS
+{
+public:
+    KS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL    IntrinsicModel2;
+
+public:
+    CCameraIntrinsics_2Models();
+};
 
 
 #define SAFE_FREE(_x_)      \
