@@ -53,6 +53,7 @@ public:
     {
         NT_ASSERT( ( Width % 2 ) == 0 );
         NT_ASSERT( ( Height % 2 ) == 0 );
+        m_OutputStride = Width * sizeof(BYTE);
     }
 
     //

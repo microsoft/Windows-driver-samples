@@ -85,6 +85,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="multipinmft.cpp">
       <WppEnabled>true</WppEnabled>
@@ -95,6 +96,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="basepin.cpp">
       <WppEnabled>true</WppEnabled>
@@ -105,6 +107,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="multipinmfthelpers.cpp">
       <WppEnabled>true</WppEnabled>
@@ -115,6 +118,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="multipinmftutils.cpp">
       <WppEnabled>true</WppEnabled>
@@ -125,6 +129,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="custompin.cpp">
       <WppEnabled>true</WppEnabled>
@@ -135,6 +140,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <WppEnabled>true</WppEnabled>
@@ -145,6 +151,7 @@
       <PreCompiledHeaderFile>stdafx.h</PreCompiledHeaderFile>
       <PreCompiledHeader>Use</PreCompiledHeader>
       <PreCompiledHeaderOutputFile>$(IntDir)\stdafx.h.pch</PreCompiledHeaderOutputFile>
+      <WppScanConfigurationData>common.h</WppScanConfigurationData>
     </ClCompile>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

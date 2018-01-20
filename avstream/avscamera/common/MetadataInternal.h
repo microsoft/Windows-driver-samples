@@ -18,7 +18,7 @@
         created 4/29/2013
 
 **************************************************************************/
-
+#pragma once
 
 
 enum MetadataId_Custom
@@ -353,3 +353,23 @@ typedef struct _CAMERA_METADATA_INTRINSICS
     KS_CAMERA_INTRINSICS            Data;
 } CAMERA_METADATA_INTRINSICS, *PCAMERA_METADATA_INTRINSICS;
 
+#if !defined(STATIC_KSPROPERTYSETID_CameraAttributes)
+// Property set implemented by USBVideo.sys and accessed by devproxy
+// {2A3C5205-F9C8-4F78-B110-43D534C0CA64}
+#define STATIC_KSPROPERTYSETID_CameraAttributes \
+     0x2a3c5205, 0xf9c8, 0x4f78, 0xb1, 0x10, 0x43, 0xd5, 0x34, 0xc0, 0xca, 0x64
+DEFINE_GUIDSTRUCT("2A3C5205-F9C8-4F78-B110-43D534C0CA64", KSPROPERTYSETID_CameraAttributes);
+#define KSPROPERTYSETID_CameraAttributes DEFINE_GUIDNAMED(KSPROPERTYSETID_CameraAttributes)
+
+#define KSPROPERTY_CAMERA_ATTRIBUTES_EXTRINSICS    0
+#define KSPROPERTY_CAMERA_ATTRIBUTES_INTRINSICS    1
+
+#pragma message( "Defining KSCAMERA_ATTRIBUTES_HEADER" )
+
+typedef
+struct _KSCAMERA_ATTRIBUTES_HEADER
+{
+    ULONG   Size;           //  Size of the entire payload including this header.
+    ULONG   PinId;          //  The Pin this payload affects.
+} KSCAMERA_ATTRIBUTES_HEADER, *PKSCAMERA_ATTRIBUTES_HEADER;
+#endif

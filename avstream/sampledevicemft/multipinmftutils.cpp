@@ -253,7 +253,7 @@ STDMETHODIMP RandomnizeMediaTypes(_In_ IMFMediaTypeArray &pMediaTypeArray)
 /*++
 Description: Used to test if the sample passed is a DX sample or not?
 --*/
-STDMETHODIMP IsInputDxSample(
+HRESULT IsInputDxSample(
     _In_ IMFSample* pSample,
     _Inout_ BOOL *isDxSample
     )
@@ -338,31 +338,6 @@ STDMETHODIMP_(BOOL) IsKnownUncompressedVideoType(_In_ GUID guidSubType)
 
     return( FALSE ); 
 }
-
-/*++
-Description:
-    Function used to lock the MFT. 
---*/
-
-STDMETHODIMP UnLockAsynMFT(IMFTransform* pTransform)
-{
-    HRESULT hr = S_OK;
-    IMFAttributes *pAttributes;
-    UINT32 unValue;
-    
-    DMFTCHECKNULL_GOTO(pTransform,done, E_INVALIDARG);
-    DMFTCHECKHR_GOTO(pTransform->GetAttributes(&pAttributes),done);
-    DMFTCHECKHR_GOTO(pAttributes->GetUINT32(MF_TRANSFORM_ASYNC, &unValue), done);
-
-    if (unValue)
-    {
-        DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_TRANSFORM_ASYNC, true), done);
-    }
-     
-done:
-    return hr;
-}
-
 
 #ifndef IF_EQUAL_RETURN
 #define IF_EQUAL_RETURN(param, val) if(val == param) return #val
@@ -754,97 +729,9 @@ void printMessageEvent(MFT_MESSAGE_TYPE msg)
     }
 }
 
-/*++
-Below functions not used in the current iteration..
---*/
-HRESULT CreateCodec(
-    _In_opt_ IMFMediaType* inMediaType,
-    _In_opt_ IMFMediaType *outMediaType,
-    _In_ BOOL operation /*True = Encode, False = Decode*/,
-    _Out_ IMFTransform **pTransform)
-{
-    UNREFERENCED_PARAMETER(inMediaType);
-    UNREFERENCED_PARAMETER(outMediaType);
-    UNREFERENCED_PARAMETER(operation);
-    UNREFERENCED_PARAMETER(pTransform);
-    HRESULT hr = S_OK;
-    *pTransform = nullptr;
-    return hr;
-}
-
-
-HRESULT CheckDX9RotationSupport(_In_ ID3D11VideoDevice* pVideoDevice)
-{
-    HRESULT hr = S_OK;
-    //
-    // check if the DX9 device is ok
-    // New drivers should have an DXVA-HD rotation cap set
-    //
-    D3D11_VIDEO_PROCESSOR_CONTENT_DESC      desc = {};
-    D3D11_VIDEO_PROCESSOR_CAPS              caps;
-    ComPtr<ID3D11VideoProcessorEnumerator> spVideoProcEnum = nullptr;
-
-    DMFTCHECKNULL_GOTO(pVideoDevice, done, E_NOTIMPL);
-    desc.InputWidth = 640;
-    desc.InputHeight = 480;
-    desc.OutputWidth = 640;
-    desc.OutputHeight = 480;
-
-    DMFTCHECKHR_GOTO(pVideoDevice->CreateVideoProcessorEnumerator(&desc, &spVideoProcEnum), done);
-    DMFTCHECKHR_GOTO(spVideoProcEnum->GetVideoProcessorCaps(&caps), done);
-
-    if (!(caps.FeatureCaps & D3D11_VIDEO_PROCESSOR_FEATURE_CAPS_ROTATION))
-    {
-        hr = E_NOTIMPL;
-    }
-done:
-    return hr;
-}
-
-
-
-HRESULT IsDXOptimal(_In_ IUnknown *pDeviceManager, _Out_ BOOL *pIsOptimal)
-{
-    HRESULT                                         hr  = S_OK;
-    ComPtr<IMFDXGIDeviceManager> spDXGIDeviceManager    = nullptr;
-    ComPtr<ID3D11Device>         spD3D11                = nullptr;
-    ComPtr<ID3D11VideoDevice>    spVideoDevice          = nullptr;
-    HANDLE                            hDevice           = NULL;
-    BOOL                              locked            = FALSE;
-
-    *pIsOptimal = false;
-    DMFTCHECKNULL_GOTO( pDeviceManager, done, E_INVALIDARG );
-    DMFTCHECKHR_GOTO( pDeviceManager->QueryInterface(IID_PPV_ARGS( &spDXGIDeviceManager )), done );
-    DMFTCHECKHR_GOTO( spDXGIDeviceManager->OpenDeviceHandle( &hDevice ), done );
-    DMFTCHECKHR_GOTO( spDXGIDeviceManager->LockDevice( hDevice, IID_PPV_ARGS( &spD3D11 ), TRUE), done );
-    locked = TRUE;
-    DMFTCHECKHR_GOTO( spD3D11.As(&spVideoDevice), done );
-
-    if (spD3D11->GetFeatureLevel() <= D3D_FEATURE_LEVEL_9_3)
-    {
-        if (FAILED(CheckDX9RotationSupport(spVideoDevice.Get())))
-        {
-            goto done;
-        }
-    }
-    *pIsOptimal = TRUE;
-done:
-    if (hDevice)
-    {
-        if (locked)
-        {
-            spDXGIDeviceManager->UnlockDevice(hDevice, false);
-        }
-        spDXGIDeviceManager->CloseDeviceHandle(hDevice);
-    }
-    return hr;
-}
-
-
 //
 // Used to check if the pin is a custom pin or not!!
 //
-
 STDMETHODIMP CheckCustomPin(
     _In_ CInPin * pPin,
     _Inout_ PBOOL  pIsCustom 
@@ -875,3 +762,248 @@ done:
     return hr;
 }
 
+
+#ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
+//
+// Please remove the below functions if you don't need them.
+// Helper functions for the gray scaler
+// 
+
+void TransformImage_UYVY(
+    const RECT &rcDest,
+    _Inout_updates_(_Inexpressible_(lDestStride * dwHeightInPixels)) BYTE *pDest,
+    _In_ LONG lDestStride,
+    _In_reads_(_Inexpressible_(lSrcStride * dwHeightInPixels)) const BYTE *pSrc,
+    _In_ LONG lSrcStride,
+    _In_ DWORD dwWidthInPixels,
+    _In_ DWORD dwHeightInPixels)
+{
+    DWORD y = 0;
+    // Round down to the even value.
+    const UINT32 left = rcDest.left & ~(1);
+    const UINT32 right = rcDest.right & ~(1);
+    const DWORD y0 = min((DWORD)rcDest.bottom, dwHeightInPixels);
+
+    // Lines above the destination rectangle.
+    for (; y < (DWORD)rcDest.top; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels * 2);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+
+    // Lines within the destination rectangle.
+    for (; y < y0; y++)
+    {
+        const WORD *pSrc_Pixel = reinterpret_cast<const WORD*>(pSrc);
+        WORD *pDest_Pixel = reinterpret_cast<WORD*>(pDest);
+
+        CopyMemory(pDest, pSrc, left * 2);
+        for (DWORD x = left; (x + 1) < right; x += 2)
+        {
+            // Byte order is Y0 U0 Y1 V0
+            // Each WORD is a byte pair (Y, U/V)
+            // Windows is little-endian so the order appears reversed.
+
+            DWORD tmp = *reinterpret_cast<const DWORD*>(&pSrc_Pixel[x]);
+            *reinterpret_cast<DWORD*>(&pDest_Pixel[x]) = (tmp & 0xFF00FF00) | 0x00800080;
+        }
+        CopyMemory(pDest + (right * 2), pSrc + (right * 2), (dwWidthInPixels - right) * 2);
+
+        pDest += lDestStride;
+        pSrc += lSrcStride;
+    }
+
+    // Lines below the destination rectangle.
+    for (; y < dwHeightInPixels; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels * 2);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+}
+
+
+// Convert YUY2 image.
+
+void TransformImage_YUY2(
+    const RECT &rcDest,
+    _Inout_updates_(_Inexpressible_(lDestStride * dwHeightInPixels)) BYTE *pDest,
+    _In_ LONG lDestStride,
+    _In_reads_(_Inexpressible_(lSrcStride * dwHeightInPixels)) const BYTE *pSrc,
+    _In_ LONG lSrcStride,
+    _In_ DWORD dwWidthInPixels,
+    _In_ DWORD dwHeightInPixels)
+{
+    DWORD y = 0;
+    // Round down to the even value.
+    const UINT32 left = rcDest.left & ~(1);
+    const UINT32 right = rcDest.right & ~(1);
+    const DWORD y0 = min((DWORD)rcDest.bottom, dwHeightInPixels);
+
+    // Lines above the destination rectangle.
+    for (; y < (DWORD)rcDest.top; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels * 2);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+
+    // Lines within the destination rectangle.
+    for (; y < y0; y++)
+    {
+        const WORD *pSrc_Pixel = reinterpret_cast<const WORD*>(pSrc);
+        WORD *pDest_Pixel = reinterpret_cast<WORD*>(pDest);
+
+        CopyMemory(pDest, pSrc, left * 2);
+        for (DWORD x = left; (x + 1) < right; x += 2)
+        {
+            // Byte order is Y0 U0 Y1 V0
+            // Each WORD is a byte pair (Y, U/V)
+            // Windows is little-endian so the order appears reversed.
+
+            DWORD tmp = *reinterpret_cast<const DWORD*>(&pSrc_Pixel[x]);
+            *reinterpret_cast<DWORD*>(&pDest_Pixel[x]) = (tmp & 0x00FF00FF) | 0x80008000;
+        }
+        CopyMemory(pDest + (right * 2), pSrc + (right * 2), (dwWidthInPixels - right) * 2);
+
+        pDest += lDestStride;
+        pSrc += lSrcStride;
+    }
+
+    // Lines below the destination rectangle.
+    for (; y < dwHeightInPixels; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels * 2);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+}
+
+// Convert NV12 image
+
+void TransformImage_NV12(
+    const RECT &rcDest,
+    _Inout_updates_(_Inexpressible_(2 * lDestStride * dwHeightInPixels)) BYTE *pDest,
+    _In_ LONG lDestStride,
+    _In_reads_(_Inexpressible_(2 * lSrcStride * dwHeightInPixels)) const BYTE *pSrc,
+    _In_ LONG lSrcStride,
+    _In_ DWORD dwWidthInPixels,
+    _In_ DWORD dwHeightInPixels)
+{
+    // NV12 is planar: Y plane, followed by packed U-V plane.
+
+    // Y plane
+    for (DWORD y = 0; y < dwHeightInPixels; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels);
+        pDest += lDestStride;
+        pSrc += lSrcStride;
+    }
+
+    // U-V plane
+
+    // NOTE: The U-V plane has 1/2 the number of lines as the Y plane.
+
+    // Lines above the destination rectangle.
+    DWORD y = 0;
+    const DWORD y0 = min((DWORD)rcDest.bottom, dwHeightInPixels);
+
+    for (; y < (DWORD)rcDest.top / 2; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+
+    // Lines within the destination rectangle.
+    for (; y < y0 / 2; y++)
+    {
+        CopyMemory(pDest, pSrc, rcDest.left);
+        FillMemory(pDest + rcDest.left, rcDest.right - rcDest.left, 128);
+        CopyMemory(pDest + rcDest.right, pSrc + rcDest.right, dwWidthInPixels - rcDest.right);
+        pDest += lDestStride;
+        pSrc += lSrcStride;
+    }
+
+    // Lines below the destination rectangle.
+    for (; y < dwHeightInPixels / 2; y++)
+    {
+        CopyMemory(pDest, pSrc, dwWidthInPixels);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+}
+
+
+
+void TransformImage_RGB32(
+    const RECT &rcDest,
+    _Inout_updates_(_Inexpressible_(2 * lDestStride * dwHeightInPixels)) BYTE *pDest,
+    _In_ LONG lDestStride,
+    _In_reads_(_Inexpressible_(2 * lSrcStride * dwHeightInPixels)) const BYTE *pSrc,
+    _In_ LONG lSrcStride,
+    _In_ DWORD dwWidthInPixels,
+    _In_ DWORD dwHeightInPixels)
+{
+    DWORD y = 0;
+    const DWORD y0 = min((DWORD)rcDest.bottom, dwHeightInPixels);
+
+    // Lines above the destination rectangle.
+    for (; y < (DWORD)rcDest.top; y++)
+    {
+        memcpy(pDest, pSrc, dwWidthInPixels * 4);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+
+    // Lines within the destination rectangle.
+    // Use the grayscale conversion Red = 30%, Green = 59%, Blue = 11%
+    for (; y < y0; y++)
+    {
+        DWORD *pSrc_Pixel = (DWORD*)pSrc;
+        DWORD *pDest_Pixel = (DWORD*)pDest;
+
+        for (DWORD x = 0; (x + 1) < dwWidthInPixels; x++)
+        {
+            // Byte order is X8 R8 G8 B8
+
+            if (x >= (DWORD)rcDest.left && x < (DWORD)rcDest.right)
+            {
+                WORD color;
+                color = (pSrc_Pixel[x] & 0x000000FF);
+                int r = (int)(color * 0.3);
+                color = (pSrc_Pixel[x] & 0x0000FF00) >> 8;
+                int g = (int)(color * 0.59);
+                color = (pSrc_Pixel[x] & 0x00FF0000) >> 16;
+                int b = (int)(color * 0.11);
+                int gray = r + g + b;
+
+                pDest_Pixel[x] = (gray & 0x000000FF) << 16 |
+                    (gray & 0x000000FF) << 8 |
+                    (gray & 0x000000FF);
+            }
+            else
+            {
+#pragma warning(push)
+#pragma warning(disable: 6385)
+#pragma warning(disable: 6386)
+                pDest_Pixel[x] = pSrc_Pixel[x];
+#pragma warning(pop)
+            }
+        }
+
+        pDest += lDestStride;
+        pSrc += lSrcStride;
+    }
+
+    // Lines below the destination rectangle.
+    for (; y < dwHeightInPixels; y++)
+    {
+        memcpy(pDest, pSrc, dwWidthInPixels * 4);
+        pSrc += lSrcStride;
+        pDest += lDestStride;
+    }
+}
+
+#endif

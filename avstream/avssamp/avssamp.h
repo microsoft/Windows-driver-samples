@@ -1,27 +1,27 @@
 /**************************************************************************
 
-AVStream Filter-Centric Sample
+    AVStream Filter-Centric Sample
 
-Copyright (c) 2001, Microsoft Corporation
+    Copyright (c) 2001, Microsoft Corporation
 
-File:
+    File:
 
-avssamp.h
+        avssamp.h
 
-Abstract:
+    Abstract:
 
-AVStream Filter-Centric Sample header file.  This is the main
-header.
+        AVStream Filter-Centric Sample header file.  This is the main
+        header.
 
-History:
+    History:
 
-created 6/18/01
+        created 6/18/01
 
 **************************************************************************/
 
 /*************************************************
 
-Standard Includes
+    Standard Includes
 
 *************************************************/
 
@@ -42,7 +42,7 @@ extern "C" {
 #pragma warning (disable : 4100 4101 4131 4127 4189 4701 4706)
 /*************************************************
 
-Misc Definitions
+    Misc Definitions
 
 *************************************************/
 
@@ -81,7 +81,7 @@ Misc Definitions
 
 /*************************************************
 
-Externed information
+    Externed information
 
 *************************************************/
 
@@ -101,12 +101,12 @@ CaptureFilterDescriptor;
 extern
 const
 KSPIN_DESCRIPTOR_EX
-CaptureFilterPinDescriptors[CAPTURE_FILTER_PIN_COUNT];
+CaptureFilterPinDescriptors [CAPTURE_FILTER_PIN_COUNT];
 
 extern
 const
 GUID
-CaptureFilterCategories[CAPTURE_FILTER_CATEGORIES_COUNT];
+CaptureFilterCategories [CAPTURE_FILTER_CATEGORIES_COUNT];
 
 //
 // video.cpp externs:
@@ -124,7 +124,7 @@ VideoCapturePinDispatch;
 extern
 const
 PKSDATARANGE
-VideoCapturePinDataRanges[CAPTURE_PIN_DATA_RANGE_COUNT];
+VideoCapturePinDataRanges [CAPTURE_PIN_DATA_RANGE_COUNT];
 
 //
 // audio.cpp externs:
@@ -149,60 +149,60 @@ PVOID operator new
 (
     size_t          iSize,
     _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
     POOL_TYPE       poolType
-    );
+);
 
 PVOID operator new
 (
     size_t          iSize,
     _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
+       __drv_reportError("Must succeed pool allocations are forbidden. "
+             "Allocation failures cause a system crash"))
     POOL_TYPE       poolType,
     ULONG           tag
-    );
+);
 
 /*++
 
 Routine Description:
 
-Array delete() operator.
+    Array delete() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
-void
-__cdecl
+void 
+__cdecl 
 operator delete[](
     PVOID pVoid
-    );
+);
 
 /*++
 
 Routine Description:
 
-Sized delete() operator.
+    Sized delete() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
-size -
-The size of the memory to free.
+    size -
+        The size of the memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
 void __cdecl operator delete
@@ -215,32 +215,32 @@ void __cdecl operator delete
 
 Routine Description:
 
-Sized delete[]() operator.
+    Sized delete[]() operator.
 
 Arguments:
 
-pVoid -
-The memory to free.
+    pVoid -
+        The memory to free.
 
-size -
-The size of the memory to free.
+    size -
+        The size of the memory to free.
 
 Return Value:
 
-None
+    None
 
 --*/
 void __cdecl operator delete[]
 (
     void *pVoid,
     size_t /*size*/
-    );
+);
 
 #endif // _NEW_DELETE_OPERATORS_
 
 /*************************************************
 
-Internal Includes
+    Internal Includes
 
 *************************************************/
 

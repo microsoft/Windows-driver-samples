@@ -49,10 +49,6 @@
 #endif // ALLOC_PRAGMA
 
 
-// suppressed due to Esp:773
-#pragma warning (push)
-#pragma warning( disable:26015 )    // Suppress OACR error.  Seems nonsensical.  TODO: Must revisit.
-#pragma warning( disable:26019 )
 _Success_(return > 0)
 ULONG
 CNV12Synthesizer::
@@ -86,8 +82,11 @@ Return Value:
 
 --*/
 {
-    //  We assume the output stride is the same as the original width here.
-    UNREFERENCED_PARAMETER(Stride);
+    //  In case stride isn't initialized.
+    if( Stride==0 )
+    {
+        Stride = m_OutputStride;
+    }
 
     //  The code actually handles this gracefully.  It rounds down.
     NT_ASSERT( (m_Width&1) == 0 );
@@ -107,7 +106,7 @@ Return Value:
     ULONG   MacroPixelsWide = m_Width/2;
 
     //  Impossible.
-    if( MacroPixelsWide==0 )
+    if (MacroPixelsWide == 0 || Stride < (MacroPixelsWide*2)) // 1 macropixel for NV12 is 2 bytes wide
     {
         NT_ASSERT(FALSE);
         return 0;
@@ -117,7 +116,7 @@ Return Value:
     //  Notice that we limit the number of macro pixel rows to what will
     //  fit in the space available, no matter what is in the original.
     ULONG   Y_limit = (Size /3) * 2;
-    ULONG   MacroPixelsHigh = min( m_Height, Y_limit/m_Width)/2;
+    ULONG   MacroPixelsHigh = min(m_Height, Y_limit / Stride) / 2;
 
     //  Impossible.
     if( MacroPixelsHigh==0 )
@@ -127,8 +126,8 @@ Return Value:
     }
 
     //  Now we work back to arrive at the Y & UV plane sizes.
-    ULONG   UV_size  = MacroPixelsWide * MacroPixelsHigh *2;
-    ULONG   Y_size   = MacroPixelsWide * MacroPixelsHigh *4;
+    ULONG   UV_size  = Stride * MacroPixelsHigh;
+    ULONG   Y_size   = Stride * MacroPixelsHigh * 2;
     ULONG   YUV_size = Y_size + UV_size;
 
     //  Impossible.
@@ -138,12 +137,14 @@ Return Value:
         return 0;
     }
 
-    PWORD   pY  = (PWORD) Buffer;
-    PWORD   pUV = (PWORD) (Buffer + Y_size);
-
+    PUCHAR   pYRow  = Buffer;
+    PUCHAR   pUVRow = Buffer + Y_size;
     for(ULONG row = 0; row < MacroPixelsHigh; row++)
     {
         PKS_RGBQUAD pSrc = (PKS_RGBQUAD) GetImageLocation(0, row*2);
+        PWORD pYUpper = (PWORD)pYRow;
+        PWORD pYLower = (PWORD)(pYRow + Stride);
+        PWORD pUV = (PWORD)pUVRow;
         for(ULONG col = 0; col < MacroPixelsWide; col++)
         {
             KS_RGBQUAD  TL = pSrc[0];
@@ -153,9 +154,10 @@ Return Value:
             pSrc += 2;
 
             //  Copy luma first
-            pY[0]               = MAKEWORD(TL.rgbGreen, TR.rgbGreen);
-            pY[MacroPixelsWide] = MAKEWORD(BL.rgbGreen, BR.rgbGreen);
-            pY++;
+            pYUpper[0] = MAKEWORD(TL.rgbGreen, TR.rgbGreen);
+            pYLower[0] = MAKEWORD(BL.rgbGreen, BR.rgbGreen);
+            pYUpper++;
+            pYLower++;
 
             LONG
             tU  = TL.rgbBlue;    //top left
@@ -172,12 +174,10 @@ Return Value:
             //  Copy decimated chroma
             *pUV++ = MAKEWORD(((tU+2)>>2), ((tV+2)>>2));
         }
-        //  Skip a scan line, since we've already copied it.
-        pY += MacroPixelsWide;
+        //  A row of macropixels covers two Y rows and one UV row
+        pYRow  += (Stride * 2);
+        pUVRow += Stride;
     }
 
-    return (ULONG) (((PUCHAR) pUV) - Buffer);
+    return (ULONG)(pUVRow - Buffer);
 }
-// suppressed due to Esp:773
-#pragma warning (pop)
-

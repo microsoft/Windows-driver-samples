@@ -175,7 +175,7 @@ WhiteBalancePreset2Temperature(
         break;
     }
 
-    return temp;
+    return min( max( temp, WHITEBALANCE_MIN ), WHITEBALANCE_MAX );
 }
 
 typedef struct
@@ -475,6 +475,8 @@ DbgRotation2Degrees(
     AcpiPldRotation r 
 )
 {
+    PAGED_CODE();
+
     switch( r )
     {
         case AcpiPldRotation0  : return 0; 
@@ -489,3 +491,59 @@ DbgRotation2Degrees(
     return -1;
 }
 
+CCameraExtrinsics_2Transforms::
+CCameraExtrinsics_2Transforms( ULONG Seed )
+{
+    PAGED_CODE();
+
+    static
+    KS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM temp =
+    {
+        {0x2eef2648, 0x67e7, 0x48a0, 0xa2, 0x27, 0x46, 0xed, 0x5c, 0xdc, 0x84, 0xb4},   // CalibrationId
+        {0.5, 0.5, 0.5},                                                                // Position
+        {0.5, 0.5, 0.5, 0.5}                                                            // Orientation
+    };
+
+    TransformCount = 2;
+    PKS_CAMERA_EXTRINSICS_CALIBRATEDTRANSFORM pTransform = CalibratedTransforms;
+    for( UINT32 i=0; i<2; i++ )
+    {
+        *pTransform = temp;
+        pTransform->CalibrationId.Data4[7] = (unsigned char) i;
+        pTransform->CalibrationId.Data1 = Seed;
+        pTransform++;
+    }
+}
+
+CCameraIntrinsics_2Models::
+CCameraIntrinsics_2Models()
+{
+    PAGED_CODE();
+
+    static
+    KS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL temp =
+    {
+        0xBADF00D,                                  // Width
+        0xBADF00D,                                  // Height
+        { {1.0,2.0}, {3.0,4.0} },                   // CameraModel
+        { 1.0, 2.0, 3.0, (float)3.1415296, (float)2.71828 }       // DistortionModel
+    };
+
+    static
+    POINT Dimension[]=
+    {
+        {DMAX_X, DMAX_Y},
+        {D_X, D_Y}
+    };
+
+    IntrinsicModelCount = 2;
+    PKS_PINHOLECAMERAINTRINSIC_INTRINSICMODEL   pModel = IntrinsicModels;
+    for( UINT32 i=0; i<2; i++ )
+    {
+        
+        *pModel = temp;
+        pModel->Width = Dimension[i].x;
+        pModel->Height = Dimension[i].y;
+        pModel++;
+    }
+}

@@ -72,6 +72,18 @@ protected:
     void
     Cleanup();
 
+    NTSTATUS
+    GetExtrinsic(
+        _In_opt_    KS_CAMERA_EXTRINSICS *Data,
+        _In_        ULONG   PinId,
+        _Inout_     ULONG   *Length);
+
+    NTSTATUS
+    GetIntrinsic(
+        _In_opt_    KS_CAMERA_INTRINSICS *Data,
+        _In_        ULONG   PinId,
+        _Inout_     ULONG   *Length);
+
 public:
 
     //
@@ -319,6 +331,7 @@ DECLARE_PROPERTY_SET_HANDLER( type, name )
     DECLARE_PROPERTY_HANDLERS( CExtendedProperty, Thumbnail )
     DECLARE_PROPERTY_HANDLERS( CExtendedProperty, TriggerTime )
     DECLARE_PROPERTY_HANDLERS( CExtendedProperty, TorchMode )
+    DECLARE_PROPERTY_HANDLERS( CExtendedProperty, VideoTemporalDenoising)
 
     DECLARE_PROPERTY_HANDLERS( KSPROPERTY_CAMERACONTROL_VIDEOSTABILIZATION_MODE_S, VideoStabMode )
     DECLARE_PROPERTY_HANDLERS( KSPROPERTY_CAMERACONTROL_FLASH_S, Flash )
@@ -378,6 +391,22 @@ DECLARE_PROPERTY_SET_HANDLER( type, name )
         _In_    ULONG                               BufferLimit,
         _Outptr_opt_result_maybenull_
         ISP_FRAME_SETTINGS                **ppSettings );
+
+    static
+    NTSTATUS
+    GetExtrinsics(
+        _In_    PIRP            pIrp,
+        _In_    PKSP_PIN        pProperty,
+        _Inout_ PVOID           pData
+    );
+
+    static
+    NTSTATUS
+    GetIntrinsics(
+        _In_    PIRP            pIrp,
+        _In_    PKSP_PIN        pProperty,
+        _Inout_ PVOID           pData
+    );
 
     //  Helper function for finding our filter object.
     static

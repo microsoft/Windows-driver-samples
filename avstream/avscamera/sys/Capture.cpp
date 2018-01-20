@@ -51,7 +51,6 @@ CCapturePin (
     , m_PendIo(FALSE)
     , m_AcquiredResources(FALSE)
     , m_VideoInfoHeader(nullptr)
-    , m_pBitmapInfoHeader(nullptr)
     , m_PreviousStreamPointer(nullptr)
     , m_PresentationTime(0)
     , m_FrameNumber(0)
@@ -100,7 +99,6 @@ CCapturePin::
 {
     PAGED_CODE();
 
-    SAFE_FREE( m_pBitmapInfoHeader );
     SAFE_FREE( m_VideoInfoHeader );
 }
 
@@ -254,22 +252,10 @@ Return Value:
 
     const GUID ImageInfoSpecifier ={ STATICGUIDOF( KSDATAFORMAT_SPECIFIER_IMAGE ) };
     const GUID VideoInfoSpecifier ={ STATICGUIDOF( KSDATAFORMAT_SPECIFIER_VIDEOINFO ) };
+    const GUID VideoInfo2Specifier = { STATICGUIDOF(KSDATAFORMAT_SPECIFIER_VIDEOINFO2) };
 
     //  Free any previous copy of these header.
-    SAFE_FREE(m_pBitmapInfoHeader);
     SAFE_FREE(m_VideoInfoHeader);
-
-    m_pBitmapInfoHeader = reinterpret_cast <PKS_BITMAPINFOHEADER> (
-        ExAllocatePoolWithTag (
-            NonPagedPoolNx,
-            sizeof(KS_BITMAPINFOHEADER),
-            AVSHWS_POOLTAG
-            )
-        );
-    if( !m_pBitmapInfoHeader )
-    {
-        return STATUS_INSUFFICIENT_RESOURCES;
-    }
 
     if( IsEqualGUID( m_Pin->ConnectionFormat->Specifier, ImageInfoSpecifier ) &&
             m_Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_IMAGEINFO) )
@@ -279,40 +265,35 @@ Return Value:
             &((reinterpret_cast <PKS_DATAFORMAT_IMAGEINFO>
                (m_Pin->ConnectionFormat))->ImageInfoHeader);
 
-        //
-        // Copy the connection format video info header into the newly 
-        // allocated "captured" video info header.
-        //
-        *m_pBitmapInfoHeader = *ConnectionHeader;
-
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
             ExAllocatePoolWithTag (
                 NonPagedPoolNx,
-                sizeof(KS_VIDEOINFOHEADER),
+                max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->biSize + KS_SIZE_PREHEADER),
                 AVSHWS_POOLTAG
                 )
             );
         if( !m_VideoInfoHeader )
         {
-            SAFE_FREE( m_pBitmapInfoHeader );
             return STATUS_INSUFFICIENT_RESOURCES;
         }
 
         //
-        // Copy the connection format video info header into the newly 
+        // Copy the connection format bitmap info header into the newly 
         // allocated "captured" video info header.
         //
         m_VideoInfoHeader->bmiHeader = *ConnectionHeader;
 
+        PKS_BITMAPINFOHEADER CurrentBitmapInfoHeader = &(m_VideoInfoHeader->bmiHeader);
+
         //  If we don't have a known bit-depth (compressed formats), assume the worse-case.
-        if( m_pBitmapInfoHeader->biBitCount==0 )
+        if( CurrentBitmapInfoHeader->biBitCount==0 )
         {
-            m_pBitmapInfoHeader->biBitCount=32;
+            CurrentBitmapInfoHeader->biBitCount=32;
         }
 
         //  Estimate the image size.  The derived pin can chose to override this value.
-        m_VideoInfoHeader->bmiHeader.biSizeImage =
-            (m_pBitmapInfoHeader->biWidth*m_pBitmapInfoHeader->biHeight*m_pBitmapInfoHeader->biBitCount)/8;
+        CurrentBitmapInfoHeader->biSizeImage =
+            (CurrentBitmapInfoHeader->biWidth*CurrentBitmapInfoHeader->biHeight*CurrentBitmapInfoHeader->biBitCount)/8;
 
         //  Estimate a frame rate.  The derived pin can chose to override this value.
         m_VideoInfoHeader->AvgTimePerFrame = ONESECOND/30;
@@ -329,13 +310,12 @@ Return Value:
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
             ExAllocatePoolWithTag (
                 NonPagedPoolNx,
-                KS_SIZE_VIDEOHEADER (ConnectionHeader),
+                max(sizeof(KS_VIDEOINFOHEADER), KS_SIZE_VIDEOHEADER (ConnectionHeader)),
                 AVSHWS_POOLTAG
                 )
             );
         if( !m_VideoInfoHeader )
         {
-            SAFE_FREE( m_pBitmapInfoHeader );
             return STATUS_INSUFFICIENT_RESOURCES;
         }
 
@@ -348,12 +328,42 @@ Return Value:
             ConnectionHeader,
             KS_SIZE_VIDEOHEADER (ConnectionHeader)
             );
+    }
+    else
+    if( IsEqualGUID( m_Pin->ConnectionFormat->Specifier, VideoInfo2Specifier ) &&
+        m_Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_VIDEOINFOHEADER2) )
+    {
+        PKS_VIDEOINFOHEADER2 ConnectionHeader =
+            &((reinterpret_cast <PKS_DATAFORMAT_VIDEOINFOHEADER2>
+                (m_Pin->ConnectionFormat))->
+                VideoInfoHeader2);
+
+        m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
+            ExAllocatePoolWithTag(
+                NonPagedPoolNx,
+                max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->bmiHeader.biSize + KS_SIZE_PREHEADER),
+                AVSHWS_POOLTAG
+                )
+            );
+        if (!m_VideoInfoHeader)
+        {
+            return STATUS_INSUFFICIENT_RESOURCES;
+        }
 
         //
         // Copy the connection format video info header into the newly 
         // allocated "captured" video info header.
         //
-        *m_pBitmapInfoHeader = m_VideoInfoHeader->bmiHeader;
+        m_VideoInfoHeader->rcSource = ConnectionHeader->rcSource;
+        m_VideoInfoHeader->rcTarget = ConnectionHeader->rcTarget;
+        m_VideoInfoHeader->dwBitRate = ConnectionHeader->dwBitRate;
+        m_VideoInfoHeader->dwBitErrorRate = ConnectionHeader->dwBitErrorRate;
+        m_VideoInfoHeader->AvgTimePerFrame = ConnectionHeader->AvgTimePerFrame;
+        RtlCopyMemory (
+            &m_VideoInfoHeader->bmiHeader,
+            &ConnectionHeader->bmiHeader,
+            ConnectionHeader->bmiHeader.biSize
+            );
     }
     else
     {
@@ -1165,6 +1175,7 @@ Return Value:
     NTSTATUS Status = STATUS_NO_MATCH;
     const GUID ImageInfoSpecifier = { STATICGUIDOF( KSDATAFORMAT_SPECIFIER_IMAGE ) };
     const GUID VideoInfoSpecifier = { STATICGUIDOF( KSDATAFORMAT_SPECIFIER_VIDEOINFO ) };
+    const GUID VideoInfo2Specifier = { STATICGUIDOF(KSDATAFORMAT_SPECIFIER_VIDEOINFO2) };
 
     //
     // Find the pin, if it exists yet.  OldFormat will be an indication of
@@ -1176,11 +1187,14 @@ Return Value:
     CCapturePin *CapPin = reinterpret_cast <CCapturePin *> (Pin->Context);
 
     //  For debugging...
+    UNICODE_STRING  NewFormatSpecifier;
     UNICODE_STRING  NewFormat;
     UNICODE_STRING  RefFormat;
+    (void)RtlStringFromGUID( Pin->ConnectionFormat->Specifier, &NewFormatSpecifier );
     (void)RtlStringFromGUID( Pin->ConnectionFormat->SubFormat, &NewFormat );
     (void)RtlStringFromGUID( DataRange->SubFormat, &RefFormat );
 
+    DBG_TRACE("Format specifier for Pin %d is %wZ)", Pin->Id, &NewFormatSpecifier);
     if( IsEqualGUID( Pin->ConnectionFormat->Specifier, ImageInfoSpecifier ) &&
             Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_IMAGEINFO) )
     {
@@ -1276,68 +1290,105 @@ Return Value:
             }
         }
     }
-
-    else if( IsEqualGUID( Pin->ConnectionFormat->Specifier,
-                          VideoInfoSpecifier ) &&
-             Pin->ConnectionFormat->FormatSize >=
-             sizeof (KS_DATAFORMAT_VIDEOINFOHEADER) )
+    else
+    if( ( IsEqualGUID( Pin->ConnectionFormat->Specifier, VideoInfoSpecifier ) &&
+            Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_VIDEOINFOHEADER) ) || 
+        ( IsEqualGUID( Pin->ConnectionFormat->Specifier, VideoInfo2Specifier ) &&
+            Pin->ConnectionFormat->FormatSize >= sizeof (KS_DATAFORMAT_VIDEOINFOHEADER2) ) )
     {
+        ULONG VideoHeaderSize = 0;
+        ULONG DataFormatSize = 0;
+        ULONG ConnectionFormatDataFormatSize = 0;
+        KS_BITMAPINFOHEADER ConnectionFormatBitMapInfoHeader = {};
+        KS_BITMAPINFOHEADER DataRangeBitMapInfoHeader = {};
 
-        PKS_DATAFORMAT_VIDEOINFOHEADER ConnectionFormat =
-            reinterpret_cast <PKS_DATAFORMAT_VIDEOINFOHEADER>
-            (Pin->ConnectionFormat);
+        if (IsEqualGUID(Pin->ConnectionFormat->Specifier, VideoInfo2Specifier))
+        {
+            PKS_DATAFORMAT_VIDEOINFOHEADER2 ConnectionFormat =
+                reinterpret_cast <PKS_DATAFORMAT_VIDEOINFOHEADER2>
+                (Pin->ConnectionFormat);
+
+            //
+            // DataRange comes out of OUR data range list.  I know the range
+            // is valid as such.
+            //
+            const KS_DATARANGE_VIDEO2 *VIRange =
+                reinterpret_cast <const KS_DATARANGE_VIDEO2 *>
+                (DataRange);
+
+            VideoHeaderSize = AVSCAM_SIZE_VIDEOHEADER2(
+                &ConnectionFormat->VideoInfoHeader2
+                );
+
+            DataFormatSize = FIELD_OFFSET(
+                KS_DATAFORMAT_VIDEOINFOHEADER2, VideoInfoHeader2
+                ) + VideoHeaderSize;
+
+            ConnectionFormatDataFormatSize = ConnectionFormat->DataFormat.FormatSize;
+            ConnectionFormatBitMapInfoHeader = ConnectionFormat->VideoInfoHeader2.bmiHeader;
+            DataRangeBitMapInfoHeader = VIRange->VideoInfoHeader.bmiHeader;
+        }
+        else
+        {
+            PKS_DATAFORMAT_VIDEOINFOHEADER ConnectionFormat =
+                reinterpret_cast <PKS_DATAFORMAT_VIDEOINFOHEADER>
+                (Pin->ConnectionFormat);
+
+            //
+            // DataRange comes out of OUR data range list.  I know the range
+            // is valid as such.
+            //
+            const KS_DATARANGE_VIDEO *VIRange =
+                reinterpret_cast <const KS_DATARANGE_VIDEO *>
+                (DataRange);
+
+            VideoHeaderSize = KS_SIZE_VIDEOHEADER(
+                &ConnectionFormat->VideoInfoHeader
+                );
+
+            DataFormatSize = FIELD_OFFSET(
+                KS_DATAFORMAT_VIDEOINFOHEADER, VideoInfoHeader
+                ) + VideoHeaderSize;
+
+            ConnectionFormatDataFormatSize = ConnectionFormat->DataFormat.FormatSize;
+            ConnectionFormatBitMapInfoHeader = ConnectionFormat->VideoInfoHeader.bmiHeader;
+            DataRangeBitMapInfoHeader = VIRange->VideoInfoHeader.bmiHeader;
+        }
 
         //
-        // DataRange comes out of OUR data range list.  I know the range
-        // is valid as such.
+        // Check that ConnectionFormatBitMapInfoHeader.biSize is valid since we use it later.
         //
-        const KS_DATARANGE_VIDEO *VIRange =
-            reinterpret_cast <const KS_DATARANGE_VIDEO *>
-            (DataRange);
-
-        //
-        // Check that bmiHeader.biSize is valid since we use it later.
-        //
-        ULONG VideoHeaderSize = KS_SIZE_VIDEOHEADER(
-                                    &ConnectionFormat->VideoInfoHeader
-                                );
-
-        ULONG DataFormatSize = FIELD_OFFSET(
-                                   KS_DATAFORMAT_VIDEOINFOHEADER, VideoInfoHeader
-                               ) + VideoHeaderSize;
-
-        if( VideoHeaderSize < ConnectionFormat->VideoInfoHeader.bmiHeader.biSize ||
+        if (VideoHeaderSize < ConnectionFormatBitMapInfoHeader.biSize ||
             DataFormatSize < VideoHeaderSize ||
-            DataFormatSize > ConnectionFormat->DataFormat.FormatSize )
+            DataFormatSize > ConnectionFormatDataFormatSize)
         {
             Status = STATUS_INVALID_PARAMETER;
         }
-
         //
         // Check that the format is a match for the selected range.
         //
         else if(
-            (ConnectionFormat->VideoInfoHeader.bmiHeader.biWidth !=
-                 VIRange->VideoInfoHeader.bmiHeader.biWidth) ||
-            (ConnectionFormat->VideoInfoHeader.bmiHeader.biHeight !=
-                 VIRange->VideoInfoHeader.bmiHeader.biHeight) ||
+            (ConnectionFormatBitMapInfoHeader.biWidth !=
+                 DataRangeBitMapInfoHeader.biWidth) ||
+            (ConnectionFormatBitMapInfoHeader.biHeight !=
+                 DataRangeBitMapInfoHeader.biHeight) ||
             !IsEqualGUID( Pin->ConnectionFormat->SubFormat, DataRange->SubFormat ) )
         {
             DBG_TRACE("FAILED: Height=(%d,%d), Width=(%d,%d), SubFormat=(%wZ,%wZ)",
-                        ConnectionFormat->VideoInfoHeader.bmiHeader.biWidth,
-                        VIRange->VideoInfoHeader.bmiHeader.biWidth,
-                        ConnectionFormat->VideoInfoHeader.bmiHeader.biHeight,
-                        VIRange->VideoInfoHeader.bmiHeader.biHeight,
+                        ConnectionFormatBitMapInfoHeader.biWidth,
+                        DataRangeBitMapInfoHeader.biWidth,
+                        ConnectionFormatBitMapInfoHeader.biHeight,
+                        DataRangeBitMapInfoHeader.biHeight,
                         &NewFormat, &RefFormat );
             Status = STATUS_NO_MATCH;
         }
         else
         {
             DBG_TRACE("MATCH: Height=(%d,%d), Width=(%d,%d), SubFormat=(%wZ,%wZ)",
-                        ConnectionFormat->VideoInfoHeader.bmiHeader.biWidth,
-                        VIRange->VideoInfoHeader.bmiHeader.biWidth,
-                        ConnectionFormat->VideoInfoHeader.bmiHeader.biHeight,
-                        VIRange->VideoInfoHeader.bmiHeader.biHeight,
+                        ConnectionFormatBitMapInfoHeader.biWidth,
+                        DataRangeBitMapInfoHeader.biWidth,
+                        ConnectionFormatBitMapInfoHeader.biHeight,
+                        DataRangeBitMapInfoHeader.biHeight,
                         &NewFormat, &RefFormat );
 
             //
@@ -1356,9 +1407,8 @@ Return Value:
             ULONG ImageSize;
 
             if( !MultiplyCheckOverflow(
-                        (ULONG) ConnectionFormat->VideoInfoHeader.bmiHeader.biWidth,
-                        (ULONG) abs( ConnectionFormat->
-                                     VideoInfoHeader.bmiHeader.biHeight ),
+                        (ULONG) ConnectionFormatBitMapInfoHeader.biWidth,
+                        (ULONG) abs( ConnectionFormatBitMapInfoHeader.biHeight ),
                         &ImageSize
                     ) )
             {
@@ -1371,8 +1421,7 @@ Return Value:
             //
             else if( !MultiplyCheckOverflow(
                          ImageSize,
-                         (ULONG) (ConnectionFormat->
-                                  VideoInfoHeader.bmiHeader.biBitCount / 8),
+                         (ULONG) (ConnectionFormatBitMapInfoHeader.biBitCount / 8),
                          &ImageSize
                      ) )
             {
@@ -1383,7 +1432,7 @@ Return Value:
             // Valid for the formats we use.  Otherwise, this would be
             // checked later.
             //
-            else if( ConnectionFormat->VideoInfoHeader.bmiHeader.biSizeImage <
+            else if( ConnectionFormatBitMapInfoHeader.biSizeImage <
                      ImageSize )
             {
                 Status = STATUS_INVALID_PARAMETER;
@@ -1431,6 +1480,7 @@ Return Value:
         }
     }
 
+    RtlFreeUnicodeString(&NewFormatSpecifier);
     RtlFreeUnicodeString(&NewFormat);
     RtlFreeUnicodeString(&RefFormat);
 
@@ -1509,6 +1559,7 @@ Return Value:
 
     const GUID ImageInfoSpecifier = { STATICGUIDOF( KSDATAFORMAT_SPECIFIER_IMAGE ) };
     const GUID VideoInfoSpecifier = { STATICGUIDOF( KSDATAFORMAT_SPECIFIER_VIDEOINFO ) };
+    const GUID VideoInfo2Specifier = { STATICGUIDOF(KSDATAFORMAT_SPECIFIER_VIDEOINFO2) };
     ULONG DataFormatSize;
 
     NT_ASSERT( Filter );
@@ -1726,6 +1777,138 @@ Return Value:
         FormatVideoInfoHeader->VideoInfoHeader.bmiHeader.biSizeImage =
             FormatVideoInfoHeader->DataFormat.SampleSize =
                 KS_DIBSIZE( FormatVideoInfoHeader->VideoInfoHeader.bmiHeader );
+
+        //
+        // REVIEW - Perform other validation such as cropping and scaling checks
+        //
+
+        return STATUS_SUCCESS;
+
+    }
+    else if( IsEqualGUID( CallerDataRange->Specifier, VideoInfo2Specifier ) &&
+        CallerDataRange->FormatSize >= sizeof (KS_DATARANGE_VIDEO2) )
+    {
+
+        PKS_DATARANGE_VIDEO2 callerDataRange =
+            reinterpret_cast <PKS_DATARANGE_VIDEO2> (CallerDataRange);
+
+        PKS_DATARANGE_VIDEO2 descriptorDataRange =
+            reinterpret_cast <PKS_DATARANGE_VIDEO2> (DescriptorDataRange);
+
+        PKS_DATAFORMAT_VIDEOINFOHEADER2 FormatVideoInfoHeader;
+
+        //
+        // Check that the other fields match
+        //
+        if( (callerDataRange->bFixedSizeSamples !=
+            descriptorDataRange->bFixedSizeSamples) ||
+            (callerDataRange->bTemporalCompression !=
+                descriptorDataRange->bTemporalCompression) ||
+            (callerDataRange->StreamDescriptionFlags !=
+                descriptorDataRange->StreamDescriptionFlags) ||
+            (callerDataRange->MemoryAllocationFlags !=
+                descriptorDataRange->MemoryAllocationFlags) ||
+            (RtlCompareMemory( &callerDataRange->ConfigCaps,
+                &descriptorDataRange->ConfigCaps,
+                sizeof (KS_VIDEO_STREAM_CONFIG_CAPS) ) !=
+                sizeof (KS_VIDEO_STREAM_CONFIG_CAPS)) )
+        {
+            return STATUS_NO_MATCH;
+        }
+
+        //
+        // AVSCAM_SIZE_VIDEOHEADER2() below is relying on bmiHeader.biSize from
+        // the caller's data range.  This **MUST** be validated; the
+        // extended bmiHeader size (biSize) must not extend past the end
+        // of the range buffer.  Possible arithmetic overflow is also
+        // checked for.
+        //
+        ULONG VideoHeaderSize = AVSCAM_SIZE_VIDEOHEADER2(
+            &callerDataRange->VideoInfoHeader
+            );
+
+        ULONG DataRangeSize =
+            FIELD_OFFSET( KS_DATARANGE_VIDEO2, VideoInfoHeader ) +
+            VideoHeaderSize;
+
+        //
+        // Check that biSize does not extend past the buffer.  The
+        // first two checks are for arithmetic overflow on the
+        // operations to compute the alleged size.  (On unsigned
+        // math, a+b < a iff an arithmetic overflow occurred).
+        //
+        if( VideoHeaderSize < callerDataRange->VideoInfoHeader.bmiHeader.biSize ||
+            DataRangeSize < VideoHeaderSize ||
+            DataRangeSize > callerDataRange->DataRange.FormatSize )
+        {
+            return STATUS_INVALID_PARAMETER;
+        }
+
+        DataFormatSize =
+            sizeof (KSDATAFORMAT) +
+            AVSCAM_SIZE_VIDEOHEADER2( &callerDataRange->VideoInfoHeader );
+
+
+        //
+        // If the passed buffer size is 0, it indicates that this is a size
+        // only query.  Return the size of the intersecting data format and
+        // pass back STATUS_BUFFER_OVERFLOW.
+        //
+        if( BufferSize == 0 )
+        {
+            *DataSize = DataFormatSize;
+            return STATUS_BUFFER_OVERFLOW;
+        }
+
+        //
+        // Verify that the provided structure is large enough to
+        // accept the result.
+        //
+        if( BufferSize < DataFormatSize )
+        {
+            return STATUS_BUFFER_TOO_SMALL;
+        }
+
+        //
+        // Copy over the KSDATAFORMAT, followed by the actual VideoInfoHeader
+        //
+        *DataSize = DataFormatSize;
+
+        FormatVideoInfoHeader = PKS_DATAFORMAT_VIDEOINFOHEADER2( Data );
+
+        //
+        // Copy over the KSDATAFORMAT.  This is precisely the same as the
+        // KSDATARANGE (it's just the GUIDs, etc...  not the format information
+        // following any data format.
+        //
+        RtlCopyMemory(
+            &FormatVideoInfoHeader->DataFormat,
+            DescriptorDataRange,
+            sizeof (KSDATAFORMAT) );
+
+        FormatVideoInfoHeader->DataFormat.FormatSize = DataFormatSize;
+
+        //
+        // Copy over the callers requested VIDEOINFOHEADER
+        //
+
+        RtlCopyMemory(
+            &FormatVideoInfoHeader->VideoInfoHeader2,
+            &callerDataRange->VideoInfoHeader,
+            AVSCAM_SIZE_VIDEOHEADER2( &callerDataRange->VideoInfoHeader )
+            );
+
+        //
+        // Calculate biSizeImage for this request, and put the result in both
+        // the biSizeImage field of the bmiHeader AND in the SampleSize field
+        // of the DataFormat.
+        //
+        // Note that for compressed sizes, this calculation will probably not
+        // be just width * height * bitdepth
+        //
+        FormatVideoInfoHeader->VideoInfoHeader2.bmiHeader.biSizeImage =
+            FormatVideoInfoHeader->DataFormat.SampleSize =
+            KS_DIBSIZE( FormatVideoInfoHeader->VideoInfoHeader2.bmiHeader );
 
         //
         // REVIEW - Perform other validation such as cropping and scaling checks

@@ -17,7 +17,7 @@ This sample features enhanced parameter validation and overflow detection.
 Provision a target computer
 ---------------------------
 
-After you've cloned the sample repo to your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution...**, navigate to the Avshws sample directory, and select **avshws.sln**.
+After you've installed the sample on your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution...**, navigate to the directory where you've copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
 
 In the **Solution Explorer** pane in Visual Studio, at the top is **Solution 'avshws'**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with the WDK](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
 
@@ -26,7 +26,7 @@ Provision your target computer using instructions in, for example, [Preparing a 
 Deploy the driver to the target computer
 ----------------------------------------
 
-Now you can deploy the Avshws driver that you've just built to the target computer, using guidance in [Deploying a Driver to a Test Computer](https://docs.microsoft.com/windows-hardware/drivers/develop/deploying-a-driver-to-a-test-computer). Specifically, in the Visual Studio Solution Explorer, right click the Avshws project and select **Properties**. Under Configuration Properties, click **Driver Install** and then **Deployment**.  Enter the **Target Device Name** and the host computer automatically provisions the target computer and sets up debugger options.
+Now you can deploy the Avshws driver that you've just built to the target computer, using guidance in [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Specifically, find the package file under the **Package** folder in the Avshws solution. Right-click **package** and select **Properties**. Under Configuration Properties, click **Driver install** and then **Deployment**. Here you must click the check box for **Enable deployment**, and then click the button to the right of **\<Configure Computer...\>**. In the next dialog you enter the **Target Computer Name** and can let the host computer automatically provision the target computer and set up debugger options.
 
 Finally, in Visual Studio, from the **Build** menu select **Deploy Solution** to deploy the sample to the target computer. On the target computer, you can see the deployed package in the **%Systemdrive%\\drivertest\\drivers** folder.
 
@@ -35,7 +35,7 @@ Install the driver
 
 On the target computer, open Device Manager, and follow these steps:
 
-1.  In the **Action** menu, select the top node and click **Add Legacy Hardware**. Click **Next** and then **Next** again.  You might need to select **Have disk** and search for the driver in the target driver folder that was set up when the test computer was provisioned.
+1.  In the **Action** menu, click **Add Legacy Hardware**, and the **Add Hardware Wizard** appears. Click **Next** and then **Next** again.
 2.  In the **Add Hardware** window, select **Show All Devices**.
 3.  In the **Manufacturer** list in the left pane, click **Microsoft**.
 4.  You should see the **AVStream Simulated Hardware Sample** in the **Model** pane on the right. Click this and then click **Next**.
@@ -64,8 +64,8 @@ Run the sample
 Follow these steps to see how the sample driver functions:
 
 1.  After installation has completed, access the driver through the Graphedt tool. Graphedt.exe is available in the *tools* directory of the WDK.
-2.  Before running GraphEdt, use the regsvr32 utility to register the proppage.dll DLL and to enable GraphEdit to display property pages for some of the built-in Microsoft DirectShow filters. Open an elevated command window with Administrator privileges, and navigate to the WDK or SDK *tools* directory that contains proppage.dll.
-3.  On the command line, type `regsvr32 "c:\Program Files (x86)\Windows Kits\10\Tools\x64\proppage.dll"`. If the registration succeeds, you'll get a message, "DllRegisterServer in proppage.dll succeeded." Click OK.
+2.  Before running GraphEdit, use the regsvr32 utility to register the proppage.dll DLL and to enable GraphEdit to display property pages for some of the built-in Microsoft DirectShow filters. Open an elevated command window with Administrator privileges, and navigate to the WDK or SDK *tools* directory that contains proppage.dll.
+3.  On the command line, type regsvr32 proppage.dll. If the registration succeeds, you'll get a message, "DllRegisterServer in proppage.dll succeeded." Click OK.
 4.  In the Graphedt tool, click the **Graph** menu and click **Insert Filters**. The sample appears under "WDM Streaming Capture Devices" as "avshws Source."
 5.  Click **Insert Filter**. The sample appears in the graph as a single filter labeled, "avshws Source." There is one output pin, which is the video capture pin. This pin emits video in YUY2 format.
 6.  Attach this filter to either a DirectShow Video Renderer or to the VMR default video renderer. Then click **Play**.

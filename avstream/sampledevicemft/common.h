@@ -17,6 +17,29 @@
 #define DMFTRACE(...) 
 #endif
 
+//
+// The below guid is used to register the GUID as the Device Transform. This should be adeed to the 
+// HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceClasses\ and under the 
+// GLOBAL#\Device Parameters key, add a CameraDeviceMFTCLSID value, and set its value to
+// {0E313280-3169-4F41-A329-9E854169634F} for the Pipeline to pick up the Transform.
+//
+DEFINE_GUID(CLSID_MultiPinMFT,
+    0xe313280, 0x3169, 0x4f41, 0xa3, 0x29, 0x9e, 0x85, 0x41, 0x69, 0x63, 0x4f);
+
+
+//
+// Custom Pin GUID. The avstream driver should define a PIN_DESCRIPTOR with this GUID
+// defined in cateogory. This will lead to devproxy creating this pin. This pin however
+// cannot be used by the pipeline as it may share a custom media type and pipeline could
+// fail. Moreover pipeline can currently (when this sample is written) only deal with
+// the known pins (PREVIEW/CAPTURE/IMAGE). This code snippet creates a custom pin 
+// and 
+// 
+DEFINE_GUID(AVSTREAM_CUSTOM_PIN_IMAGE,
+    0x888c4105, 0xb328, 0x4ed6, 0xa3, 0xca, 0x2f, 0xf4, 0xc0, 0x3a, 0x9f, 0x33);
+
+
+
 //TP_NORMAL
 //TP_LOWEST
 //TP_LOW
@@ -24,10 +47,11 @@
 //TP_HIGHEST
 //TP_ERROR
 //TP_MUTED = 0x00070000
-
-
-
+#ifdef DBG
 #define mf_assert(a) if(!a) DebugBreak()
+#else
+#define mf_assert(a)
+#endif
 
 #define WPP_CONTROL_GUIDS \
     WPP_DEFINE_CONTROL_GUID(CtlGUID_DMFTTrace, (CBCCA12E, 9472, 409D, A1B1, 753C98BF03C0), \
@@ -41,6 +65,38 @@
 #define WPP_FLAG_LEVEL_LOGGER(flags,lvl) WPP_LEVEL_LOGGER(flags)  
 #define WPP_FLAG_LEVEL_ENABLED(flags, lvl) (WPP_LEVEL_ENABLED(flags) && WPP_CONTROL(WPP_BIT_ ## flags).Level >= lvl)  
 
+#define WPP_CHECK_LEVEL_ENABLED(flags, level) 1
+
+//begin_wpp config
+//
+// USEPREFIX (DMFTCHECKNULL_GOTO,"%!STDPREFIX!");
+// FUNC DMFTCHECKNULL_GOTO(CHECKNULLGOTO_EXP,LABEL,HR,...);
+// USESUFFIX (DMFTCHECKNULL_GOTO," failed %!HRESULT!\n", hr);
+//
+//end_wpp
+
+//begin_wpp config
+//
+// USEPREFIX (DMFTCHECKHR_GOTO,"%!STDPREFIX!");
+// FUNC DMFTCHECKHR_GOTO(CHECKHRGOTO_EXP,LABEL,...);
+// USESUFFIX (DMFTCHECKHR_GOTO," failed %!HRESULT!\n", hr);
+//
+
+//end_wpp
+
+#define WPP_CHECKNULLGOTO_EXP_LABEL_HR_PRE(pointer,label,HR) if( pointer == NULL ) { hr = HR;
+#define WPP_CHECKNULLGOTO_EXP_LABEL_HR_POST(pointer,label,HR) ; goto label; }
+
+#define WPP_CHECKNULLGOTO_EXP_LABEL_HR_LOGGER(pointer,label,HR) WPP_LEVEL_LOGGER( DMFT_INIT )
+#define WPP_CHECKNULLGOTO_EXP_LABEL_HR_ENABLED(pointer,label,HR) WPP_CHECK_LEVEL_ENABLED( DMFT_INIT, TP_ERROR )
+
+#define WPP_CHECKHRGOTO_EXP_LABEL_PRE(HR,label) if( FAILED( hr = HR ) ) {
+#define WPP_CHECKHRGOTO_EXP_LABEL_POST(HR,label) ; goto label; }
+
+#define WPP_CHECKHRGOTO_EXP_LABEL_LOGGER(HR, label) WPP_LEVEL_LOGGER( DMFT_INIT )
+#define WPP_CHECKHRGOTO_EXP_LABEL_ENABLED(HR, label) WPP_CHECK_LEVEL_ENABLED( DMFT_INIT, TP_ERROR )
+
+
 #define SAFE_ADDREF(p)              if( NULL != p ) { ( p )->AddRef(); }
 #define SAFE_DELETE(p)              delete p; p = NULL;
 #define SAFE_SHUTDELETE(p)          if( NULL != p ) { ( p )->Shutdown(); delete p; p = NULL; }
@@ -53,67 +109,11 @@
 #define SAFE_BYTEARRAYDELETE(p)     delete [] (BYTE*) p; p = NULL;
 
 
-
-#define DMFTCHECKHR_GOTO(val,label) \
-    hr = (val); \
-if (FAILED(hr)) {\
-    /*DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr); */\
-    goto label; \
-}
-
-
-#define DMFTCHECKNULL_GOTO( val, label, err) \
-if( (val) == NULL ) { \
-    hr = (err); \
-    /*DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);*/\
-    goto label; \
-}
-
-#define TP_SCOPE_TRACE TP_NORMAL
-#define DH_THIS_FILE DH_DEVPROXY
-
 #define SAFERELEASE(x) \
 if (x) {\
     x->Release(); \
     x = NULL; \
 }
-
-#define CHK_LOG_BRK(exp) \
-if (FAILED(hr = (exp)))  {\
-    wprintf(L"HR=%08x File: %S Ln:  %d\n", hr, __FILE__, __LINE__); \
-    /*MFWMITRACE(DH_THIS_FILE, TP_NORMAL, __FUNCTION__ " : MULTIPINERROR File: %s Ln:%d",__FILE__,__LINE__);*/\
-    break; \
-}
-
-
-#define CHK_NULL_BRK(exp) \
-if ((exp) == NULL) {\
-hr = E_OUTOFMEMORY; \
-wprintf(L"HR=%08x File: %S Ln:  %d\n", hr, __FILE__, __LINE__); \
-break; \
-}
-
-#define CHK_NULL_PTR_BRK(exp) \
-if ((exp) == NULL) {\
-hr = E_INVALIDARG; \
-wprintf(L"HR=%08x File: %S Ln:  %d\n", hr, __FILE__, __LINE__); \
-break; \
-}
-
-#define CHK_BOOL_BRK(exp) \
-if (!exp) {\
-    hr = E_FAIL; \
-    wprintf(L"HR=%08x File: %S Ln:  %d\n", hr, __FILE__, __LINE__); \
-    break; \
-}
-
-
-//
-// The Below type definitions are added for this iteration. It will taken out in the
-// next one when we will have the windows headers modified to include the interfaces 
-// externally.
-//
-
 
 #if !defined(_IKsControl_)
 #define _IKsControl_
@@ -148,180 +148,6 @@ DECLARE_INTERFACE_(IKsControl, IUnknown)
         ) PURE;
 };
 #endif //!defined(_IKsControl_)
-
-
-
-#if !defined(__IMFDeviceTransform_INTERFACE_DEFINED__)
-//
-//These definitions will have to be taken out when the
-//internal defines are made public
-//
-
-EXTERN_GUID(MEDeviceStreamCreated, 0x0252a1cf, 0x3540, 0x43b4, 0x91, 0x64, 0xd7, 0x2e, 0xb4, 0x05, 0xfa, 0x40);
-
-typedef
-enum _DeviceStreamState
-{
-    DeviceStreamState_Stop = 0,
-    DeviceStreamState_Pause = (DeviceStreamState_Stop + 1),
-    DeviceStreamState_Run = (DeviceStreamState_Pause + 1),
-    DeviceStreamState_Disabled = (DeviceStreamState_Run + 1)
-} 	DeviceStreamState;
-
-/* size is 4, align is 4*/
-typedef enum _DeviceStreamState *PDeviceStreamState;
-
-EXTERN_C const IID IID_IMFDeviceTransform;
-MIDL_INTERFACE("D818FBD8-FC46-42F2-87AC-1EA2D1F9BF32")
-IMFDeviceTransform : public IUnknown
-{
-public:
-    virtual HRESULT STDMETHODCALLTYPE InitializeTransform(
-        /* [annotation][in] */
-        _In_  IMFAttributes *pAttributes) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetInputAvailableType(
-        /* [annotation][in] */
-        _In_  DWORD dwInputStreamID,
-        /* [annotation][in] */
-        _In_  DWORD dwTypeIndex,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFMediaType **pMediaType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetInputCurrentType(
-        /* [annotation][in] */
-        _In_  DWORD dwInputStreamID,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFMediaType **pMediaType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetInputStreamAttributes(
-        /* [annotation][in] */
-        _In_  DWORD dwInputStreamID,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFAttributes **ppAttributes) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetOutputAvailableType(
-        /* [annotation][in] */
-        _In_  DWORD dwOutputStreamID,
-        /* [annotation][in] */
-        _In_  DWORD dwTypeIndex,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFMediaType **pMediaType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetOutputCurrentType(
-        /* [annotation][in] */
-        _In_  DWORD dwOutputStreamID,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFMediaType **pMediaType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetOutputStreamAttributes(
-        /* [annotation][in] */
-        _In_  DWORD dwOutputStreamID,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFAttributes **ppAttributes) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetStreamCount(
-        /* [annotation][out] */
-        _Out_  DWORD *pcInputStreams,
-        /* [annotation][out] */
-        _Out_  DWORD *pcOutputStreams) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetStreamIDs(
-        /* [annotation][in] */
-        _In_  DWORD dwInputIDArraySize,
-        /* [annotation][out] */
-        _Out_  DWORD *pdwInputStreamIds,
-        /* [annotation][in] */
-        _In_  DWORD dwOutputIDArraySize,
-        /* [annotation][out] */
-        _Out_  DWORD *pdwOutputStreamIds) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE ProcessEvent(
-        /* [annotation][in] */
-        _In_  DWORD dwInputStreamID,
-        /* [annotation][in] */
-        _In_  IMFMediaEvent *pEvent) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE ProcessInput(
-        /* [annotation][in] */
-        _In_  DWORD dwInputStreamID,
-        /* [annotation][in] */
-        _In_  IMFSample *pSample,
-        /* [annotation][in] */
-        _In_  DWORD dwFlags) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE ProcessMessage(
-        /* [annotation][in] */
-        _In_  MFT_MESSAGE_TYPE eMessage,
-        /* [annotation][in] */
-        _In_  ULONG_PTR ulParam) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE ProcessOutput(
-        /* [annotation][in] */
-        _In_  DWORD dwFlags,
-        /* [annotation][in] */
-        _In_  DWORD cOutputBufferCount,
-        /* [size_is][annotation][out][in] */
-        _Inout_  MFT_OUTPUT_DATA_BUFFER *pOutputSample,
-        /* [annotation][out] */
-        _Out_  DWORD *pdwStatus) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetInputStreamState(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamID,
-        /* [annotation][in] */
-        _In_  IMFMediaType *pMediaType,
-        /* [annotation][in] */
-        _In_  DeviceStreamState value,
-        /* [annotation][in] */
-        _In_  DWORD dwFlags) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetInputStreamState(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamID,
-        /* [annotation][out] */
-        _Out_  DeviceStreamState *value) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetOutputStreamState(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamID,
-        /* [annotation][in] */
-        _In_  IMFMediaType *pMediaType,
-        /* [annotation][in] */
-        _In_  DeviceStreamState value,
-        /* [annotation][in] */
-        _In_  DWORD dwFlags) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetOutputStreamState(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamID,
-        /* [annotation][out] */
-        _Out_  DeviceStreamState *value) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetInputStreamPreferredState(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamID,
-        /* [annotation][out] */
-        _Out_  DeviceStreamState *value,
-        /* [annotation][out] */
-        _COM_Outptr_  IMFMediaType **ppMediaType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE FlushInputStream(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamIndex,
-        /* [annotation][in] */
-        _In_  DWORD dwFlags) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE FlushOutputStream(
-        /* [annotation][in] */
-        _In_  DWORD dwStreamIndex,
-        /* [annotation][in] */
-        _In_  DWORD dwFlags) = 0;
-
-};
-
-#endif 
-
 
 interface IDirect3DDeviceManager9;
 //Forward defintion
@@ -384,14 +210,6 @@ public:
 };
 
 
-//
-//The below guid is used to register the GUID as the Device Transform. This should be adeed to the 
-//HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceClasses\ and under the 
-//GLOBAL#\Device Parameters key, add a CameraDeviceMFTCLSID value, and set its value to
-// {0E313280-3169-4F41-A329-9E854169634F} for the Pipeline to pick up the Transform.
-//
-DEFINE_GUID(CLSID_MultiPinMFT,
-    0xe313280, 0x3169, 0x4f41, 0xa3, 0x29, 0x9e, 0x85, 0x41, 0x69, 0x63, 0x4f);
 
 
 typedef enum _MF_TRANSFORM_XVP_OPERATION{
@@ -407,12 +225,6 @@ typedef  std::vector< IMFSample *>    IMFSampleList;
 typedef  std::pair< std::multimap<int, int>::iterator, std::multimap<int, int>::iterator > MMFTMMAPITERATOR;
 
 
-HRESULT CreateCodec(
-    _In_opt_    IMFMediaType    * inMediaType,
-    _In_opt_    IMFMediaType    *outMediaType,
-    _In_        BOOL            operation /*True = Encode, False = Decode*/,
-    _Out_       IMFTransform          **pTransform
-    );
 
 STDMETHODIMP   IsOptimizedPlanarVideoInputImageOutputPair(
     _In_        IMFMediaType *inMediaType,
@@ -430,7 +242,7 @@ STDMETHODIMP RandomnizeMediaTypes(
     _In_ IMFMediaTypeArray &pMediaTypeArray
     );
 
-STDMETHODIMP IsInputDxSample(
+HRESULT IsInputDxSample(
     _In_ IMFSample* pSample,
     _Inout_ BOOL *isDxSample
     );
@@ -475,19 +287,6 @@ HRESULT ExceptionBoundary(Lambda&& lambda)
         return E_FAIL;
     }
 }
-
-
-//
-// Custom Pin GUID. The avstream driver should define a PIN_DESCRIPTOR with this GUID
-// defined in cateogory. This will lead to devproxy creating this pin. This pin however
-// cannot be used by the pipeline as it may share a custom media type and pipeline could
-// fail. Moreover pipeline can currently (when this sample is written) only deal with
-// the known pins (PREVIEW/CAPTURE/IMAGE). This code snippet creates a custom pin 
-// and 
-// 
-DEFINE_GUID(AVSTREAM_CUSTOM_PIN_IMAGE,
-    0x888c4105, 0xb328, 0x4ed6, 0xa3, 0xca, 0x2f, 0xf4, 0xc0, 0x3a, 0x9f, 0x33);
-
 
 //
 // The Below redirections are to support MFT0. Implement this only if you need to load 
@@ -714,4 +513,114 @@ public:
     }
 private:
     static volatile long s_lObjectCount;
+};
+#define DECLARE_TransformImageFunctions(a) void TransformImage_##a(\
+const RECT &rcDest,\
+_Inout_updates_(_Inexpressible_(lDestStride * dwHeightInPixels)) BYTE *pDest,\
+_In_ LONG lDestStride,\
+_In_reads_(_Inexpressible_(lSrcStride * dwHeightInPixels)) const BYTE *pSrc,\
+_In_ LONG lSrcStride,\
+_In_ DWORD dwWidthInPixels,\
+_In_ DWORD dwHeightInPixels)
+
+DECLARE_TransformImageFunctions(YUY2);
+DECLARE_TransformImageFunctions(UYVY);
+DECLARE_TransformImageFunctions(NV12);
+DECLARE_TransformImageFunctions(RGB32);
+
+class VideoBufferLock
+{
+public:
+    VideoBufferLock(IMFMediaBuffer *pBuffer) 
+    {
+        m_pBuffer = pBuffer;
+        // Query for the 2-D buffer interface. OK if this fails.
+        if (FAILED(m_pBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer2.GetAddressOf()))))
+        {
+            m_p2DBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer.GetAddressOf()));
+        } 
+    }
+    ~VideoBufferLock()
+    {
+        UnlockBuffer();
+    }
+    // LockBuffer:
+    // Locks the buffer. Returns a pointer to scan line 0 and returns the stride.
+
+    // The caller must provide the default stride as an input parameter, in case
+    // the buffer does not expose IMF2DBuffer. You can calculate the default stride
+    // from the media type.
+
+    HRESULT LockBuffer(
+        _In_        LONG  lDefaultStride,    // Minimum stride (with no padding).
+        _In_        DWORD dwHeightInPixels,  // Height of the image, in pixels.
+        _Out_       BYTE  **ppbScanLine0,    // Receives a pointer to the start of scan line 0.
+        _Inout_     LONG  *plStride,         // Receives the actual stride.
+        _Out_       DWORD *pcbBuffer,        // Length of the Buffer
+        _In_        BOOL   Read = TRUE       // Whether Read    
+    )
+    {
+        HRESULT hr = S_OK;
+        // Use the 2-D version if available.
+        if (m_p2DBuffer2)
+        {
+            BYTE *pbBufferStart = NULL;
+            MF2DBuffer_LockFlags Flags = (Read == TRUE) ? MF2DBuffer_LockFlags_Read : MF2DBuffer_LockFlags_Write;
+            hr = m_p2DBuffer2->Lock2DSize(
+                Flags,
+                ppbScanLine0,
+                plStride,
+                &pbBufferStart,
+                pcbBuffer);
+            if (dwHeightInPixels* abs(*plStride) > *pcbBuffer)
+            {
+                hr = E_FAIL;
+            }
+        } else if (m_p2DBuffer)
+        {
+            hr = m_p2DBuffer->Lock2D(ppbScanLine0, plStride);
+        }
+        else
+        {
+            // Use non-2D version.
+            BYTE *pData = NULL;
+            hr = m_pBuffer->Lock(&pData, NULL, NULL);
+            if (SUCCEEDED(hr))
+            {
+                *plStride = lDefaultStride;
+                if (lDefaultStride < 0)
+                {
+                    // Bottom-up orientation. Return a pointer to the start of the
+                    // last row *in memory* which is the top row of the image.
+                    *ppbScanLine0 = pData + abs(lDefaultStride) * (dwHeightInPixels - 1);
+                }
+                else
+                {
+                    // Top-down orientation. Return a pointer to the start of the
+                    // buffer.
+                    *ppbScanLine0 = pData;
+                }
+            }
+        }
+        return hr;
+    }
+    HRESULT UnlockBuffer()
+    {
+        if (m_p2DBuffer2.Get())
+        {
+            return m_p2DBuffer2->Unlock2D();
+        }
+        else if (m_p2DBuffer.Get())
+        {
+            return m_p2DBuffer->Unlock2D();
+        }
+        else
+        {
+            return m_pBuffer->Unlock();
+        }
+    }
+private:
+    ComPtr<IMFMediaBuffer>  m_pBuffer;
+    ComPtr<IMF2DBuffer>     m_p2DBuffer;
+    ComPtr<IMF2DBuffer2>    m_p2DBuffer2;
 };

@@ -884,7 +884,7 @@ Return Value:
 
 **************************************************************************/
 
-PCCHAR
+const CHAR *
 AdvancedPhoto_Text( ULONGLONG Flags )
 {
     PAGED_CODE();
@@ -908,7 +908,7 @@ AdvancedPhoto_Text( ULONGLONG Flags )
             CHAR buffer[32];
 
             RtlStringCbPrintfA(buffer, sizeof(buffer), "Unknown [0x%016llX]", Flags);
-            return (PCCHAR) buffer;
+            return (const CHAR *) buffer;
         }
     }
 }

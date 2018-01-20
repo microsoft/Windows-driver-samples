@@ -11,7 +11,7 @@
     Abstract:
 
         This is the implementation of CSocMft0.
-        
+
         CSocMft0 is the MFT0 for the AvsCamera sample driver.  This MFT0
         performs the following key tasks:
             1. Filters overscan media types supplied by the driver, and
@@ -54,7 +54,7 @@ STDMETHODIMP CSocMft0::GetState(UINT32 *pState)
 
     // OEM can use similar function to get the status of MFT
     // From their own application
-    if(!pState)
+    if (!pState)
     {
         return E_POINTER;
     }
@@ -79,13 +79,13 @@ HRESULT CSocMft0::CreateInstance(
 
     auto sObject = Microsoft::WRL::Make<CSocMft0>();
 
-    if(!sObject)
+    if (!sObject)
     {
         return E_OUTOFMEMORY;
     }
     hr = sObject->FinalConstruct();
 
-    if(SUCCEEDED(hr))
+    if (SUCCEEDED(hr))
     {
         hr = sObject.As(&spMFT);
         *ppMFT = spMFT.Detach();
@@ -107,12 +107,12 @@ STDMETHODIMP CSocMft0::GetIids(
 {
     HRESULT hr = S_OK;
 
-    if(!iidCount)
+    if (!iidCount)
     {
         return E_POINTER;
     }
 
-    if(!iids)
+    if (!iids)
     {
         return E_POINTER;
     }
@@ -132,7 +132,7 @@ STDMETHODIMP CSocMft0::GetRuntimeClassName(
 )
 {
 
-    if(!pClassName)
+    if (!pClassName)
     {
         return E_POINTER;
     }
@@ -149,7 +149,7 @@ STDMETHODIMP CSocMft0::GetTrustLevel(
 {
     HRESULT hr = S_OK;
 
-    if(trustLevel)
+    if (trustLevel)
     {
         return E_POINTER;
     }
@@ -178,19 +178,19 @@ HRESULT CSocMft0::FinalConstruct()
     }
 
     hr = m_spGlobalAttributes->SetString(
-             MFT_ENUM_HARDWARE_URL_Attribute,
-             L"Sample_CameraExtensionMft");
+        MFT_ENUM_HARDWARE_URL_Attribute,
+        L"Sample_CameraExtensionMft");
     if (FAILED(hr))
     {
         goto done;
     }
 
     hr = m_spGlobalAttributes->SetUINT32(
-             MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE,
-             TRUE);
+        MFT_SUPPORT_DYNAMIC_FORMAT_CHANGE,
+        TRUE);
 
 done:
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         m_spGlobalAttributes.Reset();
     }
@@ -211,10 +211,10 @@ STDMETHODIMP CSocMft0::GetStreamLimits(
     _Out_ DWORD *pdwOutputMaximum
 )
 {
-    if( (!pdwInputMinimum) ||
-            (!pdwInputMaximum) ||
-            (!pdwOutputMinimum) ||
-            (!pdwOutputMaximum))
+    if ((!pdwInputMinimum) ||
+        (!pdwInputMaximum) ||
+        (!pdwOutputMinimum) ||
+        (!pdwOutputMaximum))
     {
         return E_POINTER;
     }
@@ -238,7 +238,7 @@ STDMETHODIMP CSocMft0::GetStreamCount(
     _Out_ DWORD *pcOutputStreams
 )
 {
-    if(!pcInputStreams || !pcOutputStreams)
+    if (!pcInputStreams || !pcOutputStreams)
     {
         return E_POINTER;
     }
@@ -285,30 +285,26 @@ STDMETHODIMP CSocMft0::GetInputStreamInfo(
     _Out_ MFT_INPUT_STREAM_INFO *pStreamInfo
 )
 {
+    UNREFERENCED_PARAMETER(dwInputStreamID);
     CAutoLock lock(&m_critSec);
 
-    if(!pStreamInfo)
+    if (!pStreamInfo)
     {
         return E_POINTER;
     }
 
-    if (!IsValidInputStream(dwInputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
-
-    if(!m_spInputType)
+    if (!m_spInputType)
     {
         return MF_E_TRANSFORM_TYPE_NOT_SET;
     }
 
-    pStreamInfo->hnsMaxLatency  = 0;
+    pStreamInfo->hnsMaxLatency = 0;
     pStreamInfo->cbAlignment = 0;
     pStreamInfo->cbSize = 0;
     pStreamInfo->dwFlags =
         MFT_INPUT_STREAM_WHOLE_SAMPLES |
         MFT_INPUT_STREAM_SINGLE_SAMPLE_PER_BUFFER |
-        MFT_INPUT_STREAM_PROCESSES_IN_PLACE ;
+        MFT_INPUT_STREAM_PROCESSES_IN_PLACE;
     pStreamInfo->hnsMaxLatency = 0;
 
     return S_OK;
@@ -324,19 +320,15 @@ STDMETHODIMP CSocMft0::GetOutputStreamInfo(
     _Out_ MFT_OUTPUT_STREAM_INFO *pStreamInfo
 )
 {
+    UNREFERENCED_PARAMETER(dwOutputStreamID);
     CAutoLock lock(&m_critSec);
 
-    if(!pStreamInfo)
+    if (!pStreamInfo)
     {
         return E_POINTER;
     }
 
-    if (!IsValidInputStream(dwOutputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
-
-    if(!m_spOutputType)
+    if (!m_spOutputType)
     {
         return MF_E_TRANSFORM_TYPE_NOT_SET;
     }
@@ -344,7 +336,7 @@ STDMETHODIMP CSocMft0::GetOutputStreamInfo(
     pStreamInfo->cbAlignment = 0;
     pStreamInfo->cbSize = 0;
     pStreamInfo->dwFlags =
-        MFT_OUTPUT_STREAM_WHOLE_SAMPLES  |
+        MFT_OUTPUT_STREAM_WHOLE_SAMPLES |
         MFT_OUTPUT_STREAM_SINGLE_SAMPLE_PER_BUFFER |
         MFT_OUTPUT_STREAM_PROVIDES_SAMPLES |
         MFT_OUTPUT_STREAM_FIXED_SAMPLE_SIZE;
@@ -361,7 +353,7 @@ STDMETHODIMP CSocMft0::GetAttributes(
     _Outptr_result_maybenull_ IMFAttributes **ppAttributes
 )
 {
-    if(!ppAttributes)
+    if (!ppAttributes)
     {
         return E_POINTER;
     }
@@ -381,16 +373,16 @@ STDMETHODIMP CSocMft0::GetInputStreamAttributes(
 {
     HRESULT hr = S_OK;
 
-    if(dwInputStreamID > 0)
+    if (dwInputStreamID > 0)
     {
         return MF_E_INVALIDSTREAMNUMBER;
     }
-    if(!ppAttributes)
+    if (!ppAttributes)
     {
         return E_POINTER;
     }
 
-    if(!m_spInputAttributes)
+    if (!m_spInputAttributes)
     {
         hr = MFCreateAttributes(&m_spInputAttributes, 2);
         if (FAILED(hr))
@@ -411,7 +403,7 @@ STDMETHODIMP CSocMft0::GetInputStreamAttributes(
     hr = m_spInputAttributes.CopyTo(ppAttributes);
 
 done:
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         m_spInputAttributes.Reset();
     }
@@ -428,17 +420,17 @@ STDMETHODIMP CSocMft0::GetOutputStreamAttributes(
     _Outptr_result_maybenull_ IMFAttributes **ppAttributes
 )
 {
-    if(dwOutputStreamID > 0)
+    if (dwOutputStreamID > 0)
     {
         return MF_E_INVALIDSTREAMNUMBER;
     }
 
-    if(!ppAttributes)
+    if (!ppAttributes)
     {
         return E_POINTER;
     }
 
-    if(!m_spInputAttributes)
+    if (!m_spInputAttributes)
     {
         return MF_E_TRANSFORM_TYPE_NOT_SET;
     }
@@ -492,12 +484,8 @@ STDMETHODIMP CSocMft0::GetInputAvailableType(
     ComPtr<IMFAttributes> spSourceAttributes;
 
     CAutoLock lock(&m_critSec);
-    if(!IsValidInputStream(dwInputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
 
-    if(!m_spSourceTransform && m_spInputAttributes)
+    if (!m_spSourceTransform && m_spInputAttributes)
     {
         hr = m_spInputAttributes->GetUnknown(MFT_CONNECTED_STREAM_ATTRIBUTE, IID_PPV_ARGS(spSourceAttributes.ReleaseAndGetAddressOf()));
         if (FAILED(hr))
@@ -557,11 +545,6 @@ STDMETHODIMP CSocMft0::GetOutputAvailableType(
     ComPtr<IMFAttributes> spSourceAttributes;
 
     CAutoLock lock(&m_critSec);
-
-    if (!IsValidInputStream(dwOutputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
 
     if (!m_spSourceTransform && m_spInputAttributes)
     {
@@ -636,19 +619,19 @@ STDMETHODIMP CSocMft0::SetInputType(
     // Validate flags.
     // Only MFT_SET_TYPE_TEST_ONLY is supported, if any other bit flags
     // get set, it should return error.
-    if(dwFlags & ~MFT_SET_TYPE_TEST_ONLY)
+    if (dwFlags & ~MFT_SET_TYPE_TEST_ONLY)
     {
         return E_INVALIDARG;
     }
 
-    if(!bReallySet)
+    if (!bReallySet)
     {
         return IsMediaTypeSupported(dwInputStreamID, pType);
     }
 
     ComPtr<IMFMediaType> spFullType;
     hr = IsMediaTypeSupported(dwInputStreamID, pType, spFullType.ReleaseAndGetAddressOf());
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
@@ -677,12 +660,12 @@ STDMETHODIMP CSocMft0::SetOutputType(
     BOOL bUseModifiedInputType = FALSE;
 
     // Validate flags.
-    if(dwFlags & ~MFT_SET_TYPE_TEST_ONLY)
+    if (dwFlags & ~MFT_SET_TYPE_TEST_ONLY)
     {
         return E_INVALIDARG;
     }
 
-    if(!bReallySet)
+    if (!bReallySet)
     {
         return IsMediaTypeSupported(dwOutputStreamID, pType);
     }
@@ -690,7 +673,7 @@ STDMETHODIMP CSocMft0::SetOutputType(
     ComPtr<IMFMediaType> spFullType;
     ComPtr<IMFMediaType> spFullInputType;
     hr = IsMediaTypeSupported(dwOutputStreamID, pType, spFullType.ReleaseAndGetAddressOf());
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
@@ -768,20 +751,17 @@ STDMETHODIMP CSocMft0::GetInputCurrentType(
     _Outptr_result_maybenull_ IMFMediaType **ppType
 )
 {
+    UNREFERENCED_PARAMETER(dwInputStreamID);
     HRESULT hr = S_OK;
 
     CAutoLock lock(&m_critSec);
 
-    if(!ppType)
+    if (!ppType)
     {
         return E_POINTER;
     }
-    if (!IsValidInputStream(dwInputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
 
-    if(!m_spInputType)
+    if (!m_spInputType)
     {
         return MF_E_TRANSFORM_TYPE_NOT_SET;
     }
@@ -812,20 +792,17 @@ STDMETHODIMP CSocMft0::GetOutputCurrentType(
     _Outptr_result_maybenull_ IMFMediaType **ppType
 )
 {
+    UNREFERENCED_PARAMETER(dwOutputStreamID);
     HRESULT hr = S_OK;
 
     CAutoLock lock(&m_critSec);
 
-    if(!ppType)
+    if (!ppType)
     {
         return E_POINTER;
     }
 
-    if (!IsValidOutputStream(dwOutputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
-    }
-    if(!m_spOutputType)
+    if (!m_spOutputType)
     {
         return MF_E_TRANSFORM_TYPE_NOT_SET;
     }
@@ -856,16 +833,12 @@ STDMETHODIMP CSocMft0::GetInputStatus(
     _Out_ DWORD *pdwFlags
 )
 {
+    UNREFERENCED_PARAMETER(dwInputStreamID);
     CAutoLock lock(&m_critSec);
 
-    if(!pdwFlags)
+    if (!pdwFlags)
     {
         return E_POINTER;
-    }
-
-    if (!IsValidInputStream(dwInputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
     }
 
     // If we already have an input sample, we don't accept
@@ -891,7 +864,7 @@ STDMETHODIMP CSocMft0::GetOutputStatus(
     _Out_ DWORD *pdwFlags
 )
 {
-    if(!pdwFlags)
+    if (!pdwFlags)
     {
         return E_POINTER;
     }
@@ -981,22 +954,18 @@ STDMETHODIMP CSocMft0::ProcessInput(
     DWORD dwFlags
 )
 {
+    UNREFERENCED_PARAMETER(dwInputStreamID);
     HRESULT hr = S_OK;
 
     CAutoLock lock(&m_critSec);
 
-    if(!pSample)
+    if (!pSample)
     {
         return E_POINTER;
     }
-    if(dwFlags != 0)
+    if (dwFlags != 0)
     {
         return E_INVALIDARG;
-    }
-
-    if (!IsValidInputStream(dwInputStreamID))
-    {
-        return MF_E_INVALIDSTREAMNUMBER;
     }
 
     if (!m_spInputType || !m_spOutputType)
@@ -1012,7 +981,7 @@ STDMETHODIMP CSocMft0::ProcessInput(
     // Validate the number of buffers. There should only be a single buffer to hold the video frame.
     DWORD dwBufferCount = 0;
     hr = pSample->GetBufferCount(&dwBufferCount);
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
@@ -1049,43 +1018,43 @@ STDMETHODIMP CSocMft0::ProcessOutput(
 
     CAutoLock lock(&m_critSec);
 
-    if(dwFlags != 0)
+    if (dwFlags != 0)
     {
         return E_INVALIDARG;
     }
 
-    if(!pOutputSamples || !pdwStatus)
+    if (!pOutputSamples || !pdwStatus)
     {
         return E_POINTER;
     }
 
-    if( pOutputSamples[0].pSample)
+    if (pOutputSamples[0].pSample)
     {
         pOutputSamples[0].pSample->Release();
         pOutputSamples[0].pSample = nullptr;
     }
 
     // Must be exactly one output buffer.
-    if(cOutputBufferCount != 1)
+    if (cOutputBufferCount != 1)
     {
         return E_INVALIDARG;
     }
 
     // If we don't have an input sample, we need some input before
     // we can generate any output.
-    if(m_spSample == nullptr)
+    if (m_spSample == nullptr)
     {
         return MF_E_TRANSFORM_NEED_MORE_INPUT;
     }
 
     hr = ProcessMetadata();
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         //Log the failure
         hr = S_OK;
-    }    
+    }
     hr = CreateOutputSample(&pOutputSamples[0].pSample);
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
@@ -1114,7 +1083,7 @@ CreateOutputSample(
     HRESULT hr = S_OK;
 
     //Do nothing for now
-    if(!ppSample)
+    if (!ppSample)
     {
         return E_POINTER;
     }
@@ -1148,17 +1117,17 @@ STDMETHODIMP CSocMft0::GetMediaType(
     HRESULT hr = S_OK;
     ComPtr<IMFMediaType> spMediaType;
 
-    if(!ppType)
+    if (!ppType)
     {
         return E_POINTER;
     }
 
-    if(dwStreamId != 0)
+    if (dwStreamId != 0)
     {
         return MF_E_INVALIDSTREAMNUMBER;
     }
 
-    if(dwTypeIndex >= m_listOfMediaTypes.size())
+    if (dwTypeIndex >= m_listOfMediaTypes.size())
     {
         return MF_E_NO_MORE_TYPES;
     }
@@ -1190,48 +1159,48 @@ STDMETHODIMP CSocMft0::IsMediaTypeSupported(
 {
     HRESULT hr = S_OK;
 
-    if(!pIMFMediaType)
+    if (!pIMFMediaType)
     {
         return E_POINTER;
     }
 
-    if(uiStreamId != 0)
+    if (uiStreamId != 0)
     {
         return MF_E_INVALIDINDEX;
     }
 
-    BOOL bFound =FALSE;
+    BOOL bFound = FALSE;
 
 
-    for(UINT i = 0; i< m_listOfMediaTypes.size(); i++)
+    for (UINT i = 0; i < m_listOfMediaTypes.size(); i++)
     {
         DWORD   dwResult = 0;
         hr = m_listOfMediaTypes[i]->IsEqual(pIMFMediaType, &dwResult);
-        if(hr == S_FALSE)
+        if (hr == S_FALSE)
         {
-            if((dwResult & MF_MEDIATYPE_EQUAL_MAJOR_TYPES) &&
-                    (dwResult& MF_MEDIATYPE_EQUAL_FORMAT_TYPES) &&
-                    (dwResult& MF_MEDIATYPE_EQUAL_FORMAT_DATA))
+            if ((dwResult & MF_MEDIATYPE_EQUAL_MAJOR_TYPES) &&
+                (dwResult& MF_MEDIATYPE_EQUAL_FORMAT_TYPES) &&
+                (dwResult& MF_MEDIATYPE_EQUAL_FORMAT_DATA))
             {
                 hr = S_OK;
             }
         }
-        if(hr == S_OK)
+        if (hr == S_OK)
         {
             bFound = TRUE;
-            if(ppIMFMediaTypeFull)
+            if (ppIMFMediaTypeFull)
             {
                 m_listOfMediaTypes[i].CopyTo(ppIMFMediaTypeFull);
             }
             break;
         }
-        else if(FAILED(hr))
+        else if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(bFound == FALSE)
+    if (bFound == FALSE)
     {
         return MF_E_INVALIDMEDIATYPE;
     }
@@ -1252,44 +1221,44 @@ STDMETHODIMP CSocMft0::FindMediaIndex(
 {
     HRESULT hr = S_OK;
 
-    if(!pIMFMediaType || !puiMediaIndex)
+    if (!pIMFMediaType || !puiMediaIndex)
     {
         return E_INVALIDARG;
     }
 
-    if(uiStreamId != 0)
+    if (uiStreamId != 0)
     {
         return MF_E_INVALIDINDEX;
     }
 
     BOOL bFound = FALSE;
 
-    for(UINT i = 0; i< m_listOfMediaTypes.size(); i++)
+    for (UINT i = 0; i < m_listOfMediaTypes.size(); i++)
     {
         DWORD   dwResult = 0;
         hr = m_listOfMediaTypes[i]->IsEqual(pIMFMediaType, &dwResult);
-        if(hr == S_FALSE)
+        if (hr == S_FALSE)
         {
-            if((dwResult & MF_MEDIATYPE_EQUAL_MAJOR_TYPES) &&
-                    (dwResult & MF_MEDIATYPE_EQUAL_FORMAT_TYPES) &&
-                    (dwResult & MF_MEDIATYPE_EQUAL_FORMAT_DATA))
+            if ((dwResult & MF_MEDIATYPE_EQUAL_MAJOR_TYPES) &&
+                (dwResult & MF_MEDIATYPE_EQUAL_FORMAT_TYPES) &&
+                (dwResult & MF_MEDIATYPE_EQUAL_FORMAT_DATA))
             {
                 hr = S_OK;
             }
         }
-        if(hr == S_OK)
+        if (hr == S_OK)
         {
             bFound = TRUE;
             *puiMediaIndex = i;
             break;
         }
-        else if(FAILED(hr))
+        else if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(bFound == FALSE)
+    if (bFound == FALSE)
     {
         return MF_E_INVALIDMEDIATYPE;
     }
@@ -1305,27 +1274,27 @@ STDMETHODIMP CSocMft0::GenerateMFMediaTypeListFromDevice()
 {
     HRESULT hr = S_OK;
 
-    if(!m_spSourceTransform)
+    if (!m_spSourceTransform)
     {
         return MF_E_NOT_FOUND;
     }
 
     m_listOfMediaTypes.clear();
     UINT iMediaType = 0;
-    while(SUCCEEDED(hr))
+    while (SUCCEEDED(hr))
     {
         ComPtr<IMFMediaType> spMediaType;
         hr = m_spSourceTransform->GetOutputAvailableType(m_uiSourceStreamId, iMediaType, spMediaType.ReleaseAndGetAddressOf());
-        if(FAILED(hr))
+        if (FAILED(hr))
         {
-            if(hr == MF_E_NO_MORE_TYPES)
+            if (hr == MF_E_NO_MORE_TYPES)
             {
                 hr = S_OK;
             }
             break;
         }
 
-        if(m_stStreamType == PINNAME_IMAGE || m_stStreamType == PINNAME_VIDEO_STILL)
+        if (m_stStreamType == PINNAME_IMAGE || m_stStreamType == PINNAME_VIDEO_STILL)
         {
             GUID guidPhotoSubType = {};
             spMediaType->GetGUID(MF_MT_SUBTYPE, &guidPhotoSubType);
@@ -1339,7 +1308,7 @@ STDMETHODIMP CSocMft0::GenerateMFMediaTypeListFromDevice()
                 }
             }
 
-            
+
             m_listOfMediaTypes.push_back(spMediaType);
         }
 
@@ -1389,42 +1358,42 @@ HRESULT CSocMft0::GetPreviewMediaType(
 )
 {
     CAutoLock lock(&m_critSec);
-    if(!m_spSourceTransform)
+    if (!m_spSourceTransform)
     {
         return MF_E_NOT_FOUND;
     }
 
     DWORD dwInStreamCount = 0, dwOutStreamCount = 0;
     HRESULT hr = m_spSourceTransform->GetStreamCount(
-                     &dwInStreamCount,
-                     &dwOutStreamCount);
+        &dwInStreamCount,
+        &dwOutStreamCount);
     if (FAILED(hr))
     {
         return hr;
     }
 
-    for(UINT32 i = 0 ; i < dwOutStreamCount; i++)
+    for (UINT32 i = 0; i < dwOutStreamCount; i++)
     {
         ComPtr<IMFAttributes> spAttributes;
         hr = m_spSourceTransform->GetOutputStreamAttributes(i, spAttributes.ReleaseAndGetAddressOf());
-        if(FAILED(hr))
+        if (FAILED(hr))
         {
             continue;
         }
 
         GUID guidPinCategory = GUID_NULL;
         hr = spAttributes->GetGUID(
-                 MF_DEVICESTREAM_STREAM_CATEGORY,
-                 &guidPinCategory);
-        if(FAILED(hr))
+            MF_DEVICESTREAM_STREAM_CATEGORY,
+            &guidPinCategory);
+        if (FAILED(hr))
         {
             continue;
         }
         if (IsEqualGUID(guidPinCategory, PINNAME_VIDEO_PREVIEW))
         {
             ComPtr<IMFMediaType> spMediaType;
-            hr =  m_spSourceTransform->GetOutputCurrentType(i, spMediaType.ReleaseAndGetAddressOf());
-            if(FAILED(hr))
+            hr = m_spSourceTransform->GetOutputCurrentType(i, spMediaType.ReleaseAndGetAddressOf());
+            if (FAILED(hr))
             {
                 return MF_E_NOT_FOUND;
             }
@@ -1443,14 +1412,14 @@ HRESULT CSocMft0::ProcessMetadata()
 {
     ComPtr<IMFAttributes>  spMetadata;
     HRESULT hr = m_spSample->GetUnknown(MFSampleExtension_CaptureMetadata, IID_PPV_ARGS(spMetadata.ReleaseAndGetAddressOf()));
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
 
     ComPtr<IMFMediaBuffer> spBuffer;
     hr = spMetadata->GetUnknown(MF_CAPTURE_METADATA_FRAME_RAWSTREAM, IID_PPV_ARGS(spBuffer.ReleaseAndGetAddressOf()));
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
@@ -1459,46 +1428,46 @@ HRESULT CSocMft0::ProcessMetadata()
     BYTE *pData = NULL;
     DWORD dwLength = 0;
     hr = bufferLock.LockBuffer(&pData, NULL, &dwLength);
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
 
     // OEM put meta data passing logic here,
-    if(FAILED(hr))
+    if (FAILED(hr))
     {
         return hr;
     }
 
     LONG lBufferLeft = static_cast<LONG>(dwLength);
-    if(lBufferLeft < sizeof(KSCAMERA_METADATA_ITEMHEADER))
+    if (lBufferLeft < sizeof(KSCAMERA_METADATA_ITEMHEADER))
     {
         return E_UNEXPECTED;
     }
 
-    PKSCAMERA_METADATA_ITEMHEADER pItem = (PKSCAMERA_METADATA_ITEMHEADER) pData;
+    PKSCAMERA_METADATA_ITEMHEADER pItem = (PKSCAMERA_METADATA_ITEMHEADER)pData;
 
-    while(lBufferLeft > 0)
+    while (lBufferLeft > 0)
     {
         switch (pItem->MetadataId)
         {
         case MetadataId_Custom_PreviewAggregation:
             hr = ParseMetadata_PreviewAggregation(pItem, spMetadata.Get());
-            if(FAILED(hr))
+            if (FAILED(hr))
             {
                 return hr;
             }
             break;
         case MetadataId_Custom_ImageAggregation:
             hr = ParseMetadata_ImageAggregation(pItem, spMetadata.Get());
-            if(FAILED(hr))
+            if (FAILED(hr))
             {
                 return hr;
             }
             break;
         case MetadataId_Custom_Histogram:
             hr = ParseMetadata_Histogram(pItem, spMetadata.Get());
-            if(FAILED(hr))
+            if (FAILED(hr))
             {
                 return hr;
             }
@@ -1511,22 +1480,22 @@ HRESULT CSocMft0::ProcessMetadata()
             }
         }
 
-        if(!pItem->Size)
+        if (!pItem->Size)
         {
             // 0 size item will cause the loop to break and
             // we will report buffer malformated
             break;
         }
         lBufferLeft -= (LONG)pItem->Size;
-        if(lBufferLeft < sizeof(KSCAMERA_METADATA_ITEMHEADER))
+        if (lBufferLeft < sizeof(KSCAMERA_METADATA_ITEMHEADER))
         {
             break;
         }
         pItem = reinterpret_cast<PKSCAMERA_METADATA_ITEMHEADER>
-                (reinterpret_cast<PBYTE>(pItem) + pItem->Size);
+            (reinterpret_cast<PBYTE>(pItem) + pItem->Size);
     }
 
-    if(lBufferLeft != 0)
+    if (lBufferLeft != 0)
     {
         //Check and log for malformated data
         return E_UNEXPECTED;
@@ -1541,7 +1510,7 @@ HRESULT CSocMft0::ParseMetadata_PreviewAggregation(
 )
 {
     HRESULT hr = S_OK;
-    if(pItem->Size < sizeof(CAMERA_METADATA_PREVIEWAGGREGATION))
+    if (pItem->Size < sizeof(CAMERA_METADATA_PREVIEWAGGREGATION))
     {
         return E_UNEXPECTED;
     }
@@ -1560,62 +1529,62 @@ HRESULT CSocMft0::ParseMetadata_PreviewAggregation(
         }
     }
 
-    if(pFixedStruct->Data.ExposureTime.Set)
+    if (pFixedStruct->Data.ExposureTime.Set)
     {
         hr = pMetaDataAttributes->SetUINT64(
-                 MF_CAPTURE_METADATA_EXPOSURE_TIME,
-                 pFixedStruct->Data.ExposureTime.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_EXPOSURE_TIME,
+            pFixedStruct->Data.ExposureTime.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.ISOSpeed.Set)
+    if (pFixedStruct->Data.ISOSpeed.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_ISO_SPEED,
-                 pFixedStruct->Data.ISOSpeed.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_ISO_SPEED,
+            pFixedStruct->Data.ISOSpeed.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.LensPosition.Set)
+    if (pFixedStruct->Data.LensPosition.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_LENS_POSITION,
-                 pFixedStruct->Data.LensPosition.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_LENS_POSITION,
+            pFixedStruct->Data.LensPosition.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.FlashOn.Set)
+    if (pFixedStruct->Data.FlashOn.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_FLASH,
-                 pFixedStruct->Data.FlashOn.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_FLASH,
+            pFixedStruct->Data.FlashOn.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.WhiteBalanceMode.Set)
+    if (pFixedStruct->Data.WhiteBalanceMode.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_WHITEBALANCE,
-                 pFixedStruct->Data.WhiteBalanceMode.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_WHITEBALANCE,
+            pFixedStruct->Data.WhiteBalanceMode.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.EVCompensation.Set)
+    if (pFixedStruct->Data.EVCompensation.Set)
     {
         CapturedMetadataExposureCompensation EVCompensation;
 
@@ -1623,84 +1592,84 @@ HRESULT CSocMft0::ParseMetadata_PreviewAggregation(
         EVCompensation.Value = pFixedStruct->Data.EVCompensation.Value;
 
         hr = pMetaDataAttributes->SetBlob(
-                 MF_CAPTURE_METADATA_EXPOSURE_COMPENSATION,
-                 (const UINT8 *)&EVCompensation,
-                 sizeof(EVCompensation));
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_EXPOSURE_COMPENSATION,
+            (const UINT8 *)&EVCompensation,
+            sizeof(EVCompensation));
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.SensorFrameRate.Set)
+    if (pFixedStruct->Data.SensorFrameRate.Set)
     {
         hr = pMetaDataAttributes->SetUINT64(
-                 MF_CAPTURE_METADATA_SENSORFRAMERATE,
-                 pFixedStruct->Data.SensorFrameRate.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_SENSORFRAMERATE,
+            pFixedStruct->Data.SensorFrameRate.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if( pFixedStruct->Data.IsoAnalogGain.Set ||
-            pFixedStruct->Data.IsoDigitalGain.Set )
+    if (pFixedStruct->Data.IsoAnalogGain.Set ||
+        pFixedStruct->Data.IsoDigitalGain.Set)
     {
         CapturedMetadataISOGains IsoGains;
 
-        if( pFixedStruct->Data.IsoAnalogGain.Set )
+        if (pFixedStruct->Data.IsoAnalogGain.Set)
         {
             IsoGains.AnalogGain =
-                FLOAT( pFixedStruct->Data.IsoAnalogGain.Numerator ) /
-                FLOAT( pFixedStruct->Data.IsoAnalogGain.Denominator );
+                FLOAT(pFixedStruct->Data.IsoAnalogGain.Numerator) /
+                FLOAT(pFixedStruct->Data.IsoAnalogGain.Denominator);
         }
-        if( pFixedStruct->Data.IsoDigitalGain.Set )
+        if (pFixedStruct->Data.IsoDigitalGain.Set)
         {
             IsoGains.DigitalGain =
-                FLOAT( pFixedStruct->Data.IsoDigitalGain.Numerator ) /
-                FLOAT( pFixedStruct->Data.IsoDigitalGain.Denominator );
+                FLOAT(pFixedStruct->Data.IsoDigitalGain.Numerator) /
+                FLOAT(pFixedStruct->Data.IsoDigitalGain.Denominator);
         }
 
         hr = pMetaDataAttributes->SetBlob(
-                 MF_CAPTURE_METADATA_ISO_GAINS,
-                 (const UINT8 *)&IsoGains,
-                 sizeof(IsoGains));
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_ISO_GAINS,
+            (const UINT8 *)&IsoGains,
+            sizeof(IsoGains));
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if( pFixedStruct->Data.WhiteBalanceGain_R.Set ||
-            pFixedStruct->Data.WhiteBalanceGain_G.Set ||
-            pFixedStruct->Data.WhiteBalanceGain_B.Set )
+    if (pFixedStruct->Data.WhiteBalanceGain_R.Set ||
+        pFixedStruct->Data.WhiteBalanceGain_G.Set ||
+        pFixedStruct->Data.WhiteBalanceGain_B.Set)
     {
         CapturedMetadataWhiteBalanceGains WhiteBalanceGains;
 
-        if( pFixedStruct->Data.WhiteBalanceGain_R.Set )
+        if (pFixedStruct->Data.WhiteBalanceGain_R.Set)
         {
             WhiteBalanceGains.R =
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_R.Numerator ) /
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_R.Denominator );
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_R.Numerator) /
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_R.Denominator);
         }
-        if( pFixedStruct->Data.WhiteBalanceGain_G.Set )
+        if (pFixedStruct->Data.WhiteBalanceGain_G.Set)
         {
             WhiteBalanceGains.G =
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_G.Numerator ) /
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_G.Denominator );
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_G.Numerator) /
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_G.Denominator);
         }
-        if( pFixedStruct->Data.WhiteBalanceGain_B.Set )
+        if (pFixedStruct->Data.WhiteBalanceGain_B.Set)
         {
             WhiteBalanceGains.B =
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_B.Numerator ) /
-                FLOAT( pFixedStruct->Data.WhiteBalanceGain_B.Denominator );
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_B.Numerator) /
+                FLOAT(pFixedStruct->Data.WhiteBalanceGain_B.Denominator);
         }
 
         hr = pMetaDataAttributes->SetBlob(
-                 MF_CAPTURE_METADATA_WHITEBALANCE_GAINS,
-                 (const UINT8 *)&WhiteBalanceGains,
-                 sizeof(WhiteBalanceGains));
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_WHITEBALANCE_GAINS,
+            (const UINT8 *)&WhiteBalanceGains,
+            sizeof(WhiteBalanceGains));
+        if (FAILED(hr))
         {
             return hr;
         }
@@ -1715,7 +1684,7 @@ HRESULT CSocMft0::ParseMetadata_ImageAggregation(
 )
 {
     HRESULT hr = S_OK;
-    if(pItem->Size < sizeof(CAMERA_METADATA_IMAGEAGGREGATION))
+    if (pItem->Size < sizeof(CAMERA_METADATA_IMAGEAGGREGATION))
     {
         return E_UNEXPECTED;
     }
@@ -1723,106 +1692,106 @@ HRESULT CSocMft0::ParseMetadata_ImageAggregation(
     PCAMERA_METADATA_IMAGEAGGREGATION pFixedStruct =
         (PCAMERA_METADATA_IMAGEAGGREGATION)pItem;
 
-    if(pFixedStruct->Data.FrameId.Set)
+    if (pFixedStruct->Data.FrameId.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_REQUESTED_FRAME_SETTING_ID,
-                 pFixedStruct->Data.FrameId.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_REQUESTED_FRAME_SETTING_ID,
+            pFixedStruct->Data.FrameId.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.ExposureTime.Set)
+    if (pFixedStruct->Data.ExposureTime.Set)
     {
         hr = pMetaDataAttributes->SetUINT64(
-                 MF_CAPTURE_METADATA_EXPOSURE_TIME,
-                 pFixedStruct->Data.ExposureTime.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_EXPOSURE_TIME,
+            pFixedStruct->Data.ExposureTime.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.ISOSpeed.Set)
+    if (pFixedStruct->Data.ISOSpeed.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_ISO_SPEED,
-                 pFixedStruct->Data.ISOSpeed.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_ISO_SPEED,
+            pFixedStruct->Data.ISOSpeed.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.LensPosition.Set)
+    if (pFixedStruct->Data.LensPosition.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_LENS_POSITION,
-                 pFixedStruct->Data.LensPosition.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_LENS_POSITION,
+            pFixedStruct->Data.LensPosition.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.SceneMode.Set)
+    if (pFixedStruct->Data.SceneMode.Set)
     {
         hr = pMetaDataAttributes->SetUINT64(
-                 MF_CAPTURE_METADATA_SCENE_MODE,
-                 pFixedStruct->Data.SceneMode.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_SCENE_MODE,
+            pFixedStruct->Data.SceneMode.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.FlashOn.Set)
+    if (pFixedStruct->Data.FlashOn.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_FLASH,
-                 pFixedStruct->Data.FlashOn.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_FLASH,
+            pFixedStruct->Data.FlashOn.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.FlashPower.Set)
+    if (pFixedStruct->Data.FlashPower.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_FLASH_POWER,
-                 pFixedStruct->Data.FlashPower.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_FLASH_POWER,
+            pFixedStruct->Data.FlashPower.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.WhiteBalanceMode.Set)
+    if (pFixedStruct->Data.WhiteBalanceMode.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_WHITEBALANCE,
-                 pFixedStruct->Data.WhiteBalanceMode.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_WHITEBALANCE,
+            pFixedStruct->Data.WhiteBalanceMode.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.ZoomFactor.Set)
+    if (pFixedStruct->Data.ZoomFactor.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_ZOOMFACTOR,
-                 pFixedStruct->Data.ZoomFactor.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_ZOOMFACTOR,
+            pFixedStruct->Data.ZoomFactor.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if(pFixedStruct->Data.EVCompensation.Set)
+    if (pFixedStruct->Data.EVCompensation.Set)
     {
         CapturedMetadataExposureCompensation EVCompensation;
 
@@ -1830,21 +1799,21 @@ HRESULT CSocMft0::ParseMetadata_ImageAggregation(
         EVCompensation.Value = pFixedStruct->Data.EVCompensation.Value;
 
         hr = pMetaDataAttributes->SetBlob(
-                 MF_CAPTURE_METADATA_EXPOSURE_COMPENSATION,
-                 (const UINT8 *)&EVCompensation,
-                 sizeof(EVCompensation));
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_EXPOSURE_COMPENSATION,
+            (const UINT8 *)&EVCompensation,
+            sizeof(EVCompensation));
+        if (FAILED(hr))
         {
             return hr;
         }
     }
 
-    if( pFixedStruct->Data.FocusState.Set )
+    if (pFixedStruct->Data.FocusState.Set)
     {
         hr = pMetaDataAttributes->SetUINT32(
-                 MF_CAPTURE_METADATA_FOCUSSTATE,
-                 pFixedStruct->Data.FocusState.Value);
-        if(FAILED(hr))
+            MF_CAPTURE_METADATA_FOCUSSTATE,
+            pFixedStruct->Data.FocusState.Value);
+        if (FAILED(hr))
         {
             return hr;
         }
@@ -1862,7 +1831,7 @@ struct HistogramData
         Header.Size = sizeof(*this);
         Header.ChannelMask = 0;
         Header.Linear = 1;
-        RtlZeroMemory( Color, sizeof(Color) );
+        RtlZeroMemory(Color, sizeof(Color));
     }
 };
 
@@ -1876,8 +1845,8 @@ struct Histogram
     HistogramData           Data[I];
 
     Histogram(
-        _In_    ULONG   Width=0,
-        _In_    ULONG   Height=0
+        _In_    ULONG   Width = 0,
+        _In_    ULONG   Height = 0
     )
     {
         Blob.Histograms = 1;
@@ -1889,8 +1858,8 @@ struct Histogram
         Header.Grid.Width = Width;
         Header.Grid.Region.top = 0;
         Header.Grid.Region.left = 0;
-        Header.Grid.Region.bottom = Height-1;
-        Header.Grid.Region.right = Width-1;
+        Header.Grid.Region.bottom = Height - 1;
+        Header.Grid.Region.right = Width - 1;
     }
 };
 
@@ -1902,58 +1871,58 @@ HRESULT CSocMft0::ParseMetadata_Histogram(
     _In_ IMFAttributes *pMetaDataAttributes
 )
 {
-    if(pItem->Size < sizeof(CAMERA_METADATA_HISTOGRAM))
+    if (pItem->Size < sizeof(CAMERA_METADATA_HISTOGRAM))
     {
         return E_UNEXPECTED;
     }
 
-    PCAMERA_METADATA_HISTOGRAM pHistogram = (PCAMERA_METADATA_HISTOGRAM) pItem;
+    PCAMERA_METADATA_HISTOGRAM pHistogram = (PCAMERA_METADATA_HISTOGRAM)pItem;
 
-    if( (pHistogram->Data.ChannelMask & MF_HISTOGRAM_RGB) == MF_HISTOGRAM_RGB )
+    if ((pHistogram->Data.ChannelMask & MF_HISTOGRAM_RGB) == MF_HISTOGRAM_RGB)
     {
-        Histogram<4>    Blob( pHistogram->Data.Width, pHistogram->Data.Height );
+        Histogram<4>    Blob(pHistogram->Data.Width, pHistogram->Data.Height);
 
         Blob.Header.FourCC = pHistogram->Data.FourCC;
         Blob.Header.ChannelMasks = pHistogram->Data.ChannelMask;
 
         //  For a RGB Histogram, we fake the Y channel by copying the G channel.
         Blob.Data[0].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_Y;
-        RtlCopyMemory( Blob.Data[0].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[0].Color) );
+        RtlCopyMemory(Blob.Data[0].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[0].Color));
 
         //  Now just copy the RGB channels normally.
         Blob.Data[1].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_R;
-        RtlCopyMemory( Blob.Data[1].Color, pHistogram->Data.P0Data, sizeof(Blob.Data[1].Color) );
+        RtlCopyMemory(Blob.Data[1].Color, pHistogram->Data.P0Data, sizeof(Blob.Data[1].Color));
         Blob.Data[2].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_G;
-        RtlCopyMemory( Blob.Data[2].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[2].Color) );
+        RtlCopyMemory(Blob.Data[2].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[2].Color));
         Blob.Data[3].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_B;
-        RtlCopyMemory( Blob.Data[3].Color, pHistogram->Data.P2Data, sizeof(Blob.Data[3].Color) );
+        RtlCopyMemory(Blob.Data[3].Color, pHistogram->Data.P2Data, sizeof(Blob.Data[3].Color));
 
         return pMetaDataAttributes->SetBlob(
-                   MF_CAPTURE_METADATA_HISTOGRAM,
-                   (PBYTE) &Blob,
-                   sizeof(Blob)
-               );
+            MF_CAPTURE_METADATA_HISTOGRAM,
+            (PBYTE)&Blob,
+            sizeof(Blob)
+        );
     }
-    else if( (pHistogram->Data.ChannelMask & MF_HISTOGRAM_YCrCb) == MF_HISTOGRAM_YCrCb )
+    else if ((pHistogram->Data.ChannelMask & MF_HISTOGRAM_YCrCb) == MF_HISTOGRAM_YCrCb)
     {
-        Histogram<3>    Blob( pHistogram->Data.Width, pHistogram->Data.Height );
+        Histogram<3>    Blob(pHistogram->Data.Width, pHistogram->Data.Height);
 
         Blob.Header.FourCC = pHistogram->Data.FourCC;
         Blob.Header.ChannelMasks = pHistogram->Data.ChannelMask;
 
         Blob.Data[0].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_Y;
-        RtlCopyMemory( Blob.Data[0].Color, pHistogram->Data.P0Data, sizeof(Blob.Data[0].Color) );
+        RtlCopyMemory(Blob.Data[0].Color, pHistogram->Data.P0Data, sizeof(Blob.Data[0].Color));
         Blob.Data[1].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_Cr;
-        RtlCopyMemory( Blob.Data[1].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[1].Color) );
+        RtlCopyMemory(Blob.Data[1].Color, pHistogram->Data.P1Data, sizeof(Blob.Data[1].Color));
         Blob.Data[2].Header.ChannelMask = MF_HISTOGRAM_CHANNEL_Cb;
-        RtlCopyMemory( Blob.Data[2].Color, pHistogram->Data.P2Data, sizeof(Blob.Data[2].Color) );
+        RtlCopyMemory(Blob.Data[2].Color, pHistogram->Data.P2Data, sizeof(Blob.Data[2].Color));
 
         //TODO:
         return pMetaDataAttributes->SetBlob(
-                   MF_CAPTURE_METADATA_HISTOGRAM,
-                   (PBYTE) &Blob,
-                   sizeof(Blob)
-               );
+            MF_CAPTURE_METADATA_HISTOGRAM,
+            (PBYTE)&Blob,
+            sizeof(Blob)
+        );
     }
     return E_UNEXPECTED;
 }
@@ -1972,13 +1941,13 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
 
     PCAMERA_METADATA_FACEHEADER pFaceHeader = (PCAMERA_METADATA_FACEHEADER)pItem;
 
-    if( pItem->Size < (sizeof(CAMERA_METADATA_FACEHEADER) + (sizeof(METADATA_FACEDATA) * pFaceHeader->Count)) )
+    if (pItem->Size < (sizeof(CAMERA_METADATA_FACEHEADER) + (sizeof(METADATA_FACEDATA) * pFaceHeader->Count)))
     {
         return E_UNEXPECTED;
     }
-    PMETADATA_FACEDATA  pFaceData = (PMETADATA_FACEDATA) (pFaceHeader+1);
+    PMETADATA_FACEDATA  pFaceData = (PMETADATA_FACEDATA)(pFaceHeader + 1);
     UINT32 cbRectSize = sizeof(FaceRectInfoBlobHeader) + (sizeof(FaceRectInfo) * (pFaceHeader->Count));
-    BYTE *pRectBuf = new BYTE [cbRectSize];
+    BYTE *pRectBuf = new BYTE[cbRectSize];
     if (pRectBuf == NULL)
     {
         return E_OUTOFMEMORY;
@@ -1988,7 +1957,7 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
     BYTE *pCharBuf = new BYTE[cbCharSize];
     if (pCharBuf == NULL)
     {
-        delete [] pRectBuf;
+        delete[] pRectBuf;
         return E_OUTOFMEMORY;
     }
 
@@ -2001,21 +1970,21 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
     pFaceCharHeader->Count = pFaceHeader->Count;
 
     FaceRectInfo           *FaceRegions = (FaceRectInfo *)(pFaceRectHeader + 1);
-    FaceCharacterization   *FaceChars   = (FaceCharacterization *) (pFaceCharHeader + 1);
+    FaceCharacterization   *FaceChars = (FaceCharacterization *)(pFaceCharHeader + 1);
 
     for (UINT i = 0; i < pFaceHeader->Count; i++)
     {
         FaceRegions[i].Region = pFaceData[i].Region;
         FaceRegions[i].confidenceLevel = pFaceData[i].confidenceLevel;
 
-        FaceChars[i].BlinkScoreLeft  = pFaceData[i].BlinkScoreLeft;
+        FaceChars[i].BlinkScoreLeft = pFaceData[i].BlinkScoreLeft;
         FaceChars[i].BlinkScoreRight = pFaceData[i].BlinkScoreRight;
-        FaceChars[i].FacialExpression      = (pFaceData[i].FacialExpression==EXPRESSION_SMILE)?MF_METADATAFACIALEXPRESSION_SMILE:0;
+        FaceChars[i].FacialExpression = (pFaceData[i].FacialExpression == EXPRESSION_SMILE) ? MF_METADATAFACIALEXPRESSION_SMILE : 0;
         FaceChars[i].FacialExpressionScore = pFaceData[i].FacialExpressionScore;
     }
 
     hr = pMetaDataAttributes->SetBlob(MF_CAPTURE_METADATA_FACEROIS, pRectBuf, cbRectSize);
-    if( FAILED(hr) )
+    if (FAILED(hr))
     {
         goto done;
     }
@@ -2025,20 +1994,20 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
     timestamp.Device = pFaceHeader->Timestamp;
 
     hr = pMetaDataAttributes->SetBlob(MF_CAPTURE_METADATA_FACEROITIMESTAMPS, (const UINT8 *)&timestamp, sizeof(MetadataTimeStamps));
-    if( FAILED(hr) )
+    if (FAILED(hr))
     {
         goto done;
     }
 
     //  Include characterization data if any of the associated bits were set.
-    if( pFaceHeader->Flags & KSCAMERA_EXTENDEDPROP_FACEDETECTION_ADVANCED_MASK )
+    if (pFaceHeader->Flags & KSCAMERA_EXTENDEDPROP_FACEDETECTION_ADVANCED_MASK)
     {
-        hr = pMetaDataAttributes->SetBlob(MF_CAPTURE_METADATA_FACEROICHARACTERIZATIONS , pCharBuf, cbCharSize);
+        hr = pMetaDataAttributes->SetBlob(MF_CAPTURE_METADATA_FACEROICHARACTERIZATIONS, pCharBuf, cbCharSize);
     }
 
 done:
-    delete [] pRectBuf;
-    delete [] pCharBuf;
+    delete[] pRectBuf;
+    delete[] pCharBuf;
 
     return hr;
 }
@@ -2048,13 +2017,13 @@ HRESULT CSocMft0::FillBufferLengthFromMediaType(
     _Inout_ IMFMediaBuffer *pBuffer
 )
 {
-    if(!pPreviewType || !pBuffer)
+    if (!pPreviewType || !pBuffer)
     {
         return E_INVALIDARG;
     }
 
     UINT32 uiWidth = 0, uiHeight = 0, uiImageSize = 0;
-    GUID guidSubType= {};
+    GUID guidSubType = {};
 
     HRESULT hr = MFGetAttributeSize(pPreviewType, MF_MT_FRAME_SIZE, &uiWidth, &uiHeight);
     if (FAILED(hr))

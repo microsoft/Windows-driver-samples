@@ -146,16 +146,16 @@
     </Midl>
   </ItemDefinitionGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NTDDI_VERSION>NTDDI_WINTHRESHOLD</NTDDI_VERSION>
+    <NTDDI_VERSION>NTDDI_WIN10_RS3</NTDDI_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NTDDI_VERSION>NTDDI_WINTHRESHOLD</NTDDI_VERSION>
+    <NTDDI_VERSION>NTDDI_WIN10_RS3</NTDDI_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NTDDI_VERSION>NTDDI_WINTHRESHOLD</NTDDI_VERSION>
+    <NTDDI_VERSION>NTDDI_WIN10_RS3</NTDDI_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NTDDI_VERSION>NTDDI_WINTHRESHOLD</NTDDI_VERSION>
+    <NTDDI_VERSION>NTDDI_WIN10_RS3</NTDDI_VERSION>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
