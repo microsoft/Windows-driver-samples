@@ -424,9 +424,24 @@ Return Value:
     // restart.
     //
     if (pDeviceContext->UsbDevice == NULL) {
+
+#if UMDF_VERSION_MINOR >= 25
+        WDF_USB_DEVICE_CREATE_CONFIG createParams;
+
+        WDF_USB_DEVICE_CREATE_CONFIG_INIT(&createParams,
+                                          USBD_CLIENT_CONTRACT_VERSION_602);
+
+        status = WdfUsbTargetDeviceCreateWithParameters(
+                                          Device,
+                                          &createParams,
+                                          WDF_NO_OBJECT_ATTRIBUTES,
+                                          &pDeviceContext->UsbDevice);
+#else
         status = WdfUsbTargetDeviceCreate(Device,
                                           WDF_NO_OBJECT_ATTRIBUTES,
                                           &pDeviceContext->UsbDevice);
+#endif
+
         if (!NT_SUCCESS(status)) {
             TraceEvents(TRACE_LEVEL_ERROR, DBG_PNP,
                  "WdfUsbTargetDeviceCreate failed with Status code %!STATUS!\n", status);
