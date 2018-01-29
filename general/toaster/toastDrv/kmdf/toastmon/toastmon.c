@@ -384,7 +384,7 @@ Routine Description:
     for (i = 0; i < count; i ++) {
 
         ioTarget = WdfCollectionGetItem(deviceExtension->TargetDeviceCollection, i);
-        WdfIoTargetStop(ioTarget, WdfIoTargetWaitForSentIoToComplete);
+        WdfIoTargetPurge(ioTarget, WdfIoTargetPurgeIoAndWait);
 
         targetDeviceInfo = GetTargetDeviceInfo(ioTarget);
         WdfTimerStop(targetDeviceInfo->TimerForPostingRequests, TRUE);
