@@ -35,6 +35,7 @@ Environment:
 #pragma alloc_text(PAGE, WmiNotificationCallback)
 #endif
 
+_Use_decl_annotations_
 NTSTATUS
 RegisterForWMINotification(
     PDEVICE_EXTENSION DeviceExt
@@ -82,7 +83,7 @@ RegisterForWMINotification(
     return status;
 }
 
-
+_Use_decl_annotations_
 VOID
 UnregisterForWMINotification(
     PDEVICE_EXTENSION DeviceExt
@@ -146,6 +147,7 @@ Return Value:
     return status;
 }
 
+_Use_decl_annotations_
 VOID
 WmiNotificationCallback(
     PVOID Wnode,

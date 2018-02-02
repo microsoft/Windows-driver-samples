@@ -83,22 +83,22 @@ Toastmon_OpenDevice(
 
 NTSTATUS
 ToastMon_PostReadRequests(
-    WDFIOTARGET IoTarget
+    _In_ WDFIOTARGET IoTarget
     );
 
 NTSTATUS
 ToastMon_PostWriteRequests(
-    WDFIOTARGET IoTarget
+    _In_ WDFIOTARGET IoTarget
     );
 
 NTSTATUS
 RegisterForWMINotification(
-    PDEVICE_EXTENSION DeviceExt
+    _Inout_ PDEVICE_EXTENSION DeviceExt
     );
 
 VOID
 UnregisterForWMINotification(
-    PDEVICE_EXTENSION DeviceExt
+    _Inout_ PDEVICE_EXTENSION DeviceExt
     );
 
 NTSTATUS
