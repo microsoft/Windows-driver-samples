@@ -25,10 +25,12 @@ C_DEFINES= $(C_DEFINES) -DDEBUG_LEVEL=DEBUGLVL_TERSE
 SOURCES=\
         ..\adapter.cpp  \
         ..\basetopo.cpp \
+        ..\BthhfpDevice.cpp \
         ..\common.cpp   \
         ..\hw.cpp       \
         ..\kshelper.cpp \
         ..\savedata.cpp \
         ..\tonegenerator.cpp \
+        ..\wavereader.cpp \
         ..\sysvad.rc
 

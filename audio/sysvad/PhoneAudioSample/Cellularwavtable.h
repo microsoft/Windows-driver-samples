@@ -218,42 +218,42 @@ PCPROPERTY_ITEM PropertiesCellularWaveFilter[] =
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_WaveFilter
     },
-
+    {
+        &KSPROPSETID_Pin,
+        KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_WaveFilter
+    },
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_PROVIDERID,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_CellularWaveFilter
     },
-
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_CALLINFO,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_CellularWaveFilter
     },
-
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_CALLCONTROL,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_CellularWaveFilter
     },
-
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_PROVIDERCHANGE,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_CellularWaveFilter
     },
-
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_CALLHOLD,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_CellularWaveFilter
     },
-
     {
         &KSPROPSETID_TelephonyControl,
         KSPROPERTY_TELEPHONY_MUTE_TX,

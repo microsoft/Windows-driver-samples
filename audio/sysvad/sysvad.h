@@ -16,33 +16,14 @@ Abstract:
 #define _SYSVAD_H_
 
 #include <portcls.h>
-
-// Note: Since VS2015 Update 2 overloaded operator new and operator delete may not
-// be declared inline (Level 1 (/W1) on-by-default, warning C4595).
-// See https://msdn.microsoft.com/en-us/library/mt656697.aspx
-//
-// To mitigate this issue, add "#define _NEW_DELETE_OPERATORS_" before "#include <stdunk.h>"
-// and implement non-inline operator new and operator delete locally.
-//
-#define _NEW_DELETE_OPERATORS_
 #include <stdunk.h>
-// non-inline operator new and operator delete are implemented in common.cpp
-PVOID operator new
-(
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-       __drv_reportError("Must succeed pool allocations are forbidden. "
-             "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
-);
-
 #include <ksdebug.h>
 #include <ntintsafe.h>
 #include <wdf.h>
 #include <wdfminiport.h>
 #include <MsApoFxProxy.h>
 #include <Ntstrsafe.h>
+#include "NewDelete.h"
 
 //=============================================================================
 // Defines
@@ -62,7 +43,7 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 #define PID_SYSVAD DEFINE_GUIDNAMED(PID_SYSVAD)
 
 // Pool tag used for SYSVAD allocations
-#define SYSVAD_POOLTAG               'DVSM'
+#define SYSVAD_POOLTAG               'DVSM'  
 
 // Debug module name
 #define STR_MODULENAME              "SYSVAD: "
@@ -70,9 +51,9 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 // Debug utility macros
 #define D_FUNC                      4
 #define D_BLAB                      DEBUGLVL_BLAB
-#define D_VERBOSE                   DEBUGLVL_VERBOSE
-#define D_TERSE                     DEBUGLVL_TERSE
-#define D_ERROR                     DEBUGLVL_ERROR
+#define D_VERBOSE                   DEBUGLVL_VERBOSE        
+#define D_TERSE                     DEBUGLVL_TERSE          
+#define D_ERROR                     DEBUGLVL_ERROR          
 #define DPF                         _DbgPrintF
 #define DPF_ENTER(x)                DPF(D_FUNC, x)
 
@@ -126,80 +107,15 @@ DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_SYSVAD);
 
 #define ALL_CHANNELS_ID             UINT32_MAX
 
-// Flags to identify stream processing mode
-typedef enum {
-    SIGNALPROCESSINGMODE_NONE           = 0x00,
-    SIGNALPROCESSINGMODE_DEFAULT        = 0x01,
-    SIGNALPROCESSINGMODE_RAW            = 0x02,
-    SIGNALPROCESSINGMODE_COMMUNICATIONS = 0x04,
-    SIGNALPROCESSINGMODE_SPEECH         = 0x08,
-    SIGNALPROCESSINGMODE_NOTIFICATION   = 0x10,
-    SIGNALPROCESSINGMODE_MEDIA          = 0x20,
-    SIGNALPROCESSINGMODE_MOVIE          = 0x40
-} SIGNALPROCESSINGMODE;
+// Macros to assist with pin instance counting
+#define VERIFY_PIN_INSTANCE_RESOURCES_AVAILABLE(status, allocated, max) \
+    status = (allocated < max) ? STATUS_SUCCESS : STATUS_INSUFFICIENT_RESOURCES
 
-#define MAP_GUID_TO_MODE(guid, mode)                                                  \
-    if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_DEFAULT))                        \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_DEFAULT;                                          \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_RAW))                       \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_RAW;                                              \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS))            \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_COMMUNICATIONS;                                   \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_SPEECH))                    \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_SPEECH;                                           \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION))              \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_NOTIFICATION;                                     \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_MEDIA))                     \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_MEDIA;                                            \
-    }                                                                                 \
-    else if (IsEqualGUID(guid, AUDIO_SIGNALPROCESSINGMODE_MOVIE))                     \
-    {                                                                                 \
-        mode = SIGNALPROCESSINGMODE_MOVIE;                                            \
-    }                                                                                 \
-    else                                                                              \
-    {                                                                                 \
-        ASSERT(FALSE && "Unknown Signal Processing Mode");                            \
-        mode = SIGNALPROCESSINGMODE_NONE;                                             \
-    }
+#define ALLOCATE_PIN_INSTANCE_RESOURCES(allocated) \
+    allocated++
 
-#define VERIFY_MODE_RESOURCES_AVAILABLE(modes, guid, status)                          \
-    {                                                                                 \
-        SIGNALPROCESSINGMODE mode = SIGNALPROCESSINGMODE_NONE;                        \
-        MAP_GUID_TO_MODE(guid, mode);                                                 \
-        if (SIGNALPROCESSINGMODE_NONE != mode)                                        \
-        {                                                                             \
-            status = (modes & mode) ? STATUS_INSUFFICIENT_RESOURCES : STATUS_SUCCESS; \
-        }                                                                             \
-        else                                                                          \
-        {                                                                             \
-            status = STATUS_INVALID_PARAMETER;                                        \
-        }                                                                             \
-    }
-
-#define ALLOCATE_MODE_RESOURCES(modes, guid)                                          \
-    {                                                                                 \
-        SIGNALPROCESSINGMODE mode = SIGNALPROCESSINGMODE_NONE;                        \
-        MAP_GUID_TO_MODE(guid, mode);                                                 \
-        modes |= mode;                                                                \
-    }
-
-#define FREE_MODE_RESOURCES(modes, guid)                                              \
-    {                                                                                 \
-        SIGNALPROCESSINGMODE mode = SIGNALPROCESSINGMODE_NONE;                        \
-        MAP_GUID_TO_MODE(guid, mode);                                                 \
-        modes &= (~mode);                                                             \
-    }
+#define FREE_PIN_INSTANCE_RESOURCES(allocated) \
+    allocated--
 
 // Define the value data type for supported sound detector patterns. Only
 // one pattern type is supported in this sample.
@@ -236,7 +152,7 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
     ULONG_PTR m_pulReserved1[2];                    // 0-7      0-15    First two pointers are reserved.
     PDEVICE_OBJECT m_DoNotUsePhysicalDeviceObject;  // 8-11     16-23   Reserved pointer to our Physical Device Object (PDO).
     PVOID m_pvReserved2;                            // 12-15    24-31   Reserved pointer to our Start Device function.
-    PVOID m_pvReserved3;                            // 16-19    32-39   "Out Memory" according to DDK.
+    PVOID m_pvReserved3;                            // 16-19    32-39   "Out Memory" according to DDK.  
     IAdapterCommon* m_pCommon;                      // 20-23    40-47   Pointer to our adapter common object.
 #ifdef _USE_SingleComponentMultiFxStates
     POHANDLE m_poHandle;                            // 24-27    48-55   PoFxDevice handle.
@@ -254,7 +170,7 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
 //
 #define MajorTarget_to_Obj(ptr) \
     reinterpret_cast<CMiniportWaveRT*>(ptr)
-
+    
 #define MinorTarget_to_Obj(ptr) \
     static_cast<CMiniportWaveRTStream*>(reinterpret_cast<PMINIPORTWAVERTSTREAM>(ptr))
 
@@ -263,6 +179,7 @@ typedef struct _PortClassDeviceContext              // 32       64      Byte off
 //
 extern DWORD g_DoNotCreateDataFiles;
 extern DWORD g_DisableBthScoBypass;
+extern UNICODE_STRING g_RegistryPath;
 
 //=============================================================================
 // Function prototypes
@@ -270,8 +187,8 @@ extern DWORD g_DisableBthScoBypass;
 
 // Generic topology handler
 NTSTATUS PropertyHandler_Topology
-(
-    _In_  PPCPROPERTY_REQUEST PropertyRequest
+( 
+    _In_  PPCPROPERTY_REQUEST PropertyRequest 
 );
 
 // Default WaveFilter automation table.
@@ -287,8 +204,8 @@ NTSTATUS PropertyHandler_OffloadPin
 );
 
 NTSTATUS PropertyHandler_GenericPin
-(
-    _In_ PPCPROPERTY_REQUEST      PropertyRequest
+( 
+    _In_ PPCPROPERTY_REQUEST      PropertyRequest 
 );
 
 // common.h uses some of the above definitions.

@@ -92,18 +92,18 @@ Return Value:
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
-        ASSERT(m_BthHfpDevice != NULL);
+        ASSERT(m_pSidebandDevice != NULL);
 
         //
-        // bHfpNrecPresent is set to TRUE when the HF (remote device) handles NR + EC.
+        // bSidebandNrecPresent is set to TRUE when the HF (remote device) handles NR + EC.
         // Note that GetNRECDisableStatus() returns TRUE if the HF notified the AG to disable
         // the NR + EC locally.
         //
-        BOOL bHfpNrecPresent = m_BthHfpDevice->IsNRECSupported() && m_BthHfpDevice->GetNRECDisableStatus();
+        BOOL bSidebandNrecPresent = m_pSidebandDevice->IsNRECSupported() && m_pSidebandDevice->GetNRECDisableStatus();
 
         // If it is HFP render pin (data flow in) or if the NR-EC is not supported, 
         // return size 0 effect list
-        if (IsSystemRenderPin(nPinId) || !bHfpNrecPresent)
+        if (IsSystemRenderPin(nPinId) || !bSidebandNrecPresent)
         {
             PropertyRequest->ValueSize = 0;
             ntStatus = STATUS_SUCCESS;
@@ -182,6 +182,13 @@ Return Value:
             case KSPROPERTY_PIN_PROPOSEDATAFORMAT:
                 ntStatus = waveRt->PropertyHandlerProposedFormat(PropertyRequest);
                 break;
+
+            case KSPROPERTY_PIN_PROPOSEDATAFORMAT2:
+                ntStatus = waveRt->PropertyHandlerProposedFormat2(PropertyRequest);
+                break;
+
+            default:
+                DPF(D_TERSE, ("[PropertyHandler_BthHfpWaveFilter: Invalid Device Request]"));
         }
     }
     else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioEffectsDiscovery))
@@ -191,6 +198,9 @@ Return Value:
             case KSPROPERTY_AUDIOEFFECTSDISCOVERY_EFFECTSLIST:
                 ntStatus = waveRt->PropertyHandler_BthHfpAudioEffectsDiscoveryEffectsList(PropertyRequest);
                 break;
+
+            default:
+                DPF(D_TERSE, ("[PropertyHandler_BthHfpWaveFilter: Invalid Device Request]"));
         }
     }
     
@@ -203,4 +213,5 @@ Return Value:
 #endif  // SYSVAD_BTH_BYPASS
 
   
+
 

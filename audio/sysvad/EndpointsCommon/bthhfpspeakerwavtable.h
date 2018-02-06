@@ -22,19 +22,19 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 
 
 
-#define BTHHFPSPEAKER_DEVICE_MAX_CHANNELS                 1       // Max Channels.
+#define BTHHFPSPEAKER_DEVICE_MAX_CHANNELS                 1         // Max Channels.
 
-#define BTHHFPSPEAKER_HOST_MAX_CHANNELS                   1       // Max Channels.
-#define BTHHFPSPEAKER_HOST_MIN_BITS_PER_SAMPLE            8       // Min Bits Per Sample
-#define BTHHFPSPEAKER_HOST_MAX_BITS_PER_SAMPLE            16      // Max Bits Per Sample
-#define BTHHFPSPEAKER_HOST_MIN_SAMPLE_RATE                8000    // Min Sample Rate
-#define BTHHFPSPEAKER_HOST_MAX_SAMPLE_RATE                8000    // Max Sample Rate
+#define BTHHFPSPEAKER_HOST_MAX_CHANNELS                   1         // Max Channels.
+#define BTHHFPSPEAKER_HOST_MIN_BITS_PER_SAMPLE            16        // Min Bits Per Sample
+#define BTHHFPSPEAKER_HOST_MAX_BITS_PER_SAMPLE            16        // Max Bits Per Sample
+#define BTHHFPSPEAKER_HOST_MIN_SAMPLE_RATE                8000      // Min Sample Rate
+#define BTHHFPSPEAKER_HOST_MAX_SAMPLE_RATE                8000      // Max Sample Rate
 
-#define BTHHFPSPEAKER_OFFLOAD_MAX_CHANNELS                1       // Max Channels.
-#define BTHHFPSPEAKER_OFFLOAD_MIN_BITS_PER_SAMPLE         8       // Min Bits Per Sample
-#define BTHHFPSPEAKER_OFFLOAD_MAX_BITS_PER_SAMPLE         16      // Max Bits Per Sample
-#define BTHHFPSPEAKER_OFFLOAD_MIN_SAMPLE_RATE             8000    // Min Sample Rate
-#define BTHHFPSPEAKER_OFFLOAD_MAX_SAMPLE_RATE             8000    // Max Sample Rate
+#define BTHHFPSPEAKER_OFFLOAD_MAX_CHANNELS                1         // Max Channels.
+#define BTHHFPSPEAKER_OFFLOAD_MIN_BITS_PER_SAMPLE         16        // Min Bits Per Sample
+#define BTHHFPSPEAKER_OFFLOAD_MAX_BITS_PER_SAMPLE         16        // Max Bits Per Sample
+#define BTHHFPSPEAKER_OFFLOAD_MIN_SAMPLE_RATE             8000      // Min Sample Rate
+#define BTHHFPSPEAKER_OFFLOAD_MAX_SAMPLE_RATE             8000      // Max Sample Rate
 
 #define BTHHFPSPEAKER_LOOPBACK_MAX_CHANNELS               BTHHFPSPEAKER_HOST_MAX_CHANNELS          // Must be equal to host pin's Max Channels.
 #define BTHHFPSPEAKER_LOOPBACK_MIN_BITS_PER_SAMPLE        BTHHFPSPEAKER_HOST_MIN_BITS_PER_SAMPLE   // Must be equal to host pin's Min Bits Per Sample
@@ -54,31 +54,6 @@ static
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerAudioEngineSupportedDeviceFormats[] =
 {
     { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
             0,
@@ -123,31 +98,6 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerHostPinSupportedDeviceFormats[] =
                 WAVE_FORMAT_EXTENSIBLE,
                 1,
                 8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
                 16000,
                 2,
                 16,
@@ -164,31 +114,6 @@ static
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerOffloadPinSupportedDeviceFormats[] =
 {
     { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    { // 1
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
             0,
@@ -519,7 +444,13 @@ PCPROPERTY_ITEM PropertiesBthHfpSpeakerWaveFilter[] =
     {
         &KSPROPSETID_Pin,
         KSPROPERTY_PIN_PROPOSEDATAFORMAT,
-        KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_BthHfpWaveFilter
+    },
+    {
+        &KSPROPSETID_Pin,
+        KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_BthHfpWaveFilter
     },
     {
@@ -530,7 +461,21 @@ PCPROPERTY_ITEM PropertiesBthHfpSpeakerWaveFilter[] =
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationBthHfpSpeakerWaveFilter, PropertiesBthHfpSpeakerWaveFilter);
+NTSTATUS CMiniportWaveRT_EventHandler_PinCapsChange(
+    _In_  PPCEVENT_REQUEST EventRequest
+    );
+
+static PCEVENT_ITEM BthHfpSpeakerFormatChangePinEvent[] = {
+    {
+        &KSEVENTSETID_PinCapsChange,
+        KSEVENT_PINCAPS_FORMATCHANGE,
+        KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
+        CMiniportWaveRT_EventHandler_PinCapsChange
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationBthHfpSpeakerWaveFilter, PropertiesBthHfpSpeakerWaveFilter, BthHfpSpeakerFormatChangePinEvent);
+
 
 //=============================================================================
 static

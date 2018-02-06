@@ -20,6 +20,7 @@ Abstract:
 #include "micarray1toptable.h"
 
 constexpr float MICARRAY_SENSITIVITY = -46.5f;
+constexpr float MICARRAY_SENSITIVITY2 = -23.5f;
 constexpr float MICARRAY_SNR = 66.0f;
 
 constexpr inline LONG FloatToFixedPoint16_16(float fl)
@@ -514,8 +515,8 @@ CMicArrayMiniportTopology::PropertyHandlerMicProperties
 
 Routine Description:
 
-Handles ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_MIC_SENSITIVITY )
 Handles ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_MIC_SNR )
+Handles ( KSPROPSETID_Audio, KSPROPERTY_AUDIO_MIC_SENSITIVITY2 )
 
 Arguments:
 
@@ -568,21 +569,7 @@ NT status code.
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY)
-                        {
-                            LONG* micSensitivity = (LONG*)PropertyRequest->Value;
-
-                            fstatus = KeSaveFloatingPointState(&saveData);
-                            if (NT_SUCCESS(fstatus))
-                            {
-                                // Return microphone sensitivity information.
-                                *micSensitivity = FloatToFixedPoint16_16(MICARRAY_SENSITIVITY); // convert float dBFS to fixed point arithmetic
-                                KeRestoreFloatingPointState(&saveData);
-                            }
-                            PropertyRequest->ValueSize = sizeof(LONG);
-                            ntStatus = STATUS_SUCCESS;
-                        }
-                        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
+                        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
                         {
                             LONG* micSNR = (LONG*)PropertyRequest->Value;
                             fstatus = KeSaveFloatingPointState(&saveData);
@@ -841,10 +828,6 @@ Return Value:
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_ARRAY_GEOMETRY)
         {
             ntStatus = pMiniport->PropertyHandlerMicArrayGeometry(PropertyRequest);
-        }
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY)
-        {
-            ntStatus = pMiniport->PropertyHandlerMicProperties(PropertyRequest);
         }
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
         {

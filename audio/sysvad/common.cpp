@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    Implementation of the AdapterCommon class.
+    Implementation of the AdapterCommon class. 
 
 --*/
 
@@ -27,11 +27,7 @@ Abstract:
 #include <wdmguid.h>    // guild-arrival/removal
 #include <devpkey.h>
 #include "bthhfpminipairs.h"
-
-// # of sec before sync request is cancelled.
-#define BTH_HFP_SYNC_REQ_TIMEOUT_IN_SEC         60
-#define BTH_HFP_NOTIFICATION_MAX_ERROR_COUNT    5
-
+#include "BthhfpDevice.h"
 #endif // SYSVAD_BTH_BYPASS
 
 //-----------------------------------------------------------------------------
@@ -40,7 +36,6 @@ Abstract:
 
 PSAVEWORKER_PARAM       CSaveData::m_pWorkItems = NULL;
 PDEVICE_OBJECT          CSaveData::m_pDeviceObject = NULL;
-
 //=============================================================================
 // Classes
 //=============================================================================
@@ -50,18 +45,18 @@ class BthHfpDevice;     // Forward declaration.
 
 ///////////////////////////////////////////////////////////////////////////////
 // CAdapterCommon
-//
-class CAdapterCommon :
+//   
+class CAdapterCommon : 
     public IAdapterCommon,
     public IAdapterPowerManagement,
-    public CUnknown
+    public CUnknown    
 {
     private:
         PSERVICEGROUP           m_pServiceGroupWave;
         PDEVICE_OBJECT          m_pDeviceObject;
         PDEVICE_OBJECT          m_pPhysicalDeviceObject;
-        WDFDEVICE               m_WdfDevice;            // Wdf device.
-        DEVICE_POWER_STATE      m_PowerState;
+        WDFDEVICE               m_WdfDevice;            // Wdf device. 
+        DEVICE_POWER_STATE      m_PowerState;  
 
         PCSYSVADHW              m_pHW;                  // Virtual SYSVAD HW object
         PPORTCLSETWHELPER       m_pPortClsEtwHelper;
@@ -82,21 +77,21 @@ class CAdapterCommon :
         IMP_IAdapterPowerManagement;
 
         //=====================================================================
-        // IAdapterCommon methods
+        // IAdapterCommon methods      
 
         STDMETHODIMP_(NTSTATUS) Init
-        (
+        (   
             _In_  PDEVICE_OBJECT  DeviceObject
         );
 
         STDMETHODIMP_(PDEVICE_OBJECT)   GetDeviceObject(void);
-
+        
         STDMETHODIMP_(PDEVICE_OBJECT)   GetPhysicalDeviceObject(void);
-
+        
         STDMETHODIMP_(WDFDEVICE)        GetWdfDevice(void);
 
         STDMETHODIMP_(void)     SetWaveServiceGroup
-        (
+        (   
             _In_  PSERVICEGROUP   ServiceGroup
         );
 
@@ -142,26 +137,26 @@ class CAdapterCommon :
         STDMETHODIMP_(void)     MixerReset(void);
 
         STDMETHODIMP_(LONG)     MixerVolumeRead
-        (
+        ( 
             _In_  ULONG           Index,
             _In_  ULONG           Channel
         );
 
         STDMETHODIMP_(void)     MixerVolumeWrite
-        (
+        ( 
             _In_  ULONG           Index,
             _In_  ULONG           Channel,
-            _In_  LONG            Value
+            _In_  LONG            Value 
         );
 
         STDMETHODIMP_(LONG)     MixerPeakMeterRead
-        (
+        ( 
             _In_  ULONG           Index,
             _In_  ULONG           Channel
         );
 
-        STDMETHODIMP_(NTSTATUS) WriteEtwEvent
-        (
+        STDMETHODIMP_(NTSTATUS) WriteEtwEvent 
+        ( 
             _In_ EPcMiniportEngineEvent    miniportEventType,
             _In_ ULONGLONG      ullData1,
             _In_ ULONGLONG      ullData2,
@@ -169,15 +164,16 @@ class CAdapterCommon :
             _In_ ULONGLONG      ullData4
         );
 
-        STDMETHODIMP_(VOID)     SetEtwHelper
-        (
+        STDMETHODIMP_(VOID)     SetEtwHelper 
+        ( 
             PPORTCLSETWHELPER _pPortClsEtwHelper
         );
-
+        
         STDMETHODIMP_(NTSTATUS) InstallSubdevice
-        (
+        ( 
             _In_opt_        PIRP                                        Irp,
             _In_            PWSTR                                       Name,
+            _In_opt_        PWSTR                                       TemplateName,
             _In_            REFGUID                                     PortClassId,
             _In_            REFGUID                                     MiniportClassId,
             _In_opt_        PFNCREATEMINIPORT                           MiniportCreate,
@@ -191,12 +187,12 @@ class CAdapterCommon :
             _Out_opt_       PUNKNOWN                                  * OutPortUnknown,
             _Out_opt_       PUNKNOWN                                  * OutMiniportUnknown
         );
-
+        
         STDMETHODIMP_(NTSTATUS) UnregisterSubdevice
         (
             _In_opt_ PUNKNOWN               UnknownPort
         );
-
+        
         STDMETHODIMP_(NTSTATUS) ConnectTopologies
         (
             _In_ PUNKNOWN                   UnknownTopology,
@@ -204,7 +200,7 @@ class CAdapterCommon :
             _In_ PHYSICALCONNECTIONTABLE*   PhysicalConnections,
             _In_ ULONG                      PhysicalConnectionCount
         );
-
+        
         STDMETHODIMP_(NTSTATUS) DisconnectTopologies
         (
             _In_ PUNKNOWN                   UnknownTopology,
@@ -212,10 +208,10 @@ class CAdapterCommon :
             _In_ PHYSICALCONNECTIONTABLE*   PhysicalConnections,
             _In_ ULONG                      PhysicalConnectionCount
         );
-
+        
         STDMETHODIMP_(NTSTATUS) InstallEndpointFilters
         (
-            _In_opt_    PIRP                Irp,
+            _In_opt_    PIRP                Irp, 
             _In_        PENDPOINT_MINIPAIR  MiniportPair,
             _In_opt_    PVOID               DeviceContext,
             _Out_opt_   PUNKNOWN *          UnknownTopology,
@@ -223,7 +219,7 @@ class CAdapterCommon :
             _Out_opt_   PUNKNOWN *          UnknownMiniportTopology,
             _Out_opt_   PUNKNOWN *          UnknownMiniportWave
         );
-
+        
         STDMETHODIMP_(NTSTATUS) RemoveEndpointFilters
         (
             _In_        PENDPOINT_MINIPAIR  MiniportPair,
@@ -248,23 +244,23 @@ class CAdapterCommon :
 
 #ifdef SYSVAD_BTH_BYPASS
         STDMETHODIMP_(NTSTATUS) InitBthScoBypass();
-
+        
         STDMETHODIMP_(VOID)     CleanupBthScoBypass();
 #endif // SYSVAD_BTH_BYPASS
 
         STDMETHODIMP_(VOID) Cleanup();
-
+        
         //=====================================================================
         // friends
         friend NTSTATUS         NewAdapterCommon
-        (
+        ( 
             _Out_       PUNKNOWN *              Unknown,
             _In_        REFCLSID,
             _In_opt_    PUNKNOWN                UnknownOuter,
             _When_((PoolType & NonPagedPoolMustSucceed) != 0,
                 __drv_reportError("Must succeed pool allocations are forbidden. "
                         "Allocation failures cause a system crash"))
-            _In_        POOL_TYPE               PoolType
+            _In_        POOL_TYPE               PoolType 
         );
 
 #ifdef SYSVAD_BTH_BYPASS
@@ -277,17 +273,17 @@ class CAdapterCommon :
         WDFWORKITEM             m_BthHfpWorkItem;               // Async work-item.
         LIST_ENTRY              m_BthHfpWorkTasks;              // Work-item's tasks.
         LIST_ENTRY              m_BthHfpDevices;                // Bth HFP devices.
-        NPAGED_LOOKASIDE_LIST   m_BhtHfpWorkTaskPool;           // LookasideList
-        size_t                  m_BhtHfpWorkTaskPoolElementSize;
+        NPAGED_LOOKASIDE_LIST   m_BthHfpWorkTaskPool;           // LookasideList
+        size_t                  m_BthHfpWorkTaskPoolElementSize;
         BOOL                    m_BthHfpEnableCleanup;          // Do cleanup if true.
 
     private:
-        static
+        static 
         DRIVER_NOTIFICATION_CALLBACK_ROUTINE  EvtBthHfpScoBypassInterfaceChange;
-
-        static
+        
+        static 
         EVT_WDF_WORKITEM                      EvtBthHfpScoBypassInterfaceWorkItem;
-
+    
     protected:
         BthHfpDevice * BthHfpDeviceFind
         (
@@ -304,7 +300,6 @@ class CAdapterCommon :
             _In_ PUNICODE_STRING SymbolicLinkName
         );
 #endif // SYSVAD_BTH_BYPASS
-
 
     private:
 
@@ -323,7 +318,7 @@ class CAdapterCommon :
         _In_ PUNKNOWN UnknownPort,
         _In_ PUNKNOWN UnknownMiniport
     );
-
+    
     NTSTATUS RemoveCachedSubdevice
     (
         _In_ PWSTR Name
@@ -334,9 +329,16 @@ class CAdapterCommon :
     NTSTATUS CreateAudioInterfaceWithProperties
     (
         _In_ PCWSTR                                                 ReferenceString,
+        _In_opt_ PCWSTR                                             TemplateReferenceString,
         _In_ ULONG                                                  cPropertyCount,
         _In_reads_opt_(cPropertyCount) const SYSVAD_DEVPROPERTY        *pProperties,
         _Out_ _At_(AudioSymbolicLinkName->Buffer, __drv_allocatesMem(Mem)) PUNICODE_STRING AudioSymbolicLinkName
+    );
+
+    NTSTATUS MigrateDeviceInterfaceTemplateParameters
+    (
+        _In_ PUNICODE_STRING    SymbolicLinkName,
+        _In_opt_ PCWSTR         TemplateReferenceString
     );
 };
 
@@ -349,417 +351,14 @@ typedef struct _MINIPAIR_UNKNOWN
     PADAPTERPOWERMANAGEMENT PowerInterface;
 } MINIPAIR_UNKNOWN;
 
+#define MAX_DEVICE_REG_KEY_LENGTH 0x100
+
 //
 // Used to implement the singleton pattern.
 //
 LONG  CAdapterCommon::m_AdapterInstances = 0;
 
 
-#ifdef SYSVAD_BTH_BYPASS
-
-//=====================================================================
-//
-// CAdapterCommon: Bluetooth Hands-Free Profile SCO Bypass definitions.
-//
-
-struct BthHfpWorkItemContext
-{
-    CAdapterCommon *    Adapter;
-};
-
-WDF_DECLARE_CONTEXT_TYPE_WITH_NAME
-(
-    BthHfpWorkItemContext,
-    GetBthHfpWorkItemContext
-)
-
-// start/stop the device
-enum eBthHfpTaskAction
-{
-    eBthHfpTaskStart    = 1,
-    eBthHfpTaskStop     = 2,
-};
-
-struct BthHfpWorkTask
-{
-    LIST_ENTRY          ListEntry;
-    BthHfpDevice      * Device;
-    eBthHfpTaskAction   Action;
-};
-
-
-//=====================================================================
-//
-// Device: Bluetooth Hands-Free Profile SCO Bypass definitions.
-//
-
-// BTH HFP device's notification work-item context.
-struct BthHfpDeviceNotificationWorkItemContext
-{
-    BthHfpDevice *  BthHfpDevice;
-};
-
-WDF_DECLARE_CONTEXT_TYPE_WITH_NAME
-(
-    BthHfpDeviceNotificationWorkItemContext,
-    GetBthHfpDeviceNotificationWorkItemContext
-)
-
-// BTH HFP device's notification request context.
-union BthHfpDeviceNotificationBuffer
-{
-    BOOL        bImmediate;
-    LONG        Volume;
-    BOOL        BoolStatus;
-    NTSTATUS    NtStatus;
-};
-
-struct BthHfpDeviceNotificationReqContext
-{
-    BthHfpDevice                  * BthHfpDevice;
-    LONG                            Errors;
-    BthHfpDeviceNotificationBuffer  Buffer;
-    WDFMEMORY                       MemIn;
-    WDFMEMORY                       MemOut;
-};
-
-WDF_DECLARE_CONTEXT_TYPE_WITH_NAME
-(
-    BthHfpDeviceNotificationReqContext,
-    GetBthHfpDeviceNotificationReqContext
-)
-
-enum eBthHfpState
-{
-    eBthHfpStateInvalid         = 0,
-    eBthHfpStateInitializing    = 1,
-    eBthHfpStateRunning         = 2,
-    eBthHfpStateStopping        = 3,
-    eBthHfpStateStopped         = 4,
-    eBthHfpStateFailed          = 5,
-};
-
-// To support event notification.
-struct BthHfpEventCallback
-{
-    PFNEVENTNOTIFICATION    Handler;
-    PVOID                   Context;
-};
-
-//
-// This class represents a the Bluetooth Hands-Free Profile SCO Bypass device.
-// There is one class for each interface (id = symbolic-link-name).
-//
-class BthHfpDevice :
-    IBthHfpDeviceCommon,
-    public CUnknown
-{
-    private:
-        eBthHfpState            m_State;
-
-        CAdapterCommon        * m_Adapter;
-        WDFIOTARGET             m_WdfIoTarget;
-
-        LIST_ENTRY              m_ListEntry;
-        UNICODE_STRING          m_SymbolicLinkName;
-
-        //
-        // The Topo Filter Desc and Topo Pins structures referenced from
-        // the Miniports structure are deep copies: they start as copies of the
-        // static structures and are modified to allow per-SCO-Device pin
-        // categories based on the info obtained from
-        // IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2
-        //
-        PENDPOINT_MINIPAIR      m_SpeakerMiniports;
-        PENDPOINT_MINIPAIR      m_MicMiniports;
-
-        PUNKNOWN                m_UnknownSpeakerTopology;
-        PUNKNOWN                m_UnknownSpeakerWave;
-        PUNKNOWN                m_UnknownMicTopology;
-        PUNKNOWN                m_UnknownMicWave;
-
-        PBTHHFP_DESCRIPTOR2     m_Descriptor;
-        PKSPROPERTY_VALUES      m_VolumePropValues;
-        LONG                    m_SpeakerVolumeLevel;
-        LONG                    m_MicVolumeLevel;
-        union{
-          BOOL                  m_ConnectionStatus;
-          LONG                  m_ConnectionStatusLong;
-        }; // unnamed.
-
-        union{
-          NTSTATUS              m_StreamStatus;
-          LONG                  m_StreamStatusLong;
-        }; // unnamed.
-
-        KEVENT                  m_StreamStatusEvent;
-
-        //
-        // Set to TRUE when the HF (remote device) wants to disable the
-        // NR + EC of the AG (local system).
-        //
-        LONG                    m_NRECDisableStatusLong;
-
-        WDFREQUEST              m_StreamReq;
-        WDFREQUEST              m_SpeakerVolumeReq;
-        WDFREQUEST              m_MicVolumeReq;
-        WDFREQUEST              m_ConnectionReq;
-        WDFREQUEST              m_NRECDisableStatusReq;
-        WDFWORKITEM             m_WorkItem;
-        WDFCOLLECTION           m_ReqCollection;
-        KSPIN_LOCK              m_Lock;
-
-        LONG                    m_nStreams; // # of open streams.
-
-        BthHfpEventCallback     m_SpeakerVolumeCallback;
-        BthHfpEventCallback     m_SpeakerConnectionStatusCallback;
-        BthHfpEventCallback     m_MicVolumeCallback;
-        BthHfpEventCallback     m_MicConnectionStatusCallback;
-
-    public:
-        //=====================================================================
-        // Default CUnknown
-        DECLARE_STD_UNKNOWN();
-        DEFINE_STD_CONSTRUCTOR(BthHfpDevice);
-        ~BthHfpDevice();
-
-        NTSTATUS Init
-        (
-            _In_ CAdapterCommon     * Adapter,
-            _In_ PUNICODE_STRING      SymbolicLinkName
-        );
-
-    public:
-        //=====================================================================
-        //
-        // Public functions used by CAdapterCommon object.
-        //
-        VOID Start();
-        VOID Stop();
-
-        PLIST_ENTRY GetListEntry()
-        {
-            return &m_ListEntry;
-        }
-
-        PUNICODE_STRING GetSymbolicLinkName()
-        {
-            return &m_SymbolicLinkName;
-        }
-
-        static
-        BthHfpDevice *
-        GetBthHfpDevice
-        (
-            _In_ PLIST_ENTRY le
-        )
-        {
-            return CONTAINING_RECORD(le, BthHfpDevice, m_ListEntry);
-        }
-
-    public:
-        //=====================================================================
-        //
-        // IBthHfpDeviceCommon functions.
-        //
-        STDMETHODIMP_(BOOL)                 IsVolumeSupported();
-
-        STDMETHODIMP_(PKSPROPERTY_VALUES)   GetVolumeSettings
-        (
-            _Out_ PULONG    Size
-        );
-
-        STDMETHODIMP_(LONG)                 GetSpeakerVolume();
-
-        STDMETHODIMP_(NTSTATUS)             SetSpeakerVolume
-        (
-            _In_ ULONG      Volume
-        );
-
-        STDMETHODIMP_(LONG)                 GetMicVolume();
-
-        STDMETHODIMP_(NTSTATUS)             SetMicVolume
-        (
-            _In_ ULONG      Volume
-        );
-
-        STDMETHODIMP_(BOOL)                 GetConnectionStatus();
-
-        STDMETHODIMP_(NTSTATUS)             Connect();
-
-        STDMETHODIMP_(NTSTATUS)             Disconnect();
-
-        STDMETHODIMP_(BOOL)                 GetStreamStatus();
-
-        STDMETHODIMP_(NTSTATUS)             StreamOpen();
-
-        STDMETHODIMP_(NTSTATUS)             StreamClose();
-
-        STDMETHODIMP_(GUID)                 GetContainerId();
-
-        STDMETHODIMP_(VOID)                 SetSpeakerVolumeHandler
-        (
-            _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-            _In_opt_    PVOID                   EventHandlerContext
-        );
-
-        STDMETHODIMP_(VOID)                 SetSpeakerConnectionStatusHandler
-        (
-            _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-            _In_opt_    PVOID                   EventHandlerContext
-        );
-
-        STDMETHODIMP_(VOID)                 SetMicVolumeHandler
-        (
-            _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-            _In_opt_    PVOID                   EventHandlerContext
-        );
-
-        STDMETHODIMP_(VOID)                 SetMicConnectionStatusHandler
-        (
-            _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-            _In_opt_    PVOID                   EventHandlerContext
-        );
-
-        STDMETHODIMP_(BOOL)                 IsNRECSupported();
-
-        STDMETHODIMP_(BOOL)                 GetNRECDisableStatus();
-
-    private:
-        //=====================================================================
-        //
-        // Helper functions.
-        //
-        NTSTATUS    SendIoCtrlSynchronously
-        (
-            _In_opt_    WDFREQUEST  Request,
-            _In_        ULONG       IoControlCode,
-            _In_        ULONG       InLength,
-            _In_        ULONG       OutLength,
-            _When_(InLength > 0 || OutLength > 0, _In_)
-            _When_(InLength == 0 && OutLength == 0, _In_opt_)
-                        PVOID       Buffer
-        );
-
-        NTSTATUS    SendIoCtrlAsynchronously
-        (
-            _In_        WDFREQUEST      Request,
-            _In_        ULONG           IoControlCode,
-            _In_opt_    WDFMEMORY       MemIn,
-            _In_opt_    WDFMEMORY       MemOut,
-            _In_        PFN_WDF_REQUEST_COMPLETION_ROUTINE CompletionRoutine,
-            _In_        WDFCONTEXT      Context
-        );
-
-        NTSTATUS    GetBthHfpDescriptor
-        (
-            _Out_ PBTHHFP_DESCRIPTOR2 * Descriptor
-        );
-
-        NTSTATUS    EnableBthHfpNrecDisableStatusNotification();
-
-        NTSTATUS    GetBthHfpVolumePropertyValues
-        (
-            _In_  ULONG                 Length,
-            _Out_ PKSPROPERTY_VALUES  * PropValues
-        );
-
-        NTSTATUS    SetBthHfpSpeakerVolume
-        (
-            _In_ LONG  Volume
-        );
-
-        NTSTATUS    GetBthHfpSpeakerVolume
-        (
-            _Out_ LONG  * Volume
-        );
-
-        NTSTATUS    EnableBthHfpSpeakerVolumeStatusNotification();
-
-        NTSTATUS    SetBthHfpMicVolume
-        (
-            _In_ LONG  Volume
-        );
-
-        NTSTATUS    GetBthHfpMicVolume
-        (
-            _Out_ LONG  * Volume
-        );
-
-        NTSTATUS    EnableBthHfpMicVolumeStatusNotification();
-
-        NTSTATUS    GetBthHfpConnectionStatus
-        (
-            _Out_ BOOL * ConnectionStatus
-        );
-
-        NTSTATUS    EnableBthHfpConnectionStatusNotification();
-
-        static
-        NTSTATUS    CreateCustomEndpointMinipair
-        (
-            _In_        PENDPOINT_MINIPAIR pBaseMinipair,
-            _In_        PUNICODE_STRING FriendlyName,
-            _In_        PGUID pCategory,
-            _Outptr_    PENDPOINT_MINIPAIR *ppCustomMinipair
-        );
-
-        static
-        NTSTATUS    UpdateCustomEndpointCategory
-        (
-            _In_        PPCFILTER_DESCRIPTOR pCustomMinipairTopoFilter,
-            _In_        PPCPIN_DESCRIPTOR pCustomMinipairTopoPins,
-            _In_        PGUID pCategory
-        );
-
-        static
-        VOID        DeleteCustomEndpointMinipair
-        (
-            _In_        PENDPOINT_MINIPAIR CustomMinipair
-        );
-
-        NTSTATUS    GetBthHfpCodecId
-        (
-            _Out_ UCHAR * CodecId
-        );
-
-        NTSTATUS    SetBthHfpConnect();
-
-        NTSTATUS    SetBthHfpDisconnect();
-
-        NTSTATUS    SetBthHfpStreamOpen();
-
-        NTSTATUS    SetBthHfpStreamClose();
-
-        NTSTATUS    EnableBthHfpStreamStatusNotification();
-
-        NTSTATUS    StopBthHfpStreamStatusNotification();
-
-        //
-        // WDF I/O Target callback.
-        //
-        static
-        EVT_WDF_IO_TARGET_QUERY_REMOVE    EvtBthHfpTargetQueryRemove;
-
-        static
-        EVT_WDF_IO_TARGET_REMOVE_CANCELED EvtBthHfpTargetRemoveCanceled;
-
-        static
-        EVT_WDF_IO_TARGET_REMOVE_COMPLETE EvtBthHfpTargetRemoveComplete;
-
-        //
-        // Status notifications callbacks.
-        //
-        static
-        EVT_WDF_REQUEST_COMPLETION_ROUTINE EvtBthHfpDeviceStreamStatusCompletion;
-
-        static
-        EVT_WDF_REQUEST_COMPLETION_ROUTINE EvtBthHfpDeviceNotificationStatusCompletion;
-
-        static
-        EVT_WDF_WORKITEM                   EvtBthHfpDeviceNotificationStatusWorkItem;
-};
-#endif // SYSVAD_BTH_BYPASS
 
 //-----------------------------------------------------------------------------
 // Functions
@@ -805,14 +404,14 @@ NTSTATUS SysvadIoSetDeviceInterfacePropertyDataMultiple
 #pragma code_seg("PAGE")
 NTSTATUS
 NewAdapterCommon
-(
+( 
     _Out_       PUNKNOWN *              Unknown,
     _In_        REFCLSID,
     _In_opt_    PUNKNOWN                UnknownOuter,
     _When_((PoolType & NonPagedPoolMustSucceed) != 0,
         __drv_reportError("Must succeed pool allocations are forbidden. "
-			    "Allocation failures cause a system crash"))
-    _In_        POOL_TYPE               PoolType
+                "Allocation failures cause a system crash"))
+    _In_        POOL_TYPE               PoolType 
 )
 /*++
 
@@ -822,7 +421,7 @@ Routine Description:
 
 Arguments:
 
-  Unknown -
+  Unknown - 
 
   UnknownOuter -
 
@@ -842,7 +441,7 @@ Return Value:
 
     //
     // This sample supports only one instance of this object.
-    // (b/c of CSaveData's static members and Bluetooth HFP logic).
+    // (b/c of CSaveData's static members and Bluetooth HFP logic). 
     //
     if (InterlockedCompareExchange(&CAdapterCommon::m_AdapterInstances, 1, 0) != 0)
     {
@@ -850,7 +449,7 @@ Return Value:
         DPF(D_ERROR, ("NewAdapterCommon failed, only one instance is allowed"));
         goto Done;
     }
-
+    
     //
     // Allocate an adapter object.
     //
@@ -862,22 +461,22 @@ Return Value:
         goto Done;
     }
 
-    //
+    // 
     // Success.
     //
     *Unknown = PUNKNOWN((PADAPTERCOMMON)(p));
-    (*Unknown)->AddRef();
-    ntStatus = STATUS_SUCCESS;
+    (*Unknown)->AddRef(); 
+    ntStatus = STATUS_SUCCESS; 
 
-Done:
+Done:    
     return ntStatus;
 } // NewAdapterCommon
 
 //=============================================================================
 #pragma code_seg("PAGE")
 CAdapterCommon::~CAdapterCommon
-(
-    void
+( 
+    void 
 )
 /*++
 
@@ -901,12 +500,11 @@ Return Value:
         delete m_pHW;
         m_pHW = NULL;
     }
-
+    
     CSaveData::DestroyWorkItems();
-
     SAFE_RELEASE(m_pPortClsEtwHelper);
     SAFE_RELEASE(m_pServiceGroupWave);
-
+ 
     if (m_WdfDevice)
     {
         WdfObjectDelete(m_WdfDevice);
@@ -915,11 +513,11 @@ Return Value:
 
     InterlockedDecrement(&CAdapterCommon::m_AdapterInstances);
     ASSERT(CAdapterCommon::m_AdapterInstances == 0);
-} // ~CAdapterCommon
+} // ~CAdapterCommon  
 
 //=============================================================================
 #pragma code_seg("PAGE")
-STDMETHODIMP_(PDEVICE_OBJECT)
+STDMETHODIMP_(PDEVICE_OBJECT)   
 CAdapterCommon::GetDeviceObject
 (
     void
@@ -939,13 +537,13 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-
+    
     return m_pDeviceObject;
 } // GetDeviceObject
 
 //=============================================================================
 #pragma code_seg("PAGE")
-STDMETHODIMP_(PDEVICE_OBJECT)
+STDMETHODIMP_(PDEVICE_OBJECT)   
 CAdapterCommon::GetPhysicalDeviceObject
 (
     void
@@ -965,13 +563,13 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-
+    
     return m_pPhysicalDeviceObject;
 } // GetPhysicalDeviceObject
 
 //=============================================================================
 #pragma code_seg("PAGE")
-STDMETHODIMP_(WDFDEVICE)
+STDMETHODIMP_(WDFDEVICE)   
 CAdapterCommon::GetWdfDevice
 (
     void
@@ -993,7 +591,7 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-
+    
     return m_WdfDevice;
 } // GetWdfDevice
 
@@ -1001,8 +599,8 @@ Return Value:
 #pragma code_seg("PAGE")
 NTSTATUS
 CAdapterCommon::Init
-(
-    _In_  PDEVICE_OBJECT          DeviceObject
+( 
+    _In_  PDEVICE_OBJECT          DeviceObject 
 )
 /*++
 
@@ -1031,8 +629,6 @@ Return Value:
     m_BthHfpEnableCleanup = FALSE;
 #endif // SYSVAD_BTH_BYPASS
 
-
-
     m_pServiceGroupWave     = NULL;
     m_pDeviceObject         = DeviceObject;
     m_pPhysicalDeviceObject = NULL;
@@ -1053,7 +649,7 @@ Return Value:
         Done);
 
     //
-    // Create a WDF miniport to represent the adapter. Note that WDF miniports
+    // Create a WDF miniport to represent the adapter. Note that WDF miniports 
     // are NOT audio miniports. An audio adapter is associated with a single WDF
     // miniport. This driver uses WDF to simplify the handling of the Bluetooth
     // SCO HFP Bypass interface.
@@ -1070,7 +666,7 @@ Return Value:
         Done);
 
     // Initialize HW.
-    //
+    // 
     m_pHW = new (NonPagedPoolNx, SYSVAD_POOLTAG)  CSYSVADHW;
     if (!m_pHW)
     {
@@ -1078,7 +674,7 @@ Return Value:
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_JUMP(ntStatus, Done);
-
+    
     m_pHW->MixerReset();
 
     //
@@ -1087,7 +683,6 @@ Return Value:
     CSaveData::SetDeviceObject(DeviceObject);   //device object is needed by CSaveData
     ntStatus = CSaveData::InitializeWorkItems(DeviceObject);
     IF_FAILED_JUMP(ntStatus, Done);
-
 Done:
 
     return ntStatus;
@@ -1097,8 +692,8 @@ Done:
 #pragma code_seg("PAGE")
 STDMETHODIMP_(void)
 CAdapterCommon::MixerReset
-(
-    void
+( 
+    void 
 )
 /*++
 
@@ -1115,7 +710,7 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-
+    
     if (m_pHW)
     {
         m_pHW->MixerReset();
@@ -1125,60 +720,60 @@ Return Value:
 //=============================================================================
 /* Here are the definitions of the standard miniport events.
 
-Event type	: eMINIPORT_IHV_DEFINED
-Parameter 1	: Defined and used by IHVs
-Parameter 2	: Defined and used by IHVs
-Parameter 3	:Defined and used by IHVs
+Event type  : eMINIPORT_IHV_DEFINED 
+Parameter 1 : Defined and used by IHVs
+Parameter 2 : Defined and used by IHVs
+Parameter 3 : Defined and used by IHVs
 Parameter 4 :Defined and used by IHVs
 
 Event type: eMINIPORT_BUFFER_COMPLETE
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
 Parameter 3: Data length completed
 Parameter 4:0
 
 Event type: eMINIPORT_PIN_STATE
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
-Parameter 3: Pin State 0->KS_STOP, 1->KS_ACQUIRE, 2->KS_PAUSE, 3->KS_RUN
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received        
+Parameter 3: Pin State 0->KS_STOP, 1->KS_ACQUIRE, 2->KS_PAUSE, 3->KS_RUN 
 Parameter 4:0
 
 Event type: eMINIPORT_GET_STREAM_POS
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
 Parameter 3: 0
 Parameter 4:0
 
 
 Event type: eMINIPORT_SET_WAVERT_BUFFER_WRITE_POS
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
 Parameter 3: the arget WaveRtBufferWritePosition received from portcls
 Parameter 4:0
 
 Event type: eMINIPORT_GET_PRESENTATION_POS
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
 Parameter 3: Presentation position
 Parameter 4:0
 
-Event type: eMINIPORT_PROGRAM_DMA
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
+Event type: eMINIPORT_PROGRAM_DMA 
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
 Parameter 3: Starting  WaveRt buffer offset
 Parameter 4: Data length
 
 Event type: eMINIPORT_GLITCH_REPORT
-Parameter 1: Current linear buffer position
-Parameter 2: the previous WaveRtBufferWritePosition that the drive received
-Parameter 3: major glitch code: 1:WaveRT buffer is underrun,
-                                2:decoder errors,
+Parameter 1: Current linear buffer position    
+Parameter 2: the previous WaveRtBufferWritePosition that the drive received    
+Parameter 3: major glitch code: 1:WaveRT buffer is underrun, 
+                                2:decoder errors, 
                                 3:receive the same wavert buffer two in a row in event driven mode
 Parameter 4: minor code for the glitch cause
 
 Event type: eMINIPORT_LAST_BUFFER_RENDERED
-Parameter 1: Current linear buffer position
-Parameter 2: the very last WaveRtBufferWritePosition that the driver received
+Parameter 1: Current linear buffer position    
+Parameter 2: the very last WaveRtBufferWritePosition that the driver received    
 Parameter 3: 0
 Parameter 4: 0
 
@@ -1186,7 +781,7 @@ Parameter 4: 0
 #pragma code_seg()
 STDMETHODIMP
 CAdapterCommon::WriteEtwEvent
-(
+( 
     _In_ EPcMiniportEngineEvent    miniportEventType,
     _In_ ULONGLONG  ullData1,
     _In_ ULONGLONG  ullData2,
@@ -1207,12 +802,12 @@ CAdapterCommon::WriteEtwEvent
 #pragma code_seg("PAGE")
 STDMETHODIMP_(void)
 CAdapterCommon::SetEtwHelper
-(
+( 
     PPORTCLSETWHELPER _pPortClsEtwHelper
 )
 {
     PAGED_CODE();
-
+    
     SAFE_RELEASE(m_pPortClsEtwHelper);
 
     m_pPortClsEtwHelper = _pPortClsEtwHelper;
@@ -1227,9 +822,9 @@ CAdapterCommon::SetEtwHelper
 #pragma code_seg("PAGE")
 STDMETHODIMP
 CAdapterCommon::NonDelegatingQueryInterface
-(
+( 
     _In_ REFIID                      Interface,
-    _COM_Outptr_ PVOID *        Object
+    _COM_Outptr_ PVOID *        Object 
 )
 /*++
 
@@ -1239,7 +834,7 @@ Routine Description:
 
 Arguments:
 
-  Interface -
+  Interface - 
 
   Object -
 
@@ -1283,8 +878,8 @@ Return Value:
 #pragma code_seg("PAGE")
 STDMETHODIMP_(void)
 CAdapterCommon::SetWaveServiceGroup
-(
-    _In_ PSERVICEGROUP            ServiceGroup
+( 
+    _In_ PSERVICEGROUP            ServiceGroup 
 )
 /*++
 
@@ -1301,7 +896,7 @@ Return Value:
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::SetWaveServiceGroup]"));
-
+    
     SAFE_RELEASE(m_pServiceGroupWave);
 
     m_pServiceGroupWave = ServiceGroup;
@@ -1551,7 +1146,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg()
 STDMETHODIMP_(ULONG)
-CAdapterCommon::MixerMuxRead()
+CAdapterCommon::MixerMuxRead() 
 /*++
 
 Routine Description:
@@ -1613,7 +1208,7 @@ Return Value:
 #pragma code_seg()
 STDMETHODIMP_(LONG)
 CAdapterCommon::MixerVolumeRead
-(
+( 
     _In_  ULONG                   Index,
     _In_  ULONG                   Channel
 )
@@ -1647,7 +1242,7 @@ Return Value:
 #pragma code_seg()
 STDMETHODIMP_(void)
 CAdapterCommon::MixerVolumeWrite
-(
+( 
     _In_  ULONG                   Index,
     _In_  ULONG                   Channel,
     _In_  LONG                    Value
@@ -1682,7 +1277,7 @@ Return Value:
 #pragma code_seg()
 STDMETHODIMP_(LONG)
 CAdapterCommon::MixerPeakMeterRead
-(
+( 
     _In_  ULONG                   Index,
     _In_  ULONG                   Channel
 )
@@ -1716,8 +1311,8 @@ Return Value:
 #pragma code_seg()
 STDMETHODIMP_(void)
 CAdapterCommon::PowerChangeState
-(
-    _In_  POWER_STATE             NewState
+( 
+    _In_  POWER_STATE             NewState 
 )
 /*++
 
@@ -1726,7 +1321,7 @@ Routine Description:
 
 Arguments:
 
-  NewState - The requested, new power state for the device.
+  NewState - The requested, new power state for the device. 
 
 Return Value:
 
@@ -1737,29 +1332,29 @@ Note:
 
   To assist the driver, PortCls will pause any active audio streams prior to calling
   this method to place the device in a sleep state. After calling this method, PortCls
-  will unpause active audio streams, to wake the device up. Miniports can opt for
+  will unpause active audio streams, to wake the device up. Miniports can opt for 
   additional notification by utilizing the IPowerNotify interface.
 
-  The miniport driver must perform the requested change to the device's power state
-  before it returns from the PowerChangeState call. If the miniport driver needs to
-  save or restore any device state before a power-state change, the miniport driver
+  The miniport driver must perform the requested change to the device's power state 
+  before it returns from the PowerChangeState call. If the miniport driver needs to 
+  save or restore any device state before a power-state change, the miniport driver 
   should support the IPowerNotify interface, which allows it to receive advance warning
-  of any such change. Before returning from a successful PowerChangeState call, the
+  of any such change. Before returning from a successful PowerChangeState call, the 
   miniport driver should cache the new power state.
 
-  While the miniport driver is in one of the sleep states (any state other than
+  While the miniport driver is in one of the sleep states (any state other than 
   PowerDeviceD0), it must avoid writing to the hardware. The miniport driver must cache
   any hardware accesses that need to be deferred until the device powers up again. If
-  the power state is changing from one of the sleep states to PowerDeviceD0, the
+  the power state is changing from one of the sleep states to PowerDeviceD0, the 
   miniport driver should perform any deferred hardware accesses after it has powered up
-  the device. If the power state is changing from PowerDeviceD0 to a sleep state, the
+  the device. If the power state is changing from PowerDeviceD0 to a sleep state, the 
   miniport driver can perform any necessary hardware accesses during the PowerChangeState
   call before it powers down the device.
 
   While powered down, a miniport driver is never asked to create a miniport driver object
   or stream object. PortCls always places the device in the PowerDeviceD0 state before
   calling the miniport driver's NewStream method.
-
+  
 --*/
 {
     DPF_ENTER(("[CAdapterCommon::PowerChangeState]"));
@@ -1791,15 +1386,15 @@ Note:
                 m_PowerState = NewState.DeviceState;
 
                 DPF
-                (
-                    D_VERBOSE,
-                    ("Entering D%u", ULONG(m_PowerState) - ULONG(PowerDeviceD0))
+                ( 
+                    D_VERBOSE, 
+                    ("Entering D%u", ULONG(m_PowerState) - ULONG(PowerDeviceD0)) 
                 );
 
                 break;
-
+    
             default:
-
+            
                 DPF(D_VERBOSE, ("Unknown Device Power State"));
                 break;
         }
@@ -1810,20 +1405,20 @@ Note:
 #pragma code_seg()
 STDMETHODIMP_(NTSTATUS)
 CAdapterCommon::QueryDeviceCapabilities
-(
-    _Inout_updates_bytes_(sizeof(DEVICE_CAPABILITIES)) PDEVICE_CAPABILITIES    PowerDeviceCaps
+( 
+    _Inout_updates_bytes_(sizeof(DEVICE_CAPABILITIES)) PDEVICE_CAPABILITIES    PowerDeviceCaps 
 )
 /*++
 
 Routine Description:
 
-    Called at startup to get the caps for the device.  This structure provides
-    the system with the mappings between system power state and device power
-    state.  This typically will not need modification by the driver.
+    Called at startup to get the caps for the device.  This structure provides 
+    the system with the mappings between system power state and device power 
+    state.  This typically will not need modification by the driver.         
 
 Arguments:
 
-  PowerDeviceCaps - The device's capabilities.
+  PowerDeviceCaps - The device's capabilities. 
 
 Return Value:
 
@@ -1842,14 +1437,14 @@ Return Value:
 #pragma code_seg()
 STDMETHODIMP_(NTSTATUS)
 CAdapterCommon::QueryPowerChangeState
-(
-    _In_  POWER_STATE             NewStateQuery
+( 
+    _In_  POWER_STATE             NewStateQuery 
 )
 /*++
 
 Routine Description:
 
-  Query to see if the device can change to this power state
+  Query to see if the device can change to this power state 
 
 Arguments:
 
@@ -1887,6 +1482,7 @@ NTSTATUS
 CAdapterCommon::CreateAudioInterfaceWithProperties
 (
     _In_ PCWSTR ReferenceString,
+    _In_opt_ PCWSTR TemplateReferenceString,
     _In_ ULONG cPropertyCount,
     _In_reads_opt_(cPropertyCount) const SYSVAD_DEVPROPERTY *pProperties,
     _Out_ _At_(AudioSymbolicLinkName->Buffer, __drv_allocatesMem(Mem)) PUNICODE_STRING AudioSymbolicLinkName
@@ -1927,6 +1523,20 @@ Create the audio interface (in disabled mode).
         Done);
 
     //
+    // Migrate optional device interface parameters from the template if it exists
+    // This is done first, so that any additional parameters in pProperties will override the defaults.
+    //
+    if (NULL != TemplateReferenceString)
+    {
+        ntStatus = MigrateDeviceInterfaceTemplateParameters(AudioSymbolicLinkName, TemplateReferenceString);
+
+        IF_FAILED_ACTION_JUMP(
+            ntStatus,
+            DPF(D_ERROR, ("MigrateDeviceInterfaceTempalteParameters: MigrateDeviceInterfaceTemplateParameters(...): failed, 0x%x", ntStatus)),
+            Done);
+    }
+
+    //
     // Set properties on the interface
     //
     ntStatus = SysvadIoSetDeviceInterfacePropertyDataMultiple(AudioSymbolicLinkName, cPropertyCount, pProperties);
@@ -1954,9 +1564,10 @@ Done:
 #pragma code_seg("PAGE")
 STDMETHODIMP_(NTSTATUS)
 CAdapterCommon::InstallSubdevice
-(
+( 
     _In_opt_        PIRP                                    Irp,
     _In_            PWSTR                                   Name,
+    _In_opt_        PWSTR                                   TemplateName,
     _In_            REFGUID                                 PortClassId,
     _In_            REFGUID                                 MiniportClassId,
     _In_opt_        PFNCREATEMINIPORT                       MiniportCreate,
@@ -1975,34 +1586,34 @@ CAdapterCommon::InstallSubdevice
 
 Routine Description:
 
-    This function creates and registers a subdevice consisting of a port
-    driver, a minport driver and a set of resources bound together.  It will
-    also optionally place a pointer to an interface on the port driver in a
-    specified location before initializing the port driver.  This is done so
-    that a common ISR can have access to the port driver during
-    initialization, when the ISR might fire.
+    This function creates and registers a subdevice consisting of a port       
+    driver, a minport driver and a set of resources bound together.  It will   
+    also optionally place a pointer to an interface on the port driver in a    
+    specified location before initializing the port driver.  This is done so   
+    that a common ISR can have access to the port driver during 
+    initialization, when the ISR might fire.                                   
 
 Arguments:
 
     Irp - pointer to the irp object.
 
     Name - name of the miniport. Passes to PcRegisterSubDevice
-
+ 
     PortClassId - port class id. Passed to PcNewPort.
 
     MiniportClassId - miniport class id. Passed to PcNewMiniport.
 
-    MiniportCreate - pointer to a miniport creation function. If NULL,
+    MiniportCreate - pointer to a miniport creation function. If NULL, 
                      PcNewMiniport is used.
-
+                     
     DeviceContext - deviceType specific.
 
-    MiniportPair - endpoint configuration info.
+    MiniportPair - endpoint configuration info.    
 
     ResourceList - pointer to the resource list.
 
     PortInterfaceId - GUID that represents the port interface.
-
+       
     OutPortInterface - pointer to store the port interface
 
     OutPortUnknown - pointer to store the unknown port interface.
@@ -2028,7 +1639,7 @@ Return Value:
 
     adapterCommon = PADAPTERCOMMON(this);
 
-    ntStatus = CreateAudioInterfaceWithProperties(Name, cPropertyCount, pProperties, &symbolicLink);
+    ntStatus = CreateAudioInterfaceWithProperties(Name, TemplateName, cPropertyCount, pProperties, &symbolicLink);
     if (NT_SUCCESS(ntStatus))
     {
         // Currently have no use for the symbolic link
@@ -2045,9 +1656,9 @@ Return Value:
     {
         if (MiniportCreate)
         {
-            ntStatus =
+            ntStatus = 
                 MiniportCreate
-                (
+                ( 
                     &miniport,
                     MiniportClassId,
                     NULL,
@@ -2059,10 +1670,10 @@ Return Value:
         }
         else
         {
-            ntStatus =
+            ntStatus = 
                 PcNewMiniport
                 (
-                    (PMINIPORT *) &miniport,
+                    (PMINIPORT *) &miniport, 
                     MiniportClassId
                 );
         }
@@ -2078,14 +1689,14 @@ Return Value:
         // still succeed.
         //
 #pragma warning(disable:6387)
-        ntStatus =
+        ntStatus = 
             port->Init
-            (
+            ( 
                 m_pDeviceObject,
                 Irp,
                 miniport,
                 adapterCommon,
-                ResourceList
+                ResourceList 
             );
 #pragma warning (pop)
 
@@ -2093,12 +1704,12 @@ Return Value:
         {
             // Register the subdevice (port/miniport combination).
             //
-            ntStatus =
+            ntStatus = 
                 PcRegisterSubdevice
-                (
+                ( 
                     m_pDeviceObject,
                     Name,
-                    port
+                    port 
                 );
         }
     }
@@ -2109,31 +1720,31 @@ Return Value:
     {
         if (OutPortUnknown)
         {
-            ntStatus =
+            ntStatus = 
                 port->QueryInterface
-                (
+                ( 
                     IID_IUnknown,
-                    (PVOID *)OutPortUnknown
+                    (PVOID *)OutPortUnknown 
                 );
         }
 
         if (OutPortInterface)
         {
-            ntStatus =
+            ntStatus = 
                 port->QueryInterface
-                (
+                ( 
                     PortInterfaceId,
-                    (PVOID *) OutPortInterface
+                    (PVOID *) OutPortInterface 
                 );
         }
 
         if (OutMiniportUnknown)
         {
-            ntStatus =
+            ntStatus = 
                 miniport->QueryInterface
-                (
+                ( 
                     IID_IUnknown,
-                    (PVOID *)OutMiniportUnknown
+                    (PVOID *)OutMiniportUnknown 
                 );
         }
 
@@ -2179,10 +1790,10 @@ Return Value:
     DPF_ENTER(("[CAdapterCommon::UnregisterSubdevice]"));
 
     ASSERT(m_pDeviceObject != NULL);
-
+    
     NTSTATUS                ntStatus            = STATUS_SUCCESS;
     PUNREGISTERSUBDEVICE    unregisterSubdevice = NULL;
-
+    
     if (NULL == UnknownPort)
     {
         return ntStatus;
@@ -2191,7 +1802,7 @@ Return Value:
     //
     // Get the IUnregisterSubdevice interface.
     //
-    ntStatus = UnknownPort->QueryInterface(
+    ntStatus = UnknownPort->QueryInterface( 
         IID_IUnregisterSubdevice,
         (PVOID *)&unregisterSubdevice);
 
@@ -2209,7 +1820,7 @@ Return Value:
         //
         unregisterSubdevice->Release();
     }
-
+    
     return ntStatus;
 }
 
@@ -2239,9 +1850,9 @@ Return Value:
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::ConnectTopologies]"));
-
+    
     ASSERT(m_pDeviceObject != NULL);
-
+    
     NTSTATUS        ntStatus            = STATUS_SUCCESS;
 
     //
@@ -2251,13 +1862,13 @@ Return Value:
     //
     for (ULONG i = 0; i < PhysicalConnectionCount && NT_SUCCESS(ntStatus); i++)
     {
-
+    
         switch(PhysicalConnections[i].eType)
         {
             case CONNECTIONTYPE_TOPOLOGY_OUTPUT:
                 ntStatus =
                     PcRegisterPhysicalConnection
-                    (
+                    ( 
                         m_pDeviceObject,
                         UnknownTopology,
                         PhysicalConnections[i].ulTopology,
@@ -2272,7 +1883,7 @@ Return Value:
             case CONNECTIONTYPE_WAVE_OUTPUT:
                 ntStatus =
                     PcRegisterPhysicalConnection
-                    (
+                    ( 
                         m_pDeviceObject,
                         UnknownWave,
                         PhysicalConnections[i].ulWave,
@@ -2285,7 +1896,7 @@ Return Value:
                 }
                 break;
         }
-    }
+    }    
 
     //
     // Cleanup in case of error.
@@ -2326,9 +1937,9 @@ Return Value:
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::DisconnectTopologies]"));
-
+    
     ASSERT(m_pDeviceObject != NULL);
-
+    
     NTSTATUS                        ntStatus                        = STATUS_SUCCESS;
     NTSTATUS                        ntStatus2                       = STATUS_SUCCESS;
     PUNREGISTERPHYSICALCONNECTION   unregisterPhysicalConnection    = NULL;
@@ -2336,12 +1947,12 @@ Return Value:
     //
     // Get the IUnregisterPhysicalConnection interface
     //
-    ntStatus = UnknownTopology->QueryInterface(
+    ntStatus = UnknownTopology->QueryInterface( 
         IID_IUnregisterPhysicalConnection,
         (PVOID *)&unregisterPhysicalConnection);
-
+    
     if (NT_SUCCESS(ntStatus))
-    {
+    { 
         for (ULONG i = 0; i < PhysicalConnectionCount; i++)
         {
             switch(PhysicalConnections[i].eType)
@@ -2382,9 +1993,9 @@ Return Value:
             {
                 ntStatus = ntStatus2;
             }
-        }
+        }    
     }
-
+    
     //
     // Release the IUnregisterPhysicalConnection interface.
     //
@@ -2576,7 +2187,7 @@ CAdapterCommon::Cleanup()
 STDMETHODIMP_(NTSTATUS)
 CAdapterCommon::InstallEndpointFilters
 (
-    _In_opt_    PIRP                Irp,
+    _In_opt_    PIRP                Irp, 
     _In_        PENDPOINT_MINIPAIR  MiniportPair,
     _In_opt_    PVOID               DeviceContext,
     _Out_opt_   PUNKNOWN *          UnknownTopology,
@@ -2587,7 +2198,7 @@ CAdapterCommon::InstallEndpointFilters
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::InstallEndpointFilters]"));
-
+    
     NTSTATUS            ntStatus            = STATUS_SUCCESS;
     PUNKNOWN            unknownTopology     = NULL;
     PUNKNOWN            unknownWave         = NULL;
@@ -2606,7 +2217,7 @@ CAdapterCommon::InstallEndpointFilters
     {
         *UnknownWave = NULL;
     }
-
+  
     if (UnknownMiniportTopology)
     {
         *UnknownMiniportTopology = NULL;
@@ -2626,8 +2237,9 @@ CAdapterCommon::InstallEndpointFilters
         //
         ntStatus = InstallSubdevice(Irp,
                                     MiniportPair->TopoName, // make sure this name matches with SYSVAD.<TopoName>.szPname in the inf's [Strings] section
+                                    MiniportPair->TemplateTopoName,
                                     CLSID_PortTopology,
-                                    CLSID_PortTopology,
+                                    CLSID_PortTopology, 
                                     MiniportPair->TopoCreateCallback,
                                     MiniportPair->TopoInterfacePropertyCount,
                                     MiniportPair->TopoInterfaceProperties,
@@ -2654,8 +2266,9 @@ CAdapterCommon::InstallEndpointFilters
         //
         ntStatus = InstallSubdevice(Irp,
                                     MiniportPair->WaveName, // make sure this name matches with SYSVAD.<WaveName>.szPname in the inf's [Strings] section
+                                    MiniportPair->TemplateWaveName,
                                     CLSID_PortWaveRT,
-                                    CLSID_PortWaveRT,
+                                    CLSID_PortWaveRT,   
                                     MiniportPair->WaveCreateCallback,
                                     MiniportPair->WaveInterfacePropertyCount,
                                     MiniportPair->WaveInterfaceProperties,
@@ -2663,7 +2276,7 @@ CAdapterCommon::InstallEndpointFilters
                                     MiniportPair,
                                     NULL,
                                     IID_IPortWaveRT,
-                                    NULL,
+                                    NULL, 
                                     &unknownWave,
                                     &unknownMiniWave
                                     );
@@ -2698,7 +2311,7 @@ CAdapterCommon::InstallEndpointFilters
             unknownTopology->AddRef();
             *UnknownTopology = unknownTopology;
         }
-
+        
         if (UnknownWave != NULL && unknownWave != NULL)
         {
             unknownWave->AddRef();
@@ -2724,14 +2337,14 @@ CAdapterCommon::InstallEndpointFilters
             UnregisterSubdevice(unknownTopology);
             RemoveCachedSubdevice(MiniportPair->TopoName);
         }
-
+            
         if (bWaveCreated && unknownWave != NULL)
         {
             UnregisterSubdevice(unknownWave);
             RemoveCachedSubdevice(MiniportPair->WaveName);
         }
     }
-
+   
     SAFE_RELEASE(unknownMiniTopo);
     SAFE_RELEASE(unknownTopology);
     SAFE_RELEASE(unknownMiniWave);
@@ -2752,9 +2365,9 @@ CAdapterCommon::RemoveEndpointFilters
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::RemoveEndpointFilters]"));
-
+    
     NTSTATUS    ntStatus   = STATUS_SUCCESS;
-
+    
     if (UnknownTopology != NULL && UnknownWave != NULL)
     {
         ntStatus = DisconnectTopologies(
@@ -2769,7 +2382,7 @@ CAdapterCommon::RemoveEndpointFilters
         }
     }
 
-
+        
     RemoveCachedSubdevice(MiniportPair->WaveName);
 
     ntStatus = UnregisterSubdevice(UnknownWave);
@@ -2790,7 +2403,7 @@ CAdapterCommon::RemoveEndpointFilters
     // All Done.
     //
     ntStatus = STATUS_SUCCESS;
-
+    
     return ntStatus;
 }
 
@@ -2808,8 +2421,8 @@ CAdapterCommon::GetFilters
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::GetFilters]"));
-
-    NTSTATUS    ntStatus   = STATUS_SUCCESS;
+    
+    NTSTATUS    ntStatus   = STATUS_SUCCESS; 
     PUNKNOWN            unknownTopologyPort     = NULL;
     PUNKNOWN            unknownTopologyMiniport = NULL;
     PUNKNOWN            unknownWavePort         = NULL;
@@ -2866,7 +2479,7 @@ CAdapterCommon::SetIdlePowerManagement
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::SetIdlePowerManagement]"));
 
-    NTSTATUS      ntStatus   = STATUS_SUCCESS;
+    NTSTATUS      ntStatus   = STATUS_SUCCESS; 
     IUnknown      *pUnknown = NULL;
     PPORTCLSPOWER pPortClsPower = NULL;
     // refcounting disable requests. Each miniport is responsible for calling this in pairs,
@@ -2878,7 +2491,7 @@ CAdapterCommon::SetIdlePowerManagement
     ntStatus = GetFilters(MiniportPair, NULL, NULL, &pUnknown, NULL);
     if (NT_SUCCESS(ntStatus))
     {
-        ntStatus =
+        ntStatus = 
             pUnknown->QueryInterface
             (
                 IID_IPortClsPower,
@@ -2935,15 +2548,15 @@ Routine Description:
 Arguments:
 
     WorkItem    - WDF work-item object.
-
+    
 --*/
 {
     PAGED_CODE();
     DPF_ENTER(("[EvtBthHfpScoBypassInterfaceWorkItem]"));
 
     CAdapterCommon        * This;
-
-    if (WorkItem == NULL)
+    
+    if (WorkItem == NULL) 
     {
         return;
     }
@@ -2955,7 +2568,7 @@ Arguments:
     {
         PLIST_ENTRY         le          = NULL;
         BthHfpWorkTask    * task        = NULL;
-
+        
         //
         // Retrieve a taask.
         //
@@ -2967,7 +2580,7 @@ Arguments:
             InitializeListHead(le);
         }
         ExReleaseFastMutex(&This->m_BthHfpFastMutex);
-
+        
         if (task == NULL)
         {
             break;
@@ -2975,7 +2588,7 @@ Arguments:
 
         ASSERT(task->Device != NULL);
         _Analysis_assume_(task->Device != NULL);
-
+        
         //
         // Process the task.
         //
@@ -3003,7 +2616,7 @@ Arguments:
         //
         // Free the task.
         //
-        ExFreeToNPagedLookasideList(&This->m_BhtHfpWorkTaskPool, task);
+        ExFreeToNPagedLookasideList(&This->m_BthHfpWorkTaskPool, task);
     }
 }
 
@@ -3023,7 +2636,7 @@ Routine Description:
 Arguments:
 
   SymbolicLinkName - interface's symbolic link.
-
+  
 Return Value:
 
   BthHfpDevice pointer or NULL.
@@ -3032,17 +2645,17 @@ Return Value:
 {
     PAGED_CODE();
     DPF_ENTER(("[CAdapterCommon::BthHfpDeviceFind]"));
-
+    
     PLIST_ENTRY     le          = NULL;
     BthHfpDevice  * bthDevice   = NULL;
 
     ExAcquireFastMutex(&m_BthHfpFastMutex);
-
+    
     for (le = m_BthHfpDevices.Flink; le != &m_BthHfpDevices; le = le->Flink)
     {
         BthHfpDevice  *     tmpBthDevice    = BthHfpDevice::GetBthHfpDevice(le);
         ASSERT(tmpBthDevice != NULL);
-
+        
         PUNICODE_STRING     unicodeStr      = tmpBthDevice->GetSymbolicLinkName();
         ASSERT(unicodeStr != NULL);
 
@@ -3055,7 +2668,7 @@ Return Value:
             break;
         }
     }
-
+    
     ExReleaseFastMutex(&m_BthHfpFastMutex);
 
     return bthDevice;
@@ -3077,7 +2690,7 @@ Routine Description:
 Arguments:
 
   SymbolicLinkName - new interface's symbolic link.
-
+  
 Return Value:
 
   NT status code.
@@ -3090,7 +2703,7 @@ Return Value:
     NTSTATUS            ntStatus        = STATUS_SUCCESS;
     BthHfpDevice      * bthDevice       = NULL;
     BthHfpWorkTask    * bthWorkTask     = NULL;
-
+    
     DPF(D_VERBOSE, ("BthHfpScoInterfaceArrival: SymbolicLinkName %wZ", SymbolicLinkName));
 
     //
@@ -3106,7 +2719,7 @@ Return Value:
         ntStatus = STATUS_SUCCESS;
         goto Done;
     }
-
+    
     //
     // Alloc a new structure for this Bluetooth hands-free device.
     //
@@ -3117,9 +2730,9 @@ Return Value:
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
         goto Done;
     }
-
+    
     DPF(D_VERBOSE, ("BthHfpScoInterfaceArrival: created BthHfpDevice 0x%p ", bthDevice));
-
+    
     //
     // Basic initialization of the Bluetooth Hands-Free Profile interface.
     // The audio miniport creation is done later by the BthHfpDevice.Start()
@@ -3132,14 +2745,14 @@ Return Value:
     //
     // Get and init a work task.
     //
-    bthWorkTask = (BthHfpWorkTask*)ExAllocateFromNPagedLookasideList(&m_BhtHfpWorkTaskPool);
+    bthWorkTask = (BthHfpWorkTask*)ExAllocateFromNPagedLookasideList(&m_BthHfpWorkTaskPool);
     if (NULL == bthWorkTask)
     {
         DPF(D_ERROR, ("BthHfpScoInterfaceArrival: unable to allocate BthHfpWorkTask, out of memory"));
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
         goto Done;
     }
-
+    
     // bthWorkTask->L.Size is set to sizeof(BthHfpWorkTask) in the Look Aside List configuration
 #pragma warning(suppress: 6386)
     RtlZeroMemory(bthWorkTask, sizeof(*bthWorkTask));
@@ -3147,9 +2760,9 @@ Return Value:
     InitializeListHead(&bthWorkTask->ListEntry);
     // Note that bthDevice has one reference at this point.
     bthWorkTask->Device = bthDevice;
-
+    
     ExAcquireFastMutex(&m_BthHfpFastMutex);
-
+    
     //
     // Insert this new Bluetooth HFP device in our list.
     //
@@ -3165,22 +2778,22 @@ Return Value:
     // Schedule a work-item if not already running.
     //
     WdfWorkItemEnqueue(m_BthHfpWorkItem);
-
+    
     ExReleaseFastMutex(&m_BthHfpFastMutex);
 
 Done:
     if (!NT_SUCCESS(ntStatus))
     {
-        // Release the last ref, this will delete the BthHfpDevice
+        // Release the last ref, this will delete the BthHfpDevice 
         SAFE_RELEASE(bthDevice);
 
         if (bthWorkTask != NULL)
         {
-            ExFreeToNPagedLookasideList(&m_BhtHfpWorkTaskPool, bthWorkTask);
+            ExFreeToNPagedLookasideList(&m_BthHfpWorkTaskPool, bthWorkTask);
             bthWorkTask = NULL;
         }
     }
-
+    
     return ntStatus;
 }
 
@@ -3200,7 +2813,7 @@ Routine Description:
 Arguments:
 
   SymbolicLinkName - interface's symbolic link to remove.
-
+  
 Return Value:
 
   NT status code.
@@ -3213,7 +2826,7 @@ Return Value:
     NTSTATUS            ntStatus        = STATUS_SUCCESS;
     BthHfpDevice      * bthDevice       = NULL;
     BthHfpWorkTask    * bthWorkTask     = NULL;
-
+    
     DPF(D_VERBOSE, ("BthHfpScoInterfaceRemoval: SymbolicLinkName %wZ", SymbolicLinkName));
 
     //
@@ -3227,18 +2840,18 @@ Return Value:
         ntStatus = STATUS_SUCCESS;
         goto Done;
     }
-
+    
     //
     // Init a work task.
     //
-    bthWorkTask = (BthHfpWorkTask*)ExAllocateFromNPagedLookasideList(&m_BhtHfpWorkTaskPool);
+    bthWorkTask = (BthHfpWorkTask*)ExAllocateFromNPagedLookasideList(&m_BthHfpWorkTaskPool);
     if (NULL == bthWorkTask)
     {
         DPF(D_ERROR, ("BthHfpScoInterfaceRemoval: unable to allocate BthHfpWorkTask, out of memory"));
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
         goto Done;
     }
-
+    
     // bthWorkTask->L.Size is set to sizeof(BthHfpWorkTask) in the Look Aside List configuration
 #pragma warning(suppress: 6386)
     RtlZeroMemory(bthWorkTask, sizeof(*bthWorkTask));
@@ -3248,7 +2861,7 @@ Return Value:
     bthWorkTask->Device = bthDevice;
 
     ExAcquireFastMutex(&m_BthHfpFastMutex);
-
+    
     //
     // Remove this Bluetooth device from our list and release the associated reference.
     //
@@ -3265,7 +2878,7 @@ Return Value:
     // Schedule a work-item if not already running.
     //
     WdfWorkItemEnqueue(m_BthHfpWorkItem);
-
+    
     ExReleaseFastMutex(&m_BthHfpFastMutex);
 
     //
@@ -3280,7 +2893,7 @@ Done:
         // Release the ref we got in find.
         SAFE_RELEASE(bthDevice);
     }
-
+    
     return ntStatus;
 }
 
@@ -3298,9 +2911,9 @@ Routine Description:
     This callback is invoked when a new HFP SCO Bypass interface is added or removed.
 
 Arguments:
-    NotificationPointer - Interface change notification
+    NotificationPointer - Interface change notification 
     Context - CAdapterCommon ptr.
-
+    
 Return Value:
 
     NT status code.
@@ -3309,32 +2922,32 @@ Return Value:
 {
     PAGED_CODE();
     DPF_ENTER(("[EvtBthHfpScoBypassInterfaceChange]"));
-
+    
     NTSTATUS                              ntStatus      = STATUS_SUCCESS;
     CAdapterCommon                      * This          = NULL;
     PDEVICE_INTERFACE_CHANGE_NOTIFICATION Notification  = (PDEVICE_INTERFACE_CHANGE_NOTIFICATION) NotificationPointer;
-
+    
     //
     // Make sure this is the interface class we extect. Any other class guid
     // is an error, but let it go since it is not fatal to the machine.
     //
-    if (!IsEqualGUID(Notification->InterfaceClassGuid, GUID_DEVINTERFACE_BLUETOOTH_HFP_SCO_HCIBYPASS))
+    if (!IsEqualGUID(Notification->InterfaceClassGuid, GUID_DEVINTERFACE_BLUETOOTH_HFP_SCO_HCIBYPASS)) 
     {
         DPF(D_VERBOSE, ("EvtBthHfpScoBypassInterfaceChange: bad interface ClassGuid"));
         ASSERTMSG("EvtBthHfpScoBypassInterfaceChange: bad interface ClassGuid ", FALSE);
-
+        
         goto Done;
     }
 
     This = (CAdapterCommon *)Context;
     ASSERT(This != NULL);
     _Analysis_assume_(This != NULL);
-
+    
     //
-    // Take action based on the event. Any other event type is an error,
+    // Take action based on the event. Any other event type is an error, 
     // but let it go since it is not fatal to the machine.
     //
-    if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_ARRIVAL))
+    if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_ARRIVAL)) 
     {
         ntStatus = This->BthHfpScoInterfaceArrival(Notification->SymbolicLinkName);
     }
@@ -3342,13 +2955,13 @@ Return Value:
     {
         ntStatus = This->BthHfpScoInterfaceRemoval(Notification->SymbolicLinkName);
     }
-    else
+    else 
     {
         DPF(D_VERBOSE, ("EvtBthHfpScoBypassInterfaceChange: bad "
             "GUID_DEVINTERFACE_BLUETOOTH_HFP_SCO_HCIBYPASS event"));
         ASSERTMSG("EvtBthHfpScoBypassInterfaceChange: bad "
             "GUID_DEVINTERFACE_BLUETOOTH_HFP_SCO_HCIBYPASS event ", FALSE);
-
+        
         goto Done;
     }
 
@@ -3379,7 +2992,7 @@ Return Value:
     WDF_WORKITEM_CONFIG     wiConfig;
     WDF_OBJECT_ATTRIBUTES   attributes;
     BthHfpWorkItemContext * wiContext;
-
+    
     //
     // Init spin-lock, linked lists, work-item, event, etc.
     // Init all members to default values. This basic init should not fail.
@@ -3389,14 +3002,14 @@ Return Value:
     ExInitializeFastMutex(&m_BthHfpFastMutex);
     InitializeListHead(&m_BthHfpWorkTasks);
     InitializeListHead(&m_BthHfpDevices);
-    m_BhtHfpWorkTaskPoolElementSize = sizeof(BthHfpWorkTask);
-    ExInitializeNPagedLookasideList(&m_BhtHfpWorkTaskPool,
+    m_BthHfpWorkTaskPoolElementSize = sizeof(BthHfpWorkTask);
+    ExInitializeNPagedLookasideList(&m_BthHfpWorkTaskPool,
                                     NULL,
                                     NULL,
                                     POOL_NX_ALLOCATION,
-                                    m_BhtHfpWorkTaskPoolElementSize,
+                                    m_BthHfpWorkTaskPoolElementSize,
                                     MINADAPTER_POOLTAG,
-                                    0);
+                                    0); 
     //
     // Enable Bluetooth HFP SCO-Bypass Cleanup.
     // Do any allocation/initialization that can fail after this point.
@@ -3421,7 +3034,7 @@ Return Value:
 
     wiContext = GetBthHfpWorkItemContext(m_BthHfpWorkItem);
     wiContext->Adapter = this; // weak ref.
-
+ 
     //
     // Register for bluetooth heandsfree profile interface changes.
     //
@@ -3470,7 +3083,7 @@ Routine Description:
     {
         return;
     }
-
+    
     //
     // Unregister for bluetooth heandsfree profile interface changes.
     //
@@ -3489,20 +3102,20 @@ Routine Description:
         WdfObjectDelete(m_BthHfpWorkItem);
         m_BthHfpWorkItem = NULL;
     }
-
+    
     ASSERT(IsListEmpty(&m_BthHfpWorkTasks));
-
+    
     //
-    // Stop and delete all BthHfpDevices. We are the only thread accessing this list,
+    // Stop and delete all BthHfpDevices. We are the only thread accessing this list, 
     // so there is no need to acquire the mutex.
     //
     while (!IsListEmpty(&m_BthHfpDevices))
     {
         BthHfpDevice  * bthDevice   = NULL;
         PLIST_ENTRY     le          = NULL;
-
+        
         le = RemoveHeadList(&m_BthHfpDevices);
-
+        
         bthDevice = BthHfpDevice::GetBthHfpDevice(le);
         InitializeListHead(le);
 
@@ -3512,40 +3125,24 @@ Routine Description:
         // This should be the last reference.
         bthDevice->Release();
     }
-
+    
     ASSERT(IsListEmpty(&m_BthHfpDevices));
-
+    
     //
     // General cleanup.
     //
-    ExDeleteNPagedLookasideList(&m_BhtHfpWorkTaskPool);
+    ExDeleteNPagedLookasideList(&m_BthHfpWorkTaskPool);
 }
 #endif  // SYSVAD_BTH_BYPASS
 
-#ifdef SYSVAD_BTH_BYPASS
-//
-// BthHfpDevice implementation.
-//
-
-//=============================================================================
 #pragma code_seg("PAGE")
-STDMETHODIMP
-BthHfpDevice::NonDelegatingQueryInterface
-(
-    _In_ REFIID                 Interface,
-    _COM_Outptr_ PVOID *        Object
-)
+NTSTATUS
+CopyRegistryValues(HANDLE _hSourceKey, HANDLE _hDestinationKey)
 /*++
 
 Routine Description:
 
-  QueryInterface routine for BthHfpDevice
-
-Arguments:
-
-  Interface -
-
-  Object -
+  This method copies the registry values in _hSourceKey to _hDestinationKey.
 
 Return Value:
 
@@ -3553,2992 +3150,309 @@ Return Value:
 
 --*/
 {
+    NTSTATUS                    ntStatus = STATUS_SUCCESS;
+    PKEY_VALUE_FULL_INFORMATION kvFullInfo = NULL;
+    ULONG                       ulFullInfoLength = 0;
+    ULONG                       ulFullInfoResultLength = 0;
+    PWSTR                       pwstrKeyValueName = NULL;
+    UNICODE_STRING              strKeyValueName;
     PAGED_CODE();
+    // Allocate the KEY_VALUE_FULL_INFORMATION structure
+    ulFullInfoLength = sizeof(KEY_VALUE_FULL_INFORMATION) + MAX_DEVICE_REG_KEY_LENGTH;
+    kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulFullInfoLength, MINADAPTER_POOLTAG);
+    IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, Exit);
 
-    ASSERT(Object);
-
-    if (IsEqualGUIDAligned(Interface, IID_IUnknown))
+    // Iterate over each value and copy it to the destination
+    for (UINT i = 0; NT_SUCCESS(ntStatus); i++)
     {
-        *Object = PVOID(PUNKNOWN(PBTHHFPDEVICECOMMON(this)));
-    }
-    else if (IsEqualGUIDAligned(Interface, IID_IBthHfpDeviceCommon))
-    {
-        *Object = PVOID(PBTHHFPDEVICECOMMON(this));
-    }
-    else
-    {
-        *Object = NULL;
-    }
+        // Enumerate the next value
+        ntStatus = ZwEnumerateValueKey(_hSourceKey, i, KeyValueFullInformation, kvFullInfo, ulFullInfoLength, &ulFullInfoResultLength);
 
-    if (*Object)
-    {
-        PUNKNOWN(*Object)->AddRef();
-        return STATUS_SUCCESS;
-    }
+        // Jump out of this loop if there are no more values
+        IF_TRUE_ACTION_JUMP(ntStatus == STATUS_NO_MORE_ENTRIES, ntStatus = STATUS_SUCCESS, Exit);
 
-    return STATUS_INVALID_PARAMETER;
-} // NonDelegatingQueryInterface
-
-//=============================================================================
-// Dummy stubs to override the default WDF behavior of closing the target
-// on query remove. This driver closes and deletes the supporting objects
-// when the target removes the BTH HFP SCO Bypass interface.
-//
-
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::EvtBthHfpTargetQueryRemove
-(
-    _In_    WDFIOTARGET     IoTarget
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpTargetQueryRemove]"));
-
-    UNREFERENCED_PARAMETER(IoTarget);
-    return STATUS_SUCCESS;
-}
-
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::EvtBthHfpTargetRemoveCanceled
-(
-    _In_    WDFIOTARGET     IoTarget
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpTargetRemoveCanceled]"));
-
-    UNREFERENCED_PARAMETER(IoTarget);
-}
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::EvtBthHfpTargetRemoveComplete
-(
-    _In_    WDFIOTARGET     IoTarget
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpTargetRemoveComplete]"));
-
-    UNREFERENCED_PARAMETER(IoTarget);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::Init
-(
-    _In_ CAdapterCommon     * Adapter,
-    _In_ PUNICODE_STRING      SymbolicLinkName
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::Init]"));
-
-    NTSTATUS                                ntStatus        = STATUS_SUCCESS;
-    BthHfpDeviceNotificationWorkItemContext *wiCtx          = NULL;
-    BthHfpDeviceNotificationReqContext      *reqCtx         = NULL;
-    WDF_OBJECT_ATTRIBUTES                   attributes;
-    WDF_IO_TARGET_OPEN_PARAMS               openParams;
-    WDF_WORKITEM_CONFIG                     wiConfig;
-
-    AddRef(); // first ref.
-
-    //
-    // Basic init of all the class' members.
-    //
-    m_State                 = eBthHfpStateInitializing;
-    m_Adapter               = Adapter;
-
-    // Static config.
-    m_WdfIoTarget           = NULL;
-    m_SpeakerMiniports      = NULL;
-    m_MicMiniports          = NULL;
-    m_UnknownSpeakerTopology = NULL;
-    m_UnknownSpeakerWave    = NULL;
-    m_UnknownMicTopology    = NULL;
-    m_UnknownMicWave        = NULL;
-    m_Descriptor            = NULL;
-    m_VolumePropValues      = NULL;
-
-    // Notification updates.
-    m_SpeakerVolumeLevel    = 0;
-    m_MicVolumeLevel        = 0;
-    m_ConnectionStatusLong  = FALSE;
-    m_StreamStatusLong      = STATUS_INVALID_DEVICE_STATE; // Sco stream is not open.
-    m_NRECDisableStatusLong = FALSE;
-
-    m_StreamReq             = NULL;
-    m_SpeakerVolumeReq      = NULL;
-    m_MicVolumeReq          = NULL;
-    m_ConnectionReq         = NULL;
-    m_NRECDisableStatusReq  = NULL;
-
-    m_WorkItem              = NULL;
-    m_ReqCollection         = NULL;
-
-    m_nStreams              = 0;
-
-    KeInitializeEvent(&m_StreamStatusEvent, NotificationEvent, TRUE);
-
-    InitializeListHead(&m_ListEntry);
-    KeInitializeSpinLock(&m_Lock);
-
-    RtlZeroMemory(&m_SymbolicLinkName, sizeof(m_SymbolicLinkName));
-
-    RtlZeroMemory(&m_SpeakerVolumeCallback, sizeof(m_SpeakerVolumeCallback));
-    RtlZeroMemory(&m_SpeakerConnectionStatusCallback, sizeof(m_SpeakerConnectionStatusCallback));
-    RtlZeroMemory(&m_MicVolumeCallback, sizeof(m_MicVolumeCallback));
-    RtlZeroMemory(&m_MicConnectionStatusCallback, sizeof(m_MicConnectionStatusCallback));
-
-    //
-    // Allocate a notification WDF work-item.
-    //
-    WDF_WORKITEM_CONFIG_INIT(&wiConfig, EvtBthHfpDeviceNotificationStatusWorkItem);
-    wiConfig.AutomaticSerialization = FALSE;
-
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationWorkItemContext);
-    attributes.ParentObject = Adapter->GetWdfDevice();
-    ntStatus = WdfWorkItemCreate( &wiConfig,
-                                  &attributes,
-                                  &m_WorkItem);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfWorkItemCreate failed: 0x%x", ntStatus)),
-        Done);
-
-    wiCtx = GetBthHfpDeviceNotificationWorkItemContext(m_WorkItem);
-    wiCtx->BthHfpDevice = this; // weak ref.
-
-    //
-    // Allocate a collection to hold notification requests for the notification work-item.
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfCollectionCreate(
-        &attributes,
-        &m_ReqCollection);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfCollectionCreate failed: 0x%x", ntStatus)),
-        Done);
-
-    //
-    // Open the target interface.
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfIoTargetCreate(m_Adapter->GetWdfDevice(),
-                                 &attributes,
-                                 &m_WdfIoTarget);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfIoTargetCreate failed: 0x%x", ntStatus)),
-        Done);
-
-    WDF_IO_TARGET_OPEN_PARAMS_INIT_OPEN_BY_NAME(
-        &openParams,
-        SymbolicLinkName,
-        STANDARD_RIGHTS_ALL);
-
-    openParams.EvtIoTargetQueryRemove = EvtBthHfpTargetQueryRemove;
-    openParams.EvtIoTargetRemoveCanceled = EvtBthHfpTargetRemoveCanceled;
-    openParams.EvtIoTargetRemoveComplete = EvtBthHfpTargetRemoveComplete;
-
-    ntStatus = WdfIoTargetOpen(m_WdfIoTarget, &openParams);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfIoTargetOpen(%wZ) failed: 0x%x", SymbolicLinkName, ntStatus)),
-        Done);
-
-    //
-    // Make a copy of the symbolic link name.
-    //
-    m_SymbolicLinkName.MaximumLength = SymbolicLinkName->MaximumLength;
-    m_SymbolicLinkName.Length = SymbolicLinkName->Length;
-    m_SymbolicLinkName.Buffer = (PWSTR) ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                              SymbolicLinkName->MaximumLength,
-                                                              MINADAPTER_POOLTAG);
-    if (m_SymbolicLinkName.Buffer == NULL)
-    {
-        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-    }
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: ExAllocatePoolWithTag failed, out of memory")),
-        Done);
-
-    RtlCopyUnicodeString(&m_SymbolicLinkName, SymbolicLinkName);
-
-    //
-    // Allocate the WDF requests for status notifications.
-    //
-
-    //
-    // IOCTL_BTHHFP_DEVICE_GET_NRECDISABLE_STATUS_UPDATE
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationReqContext);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &m_NRECDisableStatusReq);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfRequestCreate(Nrec-disable status) failed, 0x%x", ntStatus)),
-        Done);
-
-    // Init context.
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_NRECDisableStatusReq);
-    reqCtx->BthHfpDevice = this; // weak ref.
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.bImmediate),
-        &reqCtx->MemIn);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.BoolStatus),
-        &reqCtx->MemOut);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationReqContext);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &m_SpeakerVolumeReq);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfRequestCreate(Speaker-Volume) failed, 0x%x", ntStatus)),
-        Done);
-
-    // Init context.
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_SpeakerVolumeReq);
-    reqCtx->BthHfpDevice = this; // weak ref.
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.bImmediate),
-        &reqCtx->MemIn);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.Volume),
-        &reqCtx->MemOut);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationReqContext);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &m_MicVolumeReq);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfRequestCreate(Mic-Volume) failed, 0x%x", ntStatus)),
-        Done);
-
-    // Init context.
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_MicVolumeReq);
-    reqCtx->BthHfpDevice = this; // weak ref.
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.bImmediate),
-        &reqCtx->MemIn);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.Volume),
-        &reqCtx->MemOut);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationReqContext);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &m_ConnectionReq);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfRequestCreate(Connection-Status) failed, 0x%x", ntStatus)),
-        Done);
-
-    // Init context.
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_ConnectionReq);
-    reqCtx->BthHfpDevice = this; // weak ref.
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.bImmediate),
-        &reqCtx->MemIn);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.BoolStatus),
-        &reqCtx->MemOut);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // IOCTL_BTHHFP_STREAM_GET_STATUS_UPDATE
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, BthHfpDeviceNotificationReqContext);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &m_StreamReq);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfRequestCreate(Stream-Status) failed, 0x%x", ntStatus)),
-        Done);
-
-    // Init context.
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_StreamReq);
-    reqCtx->BthHfpDevice = this; // weak ref.
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.bImmediate),
-        &reqCtx->MemIn);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = WdfMemoryCreatePreallocated(
-        WDF_NO_OBJECT_ATTRIBUTES,
-        &reqCtx->Buffer,
-        sizeof(reqCtx->Buffer.NtStatus),
-        &reqCtx->MemOut);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Init: WdfMemoryCreatePreallocated failed, 0x%x", ntStatus)),
-        Done);
-
-   //
-   // This remote device is now in running state. No need to use interlock operations
-   // b/c at this time this is the only thread accessing this info.
-   //
-   m_State = eBthHfpStateRunning;
-
-   //
-   // Init successful.
-   //
-   ntStatus = STATUS_SUCCESS;
-
-Done:
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-BthHfpDevice::~BthHfpDevice
-(
-    void
-)
-/*++
-
-Routine Description:
-
-  Destructor for BthHfpDevice.
-
-Arguments:
-
-Return Value:
-
-  void
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::~BthHfpDevice]"));
-
-    ASSERT(m_State != eBthHfpStateRunning);
-    ASSERT(IsListEmpty(&m_ListEntry));
-
-    //
-    // Release ref to remote stack.
-    //
-    if (m_WdfIoTarget != NULL)
-    {
-        WdfObjectDelete(m_WdfIoTarget);
-        m_WdfIoTarget = NULL;
-    }
-
-    //
-    // Free symbolic links.
-    //
-    if (m_SymbolicLinkName.Buffer != NULL)
-    {
-        ExFreePoolWithTag(m_SymbolicLinkName.Buffer, MINADAPTER_POOLTAG);
-        RtlZeroMemory(&m_SymbolicLinkName, sizeof(m_SymbolicLinkName));
-    }
-
-    DeleteCustomEndpointMinipair(m_SpeakerMiniports);
-    m_SpeakerMiniports = NULL;
-
-    DeleteCustomEndpointMinipair(m_MicMiniports);
-    m_MicMiniports = NULL;
-
-    if (m_Descriptor != NULL)
-    {
-        ExFreePoolWithTag(m_Descriptor, MINADAPTER_POOLTAG);
-        m_Descriptor = NULL;
-    }
-
-    if (m_VolumePropValues != NULL)
-    {
-        ExFreePoolWithTag(m_VolumePropValues, MINADAPTER_POOLTAG);
-        m_VolumePropValues = NULL;
-    }
-
-    //
-    // Free Irps.
-    //
-    if (m_SpeakerVolumeReq != NULL)
-    {
-        BthHfpDeviceNotificationReqContext * ctx;
-
-        // Delete the associated memory objects.
-        ctx = GetBthHfpDeviceNotificationReqContext(m_SpeakerVolumeReq);
-        if (ctx->MemIn != NULL)
+        // Handle incorrect buffer size
+        if (ntStatus == STATUS_BUFFER_TOO_SMALL || ntStatus == STATUS_BUFFER_OVERFLOW)
         {
-            WdfObjectDelete(ctx->MemIn);
-            ctx->MemIn = NULL;
-        }
+            // Free and re-allocate the KEY_VALUE_FULL_INFORMATION structure with the correct size
+            ExFreePoolWithTag(kvFullInfo, MINADAPTER_POOLTAG);
 
-        if (ctx->MemOut != NULL)
-        {
-            WdfObjectDelete(ctx->MemOut);
-            ctx->MemOut = NULL;
-        }
+            ulFullInfoLength = ulFullInfoResultLength;
 
-        // Delete the request.
-        WdfObjectDelete(m_SpeakerVolumeReq);
-        m_SpeakerVolumeReq = NULL;
-    }
+            kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulFullInfoLength, MINADAPTER_POOLTAG);
+            IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
-    if (m_MicVolumeReq != NULL)
-    {
-        BthHfpDeviceNotificationReqContext * ctx;
+            // Try to enumerate the current value again
+            ntStatus = ZwEnumerateValueKey(_hSourceKey, i, KeyValueFullInformation, kvFullInfo, ulFullInfoLength, &ulFullInfoResultLength);
 
-        // Delete the associated memory objects.
-        ctx = GetBthHfpDeviceNotificationReqContext(m_MicVolumeReq);
-        if (ctx->MemIn != NULL)
-        {
-            WdfObjectDelete(ctx->MemIn);
-            ctx->MemIn = NULL;
-        }
-
-        if (ctx->MemOut != NULL)
-        {
-            WdfObjectDelete(ctx->MemOut);
-            ctx->MemOut = NULL;
-        }
-
-        // Delete the request.
-        WdfObjectDelete(m_MicVolumeReq);
-        m_MicVolumeReq = NULL;
-    }
-
-    if (m_ConnectionReq != NULL)
-    {
-        BthHfpDeviceNotificationReqContext * ctx;
-
-        // Delete the associated memory objects.
-        ctx = GetBthHfpDeviceNotificationReqContext(m_ConnectionReq);
-        if (ctx->MemIn != NULL)
-        {
-            WdfObjectDelete(ctx->MemIn);
-            ctx->MemIn = NULL;
-        }
-
-        if (ctx->MemOut != NULL)
-        {
-            WdfObjectDelete(ctx->MemOut);
-            ctx->MemOut = NULL;
-        }
-
-        // Delete the request.
-        WdfObjectDelete(m_ConnectionReq);
-        m_ConnectionReq = NULL;
-    }
-
-    if (m_StreamReq != NULL)
-    {
-        BthHfpDeviceNotificationReqContext * ctx;
-
-        // Delete the associated memory objects.
-        ctx = GetBthHfpDeviceNotificationReqContext(m_StreamReq);
-        if (ctx->MemIn != NULL)
-        {
-            WdfObjectDelete(ctx->MemIn);
-            ctx->MemIn = NULL;
-        }
-
-        if (ctx->MemOut != NULL)
-        {
-            WdfObjectDelete(ctx->MemOut);
-            ctx->MemOut = NULL;
-        }
-
-        // Delete the request.
-        WdfObjectDelete(m_StreamReq);
-        m_StreamReq = NULL;
-    }
-
-    //
-    // Notification work-item.
-    //
-    if (m_WorkItem != NULL)
-    {
-        WdfObjectDelete(m_WorkItem);
-        m_WorkItem = NULL;
-    }
-
-    //
-    // Notification req. collection.
-    //
-    if (m_ReqCollection != NULL)
-    {
-        WdfObjectDelete(m_ReqCollection);
-        m_ReqCollection = NULL;
-    }
-
-    ASSERT(m_UnknownSpeakerTopology == NULL);
-    SAFE_RELEASE(m_UnknownSpeakerTopology);
-
-    ASSERT(m_UnknownSpeakerWave == NULL);
-    SAFE_RELEASE(m_UnknownSpeakerWave);
-
-    ASSERT(m_UnknownMicTopology == NULL);
-    SAFE_RELEASE(m_UnknownMicTopology);
-
-    ASSERT(m_UnknownMicWave == NULL);
-    SAFE_RELEASE(m_UnknownMicWave);
-
-    ASSERT(m_nStreams == 0);
-
-    ASSERT(m_SpeakerVolumeCallback.Handler == NULL);
-    ASSERT(m_SpeakerConnectionStatusCallback.Handler == NULL);
-    ASSERT(m_MicVolumeCallback.Handler == NULL);
-    ASSERT(m_MicConnectionStatusCallback.Handler == NULL);
-} // ~CAdapterCommon
-
-//
-// IBthHfpDeviceCommon implementation.
-//
-
-//=============================================================================
-#pragma code_seg("PAGE")
-BOOL
-BthHfpDevice::IsVolumeSupported()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::IsVolumeSupported]"));
-
-    return m_Descriptor->SupportsVolume;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-PKSPROPERTY_VALUES
-BthHfpDevice::GetVolumeSettings
-(
-    _Out_ PULONG    Size
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetVolumeSettings]"));
-
-    ASSERT(Size != NULL);
-
-    *Size = m_Descriptor->VolumePropertyValuesSize;
-
-    return m_VolumePropValues;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-LONG
-BthHfpDevice::GetSpeakerVolume()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetSpeakerVolume]"));
-
-    return InterlockedCompareExchange(&m_SpeakerVolumeLevel, 0, 0);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetSpeakerVolume
-(
-    _In_ ULONG      Volume
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetSpeakerVolume]"));
-
-    return SetBthHfpSpeakerVolume(Volume);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-LONG
-BthHfpDevice::GetMicVolume()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetMicVolume]"));
-
-    return InterlockedCompareExchange(&m_MicVolumeLevel, 0, 0);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetMicVolume
-(
-    _In_ ULONG      Volume
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetMicVolume]"));
-
-    return SetBthHfpMicVolume(Volume);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-BOOL
-BthHfpDevice::GetConnectionStatus()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetConnectionStatus]"));
-
-    return (BOOL)InterlockedCompareExchange(&m_ConnectionStatusLong, 0, 0);
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpCodecId(_Out_ UCHAR * CodecId)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpCodecId]"));
-
-    ASSERT(CodecId != NULL);
-
-#if !defined(NTDDI_WIN10_RS3)
-    typedef enum _HFP_BYPASS_CODEC_ID_VERSION {
-        REQ_HFP_BYPASS_CODEC_ID_V1 = 1,
-    } HFP_BYPASS_CODEC_ID_VERSION, *PHFP_BYPASS_CODEC_ID_VERSION;
-
-    typedef struct _HFP_BYPASS_CODEC_ID_V1 {
-        UCHAR CodecId;
-    } HFP_BYPASS_CODEC_ID_V1, *PHFP_BYPASS_CODEC_ID_V1;
-#endif
-
-    NTSTATUS ntStatus = STATUS_SUCCESS;
-
-    union {
-        HFP_BYPASS_CODEC_ID_V1 CodecIdV1;
-        HFP_BYPASS_CODEC_ID_VERSION Version;
-    } value;
-
-    *CodecId = 0;
-
-    value.Version = REQ_HFP_BYPASS_CODEC_ID_V1;
-
-    //
-    // Get the Bth HFP SCO Codec ID.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_DEVICE_GET_CODEC_ID,
-        sizeof(value.Version),
-        sizeof(value.CodecIdV1),
-        &value);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpCodecId: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_GET_CODEC_ID) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *CodecId = value.CodecIdV1.CodecId;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::Connect()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::Connect]"));
-
-    return SetBthHfpConnect();
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::Disconnect()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::Disconnect]"));
-
-    return SetBthHfpDisconnect();
-}
-
-//=============================================================================
-#pragma code_seg()
-BOOL
-BthHfpDevice::GetStreamStatus()
-{
-    DPF_ENTER(("[BthHfpDevice::GetStreamStatus]"));
-
-    NTSTATUS ntStatus;
-
-    ntStatus = (NTSTATUS)InterlockedCompareExchange(&m_StreamStatusLong, 0, 0);
-
-    return NT_SUCCESS(ntStatus) ? TRUE : FALSE;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::StreamOpen()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::StreamOpen]"));
-
-    NTSTATUS    ntStatus    = STATUS_SUCCESS;
-    LONG        nStreams    = 0;
-
-    ASSERT(m_nStreams >= 0);
-
-    nStreams = InterlockedIncrement(&m_nStreams);
-    if (nStreams == 1)
-    {
-        BOOLEAN  streamOpen = FALSE;
-
-        ntStatus = SetBthHfpStreamOpen();
-        if (NT_SUCCESS(ntStatus))
-        {
-            streamOpen = TRUE;
-            m_StreamStatus = STATUS_SUCCESS;
-            ntStatus = EnableBthHfpStreamStatusNotification();
-        }
-
-        //
-        // Cleanup if any error.
-        //
-        if (!NT_SUCCESS(ntStatus))
-        {
-            nStreams = InterlockedDecrement(&m_nStreams);
-            ASSERT(nStreams == 0);
-            UNREFERENCED_VAR(nStreams);
-
-            if (streamOpen)
-            {
-                SetBthHfpStreamClose();
-            }
-
-            m_StreamStatus = STATUS_INVALID_DEVICE_STATE;
-        }
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::StreamClose()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::StreamClose]"));
-
-    NTSTATUS    ntStatus    = STATUS_SUCCESS;
-    LONG        nStreams    = 0;
-
-    ASSERT(m_nStreams > 0);
-
-    nStreams = InterlockedDecrement(&m_nStreams);
-    if (nStreams == 0)
-    {
-        ntStatus = SetBthHfpStreamClose();
-
-        StopBthHfpStreamStatusNotification();
-
-        m_StreamStatus = STATUS_INVALID_DEVICE_STATE;
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-GUID
-BthHfpDevice::GetContainerId()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetContainerId]"));
-
-    return m_Descriptor->ContainerId;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::SetSpeakerVolumeHandler
-(
-    _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-    _In_opt_    PVOID                   EventHandlerContext
-)
-    {
-        PAGED_CODE();
-        DPF_ENTER(("[BthHfpDevice::SetSpeakerVolumeHandler]"));
-
-        ASSERT(EventHandler == NULL || m_SpeakerVolumeCallback.Handler == NULL);
-
-        m_SpeakerVolumeCallback.Handler = EventHandler; // weak ref.
-        m_SpeakerVolumeCallback.Context = EventHandlerContext;
-    }
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::SetSpeakerConnectionStatusHandler
-(
-    _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-    _In_opt_    PVOID                   EventHandlerContext
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetSpeakerConnectionStatusHandler]"));
-
-    ASSERT(EventHandler == NULL || m_SpeakerConnectionStatusCallback.Handler == NULL);
-
-    m_SpeakerConnectionStatusCallback.Handler = EventHandler; // weak ref.
-    m_SpeakerConnectionStatusCallback.Context = EventHandlerContext;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::SetMicVolumeHandler
-(
-    _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-    _In_opt_    PVOID                   EventHandlerContext
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetMicVolumeHandler]"));
-
-    ASSERT(EventHandler == NULL || m_MicVolumeCallback.Handler == NULL);
-
-    m_MicVolumeCallback.Handler = EventHandler; // weak ref.
-    m_MicVolumeCallback.Context = EventHandlerContext;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::SetMicConnectionStatusHandler
-(
-    _In_opt_    PFNEVENTNOTIFICATION    EventHandler,
-    _In_opt_    PVOID                   EventHandlerContext
-)
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetMicConnectionStatusHandler]"));
-
-    ASSERT(EventHandler == NULL || m_MicConnectionStatusCallback.Handler == NULL);
-
-    m_MicConnectionStatusCallback.Handler = EventHandler; // weak ref.
-    m_MicConnectionStatusCallback.Context = EventHandlerContext;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-BOOL
-BthHfpDevice::IsNRECSupported()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::IsNRECSupported]"));
-
-    return m_Descriptor->SupportsNREC;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-BOOL
-BthHfpDevice::GetNRECDisableStatus()
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetNRECDisableStatus]"));
-
-    // Return TRUE if HF wants to disable the NREC on the AG.
-    return (BOOL)InterlockedCompareExchange(&m_NRECDisableStatusLong, 0, 0);
-}
-
-//
-// Helper functions.
-//
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::SendIoCtrlAsynchronously
-(
-    _In_        WDFREQUEST      Request,
-    _In_        ULONG           IoControlCode,
-    _In_opt_    WDFMEMORY       MemIn,
-    _In_opt_    WDFMEMORY       MemOut,
-    _In_        PFN_WDF_REQUEST_COMPLETION_ROUTINE CompletionRoutine,
-    _In_        WDFCONTEXT      Context
-)
-/*++
-
-Routine Description:
-
-  This function aynchronously sends an I/O Ctrl request to the BTH HFP
-  SCO Bypass device.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::SendIoCtrlAsynchronously]"));
-
-    NTSTATUS    ntStatus    = STATUS_SUCCESS;
-    BOOLEAN     fSent       = FALSE;
-
-    //
-    // Format and send the request.
-    //
-    ntStatus = WdfIoTargetFormatRequestForIoctl(
-        m_WdfIoTarget,
-        Request,
-        IoControlCode,
-        MemIn,
-        NULL,
-        MemOut,
-        NULL);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SendIoCtrlAsynchronously: WdfIoTargetFormatRequestForIoctl(0x%x) failed, 0x%x", IoControlCode, ntStatus)),
-        Done);
-
-    WdfRequestSetCompletionRoutine(
-        Request,
-        CompletionRoutine,
-        Context);
-
-    fSent = WdfRequestSend(Request, m_WdfIoTarget, NULL);  // no options.
-    if (fSent == FALSE)
-    {
-        ntStatus = WdfRequestGetStatus(Request);
-        if (NT_SUCCESS(ntStatus))
-        {
-            ntStatus = STATUS_INVALID_DEVICE_STATE;
-        }
-
-        DPF(D_ERROR, ("SendIoCtrlAsynchronously: WdfRequestSend(0x%x) failed, 0x%x", IoControlCode, ntStatus));
-        goto Done;
-    }
-
-    //
-    // All Done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SendIoCtrlSynchronously
-(
-    _In_opt_    WDFREQUEST  Request,
-    _In_        ULONG       IoControlCode,
-    _In_        ULONG       InLength,
-    _In_        ULONG       OutLength,
-    _When_(InLength > 0 || OutLength > 0, _In_)
-    _When_(InLength == 0 && OutLength == 0, _In_opt_)
-                PVOID       Buffer
-)
-/*++
-
-Routine Description:
-
-  This function inits and synchronously sends an I/O Ctrl request to the BTH HFP
-  SCO Bypass device.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SendIoCtrlSynchronously]"));
-
-    NTSTATUS                    ntStatus    = STATUS_SUCCESS;
-    PWDF_MEMORY_DESCRIPTOR      memInPtr    = NULL;
-    PWDF_MEMORY_DESCRIPTOR      memOutPtr   = NULL;
-    WDF_MEMORY_DESCRIPTOR       memIn;
-    WDF_MEMORY_DESCRIPTOR       memOut;
-    WDF_REQUEST_SEND_OPTIONS    reqOpts;
-
-    //
-    // Format and send the request.
-    //
-    if (InLength)
-    {
-        WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&memIn,  Buffer, InLength);
-        memInPtr = &memIn;
-    }
-
-    if (OutLength)
-    {
-        WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&memOut, Buffer, OutLength);
-        memOutPtr = &memOut;
-    }
-
-    WDF_REQUEST_SEND_OPTIONS_INIT(
-        &reqOpts,
-        WDF_REQUEST_SEND_OPTION_TIMEOUT |
-         WDF_REQUEST_SEND_OPTION_SYNCHRONOUS);
-
-    reqOpts.Timeout = WDF_REL_TIMEOUT_IN_SEC(BTH_HFP_SYNC_REQ_TIMEOUT_IN_SEC);
-
-    ntStatus = WdfIoTargetSendIoctlSynchronously(
-        m_WdfIoTarget,
-        Request,
-        IoControlCode,
-        memInPtr,
-        memOutPtr,
-        &reqOpts,
-        NULL);      // bytes returned.
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_VERBOSE, ("SendIoCtrlSynchronously: WdfIoTargetSendIoctlSynchronously(0x%x) failed, 0x%x", IoControlCode, ntStatus)),
-        Done);
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-VOID
-BthHfpDevice::EvtBthHfpDeviceNotificationStatusWorkItem
-(
-    _In_    WDFWORKITEM WorkItem
-)
-/*++
-
-Routine Description:
-
-  The function processes status notification updates.
-
-Arguments:
-
-  WorkItem    - WDF work-item object.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpDeviceNotificationStatusWorkItem]"));
-
-    NTSTATUS            ntStatus = STATUS_SUCCESS;
-    BthHfpDevice      * This;
-    KIRQL               oldIrql;
-
-    if (WorkItem == NULL)
-    {
-        return;
-    }
-
-    This = GetBthHfpDeviceNotificationWorkItemContext(WorkItem)->BthHfpDevice;
-    ASSERT(This != NULL);
-
-    for (;;)
-    {
-        BOOL                                    resend  = TRUE;
-        WDFREQUEST                              req     = NULL;
-        BthHfpDeviceNotificationReqContext    * reqCtx;
-        WDF_REQUEST_COMPLETION_PARAMS           params;
-
-        //
-        // Retrieve a task.
-        //
-        KeAcquireSpinLock(&This->m_Lock, &oldIrql);
-        req = (WDFREQUEST) WdfCollectionGetFirstItem(This->m_ReqCollection);
-        if (req != NULL)
-        {
-            WdfCollectionRemove(This->m_ReqCollection, req);
-        }
-        KeReleaseSpinLock(&This->m_Lock, oldIrql);
-
-        if (req == NULL)
-        {
-            break;
-        }
-
-        //
-        // Get request parameters and context.
-        //
-        WDF_REQUEST_COMPLETION_PARAMS_INIT(&params);
-        WdfRequestGetCompletionParams(req, &params);
-
-        reqCtx = GetBthHfpDeviceNotificationReqContext(req);
-        ASSERT(reqCtx != NULL);
-
-        //
-        // Handle this notification.
-        //
-        if (NT_SUCCESS(params.IoStatus.Status))
-        {
-            switch(params.Parameters.Ioctl.IoControlCode)
-            {
-            case IOCTL_BTHHFP_DEVICE_GET_NRECDISABLE_STATUS_UPDATE:
-                {
-                    InterlockedExchange(&This->m_NRECDisableStatusLong, (LONG)reqCtx->Buffer.BoolStatus);
-                }
-                break;
-
-            case IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE:
-                {
-                    LONG oldVolume;
-
-                    oldVolume = InterlockedExchange(&This->m_SpeakerVolumeLevel, reqCtx->Buffer.Volume);
-                    if (reqCtx->Buffer.Volume != oldVolume)
-                    {
-                        // Notify audio miniport about this change.
-                        if (This->m_SpeakerVolumeCallback.Handler != NULL)
-                        {
-                            This->m_SpeakerVolumeCallback.Handler(
-                                This->m_SpeakerVolumeCallback.Context);
-                        }
-                    }
-                }
-                break;
-
-            case IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE:
-                {
-                    LONG oldVolume;
-
-                    oldVolume = InterlockedExchange(&This->m_MicVolumeLevel, reqCtx->Buffer.Volume);
-                    if (reqCtx->Buffer.Volume != oldVolume)
-                    {
-                        // Notify audio miniport about this change.
-                        if (This->m_MicVolumeCallback.Handler != NULL)
-                        {
-                            This->m_MicVolumeCallback.Handler(
-                                This->m_MicVolumeCallback.Context);
-                        }
-                    }
-                }
-                break;
-
-            case IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE:
-                {
-                    BOOL oldStatus;
-
-                    oldStatus = (BOOL)InterlockedExchange(&This->m_ConnectionStatusLong, (LONG)reqCtx->Buffer.BoolStatus);
-                    if (reqCtx->Buffer.BoolStatus != oldStatus)
-                    {
-                        // Notify audio miniport about this change.
-                        if (This->m_SpeakerConnectionStatusCallback.Handler != NULL)
-                        {
-                            This->m_SpeakerConnectionStatusCallback.Handler(
-                                This->m_SpeakerConnectionStatusCallback.Context);
-                        }
-
-                        if (This->m_MicConnectionStatusCallback.Handler != NULL)
-                        {
-                            This->m_MicConnectionStatusCallback.Handler(
-                                This->m_MicConnectionStatusCallback.Context);
-                        }
-                    }
-                }
-                break;
-
-            default:
-                // This should never happen.
-                resend = FALSE;
-                DPF(D_ERROR, ("EvtBthHfpDeviceNotificationStatusWorkItem: invalid request ctrl 0x%x",
-                    params.Parameters.Ioctl.IoControlCode));
-                break;
-            }
-        }
-
-        if (resend)
-        {
-            WDF_REQUEST_REUSE_PARAMS    reuseParams;
-
-            WDF_REQUEST_REUSE_PARAMS_INIT(
-                &reuseParams,
-                WDF_REQUEST_REUSE_NO_FLAGS,
-                STATUS_SUCCESS);
-
-            ntStatus = WdfRequestReuse(req, &reuseParams);
-            if (!NT_SUCCESS(ntStatus))
-            {
-                DPF(D_ERROR, ("EvtBthHfpDeviceNotificationStatusWorkItem: WdfRequestReuse failed, 0x%x", ntStatus));
-                break;
-            }
-
-            // Resend status notification request.
-            reqCtx->Buffer.bImmediate = FALSE;
-
-            ntStatus = This->SendIoCtrlAsynchronously(
-                req,
-                params.Parameters.Ioctl.IoControlCode,
-                reqCtx->MemIn,
-                reqCtx->MemOut,
-                EvtBthHfpDeviceNotificationStatusCompletion,
-                This);
-
-            if (!NT_SUCCESS(ntStatus))
-            {
-                DPF(D_ERROR, ("EvtBthHfpDeviceNotificationStatusWorkItem: SendIoCtrlAsynchronously"
-                              "(0x%x) failed, 0x%x",
-                              params.Parameters.Ioctl.IoControlCode, ntStatus));
-                break;
-            }
-        }
-    }
-}
-
-//=============================================================================
-#pragma code_seg()
-void
-BthHfpDevice::EvtBthHfpDeviceNotificationStatusCompletion
-(
-  _In_  WDFREQUEST Request,
-  _In_  WDFIOTARGET Target,
-  _In_  PWDF_REQUEST_COMPLETION_PARAMS Params,
-  _In_  WDFCONTEXT Context
-)
-{
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpDeviceNotificationStatusCompletion]"));
-
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext    * ctx         = NULL;
-    BthHfpDevice                          * This        = NULL;
-    KIRQL                                   oldIrql;
-
-    UNREFERENCED_PARAMETER(Target);
-    UNREFERENCED_PARAMETER(Context);
-
-    ctx = GetBthHfpDeviceNotificationReqContext(Request);
-    This = ctx->BthHfpDevice;
-    ASSERT(This != NULL);
-
-    ntStatus = Params->IoStatus.Status;
-    if (ntStatus == STATUS_CANCELLED)
-    {
-        // BTH HFP device is shutting down. Do not re-send this request.
-        goto Done;
-    }
-
-    //
-    // If something is wrong with the HFP interface, do not loop forever.
-    //
-    if (!NT_SUCCESS(ntStatus))
-    {
-        if (++ctx->Errors > BTH_HFP_NOTIFICATION_MAX_ERROR_COUNT)
-        {
-            // Too many errors. Do not re-send this request.
-            goto Done;
-        }
-    }
-    else
-    {
-        // reset the # of errors.
-        ctx->Errors = 0;
-    }
-
-    //
-    // Let the work-item thread process this request.
-    //
-    KeAcquireSpinLock(&This->m_Lock, &oldIrql);
-
-    ntStatus = WdfCollectionAdd(This->m_ReqCollection, Request);
-    if (NT_SUCCESS(ntStatus))
-    {
-        WdfWorkItemEnqueue(This->m_WorkItem);
-    }
-
-    KeReleaseSpinLock(&This->m_Lock, oldIrql);
-
-Done:;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpDescriptor
-(
-    _Out_ PBTHHFP_DESCRIPTOR2 * Descriptor
-)
-/*++
-
-Routine Description:
-
-  This function synchronously gets the remote Bluetooth Hands-Free Profile SCO
-  Bypass descriptor.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpDescriptor]"));
-
-    NTSTATUS                    ntStatus    = STATUS_SUCCESS;
-    WDFREQUEST                  req         = NULL;
-    PBTHHFP_DESCRIPTOR2         descriptor  = NULL;
-    ULONG                       length      = 0;
-    ULONG_PTR                   information = 0;
-    WDF_REQUEST_REUSE_PARAMS    reuseParams;
-    WDF_OBJECT_ATTRIBUTES       attributes;
-
-    *Descriptor = NULL;
-
-    //
-    // Allocate and format a WDF request.
-    //
-    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &req);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpDescriptor: WdfRequestCreate failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // Get the size of the buffer.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        req,
-        IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2,
-        NULL,
-        NULL,
-        NULL);
-
-    if (ntStatus != STATUS_BUFFER_TOO_SMALL)
-    {
-        if (NT_SUCCESS(ntStatus))
-        {
-            ntStatus = STATUS_INVALID_DEVICE_STATE;
-        }
-
-        DPF(D_ERROR, ("GetBthHfpDescriptor: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2): failed, 0x%x", ntStatus));
-        goto Done;
-    }
-
-    ntStatus = STATUS_SUCCESS;
-
-    information = WdfRequestGetInformation(req);
-    if (information == 0 || information > ULONG_MAX)
-    {
-        ntStatus = STATUS_INVALID_DEVICE_STATE;
-        DPF(D_ERROR, ("GetBthHfpDescriptor: IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2 buffer too big (%Id): 0x%x", information, ntStatus));
-        goto Done;
-    }
-
-    length = (ULONG)information;
-
-    //
-    // Allocate memory needed to hold the info.
-    //
-    descriptor  = (PBTHHFP_DESCRIPTOR2) ExAllocatePoolWithTag(NonPagedPoolNx, length, MINADAPTER_POOLTAG);
-    if (descriptor == NULL)
-    {
-        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-    }
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpDescriptor: ExAllocatePoolWithTag failed, out of memory")),
-        Done);
-
-    //
-    // Get the Bth HFP SCO Bypass descriptor.
-    //
-    WDF_REQUEST_REUSE_PARAMS_INIT(
-        &reuseParams,
-        WDF_REQUEST_REUSE_NO_FLAGS,
-        STATUS_SUCCESS);
-
-    ntStatus = WdfRequestReuse(req, &reuseParams);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpDescriptor: WdfRequestReuse failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = SendIoCtrlSynchronously(
-        req,
-        IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2,
-        NULL,
-        length,
-        descriptor);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpDescriptor: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_GET_DESCRIPTOR2) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *Descriptor = descriptor;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-    if (!NT_SUCCESS(ntStatus))
-    {
-        if (descriptor != NULL)
-        {
-            ExFreePoolWithTag(descriptor, MINADAPTER_POOLTAG);
-        }
-    }
-
-    if (req != NULL)
-    {
-        WdfObjectDelete(req);
-        req = NULL;
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::EnableBthHfpNrecDisableStatusNotification()
-/*++
-
-Routine Description:
-
-  This function registers for Bluetooth Hands-Free Profile SCO Bypass NREC-Disable
-  status change notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EnableBthHfpNrecDisableStatusNotification]"));
-
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext    * ctx         = NULL;
-
-    ctx = GetBthHfpDeviceNotificationReqContext(m_NRECDisableStatusReq);
-
-    //
-    // This is a notification request.
-    //
-    ctx->Buffer.bImmediate = FALSE;
-
-    //
-    // Get the Bth HFP SCO Bypass NREC-Disable status (async).
-    //
-    ntStatus = SendIoCtrlAsynchronously(
-        m_NRECDisableStatusReq,
-        IOCTL_BTHHFP_DEVICE_GET_NRECDISABLE_STATUS_UPDATE,
-        ctx->MemIn,
-        ctx->MemOut,
-        EvtBthHfpDeviceNotificationStatusCompletion,
-        this);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("EnableBthHfpNrecDisableStatusNotification: SendIoCtrlAsynchronously(IOCTL_BTHHFP_DEVICE_GET_NRECDISABLE_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpVolumePropertyValues
-(
-    _In_  ULONG                 Length,
-    _Out_ PKSPROPERTY_VALUES  * PropValues
-)
-/*++
-
-Routine Description:
-
-  This function synchronously gets the remote Bluetooth Hands-Free Profile SCO
-  Bypass volume values.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpVolumePropertyValues]"));
-
-    NTSTATUS            ntStatus    = STATUS_SUCCESS;
-    PKSPROPERTY_VALUES  propValues  = NULL;
-
-    *PropValues = NULL;
-
-    //
-    // Allocate memory.
-    //
-    propValues  = (PKSPROPERTY_VALUES) ExAllocatePoolWithTag(NonPagedPoolNx, Length, MINADAPTER_POOLTAG);
-    if (propValues == NULL)
-    {
-        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-    }
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpVolumePropertyValues: ExAllocatePoolWithTag failed, out of memory")),
-        Done);
-
-    //
-    // Get the Bth HFP SCO Bypass descriptor.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_DEVICE_GET_VOLUMEPROPERTYVALUES,
-        0,
-        Length,
-        propValues);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpVolumePropertyValues: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_GET_VOLUMEPROPERTYVALUES) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *PropValues = propValues;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-    if (!NT_SUCCESS(ntStatus))
-    {
-        if (propValues != NULL)
-        {
-            ExFreePoolWithTag(propValues, MINADAPTER_POOLTAG);
-        }
-    }
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpSpeakerVolume
-(
-    _In_ LONG  Volume
-)
-/*++
-
-Routine Description:
-
-  This function synchronously sets the remote Bluetooth Hands-Free Profile SCO
-  Bypass speaker volume.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpSpeakerVolume]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    //
-    // Get the Bth HFP SCO Bypass speaker volume.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_SPEAKER_SET_VOLUME,
-        sizeof(Volume),
-        0,
-        &Volume);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpSpeakerVolume: SendIoCtrlSynchronously(IOCTL_BTHHFP_SPEAKER_SET_VOLUME) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpSpeakerVolume
-(
-    _Out_ LONG  * Volume
-)
-/*++
-
-Routine Description:
-
-  This function synchronously gets the remote Bluetooth Hands-Free Profile SCO
-  Bypass speaker volume.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpSpeakerVolume]"));
-
-    NTSTATUS                        ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationBuffer  buffer      = {0};
-
-    *Volume = 0;
-
-    buffer.bImmediate = TRUE;
-
-    //
-    // Get the Bth HFP SCO Bypass speaker volume.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE,
-        sizeof(buffer.bImmediate),
-        sizeof(buffer.Volume),
-        &buffer);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpSpeakerVolume: SendIoCtrlSynchronously(IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *Volume = buffer.Volume;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::EnableBthHfpSpeakerVolumeStatusNotification()
-/*++
-
-Routine Description:
-
-  This function registers for Bluetooth Hands-Free Profile SCO Bypass speaker
-  volume change notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EnableBthHfpSpeakerVolumeStatusNotification]"));
-
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext    * ctx         = NULL;
-
-    ctx = GetBthHfpDeviceNotificationReqContext(m_SpeakerVolumeReq);
-
-    //
-    // This is a notification request.
-    //
-    ctx->Buffer.bImmediate = FALSE;
-
-    //
-    // Register for speaker volume updates.
-    //
-    ntStatus = SendIoCtrlAsynchronously(
-        m_SpeakerVolumeReq,
-        IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE,
-        ctx->MemIn,
-        ctx->MemOut,
-        EvtBthHfpDeviceNotificationStatusCompletion,
-        this);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("EnableBthHfpSpeakerVolumeStatusNotification: SendIoCtrlAsynchronously(IOCTL_BTHHFP_SPEAKER_GET_VOLUME_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpMicVolume
-(
-    _In_ LONG  Volume
-)
-/*++
-
-Routine Description:
-
-  This function synchronously sets the remote Bluetooth Hands-Free Profile SCO
-  Bypass mic volume.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpMicVolume]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    //
-    // Get the Bth HFP SCO Bypass mic volume.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_MIC_SET_VOLUME,
-        sizeof(Volume),
-        0,
-        &Volume);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpMicVolume: SendIoCtrlSynchronously(IOCTL_BTHHFP_MIC_SET_VOLUME) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpMicVolume
-(
-    _Out_ LONG  * Volume
-)
-/*++
-
-Routine Description:
-
-  This function synchronously gets the remote Bluetooth Hands-Free Profile SCO
-  Bypass mic volume.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpMicVolume]"));
-
-    NTSTATUS                        ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationBuffer  buffer      = {0};
-
-    *Volume = 0;
-
-    buffer.bImmediate = TRUE;
-
-    //
-    // Get the Bth HFP SCO Bypass mic volume.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE,
-        sizeof(buffer.bImmediate),
-        sizeof(buffer.Volume),
-        &buffer);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpMicVolume: SendIoCtrlSynchronously(IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *Volume = buffer.Volume;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::EnableBthHfpMicVolumeStatusNotification()
-/*++
-
-Routine Description:
-
-  This function registers for Bluetooth Hands-Free Profile SCO Bypass mic
-  volume change notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EnableBthHfpMicVolumeStatusNotification]"));
-
-    NTSTATUS                               ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext   * ctx         = NULL;
-
-    ctx = GetBthHfpDeviceNotificationReqContext(m_MicVolumeReq);
-
-    //
-    // This is a notification request.
-    //
-    ctx->Buffer.bImmediate = FALSE;
-
-    //
-    // Register for mic volume updates.
-    //
-    ntStatus = SendIoCtrlAsynchronously(
-        m_MicVolumeReq,
-        IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE,
-        ctx->MemIn,
-        ctx->MemOut,
-        EvtBthHfpDeviceNotificationStatusCompletion,
-        this);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("EnableBthHfpMicVolumeStatusNotification: SendIoCtrlAsynchronously(IOCTL_BTHHFP_MIC_GET_VOLUME_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::GetBthHfpConnectionStatus
-(
-    _Out_ BOOL * ConnectionStatus
-)
-/*++
-
-Routine Description:
-
-  This function synchronously gets the remote Bluetooth Hands-Free Profile SCO
-  Bypass connection status.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::GetBthHfpConnectionStatus]"));
-
-    NTSTATUS            ntStatus    = STATUS_SUCCESS;
-    BOOL                bValue      = TRUE; // In: bImmediate, Out: value.
-
-    *ConnectionStatus = 0;
-
-    //
-    // Get the Bth HFP SCO Bypass connection status.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE,
-        sizeof(bValue),
-        sizeof(bValue),
-        &bValue);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("GetBthHfpConnectionStatus: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    *ConnectionStatus = bValue;
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::EnableBthHfpConnectionStatusNotification()
-/*++
-
-Routine Description:
-
-  This function registers for Bluetooth Hands-Free Profile SCO Bypass
-  connection status notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EnableBthHfpConnectionStatusNotification]"));
-
-    NTSTATUS                               ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext   * ctx         = NULL;
-
-    ctx = GetBthHfpDeviceNotificationReqContext(m_ConnectionReq);
-
-    //
-    // Make sure this obj is alive while the IRP is active.
-    //
-    ctx->Buffer.bImmediate = FALSE;
-
-    //
-    // Get the Bth HFP SCO Bypass connection status.
-    //
-    ntStatus = SendIoCtrlAsynchronously(
-        m_ConnectionReq,
-        IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE,
-        ctx->MemIn,
-        ctx->MemOut,
-        EvtBthHfpDeviceNotificationStatusCompletion,
-        this);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("EnableBthHfpConnectionStatusNotification: SendIoCtrlAsynchronously(IOCTL_BTHHFP_DEVICE_GET_CONNECTION_STATUS_UPDATE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpConnect()
-/*++
-
-Routine Description:
-
-  This function synchronously requests a Bluetooth Hands-Free Profile level
-  connection to the paired Bluetooth device.
-
-  This request initiates the Service Level Connection establishment procedure
-  and completes without waiting for the connection procedure to complete.
-  Connection status can be determined using IOCTL_BTHHFP_GET_CONNECTION_STATUS_UPDATE.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpConnect]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_DEVICE_REQUEST_CONNECT,
-        0,
-        0,
-        NULL);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpConnect: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_REQUEST_CONNECT) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpDisconnect()
-/*++
-
-Routine Description:
-
-  This function synchronously requests a Bluetooth Hands-Free Profile level
-  connection to the paired Bluetooth device.
-
-  This request initiates disconnection of the Service Level Connection and
-  completes without waiting for the disconnection to complete. Connection
-  status can be determined using IOCTL_BTHHFP_GET_CONNECTION_STATUS_UPDATE.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpDisconnect]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_DEVICE_REQUEST_DISCONNECT,
-        0,
-        0,
-        NULL);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpDisconnect: SendIoCtrlSynchronously(IOCTL_BTHHFP_DEVICE_REQUEST_DISCONNECT) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg()
-void
-BthHfpDevice::EvtBthHfpDeviceStreamStatusCompletion
-(
-  _In_  WDFREQUEST Request,
-  _In_  WDFIOTARGET Target,
-  _In_  PWDF_REQUEST_COMPLETION_PARAMS Params,
-  _In_  WDFCONTEXT Context
-)
-/*++
-
-Routine Description:
-
-  Completion callback for the Bluetooth Hands-Free Profile SCO Bypass
-  stream status notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EvtBthHfpDeviceStreamStatusCompletion]"));
-
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext    * reqCtx      = NULL;
-    BthHfpDevice                          * This        = NULL;
-    NTSTATUS                                ntResult    = STATUS_SUCCESS;
-
-    UNREFERENCED_PARAMETER(Target);
-    UNREFERENCED_PARAMETER(Context);
-
-    //
-    // Get the SCO stream status.
-    //
-    reqCtx = GetBthHfpDeviceNotificationReqContext(Request);
-    This = reqCtx->BthHfpDevice;
-    ASSERT(This != NULL);
-
-    ntStatus = Params->IoStatus.Status;
-    if (!NT_SUCCESS(ntStatus))
-    {
-        ntResult = STATUS_INVALID_DEVICE_STATE;
-    }
-    else
-    {
-        ntResult = reqCtx->Buffer.NtStatus;
-    }
-
-    InterlockedExchange(&This->m_StreamStatusLong, (LONG)ntResult);
-
-    //
-    // Let the stop routine know we are done. Stop routine will
-    // re-init the request.
-    //
-    KeSetEvent(&This->m_StreamStatusEvent, IO_NO_INCREMENT, FALSE);
-}
-
-//=============================================================================
-#pragma code_seg()
-NTSTATUS
-BthHfpDevice::EnableBthHfpStreamStatusNotification()
-/*++
-
-Routine Description:
-
-  This function registers for Bluetooth Hands-Free Profile SCO Bypass
-  stream status notification.
-
---*/
-{
-    DPF_ENTER(("[BthHfpDevice::EnableBthHfpStreamStatusNotification]"));
-
-    NTSTATUS                               ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext   * ctx         = NULL;
-
-    ASSERT(m_nStreams > 0);
-
-    ctx = GetBthHfpDeviceNotificationReqContext(m_StreamReq);
-    ctx->Buffer.bImmediate = FALSE;
-
-    KeClearEvent(&m_StreamStatusEvent);
-
-    //
-    // Get the Bth HFP SCO Bypass connection status.
-    //
-    ntStatus = SendIoCtrlAsynchronously(
-        m_StreamReq,
-        IOCTL_BTHHFP_STREAM_GET_STATUS_UPDATE,
-        ctx->MemIn,
-        ctx->MemOut,
-        EvtBthHfpDeviceStreamStatusCompletion,
-        this);
-
-    if (!NT_SUCCESS(ntStatus))
-    {
-        KeSetEvent(&m_StreamStatusEvent, IO_NO_INCREMENT, FALSE);
-        DPF(D_ERROR, ("EnableBthHfpStreamStatusNotification: SendIoCtrlAsynchronously(IOCTL_BTHHFP_STREAM_GET_STATUS_UPDATE) failed, 0x%x", ntStatus));
-        goto Done;
-    }
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::StopBthHfpStreamStatusNotification()
-/*++
-
-Routine Description:
-
-  This function stops the Bluetooth Hands-Free Profile SCO Bypass
-  connection status notification.
-  The function waits for the request to be done before returning.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::StopBthHfpStreamStatusNotification]"));
-
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    BthHfpDeviceNotificationReqContext    * reqCtx      = NULL;
-    WDF_REQUEST_REUSE_PARAMS                reuseParams;
-
-    WdfRequestCancelSentRequest(m_StreamReq);
-    KeWaitForSingleObject(&m_StreamStatusEvent, Executive, KernelMode, FALSE, NULL);
-
-    reqCtx = GetBthHfpDeviceNotificationReqContext(m_StreamReq);
-    ASSERT(reqCtx != NULL);
-    UNREFERENCED_VAR(reqCtx);
-
-    //
-    // Re-init the request for later.
-    //
-    WDF_REQUEST_REUSE_PARAMS_INIT(
-        &reuseParams,
-        WDF_REQUEST_REUSE_NO_FLAGS,
-        STATUS_SUCCESS);
-
-    ntStatus = WdfRequestReuse(m_StreamReq, &reuseParams);
-    if (!NT_SUCCESS(ntStatus))
-    {
-        DPF(D_ERROR, ("StopBthHfpStreamStatusNotification: WdfRequestReuse failed, 0x%x", ntStatus));
-    }
-
-    return STATUS_SUCCESS;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpStreamOpen()
-/*++
-
-Routine Description:
-
-  This function synchronously requests an open SCO channel to transmit audio
-  data over the air.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpStreamOpen]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_STREAM_OPEN,
-        0,
-        0,
-        NULL);
-
-    if (ntStatus == STATUS_DEVICE_BUSY)
-    {
-        // The stream channel is already open.
-        DPF(D_VERBOSE, ("SetBthHfpStreamOpen: the stream channel is already open"));
-        ntStatus = STATUS_SUCCESS;
-    }
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpStreamOpen: SendIoCtrlSynchronously(IOCTL_BTHHFP_STREAM_OPEN) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::SetBthHfpStreamClose()
-/*++
-
-Routine Description:
-
-  This function synchronously requests to close the SCO channel.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::SetBthHfpStreamClose]"));
-
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-
-    ntStatus = SendIoCtrlSynchronously(
-        NULL,
-        IOCTL_BTHHFP_STREAM_CLOSE,
-        0,
-        0,
-        NULL);
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("SetBthHfpStreamClose: SendIoCtrlSynchronously(IOCTL_BTHHFP_STREAM_CLOSE) failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:
-
-    return ntStatus;
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::Start()
-/*++
-
-Routine Description:
-
-  Asynchronously called to start the audio device.
-
---*/
-{
-    PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::Start]"));
-
-    NTSTATUS            ntStatus            = STATUS_SUCCESS;
-    BOOL                connStatus          = FALSE;
-    UCHAR               codecId             = 0;
-    UINT                bthMiniportsIndex   = 0;
-
-    // CVSD is the narrow band codec for SCO. Wideband codec IDs are any number higher than 1.
-    // mSBC is the only required wideband codec, though the controller+headset combination may
-    // support other wideband codecs.
-    const UCHAR         CODEC_CVSD          = 1;
-
-    //
-    // Get bth hfp descriptor
-    //
-    ntStatus = GetBthHfpDescriptor(&m_Descriptor);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: GetBthHfpDescriptor: failed to retrieve BTHHFP_DESCRIPTOR2, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // Get valume settings.
-    //
-    if (m_Descriptor->SupportsVolume)
-    {
-        PKSPROPERTY_VALUES  volumePropValues    = NULL;
-        LONG                volume              = 0;
-
-        // Volume settings.
-        ntStatus = GetBthHfpVolumePropertyValues(
-            m_Descriptor->VolumePropertyValuesSize,
-            &volumePropValues);
-
-        IF_FAILED_ACTION_JUMP(
-            ntStatus,
-            DPF(D_ERROR, ("Start: GetBthHfpVolumePropertyValues: failed to retrieve KSPROPERTY_VALUES, 0x%x", ntStatus)),
-            Done);
-
-        m_VolumePropValues = volumePropValues;
-
-        // Speaker volume.
-        ntStatus = GetBthHfpSpeakerVolume(&volume);
-        IF_FAILED_ACTION_JUMP(
-            ntStatus,
-            DPF(D_ERROR, ("Start: GetBthHfpSpeakerVolume: failed, 0x%x", ntStatus)),
-            Done);
-
-        m_SpeakerVolumeLevel = volume;
-
-        // Mic volume.
-        ntStatus = GetBthHfpMicVolume(&volume);
-        IF_FAILED_ACTION_JUMP(
-            ntStatus,
-            DPF(D_ERROR, ("Start: GetBthHfpMicVolume: failed, 0x%x", ntStatus)),
-            Done);
-
-        m_MicVolumeLevel = volume;
-    }
-
-    //
-    // Get connection status.
-    //
-    ntStatus = GetBthHfpConnectionStatus(&connStatus);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: GetBthHfpConnectionStatus: failed, 0x%x", ntStatus)),
-        Done);
-
-    m_ConnectionStatus = connStatus;
-
-    //
-    // Get codec id (if non-zero, connection supports Wideband Speech)
-    //
-    ntStatus = GetBthHfpCodecId(&codecId);
-    if (ntStatus == STATUS_INVALID_DEVICE_REQUEST)
-    {
-        // GetBthHfpCodecId fails with STATUS_INVALID_DEVICE_REQUEST if the system doesn't
-        // support Wideband Speech (currently only Mobile supports this call)
-        ntStatus = STATUS_SUCCESS;
-    }
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: GetBthHfpCodecId: failed, 0x%x", ntStatus)),
-        Done);
-
-    if (codecId > CODEC_CVSD)
-    {
-        // Use the miniport tables that support 16kHz
-        bthMiniportsIndex = 1;
-    }
-
-    //
-    // Customize the topology/wave descriptors for this instance
-    //
-    ntStatus = CreateCustomEndpointMinipair(
-        g_BthHfpRenderEndpoints[bthMiniportsIndex],
-        &m_Descriptor->FriendlyName,
-        &m_Descriptor->OutputPinCategory,
-        &m_SpeakerMiniports);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: CreateCustomEndpointMinipair for Render: failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = CreateCustomEndpointMinipair(
-        g_BthHfpCaptureEndpoints[bthMiniportsIndex],
-        &m_Descriptor->FriendlyName,
-        &m_Descriptor->InputPinCategory,
-        &m_MicMiniports);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: CreateCustomEndpointMinipair for Capture: failed, 0x%x", ntStatus)),
-        Done);
-
-    ASSERT(m_SpeakerMiniports != NULL);
-    ASSERT(m_MicMiniports != NULL);
-    _Analysis_assume_(m_SpeakerMiniports != NULL);
-    _Analysis_assume_(m_MicMiniports != NULL);
-
-    //
-    // Register topology and wave filters.
-    //
-    ntStatus = m_Adapter->InstallEndpointFilters(
-        NULL,
-        m_SpeakerMiniports,
-        PBTHHFPDEVICECOMMON(this),
-        &m_UnknownSpeakerTopology,
-        &m_UnknownSpeakerWave, NULL, NULL
-        );
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: InstallEndpointRenderFilters (Bth HFP SCO-Bypass): failed, 0x%x", ntStatus)),
-        Done);
-
-    ntStatus = m_Adapter->InstallEndpointFilters(
-        NULL,
-        m_MicMiniports,
-        PBTHHFPDEVICECOMMON(this),
-        &m_UnknownMicTopology,
-        &m_UnknownMicWave, NULL, NULL
-        );
-
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: InstallEndpointCaptureFilters (Bth HFP SCO-Bypass): failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // Pend status notifications.
-    //
-
-    // NREC disable AudioGateway (AG) status.
-    ntStatus = EnableBthHfpNrecDisableStatusNotification();
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: EnableBthHfpNrecDisableStatusNotification: failed, 0x%x", ntStatus)),
-        Done);
-
-    // Volume speaker status.
-    ntStatus = EnableBthHfpSpeakerVolumeStatusNotification();
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: EnableBthHfpSpeakerVolumeStatusNotification: failed, 0x%x", ntStatus)),
-        Done);
-
-    // Volume mic status.
-    ntStatus = EnableBthHfpMicVolumeStatusNotification();
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: EnableBthHfpMicVolumeStatusNotification: failed, 0x%x", ntStatus)),
-        Done);
-
-    // Connection status.
-    ntStatus = EnableBthHfpConnectionStatusNotification();
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Start: EnableBthHfpConnectionStatusNotification: failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // All done.
-    //
-    ntStatus = STATUS_SUCCESS;
-
-Done:;
-    if (!NT_SUCCESS(ntStatus))
-    {
-        InterlockedExchange((PLONG)&m_State, eBthHfpStateFailed);
-    }
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-NTSTATUS
-BthHfpDevice::CreateCustomEndpointMinipair
-(
-    _In_        PENDPOINT_MINIPAIR pBaseMinipair,
-    _In_        PUNICODE_STRING FriendlyName,
-    _In_        PGUID pCategory,
-    _Outptr_    PENDPOINT_MINIPAIR *ppCustomMinipair
-)
-{
-    NTSTATUS ntStatus;
-    PENDPOINT_MINIPAIR  pNewMinipair = NULL;
-    SYSVAD_DEVPROPERTY* pProperties = NULL;
-    PPCFILTER_DESCRIPTOR pNewTopoFilterDesc = NULL;
-    PPCPIN_DESCRIPTOR   pNewTopoPins = NULL;
-    ULONG cProperties;
-    ULONG cTopoPins;
-
-    PAGED_CODE();
-
-    //
-    // This routine will add one more property to whatever the base minipair describes for the topo filter interface properties
-    // It will also allocate and set up custom filter and pin descriptors to allow changing the KSNODETYPE for the hfp device
-    //
-    cTopoPins = pBaseMinipair->TopoDescriptor->PinCount;
-    cProperties = pBaseMinipair->TopoInterfacePropertyCount + 1;
-    pProperties = (SYSVAD_DEVPROPERTY*)ExAllocatePoolWithTag(NonPagedPoolNx, cProperties * sizeof(SYSVAD_DEVPROPERTY), SYSVAD_POOLTAG);
-    pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(ENDPOINT_MINIPAIR), SYSVAD_POOLTAG);
-    pNewTopoFilterDesc = (PCFILTER_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(PCFILTER_DESCRIPTOR), SYSVAD_POOLTAG);
-    pNewTopoPins = (PCPIN_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, cTopoPins * sizeof(PCPIN_DESCRIPTOR), SYSVAD_POOLTAG);
-
-    if ((pProperties != NULL) && (pNewMinipair != NULL) && (pNewTopoFilterDesc != NULL) && (pNewTopoPins != NULL))
-    {
-        SYSVAD_DEVPROPERTY *pLastProperty;
-
-        // Copy base minipair properties to new property list
-        if (pBaseMinipair->TopoInterfacePropertyCount > 0)
-        {
-            RtlCopyMemory(pProperties, pBaseMinipair->TopoInterfaceProperties, (cProperties - 1) * sizeof(SYSVAD_DEVPROPERTY));
-        }
-
-        // Add friendly name property to the list
-        NT_ASSERT(FriendlyName->Length + sizeof(UNICODE_NULL) <= FriendlyName->MaximumLength);  // Assuming NULL terminated string
-        pLastProperty = &pProperties[cProperties - 1];
-        pLastProperty->PropertyKey = &DEVPKEY_DeviceInterface_FriendlyName;
-        pLastProperty->Type = DEVPROP_TYPE_STRING_INDIRECT;
-        pLastProperty->BufferSize = FriendlyName->Length + sizeof(UNICODE_NULL);
-        pLastProperty->Buffer = FriendlyName->Buffer;
-
-        // Copy base minipair structure
-        RtlCopyMemory(pNewMinipair, pBaseMinipair, sizeof(ENDPOINT_MINIPAIR));
-
-        RtlCopyMemory(pNewTopoFilterDesc, pBaseMinipair->TopoDescriptor, sizeof(PCFILTER_DESCRIPTOR));
-        RtlCopyMemory(pNewTopoPins, pBaseMinipair->TopoDescriptor->Pins, cTopoPins * sizeof(PCPIN_DESCRIPTOR));
-
-        pNewTopoFilterDesc->Pins = pNewTopoPins;
-        pNewMinipair->TopoDescriptor = pNewTopoFilterDesc;
-
-        // Update it to point to new property list
-        pNewMinipair->TopoInterfacePropertyCount = cProperties;
-        pNewMinipair->TopoInterfaceProperties = pProperties;
-
-        ntStatus = UpdateCustomEndpointCategory(pNewTopoFilterDesc, pNewTopoPins, pCategory);
-        if (!NT_SUCCESS(ntStatus))
-        {
-            DPF(D_ERROR, ("UpdateCustomEndpointCategory: failed, 0x%x", ntStatus));
+            // Jump out of this loop if there are no more values
+            IF_TRUE_ACTION_JUMP(ntStatus == STATUS_NO_MORE_ENTRIES, ntStatus = STATUS_SUCCESS, Exit);
+            IF_FAILED_JUMP(ntStatus, loop_exit);
         }
         else
         {
-            *ppCustomMinipair = pNewMinipair;
-
-            pProperties = NULL;
-            pNewMinipair = NULL;
-            pNewTopoFilterDesc = NULL;
-            pNewTopoPins = NULL;
-
-            ntStatus = STATUS_SUCCESS;
+            IF_FAILED_JUMP(ntStatus, loop_exit);
         }
-    }
-    else
-    {
-        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+
+        // Allocate the key value name string
+        pwstrKeyValueName = (PWSTR)ExAllocatePoolWithTag(NonPagedPoolNx, kvFullInfo->NameLength + sizeof(WCHAR)*2, MINADAPTER_POOLTAG);
+        IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
+
+        // Copy the key value name from the full information struct
+        RtlStringCbCopyNW(pwstrKeyValueName, kvFullInfo->NameLength + sizeof(WCHAR)*2, kvFullInfo->Name, kvFullInfo->NameLength);
+
+        // Make sure the string is null terminated
+        pwstrKeyValueName[(kvFullInfo->NameLength) / sizeof(WCHAR)] = 0;
+
+        // Copy the key value name string to a UNICODE string
+        RtlInitUnicodeString(&strKeyValueName, pwstrKeyValueName);
+
+        // Write the key value from the source into the destination
+        ntStatus = ZwSetValueKey(_hDestinationKey, &strKeyValueName, 0, kvFullInfo->Type, (PVOID)((PUCHAR)kvFullInfo + kvFullInfo->DataOffset), kvFullInfo->DataLength);
+        IF_FAILED_JUMP(ntStatus, loop_exit);
+
+    loop_exit:
+        // Free the key value name string
+        if (pwstrKeyValueName)
+        {
+            ExFreePoolWithTag(pwstrKeyValueName, MINADAPTER_POOLTAG);
+        }
+
+        // Bail if anything failed
+        IF_FAILED_JUMP(ntStatus, Exit);
     }
 
-    if (pProperties != NULL)
+Exit:
+    // Free the KEY_VALUE_FULL_INFORMATION structure
+    if (kvFullInfo)
     {
-        ExFreePoolWithTag(pProperties, SYSVAD_POOLTAG);
-    }
-    if (pNewMinipair != NULL)
-    {
-        ExFreePoolWithTag(pNewMinipair, SYSVAD_POOLTAG);
-    }
-    if (pNewTopoFilterDesc != NULL)
-    {
-        ExFreePoolWithTag(pNewTopoFilterDesc, SYSVAD_POOLTAG);
-    }
-    if (pNewTopoPins != NULL)
-    {
-        ExFreePoolWithTag(pNewTopoPins, SYSVAD_POOLTAG);
+        ExFreePoolWithTag(kvFullInfo, MINADAPTER_POOLTAG);
     }
 
     return ntStatus;
 }
-//=============================================================================
-#pragma code_seg("PAGE")
+
 NTSTATUS
-BthHfpDevice::UpdateCustomEndpointCategory
-(
-    _In_        PPCFILTER_DESCRIPTOR pCustomMinipairTopoFilter,
-    _In_        PPCPIN_DESCRIPTOR pCustomMinipairTopoPins,
-    _In_        PGUID pCategory
-)
-{
-    NTSTATUS ntStatus = STATUS_NOT_FOUND;
-    ULONG cPinCount = 0;
-    BOOL FoundCategoryAudio = FALSE;
-    BOOL FoundNodeType = FALSE;
-
-    PAGED_CODE();
-
-    cPinCount = pCustomMinipairTopoFilter->PinCount;
-
-    // Find the right pin: There should be two pins, one with Category KSCATEGORY_AUDIO,
-    // and one with a KSNODETYPE_* Category. We need to modify the KSNODETYPE category.
-    for (ULONG i = 0; i < cPinCount; ++i)
-    {
-        if (IsEqualGUID(*pCustomMinipairTopoPins[i].KsPinDescriptor.Category, KSCATEGORY_AUDIO))
-        {
-            ASSERT(FoundCategoryAudio == FALSE);
-            if (FoundCategoryAudio)
-            {
-                ntStatus = STATUS_INVALID_DEVICE_STATE;
-                DPF(D_ERROR, ("UpdateCustomEndpointCategory: KSCATEGORY_AUDIO found more than once, 0x%x", ntStatus));
-                break;
-            }
-
-            FoundCategoryAudio = TRUE;
-            continue;
-        }
-
-        ASSERT(FoundNodeType == FALSE);
-        if (FoundNodeType)
-        {
-            ntStatus = STATUS_INVALID_DEVICE_STATE;
-            DPF(D_ERROR, ("UpdateCustomEndpointCategory: Found more than one applicable Pin, 0x%x", ntStatus));
-            break;
-        }
-
-        pCustomMinipairTopoPins[i].KsPinDescriptor.Category = pCategory;
-        FoundNodeType = TRUE;
-        ntStatus = STATUS_SUCCESS;
-    }
-
-    return ntStatus;
-}
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::DeleteCustomEndpointMinipair
-(
-    _In_        PENDPOINT_MINIPAIR pCustomMinipair
-)
-{
-    PAGED_CODE();
-
-    if (pCustomMinipair != NULL)
-    {
-        if (pCustomMinipair->TopoInterfaceProperties != NULL)
-        {
-            ExFreePoolWithTag(const_cast<SYSVAD_DEVPROPERTY*>(pCustomMinipair->TopoInterfaceProperties), SYSVAD_POOLTAG);
-            pCustomMinipair->TopoInterfaceProperties = NULL;
-        }
-        if (pCustomMinipair->TopoDescriptor != NULL)
-        {
-            if (pCustomMinipair->TopoDescriptor->Pins != NULL)
-            {
-                ExFreePoolWithTag((PVOID)pCustomMinipair->TopoDescriptor->Pins, SYSVAD_POOLTAG);
-                pCustomMinipair->TopoDescriptor->Pins = NULL;
-            }
-            ExFreePoolWithTag(pCustomMinipair->TopoDescriptor, SYSVAD_POOLTAG);
-            pCustomMinipair->TopoDescriptor = NULL;
-        }
-        ExFreePoolWithTag(pCustomMinipair, SYSVAD_POOLTAG);
-    }
-}
-
-//=============================================================================
-#pragma code_seg("PAGE")
-VOID
-BthHfpDevice::Stop()
+CopyRegistryKey(HANDLE _hSourceKey, HANDLE _hDestinationKey, BOOL _bOverwrite = FALSE)
 /*++
 
 Routine Description:
 
-  Asynchronously called to stop the audio device.
-  After returning from this function, there are no more async notifications
-  pending (volume, connection, etc.).
+  This method recursively copies the registry values in _hSourceKey to _hDestinationKey.
+  Set _bOverwrite to indicate whether the first level values are copied or not.
+  Normal use is to set false for the initial call, and then all sub paths will be copied.
+
+Return Value:
+
+  NT status code.
 
 --*/
 {
+    NTSTATUS                ntStatus = STATUS_UNSUCCESSFUL;
+    PKEY_BASIC_INFORMATION  kBasicInfo = NULL;
+    ULONG                   ulBasicInfoLength = 0;
+    ULONG                   ulBasicInfoResultLength = 0;
+    ULONG                   ulDisposition = 0;
+    PWSTR                   pwstrKeyName = NULL;
+    UNICODE_STRING          strKeyName;
+    OBJECT_ATTRIBUTES       hCurrentSourceKeyAttributes;
+    OBJECT_ATTRIBUTES       hNewDestinationKeyAttributes;
+    HANDLE                  hCurrentSourceKey = NULL;
+    HANDLE                  hNewDestinationKey = NULL;
     PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::Stop]"));
+    // Validate parameters
+    IF_TRUE_ACTION_JUMP(_hSourceKey == nullptr, ntStatus = STATUS_INVALID_PARAMETER, Exit);
+    IF_TRUE_ACTION_JUMP(_hDestinationKey == nullptr, ntStatus = STATUS_INVALID_PARAMETER, Exit);
 
-    NTSTATUS        ntStatus    = STATUS_SUCCESS;
-    eBthHfpState    state       = eBthHfpStateInvalid;
+    // Allocate the KEY_BASIC_INFORMATION structure
+    ulBasicInfoLength = sizeof(KEY_BASIC_INFORMATION) + MAX_DEVICE_REG_KEY_LENGTH;
+    kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulBasicInfoLength, MINADAPTER_POOLTAG);
+    IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, Exit);
 
-    state = (eBthHfpState) InterlockedExchange((PLONG)&m_State, eBthHfpStateStopping);
-    ASSERT(state == eBthHfpStateRunning || state == eBthHfpStateFailed);
-    UNREFERENCED_VAR(state);
-
-    //
-    // Stop async notifications.
-    //
-    WdfIoTargetPurge(m_WdfIoTarget, WdfIoTargetPurgeIoAndWait);
-
-    //
-    // Wait for work-item.
-    //
-    WdfWorkItemFlush(m_WorkItem);
-
-    //
-    // Remove the topology and wave render filters.
-    //
-    if (m_UnknownSpeakerTopology || m_UnknownSpeakerWave)
+    ntStatus = STATUS_SUCCESS;
+    // Iterate over each key and copy it
+    for (UINT i = 0; NT_SUCCESS(ntStatus); i++)
     {
-        ntStatus = m_Adapter->RemoveEndpointFilters(
-            m_SpeakerMiniports,
-            m_UnknownSpeakerTopology,
-            m_UnknownSpeakerWave);
+        // Enumerate the next key
+        ntStatus = ZwEnumerateKey(_hSourceKey, i, KeyBasicInformation, kBasicInfo, ulBasicInfoLength, &ulBasicInfoResultLength);
 
-        if (!NT_SUCCESS(ntStatus))
+        // Jump out of this loop if there are no more keys
+        IF_TRUE_ACTION_JUMP(ntStatus == STATUS_NO_MORE_ENTRIES, ntStatus = STATUS_SUCCESS, copy_values);
+
+        // Handle incorrect buffer size
+        if (ntStatus == STATUS_BUFFER_TOO_SMALL || ntStatus == STATUS_BUFFER_OVERFLOW)
         {
-            DPF(D_ERROR, ("RemoveEndpointFilters (Bth HFP SCO-Bypass Speaker): failed, 0x%x", ntStatus));
+            // Free and re-allocate the KEY_BASIC_INFORMATION structure with the correct size.
+            ExFreePoolWithTag(kBasicInfo, MINADAPTER_POOLTAG);
+            ulBasicInfoLength = ulBasicInfoResultLength;
+            kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulBasicInfoLength, MINADAPTER_POOLTAG);
+            IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
+
+            // Try to enumerate the current key again.
+            ntStatus = ZwEnumerateKey(_hSourceKey, i, KeyBasicInformation, kBasicInfo, ulBasicInfoLength, &ulBasicInfoResultLength);
+
+            // Jump out of this loop if there are no more keys
+            IF_TRUE_ACTION_JUMP(ntStatus == STATUS_NO_MORE_ENTRIES, ntStatus = STATUS_SUCCESS, copy_values);
+            IF_FAILED_JUMP(ntStatus, loop_exit);
         }
-    }
-
-    //
-    // Remove the topology and wave capture filters.
-    //
-    if (m_UnknownMicTopology || m_UnknownMicWave)
-    {
-        ntStatus = m_Adapter->RemoveEndpointFilters(
-            m_MicMiniports,
-            m_UnknownMicTopology,
-            m_UnknownMicWave);
-
-        if (!NT_SUCCESS(ntStatus))
+        else
         {
-            DPF(D_ERROR, ("RemoveEndpointFilters (Bth HFP SCO-Bypass Capture): failed, 0x%x", ntStatus));
+            IF_FAILED_JUMP(ntStatus, loop_exit);
         }
+
+        // Allocate the key name string 
+        pwstrKeyName = (PWSTR)ExAllocatePoolWithTag(NonPagedPoolNx, kBasicInfo->NameLength + sizeof(WCHAR), MINADAPTER_POOLTAG);
+        IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
+
+        // Copy the key name from the basic information struct
+        RtlStringCbCopyNW(pwstrKeyName, kBasicInfo->NameLength + sizeof(WCHAR), kBasicInfo->Name, kBasicInfo->NameLength);
+
+        // Make sure the string is null terminated
+        pwstrKeyName[(kBasicInfo->NameLength) / sizeof(WCHAR)] = 0;
+
+        // Copy the key name string to a UNICODE string
+        RtlInitUnicodeString(&strKeyName, pwstrKeyName);
+
+        // Initialize attributes to open the currently enumerated source key
+        InitializeObjectAttributes(&hCurrentSourceKeyAttributes, &strKeyName, OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, _hSourceKey, NULL);
+
+        // Open the currently enumerated source key
+        ntStatus = ZwOpenKey(&hCurrentSourceKey, KEY_READ, &hCurrentSourceKeyAttributes);
+        IF_FAILED_ACTION_JUMP(ntStatus, ZwClose(hCurrentSourceKey), loop_exit);
+
+        // Initialize attributes to create the new destination key
+        InitializeObjectAttributes(&hNewDestinationKeyAttributes, &strKeyName, OBJ_KERNEL_HANDLE, _hDestinationKey, NULL);
+
+        // Create the key at the destination
+        ntStatus = ZwCreateKey(&hNewDestinationKey, KEY_WRITE, &hNewDestinationKeyAttributes, 0, NULL, REG_OPTION_NON_VOLATILE, &ulDisposition);
+        IF_FAILED_ACTION_JUMP(ntStatus, ZwClose(hCurrentSourceKey), loop_exit);
+
+        // Now copy the contents of the currently enumerated key to the destination
+        ntStatus = CopyRegistryKey(hCurrentSourceKey, hNewDestinationKey, TRUE);
+        IF_FAILED_JUMP(ntStatus, loop_exit);
+
+    loop_exit:
+        // Free the key name string
+        if (pwstrKeyName)
+        {
+            ExFreePoolWithTag(pwstrKeyName, MINADAPTER_POOLTAG);
+        }
+
+        // Close the current source key
+        if (hCurrentSourceKey)
+        {
+            ZwClose(hCurrentSourceKey);
+        }
+
+        // Close the new destination key
+        if (hNewDestinationKey)
+        {
+            ZwClose(hNewDestinationKey);
+        }
+
+        // Bail if anything failed
+        IF_FAILED_JUMP(ntStatus, Exit);
     }
 
-    //
-    // Release port/miniport pointers.
-    //
-    SAFE_RELEASE(m_UnknownSpeakerTopology);
-    SAFE_RELEASE(m_UnknownSpeakerWave);
-    SAFE_RELEASE(m_UnknownMicTopology);
-    SAFE_RELEASE(m_UnknownMicWave);
-
-    //
-    // The device is in the stopped state.
-    //
-    InterlockedExchange((PLONG)&m_State, eBthHfpStateStopped);
-
-    DeleteCustomEndpointMinipair(m_SpeakerMiniports);
-    m_SpeakerMiniports = NULL;
-
-    DeleteCustomEndpointMinipair(m_MicMiniports);
-    m_MicMiniports = NULL;
-
-}
-
-#endif // SYSVAD_BTH_BYPASS
-
-//
-// The following are copied from:
-// \Program Files\Windows Kits\10\Include\10.0.15063.0\km\stdunk.h
-//
-
-#ifdef _NEW_DELETE_OPERATORS_
-
-// Note: Since VS2015 Update 2 overloaded operator new and operator delete may not
-// be declared inline (Level 1 (/W1) on-by-default, warning C4595).
-// See https://msdn.microsoft.com/en-us/library/mt656697.aspx
-//
-// To mitigate this issue, add "#define _NEW_DELETE_OPERATORS_" before "#include <stdunk.h>"
-// and implement non-inline operator new and operator delete locally.
-
-/*****************************************************************************
- * ::new()
- *****************************************************************************
- * New function for creating objects with a specified allocation tag.
- */
-// PVOID operator new
-// (
-//     size_t          iSize,
-//     _When_((poolType & NonPagedPoolMustSucceed) != 0,
-//        __drv_reportError("Must succeed pool allocations are forbidden. "
-//              "Allocation failures cause a system crash"))
-//     POOL_TYPE       poolType
-// )
-// {
-//     PVOID result = ExAllocatePoolWithTag(poolType,iSize,'wNcP');
-//
-//     if (result)
-//     {
-//         RtlZeroMemory(result,iSize);
-//     }
-//
-//     return result;
-// }
-
-/*****************************************************************************
- * ::new()
- *****************************************************************************
- * New function for creating objects with a specified allocation tag.
- */
-PVOID operator new
-(
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-       __drv_reportError("Must succeed pool allocations are forbidden. "
-             "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
-)
-{
-    PVOID result = ExAllocatePoolWithTag(poolType,iSize,tag);
-
-    if (result)
+copy_values:
+    // Copy the values 
+    if (_bOverwrite)
     {
-        RtlZeroMemory(result,iSize);
+        ntStatus = CopyRegistryValues(_hSourceKey, _hDestinationKey);
+        IF_FAILED_JUMP(ntStatus, Exit);
     }
 
-    return result;
-}
-
-/*****************************************************************************
- * ::delete()
- *****************************************************************************
- * Delete function.
- */
-// void __cdecl operator delete
-// (
-//     PVOID pVoid
-// )
-// {
-//     if (pVoid)
-//     {
-//         ExFreePool(pVoid);
-//     }
-// }
-
-/*****************************************************************************
- * ::delete()
- *****************************************************************************
- * Delete function.
- */
-// void __cdecl operator delete
-// (
-//     PVOID pVoid,
-//     ULONG tag
-// )
-// {
-//     if (pVoid)
-//     {
-//         ExFreePoolWithTag(pVoid,tag);
-//     }
-// }
-
-void __cdecl operator delete
-(
-    _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
-    _In_ size_t cbSize
-)
-{
-    UNREFERENCED_PARAMETER(cbSize);
-
-    if (pVoid)
+Exit:
+    // Free the basic information structure
+    if (kBasicInfo)
     {
-        ExFreePool(pVoid);
+        ExFreePoolWithTag(kBasicInfo, MINADAPTER_POOLTAG);
     }
+    return ntStatus;
 }
 
-void __cdecl operator delete[]
+
+NTSTATUS CAdapterCommon::MigrateDeviceInterfaceTemplateParameters
 (
-    _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid
+    _In_ PUNICODE_STRING    SymbolicLinkName,
+    _In_opt_ PCWSTR         TemplateReferenceString
 )
+/*++
+
+Routine Description:
+
+  This method copies all of the properties from the template interface,
+  which is specified in the inf, to the actual interface being used which
+  may be dynamically generated at run time. This allows for a driver 
+  to reuse a single inf entry for multiple audio endpoints. The primary 
+  purpose for this is to allow for sideband audio endpoints to dynamically
+  generate the reference string at run time, tied to the peripheral connected,
+  while still having a simple static inf entry for setting up apo's or other 
+  parameters.
+
+  For example, if you have an interface in your inf defined with reference string
+  "SpeakerWave". At runtime you could generate "SpeakerWave-1234ABCDE", and specify
+  "SpeakerWave" as the template name. When "SpeakerWave-1234ABCDE" is installed
+  we will copy all of the parameters that were specified in the inf for "SpeakerWave"
+  over to "SpeakerWave-1234ABCDE". You simply need to specify "SpeakerWave" as the
+  "TemplateName" in the ENDPOINT_MINIPAIRS.
+
+  By default, the first level of registry keys are not copied. Only the 2nd level and
+  deeper are copied. This way the friendly name and other PNP properties will not
+  be modified, but the EP and FX properties will be copied.
+  
+Return Value:
+
+  NT status code.
+
+--*/
+
 {
-    if (pVoid)
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    HANDLE              hDeviceInterfaceParametersKey(NULL);
+    HANDLE              hTemplateDeviceInterfaceParametersKey(NULL);
+    UNICODE_STRING      TemplateSymbolicLinkName;
+    UNICODE_STRING      referenceString;
+
+    RtlInitUnicodeString(&TemplateSymbolicLinkName, NULL);
+    RtlInitUnicodeString(&referenceString, TemplateReferenceString);
+
+    //
+    // Register an audio interface if not already present for the template interface, so we can access
+    // the registry path. If it's already registered, this simply returns the symbolic link name. 
+    // No need to unregister it (there is no mechanism to), and we'll never make it active.
+    //
+    ntStatus = IoRegisterDeviceInterface(
+        GetPhysicalDeviceObject(),
+        &KSCATEGORY_AUDIO,
+        &referenceString,
+        &TemplateSymbolicLinkName);
+
+    // Open the template device interface's registry key path
+    ntStatus = IoOpenDeviceInterfaceRegistryKey(&TemplateSymbolicLinkName, GENERIC_READ, &hTemplateDeviceInterfaceParametersKey);
+    IF_FAILED_JUMP(ntStatus, Exit);
+
+    // Open the new device interface's registry key path that we plan to activate
+    ntStatus = IoOpenDeviceInterfaceRegistryKey(SymbolicLinkName, GENERIC_WRITE, &hDeviceInterfaceParametersKey);
+    IF_FAILED_JUMP(ntStatus, Exit);
+
+    // Copy the template device parameters key to the device interface key
+    ntStatus = CopyRegistryKey(hTemplateDeviceInterfaceParametersKey, hDeviceInterfaceParametersKey);
+    IF_FAILED_JUMP(ntStatus, Exit);
+
+Exit:
+    RtlFreeUnicodeString(&TemplateSymbolicLinkName);
+
+    if (hTemplateDeviceInterfaceParametersKey)
     {
-        ExFreePool(pVoid);
+        ZwClose(hTemplateDeviceInterfaceParametersKey);
     }
+
+    if (hDeviceInterfaceParametersKey)
+    {
+        ZwClose(hDeviceInterfaceParametersKey);
+    }
+
+    return ntStatus;
 }
 
-// void __cdecl operator delete[]
-// (
-//     _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
-//     _In_ size_t cbSize
-// )
-// {
-//     UNREFERENCED_PARAMETER(cbSize);
-
-//     if (pVoid)
-//     {
-//         ExFreePool(pVoid);
-//     }
-// }
-
-#endif //!_NEW_DELETE_OPERATORS_
