@@ -1,5 +1,5 @@
 <!---
-    Driver Device Transform Sample
+    name: Driver Device Transform Sample
     platform: WDM
     language: cpp
     category: Camera
