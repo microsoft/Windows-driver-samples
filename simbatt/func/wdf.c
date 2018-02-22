@@ -193,8 +193,7 @@ Return Value:
     WdfDeviceInitSetPnpPowerEventCallbacks(DeviceInit, &PnpPowerCallbacks);
 
     //
-    // Configure file handlers to forward all create, close, and cleanup
-    // requests to the PDO.
+    // Configure framework to complete all create, close, and cleanup requests.
     //
 
     WDF_FILEOBJECT_CONFIG_INIT(&FileObjectConfig,
@@ -202,7 +201,7 @@ Return Value:
                                WDF_NO_EVENT_CALLBACK,
                                WDF_NO_EVENT_CALLBACK);
 
-    FileObjectConfig.AutoForwardCleanupClose = WdfTrue;
+    FileObjectConfig.AutoForwardCleanupClose = WdfFalse;
     WdfDeviceInitSetFileObjectConfig(DeviceInit,
                                      &FileObjectConfig,
                                      WDF_NO_OBJECT_ATTRIBUTES);
