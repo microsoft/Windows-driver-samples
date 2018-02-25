@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: TBD
+  description: TBD
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows
