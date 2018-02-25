@@ -29,6 +29,7 @@ EVT_WDF_DEVICE_SELF_MANAGED_IO_INIT  SimBattSelfManagedIoInit;
 EVT_WDF_DEVICE_SELF_MANAGED_IO_CLEANUP  SimBattSelfManagedIoCleanup;
 EVT_WDF_DEVICE_QUERY_STOP SimBattQueryStop;
 EVT_WDF_DEVICE_PREPARE_HARDWARE SimBattDevicePrepareHardware;
+EVT_WDF_DEVICE_FILE_CREATE SimBattEvtDeviceFileCreate;
 EVT_WDFDEVICE_WDM_IRP_PREPROCESS SimBattWdmIrpPreprocessDeviceControl;
 EVT_WDFDEVICE_WDM_IRP_PREPROCESS SimBattWdmIrpPreprocessSystemControl;
 WMI_QUERY_REGINFO_CALLBACK SimBattQueryWmiRegInfo;
@@ -42,6 +43,7 @@ WMI_QUERY_DATABLOCK_CALLBACK SimBattQueryWmiDataBlock;
 #pragma alloc_text(PAGE, SimBattQueryStop)
 #pragma alloc_text(PAGE, SimBattDriverDeviceAdd)
 #pragma alloc_text(PAGE, SimBattDevicePrepareHardware)
+#pragma alloc_text(PAGE, SimBattEvtDeviceFileCreate)
 #pragma alloc_text(PAGE, SimBattWdmIrpPreprocessDeviceControl)
 #pragma alloc_text(PAGE, SimBattWdmIrpPreprocessSystemControl)
 #pragma alloc_text(PAGE, SimBattQueryWmiRegInfo)
@@ -137,6 +139,51 @@ DriverEntryEnd:
 }
 
 _Use_decl_annotations_
+VOID
+SimBattEvtDeviceFileCreate(
+    IN WDFDEVICE Device,
+    IN WDFREQUEST Request,
+    IN WDFFILEOBJECT FileObject
+    )
+
+/*++
+
+Routine Description:
+
+    The WDF framework calls a driver's EvtDeviceFileCreate callback when the WDF
+    framework receives an IRP_MJ_CREATE request. The system sends this request
+    when a user application opens the device to perform an I/O operation, such
+    as reading or writing to a device. This callback is called in the context
+    of the thread that created the IRP_MJ_CREATE request.
+
+Arguments:
+
+    Device - A handle to a framework device object.
+
+    Request - A handle to a framework request object that represents a file
+              creation request.
+
+    FileObject - Pointer to fileobject that represents the open handle.
+
+Return Value:
+
+    None.
+
+--*/
+
+{
+
+
+    UNREFERENCED_PARAMETER(FileObject);
+    UNREFERENCED_PARAMETER(Device);
+
+    PAGED_CODE();
+
+    WdfRequestComplete(Request, STATUS_SUCCESS);
+    return;
+}
+
+_Use_decl_annotations_
 NTSTATUS
 SimBattDriverDeviceAdd (
     WDFDRIVER Driver,
@@ -198,7 +245,7 @@ Return Value:
     //
 
     WDF_FILEOBJECT_CONFIG_INIT(&FileObjectConfig,
-                               WDF_NO_EVENT_CALLBACK,
+                               SimBattEvtDeviceFileCreate,
                                WDF_NO_EVENT_CALLBACK,
                                WDF_NO_EVENT_CALLBACK);
 
