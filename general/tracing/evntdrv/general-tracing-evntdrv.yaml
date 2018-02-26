@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Eventdrv
+  description: Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver.
   generateZip: true
   author: windows-driver-samples
   languages:

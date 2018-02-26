@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: UMDF Driver Skeleton Sample (UMDF version 1)
+  description: Demonstrates how to use UDMF to write a minimal driver.
   generateZip: true
   author: windows-driver-samples
   languages:

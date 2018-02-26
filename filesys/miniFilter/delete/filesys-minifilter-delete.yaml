@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Delete File System Minifilter Driver
+  description: Demonstrates how to detect deletions of files or streams.
   generateZip: true
   author: windows-driver-samples
   languages:

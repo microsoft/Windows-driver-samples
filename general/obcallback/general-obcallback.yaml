@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: ObCallback Callback Registration Driver
+  description: Demonstrates the use of registered callbacks for process protection.
   generateZip: true
   author: windows-driver-samples
   languages:

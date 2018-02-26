@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Cancel-Safe IRP Queue Sample
+  description: Demonstrates the use of the cancel-safe queue routines.
   generateZip: true
   author: windows-driver-samples
   languages:

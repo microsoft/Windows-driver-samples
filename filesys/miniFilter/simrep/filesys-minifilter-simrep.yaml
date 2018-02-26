@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SimRep File System Minifilter Driver
+  description: Demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path.
   generateZip: true
   author: windows-driver-samples
   languages:

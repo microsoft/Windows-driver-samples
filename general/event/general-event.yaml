@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Hardware Event Sample
+  description: Demonstrates different ways a kernel-mode driver can notify an application about a hardware event.
   generateZip: true
   author: windows-driver-samples
   languages:

@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: CDFS File System Driver
+  description: The CD-ROM file system driver (cdfs) sample is a file system driver for removable media.
   generateZip: true
   author: windows-driver-samples
   languages:

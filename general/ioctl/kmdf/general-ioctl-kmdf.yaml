@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Non-PnP Driver Sample
+  description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework.
   generateZip: true
   author: windows-driver-samples
   languages:

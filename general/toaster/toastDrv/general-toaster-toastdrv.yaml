@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Toaster Sample Driver
+  description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
   generateZip: true
   author: windows-driver-samples
   languages:

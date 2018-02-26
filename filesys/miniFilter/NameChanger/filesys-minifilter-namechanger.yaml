@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: NameChanger File System Minifilter Driver
+  description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
   generateZip: true
   author: windows-driver-samples
   languages:

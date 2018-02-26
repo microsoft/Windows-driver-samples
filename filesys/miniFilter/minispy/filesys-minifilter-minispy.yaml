@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Minispy File System Minifilter Driver
+  description: A tool to monitor and log any I/O and transaction activity that occurs in the system.
   generateZip: true
   author: windows-driver-samples
   languages:

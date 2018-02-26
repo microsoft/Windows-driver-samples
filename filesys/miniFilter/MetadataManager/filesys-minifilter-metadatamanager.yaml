@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Metadata Manager File System Minifilter Driver
+  description:  An example of how to use files for storing metadata that corresponds to minifilters.
   generateZip: true
   author: windows-driver-samples
   languages:

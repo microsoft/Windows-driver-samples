@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Echo Sample (UMDF Version 2)
+  description: Demonstrates how to use UMDF 2 to write a driver and to employ best practices.
   generateZip: true
   author: windows-driver-samples
   languages:
