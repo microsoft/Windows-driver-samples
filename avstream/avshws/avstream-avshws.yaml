@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: AVStream simulated hardware sample driver (Avshws)
+  description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
   generateZip: true
   author: windows-driver-samples
   languages:

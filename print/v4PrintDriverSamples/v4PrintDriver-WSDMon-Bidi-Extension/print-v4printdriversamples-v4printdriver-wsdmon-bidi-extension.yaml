@@ -5,6 +5,6 @@ sample:
   generateZip: true
   author: windows-driver-samples
   languages:
-  - cpp
+  - xml
   technologies:
   - windows

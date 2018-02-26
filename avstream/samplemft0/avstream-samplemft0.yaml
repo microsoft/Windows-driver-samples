@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Driver MFT Sample
+  description: A driver MFT for use with a camera's Windows Store device app.
   generateZip: true
   author: windows-driver-samples
   languages:
