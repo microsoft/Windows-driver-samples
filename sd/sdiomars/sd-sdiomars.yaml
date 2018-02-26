@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SDIO Driver
+  description: A functional KMDF Secure Digital (SD) IO driver for use with a generic mars development board.
   generateZip: true
   author: windows-driver-samples
   languages:

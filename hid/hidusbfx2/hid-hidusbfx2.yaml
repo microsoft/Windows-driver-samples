@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: HIDUSBFX2 sample driver
+  description: TBDemonstrates mapping of a non-HID USB device to a HID device.D
   generateZip: true
   author: windows-driver-samples
   languages:

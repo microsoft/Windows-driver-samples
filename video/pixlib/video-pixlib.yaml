@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: PixLib sample
+  description: Demonstrates how to implement the CPixel class for use by a display driver.
   generateZip: true
   author: windows-driver-samples
   languages:

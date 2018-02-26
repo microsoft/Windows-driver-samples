@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: XPS Rasterization Filter Service Sample
+  description: Implements an XPSDrv filter that rasterizes fixed pages in an XPS document.
   generateZip: true
   author: windows-driver-samples
   languages:

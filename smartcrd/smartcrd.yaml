@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: PCMCIA Smart Card Driver
+  description: Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader.
   generateZip: true
   author: windows-driver-samples
   languages:

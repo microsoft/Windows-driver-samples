@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: RAMDisk Storage Driver Sample
+  description: Demonstrates how to write a RAM disk software-only function driver using KMDF.
   generateZip: true
   author: windows-driver-samples
   languages:

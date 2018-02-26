@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Pedometer Sensor Sample
+  description: Demonstrates how to write a UMDF v2 driver to control a virtual Pedometer sensor.
   generateZip: true
   author: windows-driver-samples
   languages:

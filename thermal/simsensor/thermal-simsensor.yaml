@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SimSensor - Simulated Temperature Sensor Sample Driver
+  description: Demonstrates a simulated temperature sensor device.
   generateZip: true
   author: windows-driver-samples
   languages:

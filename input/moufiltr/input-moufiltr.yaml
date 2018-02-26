@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Mouse Input WDF Filter Driver (Moufiltr)
+  description: A WDF example of a mouse input filter driver.
   generateZip: true
   author: windows-driver-samples
   languages:

@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: ClassPnP Class Driver Library
+  description: A library storage class driver used by disk, CDROM, and the tape class drivers.
   generateZip: true
   author: windows-driver-samples
   languages:

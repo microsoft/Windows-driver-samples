@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Windows Filtering Platform Traffic Inspection Sample
+  description: Demonstrates the traffic inspection capabilities of the Windows Filtering Platform (WFP).
   generateZip: true
   author: windows-driver-samples
   languages:

@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Windows Filtering Platform MSN Messenger Monitor Sample
+  description: Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP).
   generateZip: true
   author: windows-driver-samples
   languages:

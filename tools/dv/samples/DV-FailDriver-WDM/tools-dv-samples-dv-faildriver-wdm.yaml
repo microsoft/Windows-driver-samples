@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: DV-FailDriver-WDM
+  description: Demonstrates how Driver Verifier (DV) can find errors in a WDM driver.
   generateZip: true
   author: windows-driver-samples
   languages:

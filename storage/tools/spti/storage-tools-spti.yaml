@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SCSI Pass-Through Interface Tool
+  description: Demonstrates how to communicate with a SCSI device using pass-through IOCTLs in an application using DeviceIoControl API.
   generateZip: true
   author: windows-driver-samples
   languages:

@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Print Pipeline Simple Filter
+  description: This sample shows how to use the print pipeline's filter interfaces.
   generateZip: true
   author: windows-driver-samples
   languages:

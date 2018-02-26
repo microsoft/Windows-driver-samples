@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SDV-FailDriver-NDIS
+  description: Demonstrates how Static Driver Verifier (SDV) can find errors in a NDIS driver.
   generateZip: true
   author: windows-driver-samples
   languages:

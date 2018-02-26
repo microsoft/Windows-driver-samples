@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Windows Radio Management Sample
+  description: Demonstrates how to structure a Radio Manager for use with the Windows Radio Management APIs.
   generateZip: true
   author: windows-driver-samples
   languages:

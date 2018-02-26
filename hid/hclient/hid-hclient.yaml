@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: HClient sample application
+  description: Demonstrates how to write a user-mode client application that communicates with HID devices.
   generateZip: true
   author: windows-driver-samples
   languages:

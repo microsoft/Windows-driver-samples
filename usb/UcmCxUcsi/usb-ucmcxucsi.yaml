@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: UcmTcpciCx Port Controller Client Driver
+  description: Demonstrates how to create a Windows USB Type-C port controller driver using the USB Connector Manager class extension driver (UcmCx).
   generateZip: true
   author: windows-driver-samples
   languages:

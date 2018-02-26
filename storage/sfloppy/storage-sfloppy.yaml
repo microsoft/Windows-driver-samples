@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Super Floppy (sfloppy) Storage Class Driver
+  description: A sample class driver for Super Floppy disk drives.
   generateZip: true
   author: windows-driver-samples
   languages:

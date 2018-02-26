@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Sensors Combo Driver Sample
+  description: Demonstrates how to write UMDF v2 drivers to control various types of virtual sensors.
   generateZip: true
   author: windows-driver-samples
   languages:

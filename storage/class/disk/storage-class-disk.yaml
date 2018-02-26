@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: Disk Class Driver
+  description: A class driver for disk devices.
   generateZip: true
   author: windows-driver-samples
   languages:

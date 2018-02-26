@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: HID Minidriver Sample (UMDF version 2)
+  description: Demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
   generateZip: true
   author: windows-driver-samples
   languages:

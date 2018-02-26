@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: SpbTestTool sample
+  description: Demonstrates how to open a handle to the SPB controller, use the SPB interface from a KMDF driver, and employ GPIO.
   generateZip: true
   author: windows-driver-samples
   languages:

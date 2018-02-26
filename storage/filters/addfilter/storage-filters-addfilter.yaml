@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: AddFilter Storage Filter Tool
+  description: A command-line application that adds and removes filter drivers for a given drive or volume.
   generateZip: true
   author: windows-driver-samples
   languages:

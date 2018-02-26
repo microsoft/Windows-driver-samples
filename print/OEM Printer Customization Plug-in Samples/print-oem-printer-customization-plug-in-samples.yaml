@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TBD
-  description: TBD
+- name: OEM Printer Customization Plug-in Samples
+  description: Provides examples of how to build OEM printer customization plug-ins.
   generateZip: true
   author: windows-driver-samples
   languages:
