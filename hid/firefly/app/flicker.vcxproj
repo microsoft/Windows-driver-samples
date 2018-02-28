@@ -110,7 +110,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\luminous.lib;ole32.lib;oleaut32.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
