@@ -89,7 +89,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <BaseAddress>0x400000</BaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\luminous.lib;ole32.lib;oleaut32.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -111,7 +110,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <BaseAddress>0x400000</BaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\luminous.lib;ole32.lib;oleaut32.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -133,7 +131,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <BaseAddress>0x400000</BaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\luminous.lib;ole32.lib;oleaut32.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -155,7 +152,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <BaseAddress>0x400000</BaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies);.\..\lib\$(IntDir)\luminous.lib;ole32.lib;oleaut32.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>

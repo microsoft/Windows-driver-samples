@@ -101,9 +101,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x0400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ResourceCompile>
@@ -119,9 +116,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x0400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ResourceCompile>
@@ -137,9 +131,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x0400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ResourceCompile>
@@ -155,9 +146,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x0400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="install.c" />

@@ -99,9 +99,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x04000000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,9 +112,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x04000000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -131,9 +125,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x04000000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,9 +138,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\sys</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x04000000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
