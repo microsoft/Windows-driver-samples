@@ -213,10 +213,19 @@ Return Value:
 
             reqContext = SerialGetRequestContext(oldRequest);
 
-            SerialCompleteRequest(oldRequest,
-                                  reqContext->Status,
-                                  reqContext->Information);
-        }
+            if(reqContext->CancelRoutine) {
+
+                status = SerialClearCancelRoutine(oldRequest, TRUE);
+
+            }
+
+            if(status != STATUS_CANCELLED) {
+
+                SerialCompleteRequest(oldRequest,
+                                       reqContext->Status,
+                                       reqContext->Information);
+            }
+         }
     }
 }
 
