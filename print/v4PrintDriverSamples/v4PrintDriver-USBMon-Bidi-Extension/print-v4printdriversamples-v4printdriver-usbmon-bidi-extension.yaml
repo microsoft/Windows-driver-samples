@@ -1,0 +1,11 @@
+### YamlMime:Sample
+sample:
+- name: Print Driver USB Monitor and Bidi Sample
+  description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - js
+  - xml
+  technologies:
+  - windows

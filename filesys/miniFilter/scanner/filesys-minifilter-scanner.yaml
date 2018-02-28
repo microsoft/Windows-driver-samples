@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: Scanner File System Minifilter Driver
+  description: A file data scanner example. Typically, anti-virus filters are of this type.
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows

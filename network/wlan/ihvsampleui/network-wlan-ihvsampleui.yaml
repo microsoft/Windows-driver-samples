@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: IHV Sample UI
+  description: IHV Sample UI
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows

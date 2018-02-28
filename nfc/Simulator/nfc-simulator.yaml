@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: NFC Simulator Driver Sample
+  description: Demonstrates how to use UMDF to write a Near-Field Communication (NFC) universal driver.
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows

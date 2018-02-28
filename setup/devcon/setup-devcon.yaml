@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: Device Console (DevCon) Tool
+  description: DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers.
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows

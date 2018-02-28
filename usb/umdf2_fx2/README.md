@@ -3,7 +3,7 @@
     platform: UMDF2
     language: cpp
     category: USB
-    description: Demomstreates a UMDF version 2 driver for the OSR USB-FX2 device.
+    description: Demonstrates a UMDF version 2 driver for the OSR USB-FX2 device.
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618003
 --->
 

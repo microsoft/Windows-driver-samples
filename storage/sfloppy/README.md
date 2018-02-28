@@ -3,7 +3,7 @@
     platform: WDM
     language: cpp
     category: Storage
-    description: A smaple class driver for Super Floppy disk drives.     
+    description: A sample class driver for Super Floppy disk drives.     
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617989
 --->
 

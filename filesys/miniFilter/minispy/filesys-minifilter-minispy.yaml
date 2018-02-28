@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: Minispy File System Minifilter Driver
+  description: A tool to monitor and log any I/O and transaction activity that occurs in the system.
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows
