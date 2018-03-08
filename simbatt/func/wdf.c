@@ -167,8 +167,7 @@ Return Value:
 
     WDF_OBJECT_ATTRIBUTES DeviceAttributes;
     PSIMBATT_FDO_DATA DevExt;
-    WDFDEVICE DeviceHandle;
-    WDF_FILEOBJECT_CONFIG FileObjectConfig;
+    WDFDEVICE DeviceHandle;  
     WDF_OBJECT_ATTRIBUTES LockAttributes;
     WDF_PNPPOWER_EVENT_CALLBACKS PnpPowerCallbacks;
     WDFQUEUE Queue;
@@ -191,21 +190,6 @@ Return Value:
     PnpPowerCallbacks.EvtDeviceSelfManagedIoCleanup = SimBattSelfManagedIoCleanup;
     PnpPowerCallbacks.EvtDeviceQueryStop = SimBattQueryStop;
     WdfDeviceInitSetPnpPowerEventCallbacks(DeviceInit, &PnpPowerCallbacks);
-
-    //
-    // Configure file handlers to forward all create, close, and cleanup
-    // requests to the PDO.
-    //
-
-    WDF_FILEOBJECT_CONFIG_INIT(&FileObjectConfig,
-                               WDF_NO_EVENT_CALLBACK,
-                               WDF_NO_EVENT_CALLBACK,
-                               WDF_NO_EVENT_CALLBACK);
-
-    FileObjectConfig.AutoForwardCleanupClose = WdfTrue;
-    WdfDeviceInitSetFileObjectConfig(DeviceInit,
-                                     &FileObjectConfig,
-                                     WDF_NO_OBJECT_ATTRIBUTES);
 
     //
     // Register WDM preprocess callbacks for IRP_MJ_DEVICE_CONTROL and
