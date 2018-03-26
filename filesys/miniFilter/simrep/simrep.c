@@ -1958,7 +1958,7 @@ Return Value:
 
      } else if (fileInfoClass == FileLinkInformation) {
 
-        bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
+        bufferLength = FIELD_OFFSET( FILE_LINK_INFORMATION, FileName ) + newFileName.Length;
 
         buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
