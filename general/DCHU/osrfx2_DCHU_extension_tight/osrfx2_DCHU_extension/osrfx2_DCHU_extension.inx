@@ -30,15 +30,13 @@ DriverVer = 05/16/2017,15.14.36.721
 %ManufacturerName% = OsrFx2Extension, NT$ARCH$
 
 [OsrFx2Extension.NT$ARCH$]
-%OsrFx2.ExtensionDesc% = OsrFx2Extension_Install, USB\Vid_045e&Pid_94aa&mi_00
-%OsrFx2.ExtensionDesc% = OsrFx2Extension_Install, USB\Vid_0547&PID_1002
+%OsrFx2.ExtensionDesc% = OsrFx2Extension_Install, USB\Vid_0547&PID_1002&REV_0000
 
 [OsrFx2Extension_Install.NT]
 CopyInf=osrfx2_DCHU_component.inf
 
 [OsrFx2Extension_Install.NT.HW]
 AddReg = OsrFx2Extension_AddReg
-AddReg = OsrFx2Extension_COMAddReg
 
 [OsrFx2Extension_AddReg]
 HKR, OSR, "OperatingParams",, "-Extended"
