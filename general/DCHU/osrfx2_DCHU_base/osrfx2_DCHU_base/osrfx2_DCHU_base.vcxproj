@@ -226,11 +226,15 @@
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_base.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
@@ -242,6 +246,10 @@
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_base.dll" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
     <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
@@ -250,11 +258,15 @@
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_base.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_filter.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_usersvc.exe" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
