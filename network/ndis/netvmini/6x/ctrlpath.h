@@ -22,7 +22,9 @@ Abstract:
 
 
 MINIPORT_OID_REQUEST                MPOidRequest;
-
+#if (NDIS_SUPPORT_NDIS680)
+MINIPORT_SYNCHRONOUS_OID_REQUEST    MPSynchronousOidRequest;
+#endif
 
 #endif // _CTRLPATH_H
 

@@ -31,6 +31,12 @@ MPMethodRequest(
 
 static
 NDIS_STATUS
+MPSynchronousMethodRequest(
+    _In_  PMP_ADAPTER             Adapter,
+    _In_  PNDIS_OID_REQUEST       NdisRequest);
+
+static
+NDIS_STATUS
 MPSetInformation(
     _In_  PMP_ADAPTER         Adapter,
     _In_  PNDIS_OID_REQUEST   NdisSetRequest);
@@ -106,6 +112,20 @@ NICSetQOSParameters(
 #pragma NDIS_PAGEABLE_FUNCTION(NICSetRxFilter)
 #pragma NDIS_PAGEABLE_FUNCTION(NICSetQOSParameters)
 
+#endif
+
+#if (NDIS_SUPPORT_NDIS680)
+static
+NDIS_STATUS
+MPSetRSSv2Parameters(
+    _In_ PMP_ADAPTER        Adapter,
+    _In_ PNDIS_OID_REQUEST  NdisSetRequest);
+
+static
+NDIS_STATUS
+MPSetRSSv2IndirectionTableEntries(
+    _In_ PMP_ADAPTER        Adapter,
+    _In_ PNDIS_OID_REQUEST  NdisSetRequest);
 #endif
 
 static
@@ -194,6 +214,52 @@ Return Value:
     return Status;
 }
 
+#if (NDIS_SUPPORT_NDIS680)
+NDIS_STATUS
+MPSynchronousOidRequest(
+    _In_  NDIS_HANDLE        MiniportAdapterContext,
+    _In_  PNDIS_OID_REQUEST  NdisRequest)
+/*++
+
+Routine Description:
+
+    Entry point called by NDIS to get or set the value of a specified 
+    synchronous OID.
+
+Arguments:
+
+    MiniportAdapterContext  - Our adapter handle
+    NdisRequest             - The OID request to handle
+
+Return Value:
+
+    Return code from the NdisRequest below.
+
+--*/
+{
+    NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
+    PMP_ADAPTER Adapter = MP_ADAPTER_FROM_CONTEXT(MiniportAdapterContext);
+
+    DEBUGP(MP_LOUD, "[%p] ---> MPSynchronousOidRequest\n", Adapter);
+
+    switch (NdisRequest->RequestType)
+    {
+        case NdisRequestMethod:
+            Status = MPSynchronousMethodRequest(Adapter, NdisRequest);
+            break;
+        default:
+            //
+            // The entry point may by used by other requests
+            //
+            Status = NDIS_STATUS_NOT_SUPPORTED;
+            break;
+    }
+
+
+    DEBUGP(MP_LOUD, "[%p] <--- MPSynchronousOidRequest Status = 0x%08x\n", Adapter, Status);
+    return Status;
+}
+#endif
 
 VOID
 MPCancelOidRequest(
@@ -875,6 +941,15 @@ Return Value:
                             NdisSetRequest);             
             break;
 
+#if (NDIS_SUPPORT_NDIS680)
+        case OID_GEN_RECEIVE_SCALE_PARAMETERS_V2:
+            //
+            // Update RSSv2 parameters
+            //
+            Status = MPSetRSSv2Parameters(Adapter, NdisSetRequest);
+            break;
+#endif
+
 #if (NDIS_SUPPORT_NDIS620)
         case OID_PM_ADD_WOL_PATTERN:
         case OID_PM_REMOVE_WOL_PATTERN:
@@ -996,6 +1071,55 @@ Return Value:
 }
 
 
+#if (NDIS_SUPPORT_NDIS680)
+NDIS_STATUS
+MPSynchronousMethodRequest(
+    _In_  PMP_ADAPTER             Adapter,
+    _In_  PNDIS_OID_REQUEST       NdisRequest)
+/*++
+Routine Description:
+
+    Helper function to perform a synchronous method OID request
+
+Arguments:
+
+    Adapter      -
+    NdisRequest  - THe synchronous method OID request
+
+Return Value:
+
+    NDIS_STATUS_SUCCESS
+    NDIS_STATUS_NOT_SUPPORTED
+
+--*/
+{
+    NDIS_STATUS      Status;
+    NDIS_OID         Oid;
+
+    DEBUGP(MP_LOUD, "[%p] ---> MPSynchronousMethodRequest ", Adapter);
+
+    Oid = NdisRequest->DATA.METHOD_INFORMATION.Oid;
+    DbgPrintOidName(Oid);
+
+    switch (Oid)
+    {
+        case OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES:
+            //
+            // Handle RSSv2 traffic steering OID.
+            //
+            Status = MPSetRSSv2IndirectionTableEntries(Adapter, NdisRequest);
+            break;
+
+        default:
+            Status = NDIS_STATUS_NOT_SUPPORTED;
+            break;
+    }
+
+
+    DEBUGP(MP_LOUD, "[%p] <--- MPSynchronousMethodRequest Status = 0x%08x\n", Adapter, Status);
+    return Status;
+}
+#endif
 
 
 NDIS_STATUS
@@ -1753,3 +1877,87 @@ Return Value:
 
     return Status;
 }
+
+
+#if (NDIS_SUPPORT_NDIS680)
+static
+NDIS_STATUS
+MPSetRSSv2Parameters(
+    _In_ PMP_ADAPTER        Adapter,
+    _In_ PNDIS_OID_REQUEST  NdisSetRequest)
+/*++
+Routine Description:
+
+    This routine handles OID_GEN_RECEIVE_SCALE_PARAMETERS_V2 set request. 
+
+Arguments:
+
+    Adapter         - Pointer to adapter block
+    NdisSetRequest  - The OID data for the request
+
+Return Value:
+
+    NDIS_STATUS   
+
+--*/      
+{
+    struct _SET *Set;
+
+    Set = &NdisSetRequest->DATA.SET_INFORMATION;
+
+    //
+    // Validate the request
+    //
+    if (Set->InformationBufferLength < 
+        NDIS_SIZEOF_RECEIVE_SCALE_PARAMETERS_V2_REVISION_1)
+    {
+        DEBUGP(MP_ERROR, "OID_GEN_RECEIVE_SCALE_PARAMETERS_V2: Invalid InformationBufferLength\n");
+
+        return NDIS_STATUS_INVALID_LENGTH;
+    }
+
+    return NICSetRSSv2Parameters(Adapter, NdisSetRequest);
+}
+
+
+static
+NDIS_STATUS
+MPSetRSSv2IndirectionTableEntries(
+    _In_ PMP_ADAPTER        Adapter,
+    _In_ PNDIS_OID_REQUEST  NdisMethodRequest)
+/*++
+Routine Description:
+
+    This routine handles OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES method request. 
+
+Arguments:
+
+    Adapter         - Pointer to adapter block
+    NdisSetRequest  - The OID data for the request
+
+Return Value:
+
+    NDIS_STATUS   
+
+--*/      
+{
+    struct _METHOD *Method;
+
+    ASSERT(KeGetCurrentIrql() == DISPATCH_LEVEL);
+
+    Method = &NdisMethodRequest->DATA.METHOD_INFORMATION;
+
+    //
+    // Validate the request
+    //
+    if (Method->InputBufferLength < 
+        NDIS_SIZEOF_RSS_SET_INDIRECTION_ENTRIES_REVISION_1)
+    {
+        DEBUGP(MP_ERROR, "OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES: Invalid InformationBufferLength\n");
+
+        return NDIS_STATUS_INVALID_LENGTH;
+    }
+
+    return NICSetRSSv2IndirectionTableEntries(Adapter, NdisMethodRequest);
+}
+#endif
