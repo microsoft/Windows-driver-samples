@@ -53,6 +53,9 @@ Abstract:
 #elif defined(NDIS630_MINIPORT)
 #  define MP_NDIS_MAJOR_VERSION             6
 #  define MP_NDIS_MINOR_VERSION            30
+#elif defined(NDIS680_MINIPORT)
+#  define MP_NDIS_MAJOR_VERSION             6
+#  define MP_NDIS_MINOR_VERSION            80
 #else
 #  error Unsupported NDIS version
 #endif

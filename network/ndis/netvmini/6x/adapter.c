@@ -480,6 +480,17 @@ Arguments:
             break;
         }
 
+#if (NDIS_SUPPORT_NDIS680)
+        //
+        // Set miniport attributes for supported and enabled NDIS RSS features.
+        //
+        Status = InitializeRSSConfig(Adapter);
+        if (NDIS_STATUS_SUCCESS != Status)
+        {
+            DEBUGP(MP_ERROR, "[%p] InitializeRSSConfig Status 0x%08x\n", Adapter, Status);
+            break;
+        }
+#endif
         //
         // For hardware devices, you should register your interrupt handlers
         // here, using NdisMRegisterInterruptEx.

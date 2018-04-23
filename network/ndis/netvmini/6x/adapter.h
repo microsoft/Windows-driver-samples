@@ -299,6 +299,15 @@ typedef struct _MP_ADAPTER
 
 #endif
 
+#if (NDIS_SUPPORT_NDIS680)
+
+    //
+    // NDIS RSSv2-related data
+    //
+    MP_ADAPTER_RSS_DATA     RSSData;
+
+#endif
+
 } MP_ADAPTER, *PMP_ADAPTER;
 
 #define MP_ADAPTER_FROM_CONTEXT(_ctx_) ((PMP_ADAPTER)(_ctx_))

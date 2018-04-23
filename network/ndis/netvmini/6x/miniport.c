@@ -157,6 +157,9 @@ Arguments:
         MPChar.DevicePnPEventNotifyHandler = MPDevicePnpEventNotify;
         MPChar.ShutdownHandlerEx = MPShutdownEx;
         MPChar.CancelOidRequestHandler = MPCancelOidRequest;
+#if (NDIS_SUPPORT_NDIS680)
+        MPChar.SynchronousOidRequestHandler = MPSynchronousOidRequest;
+#endif
 
         //
         // Associate the miniport driver with NDIS by calling the
@@ -591,6 +594,12 @@ DbgPrintOidName(
 #if (NDIS_SUPPORT_NDIS630)
         /* NDIS QoS OIDs for NDIS 6.30 */
         MAKECASE(OID_QOS_PARAMETERS)
+#endif
+
+#if (NDIS_SUPPORT_NDIS680)
+        /* RSSv2 OIDS*/
+        MAKECASE(OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES)
+        MAKECASE(OID_GEN_RECEIVE_SCALE_PARAMETERS_V2)
 #endif
     }
 
