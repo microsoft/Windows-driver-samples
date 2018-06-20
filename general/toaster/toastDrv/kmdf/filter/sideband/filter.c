@@ -102,7 +102,7 @@ Return Value:
     KdPrint(("Toaster SideBand Filter Driver Sample - Driver Framework Edition.\n"));
 
     //
-    // Initiialize driver config to control the attributes that
+    // Initialize driver config to control the attributes that
     // are global to the driver. Note that framework by default
     // provides a driver unload routine. If you create any resources
     // in the DriverEntry and want to be cleaned in driver unload,
@@ -216,7 +216,7 @@ Return Value:
 
     //
     // Tell the framework that you are filter driver. Framework
-    // takes care of inherting all the device flags & characterstics
+    // takes care of inheriting all the device flags & characteristics
     // from the lower device you are attaching to.
     //
     WdfFdoInitSetFilter(DeviceInit);
@@ -231,13 +231,13 @@ Return Value:
     //
     // We will just register for cleanup notification because we have to
     // delete the control-device when the last instance of the device goes
-    // away. If we don't delete, the driver wouldn't get unloaded automatcially
+    // away. If we don't delete, the driver wouldn't get unloaded automatically
     // by the PNP subsystem.
     //
     deviceAttributes.EvtCleanupCallback = FilterEvtDeviceContextCleanup;
 
     //
-    // Create a framework device object.This call will inturn create
+    // Create a framework device object. This call will in turn create
     // a WDM deviceobject, attach to the lower stack and set the
     // appropriate flags and attributes.
     //
@@ -586,7 +586,7 @@ Return Value:
 
     PAGED_CODE();
 
-    KdPrint(("Ioctl recieved into filter control object.\n"));
+    KdPrint(("Ioctl received into filter control object.\n"));
 
     WdfWaitLockAcquire(FilterDeviceCollectionLock, NULL);
 
