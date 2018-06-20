@@ -13,8 +13,6 @@ USBView sample application
 
 Usbview.exe is a Windows GUI application that allows you to browse all USB controllers and connected USB devices on your system. The left pane in the main application window displays a connection-oriented tree view, and the right pane displays the USB data structures pertaining to the selected USB device, such as the Device, Configuration, Interface, and Endpoint Descriptors, as well as the current device configuration.
 
-**Important** If you need UsbView as a tool, do not download this sample. Instead get UsbView.exe from the [Windows Driver Kit (WDK)](http://go.microsoft.com/fwlink/p?linkid=391063) in the Windows Kits\\*\<version\>*\\Tools\\*\<arch\>* folder. If you need to see the source code for UsbView, open the **Browse code** tab.
-
 This functional application sample demonstrates how a user-mode application can enumerate USB host controllers, USB hubs, and attached USB devices, and query information about the devices from the registry and through USB requests to the devices.
 
 The IOCTL calls (see the system include file USBIOCTL.H) demonstrated by this sample include:
