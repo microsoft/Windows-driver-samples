@@ -51,5 +51,5 @@ WSDMON supports the following Xcv commands:
 
 **Note** This sample is for the v4 print driver model.
 
-For more information, see [V4 Driver Connectivity Architecture](http://msdn.microsoft.com/en-us/library/windows/hardware/) and [Bidirectional Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
+For more information, see [V4 Driver Connectivity Architecture](https://msdn.microsoft.com/en-us/library/windows/hardware/) and [Bidirectional Communication Schema](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
 

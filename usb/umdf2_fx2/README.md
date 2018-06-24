@@ -18,7 +18,7 @@ The specification for the device can be found at <http://www.osronline.com/hardw
 Related technologies
 --------------------
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 
 
 Run the sample
@@ -30,7 +30,7 @@ The process of moving the driver package to the target computer and installing t
 
 ### Automatic deployment (FX2 board)
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/).
 
 1.  Plug in the OSR USB-FX2 board to the target computer.
 2.  On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
@@ -39,7 +39,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 ### Manual deployment (FX2 board)
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
 
 1.  Copy all of the files in your driver package to a folder on the target computer (for example, c:\\umdf2\_fx2).
 2.  Plug in the OSR USB-FX2 board to the target computer. Open a Command Prompt window and enter **dvmgmt** to open Device Manager. In Device Manager, locate the node for the OSR USB-FX2 board. Right click the node, and choose **Properties**. In the **Details** tab, under **Properties**, choose **Hardware Ids**. Note the hardware IDs listed for your FX2 board. One of these IDs should match one of the IDs in the osrusbfx2um.inf file. For example, Device Manager might show an ID of USB\\VID\_0547&PID\_1002, which matches one of the IDs in the [Microsoft.*xxx*] section of osrusbfx2um.inf.
@@ -66,5 +66,5 @@ As an alternative to building the driver sample in Visual Studio, you can build 
 
 **msbuild /p:configuration=�Win8 Release� /p:platform=�Win32� umdf2\_fx2.sln**
 
-For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using MSBuild to build a driver package, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

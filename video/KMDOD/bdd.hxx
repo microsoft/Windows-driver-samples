@@ -387,7 +387,7 @@ private:
     // Helper function for RegisterHWInfo
     NTSTATUS WriteHWInfoStr(_In_ HANDLE DevInstRegKeyHandle, _In_ PCWSTR pszwValueName, _In_ PCSTR pszValue);
 
-    // Set the information in the registry as described here: http://msdn.microsoft.com/en-us/library/windows/hardware/ff569240(v=vs.85).aspx
+    // Set the information in the registry as described here: https://msdn.microsoft.com/en-us/library/windows/hardware/ff569240(v=vs.85).aspx
     NTSTATUS RegisterHWInfo();
 };
 

@@ -25,7 +25,7 @@ These samples provide skeleton code that developers can use as a basis for writi
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 **Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 
@@ -54,7 +54,7 @@ This sample is taken from the UMDF FX2 sample and has been modified to expose WB
 
 -   Installs WBDI driver, including correct class GUID settings and icons, and registry settings for Windows Biometric Framework configuration.
 -   Publishes WBDI device interface.
--   Supports all the mandatory [WBDI IOCTLs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536414).
+-   Supports all the mandatory [WBDI IOCTLs](https://msdn.microsoft.com/en-us/library/windows/hardware/ff536414).
 -   Supports cancellation.
 -   Can be opened with exclusivity.
 
@@ -68,7 +68,7 @@ It uses device level-locking to simplify internal thread synchronization. This m
 
 It supports cancellation of any IOCTL which may be I/O intensive, particularly a capture IOCTL. This sample does not have a real capture mechanism, so it is simulated by a 5 second delay returning a capture IOCTL. Cancellation is supported through the mechanism exposed by WUDF, with a callback for a request object. Cancellation support is required for all IOCTLs.
 
-There are hooks for all [WBDI IOCTLs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536414), including the optional IOCTLs.
+There are hooks for all [WBDI IOCTLs](https://msdn.microsoft.com/en-us/library/windows/hardware/ff536414), including the optional IOCTLs.
 
 PnP is very simple for this driver. It needs to only implement **OnPrepareHardware** and **OnReleaseHardware** from **IPnpCallbackHardware**.
 
@@ -84,5 +84,5 @@ WinBio Adapters are plug-in components that provide a standard interface layer b
 
 For many simple biometric devices, it will only be necessary to write a WBDI driver for the device plus an Engine Adapter to perform matching operations. Consult the programming guidelines in the WinBio Service documentation for more details.
 
-Each Adapter sample contains a well-known interface-discovery function, whose job is to return the address of a function dispatch table. When the WinBio Service loads an Adapter plug-in, it uses the interface-discovery function to locate the dispatch table, and then calls various methods in the table to communicate with the biometric device. The purpose, arguments, and return codes of each Adapter method are described in the WinBio Service programming guidelines. More information on adapter plug-ins is available at [WBDI Plug-in Reference](http://msdn.microsoft.com/en-us/library/windows/desktop/dd401553(v=vs.85).aspx).
+Each Adapter sample contains a well-known interface-discovery function, whose job is to return the address of a function dispatch table. When the WinBio Service loads an Adapter plug-in, it uses the interface-discovery function to locate the dispatch table, and then calls various methods in the table to communicate with the biometric device. The purpose, arguments, and return codes of each Adapter method are described in the WinBio Service programming guidelines. More information on adapter plug-ins is available at [WBDI Plug-in Reference](https://msdn.microsoft.com/en-us/library/windows/desktop/dd401553(v=vs.85).aspx).
 

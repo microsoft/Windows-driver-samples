@@ -19,7 +19,7 @@ The ProdScan directory contains a sample WIA 2.0 mini-driver. This sample shows 
 ### EXTENDED WIA 2.0 MONSTER DRIVER
 The Wiadriverex directory contains a sample WIA 2.0 mini-driver. This sample shows how to write a WIA 2.0 mini-driver that uses the stream-based WIA 2.0 transfer model. It also shows an implementation of a very simple segmentation filter, image processing filter, and error handling extension for the WIA 2.0 mini-driver.
 
-For more information, see [Introduction to WIA](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542835).
+For more information, see [Introduction to WIA](https://msdn.microsoft.com/en-us/library/windows/hardware/ff542835).
 
 
 Build the sample

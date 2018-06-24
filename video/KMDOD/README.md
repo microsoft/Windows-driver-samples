@@ -12,7 +12,7 @@ Kernel mode display-only miniport driver (KMDOD) sample
 
 The kernel mode display-only miniport driver (KMDOD) sample implements most of the device driver interfaces (DDIs) that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM). The code is useful to understand how to write a miniport driver for a display-only device, or how to develop a full WDDM driver.
 
-For more info on how a KMDOD works, see [Kernel Mode Display-Only Driver (KMDOD) Interface](http://msdn.microsoft.com/en-us/library/windows/hardware/jj673962). For more info on WDDM drivers, see [Windows Display Driver Model (WDDM) Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff570593).
+For more info on how a KMDOD works, see [Kernel Mode Display-Only Driver (KMDOD) Interface](https://msdn.microsoft.com/en-us/library/windows/hardware/jj673962). For more info on WDDM drivers, see [Windows Display Driver Model (WDDM) Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff570593).
 
 This code can also help you to understand the use and implementation of display-related DDIs. The INF file shows how to make a display miniport driver visible to other WDDM components.
 
@@ -26,7 +26,7 @@ If the current display driver is not a WDDM 1.2 compliant driver, the sample dri
 Installation
 ------------
 
-In Microsoft Visual Studio, press **F5** to build the sample and then deploy it to a target machine. For more info, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834).
+In Microsoft Visual Studio, press **F5** to build the sample and then deploy it to a target machine. For more info, see [Deploying a Driver to a Test Computer](https://msdn.microsoft.com/en-us/library/windows/hardware/hh454834).
 
 In some cases you might need to install the driver manually, as follows.
 
@@ -46,7 +46,7 @@ In some cases you might need to install the driver manually, as follows.
 
     **Note** After you change the TESTSIGNING boot configuration option, restart the computer for the change to take effect.
 
-    For more info, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484).
+    For more info, see [The TESTSIGNING Boot Configuration Option](https://msdn.microsoft.com/en-us/library/windows/hardware/ff553484).
 
 4.  Manually install the driver using Device Manager, which is available from Control Panel.
 

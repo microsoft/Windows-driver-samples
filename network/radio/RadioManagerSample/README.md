@@ -43,7 +43,7 @@ SampleInstanceCollection.h | Header file for the functions required for a Collec
 precomp.h | Common header file.
 InternalInterfaces.h | Header file for internal interface used for this sample.
 dllmain.cpp | Standard dllmain.
-SampleRadioManager.cpp | Implementation details for the Sample Radio Manager. Important concepts include utilizing [IMediaRadioManagerNotifySink](http://msdn.microsoft.com/en-us/library/windows/hardware/hh406534) for radio instance events, adding/Removing radio instances, and queuing and deploying worker jobs for system events.
+SampleRadioManager.cpp | Implementation details for the Sample Radio Manager. Important concepts include utilizing [IMediaRadioManagerNotifySink](https://msdn.microsoft.com/en-us/library/windows/hardware/hh406534) for radio instance events, adding/Removing radio instances, and queuing and deploying worker jobs for system events.
 SampleRadioInstance.cpp | Implementation details for the Sample Radio Instance. Important concepts include accessors and modifiers for radio information, and instance change functions.
 SampleInstanceCollection.cpp | Implementation details for the Sample Instance Collection. Important concepts include radio instance discovery and retrieval.
 RadioMgr\_interface.cpp | Helper source file to include the MIDL-generated files.

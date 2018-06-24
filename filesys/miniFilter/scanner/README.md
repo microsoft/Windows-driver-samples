@@ -23,5 +23,5 @@ The Scanner minifilter comprises both kernel-mode and user-mode components. The 
 
 The kernel-mode component scans files with specific extensions only. The file is first scanned on a successful open. If the file was opened with write access, it is scanned again before a close. Scanning is also performed on data that is about to be written to a file. Writes will be rejected if any occurrences of a "foul" string are found in the data. If a "foul" string is detected during the closing of a file, a debug message is printed.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

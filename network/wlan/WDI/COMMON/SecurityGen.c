@@ -4866,7 +4866,7 @@ SecCatPMKID(
 				//	this bit in the RSN capabilities of RSN IE during an association request. For policy, the access point may advertise MFPR which will
 				//	allow MFP-capable STA to associate. Access points not supporting MFP capability will fail association. If MFPR is set by an access point
 				//	and STA is not MFP capable, Windows 8 will treat the network as mismatched in capability and not send an association request to the
-				//	miniport. http://msdn.microsoft.com/en-us/library/windows/hardware/ff547688(v=vs.85).aspx
+				//	miniport. https://msdn.microsoft.com/en-us/library/windows/hardware/ff547688(v=vs.85).aspx
 				// 
 				// SET_RSN_IE_CAP_MFP_REQUIRED(pIECurrent, 1);
 			}

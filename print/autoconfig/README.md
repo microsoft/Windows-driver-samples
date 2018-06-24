@@ -19,7 +19,7 @@ Many printers ship with optional components which are not present in all version
 
 Windows auto-configuration allows a print driver to specify a mapping between driver installable options and the state of the printer as expressed through the Bidi Schema. 
 
-For more information on auto-configuration, see [Printer Autoconfiguration](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560774(v=vs.85).aspx).
+For more information on auto-configuration, see [Printer Autoconfiguration](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560774(v=vs.85).aspx).
 
 For more information on the Bidi Schema, see [Bidirectional Communication Schema](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
 
@@ -39,9 +39,9 @@ But to build a signed driver package using Windows Driver Kit (WDK) 10 and Visua
 
 **Note** When the driver builds, it will be placed in the output folder for the architecture you selected.
 
-At this point, Visual Studio will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
+At this point, Visual Studio will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
-For more information about how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 Run the sample
 --------------

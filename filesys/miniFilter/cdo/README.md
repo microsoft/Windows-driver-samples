@@ -23,4 +23,4 @@ Design and Operation
 
 When the CDO minifilter is deployed, it creates a CDO object named "FileSystem\\Filters\\CdoSample" in the Microsoft Windows object namespace and enables applications to open it and perform certain operations on it.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.

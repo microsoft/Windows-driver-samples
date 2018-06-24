@@ -20,5 +20,5 @@ Design and Operation
 
 The *NullFilter* minifilter is a simple minifilter that registers itself with the filter manager for no callback operations.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

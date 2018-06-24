@@ -816,7 +816,7 @@ Return Value:
     WDF_INTERRUPT_INFO  interruptInfo;
 
     //
-    //MikeTs(10/15/2008): http://msdn.microsoft.com/en-us/library/bb725862.aspx
+    //MikeTs(10/15/2008): https://msdn.microsoft.com/en-us/library/bb725862.aspx
     //  explains although the callback function is called at PASSIVE_LEVEL,
     //  callback functions that leave a lower device state returning to
     //  working state should not be pageable.

@@ -13,7 +13,7 @@ NDIS MUX Intermediate Driver and Notify Object
 
 The MUX Intermediate Miniport (IM) driver is an NDIS 6.0 driver that demonstrates the operation of an "N:1" MUX driver.The sample demonstrates creating multiple virtual network devices on top of a single lower adapter. Protocols bind to these virtual adapters as if they are real adapters. Examples of Intermediate Miniport drivers that can use this framework are Virtual LAN (VLAN) drivers. Included in the project is a sample Notify Object that demonstrates how to write a notify object for installing and configuring an NDIS MUX intermediate miniport (IM) driver that implements an N:1 relationship between upper and lower bindings, for example, it creates multiple virtual network devices on top of a single lower adapter. Protocols bind to these virtual adapters as if they are real adapters. Examples of Intermediate Miniport drivers that can use this type of notify object are Virtual LAN (VLAN) drivers.
 
-For more information, see [NDIS Intermediate Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
+For more information, see [NDIS Intermediate Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
 
 INSTALLING THE SAMPLE
 ---------------------
@@ -187,5 +187,5 @@ Precomp.h | Precompile header file
 Protocol.c | Protocol related routines for the MUX driver 
 Public.h | Contains the common declarations shared by driver and user applications
 
-For more information, see [NDIS Intermediate Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
+For more information, see [NDIS Intermediate Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
 

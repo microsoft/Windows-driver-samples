@@ -68,13 +68,13 @@ WPD_OBJECT_FORMAT | GUID | Object-specific
 WPD_OBJECT_CONTENT_TYPE | GUID | Object-specific 
 WPD_OBJECT_CAN_DELETE | Bool | False 
 
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD HelloWorld Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/) description in the Windows Driver Kit documentation.
+For a complete description of this sample and its underlying code and functionality, refer to the [WPD HelloWorld Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/) description in the Windows Driver Kit documentation.
 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
 [WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597898)

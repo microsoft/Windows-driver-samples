@@ -34,7 +34,7 @@ A property is a node in the schema hierarchy. A property can have one or more ch
 
 A value is a leaf in the schema hierarchy that represents either a single data item or a list of related data items. A value has a name, a data type, and a data value. A value cannot have child elements.
 
-For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx) and [Bidi Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
+For more information, see [USB Bidi Extender](https://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx) and [Bidi Communication Schema](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
 
 Here are the core files that you will find in this sample:
 
@@ -62,10 +62,10 @@ A USB Bidi Extension XML file that specifies the supported Bidi Schema elements 
 Build the sample
 ----------------
 
-For information and instructions about how to test and deploy drivers, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
+For information and instructions about how to test and deploy drivers, see [Developing, Testing, and Deploying Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
 Run the sample
 --------------
 
-To understand how to run this sample as a Windows driver, see the [v4 Printer Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/hh706306(v=vs.85).aspx) collection of topics.
+To understand how to run this sample as a Windows driver, see the [v4 Printer Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/hh706306(v=vs.85).aspx) collection of topics.
 

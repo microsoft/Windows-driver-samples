@@ -10,7 +10,7 @@
 AVStream filter-centric simulated capture sample driver (Avssamp)
 =================================================================
 
-The AVStream filter-centric simulated capture sample driver (Avssamp) provides a filter-centric [AVStream](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554240) capture driver with functional audio. This streaming media driver performs video captures at 320 x 240 pixel resolution in RGB24 or YUV422 format while playing a user-provided Pulse Code Modulation (PCM) wave audio file in a loop. The sample demonstrates how to write a filter-centric AVStream minidriver.
+The AVStream filter-centric simulated capture sample driver (Avssamp) provides a filter-centric [AVStream](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554240) capture driver with functional audio. This streaming media driver performs video captures at 320 x 240 pixel resolution in RGB24 or YUV422 format while playing a user-provided Pulse Code Modulation (PCM) wave audio file in a loop. The sample demonstrates how to write a filter-centric AVStream minidriver.
 
 
 Installation instructions
@@ -26,13 +26,13 @@ Installation instructions
 Programming Tour
 ----------------
 
-[**DriverEntry**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff558717) in Avssamp.cpp is the initial point of entry into the driver. This routine passes control to AVStream by calling [**KsInitializeDriver**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff562683). In this call, the minidriver passes the device descriptor, an AVStream structure that recursively defines the AVStream object hierarchy for a driver. This is common behavior for an AVStream minidriver.
+[**DriverEntry**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff558717) in Avssamp.cpp is the initial point of entry into the driver. This routine passes control to AVStream by calling [**KsInitializeDriver**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff562683). In this call, the minidriver passes the device descriptor, an AVStream structure that recursively defines the AVStream object hierarchy for a driver. This is common behavior for an AVStream minidriver.
 
-Filter.cpp is where the sample lays out the [**KSPIN\_DESCRIPTOR\_EX**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff563534) structure for the single capture pin. Audio.cpp contains the **KSPIN\_DESCRIPTOR\_EX** structure for the audio capture pin. This pin is dynamically created only if C:\\avssamp.wav exists and is a valid and readable PCM format wave file.
+Filter.cpp is where the sample lays out the [**KSPIN\_DESCRIPTOR\_EX**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff563534) structure for the single capture pin. Audio.cpp contains the **KSPIN\_DESCRIPTOR\_EX** structure for the audio capture pin. This pin is dynamically created only if C:\\avssamp.wav exists and is a valid and readable PCM format wave file.
 
-The filter dispatch structure [**KSFILTER\_DISPATCH**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff562554) in Filter.cpp provides dispatches to create and process data. The **DispatchProcess** method is defined inline in Filter.h. It calls the **Process** method in Filter.cpp in the context of the **CCaptureFilter** class. Be aware that the process dispatch is provided in **KSFILTER\_DISPATCH** because this sample is filter-centric.
+The filter dispatch structure [**KSFILTER\_DISPATCH**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff562554) in Filter.cpp provides dispatches to create and process data. The **DispatchProcess** method is defined inline in Filter.h. It calls the **Process** method in Filter.cpp in the context of the **CCaptureFilter** class. Be aware that the process dispatch is provided in **KSFILTER\_DISPATCH** because this sample is filter-centric.
 
-Audio.cpp lays out a [**KSPIN\_DISPATCH**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff563535) pin dispatch structure, which contains the dispatch table for the audio pin. Be aware that the **Process** member of this structure is **NULL** because the sample is filter-centric. Similarly, Video.cpp contains the **KSPIN\_DISPATCH** structure for the video capture pin, again with the **Process** member set to **NULL**.
+Audio.cpp lays out a [**KSPIN\_DISPATCH**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff563535) pin dispatch structure, which contains the dispatch table for the audio pin. Be aware that the **Process** member of this structure is **NULL** because the sample is filter-centric. Similarly, Video.cpp contains the **KSPIN\_DISPATCH** structure for the video capture pin, again with the **Process** member set to **NULL**.
 
 For more information, see the comments in all .cpp files.
 

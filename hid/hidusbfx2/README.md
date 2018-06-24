@@ -18,19 +18,19 @@ The sample also demonstrates how to write a HID minidriver using Windows Driver 
 Related topics
 --------------
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Reference](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
 
 Related technologies
 --------------------
 
-[Creating Framework-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540774) 
-[Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
+[Creating Framework-based HID Minidrivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540774) 
+[Creating UMDF-based HID Minidrivers](https://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
 
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 Theory of Operation
 -------------------

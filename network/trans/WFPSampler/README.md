@@ -31,7 +31,7 @@ WFPSamplerSys.Lib is a library of kernel mode helper functions used throughout t
 
 Once you have downloaded the sample, the .mht files in the sample's docs directory describe the various WFP filtering scenarios that you can try.
 
-For more information about WFP callout drivers, see [Windows Filtering Platform Callout Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
+For more information about WFP callout drivers, see [Windows Filtering Platform Callout Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
 
 
 Open the driver solution in Visual Studio
@@ -70,14 +70,14 @@ to this:
 
 `RunDLL32.Exe syssetup,SetupInfObjectInstallAction DefaultInstall 132 %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.Inf`
 
-For more information about this setting, see the Remarks section for the [**InstallHinfSection**](http://msdn.microsoft.com/en-us/library/windows/hardware/aa376957) function.
+For more information about this setting, see the Remarks section for the [**InstallHinfSection**](https://msdn.microsoft.com/en-us/library/windows/hardware/aa376957) function.
 
 Build the sample using Visual Studio
 ------------------------------------
 
 In Visual Studio, on the **Build** menu, choose **Build Solution**.
 
-For more information about using Microsoft Visual Studio to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using Microsoft Visual Studio to build a driver package, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 Locate the built driver package
 -------------------------------
@@ -121,7 +121,7 @@ The process of moving the driver to the target computer and installing the drive
 Automatic deployment
 --------------------
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/). After you have provisioned the target computer, continue with these steps:
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/). After you have provisioned the target computer, continue with these steps:
 
 1.  On the host computer, in Visual Studio, in Solution Explorer, right-click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
 2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Do not install**. Click **OK**.
@@ -133,7 +133,7 @@ Before you automatically deploy a driver, you must provision the target computer
 Manual deployment
 -----------------
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571). After you have prepared the target computer for manual deployment, copy the following files to a folder on the target computer (for example, c:\\WFPSamplerSamplePackage):
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://msdn.microsoft.com/en-us/library/windows/hardware/dn265571). After you have prepared the target computer for manual deployment, copy the following files to a folder on the target computer (for example, c:\\WFPSamplerSamplePackage):
 
 -   The 4 files in your driver package folder
 -   The user-mode application (WFPSampler.exe) file
@@ -144,10 +144,10 @@ Copy additional files to the target computer
 
 Copy the driver's PDB file (WFPSamplerCalloutDriver.pdb), the user-mode service's PDB file (WFPSamplerService.pdb) and the user-mode application's PDB file (WFPSampler.pdb) to a folder on the target computer (for example, c:\\Symbols).
 
-Copy the [**TraceView**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) and [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) tools to a folder on the target computer (for example c:\\Tools).
+Copy the [**TraceView**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) and [**SignTool**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) tools to a folder on the target computer (for example c:\\Tools).
 
--   [**TraceView**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\10\\Tools\\x64\\TraceView.exe).
--   [**SignTool**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) also comes with the WDK. You can find it in your WDK installation folder under bin (for example, c:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64\\SignTool.exe).
+-   [**TraceView**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff553872) comes with the WDK. You can find it in your WDK installation folder under Tools (for example, c:\\Program Files (x86)\\Windows Kits\\10\\Tools\\x64\\TraceView.exe).
+-   [**SignTool**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff551778) also comes with the WDK. You can find it in your WDK installation folder under bin (for example, c:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64\\SignTool.exe).
 
 Installing the driver
 ---------------------
@@ -185,7 +185,7 @@ If you want to test whether your TraceView.exe session is working, you can enter
 -   **net stop WFPSamplerCallouts**
 -   **net start WFPSamplerCallouts**
 
-For more information, see [Creating a Trace Session with a PDB File](http://msdn.microsoft.com/en-us/library/windows/hardware/ff543582).
+For more information, see [Creating a Trace Session with a PDB File](https://msdn.microsoft.com/en-us/library/windows/hardware/ff543582).
 
 Tracing for the sample driver can be started at any time before the driver is started or while the driver is already running.
 

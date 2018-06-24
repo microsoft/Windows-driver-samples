@@ -23,7 +23,7 @@ Driver developers can use the framework in this sample to provide support for va
 The following table shows the features that are implemented in the various subdirectories of this sample.
 
 
-For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
+For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](https://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
 
 Build the sample
@@ -77,7 +77,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 **1. Provision the target computer**
 
-On the target computer install the latest [Windows Driver Kit](http://msdn.microsoft.com/en-us/windows/hardware/gg454513.aspx) (WDK), and then when the installation is completed, navigate to the following folder:
+On the target computer install the latest [Windows Driver Kit](https://msdn.microsoft.com/en-us/windows/hardware/gg454513.aspx) (WDK), and then when the installation is completed, navigate to the following folder:
 
 \\Program Files (x86)\\Windows Kits\\10\\Remote\\<*architecture*>\\
 
@@ -89,7 +89,7 @@ Double-click the *WDK Test Target Setup x64-x64\_en-us.msi* file to run it. This
 
 On the host computer, in Visual Studio click **Driver** \> **Test** \> **Configure Computers...**, and then click **Add a new computer**.
 
-Type the name of the target computer, select **Provision computer and choose debugger settings**, and click **Next**. In the next window, verify that the **Connection Type** is set to Network. Leave the other (default) settings as they are, and click **Next**. For more information about the settings in this window, see [Getting Set Up for Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450944(v=vs.85).aspx).
+Type the name of the target computer, select **Provision computer and choose debugger settings**, and click **Next**. In the next window, verify that the **Connection Type** is set to Network. Leave the other (default) settings as they are, and click **Next**. For more information about the settings in this window, see [Getting Set Up for Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/hh450944(v=vs.85).aspx).
 
 **2. Prepare the host computer**
 
@@ -123,7 +123,7 @@ Create a folder on the target for the built driver package (for example, *C:\\Sy
 
 Create a folder on the target computer for the certificate created by the build process. For example, you could create a folder named *C:\\Certificates* on the target computer, and then copy *package.cer* to it from the host computer. You can find this certificate in the same folder on the host computer, as the *package* folder that contains the built driver files. On the target computer, right-click the certificate file, and click **Install**, then follow the prompts to install the test certificate.
 
-If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
+If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](https://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
 
 **2. Install the driver**
 
@@ -141,7 +141,7 @@ If you get an error message about *devcon* not being recognized, try adding the 
 
 **c:\\tools\\devcon install sysvad.inf   \*ROOT\sysvad_TabletAudioSample**
 
-For more detailed instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698272(v=vs.85).aspx).
+For more detailed instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/hh698272(v=vs.85).aspx).
 
 After successfully installing the sample driver, you're now ready to test it.
 

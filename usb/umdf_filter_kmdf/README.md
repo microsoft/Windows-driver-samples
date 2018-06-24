@@ -57,7 +57,7 @@ Here is the overview of the device:
 Testing the driver
 ------------------
 
-You can test this sample either by using the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
+You can test this sample either by using the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](https://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
 
 Code tour
 ---------------

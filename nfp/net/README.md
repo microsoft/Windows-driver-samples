@@ -17,5 +17,5 @@ Typically, a near-field proximity driver would use near-field technologies such 
 
 Related technologies
 --------------------
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 

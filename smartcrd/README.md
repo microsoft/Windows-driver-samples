@@ -25,7 +25,7 @@ A card reader will not see any card insertion or removal events in these modes, 
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 **Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 
@@ -49,5 +49,5 @@ Resources
 
 ISO 7816 Part 3 describes smart cards and smart card protocols in detail. Refer to the PC99 Handbook for smart card reader requirements.
 
-For more information about Windows smart card reader drivers, see [Smart Card Reader Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+For more information about Windows smart card reader drivers, see [Smart Card Reader Devices Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/).
 

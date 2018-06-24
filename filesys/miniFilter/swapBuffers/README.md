@@ -21,5 +21,5 @@ Design and Operation
 
 The *SwapBuffers* minifilter introduces a new buffer before a read/write or directory control operations. The corresponding operation is then performed on the new buffer instead of the buffer that was originally provided. After the operation completes, the contents of the new buffer are copied back in to the original buffer.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

@@ -11,13 +11,13 @@
 RegFltr Sample Driver
 =====================
 
-The RegFltr sample shows how to write a [registry filter driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545879).In addition to providing some basic examples, this sample demonstrates the following:
+The RegFltr sample shows how to write a [registry filter driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545879).In addition to providing some basic examples, this sample demonstrates the following:
 
 -   How to handle transactional registry operations.
 -   How and when to capture input parameters.
 -   Issues and workarounds for version 1.0 of registry filtering.
 -   Changes in version 1.1 of registry filtering.
--   How to use version 1 of the [**REG\_CREATE\_KEY\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560920) and [**REG\_OPEN\_KEY\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560957) data structures.
+-   How to use version 1 of the [**REG\_CREATE\_KEY\_INFORMATION**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560920) and [**REG\_OPEN\_KEY\_INFORMATION**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560957) data structures.
 
 The RegFltr sample contains several examples of user-mode and kernel-mode registry-filtering operations. Each example comes with its own corresponding registry callback routine, and performs the following steps:
 

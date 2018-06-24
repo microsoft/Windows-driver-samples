@@ -18,7 +18,7 @@ This sample also demonstrates how to use a default parallel dispatch I/O queue, 
 Related technologies
 --------------------
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 
 Code Tour
 ---------
@@ -32,7 +32,7 @@ This sample driver is a minimal driver that is intended to demonstrate how to us
 Installation
 ------------
 
-In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
+In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](https://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
 
 To test this sample, you must have a test computer. This test computer can be a second computer or, if necessary, your development computer.
 

@@ -10,7 +10,7 @@
 Bluetooth Echo L2CAP Profile Driver
 ===================================
 
-This sample demonstrates developing [Bluetooth L2CAP profile drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536598) using [Bluetooth L2CAP DDIs](http://msdn.microsoft.com/en-us/library/windows/hardware/ff536585).The sample includes two drivers. One for a device that acts as an L2CAP server and another for a device that acts as an L2CAP client. The server simply echoes back any data that it receives from client on the same L2CA channel. These drivers can be used with devices that can be installed with bth.inf. Such devices get installed as 'Generic Bluetooth Radio'. Examples of such devices are Bluetooth USB dongles such as (but not limited to):
+This sample demonstrates developing [Bluetooth L2CAP profile drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff536598) using [Bluetooth L2CAP DDIs](https://msdn.microsoft.com/en-us/library/windows/hardware/ff536585).The sample includes two drivers. One for a device that acts as an L2CAP server and another for a device that acts as an L2CAP client. The server simply echoes back any data that it receives from client on the same L2CA channel. These drivers can be used with devices that can be installed with bth.inf. Such devices get installed as 'Generic Bluetooth Radio'. Examples of such devices are Bluetooth USB dongles such as (but not limited to):
 
 ``` 
 Generic Bluetooth Radio=\

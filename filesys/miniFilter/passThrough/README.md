@@ -21,5 +21,5 @@ Design and Operation
 
 The *PassThrough* minifilter does not have any real functionality. For each type of I/O operation, the same pre and post callback functions are called. These callback functions simply forward the I/O request to the next filter on the stack.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

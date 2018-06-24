@@ -25,7 +25,7 @@ The Serial sample driver runs in kernel mode.
 
 This sample driver supports power management. When a serial port is not in use, the driver places the port hardware in a low-power state. When the port is opened, it receives power and wakes up. The driver supports wake-on-ring for platforms that support this function. The driver can be compiled to run on both 32-bit and 64-bit versions of Windows.
 
-For more information, see [Features of Serial and Serenum](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
+For more information, see [Features of Serial and Serenum](https://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
 
 This sample can be used for these hardware IDs without any modification to the .inx file included in the project.
 

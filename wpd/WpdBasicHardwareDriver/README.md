@@ -23,17 +23,17 @@ The circuit designs are based on the sample circuits provided by Parallax in the
 
 The microcontroller firmware for each of the nine circuits is included in the **\\firmware** subdirectory of this sample.
 
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD Basic Hardware Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597697) description in the Windows Driver Kit documentation.
+For a complete description of this sample and its underlying code and functionality, refer to the [WPD Basic Hardware Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597697) description in the Windows Driver Kit documentation.
 
 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
-[WPD Programming Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/)
+[WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/)
 
 
 Installation

@@ -16,4 +16,4 @@ This sample contains example code that demonstrates how to install WDF packages 
 
 Related technologies
 --------------------
-[Installation Components for Framework-based Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544208)
+[Installation Components for Framework-based Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544208)

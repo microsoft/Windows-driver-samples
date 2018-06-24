@@ -20,12 +20,12 @@ The sample also demonstrates how to write a Notify Object dll. The Notify Object
 Related technologies
 --------------------
 
-[Creating Framework-based Miniport Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540778)
+[Creating Framework-based Miniport Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540778)
 
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 The 60 subdirectory (\\ndisprot\_kmdf\\60) indicates that the built sample will be NDIS 6.0 compatible.
 

@@ -28,7 +28,7 @@ After the filters and callouts are in place and registered, WFP indicates TCP da
 Automatic deployment
 --------------------
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/). After you have provisioned the target computer, continue with these steps:
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/). After you have provisioned the target computer, continue with these steps:
 
 1.  On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
 2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Do not install**. Click **OK**.
@@ -38,7 +38,7 @@ Before you automatically deploy a driver, you must provision the target computer
 Manual deployment
 -----------------
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571). After you have prepared the target computer for manual deployment, continue with these steps:
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://msdn.microsoft.com/en-us/library/windows/hardware/dn265571). After you have prepared the target computer for manual deployment, continue with these steps:
 
 1.  Copy all of the files in your driver package to a folder on the target computer (for example, c:\\WfpMsnMessengerMonitorSamplePackage).
 2.  On the target computer, navigate to your driver package folder. Right click msnmntr.inf, and choose **Install**
@@ -74,7 +74,7 @@ On the target computer, open TraceView.exe as Administrator. On the **File** men
 
 Tracing for the sample driver can be started at any time before the driver is started or while the driver is already running.
 
-For more information on creating a Windows Filtering Platform Callout Driver, see [Windows Filtering Platform Callout Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
+For more information on creating a Windows Filtering Platform Callout Driver, see [Windows Filtering Platform Callout Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
 
 Using MSBuild
 -------------
@@ -85,5 +85,5 @@ As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Stu
 
 **msbuild /p:configuration="Release" /p:platform="Win32" msnmntr.sln**
 
-For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 

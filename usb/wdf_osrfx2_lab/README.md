@@ -21,7 +21,7 @@ Starting in Windows 8.1, the osrusbfx2 sample has been divided into these sampl
 
 -   [kmdf\_fx2](gallery_samples.123a_gallery#1): This sample is the final version of kernel-mode wdf\_osrfx2 driver. The sample demonstrates KMDF methods.
 
--   [umdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/): This sample is the final version of the user-mode driver wdf\_osrfx2. The sample demonstrates UMDF methods.
+-   [umdf\_fx2](https://msdn.microsoft.com/en-us/library/windows/hardware/): This sample is the final version of the user-mode driver wdf\_osrfx2. The sample demonstrates UMDF methods.
 
 This sample is written for the OSR USB-FX2 Learning Kit. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>.
 
@@ -29,9 +29,9 @@ This sample is written for the OSR USB-FX2 Learning Kit. The specification for t
 Related topics
 --------------
 
-[kmdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/)
+[kmdf\_fx2](https://msdn.microsoft.com/en-us/library/windows/hardware/)
 
-[umdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/)
+[umdf\_fx2](https://msdn.microsoft.com/en-us/library/windows/hardware/)
 
 
 Build the sample

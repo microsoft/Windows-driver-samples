@@ -16,8 +16,8 @@ Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
 [WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597898)

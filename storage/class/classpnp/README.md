@@ -21,5 +21,5 @@ Installation and Operation
 
 The storage class drivers are used to interact with mass storage devices along with appropriate port driver. The class drivers are layered above the port drivers and manage mass storage devices of a specific class, regardless of their bus type. The classpnp sample contains the common routines that are required for all storage class drivers such as PnP and power management. It also provides I/O and error handling support.
 
-For more information, see [Introduction to Storage Class Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff559215) in the storage technologies design guide.
+For more information, see [Introduction to Storage Class Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff559215) in the storage technologies design guide.
 

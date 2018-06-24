@@ -11,7 +11,7 @@
 Early Launch Anti-Malware Driver
 ================================
 
-This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439379) and [**IoUnRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439394) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
+This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh439379) and [**IoUnRegisterBootDriverCallback**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh439394) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
 
 This sample driver is a minimal driver meant to demonstrate the usage of the APIs mentioned above. It is not intended for use in a production environment.
 

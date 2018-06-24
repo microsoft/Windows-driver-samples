@@ -15,7 +15,7 @@ Tracedrv is a sample driver instrumented for software tracing. The driver does n
 
 Tracedrv initializes tracing (by using WPP\_INIT\_TRACING) and, when it receives a DeviceIOControl call, it starts a thread that logs 100 trace messages. The WPP software tracing directives, calls, and macros in the code are accompanied by comments that explain their purpose
 
-While examining Tracedrv, read the [WPP Software Tracing](http://msdn.microsoft.com/en-us/library/windows/hardware/ff556204) in the Windows Driver Kit (WDK). This section includes a reference section that describes the directives, macros, and calls required for WPP software tracing.
+While examining Tracedrv, read the [WPP Software Tracing](https://msdn.microsoft.com/en-us/library/windows/hardware/ff556204) in the Windows Driver Kit (WDK). This section includes a reference section that describes the directives, macros, and calls required for WPP software tracing.
 
 Run the sample
 --------------
@@ -54,7 +54,7 @@ To test the Tracedrv event tracing provider, use the following procedure.
   tracefmt tracedrv.etl -p . -o Tracedrv.out
   ```
 
-The resulting Tracedrv.out file is a human-readable text file of the Tracedrv trace messages. To interpret the trace messages, in the Tracedrv.c file, search for the [**DoTraceMessage**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544918) macros.
+The resulting Tracedrv.out file is a human-readable text file of the Tracedrv trace messages. To interpret the trace messages, in the Tracedrv.c file, search for the [**DoTraceMessage**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544918) macros.
 
 Notes
 -----
@@ -63,7 +63,7 @@ This sample driver should not be used in a production environment.
 
 Also, because it is not a Plug and Play driver, Tracedrv does not demonstrate tracing in a Plug and Play environment.
 
-Tracedrv demonstrates the basic elements required for software tracing. It does not demonstrate more advanced tracing techniques, such as writing customized tracing calls (variations of [**DoTraceMessage**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544918)), or the use of WMI calls for software tracing.
+Tracedrv demonstrates the basic elements required for software tracing. It does not demonstrate more advanced tracing techniques, such as writing customized tracing calls (variations of [**DoTraceMessage**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544918)), or the use of WMI calls for software tracing.
 
-If you are building the Tracedrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](http://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
+If you are building the Tracedrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](https://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](https://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
 

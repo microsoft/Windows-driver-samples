@@ -131,7 +131,7 @@
 *% The following cursor commands are mandatory
 *%
 *% Learn more: Cursor Commands
-*% http://msdn.microsoft.com/en-us/library/ff547223(VS.85).aspx
+*% https://msdn.microsoft.com/en-us/library/ff547223(VS.85).aspx
 *%******************************************************************************
 *Command: CmdCR { *Cmd : "" }
 *Command: CmdLF { *Cmd : "" }

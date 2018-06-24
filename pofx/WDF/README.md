@@ -18,16 +18,16 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 Related technologies
 --------------------
-[Supporting Functional Power States](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451017)
+[Supporting Functional Power States](https://msdn.microsoft.com/en-us/library/windows/hardware/hh451017)
 
 SingleComp Overview
 -------------------
 
 This sample demonstrates how a KMDF driver can implement F-state-based power management for a device that has only a single component.
 
-The sample illustrates the use of the [**WdfDeviceWdmAssignPowerFrameworkSettings**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451097) method to specify power framework settings for the single component that represents the entire device. The power framework settings that can be specified include the F-states for the component and the power framework callbacks that are invoked when the component's active/idle condition or its F-state changes.
+The sample illustrates the use of the [**WdfDeviceWdmAssignPowerFrameworkSettings**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh451097) method to specify power framework settings for the single component that represents the entire device. The power framework settings that can be specified include the F-states for the component and the power framework callbacks that are invoked when the component's active/idle condition or its F-state changes.
 
-The sample also illustrates the use of the [**WdfDeviceAssignS0IdleSettings**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545903) method to instruct KMDF to begin power-management of the device (and the component that represents the entire device).
+The sample also illustrates the use of the [**WdfDeviceAssignS0IdleSettings**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545903) method to instruct KMDF to begin power-management of the device (and the component that represents the entire device).
 
 Installation
 ------------
@@ -43,7 +43,7 @@ The driver can be installed on a root-enumerated device using the devcon.exe too
 
 Use the PowerFxApp.exe application to send I/O requests to the driver. Running the command "PowerFxApp.exe /?" displays detailed usage information.
 
-For detailed information about implementing F-state-based power management for a single component device, see [Supporting Multiple Functional Power States for Single-Component Devices](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451032).
+For detailed information about implementing F-state-based power management for a single component device, see [Supporting Multiple Functional Power States for Single-Component Devices](https://msdn.microsoft.com/en-us/library/windows/hardware/hh451032).
 
 MultiComp Overview
 ------------------
@@ -85,7 +85,7 @@ The driver's top-level queue and component queues are all power-managed so KMDF 
 Implementation notes
 --------------------
 
-The driver uses the power framework helper library to manage most of its interactions with the power framework. In order to achieve this, during device initialization, the driver performs the following tasks in its [*EvtDriverDeviceAdd*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff541693) callback.
+The driver uses the power framework helper library to manage most of its interactions with the power framework. In order to achieve this, during device initialization, the driver performs the following tasks in its [*EvtDriverDeviceAdd*](https://msdn.microsoft.com/en-us/library/windows/hardware/ff541693) callback.
 
 -   Enables the helper library to register its own KMDF callbacks for PNP and power-management of the device.
 -   Provides the helper library with power-framework-related information about the device.
@@ -116,5 +116,5 @@ The code to implement S0-idle power management support for the device is conditi
 Additional Information
 ----------------------
 
-For detailed information about implementing F-state-based power management for a multiple component device, see [Supporting Multiple Functional Power States for Multiple-Component Devices](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451028).
+For detailed information about implementing F-state-based power management for a multiple component device, see [Supporting Multiple Functional Power States for Multiple-Component Devices](https://msdn.microsoft.com/en-us/library/windows/hardware/hh451028).
 

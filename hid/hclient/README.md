@@ -18,7 +18,7 @@ You will find this sample useful if you need to develop an application that comm
 Related topics
 --------------
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
 

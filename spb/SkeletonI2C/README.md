@@ -11,9 +11,9 @@
 Skeleton I2C Sample Driver
 ==========================
 
-The SkeletonI2C sample demonstrates how to design a KMDF controller driver for Windows that conforms to the [simple peripheral bus](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450903) (SPB) device driver interface (DDI). SPB is an abstraction for low-speed serial buses (for example, I<sup>2</sup>C and SPI) that allows peripheral drivers to be developed for cross-platform use without any knowledge of the underlying bus hardware or device connections. While this sample implements an empty I<sup>2</sup>C driver, it could just as easily be the starting point for an SPI driver with only minor modifications.
+The SkeletonI2C sample demonstrates how to design a KMDF controller driver for Windows that conforms to the [simple peripheral bus](https://msdn.microsoft.com/en-us/library/windows/hardware/hh450903) (SPB) device driver interface (DDI). SPB is an abstraction for low-speed serial buses (for example, I<sup>2</sup>C and SPI) that allows peripheral drivers to be developed for cross-platform use without any knowledge of the underlying bus hardware or device connections. While this sample implements an empty I<sup>2</sup>C driver, it could just as easily be the starting point for an SPI driver with only minor modifications.
 
-Note that the SkeletonI2C sample is simplified to show the overall structure of an SPB controller, but contains only the code that the driver requires to communicate with the [SPB framework extension (SpbCx)](http://msdn.microsoft.com/en-us/library/windows/hardware/hh406203) and KMDF. The SkeletonI2C sample driver omits all hardware-specific code. It does not simulate data transfers or implement request completion asynchronously. Pay close attention to code comments marked with "TODO" that refer to blocks of code that must be removed or updated.
+Note that the SkeletonI2C sample is simplified to show the overall structure of an SPB controller, but contains only the code that the driver requires to communicate with the [SPB framework extension (SpbCx)](https://msdn.microsoft.com/en-us/library/windows/hardware/hh406203) and KMDF. The SkeletonI2C sample driver omits all hardware-specific code. It does not simulate data transfers or implement request completion asynchronously. Pay close attention to code comments marked with "TODO" that refer to blocks of code that must be removed or updated.
 
 The simplified structure of the SkeletonI2C sample driver makes it a convenient starting point for development of a real SPB controller driver that manages the hardware functions in an SPB controller.
 
@@ -44,9 +44,9 @@ INITIALIZATION
 
 Within `OnDeviceAdd`, the driver makes several configuration calls for SPB.
 
-[**SpbDeviceInitConfig**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450918) must be called before creating the WDFDEVICE. Note that SpbCx sets a default security descriptor on the device object, but the controller driver can override it by calling [**WdfDeviceInitAssignSDDLString**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546035) after **SpbDeviceInitConfig**.
+[**SpbDeviceInitConfig**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh450918) must be called before creating the WDFDEVICE. Note that SpbCx sets a default security descriptor on the device object, but the controller driver can override it by calling [**WdfDeviceInitAssignSDDLString**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff546035) after **SpbDeviceInitConfig**.
 
-After creating the WDFDEVICE, the driver configures it appropriately for SPB by calling [**SpbDeviceInitialize**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450919). Here the driver also sets the target and request attributes.
+After creating the WDFDEVICE, the driver configures it appropriately for SPB by calling [**SpbDeviceInitialize**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh450919). Here the driver also sets the target and request attributes.
 
 Finally the driver configures a WDF system-managed idle time-out.
 
@@ -86,7 +86,7 @@ Configures the request context for the specified transfer index. This could be a
 
 `PbcRequestComplete`
 
-Sets the number of bytes completed for a request and invokes the [**SpbRequestComplete**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450920) method.
+Sets the number of bytes completed for a request and invokes the [**SpbRequestComplete**](https://msdn.microsoft.com/en-us/library/windows/hardware/hh450920) method.
 
 \*An atomic transfer in SPB is implemented using Sequence or a Lock/Unlock pair. For I<sup>2</sup>C, this means a set of reads and writes with restarts in between. For SPI, this means a set of reads and writes with the chip select-line asserted throughout.
 

@@ -39,7 +39,7 @@ The sample is accompanied by a simple multithreaded Win32 console application to
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 If the build succeeds, you will find the driver, nonpnp.sys, and the test application, nonpnpapp.exe, in the binary output directory specified for the build environment.
 
