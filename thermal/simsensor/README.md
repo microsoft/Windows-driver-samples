@@ -4,7 +4,7 @@
     language: cpp
     category: Thermal Power
     description: Demonstrates a simulated temperature sensor device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617991
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617991
 --->
 
 

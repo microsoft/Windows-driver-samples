@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Provides an application that allows you to browse all USB controllers and connected USB devices on your system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618004
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618004
 --->
 
 

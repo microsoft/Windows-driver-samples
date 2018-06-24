@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates the use of the cancel-safe queue routines.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617705
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617705
 --->
 
 

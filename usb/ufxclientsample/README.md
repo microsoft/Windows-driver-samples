@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates how to create a Windows USB function controller driver using the USB function class extension driver (UFX).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620315
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620315
 --->
 
 

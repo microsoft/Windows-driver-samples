@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write a UMDF v2 sensor driver to output Simple Device Orientation values.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617960
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617960
 --->
 
 # Simple Device Orientation Sensor Sample

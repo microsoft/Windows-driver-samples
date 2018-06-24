@@ -4,7 +4,7 @@
     language: xml
     category: Print
     description: Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617949
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617949
 --->
 
 

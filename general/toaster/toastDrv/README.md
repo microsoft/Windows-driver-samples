@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620309
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620309
 --->
 
 

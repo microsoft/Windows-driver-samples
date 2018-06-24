@@ -4,7 +4,7 @@
     language: cpp
     category: Serial
     description: Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617961
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617961
 --->
 
 

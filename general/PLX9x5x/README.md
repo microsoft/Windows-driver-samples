@@ -4,7 +4,7 @@
     language: cpp
     category: General PCI WDF
     description: Demonstrates how to write a driver for a generic PCI device using Windows Driver Frameworks (WDF).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617719
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617719
 --->
 
 

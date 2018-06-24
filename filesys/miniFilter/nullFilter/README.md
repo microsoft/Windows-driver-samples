@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: A minifilter that demonstrates registration with the filter manager.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617653
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617653
 --->
 
 NullFilter File System Minifilter Driver

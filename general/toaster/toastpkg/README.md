@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Simulates hardware-first and software-first installation of the toaster sample driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617723
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617723
 --->
 
 

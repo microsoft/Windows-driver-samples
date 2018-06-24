@@ -1,5 +1,5 @@
 <!---
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=616507
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=616507
 --->
 
 # Driver samples for Windows 10

@@ -4,7 +4,7 @@
     language: cpp
     category: WPD
     description: Demonstrates virtually all aspects of the WPD device driver interface (DDI).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618011
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618011
 --->
 
 

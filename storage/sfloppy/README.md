@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: A sample class driver for Super Floppy disk drives.     
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617989
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617989
 --->
 
 

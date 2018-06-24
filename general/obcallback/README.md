@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates the use of registered callbacks for process protection.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617716
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617716
 --->
 
 

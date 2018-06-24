@@ -4,7 +4,7 @@
     language: cpp
     category: Camera
     description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620185
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620185
 --->
 
 AVStream simulated hardware sample driver (Avshws)

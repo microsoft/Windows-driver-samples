@@ -4,7 +4,7 @@
     language: cpp
     category: SimplePeripheralBus
     description: Demonstrates how to design a KMDF controller driver for Windows that conforms to the simple peripheral bus (SPB) device driver interface (DDI).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617969
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617969
 --->
 
 

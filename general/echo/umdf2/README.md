@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use UMDF 2 to write a driver and to employ best practices.  
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617708
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617708
 --->
 
 Echo Sample (UMDF Version 2)

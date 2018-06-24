@@ -4,7 +4,7 @@
     language: js xml
     category: Print
     description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617947
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617947
 --->
 
 

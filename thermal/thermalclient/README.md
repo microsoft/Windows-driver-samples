@@ -4,7 +4,7 @@
     language: cpp
     category: Thermal Power
     description: Simulates a device that is a Windows thermal management client.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617992
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617992
 --->
 
 

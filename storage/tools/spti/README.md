@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description:  Demonstrates how to communicate with a SCSI device using pass-through IOCTLs in an application using DeviceIoControl API.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617990
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617990
 --->
 
 

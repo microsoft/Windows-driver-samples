@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write UMDF v2 drivers to control various types of virtual sensors.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=856915
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=856915
 --->
 
 # Sensors Combo Driver Sample

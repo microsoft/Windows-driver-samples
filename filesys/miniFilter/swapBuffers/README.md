@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to switch buffers between reads and writes of data. This technique is particularly useful for encryption filters.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617657
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617657
 --->
 
 

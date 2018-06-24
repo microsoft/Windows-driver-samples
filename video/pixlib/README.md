@@ -4,7 +4,7 @@
     language: cpp
     category: Video
     description: Demonstrates how to implement the CPixel class for use by a display driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618005
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618005
 --->
 
 

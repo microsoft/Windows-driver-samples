@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates how to write a registry filter driver. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617720
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617720
 --->
 
 

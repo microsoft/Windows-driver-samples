@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: Demonstrates replacing a string pattern for a Transmission Control Protocol (TCP) connection using the Windows Filtering Platform (WFP).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617933
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617933
 --->
 
 

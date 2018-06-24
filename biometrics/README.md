@@ -4,7 +4,7 @@
     language: cpp
     category: Security Biometrics
     description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620189
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620189
 --->
 
 
@@ -27,7 +27,7 @@ Build the sample
 
 For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
-**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 Run the sample
 --------------

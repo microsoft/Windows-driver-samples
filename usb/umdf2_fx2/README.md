@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates a UMDF version 2 driver for the OSR USB-FX2 device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618003
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618003
 --->
 
 Sample Function Driver for OSR USB-FX2 (UMDF Version 2)
@@ -12,7 +12,7 @@ Sample Function Driver for OSR USB-FX2 (UMDF Version 2)
 
 The umdf2\_fx2 sample is a User-Mode Driver Framework (UMDF) version 2 driver for the OSR USB-FX2 device.
 
-The specification for the device can be found at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
+The specification for the device can be found at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 
 
 Related technologies

@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write a UMDF v2 driver to control a virtual Pedometer sensor.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617959
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617959
 --->
 
 # Pedometer Sensor Sample

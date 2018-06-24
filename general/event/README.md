@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates different ways a kernel-mode driver can notify an application about a hardware event.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617711
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617711
 --->
 
 

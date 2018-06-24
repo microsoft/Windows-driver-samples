@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: A pass-through NDIS 6 filter driver demonstrating the basic principles of an NDIS 6.0 Filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617915
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617915
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: Print
     description: Contains a set of documents that exercise a variety of features of OpenXPS.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617941
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617941
 --->
 
 

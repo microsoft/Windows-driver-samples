@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to detect deletions of files or streams.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617649
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617649
 --->
 
 Delete File System Minifilter Driver

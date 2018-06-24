@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620307
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620307
 --->
 
 
@@ -45,7 +45,7 @@ If the build succeeds, you will find the driver, nonpnp.sys, and the test applic
 
 To test this driver, copy the nonpnp.inf into the same folder as the nonpnpapp.exe and the wdfcoinstaller\<version\>.dll .
 
-**Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+**Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 Next, run nonpnpapp.exe, a simple Win32 multithreaded console mode application. The driver will be automatically loaded and started. When you exit the app, the driver will be stopped and removed.
 

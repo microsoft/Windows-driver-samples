@@ -4,7 +4,7 @@
     language: cpp
     category: Proximity
     description: Demonstrates how to use UMDF version 1 to write a near-field proximity driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620200
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620200
 --->
 
 

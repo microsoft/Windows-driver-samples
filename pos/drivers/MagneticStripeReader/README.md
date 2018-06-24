@@ -4,7 +4,7 @@
     language: cpp
     category: POS
     description: This UMDF version 2 sample serves as a template for creating a new Magnetic Stripe Reader driver. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620202
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620202
 --->
 
 

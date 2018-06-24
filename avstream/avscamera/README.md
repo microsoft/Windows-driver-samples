@@ -4,7 +4,7 @@
     language: cpp
     category: Camera AVStream
     description: Provides a pin-centric AVStream capture driver for a simulated front and back camera that performs simulated captures at 320x240 or 640x480 in RGB24, RGB32, YUY2 and NV12 formats at various frame rates.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620184
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620184
 --->
 
 AvsCamera: AVStream Camera Sample Driver 

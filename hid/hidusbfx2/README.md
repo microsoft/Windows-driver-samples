@@ -4,7 +4,7 @@
     language: cpp
     category: HID
     description: Demonstrates mapping of a non-HID USB device to a HID device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620190
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620190
 --->
 
 
@@ -39,7 +39,7 @@ A HID USB device provides a HID descriptor (through an interface descriptor) tha
 
 **Overview of the Device**
 
-You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](http://go.microsoft.com/fwlink/p/?linkid=64091) document.
+You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](https://go.microsoft.com/fwlink/p/?linkid=64091) document.
 
 The device is loosely based on the development board that is supplied with the Cypress EZ-USB FX2 Development Kit (CY3681) and contains one interface and three endpoints (Interrupt IN, Bulk Out, and Bulk IN). The firmware supports vendor commands to query or set the LED bar graph display and 7-segment LED display, and to query toggle switch states.
 
@@ -111,7 +111,7 @@ To start installing the sample, you must:
     -   **Hidkmdf.sys**
     -   The WDF coinstaller from the *\<WDK ROOT\>\\redist\\wdf\\\<platform\>* directory.
 
-    **Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    **Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 2.  Plug in the device and follow these steps:
     1.  Launch Device Manager by executing command devmgmt.msc in a command window, or from the **Hardware and Sound** program group in **Control Panel**.

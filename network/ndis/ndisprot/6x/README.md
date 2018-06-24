@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description:  Demonstrates a connection-less NDIS 6.0 protocol WDM driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617917
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617917
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to specify callback functions for different types of I/O requests.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617654
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617654
 --->
 
 

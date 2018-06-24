@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617706
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617706
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: A file data scanner example. Typically, anti-virus filters are of this type.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617655
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617655
 --->
 
 

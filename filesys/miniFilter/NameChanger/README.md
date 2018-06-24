@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617652
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617652
 --->
 
 

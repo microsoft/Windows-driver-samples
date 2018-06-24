@@ -4,7 +4,7 @@
     language: cpp
     category: WPD
     description: Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618010
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618010
 --->
 
 

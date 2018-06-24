@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write a UMDF v2 driver to control an activity sensor.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617956
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617956
 --->
 
 # Activity Sensor Driver Sample

@@ -4,7 +4,7 @@
     language: cpp
     category: Serial
     description: Demonstrates UMDF version 2 serial drivers and includes a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617965
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617965
 --->
 
 

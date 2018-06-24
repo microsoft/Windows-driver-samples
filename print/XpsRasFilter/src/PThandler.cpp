@@ -122,7 +122,7 @@ PrintTicketHandler::CreatePrintTicketHandler(
     //
     // Get the User Security Token
     // Avoid CComVariant if getting the XPS_FP_USER_TOKEN property.
-    // Please refer to http://go.microsoft.com/fwlink/?LinkID=255534 for detailed information.
+    // Please refer to https://go.microsoft.com/fwlink/?LinkID=255534 for detailed information.
     //
     SafeVariant varUserSecurityToken;
     THROW_ON_FAILED_HRESULT(

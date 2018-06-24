@@ -4,7 +4,7 @@
     language: js xml
     category: Print
     description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617948
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617948
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: WPD
     description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618009
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618009
 --->
 
 

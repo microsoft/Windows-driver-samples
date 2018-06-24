@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617935
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617935
 --->
 
 

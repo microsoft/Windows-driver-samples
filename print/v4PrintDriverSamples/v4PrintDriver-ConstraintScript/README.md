@@ -4,7 +4,7 @@
     language: js
     category: Print
     description: Demonstrates how to implement advanced constraint handling and PrintTicket/PrintCapabilities handling using JavaScript.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617946
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617946
 --->
 
 

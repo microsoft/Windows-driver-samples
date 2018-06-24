@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: The CD-ROM file system driver (cdfs) sample is a file system driver for removable media.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617642
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617642
 --->
 
 

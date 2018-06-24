@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates the use of the kernel-mode performance library.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617718
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617718
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: Bluetooth
     description: Demonstrates development of Bluetooth L2CAP profile drivers using the Bluetooth L2CAP DDIs. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617640
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617640
 --->
 
 Bluetooth Echo L2CAP Profile Driver

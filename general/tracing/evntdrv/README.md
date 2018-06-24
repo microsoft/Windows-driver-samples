@@ -4,7 +4,7 @@
     language: cpp
     category: General Tracing
     description: Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617724
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617724
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: Print
     description: Demonstrates how to implement auto-configuration in v4 print drivers.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617938
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617938
 --->
 
 

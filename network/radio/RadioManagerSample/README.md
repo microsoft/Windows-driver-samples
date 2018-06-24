@@ -4,7 +4,7 @@
     language: cpp
     category: Network Radio
     description: Demonstrates how to structure a Radio Manager for use with the Windows Radio Management APIs.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617920
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617920
 --->
 
 

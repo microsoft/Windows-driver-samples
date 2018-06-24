@@ -4,7 +4,7 @@
     language: cpp
     category: WDP
     description: Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller.           
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620318
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620318
 --->
 
 
@@ -47,7 +47,7 @@ To install the WpdBasicHardwareDriver sample, do the following:
 
 2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\wpdbasichardwaredriver).
 
-    **Note** You can obtain the co-installers by downloading and installing the "Windows Driver Framework (WDF)" package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+    **Note** You can obtain the co-installers by downloading and installing the "Windows Driver Framework (WDF)" package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\wpdbasichardwaredriver), and run DevCon.exe as follows:
     **devcon.exe install wpdbasichardwaredriver.inf WUDF\\WpdBasicHardware**

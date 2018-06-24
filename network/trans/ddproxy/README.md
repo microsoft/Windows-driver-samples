@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: Demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617930
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617930
 --->
 
 

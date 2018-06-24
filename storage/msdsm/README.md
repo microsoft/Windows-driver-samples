@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620203
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620203
 --->
 
 

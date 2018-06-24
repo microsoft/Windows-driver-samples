@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: An iterative series of samples that demonstrate driver development using UMDF version 2.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620310
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620310
 --->
 
 

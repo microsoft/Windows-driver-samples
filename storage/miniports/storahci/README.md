@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: A sample Storport ACHI miniport driver.  
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617983
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617983
 --->
 
 

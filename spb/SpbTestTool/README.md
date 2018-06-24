@@ -4,7 +4,7 @@
     language: cpp
     category: SimplePeripheralBus
     description: Demonstrates how to open a handle to the SPB controller, use the SPB interface from a KMDF driver, and employ GPIO.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617970
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617970
 --->
 
 

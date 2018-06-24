@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617707
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617707
 --->
 
 

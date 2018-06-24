@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: A console application that starts the file history service, if it is stopped, and schedules regular backups.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617712
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617712
 --->
 
 

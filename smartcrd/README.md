@@ -4,7 +4,7 @@
     language: cpp
     category: SmartCard
     description: Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617968
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617968
 --->
 
 
@@ -27,7 +27,7 @@ Build the sample
 
 For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
-**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 Run the sample
 --------------

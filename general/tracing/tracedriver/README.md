@@ -4,7 +4,7 @@
     language: cpp
     category: General Tracing
     description: A sample driver instrumented for software tracing.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617726
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617726
 --->
 
 

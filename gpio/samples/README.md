@@ -4,7 +4,7 @@
     language: cpp
     category: GPIO
     description: Illustrates how to write a GPIO controller driver that works in conjunction with the GPIO framework extension (GpioClx).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617729
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617729
 --->
 
 

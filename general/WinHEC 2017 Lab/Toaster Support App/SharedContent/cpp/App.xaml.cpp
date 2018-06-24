@@ -28,7 +28,7 @@ using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
+// The Blank Application template is documented at https://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
 // These placeholder functions are used if the sample does not
 // implement the corresponding methods. This allows us to simulate

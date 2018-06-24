@@ -4,7 +4,7 @@
     language: cpp
     category: WMI ACPI
     description: Contains ACPI BIOS and WMI sample code that enables instrumentation of the ACPI BIOS from within ACPI Source Language (ASL) code.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618006
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618006
 --->
 
 

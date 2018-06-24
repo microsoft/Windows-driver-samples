@@ -4,7 +4,7 @@
     language: cpp
     category: Power
     description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617936
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617936
 --->
 
 
@@ -18,7 +18,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 Related technologies
 --------------------
-For related information, see the [KMDF Power Framework (PoFx) Sample](http://go.microsoft.com/fwlink/p/?LinkId=617937).
+For related information, see the [KMDF Power Framework (PoFx) Sample](https://go.microsoft.com/fwlink/p/?LinkId=617937).
 
 [User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 

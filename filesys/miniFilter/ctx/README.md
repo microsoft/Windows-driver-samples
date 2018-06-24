@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617648
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617648
 --->
 
 

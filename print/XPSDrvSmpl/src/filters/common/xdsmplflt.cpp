@@ -285,7 +285,7 @@ CXDSmplFilter::InitializePrintTicketManager(
 
         //
         // Avoid CComVariant if getting the XPS_FP_USER_TOKEN property.
-        // Please refer to http://go.microsoft.com/fwlink/?LinkID=255534 for detailed information.
+        // Please refer to https://go.microsoft.com/fwlink/?LinkID=255534 for detailed information.
         //
         VARIANT     varUserToken;
         VariantInit(&varUserToken);

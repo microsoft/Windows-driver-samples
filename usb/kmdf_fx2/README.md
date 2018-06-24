@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates how to use KMDF to perform bulk and interrupt data transfers to a USB device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620313
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620313
 --->
 
 
@@ -15,7 +15,7 @@ The kmdf\_fx2 sample is a Kernel-Mode Driver Framework (KMDF) driver for the OSR
 
 In the Windows Driver Kit (WDK), the osrusbfx2 sample demonstrated how to perform bulk and interrupt data transfers to an USB device. The sample was written for the OSR USB-FX2 Learning Kit.
 
-The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
+The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
@@ -76,12 +76,12 @@ This directory contains a test application that can be used to drive the KMDF dr
 
 **usb\\kmdf\_fx2\\deviceMetadata**
 
-This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see the [Custom driver access sample](http://go.microsoft.com/fwlink/p/?LinkID=248288).
+This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see the [Custom driver access sample](https://go.microsoft.com/fwlink/p/?LinkID=248288).
 
 Testing the driver
 ------------------
 
-You can use the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample as a testing method.
+You can use the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample as a testing method.
 
 The sample also includes a test application, osrusbfx2.exe, that you can use to test the device. This console application enumerates the interface registered by the driver and opens the device to send read, write, or IOCTL requests based on the command line options.
 

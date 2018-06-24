@@ -4,7 +4,7 @@
     language: cpp
     category: Power
     description: Demonstrate how a KMDF driver can implement F-state-based power management.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617937
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617937
 --->
 
 
@@ -37,7 +37,7 @@ The driver can be installed on a root-enumerated device using the devcon.exe too
 1.  Obtain the devcon.exe tool from the WDK
 2.  Copy the driver binary, INF file and the KMDF coinstaller to a directory on your test machine.
 
-    **Note** You can obtain redistributable framework updates by downloading the Wdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    **Note** You can obtain redistributable framework updates by downloading the Wdfcoinstaller.msi package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 3.  Run the command "devcon.exe install SingleComponentFStateSample.inf root\\SingleComponentFStateDevice".
 
@@ -63,7 +63,7 @@ The driver can be installed on a root-enumerated device using the devcon.exe too
 
 1.  Obtain the devcon.exe tool from the WDK
 2.  Copy the driver binary, INF file and the KMDF coinstaller to a directory on your test machine.
-    **Note** You can obtain the co-installers by downloading theWdfcoinstaller.msi package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+    **Note** You can obtain the co-installers by downloading theWdfcoinstaller.msi package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396).
 3.  Run the command "devcon.exe install WdfMultiComp.inf WDF\\WdfMultiComp".
 
 Testing

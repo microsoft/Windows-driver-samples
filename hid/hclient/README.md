@@ -4,7 +4,7 @@
     language: cpp
     category: HID
     description: Demonstrates how to write a user-mode client application that communicates with HID devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617730
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617730
 --->
 
 

@@ -4,7 +4,7 @@
     language: cpp
     category: Print
     description: Contains a set of documents that exercise a variety of features of the XML Paper Specification.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617942
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617942
 --->
 
 

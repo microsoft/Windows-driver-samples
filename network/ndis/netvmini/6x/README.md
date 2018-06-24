@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617918
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617918
 --->
 
 
