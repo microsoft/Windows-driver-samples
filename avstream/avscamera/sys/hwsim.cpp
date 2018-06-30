@@ -1195,16 +1195,16 @@ Return Value:
         // Generate a "time stamp" just to overlay it onto the capture image.
         // It makes it more exciting than bars that do nothing.
         //
-        //  Only set these values if it's a preview simulation.
-        //  Note: This was simpler than overloading CHardwareSimulation...
-        if( m_Sensor->IsPreviewIndex(m_PinID) )
+        //  Note: Streaming pins have their own indexes; but still pins track
+        //        the most recent streaming pin's index.
+        if (!m_Sensor->IsStillIndex(m_PinID))
         {
             DBG_TRACE("QPC=0x%016llX", Qpc);
 
             //  Broadcast the preview pin's info to all pin simulations.
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::FrameNumber, m_InterruptTime);
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::RelativePts, (m_InterruptTime + 1) * m_TimePerFrame );
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::QpcTime, Qpc );
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::FrameNumber, m_InterruptTime, m_PinID);
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::RelativePts, (m_InterruptTime + 1) * m_TimePerFrame, m_PinID);
+            m_Sensor->SetSynthesizerAttribute(CSynthesizer::QpcTime, Qpc, m_PinID);
         }
 
         m_Synthesizer->DoSynthesize();

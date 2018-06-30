@@ -149,7 +149,7 @@ private:
     UINT32 m_uHeight;
     ComPtr<IUnknown> m_spDeviceManagerUnk;
 };
-
+#ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
 class CGrayTee : public CWrapTee {
 public:
     CGrayTee(Ctee*);
@@ -163,7 +163,7 @@ private:
     DMFT_IMAGE_TRANSFORM_FN m_transformfn;
     RECT m_rect;
 };
-
+#endif
 /*
 ################## EVENT HANDLING #############################################
 Events are usually divided into two categories by the Capture Pipeline
@@ -265,7 +265,8 @@ public:
     CPinCreationFactory(_In_ CMultipinMft* pDeviceTransform):m_spDeviceTransform(pDeviceTransform){
     }
 };
-
+HRESULT CheckPinType(_In_ IMFAttributes* pAttributes, _In_ GUID pinType, _Out_ PBOOL pbIsImagePin);
 HRESULT CheckImagePin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin);
+HRESULT CheckPreviewPin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsPreviewPin);
 
 

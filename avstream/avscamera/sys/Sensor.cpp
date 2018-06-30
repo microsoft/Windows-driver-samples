@@ -1090,14 +1090,16 @@ void
 CSensor::
 SetSynthesizerAttribute( 
     CSynthesizer::Attribute Attrib, 
-    LONGLONG Info 
+    LONGLONG Info,
+    LONG PinId
 )
 {
     PAGED_CODE();
 
     for( ULONG Pin=0; IsValidIndex(Pin); Pin++ )
     {
-        if( m_Synthesizer[Pin] )
+        if( (Pin==(ULONG)PinId || IsStillIndex(Pin)) &&
+            m_Synthesizer[Pin] )
         {
             m_Synthesizer[Pin]->Set( Attrib, Info );
         }

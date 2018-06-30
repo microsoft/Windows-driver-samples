@@ -517,7 +517,7 @@ public:
     }
 
     void
-    SetSynthesizerAttribute( CSynthesizer::Attribute Attrib, LONGLONG Info );
+    SetSynthesizerAttribute( CSynthesizer::Attribute Attrib, LONGLONG Info, LONG PinId );
 
 protected:
     LONG

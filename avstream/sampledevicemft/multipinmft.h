@@ -7,7 +7,6 @@
 //
 
 #pragma once
-#define MF_DEVICEMFT_ADD_GRAYSCALER_ 1
 #include "common.h"
 #include "mftpeventgenerator.h"
 #include "basepin.h"
@@ -402,6 +401,7 @@ private:
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
     ComPtr<IMFAsyncCallback>    m_spPhotoConfirmationCallback;  //Photo Confirmation related definitions
     GUID                        m_guidPhotoConfirmationSubtype;
+    BOOL                        m_firePhotoConfirmation;
 #endif
 
 };

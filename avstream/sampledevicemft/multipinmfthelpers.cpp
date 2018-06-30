@@ -44,6 +44,7 @@ STDMETHODIMP_(VOID) CPinQueue::InsertInternal( _In_ IMFSample *pSample )
     if (FAILED(hr))
     {
         DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
+        // There is a bug in the pipeline that doesn't release the sample fed from processinput. We have to explicitly release the sample here
         SAFE_RELEASE(pSample);
     }
 }
@@ -108,9 +109,6 @@ STDMETHODIMP CPinQueue::RecreateTee( _In_  IMFMediaType *inMediatype,
     HRESULT hr = S_OK;
     MF_TRANSFORM_XVP_OPERATION operation = DeviceMftTransformXVPIllegal;
     
-    DMFTCHECKNULL_GOTO(inMediatype, done, E_INVALIDARG);
-    DMFTCHECKNULL_GOTO(outMediatype, done, E_INVALIDARG);
-
     SAFE_DELETE(m_teer);
 
     CNullTee *nulltee = new (std::nothrow) CNullTee();
@@ -158,7 +156,7 @@ STDMETHODIMP CPinQueueWithGrayScale::RecreateTee( _In_  IMFMediaType *inMediatyp
         outMediatype,
         punkManager),done);
     DMFTCHECKNULL_GOTO(m_teer, done, E_UNEXPECTED);
-    // Wrap the media type with Gray scale tee only if the input media type is a YUY2, UYVY or NV12
+    // Wrap the media type with Gray scale tee only if the input media type is a YUY2, UYVY, NV12 or RGB32
     DMFTCHECKHR_GOTO(inMediatype->GetGUID(MF_MT_SUBTYPE, &gInputSubType), done);
     if (IsEqualCLSID(gInputSubType, MFVideoFormat_NV12)
         ||IsEqualCLSID(gInputSubType, MFVideoFormat_YUY2)
@@ -359,10 +357,7 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pOutSampl
     }
 
     *pOutSample = spXVPOutputSample.Detach();
-    //
-    //Release the Sample back to the pipeline
-    //
-    pSample->Release();
+
 
 done:
     hr = FAILED(pohr) ? pohr : hr;
@@ -535,6 +530,7 @@ CXvptee::~CXvptee()
     m_spDeviceManagerUnk = nullptr;
 }
 
+#ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
 CGrayTee::CGrayTee(_In_ Ctee *tee) : CWrapTee(tee),m_transformfn(nullptr)
 {
 }
@@ -542,68 +538,66 @@ STDMETHODIMP CGrayTee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSam
 {
     HRESULT                 hr = S_OK;
     ComPtr<IMFSample>       spOutputSample;
-    ComPtr<IMFMediaType>    spMediaType = getOutMediaType();
     ComPtr <IMFMediaBuffer> spMediaBufInput, spMediaBufOutput;
     LONG                    lDefaultStride = 0,    lSrcStride = 0,lDestStride = 0;
-    
     GUID                    guidOutputSubType = GUID_NULL;
     LONGLONG                hnsDuration, hnsTime = 0;
     DWORD dwTotalLength = 0;
-    DMFTCHECKHR_GOTO(pSample->GetTotalLength(&dwTotalLength), done);
+    BYTE                    *pDest = NULL, *pSrc = NULL;
+    DWORD                    cbBuffer = 0;
+    ComPtr<IMFMediaType>    spMediaType = getOutMediaType();
 
     DMFTCHECKNULL_GOTO(ppOutSample, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(pSample, done, E_INVALIDARG);
+
+    DMFTCHECKHR_GOTO(pSample->GetTotalLength(&dwTotalLength), done);
     *ppOutSample = nullptr;
     DMFTCHECKHR_GOTO(pSample->ConvertToContiguousBuffer(spMediaBufInput.GetAddressOf()), done);
-    DMFTCHECKHR_GOTO(getOutMediaType()->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
-    DMFTCHECKHR_GOTO(MFGetStrideForBitmapInfoHeader(guidOutputSubType.Data1, m_rect.right, &lDefaultStride), done);
-
-    DMFTCHECKHR_GOTO(MFCreateSample(spOutputSample.GetAddressOf()), done);
-    DMFTCHECKHR_GOTO(pSample->CopyAllItems(spOutputSample.Get()), done);
-    // Create the MediaBuffer for the new sample
-    hr = MFCreate2DMediaBuffer(
-        m_rect.right,
-        m_rect.bottom,
-        guidOutputSubType.Data1,
-        FALSE, // top-down buffer (DX compatible)
-        &spMediaBufOutput);
-    if (FAILED(hr))
+    
     {
-        spMediaBufOutput = nullptr;
-        DMFTCHECKHR_GOTO(MFCreateAlignedMemoryBuffer(
-            dwTotalLength,
-            MF_1_BYTE_ALIGNMENT,
-            &spMediaBufOutput), done);
-    }
-    // Add the media buffer to the output sample
-    DMFTCHECKHR_GOTO(spOutputSample->AddBuffer(spMediaBufOutput.Get()), done);
-    {
-        BYTE                    *pDest = NULL, *pSrc = NULL;
-        DWORD                    cbBuffer = 0;
         VideoBufferLock inputLock(spMediaBufInput.Get());
-        VideoBufferLock outputLock(spMediaBufOutput.Get());
-        DMFTCHECKHR_GOTO(inputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pSrc, &lSrcStride,&cbBuffer), done);
-        DMFTCHECKHR_GOTO(outputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pDest, &lDestStride,&cbBuffer,FALSE), done);
-        if (m_transformfn)
+
+        DMFTCHECKHR_GOTO(spMediaType->GetGUID(MF_MT_SUBTYPE, &guidOutputSubType), done);
+        DMFTCHECKHR_GOTO(MFGetStrideForBitmapInfoHeader(guidOutputSubType.Data1, m_rect.right, &lDefaultStride), done);
+        DMFTCHECKHR_GOTO(MFCreateSample(spOutputSample.GetAddressOf()), done);
+        DMFTCHECKHR_GOTO(pSample->CopyAllItems(spOutputSample.Get()), done);
+        DMFTCHECKHR_GOTO(inputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pSrc, &lSrcStride, &cbBuffer), done);
+        dwTotalLength = max(dwTotalLength, (DWORD)(abs(lSrcStride*m_rect.bottom)));
+        // Create the MediaBuffer for the new sample
+        hr = MFCreate2DMediaBuffer(
+            m_rect.right,
+            m_rect.bottom,
+            guidOutputSubType.Data1,
+            (lSrcStride < 0), // top-down buffer (DX compatible)
+            &spMediaBufOutput);
+        if (FAILED(hr))
         {
-            m_transformfn(m_rect, pDest, lDestStride, pSrc, lSrcStride, m_rect.right, m_rect.bottom);
+            spMediaBufOutput = nullptr;
+            DMFTCHECKHR_GOTO(MFCreateAlignedMemoryBuffer(
+                dwTotalLength,
+                MF_1_BYTE_ALIGNMENT,
+                &spMediaBufOutput), done);
+        }
+        // Add the media buffer to the output sample
+        DMFTCHECKHR_GOTO(spOutputSample->AddBuffer(spMediaBufOutput.Get()), done);
+        {
+            VideoBufferLock outputLock(spMediaBufOutput.Get());
+            DMFTCHECKHR_GOTO(outputLock.LockBuffer(lDefaultStride, m_rect.bottom, &pDest, &lDestStride, &cbBuffer, FALSE), done);
+            if (m_transformfn)
+            {
+                m_transformfn(m_rect, pDest, lDestStride, pSrc, lSrcStride, m_rect.right, m_rect.bottom);
+            }
+        }
+        if (SUCCEEDED(pSample->GetSampleDuration(&hnsDuration)))
+        {
+            DMFTCHECKHR_GOTO(spOutputSample->SetSampleDuration(hnsDuration), done);
+        }
+        if (SUCCEEDED(pSample->GetSampleTime(&hnsTime)))
+        {
+            DMFTCHECKHR_GOTO(spOutputSample->SetSampleTime(hnsTime), done);
         }
     }
-    if (SUCCEEDED(pSample->GetSampleDuration(&hnsDuration)))
-    {
-        DMFTCHECKHR_GOTO(spOutputSample->SetSampleDuration(hnsDuration),done);
-    }
-    if (SUCCEEDED(pSample->GetSampleTime(&hnsTime)))
-    {
-        DMFTCHECKHR_GOTO(spOutputSample->SetSampleTime(hnsTime),done);
-    }
-    if (SUCCEEDED(spMediaBufInput->GetCurrentLength(&dwTotalLength)))
-    {
-        DMFTCHECKHR_GOTO(spMediaBufOutput->SetCurrentLength(dwTotalLength),done);
-    }
-
     *ppOutSample = spOutputSample.Detach();
-    pSample->Release();
 done:
     return hr;
 }
@@ -643,6 +637,7 @@ HRESULT CGrayTee::Configure(
 done:
     return hr;
 }
+#endif
 
 /*++
 Descrtiption:
@@ -1061,21 +1056,35 @@ done:
     return hr;
 }
 
-HRESULT CheckImagePin( _In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin )
+HRESULT CheckPinType(_In_ IMFAttributes* pAttributes, _In_ GUID pinType, _Out_ PBOOL pResult)
 {
     HRESULT hr = S_OK;
+    GUID pinClsid = GUID_NULL;
+   
     DMFTCHECKNULL_GOTO(pAttributes, done, E_INVALIDARG);
-    DMFTCHECKNULL_GOTO(pbIsImagePin, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pResult, done, E_INVALIDARG);
+    *pResult = FALSE;
+
+    if (SUCCEEDED(pAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &pinClsid))
+        && (IsEqualCLSID(pinClsid, pinType)))
     {
-        GUID pinClsid = GUID_NULL;
-        *pbIsImagePin = FALSE;
-        if (SUCCEEDED(pAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &pinClsid))
-            && ((IsEqualCLSID(pinClsid, PINNAME_IMAGE)) || IsEqualCLSID(pinClsid, PINNAME_VIDEO_STILL)))
-        {
-            *pbIsImagePin = TRUE;
-        }
+        *pResult = TRUE;
     }
 done:
     return hr;
 }
 
+HRESULT CheckImagePin( _In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin )
+{
+    if ((SUCCEEDED(CheckPinType(pAttributes, PINNAME_IMAGE, pbIsImagePin)) && pbIsImagePin) ||
+        (SUCCEEDED(CheckPinType(pAttributes, PINNAME_VIDEO_STILL, pbIsImagePin)) && pbIsImagePin))
+    {
+        return S_OK;
+    }
+    return E_FAIL;
+}
+
+HRESULT CheckPreviewPin( _In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsPreviewPin)
+{
+    return CheckPinType(pAttributes, PINNAME_PREVIEW, pbIsPreviewPin);
+}

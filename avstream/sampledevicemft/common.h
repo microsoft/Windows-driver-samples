@@ -537,7 +537,7 @@ public:
         // Query for the 2-D buffer interface. OK if this fails.
         if (FAILED(m_pBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer2.GetAddressOf()))))
         {
-            m_p2DBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer.GetAddressOf()));
+            m_pBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer.GetAddressOf()));
         } 
     }
     ~VideoBufferLock()

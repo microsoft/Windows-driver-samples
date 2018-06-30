@@ -644,9 +644,11 @@ STDMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
     }
     //
     // Any processing before we pass the sample to further in the pipeline should be done here
-    // PROCESSSAMPLE(pSample);
+    // PROCESSSAMPLE(pSample); There is a bug in the pipeline and to circumvent that we have to
+    // keep a reference on the sample. The pipeline is not releasing a reference when the sample
+    // is fed in ProcessInput. We are explicitly releasing it for the pipeline.
     //
-    pOutputSample->pSample = spSample.Get();
+    pOutputSample->pSample = spSample.Detach();
     pOutputSample->dwStatus = S_OK;
 done:
     return hr;

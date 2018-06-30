@@ -27,6 +27,7 @@ CMultipinMft::CMultipinMft()
     m_filterInWarmStart(false)
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
    , m_spPhotoConfirmationCallback(nullptr)
+   , m_firePhotoConfirmation(FALSE)
 #endif
 {
     HRESULT hr = S_OK;
@@ -155,6 +156,9 @@ done:
     6) Create the output pins
 
 --*/
+
+// This Sample will create a grayscale for known media types. Please remove MF_DEVICEMFT_ADD_GRAYSCALER_ to remove the grayscaler
+// This sample also has photo confirmation enabled remove DMF_DEVICEMFT_PHTOTOCONFIRMATION to remove photo confirmation
 
 STDMETHODIMP CMultipinMft::InitializeTransform ( 
     _In_ IMFAttributes *pAttributes
@@ -681,6 +685,8 @@ STDMETHODIMP  CMultipinMft::ProcessInput(
     DMFTCHECKHR_GOTO( inPin->SendSample( pSample ), done );
 done:
     DMFTRACE( DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr );
+    // Workaround A Bug in the pipeline which is incorrectly not releasing the sample
+    SAFE_RELEASE(pSample);
     return hr;
 
 }
@@ -723,22 +729,24 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
             pdwStatus ) ) )
         {
             gotOne = true;
-            // Do photo confirmation if enabled
+            // Do photo confirmation if enabled off the preview stream only
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
-            BOOL pIsImagePin = FALSE;
+            BOOL pIsPreviewPin = FALSE;
             if (pOutputSamples[i].pSample &&
                 IsPhotoConfirmationEnabled() &&
-                (SUCCEEDED(CheckImagePin(static_cast<IMFAttributes*>(poPin), &pIsImagePin)) && pIsImagePin))
+                ((SUCCEEDED(CheckPreviewPin(static_cast<IMFAttributes*>(poPin), &pIsPreviewPin)) && pIsPreviewPin) && 
+                    InterlockedCompareExchange(reinterpret_cast<PLONG>(&m_firePhotoConfirmation),FALSE,TRUE)))
             {
+                // Please note photo confirmation should always be fired off the preview stream.
                 ComPtr<IMFMediaType> spMediaType;
                 if (SUCCEEDED(poPin->getMediaType(spMediaType.GetAddressOf())))
                 {
                     // Do Photo confirmation
                     ProcessCapturePhotoConfirmationCallBack(spMediaType.Get(), pOutputSamples[i].pSample);
+                    m_firePhotoConfirmation = FALSE;
                 }
             }
 #endif
-
         }
     }
     if (gotOne)
@@ -1071,6 +1079,9 @@ STDMETHODIMP CMultipinMft::KsProperty(
             else
             {
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Take Single Photo Trigger");
+#if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
+                InterlockedExchange(reinterpret_cast<PLONG>(&m_firePhotoConfirmation),TRUE);
+#endif
             }
         }
     }
