@@ -36,6 +36,51 @@ KSDATARANGE HdmiTopoPinDataRangesBridge[] =
     STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
     STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL),
     STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+  },
+  {
+      sizeof(KSDATARANGE),
+      0,
+      0,
+      0,
+      STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+      STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP),
+      STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+  },
+  {
+      sizeof(KSDATARANGE),
+      0,
+      0,
+      0,
+      STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+      STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTS),
+      STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+  },
+  {
+      sizeof(KSDATARANGE),
+      0,
+      0,
+      0,
+      STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+      STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD),
+      STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+  },
+  {
+      sizeof(KSDATARANGE),
+      0,
+      0,
+      0,
+      STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+      STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT20),
+      STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+  },
+  {
+      sizeof(KSDATARANGE),
+      0,
+      0,
+      0,
+      STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+      STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT21),
+      STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
   }
 };
 
@@ -44,7 +89,12 @@ static
 PKSDATARANGE HdmiTopoPinDataRangePointersBridge[] =
 {
   &HdmiTopoPinDataRangesBridge[0],
-  &HdmiTopoPinDataRangesBridge[1]
+  &HdmiTopoPinDataRangesBridge[1],
+  &HdmiTopoPinDataRangesBridge[2],
+  &HdmiTopoPinDataRangesBridge[3],
+  &HdmiTopoPinDataRangesBridge[4],
+  &HdmiTopoPinDataRangesBridge[5],
+  &HdmiTopoPinDataRangesBridge[6]
 };
 
 //=============================================================================

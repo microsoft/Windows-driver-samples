@@ -35,9 +35,9 @@ class CMiniportTopology :
     eDeviceType             m_DeviceType;
     union {
         PVOID               m_DeviceContext;
-#ifdef SYSVAD_BTH_BYPASS
-        PBTHHFPDEVICECOMMON m_BthHfpDevice;
-#endif // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
+        PSIDEBANDDEVICECOMMON m_pSidebandDevice;
+#endif // defined(SYSVAD_BTH_BYPASS)
     };
 
 public:
@@ -55,16 +55,16 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
-#ifdef SYSVAD_BTH_BYPASS
-        if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS)
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
                 // This ref is released on dtor.
-                m_BthHfpDevice->AddRef(); // strong ref.
+                m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
     }
 
     ~CMiniportTopology();
@@ -86,27 +86,27 @@ public:
         _In_        DWORD                                    JackCapabilities
     );
     
-#ifdef SYSVAD_BTH_BYPASS
-    BOOL IsBthHfpDevice()
+#if defined(SYSVAD_BTH_BYPASS)
+    BOOL IsSidebandDevice()
     {
         return (m_DeviceType == eBthHfpMicDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PBTHHFPDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetSidebandDevice() 
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
-                bthHfpDevice = m_BthHfpDevice;
+                sidebandDevice = m_pSidebandDevice;
             }
         }
 
-        return bthHfpDevice;
+        return sidebandDevice;
     }
 
     static
@@ -136,9 +136,20 @@ public:
     (
         _In_opt_    PVOID   Context
     );
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
 
     PVOID GetDeviceContext() { return m_DeviceContext;  }
+
+    friend NTSTATUS PropertyHandler_BthHfpVolumeLevel_BasicSupport(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_BthHfpJackContainerId(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest,
+        _In_ ULONG                    cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION * JackDescriptions);
+    friend NTSTATUS PropertyHandler_BthHfpMicVolumeLevel(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_BthHfpSpeakerVolumeLevel(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
 };
 
 typedef CMiniportTopology *PCMiniportTopology;
@@ -149,4 +160,5 @@ NTSTATUS CMiniportTopology_EventHandler_JackState
 );
 
 #endif // _SYSVAD_MINTOPO_H_
+
 

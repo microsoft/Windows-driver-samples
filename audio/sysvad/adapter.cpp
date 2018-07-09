@@ -245,6 +245,7 @@ DRIVER_DISPATCH PnpHandler;
 //
 DWORD g_DoNotCreateDataFiles = 0;  // default is off.
 DWORD g_DisableToneGenerator = 0;  // default is to generate tones.
+UNICODE_STRING g_RegistryPath;      // This is used to store the registry settings path for the driver
 
 
 #ifdef SYSVAD_BTH_BYPASS
@@ -259,6 +260,18 @@ DWORD g_DisableBthScoBypass = 0;   // default is SCO bypass enabled.
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
+
+#pragma code_seg("PAGE")
+void ReleaseRegistryStringBuffer()
+{
+    if (g_RegistryPath.Buffer != NULL)
+    {
+        ExFreePool(g_RegistryPath.Buffer);
+        g_RegistryPath.Buffer = NULL;
+        g_RegistryPath.Length = 0;
+        g_RegistryPath.MaximumLength = 0;
+    }
+}
 
 //=============================================================================
 #pragma code_seg("PAGE")
@@ -287,6 +300,8 @@ Environment:
 
     DPF(D_TERSE, ("[DriverUnload]"));
 
+    ReleaseRegistryStringBuffer();
+
     if (DriverObject == NULL)
     {
         goto Done;
@@ -311,6 +326,51 @@ Environment:
 
 Done:
     return;
+}
+
+//=============================================================================
+#pragma code_seg("INIT")
+__drv_requiresIRQL(PASSIVE_LEVEL)
+NTSTATUS
+CopyRegistrySettingsPath(
+    _In_ PUNICODE_STRING RegistryPath
+)
+/*++
+
+Routine Description:
+
+Copies the following registry path to a global variable.
+
+\REGISTRY\MACHINE\SYSTEM\ControlSetxxx\Services\<driver>\Parameters
+
+Arguments:
+
+RegistryPath - Registry path passed to DriverEntry
+
+Returns:
+
+NTSTATUS - SUCCESS if able to configure the framework
+
+--*/
+
+{
+    // Initializing the unicode string, so that if it is not allocated it will not be deallocated too.
+    RtlInitUnicodeString(&g_RegistryPath, NULL);
+
+    g_RegistryPath.MaximumLength = RegistryPath->Length + sizeof(WCHAR);
+
+    g_RegistryPath.Buffer = (PWCH)ExAllocatePoolWithTag(PagedPool, g_RegistryPath.MaximumLength, MINADAPTER_POOLTAG);
+
+    if (g_RegistryPath.Buffer == NULL)
+    {
+        return STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    RtlZeroMemory(g_RegistryPath.Buffer, g_RegistryPath.MaximumLength);
+
+    RtlAppendUnicodeToString(&g_RegistryPath, RegistryPath->Buffer);
+
+    return STATUS_SUCCESS;
 }
 
 //=============================================================================
@@ -348,7 +408,7 @@ Returns:
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableToneGenerator", &g_DisableToneGenerator, (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableToneGenerator, sizeof(ULONG)},
 #ifdef SYSVAD_BTH_BYPASS
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableBthScoBypass",  &g_DisableBthScoBypass,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableBthScoBypass,  sizeof(ULONG)},
-#endif
+#endif // SYSVAD_BTH_BYPASS
         { NULL,   0,                                                        NULL,                    NULL,                    0,                                                             NULL,                    0}
     };
 
@@ -440,6 +500,16 @@ Return Value:
     WDF_DRIVER_CONFIG           config;
 
     DPF(D_TERSE, ("[DriverEntry]"));
+
+    // Copy registry Path name in a global variable to be used by modules inside driver.
+    // !! NOTE !! Inside this function we are initializing the registrypath, so we MUST NOT add any failing calls
+    // before the following call.
+    ntStatus = CopyRegistrySettingsPath(RegistryPathName);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("Registry path copy error 0x%x", ntStatus)),
+        Done);
+
     //
     // Get registry configuration.
     //
@@ -505,6 +575,8 @@ Done:
         {
             WdfDriverMiniportUnload(WdfGetDriver());
         }
+
+        ReleaseRegistryStringBuffer();
     }
     
     return ntStatus;
@@ -1096,4 +1168,5 @@ Return Value:
 }
 
 #pragma code_seg()
+
 

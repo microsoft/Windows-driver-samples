@@ -42,6 +42,12 @@ Abstract:
 #define TELEPHONY_VOLUME_STEPPING (3 * 0x10000)     //  10 steps
 
 
+typedef struct _ENDPOINT_PAIR_ENTRY
+{
+    LIST_ENTRY                ListEntry;
+    KSTOPOLOGY_ENDPOINTIDPAIR data;
+} ENDPOINT_PAIR_ENTRY;
+
 //=============================================================================
 // Defines
 //=============================================================================
@@ -86,6 +92,9 @@ class CCellularMiniportTopology :
     KSTOPOLOGY_ENDPOINTID m_CellularRenderEndpoint;
     KSTOPOLOGY_ENDPOINTID m_CellularCaptureEndpoint;
     ULONG m_CellularVolume;
+
+    FAST_MUTEX m_EndpointFastMutex;
+    LIST_ENTRY m_EndpointPairs;
 
   public:
     DECLARE_STD_UNKNOWN();
@@ -134,6 +143,11 @@ class CCellularMiniportTopology :
     (
         _In_ ULONG TelephonyId,
         _In_ BOOL NewState
+    );
+
+    NTSTATUS EventHandler_Telephony
+    (
+        _In_ PPCEVENT_REQUEST _pEventRequest
     );
 };
     

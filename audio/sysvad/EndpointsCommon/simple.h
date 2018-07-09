@@ -122,6 +122,12 @@ enum
     KSNODE_WAVE_ADC = 0
 };
 
+// Wave Topology nodes.
+enum 
+{
+    KSNODE_WAVE_DAC = 0
+};
+
 // topology pins.
 enum
 {

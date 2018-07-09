@@ -136,13 +136,13 @@ Return Value:
 
     NTSTATUS                ntStatus        = STATUS_INVALID_DEVICE_REQUEST;
     PCMiniportTopology      miniport        = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    PBTHHFPDEVICECOMMON     bthHfpDevice    = NULL;
+    PSIDEBANDDEVICECOMMON   bthHfpDevice    = NULL;
     ULONG                   channel         = (ULONG)-1;
     
-    bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+    bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
     ASSERT(bthHfpDevice != NULL);
     
-    if (bthHfpDevice->IsVolumeSupported() == FALSE)
+    if (bthHfpDevice->IsVolumeSupported(miniport->m_DeviceType) == FALSE)
     {
        ntStatus = miniport->PropertyHandlerGeneric(PropertyRequest); 
     }
@@ -174,14 +174,14 @@ Return Value:
                 
                 if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                 {
-                    *volume = bthHfpDevice->GetMicVolume();
+                    *volume = bthHfpDevice->GetVolume(eBthHfpMicDevice, channel);
 
                     ntStatus = STATUS_SUCCESS;
 
                 }
                 else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
                 {
-                    ntStatus = bthHfpDevice->SetMicVolume(*volume);
+                    ntStatus = bthHfpDevice->SetVolume(eBthHfpMicDevice, *volume, channel);
                 }
             }
         }
@@ -277,5 +277,4 @@ PropertyHandler_BthHfpMicTopoFilterEvent
 
 #pragma code_seg()
 #endif  // SYSVAD_BTH_BYPASS
-
 

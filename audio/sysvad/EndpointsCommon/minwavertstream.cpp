@@ -35,7 +35,6 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-
     if (NULL != m_pMiniport)
     {
         if (m_pAudioModules)
@@ -44,7 +43,7 @@ Return Value:
             m_pAudioModules = NULL;
             m_AudioModuleCount = 0;
         }
-
+    
         if (m_bUnregisterStream)
         {
             m_pMiniport->StreamClosed(m_ulPin, this);
@@ -105,9 +104,8 @@ Return Value:
     {
         ExFreePoolWithTag( m_pNotificationDpc, MINWAVERTSTREAM_POOLTAG );
     }
-    
 #ifdef SYSVAD_BTH_BYPASS
-    ASSERT(m_ScoOpen == FALSE);
+    ASSERT(m_SidebandOpen == FALSE);
 #endif  // SYSVAD_BTH_BYPASS
 
     DPF_ENTER(("[CMiniportWaveRTStream::~CMiniportWaveRTStream]"));
@@ -115,6 +113,55 @@ Return Value:
 
 //=============================================================================
 #pragma code_seg("PAGE")
+
+NTSTATUS CMiniportWaveRTStream::ReadRegistrySettings()
+{
+    NTSTATUS                    ntStatus;
+    UNICODE_STRING              parametersPath;
+
+    RTL_QUERY_REGISTRY_TABLE    paramTable[] = {
+        // QueryRoutine     Flags                                               Name                            EntryContext                            DefaultType                                                     DefaultData                                 DefaultLength
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"HostCaptureToneFrequency",        &m_ulHostCaptureToneFrequency,          (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_ulHostCaptureToneFrequency,              sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"LoopbackCaptureToneFrequency",    &m_ulLoopbackCaptureToneFrequency,      (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_ulLoopbackCaptureToneFrequency,          sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"HostCaptureToneAmplitude",        &m_dwHostCaptureToneAmplitude,          (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwHostCaptureToneAmplitude,              sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"LoopbackCaptureToneAmplitude",    &m_dwLoopbackCaptureToneAmplitude,      (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwLoopbackCaptureToneAmplitude,          sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"HostCaptureToneDCOffset",         &m_dwHostCaptureToneDCOffset,           (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwHostCaptureToneDCOffset,               sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"LoopbackCaptureToneDCOffset",     &m_dwLoopbackCaptureToneDCOffset,       (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwLoopbackCaptureToneDCOffset,           sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"HostCaptureToneInitialPhase",     &m_dwHostCaptureToneInitialPhase,       (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwHostCaptureToneInitialPhase,           sizeof(DWORD) },
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"LoopbackCaptureToneInitialPhase", &m_dwLoopbackCaptureToneInitialPhase,   (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD,  &m_dwLoopbackCaptureToneInitialPhase,       sizeof(DWORD) },
+        { NULL,   0,                                                        NULL,                               NULL,                                   0,                                                              NULL,                                       0 }
+    };
+
+    RtlInitUnicodeString(&parametersPath, NULL);
+
+    // The sizeof(WCHAR) is added to the maximum length, for allowing a space for null termination of the string.
+    parametersPath.MaximumLength =
+        g_RegistryPath.Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
+
+    parametersPath.Buffer = (PWCH)ExAllocatePoolWithTag(PagedPool, parametersPath.MaximumLength, MINWAVERT_POOLTAG);
+    if (parametersPath.Buffer == NULL)
+    {
+        return STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    RtlZeroMemory(parametersPath.Buffer, parametersPath.MaximumLength);
+
+    RtlAppendUnicodeToString(&parametersPath, g_RegistryPath.Buffer);
+    RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
+
+    ntStatus = RtlQueryRegistryValues(
+        RTL_REGISTRY_ABSOLUTE | RTL_REGISTRY_OPTIONAL,
+        parametersPath.Buffer,
+        &paramTable[0],
+        NULL,
+        NULL
+    );
+
+    ExFreePool(parametersPath.Buffer);
+
+    return ntStatus;
+}
+
 NTSTATUS
 CMiniportWaveRTStream::Init
 ( 
@@ -193,9 +240,19 @@ Return Value:
     m_pAudioModules = NULL;
     m_AudioModuleCount = 0;
 
-#ifdef SYSVAD_BTH_BYPASS
-    m_ScoOpen = FALSE;
-#endif  // SYSVAD_BTH_BYPASS
+    m_ulHostCaptureToneFrequency = IsEqualGUID(SignalProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW) ? 1000 : 2000;
+    m_ulLoopbackCaptureToneFrequency = 3000; // 3 kHz
+    m_dwHostCaptureToneAmplitude = 50; 
+    m_dwLoopbackCaptureToneAmplitude = 50; 
+    m_dwHostCaptureToneDCOffset = 0; 
+    m_dwLoopbackCaptureToneDCOffset = 0; 
+    m_dwHostCaptureToneInitialPhase = 0; 
+    m_dwLoopbackCaptureToneInitialPhase = 0; 
+
+
+#if defined(SYSVAD_BTH_BYPASS)
+    m_SidebandOpen = FALSE;
+#endif  // defined(SYSVAD_BTH_BYPASS)
 
     m_pPortStream = PortStream_;
     InitializeListHead(&m_NotificationList);
@@ -292,25 +349,69 @@ Return Value:
 
     if (m_bCapture)
     {
-        DWORD toneFrequency = 0;
+        ReadRegistrySettings();
+            DWORD toneFrequency = 0;
+            DWORD toneAmplitude = 0;
+            DWORD toneDCOffset = 0;
+            DWORD toneInitialPhase = 0;
 
-        if (m_pMiniport->IsLoopbackPin(Pin_))
-        {
-            //
-            // Loopbacks pins use a different frequency for test validation.
-            //
-            toneFrequency = 3000; // 3 kHz
-        }
-        else 
-        {
-            //
-            // Init sine wave generator. To exercise the SignalProcessingMode parameter
-            // this sample driver selects the frequency based on the parameter.
-            //
-            toneFrequency = IsEqualGUID(SignalProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW) ? 1000 : 2000;
-        }
+            double toneAmplitudeDouble = 0;
+            double toneDCOffsetDouble = 0;
+            double toneInitialPhaseDouble = 0;
 
-        ntStatus = m_ToneGenerator.Init(toneFrequency, m_pWfExt);
+            if (m_pMiniport->IsLoopbackPin(Pin_))
+            {
+                //
+                // Loopbacks pins use a different frequency for test validation.
+                //
+                toneFrequency = m_ulLoopbackCaptureToneFrequency;
+                toneAmplitude = m_dwLoopbackCaptureToneAmplitude;
+                toneDCOffset  = m_dwLoopbackCaptureToneDCOffset;
+                toneInitialPhase = m_dwLoopbackCaptureToneInitialPhase;
+            }
+            else
+            {
+                //
+                // Init sine wave generator. To exercise the SignalProcessingMode parameter
+                // this sample driver selects the frequency based on the parameter.
+                //
+                toneFrequency = m_ulHostCaptureToneFrequency;
+                toneAmplitude = m_dwHostCaptureToneAmplitude;
+                toneDCOffset  = m_dwHostCaptureToneDCOffset;
+                toneInitialPhase = m_dwHostCaptureToneInitialPhase;
+            }
+
+            if (labs(toneAmplitude) > 100)
+            {
+                toneAmplitude = toneAmplitude > 0 ? 100 : -100;
+            }
+
+            if (labs(toneDCOffset) > 100)
+            {
+                toneDCOffset = toneDCOffset > 0 ? 100 : -100;
+            }
+
+            DWORD abssum = labs(toneAmplitude) + labs(toneDCOffset);
+            
+            if ( abssum > 100)
+            {
+                toneAmplitudeDouble = ((double)toneAmplitude) / abssum;
+                toneDCOffsetDouble = ((double)toneDCOffset) / abssum;
+            }
+            else
+            {
+                toneAmplitudeDouble = ((double)toneAmplitude) / 100.0;
+                toneDCOffsetDouble = ((double)toneDCOffset) / 100.0;
+            }
+
+            if (labs(toneInitialPhase) > 31416)
+            {
+                toneInitialPhase = toneInitialPhase > 0 ? 31416 : -31416;
+            }
+
+            toneInitialPhaseDouble = (double)toneInitialPhase / 10000;
+
+            ntStatus = m_ToneGenerator.Init(toneFrequency, toneAmplitudeDouble, toneDCOffsetDouble, toneInitialPhaseDouble, m_pWfExt);
         if (!NT_SUCCESS(ntStatus))
         {
             return ntStatus;
@@ -749,16 +850,16 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
 {
     NTSTATUS ntStatus;
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS)
+    if (m_SidebandOpen)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
 
     // Return failure if this is the keyword detector pin
-    if (m_pMiniport->m_DeviceFormatsAndModes[m_ulPin].PinType == PINTYPE::KeywordCapturePin)
+    if (m_pMiniport->IsKeywordDetectorPin(m_ulPin))
     {
         return STATUS_NOT_SUPPORTED;
     }
@@ -782,9 +883,9 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
 
     ntStatus = STATUS_SUCCESS;
     
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 Done:
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
     return ntStatus;
 }
 
@@ -806,7 +907,6 @@ Done:
 //
 // ISSUE-2014/10/4 Will this work correctly across pause/play?
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetReadPacket
 (
     _Out_ ULONG     *PacketNumber,
@@ -833,7 +933,7 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
     }
 
     // If this is the keyword detector pin, then stream from the keyword FIFO
-    if (m_pMiniport->m_DeviceFormatsAndModes[m_ulPin].PinType == PINTYPE::KeywordCapturePin)
+    if (m_pMiniport->IsKeywordDetectorPin(m_ulPin))
     {
         // FUTURE-2014/11/18 Drive this with packet counter
         ntStatus = m_pMiniport->m_KeywordDetector.GetReadPacket(m_ulNotificationsPerBuffer, m_ulDmaBufferSize, m_pDmaBuffer, PacketNumber, PerformanceCounterValue, MoreData);
@@ -918,7 +1018,6 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
 }
 
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::SetWritePacket
 (
     _In_ ULONG      PacketNumber,
@@ -1011,7 +1110,6 @@ NTSTATUS CMiniportWaveRTStream::SetWritePacket
 
 //=============================================================================
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 (
     _Out_ KSAUDIO_PRESENTATION_POSITION *pPresentationPosition
@@ -1030,7 +1128,6 @@ NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 
 //=============================================================================
 #pragma code_seg()
-_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetPacketCount
 (
     _Out_ ULONG *pPacketCount
@@ -1076,13 +1173,12 @@ NTSTATUS CMiniportWaveRTStream::SetState
     //Parameter 1: Current linear buffer position
     //Parameter 2: Current WaveRtBufferWritePosition
     //Parameter 3: Pin State 0->KS_STOP, 1->KS_ACQUIRE, 2->KS_PAUSE, 3->KS_RUN 
-    //Parameter 4:0
-    pAdapterComm->WriteEtwEvent(eMINIPORT_PIN_STATE, 
-                                100, // replace with the correct "Current linear buffer position"
+    //Parameter 4: 0
+    pAdapterComm->WriteEtwEvent(eMINIPORT_PIN_STATE,
+                                m_ullLinearPosition, // replace with the correct "Current linear buffer position"
                                 m_ulCurrentWritePosition, // replace with the previous WaveRtBufferWritePosition that the driver received
                                 State_, // replace with the correct "Data length completed"
-                                0);  // always zero
-
+                                0); // always zero
     switch (State_)
     {
         case KSSTATE_STOP:
@@ -1108,56 +1204,11 @@ NTSTATUS CMiniportWaveRTStream::SetState
             {
                 m_SaveData.WaitAllWorkItems();
             }
-
-#ifdef SYSVAD_BTH_BYPASS
-            if (m_ScoOpen)
-            {
-                PBTHHFPDEVICECOMMON bthHfpDevice;
-                
-                ASSERT(m_pMiniport->IsBthHfpDevice());
-                bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-                ASSERT(bthHfpDevice != NULL);
-
-                //
-                // Close the SCO connection.
-                //
-                ntStatus = bthHfpDevice->StreamClose();
-                if (!NT_SUCCESS(ntStatus))
-                {
-                    DPF(D_ERROR, ("SetState: KSSTATE_STOP, StreamClose failed, 0x%x", ntStatus));
-                }
-                
-                m_ScoOpen = FALSE;
-            }
-#endif // SYSVAD_BTH_BYPASS
             break;
 
         case KSSTATE_ACQUIRE:
-#ifdef SYSVAD_BTH_BYPASS
-            if (m_pMiniport->IsBthHfpDevice())
-            {
-                if (m_ScoOpen == FALSE)
-                {
-                    PBTHHFPDEVICECOMMON bthHfpDevice;
-
-                    bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-                    ASSERT(bthHfpDevice != NULL);
-
-                    //
-                    // Open the SCO connection.
-                    //
-                    ntStatus = bthHfpDevice->StreamOpen();
-                    IF_FAILED_ACTION_JUMP(
-                        ntStatus,
-                        DPF(D_ERROR, ("SetState: KSSTATE_ACQUIRE, StreamOpen failed, 0x%x", ntStatus)),
-                        Done);
-
-                    m_ScoOpen = TRUE;
-                }
-            }
-#endif // SYSVAD_BTH_BYPASS
             break;
-
+            
         case KSSTATE_PAUSE:
 
             if (m_KsState > KSSTATE_PAUSE)
@@ -1165,7 +1216,7 @@ NTSTATUS CMiniportWaveRTStream::SetState
                 //
                 // Run -> Pause
                 //
-                if (m_pMiniport->m_DeviceFormatsAndModes[m_ulPin].PinType == PINTYPE::KeywordCapturePin)
+                if (m_pMiniport->IsKeywordDetectorPin(m_ulPin))
                 {
                     m_pMiniport->m_KeywordDetector.Stop();
                 }
@@ -1176,16 +1227,79 @@ NTSTATUS CMiniportWaveRTStream::SetState
                     KeCancelTimer(m_pNotificationTimer);
                     ExSetTimerResolution(0, FALSE);
                     KeFlushQueuedDpcs(); 
+
+                    // If pin is transitioning from RUN, save the time since last buffer completion event was sent 
+                    // so if the pin goes to RUN state again we can send the buffer completion event at correct time.
+                    if (m_ullLastDPCTimeStamp > 0)
+                    {
+                        LARGE_INTEGER qpc;
+                        LARGE_INTEGER qpcFrequency;
+                        LONGLONG  hnsCurrentTime;
+
+                        qpc = KeQueryPerformanceCounter(&qpcFrequency);
+
+                        // Convert ticks to 100ns units.
+                        hnsCurrentTime = KSCONVERT_PERFORMANCE_TIME(m_ullPerformanceCounterFrequency.QuadPart, qpc);
+                        m_hnsDPCTimeCarryForward = hnsCurrentTime - m_ullLastDPCTimeStamp + m_hnsDPCTimeCarryForward;
+                    }
                 }
+
+#if defined(SYSVAD_BTH_BYPASS)
+                if (m_SidebandOpen)
+                {
+                    PSIDEBANDDEVICECOMMON sidebandDevice;
+
+                    ASSERT(m_pMiniport->IsSidebandDevice());
+                    sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                    ASSERT(sidebandDevice != NULL);
+
+                    //
+                    // Close the Sideband connection.
+                    //
+                    ntStatus = sidebandDevice->StreamClose(m_pMiniport->m_DeviceType);
+                    if (!NT_SUCCESS(ntStatus))
+                    {
+                        DPF(D_ERROR, ("SetState: KSSTATE_STOP, StreamClose failed, 0x%x", ntStatus));
+                    }
+
+                    m_SidebandOpen = FALSE;
+                }
+#endif // defined(SYSVAD_BTH_BYPASS)
+
             }
             // This call updates the linear buffer and presentation positions.
             GetPositions(NULL, NULL, NULL);
             break;
 
         case KSSTATE_RUN:
+
+#if defined(SYSVAD_BTH_BYPASS)
+            if (m_pMiniport->IsSidebandDevice())
+            {
+                if (m_SidebandOpen == FALSE)
+                {
+                    PSIDEBANDDEVICECOMMON sidebandDevice;
+
+                    sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                    ASSERT(sidebandDevice != NULL);
+
+                    //
+                    // Open the Sideband connection.
+                    //
+                    ntStatus = sidebandDevice->StreamOpen(m_pMiniport->m_DeviceType);
+                    IF_FAILED_ACTION_JUMP(
+                        ntStatus,
+                        DPF(D_ERROR, ("SetState: KSSTATE_ACQUIRE, StreamOpen failed, 0x%x", ntStatus)),
+                        Done);
+
+                    m_SidebandOpen = TRUE;
+                }
+            }
+#endif // defined(SYSVAD_BTH_BYPASS)
+
             // Start DMA
             LARGE_INTEGER ullPerfCounterTemp;
-            if (m_pMiniport->m_DeviceFormatsAndModes[m_ulPin].PinType == PINTYPE::KeywordCapturePin)
+            if (m_pMiniport->IsKeywordDetectorPin(m_ulPin))
             {
                 m_pMiniport->m_KeywordDetector.Run();
             }
@@ -1217,9 +1331,9 @@ NTSTATUS CMiniportWaveRTStream::SetState
 
     m_KsState = State_;
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 Done:
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS)
     return ntStatus;
 }
 
@@ -1309,10 +1423,15 @@ VOID CMiniportWaveRTStream::UpdatePosition
         {
             m_bLastBufferRendered = TRUE;
             PADAPTERCOMMON pAdapterComm = m_pMiniport->GetAdapterCommObj();
-            pAdapterComm->WriteEtwEvent(eMINIPORT_LAST_BUFFER_RENDERED, 
+            //Event type : eMINIPORT_LAST_BUFFER_RENDERED
+            //Parameter 1 : Current linear buffer position
+            //Parameter 2 : the very last WaveRtBufferWritePosition that the driver received
+            //Parameter 3 : 0
+            //Parameter 4 : 0
+            pAdapterComm->WriteEtwEvent(eMINIPORT_LAST_BUFFER_RENDERED,
                                         m_ullLinearPosition + ByteDisplacement, // Current linear buffer position  
                                         m_ulCurrentWritePosition, // The very last WaveRtBufferWritePosition that the driver received
-                                        0, 
+                                        0,
                                         0);
         }
 
@@ -1349,8 +1468,7 @@ VOID CMiniportWaveRTStream::WriteBytes
 
 Routine Description:
 
-This function writes the audio buffer using a sine wave generator.
-
+This function writes the audio buffer using a sine wave generator
 Arguments:
 
 ByteDisplacement - # of bytes to process.
@@ -1364,7 +1482,7 @@ ByteDisplacement - # of bytes to process.
     while (ByteDisplacement > 0)
     {
         ULONG runWrite = min(ByteDisplacement, m_ulDmaBufferSize - bufferOffset);
-        m_ToneGenerator.GenerateSine(m_pDmaBuffer + bufferOffset, runWrite);
+            m_ToneGenerator.GenerateSine(m_pDmaBuffer + bufferOffset, runWrite);
         bufferOffset = (bufferOffset + runWrite) % m_ulDmaBufferSize;
         ByteDisplacement -= runWrite;
     }
@@ -1491,17 +1609,17 @@ Return Value:
     return ntStatus;
 } // SetContentId
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 
 //=============================================================================
 #pragma code_seg()
 NTSTATUS 
-CMiniportWaveRTStream::GetScoStreamNtStatus()
+CMiniportWaveRTStream::GetSidebandStreamNtStatus()
 /*++
 
 Routine Description:
 
-  Checks if the Bluetooth SCO HFP connection is up, if not, an error is returned.
+  Checks if the Sideband stream connection is up, if not, an error is returned.
 
 Return Value:
 
@@ -1509,19 +1627,19 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveRTStream::GetScoStreamNtStatus]"));
+    DPF_ENTER(("[CMiniportWaveRTStream::GetSidebandStreamNtStatus]"));
 
     NTSTATUS  ntStatus  = STATUS_INVALID_DEVICE_STATE;
         
-    if (m_ScoOpen)
+    if (m_SidebandOpen)
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice;
+        PSIDEBANDDEVICECOMMON sidebandDevice;
         
-        ASSERT(m_pMiniport->IsBthHfpDevice());
-        bthHfpDevice = m_pMiniport->GetBthHfpDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
+        ASSERT(m_pMiniport->IsSidebandDevice());
+        sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+        ASSERT(sidebandDevice != NULL);
 
-        if (bthHfpDevice->GetStreamStatus())
+        if (sidebandDevice->GetStreamStatus(m_pMiniport->m_DeviceType))
         {
             ntStatus = STATUS_SUCCESS;
         }
@@ -1529,7 +1647,7 @@ Return Value:
 
     return ntStatus;        
 }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
 
 //=============================================================================
 #pragma code_seg("PAGE")
@@ -1585,6 +1703,7 @@ TimerNotifyRT
 {
     LARGE_INTEGER qpc;
     LARGE_INTEGER qpcFrequency;
+    BOOL bufferCompleted = FALSE;
 
     UNREFERENCED_PARAMETER(Dpc);
     UNREFERENCED_PARAMETER(SA1);
@@ -1612,15 +1731,19 @@ TimerNotifyRT
 
     ULONG TimeElapsedInMS = (ULONG)(hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward)/10000;
 
-    if (TimeElapsedInMS < _this->m_ulNotificationIntervalMs && !_this->m_bEoSReceived)
+    if (TimeElapsedInMS >= _this->m_ulNotificationIntervalMs)
+    {
+        // Carry forward the time greater than notification interval to adjust time to signal next buffer completion event accordingly.
+        _this->m_hnsDPCTimeCarryForward = hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward - (_this->m_ulNotificationIntervalMs * 10000);
+        // Save the last time DPC ran at notification interval
+        _this->m_ullLastDPCTimeStamp = hnsCurrentTime;
+        bufferCompleted = TRUE;
+    }
+
+    if (!bufferCompleted && !_this->m_bEoSReceived)
     {
         goto End;
     }
-
-    // Carry forward the time greater than notification interval to adjust time to signal next buffer completion event accordingly.
-    _this->m_hnsDPCTimeCarryForward = hnsCurrentTime - _this->m_ullLastDPCTimeStamp + _this->m_hnsDPCTimeCarryForward - (_this->m_ulNotificationIntervalMs * 10000);
-    // Save the last time DPC ran at notification interval
-    _this->m_ullLastDPCTimeStamp = hnsCurrentTime;
 
     _this->UpdatePosition(qpc);
 
@@ -1629,15 +1752,15 @@ TimerNotifyRT
         _this->m_llPacketCounter++;
     }
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (_this->m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS)
+    if (_this->m_SidebandOpen)
     {
-        if (!NT_SUCCESS(_this->GetScoStreamNtStatus()))
+        if (!NT_SUCCESS(_this->GetSidebandStreamNtStatus()))
         {
             goto End;
         }
     }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  //defined(SYSVAD_BTH_BYPASS)
 
     _this->m_pMiniport->DpcRoutine(qpc.QuadPart, qpcFrequency.QuadPart);
 
@@ -1653,18 +1776,22 @@ TimerNotifyRT
     {
         //Event type: eMINIPORT_GLITCH_REPORT
         //Parameter 1: Current linear buffer position 
-        //Parameter 2: the previous WaveRtBufferWritePosition that the drive received 
-        //Parameter 3: major glitch code: 1:WaveRT buffer is underrun
-        //Parameter 4: minor code for the glitch cause
+        //Parameter 2: Previous WaveRtBufferWritePosition that the driver received 
+        //Parameter 3: Major glitch code: 1:WaveRT buffer is underrun
+        //Parameter 4: Minor code for the glitch cause
         pAdapterComm->WriteEtwEvent(eMINIPORT_GLITCH_REPORT, 
-                                    100,    // replace with the correct "Current linear buffer position"   
+                                    _this->m_ullLinearPosition,
                                     _this->GetCurrentWaveRTWritePosition(),
                                     1,      // WaveRT buffer is underrun
                                     0); 
     }
 
+    // Send buffer completion event if either of the following is true
+    // 1. Driver consumed a complete buffer for this stream
+    // 2. Driver consumed a partial buffer containing EoS for this stream
+
     if (!IsListEmpty(&_this->m_NotificationList) && 
-        (TimeElapsedInMS >= _this->m_ulNotificationIntervalMs || _this->m_bLastBufferRendered))
+        (bufferCompleted || _this->m_bLastBufferRendered))
     {
         PLIST_ENTRY leCurrent = _this->m_NotificationList.Flink;
         while (leCurrent != &_this->m_NotificationList)
@@ -1672,16 +1799,14 @@ TimerNotifyRT
             NotificationListEntry* nleCurrent = CONTAINING_RECORD( leCurrent, NotificationListEntry, ListEntry);
             //Event type: eMINIPORT_BUFFER_COMPLETE
             //Parameter 1: Current linear buffer position
-            //Parameter 2: the previous WaveRtBufferWritePosition that the driver received
+            //Parameter 2: Previous WaveRtBufferWritePosition that the driver received
             //Parameter 3: Data length completed
-            //Parameter 4:0
-
-            pAdapterComm->WriteEtwEvent(eMINIPORT_BUFFER_COMPLETE, 
-                                        100, // replace with the correct "Current linear buffer position"
+            //Parameter 4: 0
+            pAdapterComm->WriteEtwEvent(eMINIPORT_BUFFER_COMPLETE,
+                                        _this->m_ullLinearPosition,
                                         _this->GetCurrentWaveRTWritePosition(),
-                                        300, // replace with the correct "Data length completed"
-                                        0);  // always zero
-
+                                        _this->m_ulDmaBufferSize/_this->m_ulNotificationsPerBuffer, // replace with the correct "Data length completed"
+                                        0); // always zero
             KeSetEvent(nleCurrent->NotificationEvent, 0, 0);
 
             leCurrent = leCurrent->Flink;
@@ -1698,4 +1823,5 @@ End:
     return;
 }
 //=============================================================================
+
 

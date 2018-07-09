@@ -31,4 +31,6 @@ typedef struct
 {
     SOUNDDETECTOR_PATTERNHEADER Header;
     LONGLONG                    ContosoDetectorResultData;
+    ULONGLONG                   KeywordStartTimestamp;
+    ULONGLONG                   KeywordStopTimestamp;
 } CONTOSO_KEYWORDDETECTIONRESULT;

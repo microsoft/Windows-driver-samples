@@ -214,7 +214,13 @@ NTSTATUS CCellularMiniportWaveRT_EventHandler_JackState
     _In_  PPCEVENT_REQUEST EventRequest
 );
 
-static PCEVENT_ITEM JackInfoChangeEvent[] =
+NTSTATUS CCellularMiniportWaveRT_EventHandler_Telephony
+(
+    _In_  PPCEVENT_REQUEST EventRequest
+);
+
+
+static PCEVENT_ITEM TelephonyEvents[] =
 {
   {
     &KSEVENTSETID_PinCapsChange,   // Something changed
@@ -229,7 +235,7 @@ static PCEVENT_ITEM JackInfoChangeEvent[] =
  *****************************************************************************
  * Automation table for jack descripton/detection.
  */
-DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationCellularTopoFilter, PropertiesCellularTopoFilter, JackInfoChangeEvent);
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationCellularTopoFilter, PropertiesCellularTopoFilter, TelephonyEvents);
 
 
 //=============================================================================

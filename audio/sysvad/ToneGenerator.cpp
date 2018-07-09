@@ -15,7 +15,6 @@ Abstract:
 #include <sysvad.h>
 #include "ToneGenerator.h"
 
-const double TONE_AMPLITUDE = 0.5;  // Scalar value, should be between 0.0 - 1.0
 const double TWO_PI = M_PI * 2;
 
 extern DWORD g_DisableToneGenerator;
@@ -89,7 +88,7 @@ VOID ToneGenerator::InitNewFrame
     _In_                             DWORD  FrameSize
 )
 {
-    double sinValue = TONE_AMPLITUDE * sin( m_Theta );
+    double sinValue = m_ToneDCOffset + m_ToneAmplitude * sin( m_Theta );
 
     if (FrameSize != (DWORD)m_ChannelCount * m_BitsPerSample/8)
     {
@@ -222,6 +221,9 @@ ZeroBuffer:
 NTSTATUS ToneGenerator::Init
 (
     _In_    DWORD                   ToneFrequency, 
+    _In_    double                  ToneAmplitude,
+    _In_    double                  ToneDCOffset,
+    _In_    double                  ToneInitialPhase,
     _In_    PWAVEFORMATEXTENSIBLE   WfExt
 )
 {
@@ -248,8 +250,11 @@ NTSTATUS ToneGenerator::Init
     //
     // Basic init.
     //
-    RtlZeroMemory(&m_Theta, sizeof(m_Theta));
+    m_Theta             = ToneInitialPhase;
     m_Frequency         = ToneFrequency;
+    m_ToneAmplitude     = ToneAmplitude;
+    m_ToneDCOffset      = ToneDCOffset;
+
     m_ChannelCount      = WfExt->Format.nChannels;      // # channels.
     m_BitsPerSample     = WfExt->Format.wBitsPerSample; // bits per sample.
     m_SamplesPerSecond  = WfExt->Format.nSamplesPerSec; // samples per sec.

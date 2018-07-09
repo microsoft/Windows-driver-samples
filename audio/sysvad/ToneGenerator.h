@@ -32,6 +32,8 @@ public:
     BYTE*           m_PartialFrame;
     DWORD           m_PartialFrameBytes;
     DWORD           m_FrameSize;
+    double          m_ToneAmplitude;
+    double          m_ToneDCOffset;
 
 public:
     ToneGenerator();
@@ -41,6 +43,9 @@ public:
     Init
     (
         _In_    DWORD                   ToneFrequency, 
+        _In_    double                  ToneAmplitude,
+        _In_    double                  ToneDCOffset,
+        _In_    double                  ToneInitialPhase,
         _In_    PWAVEFORMATEXTENSIBLE   WfExt
     );
     
