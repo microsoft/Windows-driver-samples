@@ -8,6 +8,7 @@
 #pragma once
 #include "stdafx.h"
 #include "common.h"
+#include "multipinmfthelpers.h"
 
 
 extern DeviceStreamState pinStateTransition[][4];
@@ -402,13 +403,13 @@ public:
         return QueryInterface( IID_PPV_ARGS(ppAttributes) );
     }
 
-    STDMETHODIMP AddMediaType(
+    STDMETHOD(AddMediaType)(
         _Inout_ DWORD *pos,
         _In_ IMFMediaType *pMediatype);      /*Filling the media types data structure*/
     STDMETHODIMP GetMediaTypeAt(
          _In_ DWORD pos,
          _Outptr_result_maybenull_ IMFMediaType **pMediaType);   /* getting the data from the data structure*/
-    STDMETHODIMP_(BOOL) IsMediaTypeSupported(
+    STDMETHOD_(BOOL, IsMediaTypeSupported)(
         _In_ IMFMediaType *pMediaType, 
         _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
         IMFMediaType **ppIMFMediaTypeFull);
@@ -416,6 +417,11 @@ public:
         _In_ DWORD dwTypeIndex,
         _Out_opt_ IMFMediaType **ppType);
 
+    VOID SetD3DManager(_In_opt_ IUnknown* pManager);
+    VOID SetWorkQueue(_In_ DWORD dwQueueId)
+    {
+        m_dwWorkQueueId = dwQueueId;
+    }
 protected:
     //
     //Inline helper functions
@@ -437,6 +443,8 @@ protected:
         ComPtr<IMFAttributes>   m_spAttributes;
         ComPtr<IKsControl>      m_spIkscontrol;
         DeviceStreamState       m_state;
+        ComPtr<IUnknown>        m_spDxgiManager;
+        DWORD                   m_dwWorkQueueId;
 private:
     ULONG                       m_StreamId;                  /*Device Stream Id*/
     CCritSec                    m_lock;                      /*This is only used to change the reference count i.e. active users of this stream*/
@@ -506,9 +514,7 @@ public:
     void ReleaseConnectedPins();
 
 protected:
-    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform*/
-
-private:
+    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ComPtr<CBasePin>            m_outpin;            //Only one output pin connected per input pin. There can be multiple pins connected and this could be a list   
     DeviceStreamState           m_preferredStreamState;
@@ -532,11 +538,6 @@ public:
         _In_ IMFSample *pSample,
         _In_ CBasePin *inPin
         );
-    STDMETHODIMP AddSampleInternal(
-        _In_ IMFSample *pSample,
-        _In_ CBasePin *inPin
-        );
-
     STDMETHODIMP GetOutputStreamInfo(
         _Out_  MFT_OUTPUT_STREAM_INFO *pStreamInfo
         );
@@ -559,12 +560,16 @@ public:
     STDMETHODIMP_(VOID) SetFirstSample(
         _In_    BOOL 
         );
-
+    UINT32 GetMediatypeCount()
+    {
+        return (UINT32)m_listOfMediaTypes.size();
+    }
     
 protected:
     CPinQueue *               m_queue;           /* Queue where the sample will be stored*/
     BOOL                      m_firstSample;
 };
+
 
 class CAsyncInPin: public CInPin {
 public:
@@ -573,105 +578,69 @@ public:
     STDMETHODIMP SendSample(
         _In_ IMFSample *
         );
-    STDMETHODIMP SendSampleInternal(
-        _In_ IMFSample *
+    STDMETHODIMP Invoke(
+        _In_ IMFAsyncResult *
     );
+    STDMETHODIMP Init();
     CAsyncInPin(
         _In_opt_ IMFAttributes *pAttributes,
         _In_ ULONG ulPinId,
         _In_ CMultipinMft *pParent) : CInPin(pAttributes,
             ulPinId, pParent)
-        , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_UNDEFINED)
         , m_dwSamplesInFlight(0)
         , m_hHandle(INVALID_HANDLE_VALUE)
         , m_bFlushing(FALSE)
+        , m_asyncCallback(nullptr)
 
     {
         m_hHandle = CreateEvent(NULL, TRUE, TRUE, L"Async_Pin Event");
+        if (m_hHandle == nullptr)
+            throw bad_alloc();
+        Init();
+       
     }
     ~CAsyncInPin()
     {
+        FlushQueues();
         CloseHandle(m_hHandle);
         m_hHandle = INVALID_HANDLE_VALUE;
     }
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // Start of Asynchronous callback definitions :- If we need to use MF work queues
-    ////////////////////////////////////////////////////////////////////////////////////////
-    class CDMFTAsyncCallback : public IMFAsyncCallback
-    {
-    public:
-        CDMFTAsyncCallback() : m_cRef(1) { }
-        virtual ~CDMFTAsyncCallback() { }
 
-        STDMETHODIMP QueryInterface(REFIID riid, void** ppv)
-        {
-            HRESULT hr = S_OK;
-            if (ppv != nullptr)
-            {
-                *ppv = nullptr;
-                if (riid == __uuidof(IMFAsyncCallback) || riid == __uuidof(IUnknown))
-                {
-                    AddRef();
-                    *ppv = static_cast<IUnknown*>(this);
-                }
-                else
-                {
-                    hr = E_NOINTERFACE;
-                }
-            }
-            else
-            {
-                hr = E_POINTER;
-            }
-            return hr;
-        }
 
-        STDMETHODIMP_(ULONG) AddRef()
-        {
-            return InterlockedIncrement(&m_cRef);
-        }
-        STDMETHODIMP_(ULONG) Release()
-        {
-            long cRef = InterlockedDecrement(&m_cRef);
-            if (cRef == 0)
-            {
-                delete this;
-            }
-            return cRef;
-        }
-
-        STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue)
-        {
-            // Implementation of this method is optional.
-            UNREFERENCED_PARAMETER(pdwFlags);
-            UNREFERENCED_PARAMETER(pdwQueue);
-            return E_NOTIMPL;
-        }
-
-        STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
-        // TODO: Implement this method. 
-
-        // Inside Invoke, IMFAsyncResult::GetStatus to get the status.
-        // Then call the EndX method to complete the operation. 
-        CAsyncInPin* GetParent()
-        {
-            // The restrictioh that the below expression sets is that
-            // we should now have 
-            return CONTAINING_RECORD(this, CAsyncInPin, m_asyncCallback);
-        }
-    private:
-        long    m_cRef;
-    };
-
-    CDMFTAsyncCallback  m_asyncCallback;        // Callback object
-    DWORD               m_dwWorkQueueId;        // Work queue Id
+    ComPtr<CDMFTAsyncCallback<CAsyncInPin,&CAsyncInPin::Invoke> >  m_asyncCallback;   // Callback object
     HANDLE              m_hHandle;              // Handles to keep flush state
     DWORD               m_dwSamplesInFlight;    // Samples in flight i.e. waiting for the callback functions to be called
     BOOL                m_bFlushing;
-
     ////////////////////////////////////////////////////////////////////////////////////////
     // End of Asynchronous callback definitions
     ////////////////////////////////////////////////////////////////////////////////////////
 
+};
+
+class CTranslateOutPin : public COutPin {
+    /*List of GUIDS to be translated*/
+    const GUID tranlateGUIDS[2] =  {
+        MFVideoFormat_H264,
+        MFVideoFormat_MJPG
+    };
+    // @@@@README : This is what the compressed media types will be translated into
+    const GUID translatedGUID = MFVideoFormat_NV12; // Translating to NV12
+public:
+    CTranslateOutPin(_In_ ULONG         id = 0,
+        _In_opt_  CMultipinMft *pparent = NULL,
+        _In_     IKsControl*   iksControl = NULL) : COutPin(id, pparent, iksControl)
+    {
+        SetUINT32(MF_SD_VIDEO_SPHERICAL, TRUE);
+    }
+    STDMETHOD(AddMediaType)(
+        _Inout_ DWORD *pos,
+        _In_ IMFMediaType *pMediatype);
+    STDMETHOD_(BOOL, IsMediaTypeSupported)(
+        _In_ IMFMediaType *pMediaType,
+        _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
+        IMFMediaType **ppIMFMediaTypeFull);
+protected:
+
+    map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
 };
 

@@ -8,6 +8,9 @@
 #pragma once
 #include "stdafx.h"
 #include "common.h"
+#include <deque>
+using namespace std;
+#include <functional>
 
 typedef void(*DMFT_IMAGE_TRANSFORM_FN)(
     const RECT&             rcDest,          // Destination rectangle for the transformation.
@@ -25,9 +28,80 @@ class Ctee;
 //typedef CMFAttributesTrace CMediaTypeTrace; /* Only used for debug. take this out*/
 
 
-class CPinQueue{
+template< typename T ,  HRESULT ( __stdcall T::*Func) ( IMFAsyncResult* ) >
+class CDMFTAsyncCallback : public IMFAsyncCallback
+{
 public:
-    CPinQueue(_In_ DWORD _inPinId);
+    CDMFTAsyncCallback( T* parent ) :
+        m_cRef(1),
+        m_Parent(parent)
+    { }
+    virtual ~CDMFTAsyncCallback() { }
+
+    STDMETHODIMP QueryInterface(REFIID riid, void** ppv)
+    {
+        HRESULT hr = S_OK;
+        if (ppv != nullptr)
+        {
+            *ppv = nullptr;
+            if (riid == __uuidof(IMFAsyncCallback) || riid == __uuidof(IUnknown))
+            {
+                AddRef();
+                *ppv = static_cast<IUnknown*>(this);
+            }
+            else
+            {
+                hr = E_NOINTERFACE;
+            }
+        }
+        else
+        {
+            hr = E_POINTER;
+        }
+        return hr;
+    }
+
+    STDMETHODIMP_(ULONG) AddRef()
+    {
+        return InterlockedIncrement(&m_cRef);
+    }
+    STDMETHODIMP_(ULONG) Release()
+    {
+        long cRef = InterlockedDecrement(&m_cRef);
+        if (cRef == 0)
+        {
+            delete this;
+        }
+        return cRef;
+    }
+
+    STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue)
+    {
+        // Implementation of this method is optional.
+        UNREFERENCED_PARAMETER(pdwFlags);
+        UNREFERENCED_PARAMETER(pdwQueue);
+        return E_NOTIMPL;
+    }
+
+    STDMETHODIMP Invoke( IMFAsyncResult* pAsyncResult )
+    {
+        return (m_Parent->*Func)(pAsyncResult);
+    }
+    // TODO: Implement this method. 
+
+    T GetParent()
+    {
+        return m_Parent;
+    }
+protected:
+    T*       m_Parent; // Weak reference to the parent
+    long    m_cRef;
+};
+
+
+class CPinQueue: public IUnknown{
+public:
+    CPinQueue(_In_ DWORD _inPinId, _In_ IMFDeviceTransform* pTransform=nullptr);
     ~CPinQueue();
 
     STDMETHODIMP_(VOID) InsertInternal  ( _In_  IMFSample *pSample = nullptr );
@@ -47,10 +121,63 @@ public:
     {
         return m_dwInPinId;
     }
+    __inline GUID pinCategory()
+    {
+        if (IsEqualCLSID(m_streamCategory, GUID_NULL))
+        {
+            ComPtr<IMFAttributes> spAttributes;
+            if (SUCCEEDED(m_pTransform->GetOutputStreamAttributes(pinStreamId(), spAttributes.ReleaseAndGetAddressOf())))
+            {
+                (VOID)spAttributes->GetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, &m_streamCategory);
+
+            }
+        }
+        return m_streamCategory;
+    }
+
+    STDMETHODIMP QueryInterface(REFIID riid, void** ppv)
+    {
+        HRESULT hr = S_OK;
+        if (ppv != nullptr)
+        {
+            *ppv = nullptr;
+            if (riid == __uuidof(IUnknown))
+            {
+                AddRef();
+                *ppv = static_cast<IUnknown*>(this);
+            }
+            else
+            {
+                hr = E_NOINTERFACE;
+            }
+        }
+        else
+        {
+            hr = E_POINTER;
+        }
+        return hr;
+    }
+
+    STDMETHODIMP_(ULONG) AddRef()
+    {
+        return InterlockedIncrement(&m_cRef);
+    }
+    STDMETHODIMP_(ULONG) Release()
+    {
+        long cRef = InterlockedDecrement(&m_cRef);
+        if (cRef == 0)
+        {
+            delete this;
+        }
+        return cRef;
+    }
 
 private:
-    DWORD                m_dwInPinId;           /*This is the input pin       */
-    IMFSampleList        m_sampleList;          /*List storing the samples    */
+    DWORD                m_dwInPinId;           /* This is the input pin       */
+    IMFSampleList        m_sampleList;          /* List storing the samples    */
+    IMFDeviceTransform*  m_pTransform;         /* Weak reference to the the device MFT */
+    GUID                 m_streamCategory;
+    ULONG                m_cRef;
 protected:
     Ctee*                m_teer;                /*Tee that acts as a passthrough or an XVP  */
  };
@@ -59,7 +186,7 @@ protected:
 #ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
 class CPinQueueWithGrayScale:public  CPinQueue{
 public:
-    CPinQueueWithGrayScale(_In_ DWORD dwPinId) :CPinQueue(dwPinId)
+    CPinQueueWithGrayScale(_In_ DWORD dwPinId, _In_ IMFDeviceTransform* pParent) :CPinQueue(dwPinId,pParent)
     {
     }
     STDMETHODIMP RecreateTee(_In_  IMFMediaType *inMediatype, _In_ IMFMediaType *outMediatype, _In_opt_ IUnknown* punkManager);
@@ -68,23 +195,35 @@ public:
 //
 // Define these in different components
 // The below classes are used to add the
-// XVP and the Decoder components
+// XVP and the Decoder components.
 //
 class Ctee{
 public:
-   virtual STDMETHODIMP PassThrough( _In_ IMFSample *, _In_ CPinQueue * ) = 0;
+    STDMETHOD(Start)()
+    {
+        return S_OK;
+    }
+    STDMETHOD(Stop)()
+    {
+        return S_OK;
+    }
+   virtual STDMETHODIMP PassThrough( _In_ IMFSample * ) = 0;
 };
 
 
 class CNullTee:public Ctee{
 public:
-    STDMETHODIMP PassThrough( _In_ IMFSample*, _In_ CPinQueue * );
+    CNullTee(_In_ CPinQueue* q) :m_Queue(q) {}
+    STDMETHODIMP PassThrough( _In_ IMFSample* );
+protected:
+    // Store the queue here for simplicity
+    ComPtr<CPinQueue> m_Queue;
 };
 
 
 class CWrapTee : public Ctee{
 public:
-    CWrapTee(_In_ Ctee *tee=nullptr) 
+    CWrapTee( _In_ Ctee *tee=nullptr ) 
 :   m_objectWrapped(tee)
     , m_pInputMediaType(nullptr)
     , m_pOutputMediaType(nullptr)
@@ -93,26 +232,19 @@ public:
     }
     virtual ~CWrapTee()=0
     {
-        m_videoProcessor = nullptr;
         if (m_objectWrapped)
         {
             delete(m_objectWrapped);
         }
     }
-
-    STDMETHODIMP PassThrough        ( _In_ IMFSample*, _In_ CPinQueue * );
-    virtual STDMETHODIMP Configure  ( _In_ IMFMediaType *, _In_ IMFMediaType *, _Inout_ IMFTransform** ) = 0;
-    virtual STDMETHODIMP Do         ( _In_ IMFSample* pSample, _Out_ IMFSample ** ) = 0;
+    STDMETHODIMP PassThrough        ( _In_ IMFSample* );
+    virtual STDMETHODIMP Do         ( _In_ IMFSample* pSample, _Out_ IMFSample ** , _Inout_ bool &newSample) = 0;
     STDMETHODIMP SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMediaType* pOutMediaType);
-    
     //
-    //Inline functions
+    // Inline functions
     //
 protected:
-    __inline IMFTransform* Transform()
-    {
-        return m_videoProcessor.Get();
-    }
+    
     __inline IMFMediaType* getInMediaType()
     {
         IMFMediaType* pmediaType = nullptr;
@@ -126,44 +258,152 @@ protected:
         return pmediaType;
     }
 
-private:
-    ComPtr< IMFTransform > m_videoProcessor;
+protected:
+    
     ComPtr< IMFMediaType > m_pInputMediaType;
     ComPtr< IMFMediaType > m_pOutputMediaType;
     Ctee *m_objectWrapped;
 };
 
-
-class CXvptee :public CWrapTee{
+//
+// wrapper class for encoder and decoder
+//
+class CVideoProcTee: public CWrapTee
+{
 public:
-    CXvptee( _In_ Ctee * );
-    ~CXvptee();
-    STDMETHODIMP Do             (   _In_ IMFSample* pSample, _Outptr_ IMFSample ** );
-    STDMETHODIMP Configure      (   _In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform** );
-    STDMETHODIMP_(VOID) SetD3DManager( _In_opt_ IUnknown* punk );
 
-private:
-    BOOL  m_isoptimizedPlanarInputOutput;
-    BOOL  m_isOutPutImage;
-    UINT32 m_uWidth;
-    UINT32 m_uHeight;
-    ComPtr<IUnknown> m_spDeviceManagerUnk;
+    CVideoProcTee( _In_ Ctee* p,  _In_ GUID category = PINNAME_PREVIEW ) :CWrapTee(p)
+        , m_bProducesSamples(FALSE)
+        , m_streamCategory(category)
+        , m_fSetD3DManager(FALSE)
+    {}
+    __inline IMFTransform* Transform()
+    {
+        return m_videoProcessor.Get();
+    }
+
+    VOID SetD3DManager( _In_opt_ IUnknown* pUnk )
+    {
+            m_spDeviceManagerUnk = pUnk;
+    }
+    STDMETHODIMP SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMediaType* pOutMediaType);
+    virtual STDMETHODIMP Configure(_In_ IMFMediaType *, _In_ IMFMediaType *, _Inout_ IMFTransform**) = 0;
+    STDMETHOD(CreateAllocator)();
+    STDMETHOD(Stop)()
+    {
+        HRESULT hr = S_OK;
+        if (SUCCEEDED(hr = StopStreaming()))
+        {
+            if (m_objectWrapped)
+            {
+                hr = m_objectWrapped->Stop();
+            }
+        }
+        return hr;
+    }
+protected:
+    STDMETHOD(StartStreaming)() = 0;
+    STDMETHOD(StopStreaming)()  = 0;
+    ComPtr< IMFTransform > m_videoProcessor;
+    ComPtr<IUnknown>       m_spDeviceManagerUnk;
+    ComPtr<IMFVideoSampleAllocatorEx> m_spAllocator;
+    BOOL                   m_bProducesSamples;
+    GUID                   m_streamCategory;
+    BOOL                   m_fSetD3DManager;
 };
 
+class CXvptee :public CVideoProcTee{
+public:
+    CXvptee( _In_ Ctee *, _In_ GUID category = PINNAME_PREVIEW );
+    ~CXvptee();
+    STDMETHOD(StartStreaming)();
+    STDMETHOD(StopStreaming)();
+    STDMETHODIMP Do             (   _In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Configure      (   _In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform** );
+};
+
+class CDecoderTee : public CVideoProcTee {
+public:
+
+    CDecoderTee(_In_ Ctee *t,_In_ DWORD dwQueueId,GUID category=PINNAME_PREVIEW) :
+        CVideoProcTee(t)
+        , m_fAsyncMFT(FALSE)
+        , m_D3daware(FALSE)
+        , m_hwMFT(FALSE)
+        , m_asyncCallback(nullptr)
+        , m_asyncHresult(S_OK)
+        , m_lNeedInputRequest(0)
+        , m_streamCategory(category)
+        , m_bXvpAdded(FALSE)
+        , m_dwMFTInputId(0)
+        , m_dwMFTOutputId(0)
+        , m_dwQueueId(dwQueueId)
+        ,m_dwCameraStreamWorkQueueId(0)
+        , m_ulProcessOutputsInFlight(0)
+        , m_hSyncHandle(INVALID_HANDLE_VALUE)
+        , m_StoppedAndWaiting(FALSE)
+    {
+        m_streamCategory = category;
+    }
+    ~CDecoderTee();
+
+    __inline VOID SetAsyncStatus( _In_ HRESULT hrStatus )
+    {
+        InterlockedCompareExchange(&m_asyncHresult, hrStatus, S_OK);
+    }
+    HRESULT GetAsyncStatus()
+    {
+        return InterlockedCompareExchange(&m_asyncHresult, S_OK, S_OK);
+    }
+
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
+    STDMETHODIMP Invoke(_In_ IMFAsyncResult*);
+protected:
+    STDMETHODIMP StartStreaming();
+    STDMETHODIMP StopStreaming();
+    _Ret_maybenull_ HRESULT CDecoderTee::GetSample( _Outptr_ IMFSample**);
+    HRESULT ConfigDecoder( _In_ IMFTransform* ,_In_ GUID guidSubType = GUID_NULL);
+    HRESULT ConfigRealTimeMFT(_In_ IMFTransform* );
+    HRESULT ProcessOutputSync( _COM_Outptr_opt_ IMFSample** );
+    HRESULT ProcessFormatChange();
+
+    BOOL                 m_fAsyncMFT;
+    BOOL                 m_D3daware;
+    BOOL                 m_hwMFT;
+    ComPtr<CDMFTAsyncCallback<CDecoderTee,&CDecoderTee::Invoke> >     m_asyncCallback;
+    HRESULT              m_asyncHresult;
+    DWORD                m_lNeedInputRequest;
+    GUID                 m_streamCategory; // Needed for bind flags
+    BOOL                 m_bXvpAdded;
+    DWORD                m_dwMFTInputId;
+    DWORD                m_dwMFTOutputId;
+    ComPtr<IMFSample>    m_spUnprocessedSample;
+    DWORD                m_dwQueueId;
+    DWORD                m_dwCameraStreamWorkQueueId;
+    CCritSec             m_critSec;
+    std::deque<ComPtr<IMFSample> > m_InputSampleList;
+    ULONG                      m_ulProcessOutputsInFlight;
+    HANDLE                     m_hSyncHandle;
+    BOOL                       m_StoppedAndWaiting;
+
+};
+
+#ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
 class CGrayTee : public CWrapTee {
 public:
     CGrayTee(Ctee*);
     ~CGrayTee() {
     }
 
-    STDMETHODIMP Do(_In_ IMFSample* pSample, _Out_ IMFSample **);
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Out_ IMFSample **, , _Inout_ bool &newSample);
     STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
 private:
     // Function pointer for the function that transforms the image.
     DMFT_IMAGE_TRANSFORM_FN m_transformfn;
     RECT m_rect;
 };
-
+#endif
 /*
 ################## EVENT HANDLING #############################################
 Events are usually divided into two categories by the Capture Pipeline
@@ -265,7 +505,8 @@ public:
     CPinCreationFactory(_In_ CMultipinMft* pDeviceTransform):m_spDeviceTransform(pDeviceTransform){
     }
 };
-
+HRESULT CheckPinType(_In_ IMFAttributes* pAttributes, _In_ GUID pinType, _Out_ PBOOL pbIsImagePin);
 HRESULT CheckImagePin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin);
+HRESULT CheckPreviewPin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsPreviewPin);
 
 
