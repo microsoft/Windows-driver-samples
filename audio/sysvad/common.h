@@ -658,7 +658,7 @@ NewAdapterCommon
 );
 
 
-#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
+#if defined(SYSVAD_BTH_BYPASS)
 
 // Event callback definition.
 typedef VOID (*PFNEVENTNOTIFICATION)(
