@@ -111,7 +111,7 @@ RtPutKeyToHashTable(
 	);
 
 void
-RtRemvoeKeyFromVaHashTable(
+RtRemoveKeyFromVaHashTable(
 	IN RT_HASH_TABLE_HANDLE	hHashTable,
 	IN RT_HASH_KEY			Key
 	);
