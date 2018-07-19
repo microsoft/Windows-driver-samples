@@ -29,160 +29,6 @@
 
 **************************************************************************/
 
-/////
-/// Structures...
-//// Profile 0
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile0_PreviewMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 },
-};
-
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile0_RecordMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 3840, 2160 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1920, 1080 }, { 120, 1 },     0,     0,     0,     0,     0 },
-    { { 1920, 1080 }, {  90, 1 },     0,     0,     0,     0,     0 },
-    { { 1920, 1080 }, {  60, 1 },     0,     0,     0,     0,     0 },
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 },
-};
-
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile0_PhotoMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 }
-};
-
-
-//// Profile 1
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile1_PreviewMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 }
-};
-
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile1_PhotoMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 7680, 4320 }, {   0, 1 },     0,     0,     0,     0,     0 },
-    { { 3840, 2160 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 }
-};
-
-//// Profile 2
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile2_PreviewMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 }
-};
-
-static KSCAMERA_PROFILE_MEDIAINFO s_Profile2_RecordMediaInfo[] =
-{
-    //{ resolution }, {  fps   }, Flags, Data0, Data1, Data2, Data 3
-    { { 1920, 1080 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { { 1280,  720 }, {  30, 1 },     0,     0,     0,     0,     0 },
-    { {  640,  360 }, {  30, 1 },     0,     0,     0,     0,     0 }
-};
-
-static KSCAMERA_PROFILE_PININFO s_Profile0_PinInfo[] =
-{
-    { {STATIC_PINNAME_VIDEO_PREVIEW}, 0,0, ARRAYSIZE(s_Profile0_PreviewMediaInfo), s_Profile0_PreviewMediaInfo },
-    { {STATIC_PINNAME_VIDEO_CAPTURE}, 0,0, ARRAYSIZE(s_Profile0_RecordMediaInfo),  s_Profile0_RecordMediaInfo },
-    { {STATIC_PINNAME_IMAGE},         0,0, ARRAYSIZE(s_Profile0_PhotoMediaInfo),   s_Profile0_PhotoMediaInfo }
-};
-
-static KSCAMERA_PROFILE_PININFO s_Profile1_PinInfo[] =
-{
-    { {STATIC_PINNAME_VIDEO_PREVIEW}, 0,0, ARRAYSIZE(s_Profile1_PreviewMediaInfo), s_Profile1_PreviewMediaInfo },
-    { {STATIC_PINNAME_IMAGE},         0,0, ARRAYSIZE(s_Profile1_PhotoMediaInfo),   s_Profile1_PhotoMediaInfo }
-};
-
-static KSCAMERA_PROFILE_PININFO s_Profile2_PinInfo[] =
-{
-    { {STATIC_PINNAME_VIDEO_PREVIEW}, 0,0, ARRAYSIZE(s_Profile2_PreviewMediaInfo), s_Profile2_PreviewMediaInfo },
-    { {STATIC_PINNAME_VIDEO_CAPTURE}, 0,0, ARRAYSIZE(s_Profile2_RecordMediaInfo),  s_Profile2_RecordMediaInfo }
-};
-
-static KSCAMERA_PROFILE_INFO s_Profiles[] =
-{
-    { {STATIC_KSCAMERAPROFILE_BalancedVideoAndPhoto}, 0, ARRAYSIZE(s_Profile0_PinInfo), s_Profile0_PinInfo },
-    { {STATIC_KSCAMERAPROFILE_HighQualityPhoto},      0, ARRAYSIZE(s_Profile1_PinInfo), s_Profile1_PinInfo },
-    { {STATIC_KSCAMERAPROFILE_VideoRecording},        0, ARRAYSIZE(s_Profile2_PinInfo), s_Profile2_PinInfo }
-};
-
-// The front camera is concurrent with the rear camera, so the front camera concurrency
-// has the back camera's reference GUID and vice versa.
-static KSCAMERA_PROFILE_CONCURRENCYINFO s_Profile2_ConcurrencyInfoFront[] =
-{
-    { {STATIC_RearCamera_Filter}, 0, 1, &s_Profiles[2] }
-};
-
-static KSCAMERA_PROFILE_CONCURRENCYINFO s_Profile2_ConcurrencyInfoBack[] =
-{
-    { {STATIC_FrontCamera_Filter}, 0, 1, &s_Profiles[2] }
-};
-
-const UINT32 s_ProfileCount = 3;
-
-UINT32
-InitializeDeviceProfiles(
-    _In_    BOOL fFrontCamera,
-    _Outptr_result_maybenull_
-    PKSDEVICE_PROFILE_INFO *ppDeviceProfiles
-)
-{
-    UINT32                  uiProfileCount = 0;
-    PKSDEVICE_PROFILE_INFO  pDeviceProfiles = NULL;
-
-    pDeviceProfiles = (PKSDEVICE_PROFILE_INFO)ExAllocatePoolWithTag( PagedPool, sizeof(KSDEVICE_PROFILE_INFO) * ARRAYSIZE(s_Profiles) , 'fpSC');
-    if( !pDeviceProfiles )
-    {
-        // Can't publish, we're out of memory, silently fail here.
-        *ppDeviceProfiles = nullptr;
-        goto Exit;
-    }
-
-    for (UINT32 i = 0; i < ARRAYSIZE(s_Profiles); i++)
-    {
-        pDeviceProfiles[i].Type = KSDEVICE_PROFILE_TYPE_CAMERA;
-        pDeviceProfiles[i].Size = sizeof(KSDEVICE_PROFILE_INFO);
-        pDeviceProfiles[i].Camera.Info = s_Profiles[i];
-        pDeviceProfiles[i].Camera.Reserved = 0;
-        pDeviceProfiles[i].Camera.ConcurrencyCount = 0;
-        pDeviceProfiles[i].Camera.Concurrency = NULL;
-    }
-
-    pDeviceProfiles[2].Camera.ConcurrencyCount = 1;
-    if (fFrontCamera)
-    {
-        pDeviceProfiles[2].Camera.Concurrency = (PKSCAMERA_PROFILE_CONCURRENCYINFO)&s_Profile2_ConcurrencyInfoFront;
-    }
-    else
-    {
-        pDeviceProfiles[2].Camera.Concurrency = (PKSCAMERA_PROFILE_CONCURRENCYINFO)&s_Profile2_ConcurrencyInfoBack;
-    }
-
-    uiProfileCount = ARRAYSIZE(s_Profiles);
-    *ppDeviceProfiles = pDeviceProfiles;
-    pDeviceProfiles = NULL;
-
-Exit:
-    return uiProfileCount;
-}
-
 #ifdef ALLOC_PRAGMA
 #pragma code_seg("PAGE")
 #endif // ALLOC_PRAGMA
@@ -673,7 +519,6 @@ Return Value:
                 PKSDEVICE_PROFILE_INFO pDeviceProfiles = nullptr;
                 UINT32 uiProfileCount = 0;
                 PUNICODE_STRING SymbolicLinkName = KsFilterFactoryGetSymbolicLink(FilterFactory);
-                BOOL fFrontCamera = FALSE;
                 ACPI_PLD_V2_BUFFER pld = {0};
                 pld.Revision = 2;
                 pld.Panel = m_Context[i].AcpiPosition;
@@ -691,40 +536,6 @@ Return Value:
                                                      sizeof(pld),
                                                      (PVOID)&pld)
                 );
-
-                if( m_Context[i].Descriptor->ReferenceGuid &&
-                    IsEqualGUID(*(m_Context[i].Descriptor->ReferenceGuid), FFC_Filter))
-                {
-                    fFrontCamera = TRUE;
-                }
-
-                // Publish our profile here.
-                uiProfileCount = InitializeDeviceProfiles(fFrontCamera, &pDeviceProfiles);
-                if( uiProfileCount > 0 && pDeviceProfiles != nullptr)
-                {
-                    if( NT_SUCCESS(KsInitializeDeviceProfile(FilterFactory)) )
-                    {
-                        for( UINT32 j=0; j<uiProfileCount; j++ )
-                        {
-                            if( !NT_SUCCESS(KsPublishDeviceProfile(FilterFactory, &pDeviceProfiles[j])) )
-                            {
-                                // Bail...
-                                break;
-                            }
-                        }
-                        if( !NT_SUCCESS(KsPersistDeviceProfile(FilterFactory)) )
-                        {
-                            // Trace here?
-                        }
-                    }
-
-                    ExFreePool(pDeviceProfiles);
-                    pDeviceProfiles = NULL;
-                }
-                else
-                {
-                    IFFAILED_EXIT(STATUS_INSUFFICIENT_RESOURCES);
-                }
             }
 
             //  On a real device this object would be constructed whenever the sensor hardware is ready...

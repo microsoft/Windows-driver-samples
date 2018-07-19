@@ -162,7 +162,7 @@ done:
 
 --*/
 
-// This Sample will create a grayscale for known media types. Please remove MF_DEVICEMFT_ADD_GRAYSCALER_ to remove the grayscaler
+// This sample will create a grayscale for known media types. Please remove MF_DEVICEMFT_ADD_GRAYSCALER_ to remove the grayscaler
 // This sample also has photo confirmation enabled remove DMF_DEVICEMFT_PHTOTOCONFIRMATION to remove photo confirmation
 // Please search for the @@@@ README tag for critical sections in code and it's documentation
 //
@@ -778,15 +778,15 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
             pdwStatus ) ) )
         {
             gotOne = true;
-            // Do photo confirmation if enabled off the preview stream only
+            // Do photo confirmation if enabled from the preview stream only
 #if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
             BOOL pIsPreviewPin = FALSE;
             if (pOutputSamples[i].pSample &&
                 IsPhotoConfirmationEnabled() &&
                 ((SUCCEEDED(CheckPreviewPin(static_cast<IMFAttributes*>(spOpin.Get()), &pIsPreviewPin)) && pIsPreviewPin) &&
-                    InterlockedCompareExchange(reinterpret_cast<PLONG>(&m_firePhotoConfirmation),FALSE,TRUE)))
+                    InterlockedCompareExchange(reinterpret_cast<PLONG>(&m_firePhotoConfirmation), FALSE, TRUE)))
             {
-                // Please note photo confirmation should always be fired off the preview stream.
+                // Please note photo confirmation should always be fired from the preview stream.
                 ComPtr<IMFMediaType> spMediaType;
                 if (SUCCEEDED(spOpin->getMediaType(spMediaType.GetAddressOf())))
                 {
