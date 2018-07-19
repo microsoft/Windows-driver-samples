@@ -97,6 +97,16 @@ DEFINE_GUID(AVSTREAM_CUSTOM_PIN_IMAGE,
 #define WPP_CHECKHRGOTO_EXP_LABEL_ENABLED(HR, label) WPP_CHECK_LEVEL_ENABLED( DMFT_INIT, TP_ERROR )
 
 
+// Give it checkhr and checknull definitions if some future generations of visual studio remove the wpp processor support
+
+//#if !defined DMFTCHECKHR_GOTO
+//#define DMFTCHECKHR_GOTO(a,b) {hr=(a); if(FAILED(hr)){goto b;}} 
+//#endif
+//
+//#if !defined DMFTCHECKNULL_GOTO
+//#define DMFTCHECKNULL_GOTO(a,b,c) {if(!a) {hr = c; goto b;}} 
+//#endif
+
 #define SAFE_ADDREF(p)              if( NULL != p ) { ( p )->AddRef(); }
 #define SAFE_DELETE(p)              delete p; p = NULL;
 #define SAFE_SHUTDELETE(p)          if( NULL != p ) { ( p )->Shutdown(); delete p; p = NULL; }
@@ -107,6 +117,7 @@ DEFINE_GUID(AVSTREAM_CUSTOM_PIN_IMAGE,
 #define SAFE_SYSFREESTRING(p)       SysFreeString( p ); p = NULL;
 #define SAFE_ARRAYDELETE(p)         delete [] p; p = NULL;
 #define SAFE_BYTEARRAYDELETE(p)     delete [] (BYTE*) p; p = NULL;
+#define SAFE_CLOSEHANDLE(h)         { if(INVALID_HANDLE_VALUE != (h)) { ::CloseHandle(h); (h) = INVALID_HANDLE_VALUE; } }
 
 
 #define SAFERELEASE(x) \
@@ -212,12 +223,12 @@ public:
 
 
 
-typedef enum _MF_TRANSFORM_XVP_OPERATION{
-    DeviceMftTransformXVPDisruptiveIn,   //Break the XVP tranform and go to the new Media Type
-    DeviceMftTransformXVPDisruptiveOut,  //Keep the old transform
-    DeviceMftTransformXVPCurrent,        //Don't need an XVP
-    DeviceMftTransformXVPIllegal         //Either of the media types NULL, Major types don't match
-}MF_TRANSFORM_XVP_OPERATION,*PMF_TRANSFORM_XVP_OPERATION;
+typedef enum _DMFT_conversion_type{
+    DeviceMftTransformTypeXVP,              // Need an XVP
+    DeviceMftTransformTypeDecoder,          // Need a Decoder
+    DeviceMftTransformTypeEqual,            // No op.. The media types are equal    
+    DeviceMftTransformTypeIllegal           // We cannot satisfy the input and output combination
+}DMFT_conversion_type,*PDMFT_conversion_type;
 
 typedef  std::vector< IMFMediaType *> IMFMediaTypeArray;
 typedef  std::vector< CBasePin *>     CBasePinArray;
@@ -233,13 +244,9 @@ STDMETHODIMP   IsOptimizedPlanarVideoInputImageOutputPair(
     _Out_       bool *optimizedxvpneeded
     );
 
-STDMETHODIMP CompareMediaTypesForXVP(_In_opt_ IMFMediaType *inMediaType,
+STDMETHODIMP CompareMediaTypesForConverter(_In_opt_ IMFMediaType *inMediaType,
     _In_        IMFMediaType                *newMediaType,
-    _Inout_     MF_TRANSFORM_XVP_OPERATION  *operation
-    );
-
-STDMETHODIMP RandomnizeMediaTypes(
-    _In_ IMFMediaTypeArray &pMediaTypeArray
+    _Inout_     PDMFT_conversion_type       operation
     );
 
 HRESULT IsInputDxSample(
@@ -533,11 +540,11 @@ class VideoBufferLock
 public:
     VideoBufferLock(IMFMediaBuffer *pBuffer) 
     {
-        m_pBuffer = pBuffer;
+        m_spBuffer = pBuffer;
         // Query for the 2-D buffer interface. OK if this fails.
-        if (FAILED(m_pBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer2.GetAddressOf()))))
+        if (FAILED(m_spBuffer->QueryInterface(IID_PPV_ARGS(m_sp2DBuffer2.GetAddressOf()))))
         {
-            m_pBuffer->QueryInterface(IID_PPV_ARGS(m_p2DBuffer.GetAddressOf()));
+            m_spBuffer->QueryInterface(IID_PPV_ARGS(m_sp2DBuffer.GetAddressOf()));
         } 
     }
     ~VideoBufferLock()
@@ -562,11 +569,11 @@ public:
     {
         HRESULT hr = S_OK;
         // Use the 2-D version if available.
-        if (m_p2DBuffer2)
+        if (m_sp2DBuffer2)
         {
             BYTE *pbBufferStart = NULL;
             MF2DBuffer_LockFlags Flags = (Read == TRUE) ? MF2DBuffer_LockFlags_Read : MF2DBuffer_LockFlags_Write;
-            hr = m_p2DBuffer2->Lock2DSize(
+            hr = m_sp2DBuffer2->Lock2DSize(
                 Flags,
                 ppbScanLine0,
                 plStride,
@@ -576,15 +583,15 @@ public:
             {
                 hr = E_FAIL;
             }
-        } else if (m_p2DBuffer)
+        } else if (m_sp2DBuffer)
         {
-            hr = m_p2DBuffer->Lock2D(ppbScanLine0, plStride);
+            hr = m_sp2DBuffer->Lock2D(ppbScanLine0, plStride);
         }
         else
         {
             // Use non-2D version.
             BYTE *pData = NULL;
-            hr = m_pBuffer->Lock(&pData, NULL, NULL);
+            hr = m_spBuffer->Lock(&pData, NULL, NULL);
             if (SUCCEEDED(hr))
             {
                 *plStride = lDefaultStride;
@@ -606,21 +613,61 @@ public:
     }
     HRESULT UnlockBuffer()
     {
-        if (m_p2DBuffer2.Get())
+        if (m_sp2DBuffer2.Get())
         {
-            return m_p2DBuffer2->Unlock2D();
+            return m_sp2DBuffer2->Unlock2D();
         }
-        else if (m_p2DBuffer.Get())
+        else if (m_sp2DBuffer.Get())
         {
-            return m_p2DBuffer->Unlock2D();
+            return m_sp2DBuffer->Unlock2D();
         }
         else
         {
-            return m_pBuffer->Unlock();
+            return m_spBuffer->Unlock();
         }
     }
 private:
-    ComPtr<IMFMediaBuffer>  m_pBuffer;
-    ComPtr<IMF2DBuffer>     m_p2DBuffer;
-    ComPtr<IMF2DBuffer2>    m_p2DBuffer2;
+    ComPtr<IMFMediaBuffer>  m_spBuffer;
+    ComPtr<IMF2DBuffer>     m_sp2DBuffer;
+    ComPtr<IMF2DBuffer2>    m_sp2DBuffer2;
 };
+
+// Decoding and Allocator specific
+HRESULT CreateDecoderHW(    _In_ IMFDXGIDeviceManager* pManager,
+                            _In_ IMFMediaType* inType,
+                            _In_ IMFMediaType* outType,
+                            _Outptr_ IMFTransform** ppTransform,
+                            _Inout_ BOOL&);
+
+HRESULT EnumSWDecoder(      _Outptr_ IMFTransform** ppTransform,
+                            _In_ GUID subType);
+
+HRESULT SetDX11BindFlags(   _In_  IUnknown *pUnkManager,
+                            _In_ GUID guidPinCategory,
+                            _Inout_ DWORD &dwBindFlags);
+
+HRESULT IsDXFormatSupported(
+    _In_ IMFDXGIDeviceManager* pDeviceManager,
+    _In_ GUID subType,
+    _Outptr_opt_ ID3D11Device** ppDevice,
+    _In_opt_ PUINT32 pSupportedFormat);
+
+HRESULT CreateAllocator( _In_ IMFMediaType* pOutputMediaType,
+    _In_ GUID streamCategory,
+    _In_ IUnknown* pDeviceManagerUnk,
+    _In_ BOOL &isDxAllocator,      
+    _Outptr_ IMFVideoSampleAllocatorEx** ppAllocator);
+
+HRESULT GetDXGIAdapterLuid( _In_ IMFDXGIDeviceManager *pDXManager,
+    _Out_ LUID *pAdapterLuid);
+
+HRESULT MergeSampleAttributes(_In_ IMFSample* pInSample, _Inout_ IMFSample* pOutSample);
+
+HRESULT CheckPassthroughMediaType( _In_ IMFMediaType *pMediaType1,
+    _In_ IMFMediaType *pMediaType2,
+    _Out_ BOOL& pfPassThrough);
+//
+// Internal attribute
+//
+EXTERN_GUID(MF_SA_D3D11_SHARED_WITH_NTHANDLE_PRIVATE, 0xb18f1ad, 0xe8c6, 0x4804, 0xb7, 0x70, 0x15, 0x69, 0xdd, 0xc4, 0xbf, 0xe8);
+

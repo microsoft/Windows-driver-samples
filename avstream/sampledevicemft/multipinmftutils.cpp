@@ -136,118 +136,43 @@ Description:
     DeviceMftTransformXVPDisruptiveIn   -> If the mediatype  at the output pin is greater than the input pin. This will result in change of the media type on the input
     DeviceMftTransformXVPDisruptiveOut  -> This is a reconfiguration or addition of the XVP in the Output pin queue
     DeviceMftTransformXVPCurrent        -> No XVP needed at all
-    Note: This iteration doesn't support decoder. The next one will and this function will accordingly change
 */
-STDMETHODIMP CompareMediaTypesForXVP(
+STDMETHODIMP CompareMediaTypesForConverter(
     _In_opt_ IMFMediaType *inMediaType,
-    _In_    IMFMediaType                *newMediaType,
-    _Inout_ MF_TRANSFORM_XVP_OPERATION  *operation 
+    _In_    IMFMediaType  *newMediaType,
+    _Inout_ PDMFT_conversion_type  operation
     )
 {
-    UINT32  unWidthin, unHeightin, unWidthNew, unHeightNew = 0;
     HRESULT hr          = S_OK;
     GUID    guidTypeA   = GUID_NULL;
     GUID    guidTypeB   = GUID_NULL;
     
-    *operation = DeviceMftTransformXVPIllegal;
+    *operation = DeviceMftTransformTypeIllegal;
     if ((!inMediaType) || (!newMediaType))
     {
        goto done;
     }
 
-    DMFTCHECKHR_GOTO( MFGetAttributeSize( inMediaType, MF_MT_FRAME_SIZE, &unWidthin, &unHeightin ), done );
-    DMFTCHECKHR_GOTO( MFGetAttributeSize( newMediaType, MF_MT_FRAME_SIZE, &unWidthNew, &unHeightNew ), done );
-
-
-    if ( SUCCEEDED( inMediaType->GetGUID(  MF_MT_MAJOR_TYPE, &guidTypeA ) ) &&
+      if ( SUCCEEDED( inMediaType->GetGUID(  MF_MT_MAJOR_TYPE, &guidTypeA ) ) &&
          SUCCEEDED( newMediaType->GetGUID( MF_MT_MAJOR_TYPE, &guidTypeB ) ) &&
         IsEqualGUID( guidTypeA, guidTypeB ) )
     {
-        if ( SUCCEEDED( inMediaType->GetGUID ( MF_MT_SUBTYPE, &guidTypeA ) ) &&
-             SUCCEEDED( newMediaType->GetGUID( MF_MT_SUBTYPE, &guidTypeB ) ) &&
-            IsEqualGUID( guidTypeA, guidTypeB ) )
-        {
-            //Comparing the MF_MT_AM_FORMAT_TYPE for the directshow format guid
-#if 0
-            if (SUCCEEDED(inMediaType->GetGUID(MF_MT_AM_FORMAT_TYPE, &guidTypeA)) &&
-                SUCCEEDED(newMediaType->GetGUID(MF_MT_AM_FORMAT_TYPE, &guidTypeB)) &&
-                IsEqualGUID(guidTypeA, guidTypeB))
-#endif
-            {
-
-                if (!(( unWidthin == unWidthNew ) &&
-                    ( unHeightin == unHeightNew ) ) )
-                {
-                    if ( ( unWidthNew > unWidthin ) || ( unHeightNew > unHeightin ) )
-                    {
-                      *operation = DeviceMftTransformXVPDisruptiveIn; //Media type needs to change at input
-                    }
-                    else
-                    {
-                        *operation = DeviceMftTransformXVPDisruptiveOut; //Media type needs to change at output
-                    }
-                    goto done;
-                }
-
-                if ( MFGetAttributeUINT32( inMediaType,  MF_MT_SAMPLE_SIZE, 0 ) !=
-                     MFGetAttributeUINT32( newMediaType, MF_MT_SAMPLE_SIZE, 0 ) )
-                {
-                    hr = S_FALSE; //Sample sizes differ. 
-                    goto done;
-                }
-                else
-                {
-                    //Same media type.. No XVP needed or the current XVP is fine!
-                    *operation = DeviceMftTransformXVPCurrent;
-                }
-            }
-        }
-        else
-        {
-            //This is a disruptive operation. Actually a decoder operation!
-            *operation = DeviceMftTransformXVPDisruptiveIn;
-        }
-    }
- done:
+          if ( SUCCEEDED( inMediaType->GetGUID ( MF_MT_SUBTYPE, &guidTypeA ) ) &&
+              SUCCEEDED( newMediaType->GetGUID( MF_MT_SUBTYPE, &guidTypeB ) ) &&
+              IsEqualGUID( guidTypeA, guidTypeB ) )
+          {
+              BOOL passThrough = TRUE;
+              DMFTCHECKHR_GOTO(CheckPassthroughMediaType(inMediaType, newMediaType, passThrough), done);
+              *operation = passThrough?DeviceMftTransformTypeEqual: DeviceMftTransformTypeXVP;
+          }
+          else
+          {
+              //This is a disruptive operation. Actually a decoder operation!
+              *operation = DeviceMftTransformTypeDecoder;
+          }
+      }
+  done:
     return hr;
-}
-
-/*++
-Description:
-    A Simple function to randomnize the media types supplied in an array
---*/
-STDMETHODIMP RandomnizeMediaTypes(_In_ IMFMediaTypeArray &pMediaTypeArray)
-{
-    HRESULT hr = S_OK;
-    IMFMediaType *pTempMediaType = nullptr;
-    UNREFERENCED_PARAMETER(pTempMediaType);
-    if (pMediaTypeArray.empty())
-    {
-        goto done;
-    }
-
-    srand(static_cast<unsigned long>(GetTickCount64()));
-    
-    for (DWORD dwIndex = (DWORD)pMediaTypeArray.size() - 1; dwIndex > 0; dwIndex--)
-    {
-        DWORD fromIndex = rand() % ( dwIndex + 1 );
-        pTempMediaType					= pMediaTypeArray[dwIndex];
-        pMediaTypeArray [ dwIndex ]		=  pMediaTypeArray[fromIndex] ;
-        pMediaTypeArray [ fromIndex ]	=  pTempMediaType;
-    }
-    //
-    //Just reverse the array
-    //
-    for (DWORD dwIndex = (DWORD)pMediaTypeArray.size() - 1, fromIndex = 0; dwIndex > 0; dwIndex--, fromIndex++)
-    {
-         
-        pTempMediaType					= pMediaTypeArray[dwIndex];
-        pMediaTypeArray [ dwIndex ]		= pMediaTypeArray[fromIndex];
-        pMediaTypeArray [ fromIndex ]	=  pTempMediaType;
-    }
-    done:
-    return hr;
-
 }
 
 /*++
@@ -348,7 +273,7 @@ STDMETHODIMP_(BOOL) IsKnownUncompressedVideoType(_In_ GUID guidSubType)
 if (a && strlen(a) > ((len * 7) / 10)){\
     tStore = a; \
     len *= 2; \
-    a = new char[len]; \
+    a = new (std::nothrow) char[len]; \
 if (!a){\
 goto done;}\
     a[0] = 0; \
@@ -372,10 +297,13 @@ LPSTR DumpGUIDA(_In_ REFGUID guid)
         if (mbGuidLen > 0)
         {
             mf_assert(mbGuidLen == (int)wcslen(lpszGuidString));
-            ansiguidStr = new char[mbGuidLen];
-            WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, lpszGuidString, -1, ansiguidStr, mbGuidLen, NULL, NULL);
-            CoTaskMemFree(lpszGuidString);
-            ansiguidStr[mbGuidLen - 1] = 0;
+            ansiguidStr = new (std::nothrow) char[mbGuidLen];
+            if (ansiguidStr)
+            {
+                WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, lpszGuidString, -1, ansiguidStr, mbGuidLen, NULL, NULL);
+                CoTaskMemFree(lpszGuidString);
+                ansiguidStr[mbGuidLen - 1] = 0;
+            }
         }
     }
     return ansiguidStr;
@@ -539,7 +467,7 @@ LPSTR DumpAttribute( _In_ const MF_ATTRIBUTE_TYPE& type,
     _In_ REFPROPVARIANT var)
 {
     CHAR *tempStr = NULL;
-    tempStr = new CHAR[256];
+    tempStr = new (std::nothrow) CHAR[256];
     switch (type)
     {
     case MF_ATTRIBUTE_UINT32:
@@ -615,6 +543,7 @@ PCHAR CMediaTypePrinter::ToCompleteString( )
         DMFTCHECKHR_GOTO(pMediaType->GetCount(&attrCount), done);
         buffLen = MEDIAPRINTER_STARTLEN;
         m_pBuffer       = new char[buffLen];
+        DMFTCHECKNULL_GOTO(m_pBuffer, done, E_OUTOFMEMORY);
         m_pBuffer[0]    = 0;
         for ( UINT32 ulIndex = 0; ulIndex < attrCount; ulIndex++ )
         {
@@ -668,7 +597,8 @@ PCHAR CMediaTypePrinter::ToString()
     if (pMediaType && !m_pBuffer)
     {
         buffLen = MEDIAPRINTER_STARTLEN;
-        m_pBuffer = new char[buffLen];
+        m_pBuffer = new (std::nothrow) char[buffLen];
+        DMFTCHECKNULL_GOTO(m_pBuffer, done, E_OUTOFMEMORY);
         m_pBuffer[0] = 0;
         for (UINT32 ulIndex = 0; ulIndex < ARRAYSIZE(impGuids); ulIndex++)
         {
@@ -1007,3 +937,585 @@ void TransformImage_RGB32(
 }
 
 #endif
+
+HRESULT GetDXGIAdapterLuid(_In_ IMFDXGIDeviceManager *pDXManager, _Out_ LUID &AdapterLuid)
+{
+    HRESULT hr = S_OK;
+    ComPtr<ID3D11Device> spDevice;
+    ComPtr<IDXGIDevice> spDXGIDevice;
+    ComPtr<IDXGIAdapter> spDXGIAdapter;
+    DXGI_ADAPTER_DESC adapterDesc = { 0 };
+    HANDLE hDevice = NULL;
+
+    DMFTCHECKNULL_GOTO(pDXManager, done, E_INVALIDARG);
+  
+    DMFTCHECKHR_GOTO(pDXManager->OpenDeviceHandle(&hDevice), done);
+    DMFTCHECKHR_GOTO(pDXManager->GetVideoService(hDevice, IID_PPV_ARGS(&spDevice)), done);
+    DMFTCHECKHR_GOTO(spDevice->QueryInterface(IID_PPV_ARGS(&spDXGIDevice)), done);
+    DMFTCHECKHR_GOTO(spDXGIDevice->GetAdapter(&spDXGIAdapter), done);
+    DMFTCHECKHR_GOTO(spDXGIAdapter->GetDesc(&adapterDesc), done);
+
+    CopyMemory(&AdapterLuid, &adapterDesc.AdapterLuid, sizeof(LUID));
+
+done:
+    if (NULL != hDevice)
+    {
+        pDXManager->CloseDeviceHandle(hDevice);
+    }
+
+    return hr;
+}
+
+HRESULT EnumSWDecoder(_Outptr_ IMFTransform** ppTransform, _In_ GUID subType)
+{
+    HRESULT hr = S_OK;
+    IMFActivate** ppActivate = nullptr;
+    UINT32 count = 0;
+    ComPtr<IMFTransform> spTransform;
+    LPWSTR pszFriendlyName = nullptr;
+
+    MFT_REGISTER_TYPE_INFO info = { MFMediaType_Video, subType };
+    UINT32 unFlags = MFT_ENUM_FLAG_SYNCMFT |
+        MFT_ENUM_FLAG_LOCALMFT |
+        MFT_ENUM_FLAG_SORTANDFILTER;
+
+    DMFTCHECKNULL_GOTO(ppTransform, done, E_INVALIDARG);
+    *ppTransform = nullptr;
+
+    DMFTCHECKHR_GOTO(MFTEnumEx(MFT_CATEGORY_VIDEO_DECODER, unFlags,
+        &info,      // Input type
+        NULL,       // Output type
+        &ppActivate,
+        &count
+    ), done);
+
+
+    if (count == 0)
+    {
+        DMFTCHECKHR_GOTO(MF_E_TOPO_CODEC_NOT_FOUND, done);
+    }
+
+    if (SUCCEEDED(MFGetAttributeString(ppActivate[0], MFT_FRIENDLY_NAME_Attribute, &pszFriendlyName)))
+    {
+        //
+        // Log the friendly name of the decoder
+        //
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! decoder name: %S ", (pszFriendlyName ? pszFriendlyName : L"UnknownCodec"));
+        SAFE_COTASKMEMFREE(pszFriendlyName);
+    }
+
+    DMFTCHECKHR_GOTO(ppActivate[0]->ActivateObject(IID_PPV_ARGS(spTransform.GetAddressOf())), done);
+
+    *ppTransform = spTransform.Detach();
+
+done:
+    if (ppActivate)
+    {
+        for (UINT32 uiIndex = 0; uiIndex < count; uiIndex++)
+        {
+            ppActivate[uiIndex]->Release();
+        }
+        CoTaskMemFree(ppActivate);
+    }
+    return hr;
+}
+//
+// @@@@ README Create the decoder
+//
+HRESULT CreateDecoderFromLuid( _In_ LUID ullAdapterLuidRunningOn,
+    _In_ IMFMediaType* pInputType,
+    _In_ IMFMediaType* pOutputType,
+    _Inout_ BOOL fHwMft,
+    _Outptr_ IMFTransform** ppDecoder)
+{
+    HRESULT hr = S_OK;
+    ComPtr<IMFAttributes> spAttribs;
+    ComPtr<IMFTransform> spMJPGDecoder;
+    IMFActivate **ppActivates = nullptr;
+    DWORD dwFlags = MFT_ENUM_FLAG_SYNCMFT | MFT_ENUM_FLAG_ASYNCMFT | MFT_ENUM_FLAG_SORTANDFILTER | MFT_ENUM_FLAG_HARDWARE | 0x10000000 /*Internal attribute*/;
+    UINT32 cMFTActivate = 0;
+    MFT_REGISTER_TYPE_INFO InputType;
+    MFT_REGISTER_TYPE_INFO OutputType;
+    GUID                   compressedGUID;
+    ComPtr<ID3D11Device>  spD3D11Device;
+
+    fHwMft = FALSE;
+
+    
+    DMFTCHECKNULL_GOTO(pInputType, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutputType, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(ppDecoder, done, E_INVALIDARG);
+    *ppDecoder = nullptr;
+    DMFTCHECKHR_GOTO(pInputType->GetGUID(MF_MT_SUBTYPE, &compressedGUID), done);
+
+    InputType.guidMajorType = MFMediaType_Video;
+    InputType.guidSubtype = compressedGUID;
+
+    DMFTCHECKHR_GOTO(pOutputType->GetMajorType(&OutputType.guidMajorType), done);
+    DMFTCHECKHR_GOTO(pOutputType->GetGUID(MF_MT_SUBTYPE, &OutputType.guidSubtype), done);
+
+    DMFTCHECKHR_GOTO(MFCreateAttributes(&spAttribs, 1), done);
+    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (byte*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
+    DMFTCHECKHR_GOTO(MFTEnum2(MFT_CATEGORY_VIDEO_DECODER, dwFlags, &InputType, &OutputType, spAttribs.Get(), &ppActivates, &cMFTActivate), done);
+
+    for (DWORD i = 0; i < cMFTActivate; i++)
+    {
+        HRESULT hrTemp = ppActivates[i]->ActivateObject(IID_PPV_ARGS(spMJPGDecoder.GetAddressOf()));
+        fHwMft = (MFT_ENUM_FLAG_HARDWARE & MFGetAttributeUINT32(ppActivates[i], MF_TRANSFORM_FLAGS_Attribute, 0));
+        // Pickup the first MFT enumerated. Normally, it should be a HW MFT, if HWMFT is available.
+        if (SUCCEEDED(hrTemp))
+        {
+            break;
+        }
+        else
+        {
+            spMJPGDecoder = nullptr;
+        }
+    }
+    if (spMJPGDecoder == nullptr)
+    {
+        hr = MF_E_NOT_FOUND;
+    }
+    *ppDecoder = spMJPGDecoder.Detach();
+done:
+
+    for (UINT32 i = 0; i < cMFTActivate; i++)
+    {
+        if (nullptr != ppActivates[i])
+        {
+            ppActivates[i]->Release();
+        }
+    }
+    SAFE_COTASKMEMFREE(ppActivates);
+    return hr;
+}
+
+HRESULT SetDX11BindFlags( _In_  IUnknown *pUnkManager,
+    _In_ GUID guidPinCategory,
+    _Inout_ DWORD &dwBindFlags)
+{
+    HRESULT hr = S_OK;
+    ComPtr<IUnknown> spDeviceManager;
+    BOOL fFL10 = FALSE;
+    
+    auto
+        IsFeatureLevel10OrBetter = [&]() -> BOOL 
+    {
+        ComPtr<IMFDXGIDeviceManager> spDXGIManager;
+        ComPtr<ID3D11Device> spDevice;
+        HANDLE hDevice = 0;
+        BOOL fRet = FALSE;
+        UINT level = 0, result = 0;
+        
+        if (SUCCEEDED(pUnkManager->QueryInterface(IID_PPV_ARGS(&spDXGIManager))) &&
+            SUCCEEDED(spDXGIManager->OpenDeviceHandle(&hDevice)) &&
+            SUCCEEDED(spDXGIManager->LockDevice(hDevice, IID_PPV_ARGS(&spDevice), FALSE)))
+        {
+
+            level = (UINT)spDevice->GetFeatureLevel();
+            fRet = (level >= D3D_FEATURE_LEVEL_10_0);
+            if (!fRet)
+            {
+                if (SUCCEEDED(spDevice->CheckFormatSupport(DXGI_FORMAT_NV12, &result)))
+                {
+                    fRet = (result & D3D11_FORMAT_SUPPORT_TEXTURE2D) && (result & D3D11_FORMAT_SUPPORT_RENDER_TARGET);
+                }
+            }
+            (void)spDXGIManager->UnlockDevice(hDevice, FALSE);
+            (void)spDXGIManager->CloseDeviceHandle(hDevice);
+        }
+        return fRet;
+    };
+
+    DMFTCHECKNULL_GOTO(pUnkManager, done, E_INVALIDARG);
+    fFL10 = IsFeatureLevel10OrBetter();
+
+    dwBindFlags |= fFL10 ? D3D11_BIND_SHADER_RESOURCE : 0;
+    dwBindFlags |= (guidPinCategory != PINNAME_VIDEO_PREVIEW) ? D3D11_BIND_VIDEO_ENCODER : 0;
+    if ((dwBindFlags != 0) && ((dwBindFlags & ~(D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_VIDEO_ENCODER)) == 0))
+    {
+        dwBindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
+done:
+    return hr;
+}
+
+// @@@@ README: Create the Decoder
+HRESULT CreateDecoderHW(_In_ IMFDXGIDeviceManager* pManager,
+    _In_ IMFMediaType* inType,
+    _In_ IMFMediaType* outType,
+    _Outptr_ IMFTransform** ppTransform,
+    _Inout_  BOOL&           fHwMft)
+{
+    HRESULT hr = S_OK;
+    LUID luid;
+    ComPtr<IMFTransform> spTransform;
+    DMFTCHECKNULL_GOTO(ppTransform, done, E_INVALIDARG);
+    *ppTransform = nullptr;
+
+    if (pManager)
+    {
+        if (SUCCEEDED(hr = GetDXGIAdapterLuid(pManager, luid)))
+        {
+            hr = CreateDecoderFromLuid(luid, inType, outType, fHwMft, spTransform.GetAddressOf());
+            if (FAILED(hr))
+            {
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Error creating HW Decoder with LUID %d-%d", luid.HighPart, luid.LowPart);
+                DMFTCHECKHR_GOTO(hr, done);
+            }
+        }
+    }
+    *ppTransform = spTransform.Detach();
+done:
+    return hr;
+}
+
+HRESULT
+SubtypeToDXGIFormat(
+    _In_    GUID subType,
+    _Inout_ DXGI_FORMAT &format
+)
+{
+    HRESULT hr = S_OK;
+    typedef struct {
+        GUID subType;
+        DXGI_FORMAT format;
+    }DXGIFormatMap;
+    DXGIFormatMap formatMap[]
+    {
+    { MFVideoFormat_NV12,      DXGI_FORMAT_NV12 },
+    { MFVideoFormat_YUY2,      DXGI_FORMAT_YUY2 },
+    { MFVideoFormat_RGB32,      DXGI_FORMAT_B8G8R8X8_UNORM },
+    { MFVideoFormat_ARGB32,     DXGI_FORMAT_B8G8R8A8_UNORM },
+    { MFVideoFormat_AYUV,      DXGI_FORMAT_AYUV },
+    { MFVideoFormat_NV11,      DXGI_FORMAT_NV11 },
+    { MFVideoFormat_AI44,      DXGI_FORMAT_AI44 },
+    { MFVideoFormat_P010,      DXGI_FORMAT_P010 },
+    { MFVideoFormat_P016,      DXGI_FORMAT_P016 },
+    { MFVideoFormat_Y210,      DXGI_FORMAT_Y210 },
+    { MFVideoFormat_Y216,      DXGI_FORMAT_Y216 },
+    { MFVideoFormat_Y410,      DXGI_FORMAT_Y410 },
+    { MFVideoFormat_Y416,      DXGI_FORMAT_Y416 },
+    };
+    format = DXGI_FORMAT_UNKNOWN;
+    for (UINT32 uiIndex = 0; uiIndex < _countof(formatMap); uiIndex++)
+    {
+        if (formatMap[uiIndex].subType == subType)
+        {
+            format = formatMap[uiIndex].format;
+            break;
+        }
+    }
+    // compressed media type or unsupported of the range
+    hr = (format == DXGI_FORMAT_UNKNOWN) ? E_NOTIMPL : S_OK;
+    return hr;
+}
+
+HRESULT IsDXFormatSupported(
+    _In_ IMFDXGIDeviceManager* pDeviceManager ,
+    _In_ GUID subType,
+    _Outptr_opt_ ID3D11Device** ppDevice,
+    _In_opt_ PUINT32 pSupportedFormat)
+{
+    HRESULT hr = S_OK;
+    DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+    UINT32 supportedFormat = 0;
+    HANDLE hDevice = NULL;
+    ComPtr<ID3D11Device> spDevice;
+    DMFTCHECKNULL_GOTO(pDeviceManager, done, E_INVALIDARG);
+    DMFTCHECKHR_GOTO(pDeviceManager->OpenDeviceHandle(&hDevice), done);
+    DMFTCHECKHR_GOTO(pDeviceManager->GetVideoService(hDevice, IID_PPV_ARGS(&spDevice)), done);
+    DMFTCHECKHR_GOTO(SubtypeToDXGIFormat(subType, format), done);
+    DMFTCHECKHR_GOTO(spDevice->CheckFormatSupport(format, &supportedFormat), done);
+    if (pSupportedFormat)
+    {
+        *pSupportedFormat = supportedFormat;
+    }
+    if (ppDevice)
+    {
+        *ppDevice = spDevice.Detach();
+    }
+done:
+    if (hDevice != NULL)
+    {
+        pDeviceManager->CloseDeviceHandle(hDevice);
+    }
+    return hr;
+}
+
+HRESULT
+UpdateAllocatorAttributes(
+    _In_ IMFAttributes *pAttributes,
+    _In_ REFGUID guidStreamCategory,
+    _In_ GUID subType,
+    _In_ IMFDXGIDeviceManager *pDeviceManager
+)
+{
+    HRESULT hr = S_OK;
+    UINT32 supportedFormat = 0;
+    ComPtr<ID3D11Device> spDevice;
+    DWORD dwBindFlags = 0;
+
+    DMFTCHECKHR_GOTO(IsDXFormatSupported(pDeviceManager,subType,
+        spDevice.GetAddressOf(),&supportedFormat),done);
+ 
+    // MF_SA_D3D11_USAGE should be D3D11_USAGE_DEFAULT, same as previous release.
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_USAGE, D3D11_USAGE_DEFAULT), done);
+
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_SHARED_WITHOUT_MUTEX, TRUE), done);
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_SHARED_WITH_NTHANDLE_PRIVATE, TRUE), done);
+
+    // Bind Flags
+    dwBindFlags |= ((supportedFormat & D3D11_FORMAT_SUPPORT_RENDER_TARGET) != 0 ? D3D11_BIND_RENDER_TARGET : 0);
+
+    if (((supportedFormat & D3D11_FORMAT_SUPPORT_VIDEO_ENCODER) != 0) &&
+        (!IsEqualGUID(guidStreamCategory, PINNAME_VIDEO_PREVIEW)) &&
+        IsEqualGUID(subType, MFVideoFormat_NV12))
+    {
+        D3D11_FEATURE_DATA_D3D11_OPTIONS4 Options = { 0 };
+
+        // "D3D11_BIND_VIDEO_ENCODER + sharing" is only supported on those devices that
+        // advertise ExtendedNV12SharedTextureSupported.
+        DMFTCHECKHR_GOTO(spDevice->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS4, &Options, sizeof(Options)), done);
+        if (Options.ExtendedNV12SharedTextureSupported)
+        {
+            dwBindFlags |= D3D11_BIND_VIDEO_ENCODER;
+        }
+    }
+
+    // D3D requires one of the flags (D3D11_BIND_RENDER_TARGET, D3D11_PRIVATE_BIND_CAPTURE, or D3D11_BIND_VIDEO_ENCODER) to be set for non-zero bind flags.
+    if (dwBindFlags != 0)
+    {
+        D3D_FEATURE_LEVEL level;
+
+        // D3D11_BIND_SHADER_RESOURCE
+        level = spDevice->GetFeatureLevel();
+        dwBindFlags |= ((level >= D3D_FEATURE_LEVEL_10_0) ? D3D11_BIND_SHADER_RESOURCE : 0);
+    }
+
+    DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_BINDFLAGS, dwBindFlags), done);
+
+done:
+    return hr;
+}
+
+const UINT32 ALLOCATOR_MIN_SAMPLES = 10;
+const UINT32 ALLOCATOR_MAX_SAMPLES = 50;
+//
+//@@@@ README: Creating an Allocator.. Please don't allocate samples individually using MFCreateSample as that can lead to fragmentation and is
+// extremely inefficent. Instead create an Allocator which will create a fixed number of samples which are recycled when the pipeline returns back
+// the buffers. The above has defines will enable to create a circular allocator which will have maximum 20 samples flowing in the pipeline
+// This way we can also catch samples leaks if any.
+//
+HRESULT CreateAllocator( _In_ IMFMediaType* pOutputMediaType,
+    _In_ GUID streamCategory,
+    _In_ IUnknown* pDeviceManagerUnk,
+    _In_ BOOL &bDxAllocator,
+    _Outptr_ IMFVideoSampleAllocatorEx** ppAllocator )
+{
+    HRESULT hr = S_OK;
+    ComPtr<IMFVideoSampleAllocatorEx> spVideoSampleAllocator;
+    ComPtr<IMFAttributes> spAllocatorAttributes;
+    GUID guidMajorType = GUID_NULL;
+    GUID guidSubtype = GUID_NULL;
+    BOOL fDXAllocator = FALSE;
+
+    DMFTCHECKNULL_GOTO(ppAllocator, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutputMediaType, done, E_INVALIDARG);
+    DMFTCHECKHR_GOTO(pOutputMediaType->GetMajorType(&guidMajorType), done);
+
+    *ppAllocator = nullptr;
+    if (!IsEqualGUID(guidMajorType, MFMediaType_Video))
+    {
+        DMFTCHECKHR_GOTO(MF_E_INVALIDMEDIATYPE, done);
+    }
+
+    DMFTCHECKHR_GOTO(pOutputMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubtype), done);
+    //
+    // Set Attributes on the allocator we need. First get the Bind Flags.
+    //
+    DMFTCHECKHR_GOTO(MFCreateAttributes(&spAllocatorAttributes, 8), done);
+    DMFTCHECKHR_GOTO(spAllocatorAttributes->SetUINT32(MF_SA_BUFFERS_PER_SAMPLE, 1), done);
+
+     if (pDeviceManagerUnk != nullptr)
+    {
+         if (SUCCEEDED(UpdateAllocatorAttributes(spAllocatorAttributes.Get(), streamCategory,guidSubtype, (IMFDXGIDeviceManager*)pDeviceManagerUnk)))
+         {
+             fDXAllocator = TRUE;
+         }
+    }
+    DMFTCHECKHR_GOTO(MFCreateVideoSampleAllocatorEx(IID_PPV_ARGS(spVideoSampleAllocator.ReleaseAndGetAddressOf())), done);
+    if (fDXAllocator)
+    {
+        DMFTCHECKHR_GOTO(spVideoSampleAllocator->SetDirectXManager(pDeviceManagerUnk), done);
+    }
+    DMFTCHECKHR_GOTO(spVideoSampleAllocator->InitializeSampleAllocatorEx(ALLOCATOR_MIN_SAMPLES, ALLOCATOR_MAX_SAMPLES, spAllocatorAttributes.Get(), pOutputMediaType), done);
+    
+    *ppAllocator = spVideoSampleAllocator.Detach();
+    bDxAllocator = fDXAllocator;
+done:
+    return hr;
+}
+
+HRESULT CheckPassthroughMediaType(_In_ IMFMediaType *pMediaType1,
+    _In_ IMFMediaType *pMediaType2,
+    _Out_ BOOL& pfPassThrough)
+{
+    HRESULT hr = S_OK;
+    BOOL fPassThrough = FALSE;
+    UINT32 uWidth, uHeight;
+    UINT32 uWidth2, uHeight2;
+
+    // Compare Width/Height.
+    DMFTCHECKHR_GOTO(MFGetAttributeSize(pMediaType1, MF_MT_FRAME_SIZE, &uWidth, &uHeight), done);
+    DMFTCHECKHR_GOTO(MFGetAttributeSize(pMediaType2, MF_MT_FRAME_SIZE, &uWidth2, &uHeight2), done);
+    if ((uWidth != uWidth2) || (uHeight != uHeight2))
+    {
+        goto done;
+    }
+
+    // Compare rotation
+    {
+        UINT32 uRotation;
+        UINT32 uRotation2;
+
+        uRotation = MFGetAttributeUINT32(pMediaType1, MF_MT_VIDEO_ROTATION, 0);
+        uRotation2 = MFGetAttributeUINT32(pMediaType2, MF_MT_VIDEO_ROTATION, 0);
+        if (uRotation != uRotation2)
+        {
+            goto done;
+        }
+    }
+
+    // Compare Aspect Ratio
+    {
+        UINT32 uNumerator = 1, uDenominator = 1;
+        UINT32 uNumerator2 = 1, uDenominator2 = 1;
+
+        (void)MFGetAttributeRatio(pMediaType1, MF_MT_FRAME_RATE, &uNumerator, &uDenominator);
+        (void)MFGetAttributeRatio(pMediaType2, MF_MT_FRAME_RATE, &uNumerator2, &uDenominator2);
+        if ((uNumerator * uDenominator2) != (uNumerator2 * uDenominator))
+        {
+            goto done;
+        }
+    }
+
+    // Compare Nominal Range
+    {
+        UINT32 uNorminalRange;
+        UINT32 uNorminalRange2;
+
+        uNorminalRange = MFGetAttributeUINT32(pMediaType1, MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_Unknown);
+        uNorminalRange2 = MFGetAttributeUINT32(pMediaType2, MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_Unknown);
+        if (uNorminalRange != uNorminalRange2)
+        {
+            goto done;
+        }
+    }
+
+    // Compare color primaries
+    {
+        UINT32 uPrimaries;
+        UINT32 uPrimaries2;
+
+        uPrimaries = MFGetAttributeUINT32(pMediaType1, MF_MT_VIDEO_PRIMARIES, MFVideoPrimaries_Unknown);
+        uPrimaries2 = MFGetAttributeUINT32(pMediaType2, MF_MT_VIDEO_PRIMARIES, MFVideoPrimaries_Unknown);
+        if (uPrimaries != uPrimaries2)
+        {
+            goto done;
+        }
+    }
+
+
+    // Compare InterlaceMode
+    {
+        UINT32 uInterlaceMode;
+        UINT32 uInterlaceMode2;
+
+        uInterlaceMode = MFGetAttributeUINT32(pMediaType1, MF_MT_INTERLACE_MODE, MFVideoInterlace_Unknown);
+        uInterlaceMode2 = MFGetAttributeUINT32(pMediaType2, MF_MT_INTERLACE_MODE, MFVideoInterlace_Unknown);
+        if (uInterlaceMode != uInterlaceMode2)
+        {
+            goto done;
+        }
+    }
+
+    // Compare display aperture
+    {
+        MFVideoArea VideoArea = { 0 };
+        MFVideoArea VideoArea2 = { 0 };
+        UINT32 cbBlobSize = 0;
+
+        if (SUCCEEDED(pMediaType1->GetBlob(MF_MT_MINIMUM_DISPLAY_APERTURE, (UINT8*)&VideoArea, sizeof(MFVideoArea), &cbBlobSize)))
+        {
+            if ((VideoArea.OffsetX.value == 0 && VideoArea.OffsetX.fract == 0) &&
+                (VideoArea.OffsetY.value == 0 && VideoArea.OffsetY.fract == 0) &&
+                (VideoArea.Area.cx == (LONG)uWidth) &&
+                (VideoArea.Area.cy == (LONG)uHeight))
+            {
+                // If the display aperture is the whole frame size, ignore it.
+                ZeroMemory(&VideoArea, sizeof(VideoArea));
+            }
+        }
+
+        if (SUCCEEDED(pMediaType2->GetBlob(MF_MT_MINIMUM_DISPLAY_APERTURE, (UINT8*)&VideoArea2, sizeof(MFVideoArea), &cbBlobSize)))
+        {
+            if ((VideoArea2.OffsetX.value == 0 && VideoArea2.OffsetX.fract == 0) &&
+                (VideoArea2.OffsetY.value == 0 && VideoArea2.OffsetY.fract == 0) &&
+                (VideoArea2.Area.cx == (LONG)uWidth) &&
+                (VideoArea2.Area.cy == (LONG)uHeight))
+            {
+                // If the display aperture is the whole frame size, ignore it.
+                ZeroMemory(&VideoArea, sizeof(VideoArea));
+            }
+        }
+
+        if (memcmp(&VideoArea, &VideoArea2, sizeof(MFVideoArea)) != 0)
+        {
+            goto done;
+        }
+    }
+
+    fPassThrough = TRUE;
+
+done:
+    pfPassThrough = fPassThrough;
+    return hr;
+}
+
+
+HRESULT MergeSampleAttributes( _In_ IMFSample* pInSample, _Inout_ IMFSample* pOutSample)
+{
+    HRESULT hr = S_OK;
+    DMFTCHECKNULL_GOTO(pInSample, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
+    UINT32 cAttributes = 0;
+    GUID guidAttribute;
+    PROPVARIANT varAttribute;
+    PROPVARIANT varAttributeExists;
+
+    PropVariantInit(&varAttribute);
+    PropVariantInit(&varAttributeExists);
+
+    DMFTCHECKHR_GOTO(pInSample->GetCount(&cAttributes), done);
+    for (UINT32 i = 0; i < cAttributes; i++)
+    {
+        PropVariantClear(&varAttribute);
+        PropVariantClear(&varAttributeExists);
+
+        DMFTCHECKHR_GOTO(pInSample->GetItemByIndex(i, &guidAttribute, &varAttribute), done);
+
+        if (S_OK == pOutSample->GetItem(guidAttribute, &varAttributeExists))
+        {
+            // Exists.. dont clobber    
+            continue;
+        }
+
+        DMFTCHECKHR_GOTO(pOutSample->SetItem(guidAttribute, varAttribute), done);
+    }
+
+done:
+    PropVariantClear(&varAttribute);
+    PropVariantClear(&varAttributeExists);
+    return hr;
+}
