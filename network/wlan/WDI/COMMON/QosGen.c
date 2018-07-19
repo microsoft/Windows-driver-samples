@@ -1280,7 +1280,7 @@ QosRemoveTs(
 		u1Byte Key[QOS_TSTREAM_KEY_SIZE];
 
 		PlatformMoveMemory(Key, pTs->__HashEntry.Key, QOS_TSTREAM_KEY_SIZE);
-		RtRemvoeKeyFromVaHashTable(pStaQos->hApTsTable, Key);
+		RtRemoveKeyFromVaHashTable(pStaQos->hApTsTable, Key);
 	}
 
 }
