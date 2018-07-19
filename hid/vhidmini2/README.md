@@ -4,7 +4,7 @@
     language: cpp
     category: HID
     description: Demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617731
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617731
 --->
 
 HID Minidriver Sample (UMDF version 2)
@@ -17,11 +17,11 @@ The sample demonstrates how to communicate with an HID minidriver from an HID cl
 Related topics
 --------------
 
-[Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
+[Creating UMDF-based HID Minidrivers](https://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
 
-[UMDF HID Minidriver IOCTLs](http://msdn.microsoft.com/en-us/library/windows/hardware/hh463977)
+[UMDF HID Minidriver IOCTLs](https://msdn.microsoft.com/en-us/library/windows/hardware/hh463977)
 

@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617707
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617707
 --->
 
 
@@ -21,7 +21,7 @@ This sample driver is a minimal driver meant to demonstrate the usage of the Use
 Related technologies
 --------------------
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 
 Testing
 -------

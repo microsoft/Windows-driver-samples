@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: A minifilter demonstrating the use of cancel-safe queues.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617645
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617645
 --->
 
 
@@ -21,4 +21,4 @@ Design and Operation
 
 The *CancelSafe* minifilter initializes a cancel-safe queue when it is attached to a volume. When the minifilter is deployed, it monitors read operations that are passing through the I/O stack. If the read operation is being performed on a file named csqdemo.txt, it is queued onto the cancel-safe queue. Queued operations are completed after a brief pause through a separate worker thread that is running in system context.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.

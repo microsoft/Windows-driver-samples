@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617648
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617648
 --->
 
 
@@ -21,4 +21,4 @@ Design and Operation
 
 The *Ctx* minifilter demonstrates how to attach and remove contexts from instances, files, steams, and stream handles. *Ctx* attaches a context whenever one of these objects is created. While attaching a context to a file, the sample also creates a stream and stream handle context. All contexts are ultimately deleted by the filter manager using the callback function that the *Ctx* minifilter provides.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.

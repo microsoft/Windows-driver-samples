@@ -4,16 +4,16 @@
     language: cpp
     category: SimplePeripheralBus
     description: Demonstrates how to open a handle to the SPB controller, use the SPB interface from a KMDF driver, and employ GPIO.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617970
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617970
 --->
 
 
 SpbTestTool
 ===========
 
-The SpbTestTool sample serves two purposes. First, it demonstrates how to open a handle to the [SPB controller](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698220), use the SPB interface from a KMDF driver, and employ GPIO [passive-level interrupts](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451035). Second, it implements a set of commands for communicating with a peripheral device to aid in debugging.
+The SpbTestTool sample serves two purposes. First, it demonstrates how to open a handle to the [SPB controller](https://msdn.microsoft.com/en-us/library/windows/hardware/hh698220), use the SPB interface from a KMDF driver, and employ GPIO [passive-level interrupts](https://msdn.microsoft.com/en-us/library/windows/hardware/hh451035). Second, it implements a set of commands for communicating with a peripheral device to aid in debugging.
 
-This sample is incomplete as a driver and merely demonstrates use of the [SPB I/O request interface](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698224) and [GPIO interrupts](http://msdn.microsoft.com/en-us/library/windows/hardware/hh406467). It is not intended for use in a production environment.
+This sample is incomplete as a driver and merely demonstrates use of the [SPB I/O request interface](https://msdn.microsoft.com/en-us/library/windows/hardware/hh698224) and [GPIO interrupts](https://msdn.microsoft.com/en-us/library/windows/hardware/hh406467). It is not intended for use in a production environment.
 
 ### Run the sample
 

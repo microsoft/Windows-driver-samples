@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: A UMDF driver for the OSR USB-FX2 device that includes a test application, sample device metadata, and supports impersonation and idle power down. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618002
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618002
 --->
 
 
@@ -13,7 +13,7 @@ Sample UMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
 
 The umdf\_fx2 sample is a User-Mode Driver Framework (UMDF) driver for the OSR USB-FX2 device. It includes a test app and sample device metadata, and supports impersonation and idle power down.
 
-The sample can also be used with the CustomDeviceAccess MSDK sample. The sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
+The sample can also be used with the CustomDeviceAccess MSDK sample. The sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
 
 The osrusbfx2 sample is divided into three samples:
 
@@ -58,7 +58,7 @@ Here is the overview of the device:
 Testing the driver
 ------------------
 
-You can use the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample to test the umdf\_fx2 sample.
+You can use the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample to test the umdf\_fx2 sample.
 
 This sample also includes a test application, osrusbfx2.exe, that you can use to test the device. This console application enumerates the interface registered by the driver and opens the device to send read, write, or IOCTL requests based on the command line options.
 
@@ -341,5 +341,5 @@ This directory contains a test application that can be used to drive the UMDF dr
 
 usb\\umdf\_fx2\\deviceMetadata
 
-This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see [Custom driver access sample](http://go.microsoft.com/fwlink/p/?LinkID=248288).
+This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see [Custom driver access sample](https://go.microsoft.com/fwlink/p/?LinkID=248288).
 

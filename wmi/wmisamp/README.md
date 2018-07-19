@@ -4,7 +4,7 @@
     language: cpp
     category: WMI
     description: Demonstrates how to register WMI providers in KMDF, create provider instances, and handle WMI queries sent to a device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618007
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618007
 --->
 
 
@@ -23,9 +23,9 @@ The **Firefly**, **PCIDRV**, and **Toaster** sample drivers also implement WMI d
 Installation
 ------------
 
-In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834).
+In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](https://msdn.microsoft.com/en-us/library/windows/hardware/hh454834).
 
-**Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+**Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 Testing
 -------

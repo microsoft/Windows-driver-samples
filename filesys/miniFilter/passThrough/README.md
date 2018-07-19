@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Demonstrates how to specify callback functions for different types of I/O requests.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617654
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617654
 --->
 
 
@@ -21,5 +21,5 @@ Design and Operation
 
 The *PassThrough* minifilter does not have any real functionality. For each type of I/O operation, the same pre and post callback functions are called. These callback functions simply forward the I/O request to the next filter on the stack.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

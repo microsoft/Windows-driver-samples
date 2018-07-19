@@ -4,16 +4,16 @@
     language: cpp
     category: General Tracing
     description: Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617724
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617724
 --->
 
 
 Eventdrv
 ========
 
-Eventdrv is a sample kernel-mode trace provider and driver. The driver does not control any hardware; it simply generates trace events. It is designed to demonstrate the use of the [Event Tracing for Windows (ETW)](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545699) API in a driver.
+Eventdrv is a sample kernel-mode trace provider and driver. The driver does not control any hardware; it simply generates trace events. It is designed to demonstrate the use of the [Event Tracing for Windows (ETW)](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545699) API in a driver.
 
-Evntdrv registers as a provider by calling the [**EtwRegister**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545603) API. If the registration is successful, it logs a StartEvent with the device's name, the length of the name, and the status code. Then, when the sample receives a DeviceIOControl call, it logs a SampleEventA event. Finally, when the driver gets unloaded, it logs an UnloadEvent event with a pointer to the device object
+Evntdrv registers as a provider by calling the [**EtwRegister**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff545603) API. If the registration is successful, it logs a StartEvent with the device's name, the length of the name, and the status code. Then, when the sample receives a DeviceIOControl call, it logs a SampleEventA event. Finally, when the driver gets unloaded, it logs an UnloadEvent event with a pointer to the device object
 
 **Note** The Windows Pre-Processor (WPP) Tracing tools such as TraceView.exe cannot be used to start, stop, or view traces.
 
@@ -68,5 +68,5 @@ Run the sample
 Notes
 -----
 
-If you are building the Eventdrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](http://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
+If you are building the Eventdrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](https://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](https://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
 

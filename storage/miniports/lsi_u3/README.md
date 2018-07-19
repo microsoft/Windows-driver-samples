@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: An adapter driver for use with Parallel SCSI Host Bus Adapters or on-motherboard solutions that use the LSI 53C1010 SCSI ASIC.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617982
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617982
 --->
 
 
@@ -24,5 +24,5 @@ The operation of this sample requires one of the following hardware items:
 -   Parallel SCSI Host Bus Adapter
 -   On-motherboard solution that uses the LSI 53C1010 SCSI ASIC
 
-For more information, see [Storport Miniport Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff567562) in the storage technologies design guide.
+For more information, see [Storport Miniport Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff567562) in the storage technologies design guide.
 

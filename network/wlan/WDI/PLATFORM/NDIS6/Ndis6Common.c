@@ -4747,7 +4747,7 @@ PNPReConnentTimerCallback(
 	PADAPTER Adapter = (PADAPTER)pTimer->Adapter;
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	PRT_NDIS6_COMMON pNdisCommon = Adapter->pNdisCommon;
-	// Refent to  http://msdn.microsoft.com/en-us/library/windows/hardware/ff559418(v=vs.85).aspx
+	// Refent to  https://msdn.microsoft.com/en-us/library/windows/hardware/ff559418(v=vs.85).aspx
 	// For a miniport adapter in the Pausing state, the miniport driver:
 	// Can provide status indications with the NdisMIndicateStatusEx function.
 #if 0

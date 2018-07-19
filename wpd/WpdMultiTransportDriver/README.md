@@ -4,7 +4,7 @@
     language: cpp
     category: WPD
     description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618009
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618009
 --->
 
 
@@ -15,13 +15,13 @@ The WpdMultiTransportDriver sample demonstrates how you could extend the WpdHell
 
 A number of portable devices now support multiple transports. For example, a number of cell phones support both Bluetooth and USB. Windows supports a multitransport driver model that ensures that only one node appears for each device.
 
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD MultiTransport Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597709) description in the Windows Driver Kit documentation.
+For a complete description of this sample and its underlying code and functionality, refer to the [WPD MultiTransport Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597709) description in the Windows Driver Kit documentation.
 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
 [WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597898)

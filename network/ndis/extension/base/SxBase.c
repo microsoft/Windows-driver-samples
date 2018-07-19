@@ -45,7 +45,7 @@ SxpNdisProcessMethodOid(
     
 //
 // DriverEntry
-// http://msdn.microsoft.com/en-us/library/ff544113(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff544113(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NTSTATUS
@@ -139,7 +139,7 @@ Cleanup:
 
 //
 // Unload Routine
-// http://msdn.microsoft.com/en-us/library/ff564886(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff564886(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -158,7 +158,7 @@ SxNdisUnload(
 
 //
 // FilterSetOptions Function
-// http://msdn.microsoft.com/en-us/library/ff549972(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549972(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -175,7 +175,7 @@ SxNdisSetOptions(
 
 //
 // FilterSetModuleOptions Function
-// http://msdn.microsoft.com/en-us/library/ff549970(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549970(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -190,7 +190,7 @@ SxNdisSetFilterModuleOptions(
 
 //
 // FilterAttach Function
-// http://msdn.microsoft.com/en-us/library/ff549905(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549905(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -314,7 +314,7 @@ Cleanup:
 
 //
 // FilterDetach Function
-// http://msdn.microsoft.com/en-us/library/ff549918(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549918(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -358,7 +358,7 @@ SxNdisDetach(
 
 //
 // FilterRestart Function
-// http://msdn.microsoft.com/en-us/library/ff549962(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549962(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -397,7 +397,7 @@ SxNdisPause(
 
 //
 // FilterPause Function
-// http://msdn.microsoft.com/en-us/library/ff549957(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549957(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -437,7 +437,7 @@ Cleanup:
 
 //
 // FilterOidRequest Function
-// http://msdn.microsoft.com/en-us/library/ff549954(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549954(v=VS.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -519,7 +519,7 @@ Cleanup:
 
 //
 // FilterCancelOidRequest Function
-// http://msdn.microsoft.com/en-us/library/ff549911(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549911(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -535,7 +535,7 @@ SxNdisCancelOidRequest(
 
 //
 // FilterOidRequestComplete Function
-// http://msdn.microsoft.com/en-us/library/ff549956(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549956(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -655,7 +655,7 @@ Cleanup:
 
 //
 // FilterSendNetBufferLists Function
-// http://msdn.microsoft.com/en-us/library/ff549966(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549966(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -679,7 +679,7 @@ SxNdisSendNetBufferLists(
 
 //
 // FilterSendNetBufferListsComplete Function
-// http://msdn.microsoft.com/en-us/library/ff549967(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549967(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -700,7 +700,7 @@ SxNdisSendNetBufferListsComplete(
 
 //
 // FilterReceiveNetBufferLists Function
-// http://msdn.microsoft.com/en-us/library/ff549960(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549960(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -726,7 +726,7 @@ SxNdisReceiveNetBufferLists(
 
 //
 // FilterReturnNetBufferLists Function
-// http://msdn.microsoft.com/en-us/library/ff549964(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549964(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -747,7 +747,7 @@ SxNdisReturnNetBufferLists(
 
 //
 // FilterCancelSendNetBufferLists Function
-// http://msdn.microsoft.com/en-us/library/ff549915(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549915(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID
@@ -763,7 +763,7 @@ SxNdisCancelSendNetBufferLists(
 
 //
 // FilterNetPnPEvent Function
-// http://msdn.microsoft.com/en-us/library/ff549952(v=vs.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549952(v=vs.85).aspx
 //
 _Use_decl_annotations_
 NDIS_STATUS
@@ -791,7 +791,7 @@ SxNdisNetPnPEvent(
 
 //
 // FilterStatus Function
-// http://msdn.microsoft.com/en-us/library/ff549973(v=VS.85).aspx
+// https://msdn.microsoft.com/en-us/library/ff549973(v=VS.85).aspx
 //
 _Use_decl_annotations_
 VOID

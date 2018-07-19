@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: A base library used to implement a Hyper-V Extensible Switch extension filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617913
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617913
 --->
 
 
@@ -27,5 +27,5 @@ Installation
 
 Use the *install.cmd* script provided with each extension filter driver. The *install.cmd* uses **netcfg** to install the extension and **mofcomp** to register any required mof files. The PowerShell cmdlet *Enable-VmSwitchExtension* can then be used to enable the extension filter driver on a Hyper-V Extensible Switch.
 
-For more information on Hyper-V Extensible Switch extensions, see [Hyper-V Extensible Switch](http://msdn.microsoft.com/en-us/library/windows/hardware/hh598161).
+For more information on Hyper-V Extensible Switch extensions, see [Hyper-V Extensible Switch](https://msdn.microsoft.com/en-us/library/windows/hardware/hh598161).
 

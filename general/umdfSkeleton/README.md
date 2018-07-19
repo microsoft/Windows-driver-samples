@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use UDMF to write a minimal driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617727
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617727
 --->
 
 

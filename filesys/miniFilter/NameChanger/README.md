@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617652
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617652
 --->
 
 
@@ -92,5 +92,5 @@ F:\\X\\Y
 
 After the minifilter attaches, the "B" subdirectory of F:\\A is no longer visible. Its contents now appear under the "Y" subdirectory of F:\\X.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

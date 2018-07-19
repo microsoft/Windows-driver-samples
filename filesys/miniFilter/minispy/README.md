@@ -4,7 +4,7 @@
     language: cpp
     category: FileSystem
     description: A tool to monitor and log any I/O and transaction activity that occurs in the system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617651
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617651
 --->
 
 
@@ -23,5 +23,5 @@ Minispy consists of both user-mode and kernel-mode components. The kernel-mode c
 
 To observe I/O activity on a device, you must explicitly attach Minispy to that device by using the Minispy user-mode component. Similarly, you can request Minispy to stop logging data for a particular device.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
 

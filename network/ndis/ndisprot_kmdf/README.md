@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: Demonstrates a connection-less NDIS 6.0 protocol KMDF driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620197
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620197
 --->
 
 
@@ -20,12 +20,12 @@ The sample also demonstrates how to write a Notify Object dll. The Notify Object
 Related technologies
 --------------------
 
-[Creating Framework-based Miniport Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540778)
+[Creating Framework-based Miniport Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540778)
 
 Build the sample
 ----------------
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 The 60 subdirectory (\\ndisprot\_kmdf\\60) indicates that the built sample will be NDIS 6.0 compatible.
 
@@ -37,7 +37,7 @@ Use the following steps to install the sample.
 1.  When you build the sample, the build engine produces ndisprot.inf in the build target directory. Copy nprt6wdf.sys, protnotify.dll, and ndisprot.inf to a directory.
 2.  Copy the KMDF coinstaller (wdfcoinstaller*MMmmm*.dll) to the same directory.
 
-    **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 3.  In Control Panel, in the **Network and Internet** group, open **Network Connections**, select an adapter, and then open **Properties**.
 

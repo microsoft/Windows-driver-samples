@@ -4,7 +4,7 @@
     language: cpp
     category: Serial
     description: Demonstrates a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617963
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617963
 --->
 
 
@@ -18,7 +18,7 @@ This sample demonstrates these two serial drivers:
 
 This sample driver is a minimal driver meant to demonstrate the usage of the User-Mode Driver Framework. It is not intended for use in a production environment.
 
-For more information, see [Serial Controller and Device Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546939) in the WDK documentation.
+For more information, see [Serial Controller and Device Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff546939) in the WDK documentation.
 
 Code tour
 ---------

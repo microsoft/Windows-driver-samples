@@ -23,16 +23,16 @@ Related topics
 
 **Concepts**
 
-[Windows Store device apps for cameras](http://go.microsoft.com/fwlink/p/?LinkId=306683)
+[Windows Store device apps for cameras](https://go.microsoft.com/fwlink/p/?LinkId=306683)
 
-[Media Foundation Transforms](http://msdn.microsoft.com/en-us/library/windows/hardware/ms703138)
+[Media Foundation Transforms](https://msdn.microsoft.com/en-us/library/windows/hardware/ms703138)
 
-[Roadmap for Developing Streaming Media Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff568130)
+[Roadmap for Developing Streaming Media Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff568130)
 
 [Universal camera driver design guide for Windows 10](https://msdn.microsoft.com/en-us/Library/Windows/Hardware/dn937080)
 
 **Samples**
 
-[Windows Store device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
+[Windows Store device app for camera sample](https://go.microsoft.com/fwlink/p/?linkid=249442)
 
-[Camera Capture UI sample](http://go.microsoft.com/fwlink/p/?linkid=249441%20)
+[Camera Capture UI sample](https://go.microsoft.com/fwlink/p/?linkid=249441%20)

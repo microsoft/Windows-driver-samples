@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates the use of registered callbacks for process protection.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617716
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617716
 --->
 
 
@@ -17,7 +17,7 @@ The ObCallback sample driver demonstrates the use of registered callbacks for pr
 Design and Operation
 --------------------
 
-The sample exercises both the [**PsSetCreateProcessNotifyRoutineEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff559951) and the [**ObRegisterCallbacks**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff558692) routines. The first example uses the **ObRegisterCallbacks** routine and a callback to restrict requested access rights during a open process action. The second example uses the **PsSetCreateProcessNotifyRoutineEx** routine to reject a process creation by examining the command line.
+The sample exercises both the [**PsSetCreateProcessNotifyRoutineEx**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff559951) and the [**ObRegisterCallbacks**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff558692) routines. The first example uses the **ObRegisterCallbacks** routine and a callback to restrict requested access rights during a open process action. The second example uses the **PsSetCreateProcessNotifyRoutineEx** routine to reject a process creation by examining the command line.
 
 The following is a command line usage scenario to exercise access restriction:
 

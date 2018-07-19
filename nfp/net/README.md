@@ -4,7 +4,7 @@
     language: cpp
     category: Proximity
     description: Demonstrates how to use UMDF version 1 to write a near-field proximity driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620200
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620200
 --->
 
 
@@ -17,5 +17,5 @@ Typically, a near-field proximity driver would use near-field technologies such 
 
 Related technologies
 --------------------
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 

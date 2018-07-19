@@ -4,7 +4,7 @@
     language: cpp
     category: WDP
     description: Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller.           
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620318
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620318
 --->
 
 
@@ -23,17 +23,17 @@ The circuit designs are based on the sample circuits provided by Parallax in the
 
 The microcontroller firmware for each of the nine circuits is included in the **\\firmware** subdirectory of this sample.
 
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD Basic Hardware Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597697) description in the Windows Driver Kit documentation.
+For a complete description of this sample and its underlying code and functionality, refer to the [WPD Basic Hardware Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597697) description in the Windows Driver Kit documentation.
 
 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
-[WPD Programming Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/)
+[WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/)
 
 
 Installation
@@ -47,7 +47,7 @@ To install the WpdBasicHardwareDriver sample, do the following:
 
 2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\wpdbasichardwaredriver).
 
-    **Note** You can obtain the co-installers by downloading and installing the "Windows Driver Framework (WDF)" package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+    **Note** You can obtain the co-installers by downloading and installing the "Windows Driver Framework (WDF)" package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396).
 
 3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\wpdbasichardwaredriver), and run DevCon.exe as follows:
     **devcon.exe install wpdbasichardwaredriver.inf WUDF\\WpdBasicHardware**

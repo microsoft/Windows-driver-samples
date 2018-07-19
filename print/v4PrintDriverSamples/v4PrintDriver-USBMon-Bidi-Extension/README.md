@@ -4,7 +4,7 @@
     language: js xml
     category: Print
     description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617948
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617948
 --->
 
 
@@ -18,7 +18,7 @@ The following files are included in the sample:
 -   USBMON\_Bidi\_JavaScript\_File.js. This JavaScript file demonstrates the implementation of a Bidi support for USBMon with a v4 print driver. The JavaScript file supports three functions: getSchemas() is used to make Bidi GET queries to a device, setSchema() is used to make a single Bidi SET query to the device, and getStatus() is called repeatedly during printing in order to retrieve unsolicited status from the printer using the data from the read channel of the device.
 -   USBMON\_Bidi\_XML\_File.xml. This XML file demonstrates how to build a Bidi Schema extension for USB. It describes the supported schema elements that can be queried or set, along with their restrictions.
 
-For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx).
+For more information, see [USB Bidi Extender](https://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx).
 
 **Note** This sample is for the v4 print driver model.
 

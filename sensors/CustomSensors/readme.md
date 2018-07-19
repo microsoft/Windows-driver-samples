@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write a UMDF v2 driver to control a custom sensor.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617958
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617958
 --->
 
 # Custom Sensor Driver Sample

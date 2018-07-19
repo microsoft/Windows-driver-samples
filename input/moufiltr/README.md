@@ -4,7 +4,7 @@
     language: cpp
     category: HID WDF
     description: A WDF example of a mouse input filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620195
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620195
 --->
 
 

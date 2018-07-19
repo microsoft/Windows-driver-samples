@@ -4,7 +4,7 @@
     language: cpp
     category: Serial
     description: Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617961
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617961
 --->
 
 
@@ -36,5 +36,5 @@ Serenum.h | Local header with defines, prototypes
 String.c  | String handling support; mainly ASCII to UNICODE functionality 
 Serenum.rc | Resource script 
 
-For more information, see [Features of Serial and Serenum](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
+For more information, see [Features of Serial and Serenum](https://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
 

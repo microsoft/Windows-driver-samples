@@ -4,7 +4,7 @@
     language: cpp
     category: POS
     description: This UDMF version 2 sample serves as a template for creating a new Barcode Scanner driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620201
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620201
 --->
 
 

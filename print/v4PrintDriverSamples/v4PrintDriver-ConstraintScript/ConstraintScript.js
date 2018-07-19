@@ -570,7 +570,7 @@ function searchByAttributeName(node, tagName, keywordNamespace, nameAttribute) {
 function setSelectionNamespace(xmlNode, prefix, namespace) {
     /// <summary>
     ///     This function sets the 'SelectionNamespaces' property on the XML Node.
-    ///     For more details: http://msdn.microsoft.com/en-us/library/ms756048(VS.85).aspx
+    ///     For more details: https://msdn.microsoft.com/en-us/library/ms756048(VS.85).aspx
     /// </summary>
     /// <param name="xmlNode" type="IXMLDOMNode">
     ///     The node on which the property is set.

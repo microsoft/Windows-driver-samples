@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: Provide access to CD, DVD and Blu-ray drives, supports Plug and Play, Power Management, and AutoRun (media change notification). 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617971
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617971
 --->
 
 
@@ -64,5 +64,5 @@ The in-box CD ROM driver is protected by the system, and thus a normal device dr
 11. Click "Next" to complete the driver upgrade.
 12. After installation completes successfully, "mycdrom.sys" will be the effective driver for the device, "cdrom.sys" will no longer be used.
 
-For more information, see [CD-ROM Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551391) in the storage technologies design guide.
+For more information, see [CD-ROM Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff551391) in the storage technologies design guide.
 

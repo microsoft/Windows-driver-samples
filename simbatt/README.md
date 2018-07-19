@@ -4,7 +4,7 @@
     language: cpp
     category: Battery Power
     description: Demonstrates a KMDF-based implementation of Windows battery driver interfaces.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620188
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620188
 --->
 
 

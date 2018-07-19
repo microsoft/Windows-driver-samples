@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617709
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617709
 --->
 
 
@@ -18,7 +18,7 @@ This sample also demonstrates how to use a default parallel dispatch I/O queue, 
 Related technologies
 --------------------
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
 
 Code Tour
 ---------
@@ -32,7 +32,7 @@ This sample driver is a minimal driver that is intended to demonstrate how to us
 Installation
 ------------
 
-In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
+In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](https://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
 
 To test this sample, you must have a test computer. This test computer can be a second computer or, if necessary, your development computer.
 
@@ -42,7 +42,7 @@ To install the UMDF Echo sample driver from the command line, do the following:
 
 2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\socketechoSample).
 
-    **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\socketechoSample), and run DevCon.exe as follows:
 

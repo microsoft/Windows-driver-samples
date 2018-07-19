@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates how to load a UMDF filter driver as an upper filter driver above the umdf_fx2 sample driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618001
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618001
 --->
 
 
@@ -37,7 +37,7 @@ Here is the overview of the device:
 
 ### Testing the driver
 
-You can test this sample either by using the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [umdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
+You can test this sample either by using the [Custom driver access](https://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [umdf\_fx2](https://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
 
 ### Sample Contents
 

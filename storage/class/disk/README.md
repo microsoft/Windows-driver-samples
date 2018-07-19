@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: A class driver for disk devices.  
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617979
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617979
 --->
 
 
@@ -50,5 +50,5 @@ Installation and Operation
 
 The disk class driver is used to interact with disk devices along with the appropriate port driver. The disk class driver is layered above the port driver and manages disk devices regardless of their bus type. This driver attaches to the disk devices that are enumerated by all of the storage port drivers. This driver exposes the required functionality to the file system drivers to access the disk devices.
 
-For more information, see [Introduction to Storage Class Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff559215) in the storage technologies design guide.
+For more information, see [Introduction to Storage Class Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff559215) in the storage technologies design guide.
 

@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates how to use KMDF as a bus driver using the OSR USB-FX2 device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618000
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618000
 --->
 
 

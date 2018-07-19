@@ -4,7 +4,7 @@
     language: cpp
     category: WPD
     description: Demonstrates virtually all aspects of the WPD device driver interface (DDI).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618011
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=618011
 --->
 
 
@@ -17,14 +17,14 @@ This driver was written in the simplest way to demonstrate concepts. Therefore, 
 
 Some of the tasks that are accomplished by the WpdWudfSampleDriver are written for the advanced Windows Portable Devices (WPD) driver developer.
 
-For a complete description of this sample and its underlying code and functionality, refer to the [WPD WUDF Sample Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597723) description in the Windows Driver Kit documentation.
+For a complete description of this sample and its underlying code and functionality, refer to the [WPD WUDF Sample Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597723) description in the Windows Driver Kit documentation.
 
 
 Related topics
 --------------
 
-[WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
+[WPD Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
-[WPD Driver Development Tools](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
+[WPD Driver Development Tools](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597568)
 
 [WPD Programming Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff597898)

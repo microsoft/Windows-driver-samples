@@ -4,7 +4,7 @@
     language: cpp
     category: General PCI WDF
     description: Demonstrates how to write a KMDF driver for a PCI device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617717
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617717
 --->
 
 
@@ -103,7 +103,7 @@ INSTALLATION
 
 The driver can be installed as a Net class driver or as a standalone driver (user defined class). The KMDF versions of the INF files are dynamically generated from .INX file. In addition to the driver files, you have to include the WDF coinstaller DLL from the \\redist\\wdf folder of the WDK.
 
-You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 ### TESTING
 

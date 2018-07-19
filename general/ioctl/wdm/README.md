@@ -4,7 +4,7 @@
     language: cpp
     category: General
     description: Demonstrates usage of four different types of IOCTLs
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617715
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617715
 --->
 
 

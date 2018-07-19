@@ -4,7 +4,7 @@
     language: cpp
     category: Sensors
     description: Demonstrates how to write a UMDF v2 driver to control a virtual FusionSensor sensor.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=856914
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=856914
 --->
 
 # Fusion Sensor Driver Sample

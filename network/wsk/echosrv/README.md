@@ -4,7 +4,7 @@
     language: cpp
     category: Network
     description: A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617935
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617935
 --->
 
 
@@ -64,5 +64,5 @@ Install and run this sample driver by using the following steps:
 
 After the driver is installed and started, it will listen for incoming TCP connection requests on port 40007 over both IPv4 and IPv6 protocols until the driver is stopped. On each connection, the driver will echo all the received data back to the peer until the connection is closed by the peer.
 
-For more information on the usage of the Winsock Kernel (WSK) programming interface, see [Winsock Kernel](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571084).
+For more information on the usage of the Winsock Kernel (WSK) programming interface, see [Winsock Kernel](https://msdn.microsoft.com/en-us/library/windows/hardware/ff571084).
 

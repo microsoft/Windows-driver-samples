@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to install WDF packages on a system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617713
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617713
 --->
 
 
@@ -16,4 +16,4 @@ This sample contains example code that demonstrates how to install WDF packages 
 
 Related technologies
 --------------------
-[Installation Components for Framework-based Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544208)
+[Installation Components for Framework-based Drivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544208)

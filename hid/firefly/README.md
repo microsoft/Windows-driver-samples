@@ -4,7 +4,7 @@
     language: cpp
     category: HID
     description: Illustrates using remote I/O target interfaces to open a HID collection in kernel-mode and send IOCTL requests to set and get feature reports.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620192
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620192
 --->
 
 
@@ -15,22 +15,22 @@ Firefly is a KMDF-based filter driver for a HID device. Along with illustrating 
 Related topics
 --------------
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
 
 Related technologies
 --------------------
 
-[Creating Framework-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540774)
+[Creating Framework-based HID Minidrivers](https://msdn.microsoft.com/en-us/library/windows/hardware/ff540774)
 
 
 Build the sample
 ----------------
 
-For information on how to build a driver using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644). When you build the sample, MSBuild.exe creates luminous.lib, firefly.sys, flicker.exe, and sauron.dll. Copy these files as well as the KMDF coinstaller (wdfcoinstallerMMmmm.dll) and the INF file (firefly.inf) to a floppy disk or a temporary directory on the target system.
+For information on how to build a driver using Microsoft Visual Studio, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644). When you build the sample, MSBuild.exe creates luminous.lib, firefly.sys, flicker.exe, and sauron.dll. Copy these files as well as the KMDF coinstaller (wdfcoinstallerMMmmm.dll) and the INF file (firefly.inf) to a floppy disk or a temporary directory on the target system.
 
-**Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+**Note** You can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 Installation
 ------------
@@ -86,7 +86,7 @@ The Firefly sample is installed as an upper filter driver for the Microsoft USB 
 
 The sample consists of:
 
--   Driver (firefly.sys): The Firefly driver is an upper device filter driver for the mouse driver (mouhid.sys). Firefly is a generic filter driver based on the toaster filter driver sample available in the WDK. During start device, the driver registers a WMI class (FireflyDeviceInformation). The user mode application connects to the WMI namespace (root\\wmi) and opens this class using COM interfaces. Then the application can make requests to read ("get") or change ("set") the current value of the TailLit data value from this class. In response to a set WMI request, the driver opens the HID collection using IoTarget and sends [**IOCTL\_HID\_GET\_COLLECTION\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff541092) and [**IOCTL\_HID\_GET\_COLLECTION\_DESCRIPTOR**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff541089) requests to get the preparsed data. The driver then calls [**HidP\_GetCaps**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539715) using the preparsed data to retrieve the capabilities of the device. After getting the capabilities of the device, the driver creates a feature report to set or clear the feature that causes the light to toggle.
+-   Driver (firefly.sys): The Firefly driver is an upper device filter driver for the mouse driver (mouhid.sys). Firefly is a generic filter driver based on the toaster filter driver sample available in the WDK. During start device, the driver registers a WMI class (FireflyDeviceInformation). The user mode application connects to the WMI namespace (root\\wmi) and opens this class using COM interfaces. Then the application can make requests to read ("get") or change ("set") the current value of the TailLit data value from this class. In response to a set WMI request, the driver opens the HID collection using IoTarget and sends [**IOCTL\_HID\_GET\_COLLECTION\_INFORMATION**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff541092) and [**IOCTL\_HID\_GET\_COLLECTION\_DESCRIPTOR**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff541089) requests to get the preparsed data. The driver then calls [**HidP\_GetCaps**](https://msdn.microsoft.com/en-us/library/windows/hardware/ff539715) using the preparsed data to retrieve the capabilities of the device. After getting the capabilities of the device, the driver creates a feature report to set or clear the feature that causes the light to toggle.
 -   Library (luminous.lib): The sources for this file are located in the \\hid\\firefly\\lib folder. You will need to build the library before using it. This library is shared by the WDM and WDF samples. All the interfaces required to access the WMI is defined in this library and exposed as CLuminous class.
 -   Application (flicker.exe): The sources for this file are located in the \\hid\\firefly\\app folder. You will need to build the application before using it. This application is shared by the WDM and WDF samples. The application links to luminous.lib to open the WMI interfaces and send set requests to toggle the light.
 -   Sauron (sauron.dll): The sources for this file are located in the \\hid\\firefly\\sauron folder. You will need to build this dll before using it. The library is shared by the WDM and WDF samples. Sauron is a Windows Media Player visualization DLL, and is based on a sample from the Windows Media Player SDK kit. By using this DLL, you can cause the mouse lights to blink to the beats of the music.

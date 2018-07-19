@@ -203,7 +203,7 @@ StreamEditRemoveFlowCtx(
     Function to disassociate a previously associated context from a data flow.
     This will cause flowDelete function to be invoked (either synchronously or asynchronously).
 
-    Remarks @ http://msdn.microsoft.com/en-us/library/windows/hardware/ff551169.aspx
+    Remarks @ https://msdn.microsoft.com/en-us/library/windows/hardware/ff551169.aspx
     
     If the FwpsFlowRemoveContext0 function returns STATUS_SUCCESS, FwpsFlowRemoveContext0
     calls the flowDeleteFn callout function synchronously.If FwpsFlowRemoveContext0 returns
@@ -627,7 +627,7 @@ StreamEditRegisterFlowEstablishedCallouts(
 
             // Filter according to the direction of the flow we are interested in
             //
-            // @ http://msdn.microsoft.com/en-us/library/windows/desktop/aa364005.aspx
+            // @ https://msdn.microsoft.com/en-us/library/windows/desktop/aa364005.aspx
             //
             // For stream layers (FWPM_LAYER_STREAM_*) and  flow established layers
             // ( FWPM_LAYER_ALE_FLOW_ESTABLISHED_* ), the value will be the same as
@@ -716,7 +716,7 @@ StreamEditRegisterStreamLayerCallouts(
     sCallout.notifyFn       = StreamEditNotifyFunction;
     sCallout.flowDeleteFn   = StreamEditFlowDeleteFunction;
     
-    // http://msdn.microsoft.com/en-us/library/windows/hardware/ff551224.aspx
+    // https://msdn.microsoft.com/en-us/library/windows/hardware/ff551224.aspx
     //
     // FWPS_CALLOUT0 structure
     //

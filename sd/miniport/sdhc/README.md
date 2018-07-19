@@ -4,7 +4,7 @@
     language: cpp
     category: Storage
     description: Provides a functional miniport implementation for a standard SD host controller.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617952
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617952
 --->
 
 

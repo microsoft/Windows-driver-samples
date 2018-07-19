@@ -4,7 +4,7 @@
     language: cpp
     category: General WDF
     description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617706
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=617706
 --->
 
 
@@ -21,7 +21,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 Related technologies
 --------------------
 
-[Kernel-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544396)
+[Kernel-Mode Driver Framework](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544396)
 
 Code Tour
 ---------

@@ -4,7 +4,7 @@
     language: cpp
     category: HID WDF
     description: A WDF example of a keyboard input filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620194
+    samplefwlink: https://go.microsoft.com/fwlink/p/?LinkId=620194
 --->
 
 
@@ -42,7 +42,7 @@ Build the sample using Visual Studio
 
 In Visual Studio, on the **Build** menu, choose **Build Solution**.
 
-For more information about using Visual Studio to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using Visual Studio to build a driver package, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 The test application, *kbftest.exe* is also built as part of the solution under the 'exe' folder.
 
@@ -63,13 +63,13 @@ kbfiltr.sys | The driver file.
 Using MSBuild
 -------------
 
-As an alternative to building the Kbfiltr Filter Driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, kbfiltr.sln. Use the [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
+As an alternative to building the Kbfiltr Filter Driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, kbfiltr.sln. Use the [MSBuild](https://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
 
 **msbuild /p:configuration="Debug" /p:platform="x64" kbfiltr.sln**
 
 **msbuild /p:configuration="Release" /p:platform="Win32" kbfiltr.sln**
 
-For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using [MSBuild](https://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](https://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
 Run the sample
 --------------
@@ -80,7 +80,7 @@ The process of moving the driver package to the target computer and installing t
 
 ### Automatic deployment
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](https://msdn.microsoft.com/en-us/library/windows/hardware/).
 
 1.  On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
 2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Install and Verify**, and choose **Default Driver Package Installation Task** in the list. Click **OK**.
@@ -88,7 +88,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 ### Manual deployment
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
 
 1.  Copy all of the files in your driver package to a folder on the target computer (for example, c:\\KbfiltrDriverPackage).
 2.  On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the Devcon command with the correct hardware ID, such as:
