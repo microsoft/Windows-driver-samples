@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MediaSource", "MediaSource\MediaSource.vcxproj", "{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x64.ActiveCfg = Debug|x64
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x64.Build.0 = Debug|x64
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x86.ActiveCfg = Debug|Win32
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x86.Build.0 = Debug|Win32
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x64.ActiveCfg = Release|x64
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x64.Build.0 = Release|x64
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x86.ActiveCfg = Release|Win32
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2205BF4A-ACC2-4A73-8C1E-C3D9AF0F8B24}
+	EndGlobalSection
+EndGlobal
