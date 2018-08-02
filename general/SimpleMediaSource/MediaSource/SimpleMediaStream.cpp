@@ -1,4 +1,4 @@
-#include "SimpleMediaStream.h"
+#include "stdafx.h"
 
 #define NUM_IMAGE_ROWS 240
 #define NUM_IMAGE_COLS 320
@@ -6,22 +6,23 @@
 #define IMAGE_BUFFER_SIZE_BYTES (NUM_IMAGE_ROWS * NUM_IMAGE_COLS * BYTES_PER_PIXEL)
 #define IMAGE_ROW_SIZE_BYTES (NUM_IMAGE_COLS * BYTES_PER_PIXEL)
 
-#define CHECKHR_GOTO( val, label )  \
-hr = (val); \
-if( FAILED( hr ) ) { \
-    goto label; \
-}
-
-HRESULT SimpleMediaStream::RuntimeClassInitialize(_In_ SimpleMediaSource *pSource)
+HRESULT
+SimpleMediaStream::RuntimeClassInitialize(
+    _In_ SimpleMediaSource *pSource
+    )
 {
     HRESULT hr = S_OK;
     ComPtr<IMFMediaTypeHandler> spTypeHandler;
     ComPtr<IMFAttributes> attrs;
 
-    AsWeak(pSource, &_wpSource);
+    if (nullptr == pSource)
+    {
+        return E_INVALIDARG;
+    }
+    RETURN_IF_FAILED (pSource->QueryInterface(IID_PPV_ARGS(&_parent)));
 
     // Initialize media type and set the video output media type.
-    CHECKHR_GOTO(MFCreateMediaType(&_spMediaType), done);
+    RETURN_IF_FAILED (MFCreateMediaType(&_spMediaType));
     _spMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
     _spMediaType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32);
     _spMediaType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive);
@@ -30,52 +31,56 @@ HRESULT SimpleMediaStream::RuntimeClassInitialize(_In_ SimpleMediaSource *pSourc
     MFSetAttributeRatio(_spMediaType.Get(), MF_MT_FRAME_RATE, 30, 1);
     MFSetAttributeRatio(_spMediaType.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 
-    CHECKHR_GOTO(MFCreateAttributes(&_spAttributes, 10), done);
-    CHECKHR_GOTO(this->_SetStreamAttributes(_spAttributes.Get()), done);
-    CHECKHR_GOTO(MFCreateEventQueue(&_spEventQueue), done);
+    RETURN_IF_FAILED (MFCreateAttributes(&_spAttributes, 10));
+    RETURN_IF_FAILED (this->_SetStreamAttributes(_spAttributes.Get()));
+    RETURN_IF_FAILED (MFCreateEventQueue(&_spEventQueue));
 
     // Initialize stream descriptors
-    CHECKHR_GOTO(MFCreateStreamDescriptor(0, 1, _spMediaType.GetAddressOf(), &_spStreamDesc), done);
+    RETURN_IF_FAILED (MFCreateStreamDescriptor(0, 1, _spMediaType.GetAddressOf(), &_spStreamDesc));
 
-    CHECKHR_GOTO(_spStreamDesc->GetMediaTypeHandler(&spTypeHandler), done);
-    CHECKHR_GOTO(spTypeHandler->SetCurrentMediaType(_spMediaType.Get()), done);
-    CHECKHR_GOTO(this->_SetStreamDescriptorAttributes(_spStreamDesc.Get()), done);
+    RETURN_IF_FAILED (_spStreamDesc->GetMediaTypeHandler(&spTypeHandler));
+    RETURN_IF_FAILED (spTypeHandler->SetCurrentMediaType(_spMediaType.Get()));
+    RETURN_IF_FAILED (this->_SetStreamDescriptorAttributes(_spStreamDesc.Get()));
 
-done:
     return hr;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMFMediaEventGenerator
-IFACEMETHODIMP SimpleMediaStream::BeginGetEvent(IMFAsyncCallback *pCallback, IUnknown *punkState)
+IFACEMETHODIMP
+SimpleMediaStream::BeginGetEvent(
+    _In_ IMFAsyncCallback *pCallback,
+    _In_ IUnknown *punkState
+    )
 {
+    HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
 
-    HRESULT hr = _CheckShutdownRequiresLock();
-
-    if (SUCCEEDED(hr))
-    {
-        hr = _spEventQueue->BeginGetEvent(pCallback, punkState);
-    }
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
+    RETURN_IF_FAILED (_spEventQueue->BeginGetEvent(pCallback, punkState));
 
     return hr;
 }
 
-IFACEMETHODIMP SimpleMediaStream::EndGetEvent(IMFAsyncResult *pResult, IMFMediaEvent **ppEvent)
+IFACEMETHODIMP
+SimpleMediaStream::EndGetEvent(
+    _In_ IMFAsyncResult *pResult,
+    _COM_Outptr_ IMFMediaEvent **ppEvent
+    )
 {
+    HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
 
-    HRESULT hr = _CheckShutdownRequiresLock();
-
-    if (SUCCEEDED(hr))
-    {
-        hr = _spEventQueue->EndGetEvent(pResult, ppEvent);
-    }
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
+    RETURN_IF_FAILED (_spEventQueue->EndGetEvent(pResult, ppEvent));
 
     return hr;
 }
 
-IFACEMETHODIMP SimpleMediaStream::GetEvent(DWORD dwFlags, IMFMediaEvent **ppEvent)
+IFACEMETHODIMP
+SimpleMediaStream::GetEvent(
+    DWORD dwFlags,
+    _COM_Outptr_ IMFMediaEvent **ppEvent
+    )
 {
     // NOTE:
     // GetEvent can block indefinitely, so we don't hold the lock.
@@ -88,90 +93,80 @@ IFACEMETHODIMP SimpleMediaStream::GetEvent(DWORD dwFlags, IMFMediaEvent **ppEven
     {
         auto lock = _critSec.Lock();
 
-        // Check shutdown
-        hr = _CheckShutdownRequiresLock();
-
-        if (SUCCEEDED(hr))
-        {
-            spQueue = _spEventQueue;
-        }
+        RETURN_IF_FAILED (_CheckShutdownRequiresLock());
+        spQueue = _spEventQueue;
     }
 
     // Now get the event.
-    if (SUCCEEDED(hr))
-    {
-        hr = spQueue->GetEvent(dwFlags, ppEvent);
-    }
+    RETURN_IF_FAILED (_spEventQueue->GetEvent(dwFlags, ppEvent));
 
     return hr;
 }
 
-IFACEMETHODIMP SimpleMediaStream::QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT *pvValue)
+IFACEMETHODIMP
+SimpleMediaStream::QueueEvent(
+    MediaEventType eventType,
+    REFGUID guidExtendedType,
+    HRESULT hrStatus,
+    _In_opt_ PROPVARIANT const *pvValue
+    )
 {
+    HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
 
-    HRESULT hr = _CheckShutdownRequiresLock();
-    if (SUCCEEDED(hr))
-    {
-        hr = _spEventQueue->QueueEventParamVar(met, guidExtendedType, hrStatus, pvValue);
-    }
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
+    RETURN_IF_FAILED (_spEventQueue->QueueEventParamVar(eventType, guidExtendedType, hrStatus, pvValue));
 
     return hr;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 // IMFMediaStream
-IFACEMETHODIMP SimpleMediaStream::GetMediaSource(IMFMediaSource **ppMediaSource)
+IFACEMETHODIMP
+SimpleMediaStream::GetMediaSource(
+    _COM_Outptr_ IMFMediaSource **ppMediaSource
+    )
 {
+    HRESULT hr = S_OK;
+    auto lock = _critSec.Lock();
+
     if (ppMediaSource == nullptr)
     {
         return E_POINTER;
     }
     *ppMediaSource = nullptr;
 
-    auto lock = _critSec.Lock();
-    HRESULT hr = _CheckShutdownRequiresLock();
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
 
-    if (SUCCEEDED(hr))
-    {
-        ComPtr<SimpleMediaSource> spSource;
-        _wpSource.As(&spSource);
-        if (spSource != nullptr)
-        {
-            hr = spSource->QueryInterface(IID_PPV_ARGS(ppMediaSource));
-        }
-        else
-        {
-            hr = E_UNEXPECTED;
-        }
-    }
+    *ppMediaSource = _parent.Get();
+    (*ppMediaSource)->AddRef();
 
     return hr;
 }
 
-IFACEMETHODIMP SimpleMediaStream::GetStreamDescriptor(IMFStreamDescriptor **ppStreamDescriptor)
+IFACEMETHODIMP
+SimpleMediaStream::GetStreamDescriptor(
+    _COM_Outptr_ IMFStreamDescriptor **ppStreamDescriptor
+    )
 {
+    HRESULT hr = S_OK;
+    auto lock = _critSec.Lock();
+
     if (ppStreamDescriptor == nullptr)
     {
         return E_POINTER;
     }
-
     *ppStreamDescriptor = nullptr;
 
-    auto lock = _critSec.Lock();
-    HRESULT hr = _CheckShutdownRequiresLock();
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
 
-    if (SUCCEEDED(hr))
+    if (_spStreamDesc != nullptr)
     {
-        if (_spStreamDesc != nullptr)
-        {
-            *ppStreamDescriptor = _spStreamDesc.Get();
-            (*ppStreamDescriptor)->AddRef();
-        }
-        else
-        {
-            return E_UNEXPECTED;
-        }
+        *ppStreamDescriptor = _spStreamDesc.Get();
+        (*ppStreamDescriptor)->AddRef();
+    }
+    else
+    {
+        return E_UNEXPECTED;
     }
 
     return hr;
@@ -188,11 +183,16 @@ IFACEMETHODIMP SimpleMediaStream::GetStreamDescriptor(IMFStreamDescriptor **ppSt
    pitch - line length in bytes
    len - length of buffer in bytes
 */
-HRESULT WriteSampleData(BYTE *pBuf, LONG pitch, DWORD len)
+HRESULT
+WriteSampleData(
+    _Inout_updates_bytes_(len) BYTE *pBuf,
+    _In_ LONG pitch,
+    _In_ DWORD len
+    )
 {
     if (pBuf == nullptr)
     {
-        return E_POINTER;
+        return E_INVALIDARG;
     }
 
     const int NUM_ROWS = len / abs(pitch);
@@ -209,101 +209,63 @@ HRESULT WriteSampleData(BYTE *pBuf, LONG pitch, DWORD len)
     return S_OK;
 }
 
-IFACEMETHODIMP SimpleMediaStream::RequestSample(IUnknown *pToken)
+IFACEMETHODIMP
+SimpleMediaStream::RequestSample(
+    _In_ IUnknown *pToken
+    )
 {
+    HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
+    ComPtr<IMFSample> sample;
+    ComPtr<IMFMediaBuffer> outputBuffer;
+    LONG pitch = IMAGE_ROW_SIZE_BYTES;
+    BYTE *bufferStart = nullptr; // not used
+    DWORD bufferLength = 0;
+    BYTE *pbuf = nullptr;
+    ComPtr<IMF2DBuffer2> buffer2D;
 
-    HRESULT hr = _CheckShutdownRequiresLock();
-
-    if (SUCCEEDED(hr))
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
+    RETURN_IF_FAILED (MFCreateSample(&sample));
+    RETURN_IF_FAILED (MFCreate2DMediaBuffer(NUM_IMAGE_COLS,
+                                            NUM_IMAGE_ROWS,
+                                            D3DFMT_X8R8G8B8,
+                                            false,
+                                            &outputBuffer));
+    RETURN_IF_FAILED (outputBuffer.As(&buffer2D));
+    RETURN_IF_FAILED (buffer2D->Lock2DSize(MF2DBuffer_LockFlags_Write,
+                                           &pbuf,
+                                           &pitch,
+                                           &bufferStart,
+                                           &bufferLength));
+    RETURN_IF_FAILED (WriteSampleData(pbuf, pitch, bufferLength));
+    RETURN_IF_FAILED (buffer2D->Unlock2D());
+    RETURN_IF_FAILED (sample->AddBuffer(outputBuffer.Get()));
+    RETURN_IF_FAILED (sample->SetSampleTime(MFGetSystemTime()));
+    RETURN_IF_FAILED (sample->SetSampleDuration(333333));
+    if (pToken != nullptr)
     {
-        ComPtr<IMFSample> spSample;
-
-        ComPtr<IMFMediaBuffer> spOutputBuffer;
-        hr = MFCreate2DMediaBuffer(NUM_IMAGE_COLS, NUM_IMAGE_ROWS, D3DFMT_X8R8G8B8, false, &spOutputBuffer);
-
-        LONG pitch = IMAGE_ROW_SIZE_BYTES;
-        BYTE *bufferStart = nullptr; // not used, since in this example we know the image will be top down, so bufferStart == pBuf
-        DWORD bufferLength = IMAGE_BUFFER_SIZE_BYTES;
-
-        BYTE *pBuf = nullptr;
-        ComPtr<IMF2DBuffer2> spBuffer2D;
-        if (SUCCEEDED(hr))
-        {
-            hr = spOutputBuffer.As(&spBuffer2D);
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (spBuffer2D != nullptr)
-            {
-                hr = spBuffer2D->Lock2DSize(MF2DBuffer_LockFlags_Write, &pBuf, &pitch, &bufferStart, &bufferLength);
-            }
-            else
-            {
-                hr = spOutputBuffer->Lock(&pBuf, nullptr, nullptr);
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = WriteSampleData(pBuf, pitch, bufferLength);
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = spOutputBuffer->SetCurrentLength(bufferLength);
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = spBuffer2D->Unlock2D();
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = MFCreateSample(&spSample);
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = spSample->AddBuffer(spOutputBuffer.Get());
-        }
-
-        // set timestamp
-        if (SUCCEEDED(hr))
-        {
-            hr = spSample->SetSampleTime(MFGetSystemTime());
-        }
-        if (SUCCEEDED(hr))
-        {
-            hr = spSample->SetSampleDuration(330000);
-        }
-
-        if (pToken != nullptr)
-        {
-            hr = spSample->SetUnknown(MFSampleExtension_Token, pToken);
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            hr = _spEventQueue->QueueEventParamUnk(MEMediaSample, GUID_NULL, S_OK, spSample.Get());
-        }
+        RETURN_IF_FAILED (sample->SetUnknown(MFSampleExtension_Token, pToken));
     }
+    RETURN_IF_FAILED (_spEventQueue->QueueEventParamUnk(MEMediaSample,
+                                                        GUID_NULL,
+                                                        S_OK,
+                                                        sample.Get()));
 
     return hr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // IMFMediaStream2
-IFACEMETHODIMP SimpleMediaStream::SetStreamState(MF_STREAM_STATE state)
+IFACEMETHODIMP
+SimpleMediaStream::SetStreamState(
+    MF_STREAM_STATE state
+    )
 {
-    bool runningState = false;
-    auto lock = _critSec.Lock();
-
     HRESULT hr = S_OK;
+    auto lock = _critSec.Lock();
+    bool runningState = false;
 
-    CHECKHR_GOTO(_CheckShutdownRequiresLock(), done);
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
 
     switch (state)
     {
@@ -326,12 +288,16 @@ done:
     return hr;
 }
 
-IFACEMETHODIMP SimpleMediaStream::GetStreamState(_Out_ MF_STREAM_STATE *pState)
+IFACEMETHODIMP
+SimpleMediaStream::GetStreamState(
+    _Out_ MF_STREAM_STATE *pState
+    )
 {
+    HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
     BOOLEAN pauseState = false;
 
-    HRESULT hr = _CheckShutdownRequiresLock();
+    RETURN_IF_FAILED (_CheckShutdownRequiresLock());
 
     if (SUCCEEDED(hr))
     {
@@ -341,12 +307,15 @@ IFACEMETHODIMP SimpleMediaStream::GetStreamState(_Out_ MF_STREAM_STATE *pState)
     return hr;
 }
 
-HRESULT SimpleMediaStream::Shutdown()
+HRESULT
+SimpleMediaStream::Shutdown(
+    )
 {
     HRESULT hr = S_OK;
     auto lock = _critSec.Lock();
 
     _isShutdown = true;
+    _parent.Reset();
 
     if (_spEventQueue != nullptr)
     {
@@ -360,12 +329,12 @@ HRESULT SimpleMediaStream::Shutdown()
 
     _isSelected = false;
 
-    _wpSource.Reset();
-
     return hr;
 }
 
-HRESULT SimpleMediaStream::_CheckShutdownRequiresLock()
+HRESULT
+SimpleMediaStream::_CheckShutdownRequiresLock(
+    )
 {
     if (_isShutdown)
     {
@@ -380,28 +349,43 @@ HRESULT SimpleMediaStream::_CheckShutdownRequiresLock()
     return S_OK;
 }
 
-HRESULT SimpleMediaStream::_SetStreamAttributes(IMFAttributes *pAttributeStore)
+HRESULT
+SimpleMediaStream::_SetStreamAttributes(
+    _In_ IMFAttributes *pAttributeStore
+    )
 {
     HRESULT hr = S_OK;
 
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, PINNAME_VIDEO_CAPTURE); }
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_STREAM_ID, STREAMINDEX); }
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_FRAMESERVER_SHARED, 1); }
+    if (nullptr == pAttributeStore)
+    {
+        return E_INVALIDARG;
+    }
 
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, _MFFrameSourceTypes::MFFrameSourceTypes_Color); }
+    RETURN_IF_FAILED (pAttributeStore->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, PINNAME_VIDEO_CAPTURE));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_STREAM_ID, STREAMINDEX));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_FRAMESERVER_SHARED, 1));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, _MFFrameSourceTypes::MFFrameSourceTypes_Color));
 
     return hr;
 }
 
-HRESULT SimpleMediaStream::_SetStreamDescriptorAttributes(IMFAttributes *pAttributeStore)
+HRESULT
+SimpleMediaStream::_SetStreamDescriptorAttributes(
+    _In_ IMFAttributes *pAttributeStore
+    )
 {
     HRESULT hr = S_OK;
 
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, PINNAME_VIDEO_CAPTURE); }
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_STREAM_ID, STREAMINDEX); }
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_FRAMESERVER_SHARED, 1); }
+    if (nullptr == pAttributeStore)
+    {
+        return E_INVALIDARG;
+    }
 
-    if (SUCCEEDED(hr)) { hr = pAttributeStore->SetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, _MFFrameSourceTypes::MFFrameSourceTypes_Color); }
+    RETURN_IF_FAILED (pAttributeStore->SetGUID(MF_DEVICESTREAM_STREAM_CATEGORY, PINNAME_VIDEO_CAPTURE));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_STREAM_ID, STREAMINDEX));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_FRAMESERVER_SHARED, 1));
+    RETURN_IF_FAILED (pAttributeStore->SetUINT32(MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES, _MFFrameSourceTypes::MFFrameSourceTypes_Color));
 
     return hr;
 }
+

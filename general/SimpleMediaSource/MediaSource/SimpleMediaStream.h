@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include "SimpleMediaSource.h"
 
 class SimpleMediaSource;
 
@@ -29,19 +28,20 @@ public:
     IFACEMETHOD(SetStreamState)(MF_STREAM_STATE state);
     IFACEMETHOD(GetStreamState)(_Out_ MF_STREAM_STATE *pState);
 
-public:
+    // Non-interface methods.
     HRESULT RuntimeClassInitialize(_In_ SimpleMediaSource* pSource);
     HRESULT Shutdown();
-private:
-    HRESULT _CheckShutdownRequiresLock();
 
+
+protected:
+    HRESULT _CheckShutdownRequiresLock();
     HRESULT _SetStreamAttributes(IMFAttributes* pAttributeStore);
     HRESULT _SetStreamDescriptorAttributes(IMFAttributes* pAttributeStore);
-private:
+
+
     CriticalSection _critSec;
 
-    WeakRef _wpSource;
-
+    ComPtr<IMFMediaSource> _parent;
     ComPtr<IMFMediaEventQueue> _spEventQueue;
     ComPtr<IMFAttributes> _spAttributes;
     ComPtr<IMFMediaType> _spMediaType;

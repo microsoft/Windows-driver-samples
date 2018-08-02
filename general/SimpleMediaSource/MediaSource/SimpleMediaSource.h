@@ -3,43 +3,6 @@
 // Represents a simple media source that only has one stream and outputs a static image
 
 #include "stdafx.h"
-#include "SimpleMediaStream.h"
-
-#define  BREAK_ON_FAIL(value)       if FAILED(value) break;
-
-#if !defined(_IKsControl_)
-#define _IKsControl_
-interface DECLSPEC_UUID("28F54685-06FD-11D2-B27A-00A0C9223196") IKsControl;
-#undef INTERFACE
-#define INTERFACE IKsControl
-DECLARE_INTERFACE_(IKsControl, IUnknown)
-{
-    STDMETHOD(KsProperty)(
-        THIS_
-        IN PKSPROPERTY Property,
-        IN ULONG PropertyLength,
-        IN OUT LPVOID PropertyData,
-        IN ULONG DataLength,
-        OUT ULONG* BytesReturned
-        ) PURE;
-    STDMETHOD(KsMethod)(
-        THIS_
-        IN PKSMETHOD Method,
-        IN ULONG MethodLength,
-        IN OUT LPVOID MethodData,
-        IN ULONG DataLength,
-        OUT ULONG* BytesReturned
-        ) PURE;
-    STDMETHOD(KsEvent)(
-        THIS_
-        IN PKSEVENT Event OPTIONAL,
-        IN ULONG EventLength,
-        IN OUT LPVOID EventData,
-        IN ULONG DataLength,
-        OUT ULONG* BytesReturned
-        ) PURE;
-};
-#endif //!defined(_IKsControl_)
 
 class SimpleMediaStream;
 
@@ -70,49 +33,39 @@ public:
     IFACEMETHOD(GetCharacteristics)(_Out_ DWORD *pdwCharacteristics);
     IFACEMETHOD(Pause)();
     IFACEMETHOD(Shutdown)();
-    IFACEMETHOD(Start)(
-        _In_ IMFPresentationDescriptor *pPresentationDescriptor,
-        _In_ const GUID *pguidTimeFormat,
-        _In_ const PROPVARIANT *pvarStartPosition);
+    IFACEMETHOD(Start)(_In_ IMFPresentationDescriptor *pPresentationDescriptor, _In_ const GUID *pguidTimeFormat, _In_ const PROPVARIANT *pvarStartPosition);
     IFACEMETHOD(Stop)();
 
     // IMFMediaSourceEx
-    IFACEMETHOD(GetSourceAttributes)(_Outptr_ IMFAttributes **ppAttributes);
-    IFACEMETHOD(GetStreamAttributes)(DWORD dwStreamIdentifier, _Outptr_ IMFAttributes **ppAttributes);
+    IFACEMETHOD(GetSourceAttributes)(_COM_Outptr_ IMFAttributes **ppAttributes);
+    IFACEMETHOD(GetStreamAttributes)(DWORD dwStreamIdentifier, _COM_Outptr_ IMFAttributes **ppAttributes);
     IFACEMETHOD(SetD3DManager)(_In_opt_ IUnknown *pManager);
 
     // IMFGetService
-    IFACEMETHOD(GetService)(REFGUID guidService, REFIID riid, _Out_opt_ LPVOID *ppvObject);
+    IFACEMETHOD(GetService)(_In_ REFGUID guidService, _In_ REFIID riid, _Out_ LPVOID *ppvObject);
 
     // IKsControl
-    IFACEMETHOD(KsProperty)(
-        _In_ PKSPROPERTY pProperty,
-        ULONG ulPropertyLength,
-        _Inout_ LPVOID pPropertyData,
-        ULONG ulDataLength,
-        _Out_ ULONG* pBytesReturned);
-
-    IFACEMETHOD(KsMethod)(
-        _In_ PKSMETHOD pMethod,
-        ULONG ulMethodLength,
-        _Inout_ LPVOID pMethodData,
-        ULONG ulDataLength,
-        _Out_ ULONG* pBytesReturned
-        );
-
-    IFACEMETHOD(KsEvent)(
-        _In_opt_ PKSEVENT pEvent,
-        ULONG ulEventLength,
-        _Inout_opt_ LPVOID pEventData,
-        ULONG ulDataLength,
-        _Out_opt_ ULONG* pBytesReturned
-        );
+    IFACEMETHOD(KsProperty)(_In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
+                            _In_ ULONG ulPropertyLength,
+                            _Inout_updates_to_(ulDataLength, *pBytesReturned) LPVOID pPropertyData,
+                            _In_ ULONG ulDataLength,
+                            _Out_ ULONG* pBytesReturned);
+    IFACEMETHOD(KsMethod)(_In_reads_bytes_(ulMethodLength) PKSMETHOD pMethod,
+                          _In_ ULONG ulMethodLength,
+                          _Inout_updates_to_(ulDataLength, *pBytesReturned) LPVOID pMethodData,
+                          _In_ ULONG ulDataLength,
+                          _Out_ ULONG* pBytesReturned);
+    IFACEMETHOD(KsEvent)(_In_reads_bytes_opt_(ulEventLength) PKSEVENT pEvent,
+                         _In_ ULONG ulEventLength,
+                         _Inout_updates_to_(ulDataLength, *pBytesReturned) LPVOID pEventData,
+                         _In_ ULONG ulDataLength,
+                         _Out_opt_ ULONG* pBytesReturned);
 public:
     HRESULT RuntimeClassInitialize();
 
 private:
     HRESULT _CheckShutdownRequiresLock();
-    HRESULT _ValidatePresentationDescriptor(IMFPresentationDescriptor *pPresentationDescriptor);
+    HRESULT _ValidatePresentationDescriptor(_In_ IMFPresentationDescriptor *pPresentationDescriptor);
 
     CriticalSection _critSec;
     SourceState _sourceState{ SourceState::Invalid };
