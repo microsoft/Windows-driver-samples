@@ -34,14 +34,15 @@ KMDF_VERSION_MAJOR=1
 #C_DEFINES= $(C_DEFINES) -D_USE_IPortClsRuntimePower
 C_DEFINES= $(C_DEFINES) -D_USE_SingleComponentMultiFxStates
 
-INCLUDES= \
-        $(INCLUDES); \
-        ..\EndpointsCommon; \
+INCLUDES=                               \
+        $(INCLUDES);                    \
+        ..\EndpointsCommon;             \
 
-SOURCES=$(SOURCES)              \
-        hdmitopo.cpp    \
-        spdiftopo.cpp   \
-        micintopo.cpp   \
+SOURCES=$(SOURCES)                      \
+        hdmitopo.cpp                    \
+        spdiftopo.cpp                   \
+        micintopo.cpp                   \
+        TabletAudioSample.rc            \
 
 
 # Indicate that this module must be included in the driver package

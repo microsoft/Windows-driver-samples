@@ -867,6 +867,8 @@ NTSTATUS CMiniportWaveRT::GetChannelVolume(_In_  UINT32 _uiChannel, _Out_ LONG *
     ASSERT (_pVolume);
     DPF_ENTER(("[CMiniportWaveRT::GetChannelVolume]"));
 
+    NTSTATUS status = STATUS_SUCCESS;
+
     BOOL bHandledInSideband = FALSE;
 
     if (IsSidebandDevice())
@@ -875,7 +877,7 @@ NTSTATUS CMiniportWaveRT::GetChannelVolume(_In_  UINT32 _uiChannel, _Out_ LONG *
         {
             if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
             {
-                *_pVolume = m_pSidebandDevice->GetVolume(m_DeviceType, _uiChannel);
+                status = m_pSidebandDevice->GetVolume(m_DeviceType, _uiChannel, _pVolume);
             }
 
             bHandledInSideband = TRUE;
@@ -894,7 +896,8 @@ NTSTATUS CMiniportWaveRT::GetChannelVolume(_In_  UINT32 _uiChannel, _Out_ LONG *
             *_pVolume = m_plVolumeLevel[_uiChannel];
         }
     }
-    return STATUS_SUCCESS;
+
+    return status;
 }
 #pragma code_seg("PAGE")
 NTSTATUS CMiniportWaveRT::SetChannelVolume(_In_  UINT32 _uiChannel, _In_  LONG _Volume)

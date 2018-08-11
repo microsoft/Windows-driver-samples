@@ -227,6 +227,12 @@ static PCEVENT_ITEM TelephonyEvents[] =
     KSEVENT_PINCAPS_JACKINFOCHANGE,  // Jack Info Changes
     KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
     CCellularMiniportWaveRT_EventHandler_JackState
+  },
+  {
+    &KSEVENTSETID_Telephony,
+    KSEVENT_TELEPHONY_ENDPOINTPAIRS_CHANGED,
+    KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
+    CCellularMiniportWaveRT_EventHandler_Telephony
   }
 };
 

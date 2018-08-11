@@ -581,6 +581,18 @@ NT status code.
                             }
                             ntStatus = STATUS_SUCCESS;
                         }
+                        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY2)
+                        {
+                            LONG* micSensitivity2 = (LONG*)PropertyRequest->Value;
+                            fstatus = KeSaveFloatingPointState(&saveData);
+                            if (NT_SUCCESS(fstatus))
+                            {
+                                // Return microphone SNR information.
+                                *micSensitivity2 = FloatToFixedPoint16_16(MICARRAY_SENSITIVITY2); // convert float dB to fixed point arithmetic
+                                KeRestoreFloatingPointState(&saveData);
+                            }
+                            ntStatus = STATUS_SUCCESS;
+                        }
                     }
                     else
                     {
@@ -828,6 +840,10 @@ Return Value:
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_ARRAY_GEOMETRY)
         {
             ntStatus = pMiniport->PropertyHandlerMicArrayGeometry(PropertyRequest);
+        }
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SENSITIVITY2)
+        {
+            ntStatus = pMiniport->PropertyHandlerMicProperties(PropertyRequest);
         }
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIO_MIC_SNR)
         {

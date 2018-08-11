@@ -32,5 +32,4 @@ SOURCES=\
         ..\savedata.cpp \
         ..\tonegenerator.cpp \
         ..\wavereader.cpp \
-        ..\sysvad.rc
 

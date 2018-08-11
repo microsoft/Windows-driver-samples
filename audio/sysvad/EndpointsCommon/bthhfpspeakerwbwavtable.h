@@ -31,88 +31,9 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 #define BTHHFPSPEAKERWB_HOST_MIN_SAMPLE_RATE                16000   // Min Sample Rate
 #define BTHHFPSPEAKERWB_HOST_MAX_SAMPLE_RATE                16000   // Max Sample Rate
 
-#define BTHHFPSPEAKERWB_OFFLOAD_MAX_CHANNELS                1       // Max Channels.
-#define BTHHFPSPEAKERWB_OFFLOAD_MIN_BITS_PER_SAMPLE         16      // Min Bits Per Sample
-#define BTHHFPSPEAKERWB_OFFLOAD_MAX_BITS_PER_SAMPLE         16      // Max Bits Per Sample
-#define BTHHFPSPEAKERWB_OFFLOAD_MIN_SAMPLE_RATE             16000   // Min Sample Rate
-#define BTHHFPSPEAKERWB_OFFLOAD_MAX_SAMPLE_RATE             16000   // Max Sample Rate
-
-#define BTHHFPSPEAKERWB_LOOPBACK_MAX_CHANNELS               BTHHFPSPEAKERWB_HOST_MAX_CHANNELS          // Must be equal to host pin's Max Channels.
-#define BTHHFPSPEAKERWB_LOOPBACK_MIN_BITS_PER_SAMPLE        BTHHFPSPEAKERWB_HOST_MIN_BITS_PER_SAMPLE   // Must be equal to host pin's Min Bits Per Sample
-#define BTHHFPSPEAKERWB_LOOPBACK_MAX_BITS_PER_SAMPLE        BTHHFPSPEAKERWB_HOST_MAX_BITS_PER_SAMPLE   // Must be equal to host pin's Max Bits Per Sample
-#define BTHHFPSPEAKERWB_LOOPBACK_MIN_SAMPLE_RATE            BTHHFPSPEAKERWB_HOST_MIN_SAMPLE_RATE       // Must be equal to host pin's Min Sample Rate
-#define BTHHFPSPEAKERWB_LOOPBACK_MAX_SAMPLE_RATE            BTHHFPSPEAKERWB_HOST_MAX_SAMPLE_RATE       // Must be equal to host pin's Max Sample Rate
-
-#define BTHHFPSPEAKERWB_DOLBY_DIGITAL_MAX_CHANNELS          1       // Max Channels.
-#define BTHHFPSPEAKERWB_DOLBY_DIGITAL_MIN_BITS_PER_SAMPLE   16      // Min Bits Per Sample
-#define BTHHFPSPEAKERWB_DOLBY_DIGITAL_MAX_BITS_PER_SAMPLE   16      // Max Bits Per Sample
-#define BTHHFPSPEAKERWB_DOLBY_DIGITAL_MIN_SAMPLE_RATE       16000   // Min Sample Rate
-#define BTHHFPSPEAKERWB_DOLBY_DIGITAL_MAX_SAMPLE_RATE       16000   // Max Sample Rate
-
-
 //=============================================================================
 static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerWBAudioEngineSupportedDeviceFormats[] =
-{
-    { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                16000,
-                32000,
-                2,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    }
-};
-
-static 
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerWBHostPinSupportedDeviceFormats[] =
-{
-    { // 0
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                16000,
-                32000,
-                2,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    }
-};
-
-static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpSpeakerWBOffloadPinSupportedDeviceFormats[] =
 {
     { // 0
         {
@@ -153,15 +74,6 @@ MODE_AND_DEFAULT_FORMAT BthHfpSpeakerWBHostPinSupportedDeviceModes[] =
     }
 };
 
-static
-MODE_AND_DEFAULT_FORMAT BthHfpSpeakerWBOffloadPinSupportedDeviceModes[] =
-{
-    {
-        STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
-        &BthHfpSpeakerWBHostPinSupportedDeviceFormats[SIZEOF_ARRAY(BthHfpSpeakerWBHostPinSupportedDeviceFormats)-1].DataFormat   
-    }
-};
-
 //
 // The entries here must follow the same order as the filter's pin
 // descriptor array.
@@ -177,31 +89,10 @@ PIN_DEVICE_FORMATS_AND_MODES BthHfpSpeakerWBPinDeviceFormatsAndModes[] =
         SIZEOF_ARRAY(BthHfpSpeakerWBHostPinSupportedDeviceModes)
     },
     {
-        OffloadRenderPin,
-        BthHfpSpeakerWBOffloadPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(BthHfpSpeakerWBOffloadPinSupportedDeviceFormats),
-        BthHfpSpeakerWBOffloadPinSupportedDeviceModes,
-        SIZEOF_ARRAY(BthHfpSpeakerWBOffloadPinSupportedDeviceModes),
-    },
-    {
-        RenderLoopbackPin,
-        BthHfpSpeakerWBHostPinSupportedDeviceFormats,   // Must support all the formats supported by host pin
-        SIZEOF_ARRAY(BthHfpSpeakerWBHostPinSupportedDeviceFormats),
-        NULL,   // loopback doesn't support modes.
-        0
-    },
-    {
         BridgePin,
         NULL,
         0,
         NULL,
-        0
-    },
-    {
-        NoPin,      // For convenience, offload engine device formats appended here
-        BthHfpSpeakerWBAudioEngineSupportedDeviceFormats,
-        SIZEOF_ARRAY(BthHfpSpeakerWBAudioEngineSupportedDeviceFormats),
-        NULL,       // no modes for this entry.
         0
     }
 };
@@ -225,38 +116,6 @@ KSDATARANGE_AUDIO BthHfpSpeakerWBPinDataRangesStream[] =
         BTHHFPSPEAKERWB_HOST_MAX_BITS_PER_SAMPLE,
         BTHHFPSPEAKERWB_HOST_MAX_SAMPLE_RATE,
         BTHHFPSPEAKERWB_HOST_MAX_SAMPLE_RATE
-    },
-    { // 1
-        {
-            sizeof(KSDATARANGE_AUDIO),
-            KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        BTHHFPSPEAKERWB_OFFLOAD_MAX_CHANNELS,
-        BTHHFPSPEAKERWB_OFFLOAD_MIN_BITS_PER_SAMPLE,
-        BTHHFPSPEAKERWB_OFFLOAD_MAX_BITS_PER_SAMPLE,
-        BTHHFPSPEAKERWB_OFFLOAD_MAX_SAMPLE_RATE,
-        BTHHFPSPEAKERWB_OFFLOAD_MAX_SAMPLE_RATE
-    },
-    { // 2
-        {
-            sizeof(KSDATARANGE_AUDIO),
-                0,
-                0,
-                0,
-                STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-                STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-                STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        BTHHFPSPEAKERWB_LOOPBACK_MAX_CHANNELS,
-        BTHHFPSPEAKERWB_LOOPBACK_MIN_BITS_PER_SAMPLE,
-        BTHHFPSPEAKERWB_LOOPBACK_MAX_BITS_PER_SAMPLE,
-        BTHHFPSPEAKERWB_LOOPBACK_MAX_SAMPLE_RATE,
-        BTHHFPSPEAKERWB_LOOPBACK_MAX_SAMPLE_RATE
     }
 };
 
@@ -265,19 +124,6 @@ PKSDATARANGE BthHfpSpeakerWBPinDataRangePointersStream[] =
 {
     PKSDATARANGE(&BthHfpSpeakerWBPinDataRangesStream[0]),
     PKSDATARANGE(&PinDataRangeAttributeList)
-};
-
-static
-PKSDATARANGE BthHfpSpeakerWBPinDataRangePointersOffloadStream[] =
-{
-    PKSDATARANGE(&BthHfpSpeakerWBPinDataRangesStream[1]),
-    PKSDATARANGE(&PinDataRangeAttributeList)
-};
-
-static
-PKSDATARANGE BthHfpSpeakerWBPinDataRangePointersLoopbackStream[] =
-{
-    PKSDATARANGE(&BthHfpSpeakerWBPinDataRangesStream[2])
 };
 
 //=============================================================================
@@ -302,27 +148,6 @@ PKSDATARANGE BthHfpSpeakerWBPinDataRangePointersBridge[] =
 };
 
 //=============================================================================
-
-static
-PCPROPERTY_ITEM PropertiesBthHfpSpeakerWBOffloadPin[] =
-{
-    {
-        &KSPROPSETID_OffloadPin,  // define new property set
-        KSPROPERTY_OFFLOAD_PIN_GET_STREAM_OBJECT_POINTER, // define properties
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_OffloadPin
-    },
-    {
-        &KSPROPSETID_OffloadPin,  // define new property set
-        KSPROPERTY_OFFLOAD_PIN_VERIFY_STREAM_OBJECT_POINTER, // define properties
-        KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_OffloadPin
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationBthHfpSpeakerWBOffloadPin, PropertiesBthHfpSpeakerWBOffloadPin);
-
-//=============================================================================
 static
 PCPIN_DESCRIPTOR BthHfpSpeakerWBWaveMiniportPins[] =
 {
@@ -342,46 +167,6 @@ PCPIN_DESCRIPTOR BthHfpSpeakerWBWaveMiniportPins[] =
             KSPIN_DATAFLOW_IN,
             KSPIN_COMMUNICATION_SINK,
             &KSCATEGORY_AUDIO,
-            NULL,
-            0
-        }
-    },
-    // Wave Out Streaming Pin (Renderer) KSPIN_WAVE_RENDER_SINK_OFFLOAD
-    {
-        MAX_INPUT_OFFLOAD_STREAMS,
-        MAX_INPUT_OFFLOAD_STREAMS,
-        0,
-        &AutomationBthHfpSpeakerWBOffloadPin,     // AutomationTable
-        {
-            0,
-            NULL,
-            0,
-            NULL,
-            SIZEOF_ARRAY(BthHfpSpeakerWBPinDataRangePointersOffloadStream),
-            BthHfpSpeakerWBPinDataRangePointersOffloadStream,
-            KSPIN_DATAFLOW_IN,
-            KSPIN_COMMUNICATION_SINK,
-            &KSCATEGORY_AUDIO,
-            NULL,
-            0
-        }
-    },
-    // Wave Out Streaming Pin (Renderer) KSPIN_WAVE_RENDER_SINK_LOOPBACK
-    {
-        MAX_OUTPUT_LOOPBACK_STREAMS,
-        MAX_OUTPUT_LOOPBACK_STREAMS,
-        0,
-        NULL,
-        {
-            0,
-            NULL,
-            0,
-            NULL,
-            SIZEOF_ARRAY(BthHfpSpeakerWBPinDataRangePointersLoopbackStream),
-            BthHfpSpeakerWBPinDataRangePointersLoopbackStream,
-            KSPIN_DATAFLOW_OUT,
-            KSPIN_COMMUNICATION_SINK,
-            &KSNODETYPE_AUDIO_LOOPBACK,
             NULL,
             0
         }
@@ -411,30 +196,21 @@ PCPIN_DESCRIPTOR BthHfpSpeakerWBWaveMiniportPins[] =
 static
 PCNODE_DESCRIPTOR BthHfpSpeakerWBWaveMiniportNodes[] =
 {
-    // KSNODE_WAVE_AUDIO_ENGINE
+    // KSNODE_WAVE_DAC
     {
         0,                          // Flags
         NULL,                       // AutomationTable
-        &KSNODETYPE_AUDIO_ENGINE,   // Type  KSNODETYPE_AUDIO_ENGINE
+        &KSNODETYPE_DAC,            // Type KSNODETYPE_DAC
         NULL                        // Name
     }
 };
+
 //=============================================================================
-//
-//                   ----------------------------      
-//                   |                          |      
-//  System Pin   0-->|                          |--> 2 Loopback Pin
-//                   |   HW Audio Engine node   |      
-//  Offload Pin  1-->|                          |--> 3 KSPIN_WAVE_RENDER_SOURCE
-//                   |                          |      
-//                   ----------------------------      
 static
 PCCONNECTION_DESCRIPTOR BthHfpSpeakerWBWaveMiniportConnections[] =
 {
-    { PCFILTER_NODE,            KSPIN_WAVE_RENDER_SINK_SYSTEM,     KSNODE_WAVE_AUDIO_ENGINE,   1 },
-    { PCFILTER_NODE,            KSPIN_WAVE_RENDER_SINK_OFFLOAD,    KSNODE_WAVE_AUDIO_ENGINE,   2 },
-    { KSNODE_WAVE_AUDIO_ENGINE, 3,                                 PCFILTER_NODE,              KSPIN_WAVE_RENDER_SINK_LOOPBACK },
-    { KSNODE_WAVE_AUDIO_ENGINE, 0,                                 PCFILTER_NODE,              KSPIN_WAVE_RENDER_SOURCE },
+    { PCFILTER_NODE,            KSPIN_WAVE_RENDER3_SINK_SYSTEM,     KSNODE_WAVE_DAC,   1 },
+    { KSNODE_WAVE_DAC,          0,                                  PCFILTER_NODE,     KSPIN_WAVE_RENDER3_SOURCE },
 };
 
 //=============================================================================

@@ -777,7 +777,7 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWr
     NTSTATUS ntStatus;
 
 #if defined(SYSVAD_BTH_BYPASS)
-    if (m_SidebandOpen)
+    if (m_SidebandStarted)
     {
         ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
@@ -873,7 +873,7 @@ NTSTATUS CMiniportWaveRTStream::GetPositions
     LARGE_INTEGER   ilQPC;
     KIRQL           oldIrql;
 #if defined(SYSVAD_BTH_BYPASS)
-    if (m_SidebandOpen)
+    if (m_SidebandStarted)
     {
         ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);

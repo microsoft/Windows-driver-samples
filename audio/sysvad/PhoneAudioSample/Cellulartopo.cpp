@@ -371,6 +371,10 @@ Return Value:
     {
         *Object = PVOID(PCELLULARTOPOLOGY(this));
     }
+    else if (IsEqualGUIDAligned(Interface, IID_IMiniportChange))
+    {
+        *Object = PVOID(static_cast<PMINIPORTCHANGE>( this ));
+    }
     else
     {
         *Object = NULL;
@@ -608,14 +612,13 @@ Return Value:
     DPF_ENTER(("[PropertyHandlerTelephonyEndpointIdPair]"));
 
     NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-    PLIST_ENTRY le = NULL;
    
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
     {   
         ntStatus = STATUS_INVALID_PARAMETER;
         ULONG ulExpectedSize = (sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER));
 
-        le = NULL;
+        PLIST_ENTRY le = NULL;
         int countOfValidEndpointPairs = 0;
 
         ExAcquireFastMutex(&m_EndpointFastMutex);
@@ -637,8 +640,8 @@ Return Value:
             PropDesc->DescriptionSize   = ulExpectedSize;
             PropDesc->PropTypeSet.Set   = KSPROPSETID_TelephonyTopology;
             PropDesc->PropTypeSet.Id    = KSPROPERTY_TELEPHONY_ENDPOINTIDPAIR;
+            PropDesc->MembersListCount  = 0;
             PropDesc->PropTypeSet.Flags = 0;
-            PropDesc->MembersListCount  = 1;
             PropDesc->Reserved          = 0;
 
             // buffer is big enough to hold the full data, add that
@@ -646,6 +649,9 @@ Return Value:
             {
                 PKSPROPERTY_MEMBERSHEADER MembersHeader = 
                     PKSPROPERTY_MEMBERSHEADER(PropDesc + 1);
+
+                // we're now adding the members header.
+                PropDesc->MembersListCount  = 1;
 
                 MembersHeader->MembersFlags = KSPROPERTY_MEMBER_VALUES;
                 MembersHeader->MembersSize = sizeof(KSTOPOLOGY_ENDPOINTIDPAIR);
@@ -720,7 +726,7 @@ Return Value:
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
                 PKSTOPOLOGY_ENDPOINTIDPAIR EndpointIdPair = static_cast<PKSTOPOLOGY_ENDPOINTIDPAIR>(PropertyRequest->Value);
-                le = NULL;
+                PLIST_ENTRY le = NULL;
 
                 // verify the requested combination is in the list of valid endpoint combinations, fail with
                 // invalid parameter if not found.
@@ -1027,6 +1033,62 @@ NTSTATUS CCellularMiniportTopology::EventHandler_JackState
     }
 
     return STATUS_SUCCESS;
+}
+
+#pragma code_seg("PAGE")
+STDMETHODIMP_(NTSTATUS)
+CCellularMiniportTopology::NotifyEndpointPair
+( 
+    _In_ WCHAR              *RenderEndpointTopoName,
+    _In_ ULONG              RenderEndpointNameLen,
+    _In_ ULONG              RenderPinId,
+    _In_ WCHAR              *CaptureEndpointTopoName,
+    _In_ ULONG              CaptureEndpointNameLen,
+    _In_ ULONG              CapturePinId
+)
+{
+    PAGED_CODE ();
+
+    NTSTATUS ntStatus = STATUS_SUCCESS;
+
+    ENDPOINT_PAIR_ENTRY *newEntry = new(NonPagedPoolNx, MINADAPTER_POOLTAG) ENDPOINT_PAIR_ENTRY;
+
+    if (!newEntry)
+    {
+        DPF(D_TERSE, ("Insufficient memory to create endpoint pair"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    if (NT_SUCCESS(ntStatus))
+    {
+        KSTOPOLOGY_ENDPOINTIDPAIR *endpointPair = &newEntry->data;
+
+        RtlStringCchCopyNW(endpointPair->RenderEndpoint.TopologyName,
+            SIZEOF_ARRAY(endpointPair->RenderEndpoint.TopologyName),
+            RenderEndpointTopoName,
+            RenderEndpointNameLen);
+        endpointPair->RenderEndpoint.PinId = RenderPinId;
+
+        RtlStringCchCopyNW(endpointPair->CaptureEndpoint.TopologyName,
+            SIZEOF_ARRAY(endpointPair->CaptureEndpoint.TopologyName),
+            CaptureEndpointTopoName,
+            CaptureEndpointNameLen);
+        endpointPair->CaptureEndpoint.PinId = CapturePinId;
+
+        ExAcquireFastMutex(&m_EndpointFastMutex);
+        InsertTailList(&m_EndpointPairs, &newEntry->ListEntry);
+        ExReleaseFastMutex(&m_EndpointFastMutex);
+
+        GenerateEventList(
+                    (GUID*)&KSEVENTSETID_Telephony,
+                    KSEVENT_TELEPHONY_ENDPOINTPAIRS_CHANGED,
+                    FALSE,
+                    NULL,
+                    FALSE,
+                    ULONG(-1));
+    }
+
+    return ntStatus;
 }
 
 #pragma code_seg()

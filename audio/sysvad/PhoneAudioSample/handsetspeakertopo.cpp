@@ -496,7 +496,7 @@ Return Value:
                         // 0x00000001 - JACKDESC2_PRESENCE_DETECT_CAPABILITY
                         // 0x00000002 - JACKDESC2_DYNAMIC_FORMAT_CHANGE_CAPABILITY 
                         //
-                        pDesc->JackCapabilities = JACKDESC2_PRESENCE_DETECT_CAPABILITY;
+                        pDesc->JackCapabilities = 0;
                         
                         ntStatus = STATUS_SUCCESS;
                     }

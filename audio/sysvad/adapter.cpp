@@ -628,13 +628,14 @@ Return Value:
     DPF(D_TERSE, ("[AddDevice]"));
 
     maxObjects = g_MaxMiniports;
-    
+
 #ifdef SYSVAD_BTH_BYPASS
     // 
     // Allow three (3) Bluetooth hands-free profile devices.
     //
-    maxObjects += g_MaxBthHfpMiniports * 3; 
+    maxObjects += g_MaxBthHfpMiniports; 
 #endif // SYSVAD_BTH_BYPASS
+
 
     // Tell the class driver to add the device.
     //

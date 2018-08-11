@@ -742,29 +742,50 @@ BthHfpDevice::GetVolumeSettings
 
 //=============================================================================
 #pragma code_seg("PAGE")
-LONG
+NTSTATUS
 BthHfpDevice::GetVolume
 (
     _In_    eDeviceType     DeviceType,
-    _In_    LONG            Channel)
+    _In_    LONG            Channel,
+    _Out_   LONG            *pVolume
+)
 {
     PAGED_CODE();
     UNREFERENCED_PARAMETER(Channel);
     DPF_ENTER(("[BthHfpDevice::GetSpeakerVolume]"));
 
+    NTSTATUS status = STATUS_SUCCESS;
+
+    ASSERT(pVolume);
+
     if (eBthHfpSpeakerDevice == DeviceType)
     {
-        return InterlockedCompareExchange(&m_SpeakerVolumeLevel, 0, 0);
+        status = GetBthHfpSpeakerVolume(pVolume);
+        IF_FAILED_ACTION_JUMP(
+            status,
+            DPF(D_ERROR, ("Start: GetBthHfpSpeakerVolume: failed, 0x%x", status)),
+            Done);
+
+        InterlockedExchange(&m_SpeakerVolumeLevel, *pVolume);
     }
     else if(eBthHfpMicDevice == DeviceType)
     {
-        return InterlockedCompareExchange(&m_MicVolumeLevel, 0, 0);
+        status = GetBthHfpMicVolume(pVolume);
+        IF_FAILED_ACTION_JUMP(
+            status,
+            DPF(D_ERROR, ("Start: GetBthHfpMicVolume: failed, 0x%x", status)),
+            Done);
+
+        InterlockedExchange(&m_MicVolumeLevel, *pVolume);
     }
     else
     {
         ASSERTMSG("Invalid device type", FALSE);
-        return STATUS_INVALID_PARAMETER;
+        status = STATUS_INVALID_PARAMETER;
     }
+
+Done:
+    return status;
 }
 
 //=============================================================================
@@ -968,6 +989,25 @@ BthHfpDevice::StreamOpen(_In_ eDeviceType deviceType)
     UNREFERENCED_PARAMETER(deviceType);
     DPF_ENTER(("[BthHfpDevice::StreamOpen]"));
 
+    // BTH HFP DDI has stream open and close.
+    // No start and suspend commands
+    // START = BTH HFP STREAM OPEN
+    // SUSPEND = BTH HFP STREAM CLOSE
+    return STATUS_SUCCESS;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+BthHfpDevice::StreamStart
+(
+    _In_ eDeviceType deviceType
+)
+{
+    PAGED_CODE();
+    UNREFERENCED_PARAMETER(deviceType);
+    DPF_ENTER(("[BthHfpDevice::StreamStart]"));
+
     NTSTATUS    ntStatus = STATUS_SUCCESS;
     LONG        nStreams = 0;
 
@@ -976,12 +1016,12 @@ BthHfpDevice::StreamOpen(_In_ eDeviceType deviceType)
     nStreams = InterlockedIncrement(&m_nStreams);
     if (nStreams == 1)
     {
-        BOOLEAN  streamOpen = FALSE;
+        BOOLEAN  streamStart = FALSE;
 
         ntStatus = SetBthHfpStreamOpen();
         if (NT_SUCCESS(ntStatus))
         {
-            streamOpen = TRUE;
+            streamStart = TRUE;
             m_StreamStatus = STATUS_SUCCESS;
             ntStatus = EnableBthHfpStreamStatusNotification();
         }
@@ -995,7 +1035,7 @@ BthHfpDevice::StreamOpen(_In_ eDeviceType deviceType)
             ASSERT(nStreams == 0);
             UNREFERENCED_VAR(nStreams);
 
-            if (streamOpen)
+            if (streamStart)
             {
                 SetBthHfpStreamClose();
             }
@@ -1010,14 +1050,14 @@ BthHfpDevice::StreamOpen(_In_ eDeviceType deviceType)
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
-BthHfpDevice::StreamClose
+BthHfpDevice::StreamSuspend
 (
     _In_ eDeviceType deviceType
 )
 {
     UNREFERENCED_PARAMETER(deviceType);
     PAGED_CODE();
-    DPF_ENTER(("[BthHfpDevice::StreamClose]"));
+    DPF_ENTER(("[BthHfpDevice::StreamSuspend]"));
 
     NTSTATUS    ntStatus = STATUS_SUCCESS;
     LONG        nStreams = 0;
@@ -1035,6 +1075,25 @@ BthHfpDevice::StreamClose
     }
 
     return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+BthHfpDevice::StreamClose
+(
+    _In_ eDeviceType deviceType
+)
+{
+    UNREFERENCED_PARAMETER(deviceType);
+    PAGED_CODE();
+    DPF_ENTER(("[BthHfpDevice::StreamClose]"));
+
+    // BTH HFP DDI has stream open and close.
+    // No start and suspend commands
+    // START = BTH HFP STREAM OPEN
+    // SUSPEND = BTH HFP STREAM CLOSE
+    return STATUS_SUCCESS;
 }
 
 //=============================================================================
@@ -2724,7 +2783,7 @@ Asynchronously called to start the audio device.
     ntStatus = SetBthHfpDeviceCapabilities(TRUE);
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("Start: GetBthHfpDescriptor: failed to set Wideband Support, 0x%x", ntStatus)),
+        DPF(D_ERROR, ("Start: SetBthHfpDeviceCapabilities: failed to set Wideband Support, 0x%x", ntStatus)),
         Done);
 
     //
@@ -2882,6 +2941,20 @@ Asynchronously called to start the audio device.
     IF_FAILED_ACTION_JUMP(
         ntStatus,
         DPF(D_ERROR, ("Start: InstallEndpointCaptureFilters (Bth HFP SCO-Bypass): failed, 0x%x", ntStatus)),
+        Done);
+
+    ntStatus = m_Adapter->NotifyEndpointPair(
+        m_SpeakerTopologyNameBuffer,
+        SIZEOF_ARRAY(m_SpeakerTopologyNameBuffer),
+        KSPIN_TOPO_LINEOUT_DEST,
+        m_MicTopologyNameBuffer,
+        SIZEOF_ARRAY(m_MicTopologyNameBuffer),
+        KSPIN_TOPO_MIC_ELEMENTS
+    );
+
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("Start: NotifyEndpointPair (Bth HFP SCO-Bypass): failed, 0x%x", ntStatus)),
         Done);
 
     //
@@ -3193,12 +3266,6 @@ pending (volume, connection, etc.).
     // The device is in the stopped state.
     //
     InterlockedExchange((PLONG)&m_State, eBthHfpStateStopped);
-
-    DeleteCustomEndpointMinipair(m_SpeakerMiniports);
-    m_SpeakerMiniports = NULL;
-
-    DeleteCustomEndpointMinipair(m_MicMiniports);
-    m_MicMiniports = NULL;
 
 }
 

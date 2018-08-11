@@ -40,6 +40,13 @@ enum
     KSPIN_WAVE_RENDER_SOURCE
 };
 
+// Wave pins - no mix, no offload
+enum 
+{
+    KSPIN_WAVE_RENDER3_SINK_SYSTEM = 0, 
+    KSPIN_WAVE_RENDER3_SOURCE
+};
+
 // Wave Topology nodes - offloading supported.
 enum 
 {

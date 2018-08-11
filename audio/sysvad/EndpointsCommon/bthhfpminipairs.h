@@ -70,7 +70,7 @@ PHYSICALCONNECTIONTABLE BthHfpSpeakerTopologyPhysicalConnections[] =
 {
     {
         KSPIN_TOPO_WAVEOUT_SOURCE,      // TopologyIn
-        KSPIN_WAVE_RENDER_SOURCE,       // WaveOut
+        KSPIN_WAVE_RENDER3_SOURCE,      // WaveOut
         CONNECTIONTYPE_WAVE_OUTPUT
     }
 };
@@ -106,7 +106,7 @@ ENDPOINT_MINIPAIR BthHfpSpeakerMiniports =
     SIZEOF_ARRAY(BthHfpSpeakerPinDeviceFormatsAndModes),
     BthHfpSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(BthHfpSpeakerTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_NO_FLAGS
 };
 
 static
@@ -128,7 +128,7 @@ ENDPOINT_MINIPAIR BthHfpSpeakerWBMiniports =
     SIZEOF_ARRAY(BthHfpSpeakerWBPinDeviceFormatsAndModes),
     BthHfpSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(BthHfpSpeakerTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_NO_FLAGS
 };
 
 //
@@ -235,10 +235,14 @@ C_ASSERT(g_cBthHfpCaptureEndpoints == 2);
 //
 // Total miniports = # endpoints * 2 (topology + wave) / 2 (since we have one each for narrowband-only and wideband)
 //
-#define g_MaxBthHfpMiniports  ((g_cBthHfpRenderEndpoints + g_cBthHfpCaptureEndpoints))
+// 
+// Allow 10 Bluetooth hands-free profile devices.
+//
+#define MAX_BTHHFP_DEVICES      (10)
+#define g_MaxBthHfpMiniports    ((g_cBthHfpRenderEndpoints + g_cBthHfpCaptureEndpoints) * MAX_BTHHFP_DEVICES)
 
 // g_MaxBthHfpMiniports is used when calculating the MaxObjects inside AddDevice.
-C_ASSERT(g_MaxBthHfpMiniports == 4);
+C_ASSERT(g_MaxBthHfpMiniports == 40);
 
 #endif // _SYSVAD_BTHHFPMINIPAIRS_H_
 

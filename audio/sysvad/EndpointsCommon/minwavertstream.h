@@ -4,7 +4,7 @@ Copyright (c) 1997-2010  Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    minwavert.h
+    minwavertstream.h
 
 Abstract:
 
@@ -28,7 +28,7 @@ typedef struct _NotificationListEntry
     PKEVENT     NotificationEvent;
 } NotificationListEntry;
 
-KDEFERRED_ROUTINE TimerNotifyRT;
+EXT_CALLBACK   TimerNotifyRT;
 
 //=============================================================================
 // Referenced Forward
@@ -56,8 +56,7 @@ class CMiniportWaveRTStream :
 protected:
     PPORTWAVERTSTREAM           m_pPortStream;
     LIST_ENTRY                  m_NotificationList;
-    PKTIMER                     m_pNotificationTimer;
-    PRKDPC                      m_pNotificationDpc;
+    PEX_TIMER                   m_pNotificationTimer;
     ULONG                       m_ulNotificationIntervalMs;
     ULONG                       m_ulCurrentWritePosition;
     LONG                        m_IsCurrentWritePositionUpdated;
@@ -88,7 +87,7 @@ public:
 
     // Friends
     friend class                CMiniportWaveRT;
-    friend KDEFERRED_ROUTINE    TimerNotifyRT;
+    friend EXT_CALLBACK         TimerNotifyRT;
 protected:
     CMiniportWaveRT*            m_pMiniport;
     ULONG                       m_ulPin;
@@ -142,7 +141,8 @@ protected:
     // Member variable as config params for tone generator
 
 #if defined(SYSVAD_BTH_BYPASS)
-    BOOLEAN                     m_SidebandOpen;
+    BOOL                        m_SidebandOpen;
+    BOOL                        m_SidebandStarted;
 #endif  // defined(SYSVAD_BTH_BYPASS)
 
 public:

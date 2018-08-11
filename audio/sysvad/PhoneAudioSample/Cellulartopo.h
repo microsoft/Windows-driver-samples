@@ -86,6 +86,7 @@ typedef ICellularTopology *PCELLULARTOPOLOGY;
 class CCellularMiniportTopology : 
     public CMiniportTopologySYSVAD,
     public ICellularTopology,
+    public IMiniportChange,
     public CUnknown
 {
   private:
@@ -148,6 +149,16 @@ class CCellularMiniportTopology :
     NTSTATUS EventHandler_Telephony
     (
         _In_ PPCEVENT_REQUEST _pEventRequest
+    );
+
+    STDMETHODIMP_(NTSTATUS) NotifyEndpointPair
+    ( 
+        _In_ WCHAR              *RenderEndpointTopoName,
+        _In_ ULONG              RenderEndpointNameLen,
+        _In_ ULONG              RenderPinId,
+        _In_ WCHAR              *CaptureEndpointTopoName,
+        _In_ ULONG              CaptureEndpointNameLen,
+        _In_ ULONG              CapturePinId
     );
 };
     

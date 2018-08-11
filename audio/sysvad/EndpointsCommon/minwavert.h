@@ -254,14 +254,14 @@ public:
         _In_            PUNKNOWN                                UnknownAdapter,
         _In_            PENDPOINT_MINIPAIR                      MiniportPair,
         _In_opt_        PVOID                                   DeviceContext
-        )
+    )
         :CUnknown(0),
         m_ulMaxSystemStreams(0),
         m_ulMaxOffloadStreams(0),
         m_ulMaxLoopbackStreams(0),
         m_ulMaxKeywordDetectorStreams(0),
         m_DeviceType(MiniportPair->DeviceType),
-        m_DeviceContext(DeviceContext), 
+        m_DeviceContext(DeviceContext),
         m_DeviceMaxChannels(MiniportPair->DeviceMaxChannels),
         m_DeviceFormatsAndModes(MiniportPair->PinDeviceFormatsAndModes),
         m_DeviceFormatsAndModesCount(MiniportPair->PinDeviceFormatsAndModesCount),
@@ -273,7 +273,7 @@ public:
         PAGED_CODE();
 
         m_pAdapterCommon = (PADAPTERCOMMON)UnknownAdapter; // weak ref.
-        
+
         if (MiniportPair->WaveDescriptor)
         {
             RtlCopyMemory(&m_FilterDesc, MiniportPair->WaveDescriptor, sizeof(m_FilterDesc));
@@ -298,6 +298,10 @@ public:
                     {
                         m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER2_SINK_SYSTEM].MaxFilterInstanceCount;
                         m_ulMaxLoopbackStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER2_SINK_LOOPBACK].MaxFilterInstanceCount;
+                    }
+                    else if(m_FilterDesc.PinCount > KSPIN_WAVE_RENDER3_SOURCE)
+                    {
+                        m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER3_SINK_SYSTEM].MaxFilterInstanceCount;
                     }
                 }
             }
@@ -653,6 +657,16 @@ protected:
     {
         PAGED_CODE();
         return (m_DeviceType == eCellularDevice) ? TRUE : FALSE;
+    }
+
+    BOOL IsLoopbackSupported()
+    {
+        PAGED_CODE();
+
+        //
+        // It is assumed that loopback is supported when offload is supported
+        //
+        return (m_DeviceFlags & (ENDPOINT_LOOPBACK_SUPPORTED | ENDPOINT_OFFLOAD_SUPPORTED)) ? TRUE : FALSE;
     }
 
     BOOL IsOffloadSupported()

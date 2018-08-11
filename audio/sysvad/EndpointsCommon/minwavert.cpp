@@ -487,9 +487,7 @@ Return Value:
     //
     if (IsRenderDevice())
     {
-        // Basic validation
-        if (m_ulMaxSystemStreams == 0 ||
-            m_ulMaxLoopbackStreams == 0)
+        if (m_ulMaxSystemStreams == 0 )
         {
             return STATUS_INVALID_DEVICE_STATE;
         }
@@ -503,16 +501,23 @@ Return Value:
         }
         RtlZeroMemory(m_SystemStreams, size);
 
-        // Loopback streams.
-        size = sizeof(PCMiniportWaveRTStream) * m_ulMaxLoopbackStreams;
-        m_LoopbackStreams = (PCMiniportWaveRTStream *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
-        if (m_LoopbackStreams == NULL)
+        if (IsLoopbackSupported())
         {
-            return STATUS_INSUFFICIENT_RESOURCES;
-        }
-        RtlZeroMemory(m_LoopbackStreams, size);
+            if (m_ulMaxLoopbackStreams == 0)
+            {
+                return STATUS_INVALID_DEVICE_STATE;
+            }
 
-        // Basic validation
+            // Loopback streams.
+            size = sizeof(PCMiniportWaveRTStream) * m_ulMaxLoopbackStreams;
+            m_LoopbackStreams = (PCMiniportWaveRTStream *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+            if (m_LoopbackStreams == NULL)
+            {
+                return STATUS_INSUFFICIENT_RESOURCES;
+            }
+            RtlZeroMemory(m_LoopbackStreams, size);
+        }
+
         if (IsOffloadSupported())
         {
             PKSDATAFORMAT_WAVEFORMATEXTENSIBLE pDeviceFormats;
@@ -1442,16 +1447,47 @@ CMiniportWaveRT::PropertyHandlerProposedFormat
                 KSDATAFORMAT_WAVEFORMATEXTENSIBLE *propFormat = (KSDATAFORMAT_WAVEFORMATEXTENSIBLE *)PropertyRequest->Value;
                 ULONG numModes = 0;
                 MODE_AND_DEFAULT_FORMAT *modeInfo = NULL;
+                MODE_AND_DEFAULT_FORMAT *modeInfo_RAW = NULL;
                 numModes = GetPinSupportedDeviceModes(kspPin->PinId, &modeInfo);
-                BOOL bFound = TRUE;
+                BOOL bFound = FALSE;
                 ULONG i = 0;
+
+                // For loopback pin, get default format from host pin structures
+                if (IsLoopbackPin(kspPin->PinId))
+                {
+                    for (i = 0; i < m_DeviceFormatsAndModesCount; i++)
+                    {
+                        if (m_DeviceFormatsAndModes[i].PinType == SystemRenderPin)
+                        {
+                            modeInfo = m_DeviceFormatsAndModes[i].ModeAndDefaultFormat;
+                            numModes = m_DeviceFormatsAndModes[i].ModeAndDefaultFormatCount;
+                            break;
+                        }
+                    }
+                }
+
+                // Iterate through FormatsAndModes to find the 'DefaultFormat' for the 'DEFAULT' processing mode
+                // Make note of the RAW format for cases where DEFAULT mode is not supported by endpoint
                 for (i = 0; i < numModes; i++, ++modeInfo)
                 {
-                    if (modeInfo->DefaultFormat != NULL)
+                    if ((IsEqualGUIDAligned(modeInfo->Mode, AUDIO_SIGNALPROCESSINGMODE_DEFAULT)) &&
+                        (modeInfo->DefaultFormat != NULL))
                     {
                         bFound = TRUE;
                         break;
                     }
+                    else if ((IsEqualGUIDAligned(modeInfo->Mode, AUDIO_SIGNALPROCESSINGMODE_RAW)) &&
+                        (modeInfo->DefaultFormat != NULL))
+                    {
+                        modeInfo_RAW = modeInfo;
+                    }
+                }
+
+                if (!bFound &&
+                    modeInfo_RAW)
+                {
+                    modeInfo = modeInfo_RAW;
+                    bFound = TRUE;
                 }
 
                 if (!bFound)

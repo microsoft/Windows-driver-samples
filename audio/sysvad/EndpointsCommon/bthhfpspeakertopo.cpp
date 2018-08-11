@@ -174,10 +174,7 @@ Return Value:
                 
                 if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                 {
-                    *volume = bthHfpDevice->GetVolume(eBthHfpSpeakerDevice, channel);
-
-                    ntStatus = STATUS_SUCCESS;
-
+                    ntStatus = bthHfpDevice->GetVolume(eBthHfpSpeakerDevice, channel, volume);
                 }
                 else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
                 {

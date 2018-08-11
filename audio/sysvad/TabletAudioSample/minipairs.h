@@ -273,7 +273,7 @@ ENDPOINT_MINIPAIR HdmiMiniports =
     SIZEOF_ARRAY(HdmiPinDeviceFormatsAndModes),
     HdmiTopologyPhysicalConnections,
     SIZEOF_ARRAY(HdmiTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS,
+    ENDPOINT_LOOPBACK_SUPPORTED,
     NULL, 0, NULL,                          // audio module settings.
 };
 

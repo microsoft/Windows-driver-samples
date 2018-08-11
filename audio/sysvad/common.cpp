@@ -242,6 +242,16 @@ class CAdapterCommon :
             _In_        BOOL                bEnabled
         );
 
+        STDMETHODIMP_(NTSTATUS) NotifyEndpointPair
+        ( 
+            _In_ WCHAR              *RenderEndpointTopoName,
+            _In_ ULONG              RenderEndpointNameLen,
+            _In_ ULONG              RenderPinId,
+            _In_ WCHAR              *CaptureEndpointTopoName,
+            _In_ ULONG              CaptureEndpointNameLen,
+            _In_ ULONG              CapturePinId
+        );
+
 #ifdef SYSVAD_BTH_BYPASS
         STDMETHODIMP_(NTSTATUS) InitBthScoBypass();
         
@@ -349,6 +359,7 @@ typedef struct _MINIPAIR_UNKNOWN
     PUNKNOWN                PortInterface;
     PUNKNOWN                MiniportInterface;
     PADAPTERPOWERMANAGEMENT PowerInterface;
+    PMINIPORTCHANGE         MiniportChange;
 } MINIPAIR_UNKNOWN;
 
 #define MAX_DEVICE_REG_KEY_LENGTH 0x100
@@ -2092,6 +2103,7 @@ CAdapterCommon::CacheSubdevice
         // like FM and cellular, have their own power requirements that we must track. If this fails,
         // it just means this filter doesn't do power management.
         UnknownMiniport->QueryInterface(IID_IAdapterPowerManagement, (PVOID *)&(pNewSubdevice->PowerInterface));
+        UnknownMiniport->QueryInterface(IID_IMiniportChange, (PVOID *)&(pNewSubdevice->MiniportChange));
 
         InsertTailList(&m_SubdeviceCache, &pNewSubdevice->ListEntry);
     }
@@ -2132,6 +2144,7 @@ CAdapterCommon::RemoveCachedSubdevice
             SAFE_RELEASE(pRecord->PortInterface);
             SAFE_RELEASE(pRecord->MiniportInterface);
             SAFE_RELEASE(pRecord->PowerInterface);
+            SAFE_RELEASE(pRecord->MiniportChange);
             memset(pRecord->Name, 0, sizeof(pRecord->Name));
             RemoveEntryList(le);
             bRemoved = TRUE;
@@ -2157,6 +2170,7 @@ CAdapterCommon::EmptySubdeviceCache()
 
         SAFE_RELEASE(pRecord->PortInterface);
         SAFE_RELEASE(pRecord->MiniportInterface);
+        SAFE_RELEASE(pRecord->MiniportChange);
         SAFE_RELEASE(pRecord->PowerInterface);
         memset(pRecord->Name, 0, sizeof(pRecord->Name));
 
@@ -3451,6 +3465,46 @@ Exit:
     if (hDeviceInterfaceParametersKey)
     {
         ZwClose(hDeviceInterfaceParametersKey);
+    }
+
+    return ntStatus;
+}
+
+#pragma code_seg("PAGE")
+STDMETHODIMP_(NTSTATUS)
+CAdapterCommon::NotifyEndpointPair
+( 
+    _In_ WCHAR              *RenderEndpointTopoName,
+    _In_ ULONG              RenderEndpointNameLen,
+    _In_ ULONG              RenderPinId,
+    _In_ WCHAR              *CaptureEndpointTopoName,
+    _In_ ULONG              CaptureEndpointNameLen,
+    _In_ ULONG              CapturePinId
+)
+{
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+
+    PAGED_CODE ();
+
+    PLIST_ENTRY le = NULL;
+    BOOL bRemoved = FALSE;
+
+    // notify each subdevice which implements IMiniportChange
+    for (le = m_SubdeviceCache.Flink; le != &m_SubdeviceCache && !bRemoved; le = le->Flink)
+    {
+        MINIPAIR_UNKNOWN *pRecord = CONTAINING_RECORD(le, MINIPAIR_UNKNOWN, ListEntry);
+
+        if(pRecord->MiniportChange)
+        {
+            pRecord->MiniportChange->NotifyEndpointPair(
+                RenderEndpointTopoName,
+                RenderEndpointNameLen,
+                RenderPinId,
+                CaptureEndpointTopoName,
+                CaptureEndpointNameLen,
+                CapturePinId
+            );
+        }
     }
 
     return ntStatus;

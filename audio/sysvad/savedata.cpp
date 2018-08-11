@@ -48,7 +48,7 @@ Abstract:
 #define DEFAULT_BUFFER_SIZE         DEFAULT_FRAME_SIZE * DEFAULT_FRAME_COUNT
 
 #define DEFAULT_FILE_NAME           L"\\DosDevices\\C:\\STREAM"
-#define OSDATA_FILE_NAME            L"\\DosDevices\\C:\\OSDATA\\STREAM"
+#define OSDATA_FILE_NAME            L"\\DosDevices\\O:\\STREAM"
 #define OFFLOAD_FILE_NAME           L"OFFLOAD"
 #define HOST_FILE_NAME              L"HOST"
 

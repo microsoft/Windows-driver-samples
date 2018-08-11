@@ -339,11 +339,12 @@ typedef struct _SYSVAD_DEVPROPERTY {
     __field_bcount_opt(BufferSize) PVOID Buffer;
 } SYSVAD_DEVPROPERTY, PSYSVAD_DEVPROPERTY;
 
-#define ENDPOINT_NO_FLAGS                   0x00000000
-#define ENDPOINT_OFFLOAD_SUPPORTED          0x00000001
-#define ENDPOINT_SOUNDDETECTOR_SUPPORTED    0x00000002
-#define ENDPOINT_CELLULAR_PROVIDER1         0x00000010
-#define ENDPOINT_CELLULAR_PROVIDER2         0x00000020
+#define ENDPOINT_NO_FLAGS                       0x00000000
+#define ENDPOINT_OFFLOAD_SUPPORTED              0x00000001
+#define ENDPOINT_LOOPBACK_SUPPORTED             0x00000002
+#define ENDPOINT_SOUNDDETECTOR_SUPPORTED        0x00000004
+#define ENDPOINT_CELLULAR_PROVIDER1             0x00000008
+#define ENDPOINT_CELLULAR_PROVIDER2             0x00000010
 
 //
 // Endpoint miniport pair (wave/topology) descriptor.
@@ -637,6 +638,17 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
 #endif // SYSVAD_BTH_BYPASS
 
     STDMETHOD_(VOID, Cleanup)();
+
+    STDMETHOD_(NTSTATUS, NotifyEndpointPair) 
+    ( 
+        THIS_
+        _In_ WCHAR  *RenderEndpointTopoName,
+        _In_ ULONG  RenderEndpointNameLen,
+        _In_ ULONG  RenderPinId,
+        _In_ WCHAR  *CaptureEndpointTopoName,
+        _In_ ULONG  CaptureEndpointNameLen,
+        _In_ ULONG  CapturePinId
+    ) PURE;
 };
 
 typedef IAdapterCommon *PADAPTERCOMMON;
@@ -698,11 +710,12 @@ DECLARE_INTERFACE_(ISidebandDeviceCommon, IUnknown)
         _Out_       PULONG                  Size 
     ) PURE;
 
-    STDMETHOD_(LONG,                GetVolume)
+    STDMETHOD_(NTSTATUS,            GetVolume)
     (
         THIS_
         _In_        eDeviceType             deviceType,
-        _In_        LONG                    Channel
+        _In_        LONG                    Channel,
+        _Out_       LONG                    *pVolume
     ) PURE;
 
     STDMETHOD_(NTSTATUS,            SetVolume)
@@ -763,6 +776,18 @@ DECLARE_INTERFACE_(ISidebandDeviceCommon, IUnknown)
     ) PURE;
 
     STDMETHOD_(NTSTATUS,            StreamOpen)
+    (
+        THIS_
+        _In_        eDeviceType             deviceType
+    ) PURE;
+
+    STDMETHOD_(NTSTATUS,            StreamStart)
+    (
+        THIS_
+        _In_        eDeviceType             deviceType
+    ) PURE;
+
+    STDMETHOD_(NTSTATUS,            StreamSuspend)
     (
         THIS_
         _In_        eDeviceType             deviceType

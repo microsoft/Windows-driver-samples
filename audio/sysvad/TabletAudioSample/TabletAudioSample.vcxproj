@@ -282,10 +282,10 @@
     <ClCompile Include="hdmitopo.cpp" />
     <ClCompile Include="micintopo.cpp" />
     <ClCompile Include="spdiftopo.cpp" />
-    <ResourceCompile Include="..\sysvad.rc" />
+    <ResourceCompile Include="TabletAudioSample.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <Inf Exclude="@(Inx)" Include="*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

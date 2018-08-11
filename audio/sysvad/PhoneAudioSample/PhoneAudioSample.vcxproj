@@ -287,10 +287,10 @@
     <ClCompile Include="handsetspeakertopo.cpp" />
     <ClCompile Include="michstopo.cpp" />
     <ClCompile Include="speakerhstopo.cpp" />
-    <ResourceCompile Include="..\sysvad.rc" />
+    <ResourceCompile Include="PhoneAudioSample.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <Inf Exclude="@(Inx)" Include="*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

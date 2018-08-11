@@ -465,7 +465,7 @@ ENDPOINT_MINIPAIR HandsetSpeakerMiniports =
     SIZEOF_ARRAY(HandsetSpeakerPinDeviceFormatsAndModes),
     HandsetSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(HandsetSpeakerTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS,
+    ENDPOINT_LOOPBACK_SUPPORTED,
     NULL, 0, NULL,                                  // audio module settings.
 };
 

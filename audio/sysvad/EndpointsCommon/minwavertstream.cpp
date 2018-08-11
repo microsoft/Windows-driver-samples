@@ -91,8 +91,13 @@ Return Value:
     }
     if (m_pNotificationTimer)
     {
-        KeCancelTimer(m_pNotificationTimer);
-        ExFreePoolWithTag(m_pNotificationTimer, MINWAVERTSTREAM_POOLTAG);
+        ExDeleteTimer
+        (
+            m_pNotificationTimer, 
+            TRUE, // Cancel the timer if it is currently set.
+            TRUE, // Wait for the timer to finish expiring and for any callback to a ExTimerCallback routine to finish.
+            NULL
+         );
     }
 
     // Since we just cancelled the notification timer, wait for all queued 
@@ -100,12 +105,9 @@ Return Value:
     //
     KeFlushQueuedDpcs();
 
-    if (m_pNotificationDpc)
-    {
-        ExFreePoolWithTag( m_pNotificationDpc, MINWAVERTSTREAM_POOLTAG );
-    }
 #ifdef SYSVAD_BTH_BYPASS
     ASSERT(m_SidebandOpen == FALSE);
+    ASSERT(m_SidebandStarted == FALSE);
 #endif  // SYSVAD_BTH_BYPASS
 
     DPF_ENTER(("[CMiniportWaveRTStream::~CMiniportWaveRTStream]"));
@@ -252,6 +254,7 @@ Return Value:
 
 #if defined(SYSVAD_BTH_BYPASS)
     m_SidebandOpen = FALSE;
+    m_SidebandStarted = FALSE;
 #endif  // defined(SYSVAD_BTH_BYPASS)
 
     m_pPortStream = PortStream_;
@@ -261,26 +264,15 @@ Return Value:
     // Initialize the spinlock to synchronize position updates
     KeInitializeSpinLock(&m_PositionSpinLock);
 
-    m_pNotificationDpc = (PRKDPC)ExAllocatePoolWithTag(
-        NonPagedPoolNx,
-        sizeof(KDPC),
-        MINWAVERTSTREAM_POOLTAG);
-    if (!m_pNotificationDpc)
-    {
-        return STATUS_INSUFFICIENT_RESOURCES;
-    }
-
-    m_pNotificationTimer = (PKTIMER)ExAllocatePoolWithTag(
-        NonPagedPoolNx,
-        sizeof(KTIMER),
-        MINWAVERTSTREAM_POOLTAG);
+    m_pNotificationTimer = ExAllocateTimer(
+         TimerNotifyRT,
+         this,
+         EX_TIMER_HIGH_RESOLUTION
+    );
     if (!m_pNotificationTimer)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    KeInitializeDpc(m_pNotificationDpc, TimerNotifyRT, this);
-    KeInitializeTimerEx(m_pNotificationTimer, NotificationTimer);
 
     pWfEx = GetWaveFormatEx(DataFormat_);
     if (NULL == pWfEx) 
@@ -494,9 +486,10 @@ Return Value:
         // This interface is supported only on capture streams
         *Object = PVOID(PMINIPORTWAVERTINPUTSTREAM(this));
     }
-    else if (IsEqualGUIDAligned(Interface, IID_IMiniportWaveRTOutputStream) && (!this->m_bCapture))
+    else if (IsEqualGUIDAligned(Interface, IID_IMiniportWaveRTOutputStream) && (!this->m_bCapture)
+        && (!this->m_pMiniport->IsOffloadPin(this->m_ulPin)))
     {
-        // This interface is supported only on render streams
+        // This interface is supported only on host render streams
         *Object = PVOID(PMINIPORTWAVERTOUTPUTSTREAM(this));
     }
     else if (IsEqualGUIDAligned(Interface, IID_IMiniportStreamAudioEngineNode))
@@ -851,7 +844,7 @@ NTSTATUS CMiniportWaveRTStream::GetPosition
     NTSTATUS ntStatus;
 
 #if defined(SYSVAD_BTH_BYPASS)
-    if (m_SidebandOpen)
+    if (m_SidebandStarted)
     {
         ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
@@ -1182,6 +1175,31 @@ NTSTATUS CMiniportWaveRTStream::SetState
     switch (State_)
     {
         case KSSTATE_STOP:
+            if (m_KsState == KSSTATE_ACQUIRE)
+            {
+                // Acquire stream resources
+#if defined(SYSVAD_BTH_BYPASS)
+                if (m_SidebandOpen)
+                {
+                    PSIDEBANDDEVICECOMMON sidebandDevice;
+
+                    ASSERT(m_pMiniport->IsSidebandDevice());
+                    sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                    ASSERT(sidebandDevice != NULL);
+
+                    //
+                    // Close the Sideband connection.
+                    //
+                    ntStatus = sidebandDevice->StreamClose(m_pMiniport->m_DeviceType);
+                    if (!NT_SUCCESS(ntStatus))
+                    {
+                        DPF(D_ERROR, ("SetState: KSSTATE_PAUSE, StreamClose failed, 0x%x", ntStatus));
+                    }
+
+                    m_SidebandOpen = FALSE;
+                }
+#endif // defined(SYSVAD_BTH_BYPASS)
+            }
             KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
             // Reset DMA
             m_llPacketCounter = 0;
@@ -1207,6 +1225,33 @@ NTSTATUS CMiniportWaveRTStream::SetState
             break;
 
         case KSSTATE_ACQUIRE:
+            if (m_KsState == KSSTATE_STOP)
+            {
+                // Acquire stream resources
+#if defined(SYSVAD_BTH_BYPASS)
+                if (m_pMiniport->IsSidebandDevice())
+                {
+                    if (m_SidebandOpen == FALSE)
+                    {
+                        PSIDEBANDDEVICECOMMON sidebandDevice;
+
+                        sidebandDevice = m_pMiniport->GetSidebandDevice(); // weak ref.
+                        ASSERT(sidebandDevice != NULL);
+
+                        //
+                        // Open the Sideband connection.
+                        //
+                        ntStatus = sidebandDevice->StreamOpen(m_pMiniport->m_DeviceType);
+                        IF_FAILED_ACTION_JUMP(
+                            ntStatus,
+                            DPF(D_ERROR, ("SetState: KSSTATE_ACQUIRE, StreamOpen failed, 0x%x", ntStatus)),
+                            Done);
+
+                        m_SidebandOpen = TRUE;
+                    }
+                }
+#endif // defined(SYSVAD_BTH_BYPASS)
+            }
             break;
             
         case KSSTATE_PAUSE:
@@ -1224,8 +1269,7 @@ NTSTATUS CMiniportWaveRTStream::SetState
                 // Pause DMA
                 if (m_ulNotificationIntervalMs > 0)
                 {
-                    KeCancelTimer(m_pNotificationTimer);
-                    ExSetTimerResolution(0, FALSE);
+                    ExCancelTimer(m_pNotificationTimer, NULL);
                     KeFlushQueuedDpcs(); 
 
                     // If pin is transitioning from RUN, save the time since last buffer completion event was sent 
@@ -1245,7 +1289,7 @@ NTSTATUS CMiniportWaveRTStream::SetState
                 }
 
 #if defined(SYSVAD_BTH_BYPASS)
-                if (m_SidebandOpen)
+                if (m_SidebandStarted)
                 {
                     PSIDEBANDDEVICECOMMON sidebandDevice;
 
@@ -1256,13 +1300,13 @@ NTSTATUS CMiniportWaveRTStream::SetState
                     //
                     // Close the Sideband connection.
                     //
-                    ntStatus = sidebandDevice->StreamClose(m_pMiniport->m_DeviceType);
+                    ntStatus = sidebandDevice->StreamSuspend(m_pMiniport->m_DeviceType);
                     if (!NT_SUCCESS(ntStatus))
                     {
-                        DPF(D_ERROR, ("SetState: KSSTATE_STOP, StreamClose failed, 0x%x", ntStatus));
+                        DPF(D_ERROR, ("SetState: KSSTATE_PAUSE, StreamClose failed, 0x%x", ntStatus));
                     }
 
-                    m_SidebandOpen = FALSE;
+                    m_SidebandStarted = FALSE;
                 }
 #endif // defined(SYSVAD_BTH_BYPASS)
 
@@ -1276,7 +1320,7 @@ NTSTATUS CMiniportWaveRTStream::SetState
 #if defined(SYSVAD_BTH_BYPASS)
             if (m_pMiniport->IsSidebandDevice())
             {
-                if (m_SidebandOpen == FALSE)
+                if (m_SidebandStarted == FALSE)
                 {
                     PSIDEBANDDEVICECOMMON sidebandDevice;
 
@@ -1284,15 +1328,15 @@ NTSTATUS CMiniportWaveRTStream::SetState
                     ASSERT(sidebandDevice != NULL);
 
                     //
-                    // Open the Sideband connection.
+                    // Start the Sideband connection.
                     //
-                    ntStatus = sidebandDevice->StreamOpen(m_pMiniport->m_DeviceType);
+                    ntStatus = sidebandDevice->StreamStart(m_pMiniport->m_DeviceType);
                     IF_FAILED_ACTION_JUMP(
                         ntStatus,
-                        DPF(D_ERROR, ("SetState: KSSTATE_ACQUIRE, StreamOpen failed, 0x%x", ntStatus)),
+                        DPF(D_ERROR, ("SetState: KSSTATE_RUN, StreamStart failed, 0x%x", ntStatus)),
                         Done);
 
-                    m_SidebandOpen = TRUE;
+                    m_SidebandStarted = TRUE;
                 }
             }
 #endif // defined(SYSVAD_BTH_BYPASS)
@@ -1308,22 +1352,18 @@ NTSTATUS CMiniportWaveRTStream::SetState
 
             if (m_ulNotificationIntervalMs > 0)
             {
-                LARGE_INTEGER   delay;
-
-                delay.QuadPart = (-1) * HNSTIME_PER_MILLISECOND;
-
-                ExSetTimerResolution(HNSTIME_PER_MILLISECOND, TRUE);
                 // Set timer for 1 ms. This will cause DPC to run every 1 ms but driver will send out 
                 // notification events only after notification interval. This timer is used by Sysvad to 
                 // emulate hardware and send out notification event. Real hardware should not use this
                 // timer to fire notification event as it will drain power if the timer is running at 1 msec.
-                KeSetTimerEx
+                ExSetTimer
                 (
                     m_pNotificationTimer,
-                    delay,
-                    1,  // 1 ms
-                    m_pNotificationDpc
-                );
+                    (-1) * HNSTIME_PER_MILLISECOND,
+                    HNSTIME_PER_MILLISECOND, // 1 ms 
+                    NULL
+                 );
+
             }
 
             break;
@@ -1631,7 +1671,7 @@ Return Value:
 
     NTSTATUS  ntStatus  = STATUS_INVALID_DEVICE_STATE;
         
-    if (m_SidebandOpen)
+    if (m_SidebandStarted)
     {
         PSIDEBANDDEVICECOMMON sidebandDevice;
         
@@ -1695,19 +1735,15 @@ CMiniportWaveRTStream::PropertyHandlerModuleCommand
 void
 TimerNotifyRT
 (
-    _In_      PKDPC         Dpc,
-    _In_opt_  PVOID         DeferredContext,
-    _In_opt_  PVOID         SA1,
-    _In_opt_  PVOID         SA2
+    _In_      PEX_TIMER    Timer,
+    _In_opt_  PVOID        DeferredContext
 )
 {
     LARGE_INTEGER qpc;
     LARGE_INTEGER qpcFrequency;
     BOOL bufferCompleted = FALSE;
 
-    UNREFERENCED_PARAMETER(Dpc);
-    UNREFERENCED_PARAMETER(SA1);
-    UNREFERENCED_PARAMETER(SA2);
+    UNREFERENCED_PARAMETER(Timer);
 
     _IRQL_limited_to_(DISPATCH_LEVEL);
 
@@ -1753,7 +1789,7 @@ TimerNotifyRT
     }
 
 #if defined(SYSVAD_BTH_BYPASS)
-    if (_this->m_SidebandOpen)
+    if (_this->m_SidebandStarted)
     {
         if (!NT_SUCCESS(_this->GetSidebandStreamNtStatus()))
         {
@@ -1815,7 +1851,7 @@ TimerNotifyRT
 
     if (_this->m_bLastBufferRendered)
     {
-        KeCancelTimer(_this->m_pNotificationTimer);
+        ExCancelTimer(_this->m_pNotificationTimer, NULL);
     }
 
 End:

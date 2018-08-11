@@ -236,10 +236,11 @@ public:
         _Out_       PULONG                  Size
     );
 
-    STDMETHODIMP_(LONG)                 GetVolume
+    STDMETHODIMP_(NTSTATUS)             GetVolume
     (
         _In_        eDeviceType             DeviceType,
-        _In_        LONG                    Channel
+        _In_        LONG                    Channel,
+        _Out_       LONG                    *pVolume
     );
 
     STDMETHODIMP_(NTSTATUS)             SetVolume
@@ -282,6 +283,10 @@ public:
     STDMETHODIMP_(BOOL)                 GetStreamStatus(_In_ eDeviceType deviceType);
 
     STDMETHODIMP_(NTSTATUS)             StreamOpen(_In_ eDeviceType deviceType);
+
+    STDMETHODIMP_(NTSTATUS)             StreamStart(_In_ eDeviceType deviceType);
+
+    STDMETHODIMP_(NTSTATUS)             StreamSuspend(_In_ eDeviceType deviceType);
 
     STDMETHODIMP_(NTSTATUS)             StreamClose(_In_ eDeviceType deviceType);
 
