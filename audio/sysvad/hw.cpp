@@ -337,7 +337,8 @@ Return Value:
     PAGED_CODE();
     
     RtlFillMemory(m_VolumeControls, sizeof(LONG) * MAX_TOPOLOGY_NODES, 0xFF);
-    RtlFillMemory(m_MuteControls, sizeof(BOOL) * MAX_TOPOLOGY_NODES, TRUE);
+    // Endpoints are not muted by default.
+    RtlZeroMemory(m_MuteControls, sizeof(BOOL) * MAX_TOPOLOGY_NODES);
 
     for (ULONG i=0; i<MAX_TOPOLOGY_NODES; ++i)
     {

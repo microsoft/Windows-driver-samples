@@ -172,10 +172,12 @@ ENDPOINT_MINIPAIR SpeakerMiniports =
 {
     eSpeakerDevice,
     SPEAKER_TOPONAME,                       // defined in cellulartopo.h for use with cellular routing control
+    NULL,                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &SpeakerTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveSpeaker",                         // make sure this name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    L"WaveSpeaker",                         // make sure this or the template name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &SpeakerWaveMiniportFilterDescriptor,
     ARRAYSIZE(SysvadWaveFilterInterfacePropertiesRender),   // Interface properties
@@ -218,10 +220,12 @@ ENDPOINT_MINIPAIR SpeakerHsMiniports =
 {
     eSpeakerHsDevice,
     SPEAKER_HEADSET_TOPONAME,               // defined in cellulartopo.h for use with cellular routing control
+    NULL,                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &SpeakerHsTopoMiniportFilterDescriptor, // use the speaker headset topo filter descriptor, not headset.
     0, NULL,                                // Interface properties
-    L"WaveSpeakerHeadset",                  // make sure this name matches with KSNAME_WaveSpeakerHeadset in the inf's [Strings] section
+    L"WaveSpeakerHeadset",                  // make sure this or the template name matches with KSNAME_WaveSpeakerHeadset in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &SpeakerHsWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -263,10 +267,12 @@ ENDPOINT_MINIPAIR MicHsMiniports =
 {
     eMicHsDevice,
     MIC_HEADSET_TOPONAME,                   // defined in cellulartopo.h for use with cellular routing control
+    NULL,                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &MicHsTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveMicHeadset",                      // make sure this name matches with KSNAME_WaveMicHeadset in the inf's [Strings] section
+    L"WaveMicHeadset",                      // make sure this or the template name matches with KSNAME_WaveMicHeadset in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicHsWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -308,11 +314,13 @@ static
 ENDPOINT_MINIPAIR MicArray1Miniports =
 {
     eMicArrayDevice1,
-    L"TopologyMicArray1",                   // make sure this name matches with KSNAME_TopologyMicArray1 in the inf's [Strings] section 
+    L"TopologyMicArray1",                   // make sure this or the template name matches with KSNAME_TopologyMicArray1 in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateMicArrayMiniportTopology,
     &MicArray1TopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveMicArray1",                       // make sure this name matches with KSNAME_WaveMicArray1 in the inf's [Strings] section
+    L"WaveMicArray1",                       // make sure this or the tempalte name matches with KSNAME_WaveMicArray1 in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicArrayWaveMiniportFilterDescriptor,
     ARRAYSIZE(SysvadWaveFilterInterfacePropertiesCapture),  // Interface properties
@@ -363,11 +371,13 @@ static
 ENDPOINT_MINIPAIR CellularMiniports =
 {
     eCellularDevice,
-    L"TopologyCellular",                    // make sure this name matches with KSNAME_TopologyCellular in the inf's [Strings] section 
+    L"TopologyCellular",                    // make sure this or the template name matches with KSNAME_TopologyCellular in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateCellularMiniportTopology,
     &CellularTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveCellular",                        // make sure this name matches with KSNAME_WaveCellular in the inf's [Strings] section
+    L"WaveCellular",                        // make sure this or the template name matches with KSNAME_WaveCellular in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateCellularMiniportWaveRT,
     &CellularWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -395,11 +405,13 @@ static
 ENDPOINT_MINIPAIR CellularMiniports2 =
 {
     eCellularDevice,
-    L"TopologyCellular",                   // make sure this name matches with KSNAME_TopologyCellular in the inf's [Strings] section 
+    L"TopologyCellular",                   // make sure this or the template name matches with KSNAME_TopologyCellular in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateCellularMiniportTopology,
     &CellularTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveCellular2",                       // make sure this name matches with KSNAME_WaveCellular in the inf's [Strings] section
+    L"WaveCellular2",                       // make sure this or the template name matches with KSNAME_WaveCellular in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateCellularMiniportWaveRT,
     &CellularWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -439,10 +451,12 @@ ENDPOINT_MINIPAIR HandsetSpeakerMiniports =
 {
     eHandsetSpeakerDevice,
     HANDSET_SPEAKER_TOPONAME,                       // defined in cellulartopo.h for use with cellular routing control
+    NULL,                                           // optional template name
     CreateHandsetSpeakerMiniportTopology,
     &HandsetSpeakerTopoMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties
-    L"WaveHandsetSpeaker",                          // make sure this name matches with KSNAME_WaveHandsetSpeaker in the inf's [Strings] section
+    L"WaveHandsetSpeaker",                          // make sure this or the template name matches with KSNAME_WaveHandsetSpeaker in the inf's [Strings] section
+    NULL,                                           // optional template name
     CreateMiniportWaveRTSYSVAD,
     &HandsetSpeakerWaveMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties
@@ -451,7 +465,7 @@ ENDPOINT_MINIPAIR HandsetSpeakerMiniports =
     SIZEOF_ARRAY(HandsetSpeakerPinDeviceFormatsAndModes),
     HandsetSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(HandsetSpeakerTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS,
+    ENDPOINT_LOOPBACK_SUPPORTED,
     NULL, 0, NULL,                                  // audio module settings.
 };
 
@@ -484,10 +498,12 @@ ENDPOINT_MINIPAIR HandsetMicMiniports =
 {
     eHandsetMicDevice,
     HANDSET_MIC_TOPONAME,                           // defined in cellulartopo.h for use with cellular routing control
+    NULL,                                           // optional template name
     CreateMiniportTopologySYSVAD,
     &HandsetMicTopoMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties
-    L"WaveHandsetMic",                              // make sure this name matches with KSNAME_WaveHandsetMic in the inf's [Strings] section
+    L"WaveHandsetMic",                              // make sure this or the template name matches with KSNAME_WaveHandsetMic in the inf's [Strings] section
+    NULL,                                           // optional template name
     CreateMiniportWaveRTSYSVAD,
     &HandsetMicWaveMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties
@@ -525,10 +541,12 @@ ENDPOINT_MINIPAIR FmRxMiniports =
 {
     eFmRxDevice,
     L"TopologyFmRx",                                // make sure this name matches with KSNAME_TopologyFmRx
+    NULL,                                           // optional template name
     CreateFmMiniportTopology,
     &FmTopoMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties
-    L"WaveFmRx",                                    // make sure this name matches with KSNAME_WaveFmRx in the inf's [Strings] section
+    L"WaveFmRx",                                    // make sure this or the template name matches with KSNAME_WaveFmRx in the inf's [Strings] section
+    NULL,                                           // optional template name
     CreateFmMiniportWaveRT,
     &FmWaveMiniportFilterDescriptor,
     0, NULL,                                        // Interface properties

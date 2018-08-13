@@ -121,6 +121,9 @@ CCellularMiniportTopology::CCellularMiniportTopology
 {
     PAGED_CODE();
 
+    InitializeListHead(&m_EndpointPairs);
+
+    // populate the initial state
     memcpy(&m_CellularRenderEndpoint, &(g_EndpointList[0].RenderEndpoint), sizeof(m_CellularRenderEndpoint));
     memcpy(&m_CellularCaptureEndpoint, &(g_EndpointList[0].CaptureEndpoint), sizeof(m_CellularCaptureEndpoint));
 }
@@ -146,6 +149,13 @@ Return Value:
 --*/
 {
     PAGED_CODE();
+
+    while (!IsListEmpty(&m_EndpointPairs))
+    {
+        PLIST_ENTRY le = RemoveHeadList(&m_EndpointPairs);
+        ENDPOINT_PAIR_ENTRY *pRecord = CONTAINING_RECORD(le, ENDPOINT_PAIR_ENTRY, ListEntry);
+        delete pRecord;
+    }
 
     DPF_ENTER(("[CCellularMiniportTopology::~CCellularMiniportTopology]"));
 } // ~CCellularMiniportTopology
@@ -282,14 +292,36 @@ Return Value:
 
     DPF_ENTER(("[CCellularMiniportTopology::Init]"));
 
-    NTSTATUS                    ntStatus;
+    NTSTATUS                    ntStatus = STATUS_SUCCESS;
 
-    ntStatus = 
-        CMiniportTopologySYSVAD::Init
-        (
-            UnknownAdapter,
-            Port_
-        );
+    ExInitializeFastMutex(&m_EndpointFastMutex);
+
+    // copy the full static list over to the dynamic list.
+    for (int i = 0; i < SIZEOF_ARRAY(g_EndpointList) && NT_SUCCESS(ntStatus); i++)
+    {
+        ENDPOINT_PAIR_ENTRY *newEntry = new(NonPagedPoolNx, MINADAPTER_POOLTAG) ENDPOINT_PAIR_ENTRY;
+
+        if (!newEntry)
+        {
+            DPF(D_TERSE, ("Insufficient memory to create endpoint pair"));
+            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        }
+        else
+        {
+            memcpy(&(newEntry->data), &(g_EndpointList[i]), sizeof(KSTOPOLOGY_ENDPOINTIDPAIR));
+            InsertTailList(&m_EndpointPairs, &newEntry->ListEntry);
+        }
+    }
+
+    if (NT_SUCCESS(ntStatus))
+    {
+        ntStatus = 
+            CMiniportTopologySYSVAD::Init
+            (
+                UnknownAdapter,
+                Port_
+            );
+    }
 
     return ntStatus;
 } // Init
@@ -325,7 +357,7 @@ Return Value:
 
     if (IsEqualGUIDAligned(Interface, IID_IUnknown))
     {
-        *Object = PVOID(PUNKNOWN(this));
+        *Object = PVOID(PUNKNOWN(static_cast<IMiniportTopology*>( this )));
     }
     else if (IsEqualGUIDAligned(Interface, IID_IMiniport))
     {
@@ -338,6 +370,10 @@ Return Value:
     else if (IsEqualGUIDAligned(Interface, IID_ICellularTopology))
     {
         *Object = PVOID(PCELLULARTOPOLOGY(this));
+    }
+    else if (IsEqualGUIDAligned(Interface, IID_IMiniportChange))
+    {
+        *Object = PVOID(static_cast<PMINIPORTCHANGE>( this ));
     }
     else
     {
@@ -576,12 +612,22 @@ Return Value:
     DPF_ENTER(("[PropertyHandlerTelephonyEndpointIdPair]"));
 
     NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-
-    
+   
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
     {   
         ntStatus = STATUS_INVALID_PARAMETER;
-        ULONG ulExpectedSize = (sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(g_EndpointList));
+        ULONG ulExpectedSize = (sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER));
+
+        PLIST_ENTRY le = NULL;
+        int countOfValidEndpointPairs = 0;
+
+        ExAcquireFastMutex(&m_EndpointFastMutex);
+
+        for (le = m_EndpointPairs.Flink; le != &m_EndpointPairs; le = le->Flink)
+        {
+            countOfValidEndpointPairs++;
+        }
+        ulExpectedSize += (countOfValidEndpointPairs * sizeof(KSTOPOLOGY_ENDPOINTIDPAIR));
 
         if (PropertyRequest->ValueSize >= sizeof(KSPROPERTY_DESCRIPTION))
         {
@@ -594,8 +640,8 @@ Return Value:
             PropDesc->DescriptionSize   = ulExpectedSize;
             PropDesc->PropTypeSet.Set   = KSPROPSETID_TelephonyTopology;
             PropDesc->PropTypeSet.Id    = KSPROPERTY_TELEPHONY_ENDPOINTIDPAIR;
+            PropDesc->MembersListCount  = 0;
             PropDesc->PropTypeSet.Flags = 0;
-            PropDesc->MembersListCount  = 1;
             PropDesc->Reserved          = 0;
 
             // buffer is big enough to hold the full data, add that
@@ -604,12 +650,23 @@ Return Value:
                 PKSPROPERTY_MEMBERSHEADER MembersHeader = 
                     PKSPROPERTY_MEMBERSHEADER(PropDesc + 1);
 
+                // we're now adding the members header.
+                PropDesc->MembersListCount  = 1;
+
                 MembersHeader->MembersFlags = KSPROPERTY_MEMBER_VALUES;
                 MembersHeader->MembersSize = sizeof(KSTOPOLOGY_ENDPOINTIDPAIR);
-                MembersHeader->MembersCount = SIZEOF_ARRAY(g_EndpointList);
+                MembersHeader->MembersCount = countOfValidEndpointPairs;
                 MembersHeader->Flags = 0;
 
-                memcpy(MembersHeader + 1, g_EndpointList, sizeof(g_EndpointList));
+                le = NULL;
+                PKSTOPOLOGY_ENDPOINTIDPAIR returnData = (PKSTOPOLOGY_ENDPOINTIDPAIR) (MembersHeader + 1);
+                    
+                for (le = m_EndpointPairs.Flink; le != &m_EndpointPairs; le = le->Flink)
+                {
+                    ENDPOINT_PAIR_ENTRY *pRecord = CONTAINING_RECORD(le, ENDPOINT_PAIR_ENTRY, ListEntry);
+                    memcpy(returnData, &(pRecord->data), sizeof(pRecord->data));
+                    returnData++;
+                }
 
                 // tell them how much space we really used, which controls how much data is copied into the user buffer.
                 PropertyRequest->ValueSize = ulExpectedSize;
@@ -638,6 +695,8 @@ Return Value:
         {
             ntStatus = STATUS_BUFFER_TOO_SMALL;
         }
+
+        ExReleaseFastMutex(&m_EndpointFastMutex);
     }
     else
     {
@@ -667,16 +726,22 @@ Return Value:
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
                 PKSTOPOLOGY_ENDPOINTIDPAIR EndpointIdPair = static_cast<PKSTOPOLOGY_ENDPOINTIDPAIR>(PropertyRequest->Value);
+                PLIST_ENTRY le = NULL;
 
                 // verify the requested combination is in the list of valid endpoint combinations, fail with
                 // invalid parameter if not found.
                 ntStatus = STATUS_INVALID_PARAMETER;
-                for (int i = 0; i < SIZEOF_ARRAY(g_EndpointList); i++)
+
+                ExAcquireFastMutex(&m_EndpointFastMutex);
+
+                for (le = m_EndpointPairs.Flink; le != &m_EndpointPairs; le = le->Flink)
                 {
-                    if (g_EndpointList[i].RenderEndpoint.PinId == EndpointIdPair->RenderEndpoint.PinId &&
-                        0 == _wcsnicmp(g_EndpointList[i].RenderEndpoint.TopologyName, EndpointIdPair->RenderEndpoint.TopologyName, MAX_PATH) &&
-                        g_EndpointList[i].CaptureEndpoint.PinId == EndpointIdPair->CaptureEndpoint.PinId &&
-                        0 == _wcsnicmp(g_EndpointList[i].CaptureEndpoint.TopologyName, EndpointIdPair->CaptureEndpoint.TopologyName, MAX_PATH))
+                    ENDPOINT_PAIR_ENTRY *pRecord = CONTAINING_RECORD(le, ENDPOINT_PAIR_ENTRY, ListEntry);
+
+                    if (pRecord->data.RenderEndpoint.PinId == EndpointIdPair->RenderEndpoint.PinId &&
+                        0 == _wcsnicmp(pRecord->data.RenderEndpoint.TopologyName, EndpointIdPair->RenderEndpoint.TopologyName, MAX_PATH) &&
+                        pRecord->data.CaptureEndpoint.PinId == EndpointIdPair->CaptureEndpoint.PinId &&
+                        0 == _wcsnicmp(pRecord->data.CaptureEndpoint.TopologyName, EndpointIdPair->CaptureEndpoint.TopologyName, MAX_PATH))
                     {
                         if (HOSTRENDER_PIN == EndpointIdPair->RenderEndpoint.PinId &&
                             0 == _wcsnicmp(HOSTRENDER_TOPONAME, EndpointIdPair->RenderEndpoint.TopologyName, MAX_PATH) &&
@@ -693,16 +758,17 @@ Return Value:
                             // Route cellular audio to these new endpoints (render and capture). This will update audio routing for 
                             // all the active cellular calls.
                         }
-
+                    
                         memcpy(&m_CellularRenderEndpoint, &(EndpointIdPair->RenderEndpoint), sizeof(m_CellularRenderEndpoint));
                         memcpy(&m_CellularCaptureEndpoint, &(EndpointIdPair->CaptureEndpoint), sizeof(m_CellularCaptureEndpoint));
-
+                    
                         // we found the entry, so return success
                         ntStatus = STATUS_SUCCESS;
                         break;
                     }
                 }
 
+                ExReleaseFastMutex(&m_EndpointFastMutex);
             }
             else
             {
@@ -865,7 +931,7 @@ Return Value:
     // MajorTarget is a pointer to miniport object for miniports.
     //
     NTSTATUS                ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-    PCCellularMiniportTopology  pMiniport = (PCCellularMiniportTopology)PropertyRequest->MajorTarget;
+    PCCellularMiniportTopology  pMiniport = reinterpret_cast<PCCellularMiniportTopology>(PropertyRequest->MajorTarget);
 
     if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Jack))
     {
@@ -889,7 +955,6 @@ Return Value:
             ntStatus =  pMiniport->PropertyHandlerTelephonyVolume(PropertyRequest);
         }
     }
-
 
     return ntStatus;
 } // PropertyHandler_CellularTopoFilter
@@ -958,6 +1023,85 @@ NTSTATUS CCellularMiniportWaveRT_EventHandler_JackState
 }
 
 NTSTATUS CCellularMiniportTopology::EventHandler_JackState
+(
+    _In_  PPCEVENT_REQUEST EventRequest
+)
+{
+    if (EventRequest->Verb == PCEVENT_VERB_ADD)
+    {
+        m_PortEvents->AddEventToEventList(EventRequest->EventEntry);
+    }
+
+    return STATUS_SUCCESS;
+}
+
+#pragma code_seg("PAGE")
+STDMETHODIMP_(NTSTATUS)
+CCellularMiniportTopology::NotifyEndpointPair
+( 
+    _In_ WCHAR              *RenderEndpointTopoName,
+    _In_ ULONG              RenderEndpointNameLen,
+    _In_ ULONG              RenderPinId,
+    _In_ WCHAR              *CaptureEndpointTopoName,
+    _In_ ULONG              CaptureEndpointNameLen,
+    _In_ ULONG              CapturePinId
+)
+{
+    PAGED_CODE ();
+
+    NTSTATUS ntStatus = STATUS_SUCCESS;
+
+    ENDPOINT_PAIR_ENTRY *newEntry = new(NonPagedPoolNx, MINADAPTER_POOLTAG) ENDPOINT_PAIR_ENTRY;
+
+    if (!newEntry)
+    {
+        DPF(D_TERSE, ("Insufficient memory to create endpoint pair"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    if (NT_SUCCESS(ntStatus))
+    {
+        KSTOPOLOGY_ENDPOINTIDPAIR *endpointPair = &newEntry->data;
+
+        RtlStringCchCopyNW(endpointPair->RenderEndpoint.TopologyName,
+            SIZEOF_ARRAY(endpointPair->RenderEndpoint.TopologyName),
+            RenderEndpointTopoName,
+            RenderEndpointNameLen);
+        endpointPair->RenderEndpoint.PinId = RenderPinId;
+
+        RtlStringCchCopyNW(endpointPair->CaptureEndpoint.TopologyName,
+            SIZEOF_ARRAY(endpointPair->CaptureEndpoint.TopologyName),
+            CaptureEndpointTopoName,
+            CaptureEndpointNameLen);
+        endpointPair->CaptureEndpoint.PinId = CapturePinId;
+
+        ExAcquireFastMutex(&m_EndpointFastMutex);
+        InsertTailList(&m_EndpointPairs, &newEntry->ListEntry);
+        ExReleaseFastMutex(&m_EndpointFastMutex);
+
+        GenerateEventList(
+                    (GUID*)&KSEVENTSETID_Telephony,
+                    KSEVENT_TELEPHONY_ENDPOINTPAIRS_CHANGED,
+                    FALSE,
+                    NULL,
+                    FALSE,
+                    ULONG(-1));
+    }
+
+    return ntStatus;
+}
+
+#pragma code_seg()
+NTSTATUS CCellularMiniportWaveRT_EventHandler_Telephony
+(
+    _In_  PPCEVENT_REQUEST EventRequest
+)
+{
+    CCellularMiniportTopology* miniport = reinterpret_cast<CCellularMiniportTopology*>(EventRequest->MajorTarget);
+    return miniport->EventHandler_Telephony(EventRequest);
+}
+
+NTSTATUS CCellularMiniportTopology::EventHandler_Telephony
 (
     _In_  PPCEVENT_REQUEST EventRequest
 )

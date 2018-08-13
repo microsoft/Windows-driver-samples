@@ -249,8 +249,8 @@ PCEVENT_ITEM BthHfpSpeakerPropertiesTopoFilterEvent[] =
 };
 
 DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationBthHfpSpeakerTopoFilterWithEvent, 
-                               BthHfpSpeakerPropertiesTopoFilter,
-                               BthHfpSpeakerPropertiesTopoFilterEvent);
+                                     BthHfpSpeakerPropertiesTopoFilter,
+                                     BthHfpSpeakerPropertiesTopoFilterEvent);
 
 //=============================================================================
 static

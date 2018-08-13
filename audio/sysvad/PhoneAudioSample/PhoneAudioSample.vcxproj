@@ -184,7 +184,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -207,7 +207,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -230,7 +230,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -253,7 +253,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -273,6 +273,7 @@
   <ItemGroup>
     <ClCompile Include="..\adapter.cpp" />
     <ClCompile Include="..\basetopo.cpp" />
+    <ClCompile Include="..\BthhfpDevice.cpp" />
     <ClCompile Include="..\common.cpp" />
     <ClCompile Include="..\hw.cpp" />
     <ClCompile Include="..\kshelper.cpp" />
@@ -286,10 +287,10 @@
     <ClCompile Include="handsetspeakertopo.cpp" />
     <ClCompile Include="michstopo.cpp" />
     <ClCompile Include="speakerhstopo.cpp" />
-    <ResourceCompile Include="..\sysvad.rc" />
+    <ResourceCompile Include="PhoneAudioSample.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <Inf Exclude="@(Inx)" Include="*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

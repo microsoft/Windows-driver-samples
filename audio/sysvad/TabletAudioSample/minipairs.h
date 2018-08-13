@@ -163,11 +163,13 @@ static
 ENDPOINT_MINIPAIR SpeakerMiniports =
 {
     eSpeakerDevice,
-    L"TopologySpeaker",                                     // make sure this name matches with KSNAME_TopologySpeaker in the inf's [Strings] section 
+    L"TopologySpeaker",                                     // make sure this or the template name matches with KSNAME_TopologySpeaker in the inf's [Strings] section 
+    NULL,                                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &SpeakerTopoMiniportFilterDescriptor,
     0, NULL,                                                // Interface properties
-    L"WaveSpeaker",                                         // make sure this name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    L"WaveSpeaker",                                         // make sure this or the template name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    NULL,                                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &SpeakerWaveMiniportFilterDescriptor,
     ARRAYSIZE(SysvadWaveFilterInterfacePropertiesRender),   // Interface properties
@@ -209,11 +211,13 @@ static
 ENDPOINT_MINIPAIR SpeakerHpMiniports =
 {
     eSpeakerHpDevice,
-    L"TopologySpeakerHeadphone",            // make sure this name matches with KSNAME_TopologySpeakerHeadphone in the inf's [Strings] section 
+    L"TopologySpeakerHeadphone",            // make sure this or the template name matches with KSNAME_TopologySpeakerHeadphone in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &SpeakerHpTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveSpeakerHeadphone",                // make sure this name matches with KSNAME_WaveSpeakerHeadphone in the inf's [Strings] section
+    L"WaveSpeakerHeadphone",                // make sure this or the template name matches with KSNAME_WaveSpeakerHeadphone in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &SpeakerHpWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -254,11 +258,13 @@ static
 ENDPOINT_MINIPAIR HdmiMiniports =
 {
     eHdmiRenderDevice,
-    L"TopologyHdmi",                        // make sure this name matches with KSNAME_TopologyHdmi in the inf's [Strings] section 
+    L"TopologyHdmi",                        // make sure this or the template name matches with KSNAME_TopologyHdmi in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateHdmiMiniportTopology,
     &HdmiTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveHdmi",                            // make sure this name matches with KSNAME_WaveHdmi in the inf's [Strings] section
+    L"WaveHdmi",                            // make sure this or the template name matches with KSNAME_WaveHdmi in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &HdmiWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -267,7 +273,7 @@ ENDPOINT_MINIPAIR HdmiMiniports =
     SIZEOF_ARRAY(HdmiPinDeviceFormatsAndModes),
     HdmiTopologyPhysicalConnections,
     SIZEOF_ARRAY(HdmiTopologyPhysicalConnections),
-    ENDPOINT_NO_FLAGS,
+    ENDPOINT_LOOPBACK_SUPPORTED,
     NULL, 0, NULL,                          // audio module settings.
 };
 
@@ -297,11 +303,13 @@ static
 ENDPOINT_MINIPAIR SpdifMiniports =
 {
     eSpdifRenderDevice,
-    L"TopologySpdif",                                       // make sure this name matches with KSNAME_TopologySpeaker in the inf's [Strings] section 
+    L"TopologySpdif",                                       // make sure this or the template name matches with KSNAME_TopologySpeaker in the inf's [Strings] section 
+    NULL,                                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &SpdifTopoMiniportFilterDescriptor,
     0, NULL,                                                // Interface properties
-    L"WaveSpdif",                                           // make sure this name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    L"WaveSpdif",                                           // make sure this or the template name matches with KSNAME_WaveSpeaker in the inf's [Strings] section
+    NULL,                                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &SpdifWaveMiniportFilterDescriptor,
     ARRAYSIZE(SysvadWaveFilterInterfacePropertiesRender),   // Interface properties
@@ -343,11 +351,13 @@ static
 ENDPOINT_MINIPAIR MicInMiniports =
 {
     eMicInDevice,
-    L"TopologyMicIn",                       // make sure this name matches with KSNAME_TopologyMicIn in the inf's [Strings] section 
+    L"TopologyMicIn",                       // make sure this or the template name matches with KSNAME_TopologyMicIn in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateMiniportTopologySYSVAD,
     &MicInTopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveMicIn",                           // make sure this name matches with KSNAME_WaveMicIn in the inf's [Strings] section
+    L"WaveMicIn",                           // make sure this or the template name matches with KSNAME_WaveMicIn in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicInWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -384,11 +394,13 @@ static
 ENDPOINT_MINIPAIR MicArray1Miniports =
 {
     eMicArrayDevice1,
-    L"TopologyMicArray1",                                   // make sure this name matches with KSNAME_TopologyMicArray1 in the inf's [Strings] section 
+    L"TopologyMicArray1",                                   // make sure this or the template name matches with KSNAME_TopologyMicArray1 in the inf's [Strings] section 
+    NULL,                                                   // optional template name
     CreateMicArrayMiniportTopology,
     &MicArray1TopoMiniportFilterDescriptor,
     0, NULL,                                                // Interface properties
-    L"WaveMicArray1",                                       // make sure this name matches with KSNAME_WaveMicArray1 in the inf's [Strings] section
+    L"WaveMicArray1",                                       // make sure this or the template name matches with KSNAME_WaveMicArray1 in the inf's [Strings] section
+    NULL,                                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicArrayWaveMiniportFilterDescriptor,
     ARRAYSIZE(SysvadWaveFilterInterfacePropertiesCapture),  // Interface properties
@@ -426,11 +438,13 @@ static
 ENDPOINT_MINIPAIR MicArray2Miniports =
 {
     eMicArrayDevice2,
-    L"TopologyMicArray2",                   // make sure this name matches with KSNAME_TopologyMicArray2 in the inf's [Strings] section 
+    L"TopologyMicArray2",                   // make sure this or the template name matches with KSNAME_TopologyMicArray2 in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateMicArrayMiniportTopology,
     &MicArray2TopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveMicArray2",                       // make sure this name matches with KSNAME_WaveMicArray2 in the inf's [Strings] section
+    L"WaveMicArray2",                       // make sure this or the template name matches with KSNAME_WaveMicArray2 in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicArrayWaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
@@ -467,11 +481,13 @@ static
 ENDPOINT_MINIPAIR MicArray3Miniports =
 {
     eMicArrayDevice3,
-    L"TopologyMicArray3",                   // make sure this name matches with KSNAME_TopologyMicArray3 in the inf's [Strings] section 
+    L"TopologyMicArray3",                   // make sure this or the template name matches with KSNAME_TopologyMicArray3 in the inf's [Strings] section 
+    NULL,                                   // optional template name
     CreateMicArrayMiniportTopology,
     &MicArray3TopoMiniportFilterDescriptor,
     0, NULL,                                // Interface properties
-    L"WaveMicArray3",                       // make sure this name matches with KSNAME_WaveMicArray3 in the inf's [Strings] section
+    L"WaveMicArray3",                       // make sure this or the template name matches with KSNAME_WaveMicArray3 in the inf's [Strings] section
+    NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
     &MicArray3WaveMiniportFilterDescriptor,
     0, NULL,                                // Interface properties

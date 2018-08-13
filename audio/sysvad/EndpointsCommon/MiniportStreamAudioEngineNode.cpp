@@ -98,7 +98,7 @@ Decscription:
 Parameters:
 
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_Out_ _pVolume: a pointer to a LONG variable for receiving returned information
+        _Out_ _pVolume: a pointer to a LONG variable for receiving returned information
 
 Return Value:
 
@@ -131,7 +131,7 @@ Decscription:
 Parameters:
 
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_Out_ _pbMute: a pointer to a BOOL variable for receiving returned information
+        _Out_ _pbMute: a pointer to a BOOL variable for receiving returned information
 
 Return Value:
 
@@ -167,7 +167,7 @@ Decscription:
 Parameters:
 
         _In_ _targetType:  the query target (volume. mute, or peak meter)
-		_Out_ _pKsPropMembHead: a pointer to a PKSPROPERTY_STEPPING_LONG variable for receiving returned channel count information
+        _Out_ _pKsPropMembHead: a pointer to a PKSPROPERTY_STEPPING_LONG variable for receiving returned channel count information
         _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by _pKsPropMembHead
 
 Return Value:
@@ -233,7 +233,7 @@ Remarks
 STDMETHODIMP_(NTSTATUS) CMiniportWaveRTStream::SetStreamChannelVolume
 (
     _In_ UINT32             Channel,
-    _In_ LONG	            TargetVolume,
+    _In_ LONG                TargetVolume,
     _In_ AUDIO_CURVE_TYPE   CurveType,
     _In_ ULONGLONG          CurveDuration
 )
@@ -277,7 +277,7 @@ Decscription:
 Parameters:
 
         _In_ _uiChannel:  the target channel for this GET peak meter operation
-	_Out_ _pPeakMeterValue: a pointer to a LONG variable for receiving returned information
+    _Out_ _pPeakMeterValue: a pointer to a LONG variable for receiving returned information
 
 Return Value:
 
@@ -313,7 +313,7 @@ Decscription:
 Parameters:
 
         _In_ _uiChannel:  the target channel for this Set mute operation
-		_In_ _bMute: mute value to set 
+        _In_ _bMute: mute value to set 
 
 Return Value:
 
@@ -359,7 +359,7 @@ Decscription:
 
 Parameters:
 
-		_Out_ pPresentationPosition: a pointer to a KSAUDIO_PRESENTATION_POSITION variable for receiving returned information
+        _Out_ pPresentationPosition: a pointer to a KSAUDIO_PRESENTATION_POSITION variable for receiving returned information
 
 Return Value:
 
@@ -394,7 +394,7 @@ Decscription:
 
 Parameters:
 
-		_In_ ulCurrentWritePosition: a position value indicating the last valid byte in the buffer
+        _In_ ulCurrentWritePosition: a position value indicating the last valid byte in the buffer
 
 Return Value:
 
@@ -437,7 +437,7 @@ Decscription:
 
 Parameters:
 
-		_Out_ pullLinearBufferPosition: a pointer to a ULONGLONG variable for receiving returned information
+        _Out_ pullLinearBufferPosition: a pointer to a ULONGLONG variable for receiving returned information
 
 
 Return Value:
@@ -472,7 +472,7 @@ Decscription:
     protection option
 
 Parameters:
-		_In_ protectionOption: protection option
+        _In_ protectionOption: protection option
                                  CONSTRICTOR_OPTION_DISABLE: Turn protection  off.
                                  CONSTRICTOR_OPTION_MUTE: Mute the loopback stream
 Return Value:
@@ -513,7 +513,7 @@ Decscription:
 Parameters:
 
         _In_ _targetType:  the query target (volume, mute, or peak meter)
-		_Out_ _pulChannelCount: a pointer to a UINT32 variable for receiving returned channel count information
+        _Out_ _pulChannelCount: a pointer to a UINT32 variable for receiving returned channel count information
 
 Return Value:
 
@@ -524,7 +524,7 @@ Called at PASSIVE_LEVEL
 Remarks
 
 -------------------------------------------------------------------------------------------------------------------------*/
-NTSTATUS CMiniportWaveRTStream::GetStreamChannelCount(_In_  eChannelTargetType	_targetType,_Out_  UINT32 *_pulChannelCount)
+NTSTATUS CMiniportWaveRTStream::GetStreamChannelCount(_In_  eChannelTargetType    _targetType,_Out_  UINT32 *_pulChannelCount)
 {
     NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
 
@@ -750,23 +750,22 @@ NTSTATUS CMiniportWaveRTStream::GetPresentationPosition(_Out_  KSAUDIO_PRESENTAT
     status = GetPositions(&ullLinearPosition, &ullPresentationPosition, &timeStamp);
     if (!NT_SUCCESS(status)) 
     { 
-        return status; 
+        return status;
     }
 
     _pPresentationPosition->u64PositionInBlocks = ullPresentationPosition * m_pWfExt->Format.nSamplesPerSec / m_pWfExt->Format.nAvgBytesPerSec;
     _pPresentationPosition->u64QPCPosition = (UINT64)timeStamp.QuadPart;
 
     //Event type: eMINIPORT_GET_PRESENTATION_POSITION
-    //Parameter 1: Current linear buffer position	
-    //Parameter 2: the previous WaveRtBufferWritePosition that the drive received	
+    //Parameter 1: Current linear buffer position    
+    //Parameter 2: Previous WaveRtBufferWritePosition that the driver received    
     //Parameter 3: Presentation position
-    //Parameter 4:0
-    pAdapterComm->WriteEtwEvent(eMINIPORT_GET_PRESENTATION_POSITION, 
-                                ullLinearPosition, // replace with the correct "Current linear buffer position"	
+    //Parameter 4: 0
+    pAdapterComm->WriteEtwEvent(eMINIPORT_GET_PRESENTATION_POSITION,
+                                ullLinearPosition, // replace with the correct "Current linear buffer position"    
                                 m_ulCurrentWritePosition,
-                                _pPresentationPosition->u64PositionInBlocks, 
+                                _pPresentationPosition->u64PositionInBlocks,
                                 0);  // always zero
-     
     return STATUS_SUCCESS;
 }
 
@@ -777,13 +776,13 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePosition(_In_  ULONG _ulCurrentWr
     
     NTSTATUS ntStatus;
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS)
+    if (m_SidebandStarted)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
 
     //
     // Basic validation. WritePosition indicates the position (1-based) of the last valid byte.
@@ -808,6 +807,13 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
 {
     DPF_ENTER(("[CMiniportWaveRTStream::SetCurrentWritePositionInternal]"));
     
+    ASSERT(m_bEoSReceived == FALSE);
+
+    if (m_bEoSReceived)
+    {
+        return STATUS_INVALID_DEVICE_REQUEST;
+    }
+
     if (_ulCurrentWritePosition > m_ulDmaBufferSize)
     {
         return STATUS_INVALID_DEVICE_REQUEST;
@@ -816,19 +822,18 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
     PADAPTERCOMMON pAdapterComm = m_pMiniport->GetAdapterCommObj();
 
     //Event type: eMINIPORT_SET_WAVERT_BUFFER_WRITE_POSITION
-    //Parameter 1: Current linear buffer position	
-    //Parameter 2: the previous WaveRtBufferWritePosition that the drive received	
+    //Parameter 1: Current linear buffer position    
+    //Parameter 2: Previous WaveRtBufferWritePosition that the driver received    
     //Parameter 3: Target WaveRtBufferWritePosition received from portcls
-    //Parameter 4:0
+    //Parameter 4: 0
     pAdapterComm->WriteEtwEvent(eMINIPORT_SET_WAVERT_BUFFER_WRITE_POSITION, 
-                                100, // replace with the correct "Current linear buffer position"	
+                                m_ullLinearPosition, // replace with the correct "Current linear buffer position"    
                                 m_ulCurrentWritePosition,
-                                _ulCurrentWritePosition, // this is the passed in parameter
-                                0);  // always zero
-
+                                _ulCurrentWritePosition, // this is new write position
+                                0); // always zero
 
     //
-    // Check for eMINIPORT_GLITCH_REPORT - 'same writert buffer' only when in event mode.
+    // Check for eMINIPORT_GLITCH_REPORT - Same WaveRT buffer write during event driven mode.
     //
     if (m_ulNotificationIntervalMs > 0)
     {
@@ -836,14 +841,14 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
         {
             //Event type: eMINIPORT_GLITCH_REPORT
             //Parameter 1: Current linear buffer position 
-            //Parameter 2: the previous WaveRtBufferWritePosition that the drive received 
-            //Parameter 3: major glitch code: 3:receive the same wavert buffer two in a row in event driven mode
-            //Parameter 4: minor code for the glitch cause
+            //Parameter 2: Previous WaveRtBufferWritePosition that the driver received 
+            //Parameter 3: Major glitch code: 3: Received same WaveRT buffer twice in a row during event driven mode
+            //Parameter 4: Minor code for the glitch cause
             pAdapterComm->WriteEtwEvent(eMINIPORT_GLITCH_REPORT, 
-                                        100,    // replace with the correct "Current linear buffer position"   
+                                        m_ullLinearPosition, // replace with the correct "Current linear buffer position"
                                         m_ulCurrentWritePosition,
-                                        3,      // receive the same wavert buffer two in a row in event driven mode
-                                        _ulCurrentWritePosition); 
+                                        3, // received same WaveRT buffer twice in a row during event driven mode
+                                        _ulCurrentWritePosition);
         }
     }
     
@@ -855,24 +860,25 @@ NTSTATUS CMiniportWaveRTStream::SetCurrentWritePositionInternal(_In_  ULONG _ulC
 
 //linear and presentation positions
 #pragma code_seg()
-NTSTATUS CMiniportWaveRTStream::GetPositions(
+NTSTATUS CMiniportWaveRTStream::GetPositions
+(
     _Out_opt_  ULONGLONG *      _pullLinearBufferPosition, 
     _Out_opt_  ULONGLONG *      _pullPresentationPosition, 
     _Out_opt_  LARGE_INTEGER *  _pliQPCTime
-    )
+)
 {
     DPF_ENTER(("[CMiniportWaveRTStream::GetPositions]"));
 
     NTSTATUS        ntStatus;
     LARGE_INTEGER   ilQPC;
     KIRQL           oldIrql;
-#ifdef SYSVAD_BTH_BYPASS
-    if (m_ScoOpen)
+#if defined(SYSVAD_BTH_BYPASS)
+    if (m_SidebandStarted)
     {
-        ntStatus = GetScoStreamNtStatus();
+        ntStatus = GetSidebandStreamNtStatus();
         IF_FAILED_JUMP(ntStatus, Done);
     }
-#endif // SYSVAD_BTH_BYPASS   
+#endif // defined(SYSVAD_BTH_BYPASS)
 
     // Update *_pullLinearBufferPosition with the the number of bytes fetched from waveRT ever since a stream got set into RUN
     // state.
@@ -903,9 +909,9 @@ NTSTATUS CMiniportWaveRTStream::GetPositions(
 
     ntStatus = STATUS_SUCCESS;
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 Done:
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
     return ntStatus;
 }
 
@@ -919,7 +925,7 @@ Decscription:
     protection option
 
 Parameters:
-		_In_ protectionOption: protection option
+        _In_ protectionOption: protection option
                                  CONSTRICTOR_OPTION_DISABLE: Turn protection  off.
                                  CONSTRICTOR_OPTION_MUTE: Mute the loopback stream
 Return Value:
@@ -978,8 +984,6 @@ NTSTATUS CMiniportWaveRTStream::SetStreamCurrentWritePositionForLastBuffer(_In_ 
     DPF_ENTER(("[CMiniportWaveRT::SetStreamCurrentWritePositionForLastBuffer]"));
     NTSTATUS        ntStatus;
     KIRQL           oldIrql;
-
-    ASSERT(m_bEoSReceived == FALSE);
 
     KeAcquireSpinLock(&m_PositionSpinLock, &oldIrql);
 

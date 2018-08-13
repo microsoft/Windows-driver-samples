@@ -171,7 +171,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ eEngineFormatType: format target to indicate which format size is being asked
-		_Out_ pulFormatSize: a pointer to a ULONG variable for receiving returned szize information
+        _Out_ pulFormatSize: a pointer to a ULONG variable for receiving returned szize information
 
 Return Value:
 
@@ -230,7 +230,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _Out_ pFormat: a buffer pointer for receiving the mix format information being asked
-		_In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
+        _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
 
 Return Value:
 
@@ -242,7 +242,7 @@ Remarks
   This is a read only operation; the HW Audio Engine mix format is determined by the HW Audio Engine alone.
 
 -------------------------------------------------------------------------------------------------------------------------*/
-STDMETHODIMP_(NTSTATUS) CMiniportWaveRT::GetMixFormat(_In_  ULONG	_ulNodeId, _Out_ KSDATAFORMAT_WAVEFORMATEX *_pFormat, _In_ ULONG _ulBufferSize)
+STDMETHODIMP_(NTSTATUS) CMiniportWaveRT::GetMixFormat(_In_  ULONG    _ulNodeId, _Out_ KSDATAFORMAT_WAVEFORMATEX *_pFormat, _In_ ULONG _ulBufferSize)
 {
     NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
 
@@ -277,7 +277,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _Out_ pFormat: a buffer pointer for receiving the device format information being asked
-		_In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
+        _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
 
 Return Value:
 
@@ -325,7 +325,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _Out_ pFormat: a buffer pointer with the device format to be set to the hw Audio Engine
-		_In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
+        _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
 
 Return Value:
 
@@ -367,7 +367,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _Out_ pFormat: a buffer pointer for receiving the supported device formats
-		_In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
+        _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by pFormat
 
 Return Value:
 
@@ -419,7 +419,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _targetType:  the query target (volume. mute, or peak meter)
-		_Out_ _pulChannelCount: a pointer to a UINT32 variable for receiving returned channel count information
+        _Out_ _pulChannelCount: a pointer to a UINT32 variable for receiving returned channel count information
 
 Return Value:
 
@@ -433,9 +433,9 @@ Remarks
 #pragma code_seg("PAGE")
 NTSTATUS CMiniportWaveRT::GetDeviceChannelCount
 (
-        _In_  ULONG					_ulNodeId,
-        _In_  eChannelTargetType	_targetType,
-		_Out_  UINT32				*_pulChannelCount
+        _In_  ULONG                    _ulNodeId,
+        _In_  eChannelTargetType    _targetType,
+        _Out_  UINT32                *_pulChannelCount
 )
 {
     NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
@@ -479,7 +479,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _targetType:  the query target (volume. mute, or peak meter)
-		_Out_ _pKsPropMembHead: a pointer to a PKSPROPERTY_STEPPING_LONG variable for receiving returned channel count information
+        _Out_ _pKsPropMembHead: a pointer to a PKSPROPERTY_STEPPING_LONG variable for receiving returned channel count information
         _In_ ulBufferSize: a pointer to a ULONG variable that has the size of the buffer pointed by _pKsPropMembHead
 
 Return Value:
@@ -531,7 +531,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_Out_ _pVolume: a pointer to a LONG variable for receiving returned information
+        _Out_ _pVolume: a pointer to a LONG variable for receiving returned information
 
 Return Value:
 
@@ -570,7 +570,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_In_ _Volume: volume value to set 
+        _In_ _Volume: volume value to set 
 
 Return Value:
 
@@ -647,7 +647,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_Out_ _pbMute: a pointer to a BOOL variable for receiving returned information
+        _Out_ _pbMute: a pointer to a BOOL variable for receiving returned information
 
 Return Value:
 
@@ -686,7 +686,7 @@ Parameters:
 
         _In_ _ulNodeId: node id for the target audio engine node
         _In_ _uiChannel:  the target channel for this GET volume operation
-		_In_ _bMute: volume value to set 
+        _In_ _bMute: volume value to set 
 
 Return Value:
 
@@ -764,35 +764,102 @@ NTSTATUS CMiniportWaveRT::GetBufferSizeRange(_In_  ULONG _ulNodeId, _In_ KSDATAF
 NTSTATUS CMiniportWaveRT::GetVolumeChannelCount(_Out_  UINT32 *_pulChannelCount)
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
+    BOOL bHandledInSideband = FALSE;
     PAGED_CODE ();
     ASSERT (_pulChannelCount);
 
     DPF_ENTER(("[CMiniportWaveRT::GetVolumeChannelCount]"));
-    *_pulChannelCount = m_DeviceMaxChannels;
+
+    if (IsSidebandDevice())
+    {
+        if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
+        {
+            ULONG propSize = 0;
+            PKSPROPERTY_DESCRIPTION pPropDesc = (PKSPROPERTY_DESCRIPTION)m_pSidebandDevice->GetVolumeSettings(m_DeviceType, &propSize);
+            ASSERT(propSize >= sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_STEPPING_LONG));
+            PKSPROPERTY_MEMBERSHEADER pMembers = (PKSPROPERTY_MEMBERSHEADER)(pPropDesc + 1);
+            *_pulChannelCount = pMembers->MembersCount;
+
+            bHandledInSideband = TRUE;
+        }
+    }
+
+    if(!bHandledInSideband)
+    {
+        *_pulChannelCount = m_DeviceMaxChannels;
+    }
      return ntStatus;
 }
+
 #pragma code_seg("PAGE")
 NTSTATUS CMiniportWaveRT::GetVolumeSteppings(_Out_writes_bytes_(_ui32DataSize) PKSPROPERTY_STEPPING_LONG _pKsPropStepLong, _In_  UINT32 _ui32DataSize)
 {
     PAGED_CODE ();
     UINT32 ulChannelCount = _ui32DataSize / sizeof(KSPROPERTY_STEPPING_LONG);
+    BOOL bHandledInSideband = FALSE;
     ASSERT (_pKsPropStepLong);
     DPF_ENTER(("[CMiniportWaveRT::GetVolumeSteppings]"));
 
-    ASSERT(ulChannelCount <= m_DeviceMaxChannels);
-    if (ulChannelCount > m_DeviceMaxChannels)
+    if (IsSidebandDevice())
     {
-        return STATUS_INVALID_PARAMETER;
+        if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
+        {
+            // For Sideband Devices copy values from the Sideband DDI property descriptor
+            ULONG propSize = 0;
+            PKSPROPERTY_DESCRIPTION pPropDesc = (PKSPROPERTY_DESCRIPTION)m_pSidebandDevice->GetVolumeSettings(m_DeviceType, &propSize);
+
+            ASSERT(propSize >= sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_STEPPING_LONG));
+
+            PKSPROPERTY_MEMBERSHEADER pMembers = (PKSPROPERTY_MEMBERSHEADER)(pPropDesc + 1);
+
+            ASSERT(ulChannelCount <= pMembers->MembersCount);
+
+            if (ulChannelCount > pMembers->MembersCount)
+            {
+                return STATUS_INVALID_PARAMETER;
+            }
+
+            PKSPROPERTY_STEPPING_LONG pRange = (PKSPROPERTY_STEPPING_LONG)(pMembers + 1);
+
+            for (UINT i = 0; i < ulChannelCount; i++)
+            {
+                RtlCopyMemory(&_pKsPropStepLong[i], &pRange[i], sizeof(KSPROPERTY_STEPPING_LONG));
+            }
+
+            bHandledInSideband = TRUE;
+        }
     }
 
-    for(UINT i = 0; i < ulChannelCount; i++)
+    if(!bHandledInSideband)
     {
-        _pKsPropStepLong[i].SteppingDelta = VOLUME_STEPPING_DELTA;
-        _pKsPropStepLong[i].Bounds.SignedMaximum = VOLUME_SIGNED_MAXIMUM;
-        _pKsPropStepLong[i].Bounds.SignedMinimum = VOLUME_SIGNED_MINIMUM;
+        ASSERT(ulChannelCount <= m_DeviceMaxChannels);
+        if (ulChannelCount > m_DeviceMaxChannels)
+        {
+            return STATUS_INVALID_PARAMETER;
+        }
+
+        for (UINT i = 0; i < ulChannelCount; i++)
+        {
+            _pKsPropStepLong[i].SteppingDelta = VOLUME_STEPPING_DELTA;
+            _pKsPropStepLong[i].Bounds.SignedMaximum = VOLUME_SIGNED_MAXIMUM;
+            _pKsPropStepLong[i].Bounds.SignedMinimum = VOLUME_SIGNED_MINIMUM;
+        }
     }
     return STATUS_SUCCESS;
 }
+
+//=============================================================================
+// The volume control should be implemented as follows:
+//
+// #1 If the Sideband device supports volume control, then the audio driver should 
+//  pipe the volume change requests through the Sideband Interface
+//
+// #2 If the Sideband device does not implement a hardware volume, and the codec 
+//  (or DSP) has a hardware volume, the audio driver should handle the volume 
+//  control on the codec (or DSP).
+//
+// This sample assumes #1 #2.
+//
 #pragma code_seg("PAGE")
 NTSTATUS CMiniportWaveRT::GetChannelVolume(_In_  UINT32 _uiChannel, _Out_ LONG *_pVolume)
 {
@@ -800,16 +867,37 @@ NTSTATUS CMiniportWaveRT::GetChannelVolume(_In_  UINT32 _uiChannel, _Out_ LONG *
     ASSERT (_pVolume);
     DPF_ENTER(("[CMiniportWaveRT::GetChannelVolume]"));
 
-    if (_uiChannel == ALL_CHANNELS_ID)
+    NTSTATUS status = STATUS_SUCCESS;
+
+    BOOL bHandledInSideband = FALSE;
+
+    if (IsSidebandDevice())
     {
-        *_pVolume = m_plVolumeLevel[0];
+        if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
+        {
+            if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
+            {
+                status = m_pSidebandDevice->GetVolume(m_DeviceType, _uiChannel, _pVolume);
+            }
+
+            bHandledInSideband = TRUE;
+        }
     }
-    else
+
+    if(!bHandledInSideband)
     {
-        ASSERT(_uiChannel <= m_DeviceMaxChannels);
-        *_pVolume = m_plVolumeLevel[_uiChannel];
+        if (_uiChannel == ALL_CHANNELS_ID)
+        {
+            *_pVolume = m_plVolumeLevel[0];
+        }
+        else
+        {
+            ASSERT(_uiChannel <= m_DeviceMaxChannels);
+            *_pVolume = m_plVolumeLevel[_uiChannel];
+        }
     }
-    return STATUS_SUCCESS;
+
+    return status;
 }
 #pragma code_seg("PAGE")
 NTSTATUS CMiniportWaveRT::SetChannelVolume(_In_  UINT32 _uiChannel, _In_  LONG _Volume)
@@ -817,9 +905,18 @@ NTSTATUS CMiniportWaveRT::SetChannelVolume(_In_  UINT32 _uiChannel, _In_  LONG _
     PAGED_CODE ();
     DPF_ENTER(("[CMiniportWaveRT::SetChannelVolume]"));
 
+    if (IsSidebandDevice())
+    {
+        if (m_pSidebandDevice->IsVolumeSupported(m_DeviceType))
+        {
+            return m_pSidebandDevice->SetVolume(m_DeviceType, _uiChannel, _Volume);
+        }
+    }
+
+    // Will reach here only if not handled through Sideband
     if (_uiChannel == ALL_CHANNELS_ID)
     {
-        for (int i=0; i<m_DeviceMaxChannels; i++)
+        for (int i = 0; i < m_DeviceMaxChannels; i++)
         {
             m_plVolumeLevel[i] = _Volume;
         }
@@ -899,11 +996,30 @@ NTSTATUS CMiniportWaveRT::GetChannelPeakMeter(_In_  UINT32 _uiChannel, _Out_  LO
 NTSTATUS CMiniportWaveRT::GetMuteChannelCount(_Out_  UINT32 *_pulChannelCount)
 {
     NTSTATUS ntStatus = STATUS_SUCCESS;
+    BOOL bHandledInSideband = FALSE;
     PAGED_CODE ();
     ASSERT (_pulChannelCount);
 
     DPF_ENTER(("[CMiniportWaveRT::GetMuteChannelCount]"));
-    *_pulChannelCount = m_DeviceMaxChannels;
+
+    if (IsSidebandDevice())
+    {
+        if (m_pSidebandDevice->IsMuteSupported(m_DeviceType))
+        {
+            ULONG propSize = 0;
+            PKSPROPERTY_DESCRIPTION pPropDesc = (PKSPROPERTY_DESCRIPTION)m_pSidebandDevice->GetMuteSettings(m_DeviceType, &propSize);
+            ASSERT(propSize >= sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_STEPPING_LONG));
+            PKSPROPERTY_MEMBERSHEADER pMembers = (PKSPROPERTY_MEMBERSHEADER)(pPropDesc + 1);
+            *_pulChannelCount = pMembers->MembersCount;
+
+            bHandledInSideband = TRUE;
+        }
+    }
+
+    if(!bHandledInSideband)
+    {
+        *_pulChannelCount = m_DeviceMaxChannels;
+    }
      return ntStatus;
 }
 #pragma code_seg("PAGE")
@@ -911,22 +1027,57 @@ NTSTATUS CMiniportWaveRT::GetMuteSteppings(_Out_writes_bytes_(_ui32DataSize)  PK
 {
     PAGED_CODE ();
     UINT32 ulChannelCount = _ui32DataSize / sizeof(KSPROPERTY_STEPPING_LONG);
+    BOOL bHandledInSideband = FALSE;
 
     ASSERT (_pKsPropStepLong);
     DPF_ENTER(("[CMiniportWaveRT::GetMuteSteppings]"));
 
-    ASSERT(ulChannelCount <= m_DeviceMaxChannels);
-
-    if (ulChannelCount > m_DeviceMaxChannels)
+    if (IsSidebandDevice())
     {
-        return STATUS_INVALID_PARAMETER;
+        if (m_pSidebandDevice->IsMuteSupported(m_DeviceType))
+        {
+            // For Sideband Devices copy values from the Sideband DDI property descriptor
+            ULONG propSize = 0;
+            PKSPROPERTY_DESCRIPTION pPropDesc = (PKSPROPERTY_DESCRIPTION)m_pSidebandDevice->GetMuteSettings(m_DeviceType, &propSize);
+
+            ASSERT(propSize >= sizeof(KSPROPERTY_DESCRIPTION) + sizeof(KSPROPERTY_MEMBERSHEADER) + sizeof(KSPROPERTY_STEPPING_LONG));
+
+            PKSPROPERTY_MEMBERSHEADER pMembers = (PKSPROPERTY_MEMBERSHEADER)(pPropDesc + 1);
+
+            ASSERT(ulChannelCount <= pMembers->MembersCount);
+
+            if (ulChannelCount > pMembers->MembersCount)
+            {
+                return STATUS_INVALID_PARAMETER;
+            }
+
+            PKSPROPERTY_STEPPING_LONG pRange = (PKSPROPERTY_STEPPING_LONG)(pMembers + 1);
+
+            for (UINT i = 0; i < ulChannelCount; i++)
+            {
+                RtlCopyMemory(&_pKsPropStepLong[i], &pRange[i], sizeof(KSPROPERTY_STEPPING_LONG));
+            }
+
+            bHandledInSideband = TRUE;
+        }
+
     }
 
-    for(UINT i = 0; i < ulChannelCount; i++)
+    if(!bHandledInSideband)
     {
-        _pKsPropStepLong[i].SteppingDelta = 1;
-        _pKsPropStepLong[i].Bounds.SignedMaximum = TRUE;
-        _pKsPropStepLong[i].Bounds.SignedMinimum = FALSE;
+        ASSERT(ulChannelCount <= m_DeviceMaxChannels);
+
+        if (ulChannelCount > m_DeviceMaxChannels)
+        {
+            return STATUS_INVALID_PARAMETER;
+        }
+
+        for (UINT i = 0; i < ulChannelCount; i++)
+        {
+            _pKsPropStepLong[i].SteppingDelta = 1;
+            _pKsPropStepLong[i].Bounds.SignedMaximum = TRUE;
+            _pKsPropStepLong[i].Bounds.SignedMinimum = FALSE;
+        }
     }
     return STATUS_SUCCESS;
 }
@@ -937,15 +1088,29 @@ NTSTATUS CMiniportWaveRT::GetChannelMute(_In_  UINT32 _uiChannel, _Out_  BOOL *_
     ASSERT (_pbMute);
     DPF_ENTER(("[CMiniportWaveRT::GetChannelMute]"));
 
+    BOOL bHandledInSideband = FALSE;
 
-    if (_uiChannel == ALL_CHANNELS_ID)
+    if (IsSidebandDevice())
     {
-        *_pbMute = m_pbMuted[0];
+        if (m_pSidebandDevice->IsMuteSupported(m_DeviceType))
+        {
+            *_pbMute = m_pSidebandDevice->GetMute(m_DeviceType, _uiChannel);
+
+            bHandledInSideband = TRUE;
+        }
     }
-    else
+
+    if (!bHandledInSideband)
     {
-        ASSERT(_uiChannel <= m_DeviceMaxChannels);
-        *_pbMute = m_pbMuted[_uiChannel];
+        if (_uiChannel == ALL_CHANNELS_ID)
+        {
+            *_pbMute = m_pbMuted[0];
+        }
+        else
+        {
+            ASSERT(_uiChannel <= m_DeviceMaxChannels);
+            *_pbMute = m_pbMuted[_uiChannel];
+        }
     }
 
     return STATUS_SUCCESS;
@@ -954,8 +1119,17 @@ NTSTATUS CMiniportWaveRT::GetChannelMute(_In_  UINT32 _uiChannel, _Out_  BOOL *_
 NTSTATUS CMiniportWaveRT::SetChannelMute(_In_  UINT32 _uiChannel, _In_  BOOL _bMute)
 {
     PAGED_CODE ();
-    DPF_ENTER(("[CMiniportWaveRT::SetChannelVolume]"));
+    DPF_ENTER(("[CMiniportWaveRT::SetChannelMute]"));
 
+    if (IsSidebandDevice())
+    {
+        if (m_pSidebandDevice->IsMuteSupported(m_DeviceType))
+        {
+            return m_pSidebandDevice->SetMute(m_DeviceType, _uiChannel, _bMute);
+        }
+    }
+
+    // Will reach here only if not handled through Sideband
     if (_uiChannel == ALL_CHANNELS_ID)
     {
         for (int i=0; i<m_DeviceMaxChannels; i++)

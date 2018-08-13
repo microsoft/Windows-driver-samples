@@ -423,6 +423,8 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpdifOffloadPinSupportedDeviceFormats[] =
 
 //
 // Supported modes (only on streaming pins).
+// Note: This pin does not support KSPROPERTY_PIN_PROPOSEDATAFORMAT2 
+//       since none of the modes on this endpoint have a default format.
 //
 static
 MODE_AND_DEFAULT_FORMAT SpdifHostPinSupportedDeviceModes[] =
@@ -442,10 +444,6 @@ MODE_AND_DEFAULT_FORMAT SpdifOffloadPinSupportedDeviceModes[] =
 {
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
-        NULL, // just an example of no default format for this endpoint/mode   
-    },
-    {
-        STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
         NULL, // just an example of no default format for this endpoint/mode   
     }
 };

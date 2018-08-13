@@ -4,7 +4,7 @@ Copyright (c) 1997-2010  Microsoft Corporation All Rights Reserved
 
 Module Name:
 
-    minwavert.h
+    minwavertstream.h
 
 Abstract:
 
@@ -18,6 +18,7 @@ Abstract:
 #include "savedata.h"
 #include "tonegenerator.h"
 
+
 //
 // Structure to store notifications events in a protected list
 //
@@ -27,7 +28,7 @@ typedef struct _NotificationListEntry
     PKEVENT     NotificationEvent;
 } NotificationListEntry;
 
-KDEFERRED_ROUTINE TimerNotifyRT;
+EXT_CALLBACK   TimerNotifyRT;
 
 //=============================================================================
 // Referenced Forward
@@ -55,8 +56,7 @@ class CMiniportWaveRTStream :
 protected:
     PPORTWAVERTSTREAM           m_pPortStream;
     LIST_ENTRY                  m_NotificationList;
-    PKTIMER                     m_pNotificationTimer;
-    PRKDPC                      m_pNotificationDpc;
+    PEX_TIMER                   m_pNotificationTimer;
     ULONG                       m_ulNotificationIntervalMs;
     ULONG                       m_ulCurrentWritePosition;
     LONG                        m_IsCurrentWritePositionUpdated;
@@ -87,7 +87,7 @@ public:
 
     // Friends
     friend class                CMiniportWaveRT;
-    friend KDEFERRED_ROUTINE    TimerNotifyRT;
+    friend EXT_CALLBACK         TimerNotifyRT;
 protected:
     CMiniportWaveRT*            m_pMiniport;
     ULONG                       m_ulPin;
@@ -127,10 +127,23 @@ protected:
     KSPIN_LOCK                  m_PositionSpinLock;
     AUDIOMODULE *               m_pAudioModules;
     ULONG                       m_AudioModuleCount;
+    // Member variable as config params for tone generator
+    ULONG                       m_ulHostCaptureToneFrequency;
+    ULONG                       m_ulLoopbackCaptureToneFrequency;
+    // If abs(m_dwHostCaptureToneAmplitude) + abs(m_dwHostCaptureToneDCValue) > 100
+    // m_dwHostCaptureToneDCValue will be compensated to make the sum equal to 100
+    DWORD                       m_dwHostCaptureToneAmplitude;   // must be between -100 to 100
+    DWORD                       m_dwLoopbackCaptureToneAmplitude; // must be between -100 to 100
+    DWORD                       m_dwHostCaptureToneDCOffset;   // must be between -100 to 100
+    DWORD                       m_dwLoopbackCaptureToneDCOffset; // must be between -100 to 100
+    DWORD                       m_dwHostCaptureToneInitialPhase;   // must be between -31416 to 31416
+    DWORD                       m_dwLoopbackCaptureToneInitialPhase; // must be between -31416 to 31416
+    // Member variable as config params for tone generator
 
-#ifdef SYSVAD_BTH_BYPASS
-    BOOLEAN                     m_ScoOpen;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
+    BOOL                        m_SidebandOpen;
+    BOOL                        m_SidebandStarted;
+#endif  // defined(SYSVAD_BTH_BYPASS)
 
 public:
     
@@ -294,12 +307,14 @@ private:
         _Out_opt_  ULONGLONG *      _pullPresentationPosition, 
         _Out_opt_  LARGE_INTEGER *  _pliQPCTime
     );
+    NTSTATUS ReadRegistrySettings();
 
-#ifdef SYSVAD_BTH_BYPASS
-    NTSTATUS GetScoStreamNtStatus();
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
+    NTSTATUS GetSidebandStreamNtStatus();
+#endif  // defined(SYSVAD_BTH_BYPASS)
     
 };
 typedef CMiniportWaveRTStream *PCMiniportWaveRTStream;
 #endif // _SYSVAD_MINWAVERTSTREAM_H_
+
 

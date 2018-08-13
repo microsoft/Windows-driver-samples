@@ -83,19 +83,19 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\portcls.lib;$(DDK_LIB_PATH)\stdunk.lib;$(DDK_LIB_PATH)\libcntpr.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </Midl>
@@ -105,19 +105,19 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\portcls.lib;$(DDK_LIB_PATH)\stdunk.lib;$(DDK_LIB_PATH)\libcntpr.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </Midl>
@@ -127,19 +127,19 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\portcls.lib;$(DDK_LIB_PATH)\stdunk.lib;$(DDK_LIB_PATH)\libcntpr.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </Midl>
@@ -149,19 +149,19 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\portcls.lib;$(DDK_LIB_PATH)\stdunk.lib;$(DDK_LIB_PATH)\libcntpr.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ClCompile>
     <Midl>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;UNICODE;_UNICODE;PC_IMPLEMENTATION</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </Midl>
@@ -184,8 +184,8 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -193,12 +193,12 @@
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -207,8 +207,8 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -216,12 +216,12 @@
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -230,8 +230,8 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -239,12 +239,12 @@
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -253,8 +253,8 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
       <DisableSpecificWarnings>4595;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -262,17 +262,18 @@
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS</PreprocessorDefinitions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_SingleComponentMultiFxStates</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\adapter.cpp" />
     <ClCompile Include="..\basetopo.cpp" />
+    <ClCompile Include="..\BthhfpDevice.cpp" />
     <ClCompile Include="..\common.cpp" />
     <ClCompile Include="..\hw.cpp" />
     <ClCompile Include="..\kshelper.cpp" />
@@ -281,10 +282,10 @@
     <ClCompile Include="hdmitopo.cpp" />
     <ClCompile Include="micintopo.cpp" />
     <ClCompile Include="spdiftopo.cpp" />
-    <ResourceCompile Include="..\sysvad.rc" />
+    <ResourceCompile Include="TabletAudioSample.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <Inf Exclude="@(Inx)" Include="*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

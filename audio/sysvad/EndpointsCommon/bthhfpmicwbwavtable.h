@@ -24,92 +24,17 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 //
 // Bluetooth Headset Mic (external) range.
 //
-#define BTHHFPMICWB_DEVICE_MAX_CHANNELS           1       // Max Channels.
-#define BTHHFPMICWB_MIN_BITS_PER_SAMPLE_PCM       8       // Min Bits Per Sample
-#define BTHHFPMICWB_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
-#define BTHHFPMICWB_MIN_SAMPLE_RATE               8000    // Min Sample Rate
-#define BTHHFPMICWB_MAX_SAMPLE_RATE               16000    // Max Sample Rate
+#define BTHHFPMICWB_DEVICE_MAX_CHANNELS           1         // Max Channels.
+#define BTHHFPMICWB_MIN_BITS_PER_SAMPLE_PCM       16        // Min Bits Per Sample
+#define BTHHFPMICWB_MAX_BITS_PER_SAMPLE_PCM       16        // Max Bits Per Sample
+#define BTHHFPMICWB_MIN_SAMPLE_RATE               16000     // Min Sample Rate
+#define BTHHFPMICWB_MAX_SAMPLE_RATE               16000     // Max Sample Rate
 
 
 //=============================================================================
 static 
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpMicWBPinSupportedDeviceFormats[] =
 {
-    {
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    {
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                16000,
-                2,
-                16,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            16,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
-    {
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                16000,
-                16000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
     {
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
@@ -198,22 +123,6 @@ KSDATARANGE_AUDIO BthHfpMicWBPinDataRangesStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        BTHHFPMICWB_DEVICE_MAX_CHANNELS,           
-        BTHHFPMICWB_MIN_BITS_PER_SAMPLE_PCM,    
-        BTHHFPMICWB_MAX_BITS_PER_SAMPLE_PCM,    
-        BTHHFPMICWB_MIN_SAMPLE_RATE,            
-        BTHHFPMICWB_MIN_SAMPLE_RATE             
-    },
-    {
-        {
-            sizeof(KSDATARANGE_AUDIO),
-            KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
         BTHHFPMICWB_DEVICE_MAX_CHANNELS,
         BTHHFPMICWB_MIN_BITS_PER_SAMPLE_PCM,
         BTHHFPMICWB_MAX_BITS_PER_SAMPLE_PCM,
@@ -226,8 +135,6 @@ static
 PKSDATARANGE BthHfpMicWBPinDataRangePointersStream[] =
 {
     PKSDATARANGE(&BthHfpMicWBPinDataRangesStream[0]),
-    PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&BthHfpMicWBPinDataRangesStream[1]),
     PKSDATARANGE(&PinDataRangeAttributeList)
 };
 
@@ -328,6 +235,12 @@ PCPROPERTY_ITEM PropertiesBthHfpMicWBWaveFilter[] =
         &KSPROPSETID_Pin,
         KSPROPERTY_PIN_PROPOSEDATAFORMAT,
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_BthHfpWaveFilter
+    },
+    {
+        &KSPROPSETID_Pin,
+        KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_BthHfpWaveFilter
     },
     {

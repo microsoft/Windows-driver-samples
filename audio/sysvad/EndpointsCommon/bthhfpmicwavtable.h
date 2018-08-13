@@ -24,7 +24,7 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 // Bluetooth Headset Mic (external) range.
 //
 #define BTHHFPMIC_DEVICE_MAX_CHANNELS           1       // Max Channels.
-#define BTHHFPMIC_MIN_BITS_PER_SAMPLE_PCM       8       // Min Bits Per Sample
+#define BTHHFPMIC_MIN_BITS_PER_SAMPLE_PCM       16      // Min Bits Per Sample
 #define BTHHFPMIC_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
 #define BTHHFPMIC_MIN_SAMPLE_RATE               8000    // Min Sample Rate
 #define BTHHFPMIC_MAX_SAMPLE_RATE               8000    // Max Sample Rate
@@ -34,31 +34,6 @@ NTSTATUS PropertyHandler_BthHfpWaveFilter(_In_ PPCPROPERTY_REQUEST PropertyReque
 static 
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE BthHfpMicPinSupportedDeviceFormats[] =
 {
-    {
-        {
-            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
-            0,
-            0,
-            0,
-            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
-            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
-        },
-        {
-            {
-                WAVE_FORMAT_EXTENSIBLE,
-                1,
-                8000,
-                8000,
-                1,
-                8,
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
-            },
-            8,
-            KSAUDIO_SPEAKER_MONO,
-            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
-        }
-    },
     {
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
@@ -258,7 +233,13 @@ PCPROPERTY_ITEM PropertiesBthHfpMicWaveFilter[] =
     {
         &KSPROPSETID_Pin,
         KSPROPERTY_PIN_PROPOSEDATAFORMAT,
-        KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_BthHfpWaveFilter
+    },
+    {
+        &KSPROPSETID_Pin,
+        KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_BthHfpWaveFilter
     },
     {
@@ -269,7 +250,20 @@ PCPROPERTY_ITEM PropertiesBthHfpMicWaveFilter[] =
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationBthHfpMicWaveFilter, PropertiesBthHfpMicWaveFilter);
+NTSTATUS CMiniportWaveRT_EventHandler_PinCapsChange(
+    _In_  PPCEVENT_REQUEST EventRequest
+    );
+
+static PCEVENT_ITEM BthHfpMicFormatChangePinEvent[] = {
+    {
+        &KSEVENTSETID_PinCapsChange,
+        KSEVENT_PINCAPS_FORMATCHANGE,
+        KSEVENT_TYPE_ENABLE | KSEVENT_TYPE_BASICSUPPORT,
+        CMiniportWaveRT_EventHandler_PinCapsChange
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationBthHfpMicWaveFilter, PropertiesBthHfpMicWaveFilter, BthHfpMicFormatChangePinEvent);
 
 //=============================================================================
 static

@@ -136,13 +136,13 @@ Return Value:
 
     NTSTATUS                ntStatus        = STATUS_INVALID_DEVICE_REQUEST;
     PCMiniportTopology      miniport        = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    PBTHHFPDEVICECOMMON     bthHfpDevice    = NULL;
+    PSIDEBANDDEVICECOMMON     bthHfpDevice    = NULL;
     ULONG                   channel         = (ULONG)-1;
     
-    bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+    bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
     ASSERT(bthHfpDevice != NULL);
 
-    if (bthHfpDevice->IsVolumeSupported() == FALSE)
+    if (bthHfpDevice->IsVolumeSupported(miniport->m_DeviceType) == FALSE)
     {
        ntStatus = miniport->PropertyHandlerGeneric(PropertyRequest);     
     }
@@ -174,14 +174,11 @@ Return Value:
                 
                 if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                 {
-                    *volume = bthHfpDevice->GetSpeakerVolume();
-
-                    ntStatus = STATUS_SUCCESS;
-
+                    ntStatus = bthHfpDevice->GetVolume(eBthHfpSpeakerDevice, channel, volume);
                 }
                 else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
                 {
-                    ntStatus = bthHfpDevice->SetSpeakerVolume(*volume);
+                    ntStatus = bthHfpDevice->SetVolume(eBthHfpSpeakerDevice, *volume, channel);
                 }
             }
         }
@@ -277,5 +274,6 @@ PropertyHandler_BthHfpSpeakerTopoFilterEvent
 
 #pragma code_seg()
 #endif  // SYSVAD_BTH_BYPASS
+
 
 

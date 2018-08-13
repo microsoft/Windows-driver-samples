@@ -204,13 +204,13 @@ PCPROPERTY_ITEM MicArray1PropertiesTopoFilter[] =
     },
     {
         &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_MIC_SENSITIVITY,
+        KSPROPERTY_AUDIO_MIC_SNR,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_MicArrayTopoFilter
     },
     {
         &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_MIC_SNR,
+        KSPROPERTY_AUDIO_MIC_SENSITIVITY2,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_MicArrayTopoFilter
     }

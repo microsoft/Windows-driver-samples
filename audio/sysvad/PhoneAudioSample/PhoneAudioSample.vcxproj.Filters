@@ -19,55 +19,26 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\adapter.cpp">
+    <ClCompile Include="..\*.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\basetopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\hw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\kshelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\savedata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tonegenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cellulartopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cellularwave.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fmtopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fmwave.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="handsetmictopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="handsetspeakertopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="michstopo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="speakerhstopo.cpp">
+    <ClCompile Include="*.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sysvad.rc">
+    <ResourceCompile Include="PhoneAudioSample.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="*.inx">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>

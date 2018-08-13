@@ -48,6 +48,7 @@ Abstract:
 #define DEFAULT_BUFFER_SIZE         DEFAULT_FRAME_SIZE * DEFAULT_FRAME_COUNT
 
 #define DEFAULT_FILE_NAME           L"\\DosDevices\\C:\\STREAM"
+#define OSDATA_FILE_NAME            L"\\DosDevices\\O:\\STREAM"
 #define OFFLOAD_FILE_NAME           L"OFFLOAD"
 #define HOST_FILE_NAME              L"HOST"
 
@@ -451,6 +452,10 @@ CSaveData::Initialize
     NTSTATUS    ntStatus = STATUS_SUCCESS;
     WCHAR       szTemp[MAX_PATH];
     size_t      cLen;
+    OBJECT_ATTRIBUTES objectAttributes; 
+    UNICODE_STRING    osDataVolumeString;
+    HANDLE            osDataFileHandle = NULL;     
+    IO_STATUS_BLOCK   ioStatusBlock;
 
     DPF_ENTER(("[CSaveData::Initialize]"));
 
@@ -463,9 +468,42 @@ CSaveData::Initialize
         m_ulStreamId++;
     }
 
+    // Probe if OSData volume exists.
+    //
+    RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_probe.txt", OSDATA_FILE_NAME);
+    RtlInitUnicodeString(&osDataVolumeString, szTemp);
+    InitializeObjectAttributes
+    (
+        &objectAttributes,
+        &osDataVolumeString,
+        OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+        NULL,
+        NULL
+    );
+
+    ntStatus =
+        ZwCreateFile
+        (
+            &osDataFileHandle,
+            GENERIC_WRITE | SYNCHRONIZE,
+            &objectAttributes,
+            &ioStatusBlock,
+            NULL,
+            FILE_ATTRIBUTE_NORMAL,
+            0,
+            FILE_OVERWRITE_IF,
+            FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
+            NULL,
+            0
+        );
+    if (NT_SUCCESS(ntStatus))
+    {
+        ZwClose(osDataFileHandle);
+    }
+
     // Allocate data file name.
     //
-    RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_%s_%d.wav", DEFAULT_FILE_NAME, _bOffloaded ? OFFLOAD_FILE_NAME : HOST_FILE_NAME, _bOffloaded ? m_ulOffloadStreamId : m_ulStreamId);
+    RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_%s_%d.wav", NT_SUCCESS(ntStatus) ? OSDATA_FILE_NAME : DEFAULT_FILE_NAME, _bOffloaded ? OFFLOAD_FILE_NAME : HOST_FILE_NAME, _bOffloaded ? m_ulOffloadStreamId : m_ulStreamId);
     m_FileName.Length = 0;
     ntStatus = RtlStringCchLengthW (szTemp, sizeof(szTemp)/sizeof(szTemp[0]), &cLen);
     if (NT_SUCCESS(ntStatus))

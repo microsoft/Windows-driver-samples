@@ -1,27 +1,25 @@
-<!---
-    name: SysVAD Virtual Audio Device Driver Sample
-    platform: WDM
-    language: cpp
-    category: Audio
-    description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620183
---->
-
 SysVAD Virtual Audio Device Driver Sample
 ========================================
 
 The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
-Some of these audio devices are embedded in the system (for example, speakers, microphone arrays) while others are pluggable (like headphones, speakers, microphones, Bluetooth headsets etc.). The driver uses WaveRT and audio offloading for rendering devices. The driver uses a "virtual audio device" instead of an actual hardware-based adapter, and highlights the different aspects of the audio offloading WDM audio driver architecture.
+Some of these audio devices are embedded in the system (for example, speakers, microphone arrays) while others are pluggable (like headphones, Bluetooth headsets etc.). The driver uses WaveRT and audio offloading for rendering devices. The driver uses a "virtual audio device" instead of an actual hardware-based adapter, and highlights the different aspects of the audio offloading WDM audio driver architecture.
 
 Driver developers can use the framework in this sample to provide support for various audio devices without concern for hardware dependencies. The framework includes implementations of the following interfaces:
 
 -   The CAdapterCommon interface gives the miniports access to virtual mixer hardware. It also implements the **IAdapterPowerManagement** interface.
 
--   The CMiniportTopologyMSVAD interface is the base class for all sample topologies. It has very basic common functions. In addition, this class contains common topology property handlers.
+-   The CMiniportTopologySYSVAD interface is the base class for all sample topologies. It has very basic common functions. In addition, this class contains common topology property handlers.
 
 The following table shows the features that are implemented in the various subdirectories of this sample.
 
+Directory | Description 
+-----|------------
+TabletAudioSample | Endpoints that are present in TabletAudioSample driver.
+PhoneAudioSample | Endpoints that are present in PhoneAudioSample driver.
+EndpointsCommon | Endpoints that are present in both TabletAudioSample and PhoneAudioSample. It also contains other common code shared by both sample drivers.
+SwapAPO | Sample APO.
+KeywordDetectorAdapter | Sample Keyword Detector Adapter.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
@@ -49,7 +47,7 @@ In Visual Studio, click **Build** \> **Build Solution**.
 
 **4. Locate the built driver package**
 
-In File Explorer, navigate to the folder that contains the sample files. For example, you would navigate to *C:\\Documents\\Windows-driver-samples\\audio\\sysvad*, if that's the folder you specified in the preceding Step 1.
+In File Explorer, navigate to the folder that contains the sample files. For example, you would navigate to *C:\\Windows-driver-samples\\audio\\sysvad*, if that's the folder you specified in the preceding Step 1.
 
 In the folder, the location of the driver package varies depending on the configuration and platform settings that you selected in the **Configuration Manager**. For example, if you left the default settings unchanged, then the built driver package will be saved to a folder named *Debug* inside the same folder as the sample files. Double-click the folder for the built driver package, and then double-click the folder named *package*.
 
@@ -63,6 +61,7 @@ DelayAPO.dll | A sample APO.
 sysvad.cat | A signed catalog file, which serves as the signature for the entire package. 
 TabletAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
 PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver.
+KeywordDetectorContosoAdapter.dll | Sample Keyword detector adapter.
 
 Run the sample
 --------------
@@ -97,7 +96,7 @@ If you haven't already done so, then preform the steps in the **Build the sample
 
 In Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties** \> **Driver Install** \> **Deployment**.
 
-Check , **Enable deployment** and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter *\*Root\sysvad_TabletAudioSample* for the hardware ID. Click **OK**.
+Check , **Enable deployment** and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter *ROOT\Sysvad_TabletAudioSample* for the hardware ID. Click **OK**.
 
 On the **Build** menu, choose **Deploy Package** or **Build Solution**. This will deploy the sample driver to your target computer.
 
@@ -127,19 +126,17 @@ If you need more detailed instructions for setting up the target computer, see [
 
 **2. Install the driver**
 
-The TabletAudioSample or PhoneAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver. Here's the general syntax for the devcon tool that you will use to install the driver:
+The TabletAudioSample or PhoneAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver. 
 
-**devcon install \<*INF file*>\<*hardware ID*\>**
-
-The INF file required for installing this driver is *sysvad.inf*. Here's how to find the hardware ID for installing the *TabletAudioSample.sys or PhoneAudioSample* sample: On the target computer, navigate to the folder that contains the files for your driver (for example, *C:\\SysvadDriver*). Then right-click the INF file (*sysvad.inf*) and open it with Notepad. Use Ctrl+F to find the [MicrosoftDS] section. Note that there is a comma-separated element at the end of the row. The element after the comma shows the hardware ID. So for this sample, the hardware ID is \*ROOT\sysvad_TabletAudioSample.
+The INF file required for installing this driver is *TabletAudioSample.inf*. 
 
 On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
-**devcon install sysvad.inf \*ROOT\sysvad_TabletAudioSample*
+**devcon dp_add TabletAudioSample.inf**
 
 If you get an error message about *devcon* not being recognized, try adding the path to the *devcon* tool. For example, if you copied it to a folder called *C:\\Tools*, then try using the following command:
 
-**c:\\tools\\devcon install sysvad.inf   \*ROOT\sysvad_TabletAudioSample**
+**C:\\tools\\devcon dp_add TabletAudioSample.inf**
 
 For more detailed instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698272(v=vs.85).aspx).
 

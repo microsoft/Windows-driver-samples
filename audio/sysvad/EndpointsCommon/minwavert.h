@@ -46,6 +46,12 @@ public:
     LONGLONG GetDetectorData();
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
+    ULONGLONG GetStartTimestamp();
+
+    _IRQL_requires_max_(PASSIVE_LEVEL)
+    ULONGLONG GetStopTimestamp();
+
+    _IRQL_requires_max_(PASSIVE_LEVEL)
     NTSTATUS SetArmed(_In_ BOOL Arm);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
@@ -66,6 +72,9 @@ public:
 private:
     _IRQL_requires_max_(PASSIVE_LEVEL)
     VOID ResetFifo();
+
+    _IRQL_requires_max_(PASSIVE_LEVEL)
+    NTSTATUS ReadKeywordTimestampRegistry();
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
     VOID StartBufferingStream();
@@ -89,6 +98,9 @@ private:
     LONGLONG        m_qpcStartCapture;
     LONGLONG        m_nLastQueuedPacket;
 
+    ULONGLONG       m_ullKeywordStartTimestamp;
+    ULONGLONG       m_ullKeywordStopTimestamp;
+
     KSPIN_LOCK      PacketPoolSpinLock;
     LIST_ENTRY      PacketPoolHead;
     PACKET_ENTRY    PacketPool[1 * SamplesPerSecond / SamplesPerPacket];    // Enough storage for 1 second of audio data
@@ -111,13 +123,12 @@ private:
     ULONG                               m_ulLoopbackAllocated;
     ULONG                               m_ulSystemAllocated;
     ULONG                               m_ulOffloadAllocated;
-    DWORD                               m_dwCaptureAllocatedModes;
-    DWORD                               m_dwBiDiCaptureAllocatedModes;
-    DWORD                               m_dwSystemAllocatedModes;
+    ULONG                               m_ulKeywordDetectorAllocated;
 
     ULONG                               m_ulMaxSystemStreams;
     ULONG                               m_ulMaxOffloadStreams;
     ULONG                               m_ulMaxLoopbackStreams;
+    ULONG                               m_ulMaxKeywordDetectorStreams;
 
     // weak ref of running streams.
     PCMiniportWaveRTStream            * m_SystemStreams;
@@ -132,6 +143,7 @@ private:
     PKSDATAFORMAT_WAVEFORMATEXTENSIBLE  m_pDeviceFormat;
     PCFILTER_DESCRIPTOR                 m_FilterDesc;
     PIN_DEVICE_FORMATS_AND_MODES *      m_DeviceFormatsAndModes;
+    FAST_MUTEX                          m_DeviceFormatsAndModesLock; // To serialize access.
     ULONG                               m_DeviceFormatsAndModesCount; 
     USHORT                              m_DeviceMaxChannels;
     PDRMPORT                            m_pDrmPort;
@@ -143,9 +155,9 @@ private:
 
     union {
         PVOID                           m_DeviceContext;
-#ifdef SYSVAD_BTH_BYPASS
-        PBTHHFPDEVICECOMMON             m_BthHfpDevice;
-#endif  // SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
+        PSIDEBANDDEVICECOMMON           m_pSidebandDevice;
+#endif  // defined(SYSVAD_BTH_BYPASS)
     };
 
     AUDIOMODULE *                       m_pAudioModules;
@@ -165,6 +177,11 @@ public:
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Set_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorMatchResult);
+    
+    NTSTATUS EventHandler_PinCapsChange
+    (
+        _In_  PPCEVENT_REQUEST EventRequest
+    );
 
     NTSTATUS EventHandler_SoundDetectorMatchDetected
     (
@@ -174,8 +191,7 @@ public:
     NTSTATUS ValidateStreamCreate
     (
         _In_ ULONG _Pin, 
-        _In_ BOOLEAN _Capture,
-        _In_ GUID _SignalProcessingMode
+        _In_ BOOLEAN _Capture
     );
     
     NTSTATUS StreamCreated
@@ -215,6 +231,21 @@ protected:
         _In_ CONSTRICTOR_OPTION ulProtectionOption
     );
 
+    VOID AddEventToEventList
+    (
+        _In_  PKSEVENT_ENTRY    EventEntry
+    );
+
+    VOID                        GenerateEventList
+    (
+        _In_opt_    GUID       *Set,
+        _In_        ULONG       EventId,
+        _In_        BOOL        PinEvent,
+        _In_        ULONG       PinId,
+        _In_        BOOL        NodeEvent,
+        _In_        ULONG       NodeId
+    );
+
 public:
     DECLARE_STD_UNKNOWN();
 
@@ -223,13 +254,14 @@ public:
         _In_            PUNKNOWN                                UnknownAdapter,
         _In_            PENDPOINT_MINIPAIR                      MiniportPair,
         _In_opt_        PVOID                                   DeviceContext
-        )
+    )
         :CUnknown(0),
         m_ulMaxSystemStreams(0),
         m_ulMaxOffloadStreams(0),
         m_ulMaxLoopbackStreams(0),
+        m_ulMaxKeywordDetectorStreams(0),
         m_DeviceType(MiniportPair->DeviceType),
-        m_DeviceContext(DeviceContext), 
+        m_DeviceContext(DeviceContext),
         m_DeviceMaxChannels(MiniportPair->DeviceMaxChannels),
         m_DeviceFormatsAndModes(MiniportPair->PinDeviceFormatsAndModes),
         m_DeviceFormatsAndModesCount(MiniportPair->PinDeviceFormatsAndModesCount),
@@ -241,7 +273,7 @@ public:
         PAGED_CODE();
 
         m_pAdapterCommon = (PADAPTERCOMMON)UnknownAdapter; // weak ref.
-        
+
         if (MiniportPair->WaveDescriptor)
         {
             RtlCopyMemory(&m_FilterDesc, MiniportPair->WaveDescriptor, sizeof(m_FilterDesc));
@@ -267,20 +299,48 @@ public:
                         m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER2_SINK_SYSTEM].MaxFilterInstanceCount;
                         m_ulMaxLoopbackStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER2_SINK_LOOPBACK].MaxFilterInstanceCount;
                     }
+                    else if(m_FilterDesc.PinCount > KSPIN_WAVE_RENDER3_SOURCE)
+                    {
+                        m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVE_RENDER3_SINK_SYSTEM].MaxFilterInstanceCount;
+                    }
+                }
+            }
+            else
+            {
+                // cellular capture follows a different pin ordering than a standard wavein pin & bridge.
+                if (IsCellularDevice())
+                {
+                    m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVE_BIDI].MaxFilterInstanceCount;
+                }
+                else
+                {
+                    //
+                    // >= comparison here because capture bridge pin comes first in the enumeration
+                    //
+                    if (m_FilterDesc.PinCount >= KSPIN_WAVEIN_HOST)
+                    {
+                        m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVEIN_HOST].MaxFilterInstanceCount;
+                    }
+                    if (m_FilterDesc.PinCount >= KSPIN_WAVEIN_KEYWORD)
+                    {
+                        m_ulMaxKeywordDetectorStreams = m_FilterDesc.Pins[KSPIN_WAVEIN_KEYWORD].MaxFilterInstanceCount;
+                    }
                 }
             }
         }
 
-#ifdef SYSVAD_BTH_BYPASS
-        if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS)
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
                 // This ref is released on dtor.
-                m_BthHfpDevice->AddRef(); // strong ref.
+                m_pSidebandDevice->AddRef(); // strong ref.
             }
+
         }
-#endif // SYSVAD_BTH_BYPASS
+        ExInitializeFastMutex(&m_DeviceFormatsAndModesLock);
+#endif // defined(SYSVAD_BTH_BYPASS)
     }
 
 #pragma code_seg()
@@ -317,6 +377,11 @@ public:
     );
 
     NTSTATUS PropertyHandlerProposedFormat2
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerAudioEffectsDiscoveryEffectsList
     (
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
@@ -441,16 +506,23 @@ private:
     {
         PAGED_CODE();
 
+        PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
+
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
         ASSERT(m_DeviceFormatsAndModesCount > PinId);
-        ASSERT(m_DeviceFormatsAndModes[PinId].WaveFormats != NULL);
-        ASSERT(m_DeviceFormatsAndModes[PinId].WaveFormatsCount > 0);
+        ASSERT(pDeviceFormatsAndModes[PinId].WaveFormats != NULL);
+        ASSERT(pDeviceFormatsAndModes[PinId].WaveFormatsCount > 0);
 
         if (ppFormats != NULL)
         {
-            *ppFormats = m_DeviceFormatsAndModes[PinId].WaveFormats;
+            *ppFormats = pDeviceFormatsAndModes[PinId].WaveFormats;
         }
         
-        return m_DeviceFormatsAndModes[PinId].WaveFormatsCount;
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+
+        return pDeviceFormatsAndModes[PinId].WaveFormatsCount;
     }
 
     //---------------------------------------------------------------------------
@@ -470,8 +542,13 @@ private:
     ULONG GetAudioEngineSupportedDeviceFormats(_Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats)
     {
         ULONG i;
+        PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
 
         PAGED_CODE();
+
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
 
         // By convention, the audio engine node's device formats are the last
         // entry in the PIN_DEVICE_FORMATS_AND_MODES list.
@@ -482,16 +559,17 @@ private:
 
         i = m_DeviceFormatsAndModesCount - 1;                       // Index of last list entry
 
-        ASSERT(m_DeviceFormatsAndModes[i].PinType == NoPin);
-        ASSERT(m_DeviceFormatsAndModes[i].WaveFormats != NULL);
-        ASSERT(m_DeviceFormatsAndModes[i].WaveFormatsCount > 0);
+        ASSERT(pDeviceFormatsAndModes[i].PinType == NoPin);
+        ASSERT(pDeviceFormatsAndModes[i].WaveFormats != NULL);
+        ASSERT(pDeviceFormatsAndModes[i].WaveFormatsCount > 0);
 
         if (ppFormats != NULL)
         {
-            *ppFormats = m_DeviceFormatsAndModes[i].WaveFormats;
+            *ppFormats = pDeviceFormatsAndModes[i].WaveFormats;
         }
 
-        return m_DeviceFormatsAndModes[i].WaveFormatsCount;
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return pDeviceFormatsAndModes[i].WaveFormatsCount;
     }
 
     //---------------------------------------------------------------------------
@@ -514,6 +592,8 @@ private:
 
         PAGED_CODE();
 
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
         ASSERT(m_DeviceFormatsAndModesCount > PinId);
         ASSERT((m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormatCount == 0) == (m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormat == NULL));
 
@@ -524,8 +604,8 @@ private:
         // Special handling for the SCO bypass endpoint, whose modes are determined at runtime
         if (m_DeviceType == eBthHfpMicDevice)
         {
-            ASSERT(m_BthHfpDevice != NULL);
-            if (m_BthHfpDevice->IsNRECSupported())
+            ASSERT(m_pSidebandDevice != NULL);
+            if (m_pSidebandDevice->IsNRECSupported())
             {
                 modes = BthHfpMicPinSupportedDeviceModesNrec;
                 numModes = ARRAYSIZE(BthHfpMicPinSupportedDeviceModesNrec);
@@ -554,6 +634,7 @@ private:
             }
         }
 
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
         return numModes;
     }
 #pragma code_seg()
@@ -578,6 +659,16 @@ protected:
         return (m_DeviceType == eCellularDevice) ? TRUE : FALSE;
     }
 
+    BOOL IsLoopbackSupported()
+    {
+        PAGED_CODE();
+
+        //
+        // It is assumed that loopback is supported when offload is supported
+        //
+        return (m_DeviceFlags & (ENDPOINT_LOOPBACK_SUPPORTED | ENDPOINT_OFFLOAD_SUPPORTED)) ? TRUE : FALSE;
+    }
+
     BOOL IsOffloadSupported()
     {
         PAGED_CODE();
@@ -586,40 +677,79 @@ protected:
 
     BOOL IsSystemCapturePin(ULONG nPinId)
     {
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
         PAGED_CODE();
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
         return (pinType == SystemCapturePin);
     }
 
     BOOL IsCellularBiDiCapturePin(ULONG nPinId)
     {
         PAGED_CODE();
-        return (m_DeviceFormatsAndModes[nPinId].PinType == TelephonyBidiPin);
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return (pinType == TelephonyBidiPin);
     }
 
     BOOL IsSystemRenderPin(ULONG nPinId)
     {
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
         PAGED_CODE();
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
         return (pinType == SystemRenderPin);
     }
 
     BOOL IsLoopbackPin(ULONG nPinId)
     {
         PAGED_CODE();
-        return (m_DeviceFormatsAndModes[nPinId].PinType == RenderLoopbackPin);
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return (pinType == RenderLoopbackPin);
     }
 
     BOOL IsOffloadPin(ULONG nPinId)
     {
         PAGED_CODE();
-        return (m_DeviceFormatsAndModes[nPinId].PinType == OffloadRenderPin);
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return (pinType == OffloadRenderPin);
     }
 
     BOOL IsBridgePin(ULONG nPinId)
     {
         PAGED_CODE();
-        return (m_DeviceFormatsAndModes[nPinId].PinType == BridgePin);
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return (pinType == BridgePin);
+    }
+
+    BOOL IsKeywordDetectorPin(ULONG nPinId)
+    {
+        PAGED_CODE();
+        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+
+        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+
+        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        return (pinType == KeywordCapturePin);
     }
 
     // These three pins are the pins used by the audio engine for host, loopback, and offload.
@@ -713,36 +843,46 @@ protected:
         _In_ ULONG              AudioModuleCount
         );
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 public:
-#pragma code_seg("PAGE")
-    BOOL IsBthHfpDevice()
+#pragma code_seg()
+    BOOL IsSidebandDevice()
     {
-        PAGED_CODE();
         return (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
+                m_DeviceType == eBthHfpSpeakerDevice ) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
-    PBTHHFPDEVICECOMMON GetBthHfpDevice() 
+    PSIDEBANDDEVICECOMMON GetSidebandDevice() 
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
-        PAGED_CODE();
 
-        if (IsBthHfpDevice())
+        if (IsSidebandDevice())
         {
-            if (m_BthHfpDevice != NULL)
+            if (m_pSidebandDevice != NULL)
             {
-                bthHfpDevice = m_BthHfpDevice;
+                sidebandDevice = m_pSidebandDevice;
             }
         }
     
-        return bthHfpDevice;
+        return sidebandDevice;
     }
 #pragma code_seg()
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
+
+#ifdef SYSVAD_BTH_BYPASS
+#pragma code_seg()
+    static
+    VOID
+    EvtFormatChangeHandler
+    (
+        _In_opt_    PVOID   Context
+    );
+
+#endif //#ifdef SYSVAD_BTH_BYPASS
 };
+
 typedef CMiniportWaveRT *PCMiniportWaveRT;
 
 #endif // _SYSVAD_MINWAVERT_H_

@@ -309,6 +309,8 @@ MODE_AND_DEFAULT_FORMAT MicArrayPinSupportedDeviceModes[] =
 static
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE KeywordPinSupportedDeviceFormats[] =
 {
+    // 0 - Note the ENDPOINT_MINIPAIR structures for the mic arrays use this element as the proposed SPEECH format for KWD pin
+    // 16 KHz 16-bit mono
     {
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
@@ -327,7 +329,7 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE KeywordPinSupportedDeviceFormats[] =
                 32000,  // average bytes per second
                 2,      // 2 bytes per frame
                 16,     // 16 bits per sample container
-                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+                sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
             },
             16,         // valid bits per sample
             KSAUDIO_SPEAKER_MONO,
@@ -340,9 +342,9 @@ static
 MODE_AND_DEFAULT_FORMAT KeywordPinSupportedDeviceModes[] =
 {
     {
-        STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
+        STATIC_AUDIO_SIGNALPROCESSINGMODE_SPEECH,
         &KeywordPinSupportedDeviceFormats[SIZEOF_ARRAY(KeywordPinSupportedDeviceFormats) - 1].DataFormat
-    }
+    },
 };
 
 //
@@ -604,7 +606,7 @@ KSDATARANGE_AUDIO KeywordPinDataRangesStream[] =
         16,     // max bits per sample
         16000,  // min sample rate
         16000   // max sample rate
-    }
+    },
 };
 
 static
@@ -744,6 +746,19 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
             KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
             KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
             PropertyHandler_WaveFilter,
+        },
+        0,
+        0,
+        NULL,
+        NULL,
+        NULL
+    },
+    {
+        {
+            &KSPROPSETID_AudioEffectsDiscovery,
+            KSPROPERTY_AUDIOEFFECTSDISCOVERY_EFFECTSLIST,
+            KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+            PropertyHandler_WaveFilter
         },
         0,
         0,

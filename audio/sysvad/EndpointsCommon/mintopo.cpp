@@ -110,30 +110,24 @@ Return Value:
 
     DPF_ENTER(("[CMiniportTopology::~CMiniportTopology]"));
 
-#ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS)
+    if (IsSidebandDevice())
     {
-        ASSERT(m_BthHfpDevice != NULL);
+        ASSERT(m_pSidebandDevice != NULL);
         
         //
         // Register with BthHfpDevice to get notification events.
         //
-        if (m_DeviceType == eBthHfpMicDevice)
+        if(IsSidebandDevice())
         {
-            m_BthHfpDevice->SetMicVolumeHandler(NULL, NULL);
-            m_BthHfpDevice->SetMicConnectionStatusHandler(NULL, NULL);
-        }
-        else 
-        {
-            ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
-            
-            m_BthHfpDevice->SetSpeakerVolumeHandler(NULL, NULL);
-            m_BthHfpDevice->SetSpeakerConnectionStatusHandler(NULL, NULL);
+            m_pSidebandDevice->SetVolumeHandler(m_DeviceType, NULL, NULL);
+            m_pSidebandDevice->SetMuteHandler(m_DeviceType, NULL, NULL);
+            m_pSidebandDevice->SetConnectionStatusHandler(m_DeviceType, NULL, NULL);
         }
 
-        SAFE_RELEASE(m_BthHfpDevice);   // IBthHfpDeviceCommon
+        SAFE_RELEASE(m_pSidebandDevice);   // ISidebandDeviceCommon
     }
-#endif // SYSVAD_BTH_BYPASS
+#endif // defined(SYSVAD_BTH_BYPASS)
 
 
 } // ~CMiniportTopology
@@ -287,24 +281,26 @@ Return Value:
         DPF(D_ERROR, ("Init: CMiniportTopologySYSVAD::Init failed, 0x%x", ntStatus)),
         Done);
     
-#ifdef SYSVAD_BTH_BYPASS
-    if (IsBthHfpDevice())
+#if defined(SYSVAD_BTH_BYPASS)
+    if (IsSidebandDevice())
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON sidebandDevice = NULL;
         
-        bthHfpDevice = GetBthHfpDevice(); // weak ref.
-        ASSERT(bthHfpDevice != NULL);
+        sidebandDevice = GetSidebandDevice(); // weak ref.
+        ASSERT(sidebandDevice != NULL);
         
         //
         // Register with BthHfpDevice to get notification events.
         //
         if (m_DeviceType == eBthHfpMicDevice)
         {
-            bthHfpDevice->SetMicVolumeHandler(
+            sidebandDevice->SetVolumeHandler(
+                m_DeviceType,
                 EvtMicVolumeHandler,                // handler
                 PCMiniportTopology(this));          // context.
             
-            bthHfpDevice->SetMicConnectionStatusHandler(
+            sidebandDevice->SetConnectionStatusHandler(
+                m_DeviceType,
                 EvtMicConnectionStatusHandler,      // handler
                 PCMiniportTopology(this));          // context.
         }
@@ -312,16 +308,18 @@ Return Value:
         {
             ASSERT(m_DeviceType == eBthHfpSpeakerDevice);
             
-            bthHfpDevice->SetSpeakerVolumeHandler(
+            sidebandDevice->SetVolumeHandler(
+                m_DeviceType,
                 EvtSpeakerVolumeHandler,            // handler
                 PCMiniportTopology(this));          // context.
             
-            bthHfpDevice->SetSpeakerConnectionStatusHandler(
+            sidebandDevice->SetConnectionStatusHandler(
+                m_DeviceType,
                 EvtSpeakerConnectionStatusHandler,  // handler
                 PCMiniportTopology(this));          // context.
         }
     }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS)
 
 Done:
     return ntStatus;
@@ -583,7 +581,7 @@ Return Value:
     return ntStatus;
 }
 
-#ifdef SYSVAD_BTH_BYPASS
+#if defined(SYSVAD_BTH_BYPASS)
 //=============================================================================
 #pragma code_seg()
 VOID
@@ -687,7 +685,7 @@ CMiniportTopology::EvtMicConnectionStatusHandler
         FALSE,                              // do not use node ID.
         ULONG(-1));                         // node ID, not used.
 }
-#endif  // SYSVAD_BTH_BYPASS
+#endif  // defined(SYSVAD_BTH_BYPASS)
 
 //=============================================================================
 #pragma code_seg("PAGE")

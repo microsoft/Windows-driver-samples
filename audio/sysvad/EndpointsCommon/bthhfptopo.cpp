@@ -11,7 +11,7 @@ Abstract:
     Implementation of topology miniport for the Bluetooth Hands-Free Profile (external).
 
 --*/
-#ifdef SYSVAD_BTH_BYPASS
+ #ifdef SYSVAD_BTH_BYPASS
 
 #pragma warning (disable : 4127)
 
@@ -19,17 +19,6 @@ Abstract:
 #include "simple.h"
 #include "mintopo.h"
 #include "bthhfptopo.h"
-
-typedef struct _BTHHFP_VOLUME_VALUES_BLOCK
-{
-    KSPROPERTY_DESCRIPTION      Description;
-    KSPROPERTY_MEMBERSHEADER    SteppingHeader;
-    KSPROPERTY_STEPPING_LONG    Stepping[1];
-    KSPROPERTY_MEMBERSHEADER    DefaultHeader;
-    ULONG                       Default[1];
-    
-} BTHHFP_VOLUME_VALUES_BLOCK, *PBTHHFP_VOLUME_VALUES_BLOCK;
-
 
 //=============================================================================
 #pragma code_seg("PAGE")
@@ -57,84 +46,50 @@ Return Value:
     PAGED_CODE();
     DPF_ENTER(("[PropertyHandler_BthHfpVolumeLevel_BasicSupport]"));
 
-    NTSTATUS                ntStatus        = STATUS_SUCCESS;
+    NTSTATUS                ntStatus          = STATUS_SUCCESS;
+    ULONG                   cbDescriptionSize = sizeof(KSPROPERTY_DESCRIPTION);
     ASSERT(PropertyRequest);
 
-    if (PropertyRequest->ValueSize >= sizeof(KSPROPERTY_DESCRIPTION))
+    if (PropertyRequest->ValueSize >= cbDescriptionSize)
     {
         PCMiniportTopology      miniport            = (PCMiniportTopology)PropertyRequest->MajorTarget;
         ULONG                   volumeSettingsSize  = 0;
         PKSPROPERTY_VALUES      volumeSettings;
         PKSPROPERTY_DESCRIPTION propDesc;
-        PBTHHFPDEVICECOMMON     bthHfpDevice;
-        ULONG                   cbFullProperty      = sizeof(BTHHFP_VOLUME_VALUES_BLOCK);
-        
+        PSIDEBANDDEVICECOMMON   bthHfpDevice;
+
         propDesc        = PKSPROPERTY_DESCRIPTION(PropertyRequest->Value);
-        bthHfpDevice    = miniport->GetBthHfpDevice(); // weak ref.
+        bthHfpDevice    = miniport->GetSidebandDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
         
-        //
-        // Convert the KSPROPERTY_VALUES into a BTHHFP_VOLUME_VALUES_BLOCK.
-        //
-        volumeSettings  = bthHfpDevice->GetVolumeSettings(&volumeSettingsSize);
+        volumeSettings  = (PKSPROPERTY_VALUES)bthHfpDevice->GetVolumeSettings(miniport->m_DeviceType, &volumeSettingsSize);
         ASSERT(volumeSettings != NULL);
         ASSERT(volumeSettingsSize != 0);
         
-        if (volumeSettings->MembersListCount != 2 ||
-            volumeSettings->MembersList[0].MembersHeader.MembersFlags != KSPROPERTY_MEMBER_STEPPEDRANGES ||
-            volumeSettings->MembersList[1].MembersHeader.MembersFlags != KSPROPERTY_MEMBER_VALUES)
-        {
-            ntStatus = STATUS_NOT_SUPPORTED;
-            DPF(D_ERROR, ("PropertyHandler_BthHfpVolumeLevel_BasicSupport: invalid KSPROPERTY_VALUES settings"));
-            goto Done;
-        }
-        
+        ULONG cbMemberListSize = volumeSettingsSize - sizeof(KSPROPERTY_VALUES);
+        ULONG cbFullProperty    = cbDescriptionSize + cbMemberListSize;
+
         //
         // Init description prop header.
         //
         propDesc->AccessFlags       = KSPROPERTY_TYPE_ALL;
         propDesc->DescriptionSize   = cbFullProperty;
         propDesc->PropTypeSet       = volumeSettings->PropTypeSet;
-        propDesc->MembersListCount  = 2;
+        propDesc->MembersListCount  = volumeSettings->MembersListCount;
         propDesc->Reserved          = 0;
 
-        // if return buffer can also hold a range description, return it too
+        // if return buffer can hold range description, return it
         if(PropertyRequest->ValueSize >= cbFullProperty)
         {
-            PBTHHFP_VOLUME_VALUES_BLOCK settings = (PBTHHFP_VOLUME_VALUES_BLOCK)propDesc;
-                
-            //
-            // First entry is the range.
-            //
-            settings->SteppingHeader.MembersFlags   = KSPROPERTY_MEMBER_STEPPEDRANGES;
-            settings->SteppingHeader.MembersSize    = sizeof(KSPROPERTY_STEPPING_LONG);
-            settings->SteppingHeader.MembersCount   = 1;
-            settings->SteppingHeader.Flags          = KSPROPERTY_MEMBER_FLAG_BASICSUPPORT_MULTICHANNEL;
-            
-            // fill in the stepped range.
-            PKSPROPERTY_STEPPING_LONG ranges = (PKSPROPERTY_STEPPING_LONG)volumeSettings->MembersList[0].Members;
-            settings->Stepping[0] = *ranges;
-            //settings->Stepping[0].SteppingDelta         = 2 * 0x10000;      // 2 dB 
-            //settings->Stepping[0].Bounds.SignedMinimum  = -15 * 0x10000;    // -15 dB
-
-            //
-            // Second entry is the default value.
-            //
-            settings->DefaultHeader.MembersFlags    = KSPROPERTY_MEMBER_VALUES;
-            settings->DefaultHeader.MembersSize     = sizeof(LONG);
-            settings->DefaultHeader.MembersCount    = 1;
-            settings->DefaultHeader.Flags           = KSPROPERTY_MEMBER_FLAG_DEFAULT;
-
-            // fill in the default value.
-            PLONG defValue = (PLONG) volumeSettings->MembersList[1].Members;
-            settings->Default[0] = *defValue;
-
+            RtlCopyMemory((PVOID)(propDesc + 1), volumeSettings->MembersList, cbMemberListSize);
             // set the return value size
             PropertyRequest->ValueSize = cbFullProperty;
         } 
         else
         {
-            PropertyRequest->ValueSize = sizeof(KSPROPERTY_DESCRIPTION);
+            // otherwise only return description header
+            // set the return value size
+            PropertyRequest->ValueSize = cbDescriptionSize;
         }
     } 
     else if(PropertyRequest->ValueSize >= sizeof(ULONG))
@@ -151,7 +106,6 @@ Return Value:
         ntStatus = STATUS_BUFFER_TOO_SMALL;
     }
 
-Done:
     return ntStatus;
 }
 
@@ -227,11 +181,11 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PBTHHFPDEVICECOMMON bthHfpDevice    = NULL;
+                        PSIDEBANDDEVICECOMMON bthHfpDevice    = NULL;
                         PKSMULTIPLE_ITEM    pMI             = (PKSMULTIPLE_ITEM)PropertyRequest->Value;
                         PKSJACK_DESCRIPTION pDesc           = (PKSJACK_DESCRIPTION)(pMI+1);
 
-                        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
                         ASSERT(bthHfpDevice != NULL);
                         
                         pMI->Size = cbNeeded;
@@ -437,14 +391,14 @@ Return Value:
                 {
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
-                        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+                        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
                         
                         GUID* guid = (GUID *)PropertyRequest->Value;
                         
-                        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+                        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
                         ASSERT(bthHfpDevice != NULL);
 
-                        *guid = bthHfpDevice->GetContainerId();
+                        *guid = bthHfpDevice->GetContainerId(miniport->m_DeviceType);
 
                         ntStatus = STATUS_SUCCESS;
                     }
@@ -500,9 +454,9 @@ Return Value:
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
         
-        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
 
         ntStatus = bthHfpDevice->Connect();
@@ -555,9 +509,9 @@ Return Value:
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
-        PBTHHFPDEVICECOMMON bthHfpDevice = NULL;
+        PSIDEBANDDEVICECOMMON bthHfpDevice = NULL;
         
-        bthHfpDevice = miniport->GetBthHfpDevice(); // weak ref.
+        bthHfpDevice = miniport->GetSidebandDevice(); // weak ref.
         ASSERT(bthHfpDevice != NULL);
 
         ntStatus = bthHfpDevice->Disconnect();
@@ -619,5 +573,6 @@ PropertyHandler_BthHfpTopoNodeEvent
 
 #pragma code_seg()
 #endif  // SYSVAD_BTH_BYPASS
+
 
 

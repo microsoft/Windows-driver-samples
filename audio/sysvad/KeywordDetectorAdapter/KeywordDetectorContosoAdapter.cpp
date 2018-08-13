@@ -155,7 +155,7 @@ public:
         contosoResult = (CONTOSO_KEYWORDDETECTIONRESULT*)Result;
 
         // Do something with the result data to determine return parameters
-        // PostProcessResult(contosoResult->ContosoDetectorResultData);
+        // PostProcessResult(contosoResult->ContosoDetectorResultData, contosoResult->KeywordStartTimestamp, contosoResult->KeywordStopTimestamp);
 
         *KeywordId = KwVoiceAssistant;
         *LangId = 0x0409;

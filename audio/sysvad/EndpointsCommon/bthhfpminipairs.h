@@ -69,50 +69,66 @@ static
 PHYSICALCONNECTIONTABLE BthHfpSpeakerTopologyPhysicalConnections[] =
 {
     {
-        KSPIN_TOPO_WAVEOUT_SOURCE,  // TopologyIn
-        KSPIN_WAVE_RENDER_SOURCE,   // WaveOut
+        KSPIN_TOPO_WAVEOUT_SOURCE,      // TopologyIn
+        KSPIN_WAVE_RENDER3_SOURCE,      // WaveOut
         CONNECTIONTYPE_WAVE_OUTPUT
     }
 };
+
+// A subdevice is created for each HFP device using the reference string in the form of:
+// <Base_Reference_String>-<Hashcode>
+// where Base_Reference_String is one of the following template names
+#define BTHHFP_SPEAKER_TOPO_NAME    L"TopologyBthHfpSpeaker"
+#define BTHHFP_SPEAKER_WAVE_NAME    L"WaveBthHfpSpeaker"
+#define BTHHFP_MIC_TOPO_NAME        L"TopologyBthHfpMic"
+#define BTHHFP_MIC_WAVE_NAME        L"WaveBthHfpMic"
+// And Hashcode is 8-character long hexadecimal value
+
+// A reference string max length is being set to a value to accommodate them both
+#define BTHHFP_INTERFACE_REFSTRING_MAX_LENGTH 100
 
 static
 ENDPOINT_MINIPAIR BthHfpSpeakerMiniports =
 {
     eBthHfpSpeakerDevice,
-    L"TopologyBthHfpSpeaker",               // make sure this name matches with SYSVAD.TopologyBthHfpSpeaker.szPname in the inf's [Strings] section 
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_TOPO_NAME and made unique for each side band interface
+    BTHHFP_SPEAKER_TOPO_NAME,           // template name matches with KSNAME_TopologyBthHfpSpeaker in the inf's [Strings] section
     CreateMiniportTopologySYSVAD,
     &BthHfpSpeakerTopoMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
-    L"WaveBthHfpSpeaker",                   // make sure this name matches with SYSVAD.WaveBthHfpSpeaker.szPname in the inf's [Strings] section
+    0, NULL,                            // Interface properties
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_WAVE_NAME and made unique for each side band interface
+    BTHHFP_SPEAKER_WAVE_NAME,           // template name matches with KSNAME_WaveBthHfpSpeaker in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &BthHfpSpeakerWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    0, NULL,                            // Interface properties
     1,
     BthHfpSpeakerPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(BthHfpSpeakerPinDeviceFormatsAndModes),
     BthHfpSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(BthHfpSpeakerTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_NO_FLAGS
 };
 
 static
 ENDPOINT_MINIPAIR BthHfpSpeakerWBMiniports =
 {
     eBthHfpSpeakerDevice,
-    L"TopologyBthHfpSpeaker",               // make sure this name matches with SYSVAD.TopologyBthHfpSpeaker.szPname in the inf's [Strings] section 
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_TOPO_NAME and made unique for each side band interface
+    BTHHFP_SPEAKER_TOPO_NAME,           // Template name that matches with KSNAME_TopologyBthHfpSpeaker in the inf's [Strings] section
     CreateMiniportTopologySYSVAD,
     &BthHfpSpeakerTopoMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
-    L"WaveBthHfpSpeaker",                   // make sure this name matches with SYSVAD.WaveBthHfpSpeaker.szPname in the inf's [Strings] section
+    0, NULL,                            // Interface properties
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_WAVE_NAME and made unique for each side band interface
+    BTHHFP_SPEAKER_WAVE_NAME,           // Template name matches with KSNAME_WaveBthHfpSpeaker in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &BthHfpSpeakerWBWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    0, NULL,                            // Interface properties
     1,
     BthHfpSpeakerWBPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(BthHfpSpeakerWBPinDeviceFormatsAndModes),
     BthHfpSpeakerTopologyPhysicalConnections,
     SIZEOF_ARRAY(BthHfpSpeakerTopologyPhysicalConnections),
-    ENDPOINT_OFFLOAD_SUPPORTED
+    ENDPOINT_NO_FLAGS
 };
 
 //
@@ -133,8 +149,8 @@ static
 PHYSICALCONNECTIONTABLE BthHfpMicTopologyPhysicalConnections[] =
 {
     {
-        KSPIN_TOPO_BRIDGE,          // TopologyOut
-        KSPIN_WAVE_BRIDGE,          // WaveIn
+        KSPIN_TOPO_BRIDGE,              // TopologyOut
+        KSPIN_WAVE_BRIDGE,              // WaveIn
         CONNECTIONTYPE_TOPOLOGY_OUTPUT
     }
 };
@@ -143,14 +159,16 @@ static
 ENDPOINT_MINIPAIR BthHfpMicMiniports =
 {
     eBthHfpMicDevice,
-    L"TopologyBthHfpMic",                   // make sure this name matches with SYSVAD.TopologyBthHfpMic.szPname in the inf's [Strings] section 
+    NULL,                               // Will be generated based on BTHHFP_MIC_TOPO_NAME and made unique for each side band interface
+    BTHHFP_MIC_TOPO_NAME,               // template name matches with KSNAME_TopologyBthHfpMic in the inf's [Strings] section
     CreateMiniportTopologySYSVAD,
     &BthHfpMicTopoMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
-    L"WaveBthHfpMic",                       // make sure this name matches with SYSVAD.WaveBthHfpMic.szPname in the inf's [Strings] section
+    0, NULL,                            // Interface properties
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_WAVE_NAME and made unique for each side band interface
+    BTHHFP_MIC_WAVE_NAME,               // template name matches with KSNAME_WaveBthHfpMic in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &BthHfpMicWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    0, NULL,                            // Interface properties
     1,
     BthHfpMicPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(BthHfpMicPinDeviceFormatsAndModes),
@@ -163,14 +181,16 @@ static
 ENDPOINT_MINIPAIR BthHfpMicWBMiniports =
 {
     eBthHfpMicDevice,
-    L"TopologyBthHfpMic",                   // make sure this name matches with SYSVAD.TopologyBthHfpMic.szPname in the inf's [Strings] section 
+    NULL,                               // Will be generated based on BTHHFP_MIC_TOPO_NAME and made unique for each side band interface
+    BTHHFP_MIC_TOPO_NAME,               // template name matches with KSNAME_TopologyBthHfpMic in the inf's [Strings] section
     CreateMiniportTopologySYSVAD,
     &BthHfpMicTopoMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
-    L"WaveBthHfpMic",                       // make sure this name matches with SYSVAD.WaveBthHfpMic.szPname in the inf's [Strings] section
+    0, NULL,                            // Interface properties
+    NULL,                               // Will be generated based on BTHHFP_SPEAKER_WAVE_NAME and made unique for each side band interface
+    BTHHFP_MIC_WAVE_NAME,               // template name matches with KSNAME_WaveBthHfpMic in the inf's [Strings] section
     CreateMiniportWaveRTSYSVAD,
     &BthHfpMicWBWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
+    0, NULL,                            // Interface properties
     1,
     BthHfpMicWBPinDeviceFormatsAndModes,
     SIZEOF_ARRAY(BthHfpMicWBPinDeviceFormatsAndModes),
@@ -215,10 +235,14 @@ C_ASSERT(g_cBthHfpCaptureEndpoints == 2);
 //
 // Total miniports = # endpoints * 2 (topology + wave) / 2 (since we have one each for narrowband-only and wideband)
 //
-#define g_MaxBthHfpMiniports  ((g_cBthHfpRenderEndpoints + g_cBthHfpCaptureEndpoints))
+// 
+// Allow 10 Bluetooth hands-free profile devices.
+//
+#define MAX_BTHHFP_DEVICES      (10)
+#define g_MaxBthHfpMiniports    ((g_cBthHfpRenderEndpoints + g_cBthHfpCaptureEndpoints) * MAX_BTHHFP_DEVICES)
 
 // g_MaxBthHfpMiniports is used when calculating the MaxObjects inside AddDevice.
-C_ASSERT(g_MaxBthHfpMiniports == 4);
+C_ASSERT(g_MaxBthHfpMiniports == 40);
 
 #endif // _SYSVAD_BTHHFPMINIPAIRS_H_
 

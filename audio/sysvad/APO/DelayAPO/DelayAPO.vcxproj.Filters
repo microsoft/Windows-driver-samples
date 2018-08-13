@@ -13,47 +13,29 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
       <UniqueIdentifier>{a57b6b78-38ae-4348-ade3-0200e81a3dd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IDL Files">
+      <Extensions>idl</Extensions>
+      <UniqueIdentifier>{c6318700-1bce-4812-92f1-160881e4c976}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Delay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DelayAPODll.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DelayAPOMFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DelayAPOSFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <Midl Include="DelayAPODll.idl">
-      <Filter>Source Files</Filter>
+      <Filter>IDL Files</Filter>
     </Midl>
     <Midl Include="DelayAPOInterface.idl">
-      <Filter>Source Files</Filter>
+      <Filter>IDL Files</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DelayAPODll.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelayAPO.h" />
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DelayAPO.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">
+    <None Include="*.rc;*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="*.def;*.bat;*.hpj;*.asmx">
+    <None Include="*.cpp;*.def;*.bat;*.hpj;*.asmx">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -518,6 +518,12 @@ PCPROPERTY_ITEM PropertiesHandsetSpeakerWaveFilter[] =
         KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_WaveFilter
     },
+    {
+        &KSPROPSETID_Pin,
+        KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_WaveFilter
+    }
 };
 
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationHandsetSpeakerWaveFilter, PropertiesHandsetSpeakerWaveFilter);

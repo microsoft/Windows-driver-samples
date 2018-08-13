@@ -8,8 +8,8 @@ Copyright (c) Microsoft Corporation. All Rights Reserved
 #define VER_FILETYPE                    VFT_DLL
 #define VER_FILESUBTYPE                 VFT_UNKNOWN
 #define VER_FILEDESCRIPTION_STR         "Delay APO"
-#define VER_INTERNALNAME_STR            "DELAYAPODll"
-#define VER_ORIGINALFILENAME_STR        "DelayAPODll.Dll"
+#define VER_INTERNALNAME_STR            "DelayAPO"
+#define VER_ORIGINALFILENAME_STR        "DelayAPO.Dll"
 #include <Common.ver>
 
 IDR_DELAYAPODLL          REGISTRY                "DelayAPODll.rgs"
@@ -17,7 +17,7 @@ IDR_DELAYAPOMFX          REGISTRY                "DelayAPOMFX.rgs"
 IDR_DELAYAPOSFX          REGISTRY                "DelayAPOSFX.rgs"
 
 // ICON
-IDI_EFFECT_ICON			RCDATA					"DelayApo.png"
+IDI_EFFECT_ICON			RCDATA					"DelayAPO.png"
 
 #if 0
 1                       TYPELIB                 "DelayAPODll.tlb"

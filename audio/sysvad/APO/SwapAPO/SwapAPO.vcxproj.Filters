@@ -13,47 +13,29 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
       <UniqueIdentifier>{A9DFA5D3-3035-416E-BBD8-8D0745973136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IDL Files">
+      <Extensions>idl</Extensions>
+      <UniqueIdentifier>{6d66b527-51f6-480e-a9d1-813fa5081a43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Swap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SwapAPODll.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SwapAPOMFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SwapAPOSFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <Midl Include="SwapAPODll.idl">
-      <Filter>Source Files</Filter>
+      <Filter>IDL Files</Filter>
     </Midl>
     <Midl Include="SwapAPOInterface.idl">
-      <Filter>Source Files</Filter>
+      <Filter>IDL Files</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SwapAPODll.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SwapAPO.h" />
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SwapAPO.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">
+    <None Include="*.rc;*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="*.def;*.bat;*.hpj;*.asmx">
+    <None Include="*.cpp;*.def;*.bat;*.hpj;*.asmx">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

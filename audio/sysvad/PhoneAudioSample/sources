@@ -35,19 +35,20 @@ KMDF_VERSION_MAJOR=1
 C_DEFINES= $(C_DEFINES) -D_USE_IPortClsRuntimePower
 #C_DEFINES= $(C_DEFINES) -D_USE_SingleComponentMultiFxStates
 
-INCLUDES= \
-        $(INCLUDES); \
-        ..\EndpointsCommon; \
+INCLUDES=                       \
+        $(INCLUDES);            \
+        ..\EndpointsCommon;     \
 
 SOURCES=$(SOURCES)              \
-        cellulartopo.cpp          \
-        fmtopo.cpp          \
-        handsetspeakertopo.cpp          \
-        handsetmictopo.cpp          \
-        michstopo.cpp          \
-        speakerhstopo.cpp          \
-        cellularwave.cpp \
-        fmwave.cpp \
+        cellulartopo.cpp        \
+        fmtopo.cpp              \
+        handsetspeakertopo.cpp  \
+        handsetmictopo.cpp      \
+        michstopo.cpp           \
+        speakerhstopo.cpp       \
+        cellularwave.cpp        \
+        fmwave.cpp              \
+        PhoneAudioSample.rc     \
 
 # Indicate that this module must be included in the driver package
 DDK_NO_PACKAGE_PROJECT=0
