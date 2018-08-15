@@ -75,7 +75,7 @@ Return Value:
         //
         status = WdfDeviceCreateDeviceInterface(
             device,
-            &GUID_DEVINTERFACE_SimpleMediaSourceDriver,
+            &CAMERA_CATEGORY,
             NULL // ReferenceString
             );
 
