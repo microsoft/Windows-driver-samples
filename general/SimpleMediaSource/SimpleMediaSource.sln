@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MediaSource", "MediaSource\MediaSource.vcxproj", "{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleMediaSource", "MediaSource\MediaSource.vcxproj", "{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleMediaSourceDriver", "SimpleMediaSourceDriver\SimpleMediaSourceDriver.vcxproj", "{3098C6BF-E96E-4793-A70E-FB09B741580A}"
 EndProject
@@ -25,8 +25,10 @@ Global
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x64.Build.0 = Debug|x64
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x86.ActiveCfg = Debug|Win32
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Debug|x86.Build.0 = Debug|Win32
-		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM.ActiveCfg = Release|Win32
-		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM64.ActiveCfg = Release|Win32
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM.ActiveCfg = Release|ARM
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM.Build.0 = Release|ARM
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM64.ActiveCfg = Release|ARM64
+		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|ARM64.Build.0 = Release|ARM64
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x64.ActiveCfg = Release|x64
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x64.Build.0 = Release|x64
 		{43AD9BF7-E765-48FE-9826-71A8F2CB12DD}.Release|x86.ActiveCfg = Release|Win32
