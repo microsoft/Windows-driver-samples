@@ -4,7 +4,7 @@
     language: cpp
     category: USB
     description: Demonstrates how to create a Windows UCSI client UCSI class extension driver (UcmUcsiCx).
-    samplefwlink: 
+    samplefwlink: https://github.com/Microsoft/Windows-driver-samples/tree/master/usb/UcmUcsiAcpiSample
 --->
 
 # UcmUcsiCx ACPI Client Driver
