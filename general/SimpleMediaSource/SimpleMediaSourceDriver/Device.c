@@ -47,6 +47,8 @@ Return Value:
     PDEVICE_CONTEXT deviceContext;
     WDFDEVICE device;
     NTSTATUS status;
+    UNICODE_STRING szReference;
+    RtlInitUnicodeString(&szReference, L"CustomCameraSource");
 
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
@@ -76,7 +78,7 @@ Return Value:
         status = WdfDeviceCreateDeviceInterface(
             device,
             &CAMERA_CATEGORY,
-            NULL // ReferenceString
+            &szReference // ReferenceString
             );
 
         if (NT_SUCCESS(status)) {
@@ -87,7 +89,7 @@ Return Value:
             status = WdfDeviceCreateDeviceInterface(
                 device,
                 &CAPTURE_CATEGORY,
-                NULL // ReferenceString
+                &szReference // ReferenceString
             );
         }
 
@@ -99,7 +101,7 @@ Return Value:
             status = WdfDeviceCreateDeviceInterface(
                 device,
                 &VIDEO_CATEGORY,
-                NULL // ReferenceString
+                &szReference // ReferenceString
             );
         }
 
