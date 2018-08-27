@@ -48,7 +48,7 @@ Return Value:
     WDFDEVICE device;
     NTSTATUS status;
     UNICODE_STRING szReference;
-    RtlInitUnicodeString(&szReference, L"CustomCameraSource");
+    RtlInitUnicodeString(&szReference, L"CustomCameraSource"); // Needs to match the ReferenceString in INF
 
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
@@ -82,10 +82,6 @@ Return Value:
             );
 
         if (NT_SUCCESS(status)) {
-            //
-            // Create a device interface so that application can find and talk
-            // to us.
-            //
             status = WdfDeviceCreateDeviceInterface(
                 device,
                 &CAPTURE_CATEGORY,
@@ -94,10 +90,6 @@ Return Value:
         }
 
         if (NT_SUCCESS(status)) {
-            //
-            // Create a device interface so that application can find and talk
-            // to us.
-            //
             status = WdfDeviceCreateDeviceInterface(
                 device,
                 &VIDEO_CATEGORY,
