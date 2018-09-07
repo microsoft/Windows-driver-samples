@@ -199,7 +199,7 @@ SimpleMediaSource::Start(
 
     RETURN_IF_FAILED (_CheckShutdownRequiresLock());
 
-    if (_sourceState != SourceState::Stopped)
+    if (!(_sourceState != SourceState::Stopped || _sourceState != SourceState::Shutdown))
     {
         return MF_E_INVALID_STATE_TRANSITION;
     }
@@ -276,6 +276,8 @@ SimpleMediaSource::Stop(
     {
         return MF_E_INVALID_STATE_TRANSITION;
     }
+
+    _sourceState = SourceState::Stopped;
 
     RETURN_IF_FAILED (_CheckShutdownRequiresLock());
     RETURN_IF_FAILED (InitPropVariantFromInt64(MFGetSystemTime(), &stopTime));
