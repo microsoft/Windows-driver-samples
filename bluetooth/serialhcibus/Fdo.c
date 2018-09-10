@@ -1898,7 +1898,7 @@ Return Value:
         DoTrace(LEVEL_INFO, TFLAG_IOCTL,(" IOCTL_BTHX_WRITE_HCI ---------->"));
         // Validate input and output parameters
         if (!InBuffer || InBufferSize < sizeof(BTHX_HCI_READ_WRITE_CONTEXT) ||
-            !OutBuffer || OutBufferSize != sizeof(BTHX_HCI_PACKET_TYPE))
+            !OutBuffer || OutBufferSize != sizeof(ULONG))
         {
             Status = STATUS_INVALID_PARAMETER;
             DoTrace(LEVEL_ERROR, TFLAG_IOCTL,(" IOCTL_BTHX_WRITE_HCI %!STATUS!", Status));
@@ -1934,7 +1934,7 @@ Return Value:
     case IOCTL_BTHX_READ_HCI:
         DoTrace(LEVEL_INFO, TFLAG_IOCTL,(" IOCTL_BTHX_READ_HCI <----------"));
         // Validate input and output parameters
-        if (!InBuffer || InBufferSize != sizeof(BTHX_HCI_PACKET_TYPE) ||
+        if (!InBuffer || InBufferSize < sizeof(UCHAR) ||
             !OutBuffer || OutBufferSize < sizeof(BTHX_HCI_READ_WRITE_CONTEXT))
         {
             Status = STATUS_INVALID_PARAMETER;
@@ -1942,7 +1942,7 @@ Return Value:
             break;
         }
 
-        PacketType = *((BTHX_HCI_PACKET_TYPE *) InBuffer);
+        PacketType = (BTHX_HCI_PACKET_TYPE) *((UCHAR *) InBuffer);
 
         if (!BTHX_VALID_READ_PACKET_TYPE(PacketType))
         {
