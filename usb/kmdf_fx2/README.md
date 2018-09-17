@@ -58,7 +58,7 @@ This directory contains driver code that demonstrates the following functionalit
 -   Loads the driver and responds to PnP and Power events. You can install, uninstall, disable, enable, suspend, and resume the system.
 -   Creates a context with the WDFDEVICE object.
 -   Initializes the USB device by registering a *EvtPrepareHardware* callback.
--   Marks the interface restricted so that it can be accessed by a privileged Windows Store device app.
+-   Marks the interface restricted so that it can be accessed by a privileged UWP device app.
 -   Creates a default parallel queue to receive an IOCTL request to set bar graph display.
 -   Retrieves memory handle from the requests and uses it to send a vendor command to the USB device.
 -   Registers read and write events on the default queue.

@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
 - name: Driver MFT Sample
-  description: A driver MFT for use with a camera's Windows Store device app.
+  description: A driver MFT for use with a camera's Windows device app.
   generateZip: true
   preserveParentHierarchy: true
   author: windows-driver-samples
@@ -9,3 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/avstream/samplemft0/SampleMft0.sln

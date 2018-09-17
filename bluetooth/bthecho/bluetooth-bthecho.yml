@@ -9,3 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/bluetooth/bthecho/bthecho.sln
