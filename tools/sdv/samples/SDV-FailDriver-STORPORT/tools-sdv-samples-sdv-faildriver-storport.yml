@@ -3,6 +3,7 @@ sample:
 - name: SDV-FailDriver-STORPORT
   description: Demonstrates how Static Driver Verifier (SDV) can find errors in a Storport driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

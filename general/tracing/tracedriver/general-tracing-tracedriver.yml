@@ -3,6 +3,7 @@ sample:
 - name: Tracedrv
   description: A sample driver instrumented for software tracing.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

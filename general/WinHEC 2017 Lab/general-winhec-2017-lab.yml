@@ -3,6 +3,7 @@ sample:
 - name: WinHEC 2017 Lab
   description: WinHEC 2017 Lab
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

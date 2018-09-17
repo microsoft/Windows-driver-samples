@@ -3,6 +3,7 @@ sample:
 - name: Eventdrv
   description: Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

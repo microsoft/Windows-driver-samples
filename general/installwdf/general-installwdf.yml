@@ -3,6 +3,7 @@ sample:
 - name: WDF Installation Package
   description: Demonstrates how to install WDF packages on a system.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

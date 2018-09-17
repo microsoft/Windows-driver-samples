@@ -3,6 +3,7 @@ sample:
 - name: IOCTL
   description: Demonstrates usage of four different types of IOCTLs
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

@@ -3,6 +3,7 @@ sample:
 - name: Kernel Counter Sample (Kcs)
   description: Demonstrates the use of the kernel-mode performance library.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

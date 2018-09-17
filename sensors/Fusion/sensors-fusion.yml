@@ -3,6 +3,7 @@ sample:
 - name: Fusion Sensor Driver Sample
   description: Demonstrates how to write a UMDF v2 driver to control a virtual FusionSensor sensor.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

@@ -3,6 +3,7 @@ sample:
 - name: CancelSafe File System Minifilter Driver
   description: A minifilter demonstrating the use of cancel-safe queues.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

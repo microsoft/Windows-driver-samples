@@ -3,6 +3,7 @@ sample:
 - name: Cancel-Safe IRP Queue Sample
   description: Demonstrates the use of the cancel-safe queue routines.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

@@ -3,6 +3,7 @@ sample:
 - name: Keyboard Input WDF Filter Driver (Kbfiltr)
   description: A WDF example of a keyboard input filter driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

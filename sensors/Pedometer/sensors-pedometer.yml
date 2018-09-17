@@ -3,6 +3,7 @@ sample:
 - name: Pedometer Sensor Sample
   description: Demonstrates how to write a UMDF v2 driver to control a virtual Pedometer sensor.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

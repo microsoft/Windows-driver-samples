@@ -3,6 +3,7 @@ sample:
 - name: WDI samples
   description: WDI samples
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

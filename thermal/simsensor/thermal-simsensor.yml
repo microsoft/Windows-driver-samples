@@ -3,6 +3,7 @@ sample:
 - name: SimSensor - Simulated Temperature Sensor Sample Driver
   description: Demonstrates a simulated temperature sensor device.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

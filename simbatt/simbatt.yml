@@ -3,6 +3,7 @@ sample:
 - name: Simulated Battery Driver Sample
   description: Demonstrates a KMDF-based implementation of Windows battery driver interfaces.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

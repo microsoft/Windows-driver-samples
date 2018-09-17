@@ -3,6 +3,7 @@ sample:
 - name: Standard SD Host Controller Miniport
   description: Provides a functional miniport implementation for a standard SD host controller.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

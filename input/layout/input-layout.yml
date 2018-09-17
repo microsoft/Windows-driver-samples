@@ -3,6 +3,7 @@ sample:
 - name: Keyboard Layout Samples
   description: Demonstrates how to generate layouts for various keyboards and locales.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

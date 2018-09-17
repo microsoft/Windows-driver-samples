@@ -3,6 +3,7 @@ sample:
 - name: PCIDRV - WDF Driver for PCI Device
   description: Demonstrates how to write a KMDF driver for a PCI device.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

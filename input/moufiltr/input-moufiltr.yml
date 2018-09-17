@@ -3,6 +3,7 @@ sample:
 - name: Mouse Input WDF Filter Driver (Moufiltr)
   description: A WDF example of a mouse input filter driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

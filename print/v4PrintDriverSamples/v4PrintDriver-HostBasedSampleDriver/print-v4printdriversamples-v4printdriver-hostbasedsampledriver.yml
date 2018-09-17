@@ -3,9 +3,10 @@ sample:
 - name: USB Host-Based Print Driver Sample
   description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
-  - js
+  - javascript
   - xml
   technologies:
   - windows

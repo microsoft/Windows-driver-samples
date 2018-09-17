@@ -3,6 +3,7 @@ sample:
 - name: Serenum sample
   description: Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

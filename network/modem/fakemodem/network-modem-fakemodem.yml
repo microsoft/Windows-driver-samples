@@ -3,6 +3,7 @@ sample:
 - name: Fakemodem Driver
   description: Demonstrates a simple controller-less modem driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

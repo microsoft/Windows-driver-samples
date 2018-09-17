@@ -3,6 +3,7 @@ sample:
 - name: RegFltr Sample Driver
   description: Demonstrates how to write a registry filter driver.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

@@ -3,6 +3,7 @@ sample:
 - name: Disk Class Driver
   description: A class driver for disk devices.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp

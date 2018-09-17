@@ -3,6 +3,7 @@ sample:
 - name: Non-PnP Driver Sample
   description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework.
   generateZip: true
+  preserveParentHierarchy: true
   author: windows-driver-samples
   languages:
   - cpp
