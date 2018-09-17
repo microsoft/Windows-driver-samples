@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/filesys/miniFilter/avscan/avscan.sln
+  
