@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/spb/SkeletonI2C/SkeletonI2C.sln
+  

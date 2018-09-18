@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/usb/wdf_osrfx2_lab/wdf_osrfx2_lab.sln
+  

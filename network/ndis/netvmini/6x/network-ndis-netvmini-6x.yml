@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/network/ndis/netvmini/6x/netvmini.sln
+  

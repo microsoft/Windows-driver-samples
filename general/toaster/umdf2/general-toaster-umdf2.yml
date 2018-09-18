@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/general/toaster/umdf2/umdf2toaster.sln
+  

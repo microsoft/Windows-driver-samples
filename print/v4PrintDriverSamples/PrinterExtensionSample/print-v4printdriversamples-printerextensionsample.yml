@@ -9,3 +9,5 @@ sample:
   - csharp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/print/v4PrintDriverSamples/PrinterExtensionSample/PrinterExtensionSample.sln
+  

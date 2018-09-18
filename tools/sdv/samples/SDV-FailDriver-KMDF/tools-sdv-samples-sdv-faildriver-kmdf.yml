@@ -9,3 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/tools/sdv/samples/SDV-FailDriver-KMDF/SDV-FailDriver-KMDF.sln
+  

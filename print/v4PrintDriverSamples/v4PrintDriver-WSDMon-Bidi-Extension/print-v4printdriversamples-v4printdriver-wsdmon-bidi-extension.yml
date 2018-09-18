@@ -9,3 +9,4 @@ sample:
   - xml
   technologies:
   - windows
+  vssolution: /Windows-driver-samples/print/v4PrintDriverSamples/v4PrintDriver-WSDMon-Bidi-Extension/WSDMon-Bidi-Extension.sln

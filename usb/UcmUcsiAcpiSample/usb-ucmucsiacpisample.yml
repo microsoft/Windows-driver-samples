@@ -1,6 +1,6 @@
 ### YamlMime:Sample
 sample:
-- name: UcmTcpciCx Port Controller Client Driver
+- name: UcmUcsiCx ACPI Client Driver
   description: Demonstrates how to create a Windows USB Type-C port controller driver using the USB Connector Manager class extension driver (UcmCx).
   generateZip: true
   preserveParentHierarchy: true
@@ -9,5 +9,5 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/UcmCxUcsi/UcmCxUcsi.sln
+  vssolution: /Windows-driver-samples/usb/UcmUcsiAcpiSample/UcmUcsiAcpiSample.sln
   

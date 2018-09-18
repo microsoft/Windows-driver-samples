@@ -1,7 +1,7 @@
 ### YamlMime:Sample
 sample:
-- name: TrEE sample
-  description: TrEE sample
+- name: DHCU - Driver package installation toolkit for universal drivers
+  description: Illustrates DCHU principles of universal driver design.
   generateZip: true
   preserveParentHierarchy: true
   author: windows-driver-samples
@@ -9,5 +9,3 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/TrEE/TrEESample.sln
-  
