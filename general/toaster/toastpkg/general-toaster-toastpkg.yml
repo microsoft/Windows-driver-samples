@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/general/toaster/toastpkg/toastpkg.sln
-  
