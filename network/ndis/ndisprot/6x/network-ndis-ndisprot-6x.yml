@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/network/ndis/ndisprot/6x/ndisprot60.sln
-  

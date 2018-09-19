@@ -9,5 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
- vssolution: /Windows-driver-samples/usb/kmdf_enumswitches/kmdf_enumswitches.sln
- 
+  vssolution: /Windows-driver-samples/usb/kmdf_enumswitches/kmdf_enumswitches.sln

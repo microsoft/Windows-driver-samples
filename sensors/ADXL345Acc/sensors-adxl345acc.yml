@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/sensors/ADXL345Acc/ADXL345Acc.sln
-  

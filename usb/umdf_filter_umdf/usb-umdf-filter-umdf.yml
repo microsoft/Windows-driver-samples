@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/usb/umdf_filter_umdf/umdf_filter_umdf.sln
-  

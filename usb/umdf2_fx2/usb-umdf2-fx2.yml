@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/usb/umdf2_fx2/umdf2_fx2.sln
-  

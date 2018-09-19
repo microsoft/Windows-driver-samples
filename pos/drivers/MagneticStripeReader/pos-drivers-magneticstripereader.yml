@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/pos/drivers/MagneticStripeReader/MagneticStripeReader.sln
-  

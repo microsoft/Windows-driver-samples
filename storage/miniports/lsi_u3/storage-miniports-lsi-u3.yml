@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/storage/miniports/lsi_u3/lsi_u3.sln
-  

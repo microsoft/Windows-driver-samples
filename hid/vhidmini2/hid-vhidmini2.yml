@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/hid/vhidmini2/vhidmini2.sln
-  

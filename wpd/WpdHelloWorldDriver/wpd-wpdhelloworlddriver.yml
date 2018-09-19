@@ -10,5 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/wpd/WpdHelloWorldDriver/WpdHelloWorldDriver.sln
-
-  

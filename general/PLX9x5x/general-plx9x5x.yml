@@ -10,4 +10,3 @@ sample:
   technologies:
   - windows
   vssolution: /Windows-driver-samples/general/PLX9x5x/PLX9x5x.sln
-  
