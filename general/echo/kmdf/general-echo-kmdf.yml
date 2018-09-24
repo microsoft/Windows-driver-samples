@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/echo/kmdf/kmdfecho.sln
+  vssolution: /general/echo/kmdf/kmdfecho.sln

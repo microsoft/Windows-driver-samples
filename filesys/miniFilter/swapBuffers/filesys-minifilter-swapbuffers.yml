@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/swapBuffers/swapBuffers.sln
+  vssolution: /filesys/miniFilter/swapBuffers/swapBuffers.sln

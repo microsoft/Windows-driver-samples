@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/radio/RadioManagerSample/RadioManagerSample.sln
+  vssolution: /network/radio/RadioManagerSample/RadioManagerSample.sln

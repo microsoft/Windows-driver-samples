@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/iscsi/iscsi.sln
+  vssolution: /storage/iscsi/iscsi.sln

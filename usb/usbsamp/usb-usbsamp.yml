@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/usbsamp/usbsamp.sln
+  vssolution: /usb/usbsamp/usbsamp.sln

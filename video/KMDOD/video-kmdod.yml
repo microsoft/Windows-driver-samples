@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/video/KMDOD/KMDOD.sln
+  vssolution: /video/KMDOD/KMDOD.sln

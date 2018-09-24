@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/SampleOpenXPS/SampleOpenXPS.sln
+  vssolution: /print/SampleOpenXPS/SampleOpenXPS.sln

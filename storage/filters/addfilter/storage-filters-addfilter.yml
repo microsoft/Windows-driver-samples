@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/filters/addfilter/addfilter.sln
+  vssolution: /storage/filters/addfilter/addfilter.sln

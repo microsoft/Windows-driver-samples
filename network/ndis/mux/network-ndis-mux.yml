@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/ndis/mux/mux.sln
+  vssolution: /network/ndis/mux/mux.sln

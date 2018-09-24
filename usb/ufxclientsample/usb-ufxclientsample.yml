@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/ufxclientsample/ufxclientsample.sln
+  vssolution: /usb/ufxclientsample/ufxclientsample.sln

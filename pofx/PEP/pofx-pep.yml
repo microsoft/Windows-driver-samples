@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/pofx/PEP/pepsamples.sln
+  vssolution: /pofx/PEP/pepsamples.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/sensors/SimpleDeviceOrientationSensor/SimpleDeviceOrientationSensor.sln
+  vssolution: /sensors/SimpleDeviceOrientationSensor/SimpleDeviceOrientationSensor.sln

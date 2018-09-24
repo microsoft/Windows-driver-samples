@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/cancel/cancel.sln
+  vssolution: /general/cancel/cancel.sln

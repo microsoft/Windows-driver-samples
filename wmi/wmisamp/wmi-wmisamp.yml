@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/wmi/wmisamp/wmisamp.sln
+  vssolution: /wmi/wmisamp/wmisamp.sln

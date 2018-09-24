@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/umdfSkeleton/umdfSkeleton.sln
+  vssolution: /general/umdfSkeleton/umdfSkeleton.sln

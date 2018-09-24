@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/sd/miniport/sdhc/sdhc.sln
+  vssolution: /sd/miniport/sdhc/sdhc.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/sfloppy/sfloppy.sln
+  vssolution: /storage/sfloppy/sfloppy.sln

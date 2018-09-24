@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/SimplePipelineFilter/SimplePipelineFilter.sln
+  vssolution: /print/SimplePipelineFilter/SimplePipelineFilter.sln

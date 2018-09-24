@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/hid/hidusbfx2/hidusbfx2.sln
+  vssolution: /hid/hidusbfx2/hidusbfx2.sln

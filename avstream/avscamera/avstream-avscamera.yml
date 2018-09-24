@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/avstream/avscamera/avscamera.sln
+  vssolution: /avstream/avscamera/avscamera.sln

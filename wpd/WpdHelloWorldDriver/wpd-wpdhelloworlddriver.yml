@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/wpd/WpdHelloWorldDriver/WpdHelloWorldDriver.sln
+  vssolution: /wpd/WpdHelloWorldDriver/WpdHelloWorldDriver.sln

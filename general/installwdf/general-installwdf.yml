@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/installwdf/installwdf.sln
+  vssolution: /general/installwdf/installwdf.sln

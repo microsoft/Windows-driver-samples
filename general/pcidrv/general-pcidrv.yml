@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/pcidrv/pcidrv.sln
+  vssolution: /general/pcidrv/pcidrv.sln

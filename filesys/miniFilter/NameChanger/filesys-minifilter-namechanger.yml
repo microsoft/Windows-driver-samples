@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/NameChanger/NameChanger.sln
+  vssolution: /filesys/miniFilter/NameChanger/NameChanger.sln

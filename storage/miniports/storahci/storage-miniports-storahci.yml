@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/miniports/storahci/storahci.sln
+  vssolution: /storage/miniports/storahci/storahci.sln

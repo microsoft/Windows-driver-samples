@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/hid/hclient/hclient.sln
+  vssolution: /hid/hclient/hclient.sln

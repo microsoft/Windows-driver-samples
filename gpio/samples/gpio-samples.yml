@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/gpio/samples/sim.sln
+  vssolution: /gpio/samples/sim.sln

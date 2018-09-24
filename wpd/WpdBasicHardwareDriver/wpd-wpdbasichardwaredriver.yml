@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/wpd/WpdBasicHardwareDriver/WpdBasicHardwareDriver.sln
+  vssolution: /wpd/WpdBasicHardwareDriver/WpdBasicHardwareDriver.sln

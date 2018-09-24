@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/cdfs/cdfs.sln
+  vssolution: /filesys/cdfs/cdfs.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/wsk/echosrv/echosrv.sln
+  vssolution: /network/wsk/echosrv/echosrv.sln

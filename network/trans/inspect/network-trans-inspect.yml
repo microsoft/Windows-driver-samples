@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/trans/inspect/inspect.sln
+  vssolution: /network/trans/inspect/inspect.sln

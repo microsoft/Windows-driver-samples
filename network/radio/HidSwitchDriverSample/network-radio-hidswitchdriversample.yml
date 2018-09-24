@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/radio/HidSwitchDriverSample/HidSwitchDriverSample.sln
+  vssolution: /network/radio/HidSwitchDriverSample/HidSwitchDriverSample.sln

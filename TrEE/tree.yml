@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/TrEE/TrEESample.sln
+  vssolution: /TrEE/TrEESample.sln

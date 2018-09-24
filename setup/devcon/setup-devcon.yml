@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/setup/devcon/devcon.sln
+  vssolution: /setup/devcon/devcon.sln

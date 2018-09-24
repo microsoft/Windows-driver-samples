@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/echo/umdfSocketEcho/umdfsocketecho.sln
+  vssolution: /general/echo/umdfSocketEcho/umdfsocketecho.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/trans/WFPSampler/WFPSampler.sln
+  vssolution: /network/trans/WFPSampler/WFPSampler.sln

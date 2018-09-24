@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/delete/delete.sln
+  vssolution: /filesys/miniFilter/delete/delete.sln

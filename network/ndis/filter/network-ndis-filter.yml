@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/ndis/filter/filter.sln
+  vssolution: /network/ndis/filter/filter.sln

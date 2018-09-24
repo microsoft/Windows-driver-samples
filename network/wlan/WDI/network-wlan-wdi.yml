@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/wlan/WDI/windows.msbuild.rtwssample.sln
+  vssolution: /network/wlan/WDI/windows.msbuild.rtwssample.sln

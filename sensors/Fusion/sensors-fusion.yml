@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/sensors/Fusion/FusionSensor.sln
+  vssolution: /sensors/Fusion/FusionSensor.sln

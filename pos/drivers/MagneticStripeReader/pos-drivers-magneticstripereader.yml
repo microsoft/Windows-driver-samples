@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/pos/drivers/MagneticStripeReader/MagneticStripeReader.sln
+  vssolution: /pos/drivers/MagneticStripeReader/MagneticStripeReader.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/simrep/simrep.sln
+  vssolution: /filesys/miniFilter/simrep/simrep.sln

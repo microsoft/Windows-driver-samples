@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/scanner/scanner.sln
+  vssolution: /filesys/miniFilter/scanner/scanner.sln

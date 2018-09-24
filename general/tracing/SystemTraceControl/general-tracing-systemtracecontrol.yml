@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/tracing/SystemTraceControl/SystemTraceControl.sln
+  vssolution: /general/tracing/SystemTraceControl/SystemTraceControl.sln

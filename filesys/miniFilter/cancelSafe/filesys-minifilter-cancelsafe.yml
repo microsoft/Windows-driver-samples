@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/cancelSafe/cancelSafe.sln
+  vssolution: /filesys/miniFilter/cancelSafe/cancelSafe.sln

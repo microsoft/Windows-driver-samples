@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/input/layout/kbd.sln
+  vssolution: /input/layout/kbd.sln

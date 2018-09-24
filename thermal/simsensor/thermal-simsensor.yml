@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/thermal/simsensor/simsensor.sln
+  vssolution: /thermal/simsensor/simsensor.sln

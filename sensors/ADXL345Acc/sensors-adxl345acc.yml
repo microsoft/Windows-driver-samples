@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/sensors/ADXL345Acc/ADXL345Acc.sln
+  vssolution: /sensors/ADXL345Acc/ADXL345Acc.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/umdf_filter_kmdf/umdf_filter_kmdf.sln
+  vssolution: /usb/umdf_filter_kmdf/umdf_filter_kmdf.sln

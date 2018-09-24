@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/passThrough/passThrough.sln
+  vssolution: /filesys/miniFilter/passThrough/passThrough.sln

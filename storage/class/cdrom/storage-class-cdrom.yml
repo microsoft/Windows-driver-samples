@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/class/cdrom/cdrom.sln
+  vssolution: /storage/class/cdrom/cdrom.sln

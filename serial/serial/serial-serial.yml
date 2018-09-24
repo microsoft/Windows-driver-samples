@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/serial/serial/serial.sln
+  vssolution: /serial/serial/serial.sln

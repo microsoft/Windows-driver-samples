@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/trans/msnmntr/msnmntr.sln
+  vssolution: /network/trans/msnmntr/msnmntr.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/network/modem/fakemodem/fakemodem.sln
+  vssolution: /network/modem/fakemodem/fakemodem.sln

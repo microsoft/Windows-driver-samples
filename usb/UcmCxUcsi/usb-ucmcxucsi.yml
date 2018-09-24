@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/UcmCxUcsi/UcmCxUcsi.sln
+  vssolution: /usb/UcmCxUcsi/UcmCxUcsi.sln

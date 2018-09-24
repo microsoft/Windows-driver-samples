@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/umdf_fx2/umdf_fx2.sln
+  vssolution: /usb/umdf_fx2/umdf_fx2.sln

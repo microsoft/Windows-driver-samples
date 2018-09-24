@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/avstream/samplemft0/SampleMft0.sln
+  vssolution: /avstream/samplemft0/SampleMft0.sln

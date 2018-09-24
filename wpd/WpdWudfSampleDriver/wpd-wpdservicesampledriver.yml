@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/wpd/WpdWudfSampleDriver/WpdWudfSampleDriver.sln
+  vssolution: /wpd/WpdWudfSampleDriver/WpdWudfSampleDriver.sln

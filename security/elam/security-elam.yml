@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/security/elam/elam.sln
+  vssolution: /security/elam/elam.sln

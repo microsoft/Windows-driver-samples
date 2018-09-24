@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/filehistory/filehistory.sln
+  vssolution: /general/filehistory/filehistory.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/tools/spti/spti.sln
+  vssolution: /storage/tools/spti/spti.sln

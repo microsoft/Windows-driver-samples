@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/class/disk/disk.sln
+  vssolution: /storage/class/disk/disk.sln

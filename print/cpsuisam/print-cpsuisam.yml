@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/cpsuisam/cpsuisam.sln
+  vssolution: /print/cpsuisam/cpsuisam.sln

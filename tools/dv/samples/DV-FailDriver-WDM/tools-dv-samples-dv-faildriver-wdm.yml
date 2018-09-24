@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/tools/dv/samples/DV-FailDriver-WDM/driver/DV-FailDriver-WDM.sln
+  vssolution: /tools/dv/samples/DV-FailDriver-WDM/driver/DV-FailDriver-WDM.sln

@@ -9,4 +9,4 @@ sample:
   - javascript
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/v4PrintDriverSamples/v4PrintDriver-ConstraintScript/ConstraintScript.sln
+  vssolution: /print/v4PrintDriverSamples/v4PrintDriver-ConstraintScript/ConstraintScript.sln

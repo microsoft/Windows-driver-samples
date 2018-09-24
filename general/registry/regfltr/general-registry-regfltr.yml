@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/registry/regfltr/regfltr.sln
+  vssolution: /general/registry/regfltr/regfltr.sln

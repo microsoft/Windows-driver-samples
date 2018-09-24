@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/smartcrd/smartcrd.sln
+  vssolution: /smartcrd/smartcrd.sln

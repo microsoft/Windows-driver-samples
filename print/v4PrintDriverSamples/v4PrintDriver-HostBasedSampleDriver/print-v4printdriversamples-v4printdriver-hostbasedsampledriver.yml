@@ -10,4 +10,4 @@ sample:
   - xml
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/v4PrintDriverSamples/v4PrintDriver-HostBasedSampleDriver/HostBasedSampleDriver.sln
+  vssolution: /print/v4PrintDriverSamples/v4PrintDriver-HostBasedSampleDriver/HostBasedSampleDriver.sln

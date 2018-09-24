@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/filesys/miniFilter/nullFilter/nullFilter.sln
+  vssolution: /filesys/miniFilter/nullFilter/nullFilter.sln

@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/wmi/wmiacpi/wmiacpi.sln
+  vssolution: /wmi/wmiacpi/wmiacpi.sln

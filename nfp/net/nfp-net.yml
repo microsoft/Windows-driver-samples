@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/nfp/net/netnfp.sln
+  vssolution: /nfp/net/netnfp.sln

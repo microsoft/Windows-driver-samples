@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/general/echo/umdf2/umdf2echo.sln
+  vssolution: /general/echo/umdf2/umdf2echo.sln

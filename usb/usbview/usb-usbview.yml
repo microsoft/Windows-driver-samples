@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/usb/usbview/usbview.sln
+  vssolution: /usb/usbview/usbview.sln

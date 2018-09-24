@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/print/XpsRasFilter/XpsRasFilter.sln
+  vssolution: /print/XpsRasFilter/XpsRasFilter.sln

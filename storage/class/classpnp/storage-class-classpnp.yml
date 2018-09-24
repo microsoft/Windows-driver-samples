@@ -9,4 +9,4 @@ sample:
   - cpp
   technologies:
   - windows
-  vssolution: /Windows-driver-samples/storage/class/classpnp/classpnp.sln
+  vssolution: /storage/class/classpnp/classpnp.sln
