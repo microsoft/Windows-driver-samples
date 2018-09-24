@@ -1,0 +1,12 @@
+### YamlMime:Sample
+sample:
+- name: IOCTL
+  description: Demonstrates usage of four different types of IOCTLs
+  generateZip: true
+  preserveParentHierarchy: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows
+  vssolution: /general/ioctl/wdm/ioctl.sln
