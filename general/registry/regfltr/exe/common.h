@@ -60,7 +60,7 @@ Environment:
 #define NOT_MODIFIED_KEY_NAME      L"_RegFltrNotModifiedKey"
 #define VALUE_NAME                 L"_RegFltrValue"
 #define MODIFIED_VALUE_NAME        L"_RegFltrModifiedValue"
-#define NOT_MODIFIED_VALUE_NAME    L"_RegFltrNotModifiedValue"
+#define NOT_MODIFIED_VALUE_NAME    L"_RegFltrNotModifiedValue"
 
 #define CALLBACK_LOW_ALTITUDE      L"380000"
 #define CALLBACK_ALTITUDE          L"380010"
