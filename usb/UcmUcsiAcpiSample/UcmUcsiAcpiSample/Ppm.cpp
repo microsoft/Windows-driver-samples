@@ -212,9 +212,12 @@ Ppm::PrepareHardware()
 
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
 
-    // Placeholder. Nothing to do here as of now.
+    status = UcmUcsiPpmStart(GetObjectHandle());
+    if (!NT_SUCCESS(status))
+    {
+        TRACE_ERROR(TRACE_FLAG_PPM, "[Device: 0x%p] UcmUcsiPpmStart returned failure %!STATUS!", m_Device->GetObjectHandle(), status);
+    }
 
-    status = STATUS_SUCCESS;
     TRACE_FUNC_EXIT(TRACE_FLAG_PPM);
     return status;
 }
@@ -227,7 +230,7 @@ Ppm::ReleaseHardware()
 
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
 
-    // No action needed here from the client driver.
+    UcmUcsiPpmStop(GetObjectHandle());
 
     TRACE_FUNC_EXIT(TRACE_FLAG_PPM);
 }
