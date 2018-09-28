@@ -53,6 +53,9 @@ ClassVer=4.0
 [USB_HOST_BASED_SAMPLE]
 CopyFiles=USB_HOST_BASED_SAMPLE_FILES
 
+[USB_HOST_BASED_SAMPLE.Services]
+AddService=,2
+
 ;
 ; Copy Sections
 ;

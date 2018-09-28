@@ -68,6 +68,12 @@ DataSection=PSCRIPT_DATA
 Include=NTPRINT.INF
 Needs=PSCRIPT.OEM,PSCRIPT_DATA
 
+[INSTALL_AUTO_CONFIG.UNI.Services]
+AddService=,2
+
+[INSTALL_AUTO_CONFIG.PS.Services]
+AddService=,2
+
 ; Copy Sections
 ;
 ; Lists of files that are actually copied. These sections are referenced
