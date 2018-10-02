@@ -297,7 +297,7 @@ Return Value:
         //
         //  We had some trouble trying to perform the requested
         //  operation, so we'll abort the I/O request with the 
-        //  error status that we get back from the execption code.
+        //  error status that we get back from the exception code.
         //
 
         Status = FatProcessException( NULL, Irp, GetExceptionCode() );
@@ -666,7 +666,7 @@ Return Value:
 
     //
     //  If the queues are above the limits by a significant amount, we have
-    //  to try hard to pull them down.  To do this, we will aggresively try
+    //  to try hard to pull them down.  To do this, we will aggressively try
     //  to find closes for the last volume the caller looked at.  This will
     //  make sure we fully utilize the acquisition of the volume, which can
     //  be a hugely expensive resource to get (create/close/cleanup use it
@@ -881,7 +881,7 @@ Return Value:
     DebugTrace(+1, Dbg, "FatCommonClose...\n", 0);
 
     //
-    //  Initailize the callers variable, if needed.
+    //  Initialize the callers variable, if needed.
     //
 
     LocalVcbDeleted = FALSE;
@@ -1077,7 +1077,7 @@ Return Value:
 
                 //
                 //  Dereference the directory file.  This may cause a close
-                //  Irp to be processed, so we need to do this before we destory
+                //  Irp to be processed, so we need to do this before we destroy
                 //  the Fcb.
                 //
 
@@ -1203,7 +1203,7 @@ Return Value:
                 //
                 //  We need the global lock, which must be acquired before the
                 //  VCB.  Since we already have the VCB, we have to drop and
-                //  reaquire here.  Note that we always want to wait from this
+                //  reacquire here.  Note that we always want to wait from this
                 //  point on.  Note that the VCB cannot go away, since we have
                 //  biased the open file count.
                 //
