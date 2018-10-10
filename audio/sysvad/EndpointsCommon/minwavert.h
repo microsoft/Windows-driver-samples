@@ -143,7 +143,8 @@ private:
     PKSDATAFORMAT_WAVEFORMATEXTENSIBLE  m_pDeviceFormat;
     PCFILTER_DESCRIPTOR                 m_FilterDesc;
     PIN_DEVICE_FORMATS_AND_MODES *      m_DeviceFormatsAndModes;
-    FAST_MUTEX                          m_DeviceFormatsAndModesLock; // To serialize access.
+    KSPIN_LOCK                          m_DeviceFormatsAndModesLock; // To serialize access.
+    KIRQL                               m_DeviceFormatsAndModesIrql;
     ULONG                               m_DeviceFormatsAndModesCount; 
     USHORT                              m_DeviceMaxChannels;
     PDRMPORT                            m_pDrmPort;
@@ -339,8 +340,10 @@ public:
             }
 
         }
-        ExInitializeFastMutex(&m_DeviceFormatsAndModesLock);
 #endif // defined(SYSVAD_BTH_BYPASS)
+
+        KeInitializeSpinLock(&m_DeviceFormatsAndModesLock);
+        m_DeviceFormatsAndModesIrql = PASSIVE_LEVEL;
     }
 
 #pragma code_seg()
@@ -488,7 +491,24 @@ public:
     );
 
 private:
-#pragma code_seg("PAGE")
+#pragma code_seg()
+    _IRQL_raises_(DISPATCH_LEVEL)
+    _Acquires_lock_(m_DeviceFormatsAndModesLock)
+    _Requires_lock_not_held_(m_DeviceFormatsAndModesLock)
+    _IRQL_saves_global_(SpinLock, m_DeviceFormatsAndModesIrql)
+    VOID AcquireFormatsAndModesLock()
+    {
+        KeAcquireSpinLock(&m_DeviceFormatsAndModesLock, &m_DeviceFormatsAndModesIrql);
+    }
+
+    _Releases_lock_(m_DeviceFormatsAndModesLock)
+    _Requires_lock_held_(m_DeviceFormatsAndModesLock)
+    _IRQL_restores_global_(SpinLock, m_DeviceFormatsAndModesIrql)
+    VOID ReleaseFormatsAndModesLock()
+    {
+        KeReleaseSpinLock(&m_DeviceFormatsAndModesLock, m_DeviceFormatsAndModesIrql);
+    }
+
     //---------------------------------------------------------------------------
     // GetPinSupportedDeviceFormats 
     //
@@ -504,11 +524,9 @@ private:
     _Post_satisfies_(return > 0)
     ULONG GetPinSupportedDeviceFormats(_In_ ULONG PinId, _Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats)
     {
-        PAGED_CODE();
-
         PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
 
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
         ASSERT(m_DeviceFormatsAndModesCount > PinId);
@@ -520,7 +538,7 @@ private:
             *ppFormats = pDeviceFormatsAndModes[PinId].WaveFormats;
         }
         
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
 
         return pDeviceFormatsAndModes[PinId].WaveFormatsCount;
     }
@@ -544,9 +562,7 @@ private:
         ULONG i;
         PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
 
-        PAGED_CODE();
-
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
 
@@ -568,7 +584,7 @@ private:
             *ppFormats = pDeviceFormatsAndModes[i].WaveFormats;
         }
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return pDeviceFormatsAndModes[i].WaveFormatsCount;
     }
 
@@ -590,9 +606,7 @@ private:
         PMODE_AND_DEFAULT_FORMAT modes;
         ULONG numModes;
 
-        PAGED_CODE();
-
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         ASSERT(m_DeviceFormatsAndModesCount > PinId);
         ASSERT((m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormatCount == 0) == (m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormat == NULL));
@@ -634,16 +648,16 @@ private:
             }
         }
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return numModes;
     }
+
 #pragma code_seg()
 
 protected:
-#pragma code_seg("PAGE")
+#pragma code_seg()
     BOOL IsRenderDevice()
     {
-        PAGED_CODE();
         return (m_DeviceType == eSpeakerDevice   ||
                 m_DeviceType == eSpeakerHpDevice ||        
                 m_DeviceType == eSpeakerHsDevice ||
@@ -655,13 +669,11 @@ protected:
 
     BOOL IsCellularDevice()
     {
-        PAGED_CODE();
         return (m_DeviceType == eCellularDevice) ? TRUE : FALSE;
     }
 
     BOOL IsLoopbackSupported()
     {
-        PAGED_CODE();
 
         //
         // It is assumed that loopback is supported when offload is supported
@@ -671,91 +683,82 @@ protected:
 
     BOOL IsOffloadSupported()
     {
-        PAGED_CODE();
         return (m_DeviceFlags & ENDPOINT_OFFLOAD_SUPPORTED) ? TRUE : FALSE;
     }
 
     BOOL IsSystemCapturePin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == SystemCapturePin);
     }
 
     BOOL IsCellularBiDiCapturePin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == TelephonyBidiPin);
     }
 
     BOOL IsSystemRenderPin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == SystemRenderPin);
     }
 
     BOOL IsLoopbackPin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == RenderLoopbackPin);
     }
 
     BOOL IsOffloadPin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == OffloadRenderPin);
     }
 
     BOOL IsBridgePin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == BridgePin);
     }
 
     BOOL IsKeywordDetectorPin(ULONG nPinId)
     {
-        PAGED_CODE();
-        ExAcquireFastMutex(&m_DeviceFormatsAndModesLock);
+        AcquireFormatsAndModesLock();
 
         PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
 
-        ExReleaseFastMutex(&m_DeviceFormatsAndModesLock);
+        ReleaseFormatsAndModesLock();
         return (pinType == KeywordCapturePin);
     }
 
     // These three pins are the pins used by the audio engine for host, loopback, and offload.
     ULONG GetSystemPinId()
     {
-        PAGED_CODE();
         ASSERT(IsRenderDevice());
         ASSERT(!IsCellularDevice());
         return IsOffloadSupported() ? KSPIN_WAVE_RENDER_SINK_SYSTEM : KSPIN_WAVE_RENDER2_SINK_SYSTEM;
@@ -764,7 +767,6 @@ protected:
 
     ULONG GetLoopbackPinId()
     {
-        PAGED_CODE();
         ASSERT(IsRenderDevice());
         ASSERT(!IsCellularDevice());
         return IsOffloadSupported() ? KSPIN_WAVE_RENDER_SINK_LOOPBACK : KSPIN_WAVE_RENDER2_SINK_LOOPBACK;
@@ -773,7 +775,6 @@ protected:
 
     ULONG GetOffloadPinId()
     {
-        PAGED_CODE();
         ASSERT(IsRenderDevice());
         ASSERT(IsOffloadSupported());
         ASSERT(!IsCellularDevice());

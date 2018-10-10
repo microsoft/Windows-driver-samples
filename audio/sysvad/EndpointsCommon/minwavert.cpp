@@ -1317,11 +1317,11 @@ CMiniportWaveRT::EvtFormatChangeHandler
         if (This->m_DeviceType == eBthHfpMicDevice)
         {
             // swap the device formats and modes for bt
-            ExAcquireFastMutex(&This->m_DeviceFormatsAndModesLock);
+            This->AcquireFormatsAndModesLock();
 
             This->m_DeviceFormatsAndModes = This->m_pSidebandDevice->GetFormatsAndModes(This->m_DeviceType);
 
-            ExReleaseFastMutex(&This->m_DeviceFormatsAndModesLock);
+            This->ReleaseFormatsAndModesLock();
 
             This->GenerateEventList(
                 (GUID*)&KSEVENTSETID_PinCapsChange,
@@ -1334,11 +1334,11 @@ CMiniportWaveRT::EvtFormatChangeHandler
         else if(This->m_DeviceType == eBthHfpSpeakerDevice)
         {
             // swap the device formats and modes for bt
-            ExAcquireFastMutex(&This->m_DeviceFormatsAndModesLock);
+            This->AcquireFormatsAndModesLock();
 
             This->m_DeviceFormatsAndModes = This->m_pSidebandDevice->GetFormatsAndModes(This->m_DeviceType);
 
-            ExReleaseFastMutex(&This->m_DeviceFormatsAndModesLock);
+            This->ReleaseFormatsAndModesLock();
 
             This->GenerateEventList(
                 (GUID*)&KSEVENTSETID_PinCapsChange,
