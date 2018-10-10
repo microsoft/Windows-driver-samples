@@ -1,5 +1,5 @@
 <!---
-    Driver Device Transform Sample
+    name: Driver Device Transform Sample
     platform: WDM
     language: cpp
     category: Camera
@@ -23,7 +23,7 @@ Related topics
 
 **Concepts**
 
-[Windows Store device apps for cameras](http://go.microsoft.com/fwlink/p/?LinkId=306683)
+[UWP device apps for cameras](http://go.microsoft.com/fwlink/p/?LinkId=306683)
 
 [Media Foundation Transforms](http://msdn.microsoft.com/en-us/library/windows/hardware/ms703138)
 
@@ -33,6 +33,6 @@ Related topics
 
 **Samples**
 
-[Windows Store device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
+[Device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
 
 [Camera Capture UI sample](http://go.microsoft.com/fwlink/p/?linkid=249441%20)

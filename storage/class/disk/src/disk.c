@@ -1716,6 +1716,7 @@ Return Value:
     NTSTATUS status;
     PFUNCTIONAL_DEVICE_EXTENSION fdoExt;
     PDISK_DATA diskData;
+    #pragma warning(suppress:4311) // pointer truncation from 'PVOID' to 'NTSTATUS'
     NTSTATUS SyncCacheStatus = (NTSTATUS) Context;
 
     TracePrint((TRACE_LEVEL_VERBOSE, TRACE_FLAG_GENERAL, "DiskFlushComplete: %p %p\n", Fdo, Irp));

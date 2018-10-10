@@ -1174,7 +1174,7 @@ Return Value:
     PAGED_CODE();
 
     DebugTrace( DEBUG_TRACE_ALL_IO,
-                ("[SimRep]: SimRepQueryOpen -> Enter (Cbd = %p, FileObject = %p)\n",
+                ("[SimRep]: SimRepPreNetworkQueryOpen -> Enter (Cbd = %p, FileObject = %p)\n",
                  Cbd,
                  FltObjects->FileObject) );
 
@@ -1335,7 +1335,7 @@ SimRepPreNetworkQueryOpenCleanup:
         //
 
         DebugTrace( DEBUG_TRACE_ERROR,
-                    ("[SimRep]: SimRepPreCreate -> Failed with status 0x%x \n",
+                    ("[SimRep]: SimRepPreNetworkQueryOpen -> Failed with status 0x%x \n",
                     status) );
 
         Cbd->IoStatus.Status = status;
@@ -1958,7 +1958,7 @@ Return Value:
 
      } else if (fileInfoClass == FileLinkInformation) {
 
-        bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
+        bufferLength = FIELD_OFFSET( FILE_LINK_INFORMATION, FileName ) + newFileName.Length;
 
         buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
 

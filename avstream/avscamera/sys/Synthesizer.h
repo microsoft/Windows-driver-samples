@@ -132,7 +132,6 @@ protected:
     LONGLONG    m_Attrib[MAX_Attribute];
 
     //  This value is used to fudge a rotated image.
-    enum
     AcpiPldRotation
                 m_Rotation;
 

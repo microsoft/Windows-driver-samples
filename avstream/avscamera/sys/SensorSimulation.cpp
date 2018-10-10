@@ -702,7 +702,7 @@ GetFaceDetection(
         KSCAMERA_EXTENDEDPROP_FACEDETECTION_SMILE ;
 
     pProperty->Max() = m_FaceDetectionMax;
-    pProperty->Min() = 1;
+    pProperty->Min() = 0;
     pProperty->Step() = 1;
     *pProperty = m_FaceDetectionCurrentMax;
     pProperty->Result = m_FaceDetectionResult;

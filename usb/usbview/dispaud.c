@@ -82,14 +82,17 @@ STRINGLIST slAudioTerminalTypes [] =
     //
     // 2.6 External Terminal Types
     //
-    {0x0600, "External Undefined",        ""},
-    {0x0601, "Analog connector",          ""},
-    {0x0602, "Digital audio interface",   ""},
-    {0x0603, "Line connector",            ""},
-    {0x0604, "Legacy audio connector",    ""},
-    {0x0605, "S/PDIF interface",          ""},
-    {0x0606, "1394 DA stream",            ""},
-    {0x0607, "1394 DV stream soundtrack", ""},
+    {0x0600, "External Undefined",                    ""},
+    {0x0601, "Analog connector",                      ""},
+    {0x0602, "Digital audio interface",               ""},
+    {0x0603, "Line connector",                        ""},
+    {0x0604, "Legacy audio connector",                ""},
+    {0x0605, "S/PDIF interface",                      ""},
+    {0x0606, "1394 DA stream",                        ""},
+    {0x0607, "1394 DV stream soundtrack",             ""},
+    {0x0608, "ADAT Lightpipe",                        ""},
+    {0x0609, "Tascam Digital Interface",              ""},
+    {0x060A, "Multi-channel Audio Digital Interface", ""},
     //
     // Embedded Function Terminal Types
     //
@@ -113,6 +116,10 @@ STRINGLIST slAudioTerminalTypes [] =
     {0x0711, "Radio Transmitter",              ""},
     {0x0712, "Multi-track Recorder",           ""},
     {0x0713, "Synthesizer",                    ""},
+    {0x0714, "Piano",                          ""},
+    {0x0715, "Guitar",                         ""},
+    {0x0716, "Drums/Rythm",                    ""},
+    {0x0717, "Other Musical Instrument",       ""},
 };
 STRINGLIST slAudioFormatTypes [] =
 {
@@ -143,7 +150,69 @@ STRINGLIST slAudioFormatTypes [] =
     {0x2006, "IEC1937_MPEG-2_Layer2/3_LS",                      ""},
 };
 
+STRINGLIST slFormatTypeCode [] =
+{
+    {0x00, "FORMAT_TYPE_UNDEFINED", ""},
+    {0x01, "FORMAT_TYPE_I",         ""},
+    {0x02, "FORMAT_TYPE_II",        ""},
+    {0x03, "FORMAT_TYPE_III",       ""},
+};
 
+
+STRINGLIST slProcessingUnitTypes [] =
+{
+    {0x00, "Processing undefined",      ""},
+    {0x01, "Up/downmix",                ""},
+    {0x02, "Dolby Prologic",            ""},
+    {0x03, "3D Stereo Extender",        ""},
+    {0x04, "Reverberation",             ""},
+    {0x05, "Chorus",                    ""},
+    {0x06, "Dynamic range compression", ""},
+};
+
+STRINGLIST slFeatureUnitTypes [] =
+{
+    {0x001, "Mute",              ""},
+    {0x002, "Volume",            ""},
+    {0x004, "Bass",              ""},
+    {0x008, "Mid",               ""},
+    {0x010, "Treble",            ""},
+    {0x020, "Graphic equalizer", ""},
+    {0x040, "Automatic gain",    ""},
+    {0x080, "Delay",             ""},
+    {0x100, "Bass boost",        ""},
+    {0x200, "Loudness",          ""},
+};
+
+STRINGLIST slChannelConfig [] =
+{
+    {0x001, "Left Front (L)",                  ""},
+    {0x002, "Right Ront (R)",                  ""},
+    {0x004, "Center Front (C)",                ""},
+    {0x008, "Low Frequency Enhancement (LFE)", ""},
+    {0x010, "Left Surround (Ls)",              ""},
+    {0x020, "Right Surround (Rs)",             ""},
+    {0x040, "Left of Center (Lc)",             ""},
+    {0x080, "Right of Center (Rc)",            ""},
+    {0x100, "Surround (S)",                    ""},
+    {0x200, "Side Left (Sl)",                  ""},
+    {0x400, "Side Right (Sr)",                 ""},
+    {0x800, "Top (T)",                         ""},
+};
+
+STRINGLIST slIsocAttributes [] =
+{
+    {0x01, "Sampling Frequency control", ""},
+    {0x02, "Pitch control",              ""},
+    {0x80, "MaxPacketsOnly",             ""},
+};
+
+STRINGLIST slLockDelayUnits [] =
+{
+    {0x00, "Undefined",           ""},
+    {0x01, "Milliseconds",        ""},
+    {0x02, "Decoded PCM samples", ""},
+};
 
 /*****************************************************************************
  L O C A L    F U N C T I O N    P R O T O T Y P E S
@@ -214,6 +283,21 @@ DisplayBytes (
     PUCHAR Data,
     USHORT Len
 );
+
+VOID
+DisplayChannelConfig (
+    DWORD dwChannelConfig
+)
+{
+    for (int i = 0; i < ARRAYSIZE(slChannelConfig); i++)
+    {
+        if (dwChannelConfig & slChannelConfig[i].ulFlag)
+        {
+            AppendTextBuffer("                                 (%s)\r\n", slChannelConfig[i].pszString);
+        }
+    }
+}
+
 
 /*****************************************************************************
  L O C A L    F U N C T I O N S
@@ -330,10 +414,10 @@ DisplayACHeader (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      HeaderDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      HeaderDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (HEADER)\r\n",
                      HeaderDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bcdADC:                          0x%04X\r\n",
@@ -380,10 +464,10 @@ DisplayACInputTerminal (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      ITDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      ITDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (INPUT_TERMINAL)\r\n",
                      ITDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bTerminalID:                       0x%02X\r\n",
@@ -405,6 +489,8 @@ DisplayACInputTerminal (
 
     AppendTextBuffer("wChannelConfig:                  0x%04X\r\n",
                      ITDesc->wChannelConfig);
+
+    DisplayChannelConfig((DWORD) ITDesc->wChannelConfig);
 
     AppendTextBuffer("iChannelNames:                     0x%02X\r\n",
                      ITDesc->iChannelNames);
@@ -441,10 +527,10 @@ DisplayACOutputTerminal (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      OTDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      OTDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (OUTPUT_TERMINAL)\r\n",
                      OTDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bTerminalID:                       0x%02X\r\n",
@@ -498,10 +584,10 @@ DisplayACMixerUnit (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      MixerDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      MixerDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (MIXER_UNIT)\r\n",
                      MixerDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bUnitID:                           0x%02X\r\n",
@@ -524,6 +610,8 @@ DisplayACMixerUnit (
 
     AppendTextBuffer("wChannelConfig:                  0x%04X\r\n",
                      *(PUSHORT)data);
+
+    DisplayChannelConfig((DWORD) *data);
 
     data = (PUCHAR) ((PUSHORT) data + 1);
 
@@ -570,10 +658,10 @@ DisplayACSelectorUnit (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      SelectorDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      SelectorDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (SELECTOR_UNIT)\r\n",
                      SelectorDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bUnitID:                           0x%02X\r\n",
@@ -619,10 +707,10 @@ DisplayACFeatureUnit (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      FeatureDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      FeatureDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (FEATURE_UNIT)\r\n",
                      FeatureDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bUnitID:                           0x%02X\r\n",
@@ -676,8 +764,27 @@ DisplayACFeatureUnit (
 
     for (i=0; i<=ch; i++)
     {
-        AppendTextBuffer("bmaControls[%d]:                    ", i);
+        if (0 == i)
+        {
+            AppendTextBuffer("bmaControls[master]:               ");
+        }
+        else
+        {
+            AppendTextBuffer("bmaControls[channel %d]:            ", i-1);
+        }
         DisplayBytes(data, n);
+
+        if (n == 1)
+        {
+            for (int j = 0; j < ARRAYSIZE(slFeatureUnitTypes); j++)
+            {
+                DWORD dwData = (DWORD) *data;
+                if (dwData & slFeatureUnitTypes[j].ulFlag)
+                {
+                    AppendTextBuffer("                                   (%s)\r\n", slFeatureUnitTypes[j].pszString);
+                }
+            }
+        }
 
         data += n;
     }
@@ -703,6 +810,7 @@ DisplayACProcessingUnit (
 {
     UCHAR  i = 0;
     PUCHAR data = NULL;
+    PCHAR pStr = NULL;
 
     if (ProcessingDesc->bLength < sizeof(USB_AUDIO_PROCESSING_UNIT_DESCRIPTOR))
     {
@@ -715,10 +823,10 @@ DisplayACProcessingUnit (
     AppendTextBuffer("bLength:                          0x%02X\r\n",
                      ProcessingDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      ProcessingDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (PROCESSING_UNIT)\r\n",
                      ProcessingDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bUnitID:                           0x%02X\r\n",
@@ -727,40 +835,11 @@ DisplayACProcessingUnit (
     AppendTextBuffer("wProcessType:                    0x%04X",
                      ProcessingDesc->wProcessType);
 
-    switch (ProcessingDesc->wProcessType)
-    {
-        case USB_AUDIO_PROCESS_UNDEFINED:
-            AppendTextBuffer("(Undefined Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_UPDOWNMIX:
-            AppendTextBuffer("(Up / Down Mix Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_DOLBYPROLOGIC:
-            AppendTextBuffer("(Dolby Prologic Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_3DSTEREOEXTENDER:
-            AppendTextBuffer("(3D-Stereo Extender Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_REVERBERATION:
-            AppendTextBuffer("(Reverberation Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_CHORUS:
-            AppendTextBuffer("(Chorus Process)\r\n");
-            break;
-
-        case USB_AUDIO_PROCESS_DYNRANGECOMP:
-            AppendTextBuffer("(Dynamic Range Compressor Process)\r\n");
-            break;
-
-        default:
-            AppendTextBuffer("\r\n");
-            break;
-    }
+    pStr = GetStringFromList(slProcessingUnitTypes, 
+            sizeof(slProcessingUnitTypes) / sizeof(STRINGLIST),
+            ProcessingDesc->wProcessType, 
+            "Invalid Processing Unit Type");
+    AppendTextBuffer("                                    (%s)\r\n", pStr);
 
     AppendTextBuffer("bNrInPins:                         0x%02X\r\n",
                      ProcessingDesc->bNrInPins);
@@ -779,6 +858,8 @@ DisplayACProcessingUnit (
 
     AppendTextBuffer("wChannelConfig:                  0x%04X\r\n",
                      *(PUSHORT)data);
+
+    DisplayChannelConfig((DWORD) *data);
 
     data = (PUCHAR) ((PUSHORT) data + 1);
 
@@ -838,10 +919,10 @@ DisplayACExtensionUnit (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      ExtensionDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      ExtensionDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (EXTENSION_UNIT)\r\n",
                      ExtensionDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bUnitID:                           0x%02X\r\n",
@@ -868,6 +949,8 @@ DisplayACExtensionUnit (
 
     AppendTextBuffer("wChannelConfig:                  0x%04X\r\n",
                      *(PUSHORT)data);
+
+    DisplayChannelConfig((DWORD) *data);
 
     data = (PUCHAR) ((PUSHORT) data + 1);
 
@@ -915,10 +998,10 @@ DisplayASGeneral (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      GeneralDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      GeneralDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (AS_GENERAL)\r\n",
                      GeneralDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bTerminalLink:                     0x%02X\r\n",
@@ -951,6 +1034,8 @@ DisplayCSEndpoint (
     PUSB_AUDIO_ENDPOINT_DESCRIPTOR EndpointDesc
 )
 {
+    PCHAR pStr = NULL;
+
     if (EndpointDesc->bLength != sizeof(USB_AUDIO_ENDPOINT_DESCRIPTOR))
     {
         OOPS();
@@ -962,17 +1047,33 @@ DisplayCSEndpoint (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      EndpointDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_ENDPOINT)\r\n",
                      EndpointDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (EP_GENERAL)\r\n",
                      EndpointDesc->bDescriptorSubtype);
 
     AppendTextBuffer("bmAttributes:                      0x%02X\r\n",
                      EndpointDesc->bmAttributes);
 
-    AppendTextBuffer("bLockDelayUnits:                   0x%02X\r\n",
+    for (int j = 0; j < ARRAYSIZE(slIsocAttributes); j++)
+    {
+        DWORD dwData = (DWORD) EndpointDesc->bmAttributes;
+        if (dwData & slIsocAttributes[j].ulFlag)
+        {
+            AppendTextBuffer("                                   (%s)\r\n", slIsocAttributes[j].pszString);
+        }
+    }
+
+    AppendTextBuffer("bLockDelayUnits:                   0x%02X",
                      EndpointDesc->bLockDelayUnits);
+
+    pStr = GetStringFromList(slLockDelayUnits, 
+            sizeof(slLockDelayUnits) / sizeof(STRINGLIST),
+            EndpointDesc->bLockDelayUnits, 
+            "Invalid Lock Delay Units");
+    AppendTextBuffer(" (%s)\r\n", pStr);
+
 
     AppendTextBuffer("wLockDelay:                      0x%04X\r\n",
                      EndpointDesc->wLockDelay);
@@ -996,6 +1097,7 @@ DisplayASFormatType (
     UCHAR  n = 0;
     ULONG  freq = 0;
     PUCHAR data = NULL;
+    PCHAR  pStr = NULL;
 
     if (FormatDesc->bLength < sizeof(USB_AUDIO_COMMON_FORMAT_DESCRIPTOR))
     {
@@ -1008,15 +1110,20 @@ DisplayASFormatType (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      FormatDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      FormatDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (FORMAT_TYPE)\r\n",
                      FormatDesc->bDescriptorSubtype);
 
-    AppendTextBuffer("bFormatType:                       0x%02X\r\n",
+    AppendTextBuffer("bFormatType:                       0x%02X",
                      FormatDesc->bFormatType);
 
+    pStr = GetStringFromList(slFormatTypeCode, 
+            sizeof(slFormatTypeCode) / sizeof(STRINGLIST),
+            FormatDesc->bFormatType, 
+            "Invalid AC Format Type");
+    AppendTextBuffer(" (%s)\r\n", pStr);
 
     if (FormatDesc->bFormatType == 0x01 ||
         FormatDesc->bFormatType == 0x03)
@@ -1031,11 +1138,20 @@ DisplayASFormatType (
         AppendTextBuffer("bSubframeSize:                     0x%02X\r\n",
                          FormatI_IIIDesc->bSubframeSize);
 
-        AppendTextBuffer("bBitResolution:                    0x%02X\r\n",
-                         FormatI_IIIDesc->bBitResolution);
+        AppendTextBuffer("bBitResolution:                    0x%02X (%d)\r\n",
+                         FormatI_IIIDesc->bBitResolution, FormatI_IIIDesc->bBitResolution);
 
-        AppendTextBuffer("bSamFreqType:                      0x%02X\r\n",
+        AppendTextBuffer("bSamFreqType:                      0x%02X",
                          FormatI_IIIDesc->bSamFreqType);
+
+        if (0 == FormatI_IIIDesc->bSamFreqType)
+        {
+            AppendTextBuffer(" (Continuous)\r\n", pStr);
+        }
+        else
+        {
+            AppendTextBuffer(" (Discrete)\r\n", pStr);
+        }
 
         data = (PUCHAR)(FormatI_IIIDesc + 1);
 
@@ -1054,8 +1170,17 @@ DisplayASFormatType (
         AppendTextBuffer("wSamplesPerFrame:                0x%04X\r\n",
                          FormatIIDesc->wSamplesPerFrame);
 
-        AppendTextBuffer("bSamFreqType:                      0x%02X\r\n",
+        AppendTextBuffer("bSamFreqType:                      0x%02X",
                          FormatIIDesc->bSamFreqType);
+
+        if (0 == FormatIIDesc->bSamFreqType)
+        {
+            AppendTextBuffer(" (Continuous)\r\n", pStr);
+        }
+        else
+        {
+            AppendTextBuffer(" (Discrete)\r\n", pStr);
+        }
 
         data = (PUCHAR)(FormatIIDesc + 1);
 
@@ -1119,10 +1244,10 @@ DisplayASFormatSpecific (
     AppendTextBuffer("bLength:                           0x%02X\r\n",
                      CommonDesc->bLength);
 
-    AppendTextBuffer("bDescriptorType:                   0x%02X\r\n",
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
                      CommonDesc->bDescriptorType);
 
-    AppendTextBuffer("bDescriptorSubtype:                0x%02X\r\n",
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (FORMAT_SPECIFIC)\r\n",
                      CommonDesc->bDescriptorSubtype);
 
     DisplayBytes((PUCHAR)(CommonDesc + 1),

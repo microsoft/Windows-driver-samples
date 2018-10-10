@@ -161,10 +161,15 @@ Return Value:
 {
     PAGED_CODE();
 
+    if (!ExAcquireResourceSharedLite( Fcb->Resource, Wait )) {
+
+        return FALSE;
+    }
+
     NT_ASSERT(IoGetTopLevelIrp() == NULL);
     IoSetTopLevelIrp((PIRP)FSRTL_CACHE_TOP_LEVEL_IRP);
 
-    return ExAcquireResourceSharedLite( Fcb->Resource, Wait );
+    return TRUE;
 }
 
 

@@ -101,7 +101,6 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
-      <BaseAddress>0x01000000</BaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,7 +117,6 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
-      <BaseAddress>0x01000000</BaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,7 +133,6 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
-      <BaseAddress>0x01000000</BaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,7 +149,6 @@
     </Midl>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
-      <BaseAddress>0x01000000</BaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

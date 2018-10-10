@@ -33,6 +33,7 @@ _Analysis_mode_(_Analysis_code_type_kernel_driver_);
 #include "miniport.h"
 #include "vmq.h"
 #include "qos.h"
+#include "rssv2.h"
 #include "adapter.h"
 #include "mphal.h"
 #include "tcbrcb.h"

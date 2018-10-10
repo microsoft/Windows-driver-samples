@@ -132,7 +132,7 @@ typedef struct _NDISPROT_OPEN_CONTEXT
     WDFQUEUE             StatusIndicationQueue;
 } NDISPROT_OPEN_CONTEXT, *PNDISPROT_OPEN_CONTEXT;
 
-typedef struct _FILEO_BJECT_CONTEXT {
+typedef struct _FILE_OBJECT_CONTEXT {
 
     PNDISPROT_OPEN_CONTEXT OpenContext;
 

@@ -79,13 +79,11 @@
     <ClCompile Include="..\fdo.c; device.c; ..\io.c; ..\pdo.c; ..\driver.c">
       <WppEnabled>true</WppEnabled>
       <WppKernelMode>true</WppKernelMode>
-      <WppScanConfigurationData>debugdef.h</WppScanConfigurationData>
       <WppTraceFunction>DoTrace(LEVEL,FLAG,(MSG,...))</WppTraceFunction>
     </ClCompile>
     <OtherWpp Include="driver.rc">
       <WppEnabled>true</WppEnabled>
       <WppKernelMode>true</WppKernelMode>
-      <WppScanConfigurationData>debugdef.h</WppScanConfigurationData>
       <WppTraceFunction>DoTrace(LEVEL,FLAG,(MSG,...))</WppTraceFunction>
     </OtherWpp>
   </ItemGroup>

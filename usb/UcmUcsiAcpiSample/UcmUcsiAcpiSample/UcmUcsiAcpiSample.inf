@@ -1,0 +1,58 @@
+;
+; Copyright (c) Microsoft Corporation. All rights reserved.
+;
+; INF Name:
+;
+;     UcmUcsiAcpiSample.inf
+;
+; Abstract:
+;
+;     INF for installing the UCM-UCSI ACPI client driver.
+;
+
+[Version]
+Signature = "$WINDOWS NT$"
+Class = UCM
+ClassGuid = {e6f1aa1c-7f3b-4473-b2e8-c97d8ac71d53}
+Provider = %ProviderName%
+PnpLockdown = 1
+DriverVer = 06/21/2006,10.0.17741.1000
+CatalogFile = UcmUcsiAcpiSample.cat
+
+[SourceDisksNames]
+3426 = windows cd
+
+[SourceDisksFiles]
+UcmUcsiAcpiSample.sys = 3426
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[Manufacturer]
+%ProviderName% = UcmUcsiAcpiSample, NT$ARCH$
+
+[UcmUcsiAcpiSample.NT$ARCH$]
+%UcmUcsiAcpiSample.DeviceDesc% = UcmUcsiAcpiSample.Install, ACPI\USBC000, ACPI\PNP0CA0
+
+[UcmUcsiAcpiSample.Install.NT]
+CopyFiles = UcmUcsiAcpiSample.CopyFiles
+FeatureScore = 80 ; The default value is 0xFF. Lower the feature score value, better the feature score rank.
+
+[UcmUcsiAcpiSample.Install.NT.Services]
+AddService = UcmUcsiAcpiSample, 2, UcmUcsiAcpiSample.AddService
+
+[UcmUcsiAcpiSample.CopyFiles]
+UcmUcsiAcpiSample.sys
+
+[UcmUcsiAcpiSample.AddService]
+DisplayName = %UcmUcsiAcpiSample.ServiceName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\UcmUcsiAcpiSample.sys
+Dependencies = UcmUcsiCx
+
+[Strings]
+ProviderName = "TODO update your provider name here"
+UcmUcsiAcpiSample.DeviceDesc = "UCM-UCSI ACPI Device"
+UcmUcsiAcpiSample.ServiceName = "UCM-UCSI ACPI Sample Cient"

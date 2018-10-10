@@ -101,9 +101,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\wdm</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -119,9 +116,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\wdm</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,9 +131,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\wdm</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,9 +146,6 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\wdm</AdditionalIncludeDirectories>
     </Midl>
-    <Link>
-      <BaseAddress>0x400000</BaseAddress>
-    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="eventtest.c" />

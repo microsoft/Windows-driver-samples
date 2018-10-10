@@ -284,7 +284,7 @@ main(
         }
 
         //
-        // The driver is not started yet so let us the install the driver.
+        // The driver is not started yet so let us install the driver.
         // First setup full path to driver name.
         //
         ok = SetupDriverName( driverLocation, MAX_PATH );

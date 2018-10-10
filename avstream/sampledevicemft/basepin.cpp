@@ -29,6 +29,7 @@ CBasePin::CBasePin( _In_ ULONG id, _In_ CMultipinMft *parent) :
     , m_setMediaType(nullptr)
     , m_nRefCount(0)
     , m_state(DeviceStreamState_Stop)
+    , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_UNDEFINED)
 {
     
 }
@@ -59,6 +60,7 @@ HRESULT CBasePin::AddMediaType( _Inout_ DWORD *pos, _In_ IMFMediaType *pMediaTyp
 {
     HRESULT hr = S_OK;
     CAutoLock Lock(lock());
+
     DMFTCHECKNULL_GOTO(pMediaType, done, E_INVALIDARG);
     hr = ExceptionBoundary([&]()
     {
@@ -140,14 +142,12 @@ done:
     return SUCCEEDED(hr) ? TRUE : FALSE;
 }
 
-
 STDMETHODIMP CBasePin::GetOutputAvailableType( 
     _In_ DWORD dwTypeIndex,
     _Out_opt_ IMFMediaType** ppType)
 {
     return GetMediaTypeAt( dwTypeIndex, ppType );
 }
-
 
 HRESULT CBasePin::QueryInterface(
     _In_ REFIID iid,
@@ -179,10 +179,17 @@ HRESULT CBasePin::QueryInterface(
 done:
     return hr;
 }
-
-
-
-
+VOID CBasePin::SetD3DManager(_In_opt_ IUnknown* pManager)
+{
+    //
+    // Should release the old dxgi manager.. We will not invalidate the pins or allocators
+    // We will recreate all allocator when the media types are set, so we should be fine
+    // And the pipeline will not set the dxgimanager when the pipeline is already built
+    //
+    CAutoLock Lock(lock());
+    m_spDxgiManager = pManager;
+    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Setting D3DManager on pin %d", m_StreamId);
+}
 //
 //Input Pin implementation
 //
@@ -199,8 +206,6 @@ CInPin::CInPin(
     setAttributes(pAttributes);
 }
 
-
-
 CInPin::~CInPin()
 {
     setAttributes( nullptr );
@@ -211,8 +216,6 @@ CInPin::~CInPin()
         CloseHandle(m_waitInputMediaTypeWaiter);
     }
 }
-
-
 
 STDMETHODIMP CInPin::Init( 
     _In_ IMFTransform* pTransform
@@ -258,7 +261,6 @@ done:
     return hr;
 }
 
-
 HRESULT CInPin::GenerateMFMediaTypeListFromDevice(
     _In_ UINT uiStreamId
     )
@@ -277,7 +279,7 @@ HRESULT CInPin::GenerateMFMediaTypeListFromDevice(
             break;
      
         DMFTCHECKHR_GOTO(AddMediaType(&pos, spMediaType.Get()), done);
-        }
+    }
 done:
     if (hr == MF_E_NO_MORE_TYPES) {
         hr = S_OK;
@@ -298,7 +300,7 @@ STDMETHODIMP CInPin::SendSample(
     COutPin *poPin = static_cast<COutPin*>(m_outpin.Get());
     DMFTCHECKNULL_GOTO(pSample, done, S_OK);
     DMFTCHECKHR_GOTO(poPin->AddSample(pSample, this), done);
-    DMFTCHECKHR_GOTO(Parent()->QueueEvent(METransformHaveOutput, GUID_NULL, S_OK, NULL),done);
+    
  done: 
     return hr;
 }
@@ -311,7 +313,6 @@ STDMETHODIMP_(VOID) CInPin::ConnectPin( _In_ CBasePin * poPin )
         m_outpin = poPin;
     }
 }
-
 
 STDMETHODIMP CInPin::WaitForSetInputPinMediaChange()
 {
@@ -385,6 +386,7 @@ HRESULT CInPin::SetInputStreamState(
 
 void CInPin::ReleaseConnectedPins()
 {
+    m_spSourceTransform = nullptr;
     m_outpin = nullptr;
 }
 
@@ -452,46 +454,15 @@ STDMETHODIMP COutPin::AddPin(
 #if defined MF_DEVICEMFT_ADD_GRAYSCALER_ // Take this out to remove the gray scaler
     m_queue = new (std::nothrow) CPinQueueWithGrayScale(inputPinId);
 #else
-    m_queue = new (std::nothrow) CPinQueue(inputPinId);
+    m_queue = new (std::nothrow) CPinQueue(inputPinId,Parent());
 #endif
     DMFTCHECKNULL_GOTO(m_queue, done, E_OUTOFMEMORY );
-
-    //
-    //Just ramdonmize media types for odd numbered pins
-    //
-    if ( streamId() != 0 && streamId() % 2 != 0 )
-    {
-        RandomnizeMediaTypes(m_listOfMediaTypes);
-    }
 
 done:
 
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return S_OK;
 }
-
-/*++
-COutPin::AddSampleInternal
-Description:
-Called from AddSample if the Output Pin is in open state. This function looks for the queue 
-corresponding to the input pin and adds it in the queue. 
---*/
-
-STDMETHODIMP COutPin::AddSampleInternal( 
-    _In_ IMFSample *pSample,
-    _In_ CBasePin *pPin )
-{
-    HRESULT hr = S_OK;
-    UNREFERENCED_PARAMETER(pPin);
-    CAutoLock Lock( lock() );
-    //
-    // Add the sample into the queue. Add Ref the Sample
-    //
-    DMFTCHECKHR_GOTO(m_queue->Insert(pSample), done);
-done:
-return hr;
- }
-
 /*++
 COutPin::AddSample
 Description:
@@ -504,15 +475,24 @@ STDMETHODIMP COutPin::AddSample(
     _In_ CBasePin *pPin)
 {
     HRESULT hr = S_OK;
-    CAutoLock lock( lock() );
+    UNREFERENCED_PARAMETER(pPin);
+
+    CAutoLock Lock(lock()); // Serialize
+
     DMFTCHECKNULL_GOTO(pSample, done, E_INVALIDARG);
     if (FAILED(Active()))
     {
         goto done;
     }
-    DMFTCHECKHR_GOTO( AddSampleInternal( pSample, pPin ),done );
-
+    DMFTCHECKHR_GOTO(m_queue->Insert(pSample), done);
 done:
+    if (FAILED(hr))
+    {
+        // @@@@ Readme : This is how to throw error to the pipeline and inform it that there is an Error.
+        // This will destroy the pipeline and the App will need to recreate the source
+        //
+        DMFTCHECKHR_GOTO(Parent()->QueueEvent(MEError, GUID_NULL, hr, NULL), done);
+    }
     return hr;
 }
 
@@ -554,7 +534,6 @@ HRESULT COutPin::ChangeMediaTypeFromInpin(
     _In_ DeviceStreamState state)
 {
     HRESULT hr = S_OK;
-    ComPtr<IUnknown> spD3DManagerUnk = NULL;
     CAutoLock Lock(lock());
     //
     //Set the state to disabled and while going out we will reset the state back to the requested state
@@ -563,8 +542,7 @@ HRESULT COutPin::ChangeMediaTypeFromInpin(
     SetState(DeviceStreamState_Disabled); 
     DMFTCHECKHR_GOTO(FlushQueues(),done);  
     DMFTCHECKNULL_GOTO(m_queue,done, E_UNEXPECTED); // The queue should alwaye be set
-    (VOID)Parent()->GetD3DDeviceManager(spD3DManagerUnk.GetAddressOf());
-    hr = m_queue->RecreateTee( pInMediatype, pOutMediaType, spD3DManagerUnk.Get() );
+    hr = m_queue->RecreateTee(pInMediatype, pOutMediaType, m_spDxgiManager.Get());
     if ( SUCCEEDED( hr ) )
     {
         (VOID)setMediaType( pOutMediaType );
@@ -585,7 +563,6 @@ STDMETHODIMP COutPin::GetOutputStreamInfo(
 {
     HRESULT hr = S_OK;
     IMFMediaType* pMediatype = nullptr;
-    
     getMediaType( &pMediatype );
 
     if (SUCCEEDED(hr) && !pMediatype) {
@@ -601,6 +578,7 @@ STDMETHODIMP COutPin::GetOutputStreamInfo(
     }
     return hr;
 }
+
 
 /*++
 COutPin::ProcessOutput
@@ -619,19 +597,19 @@ STDMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
     HRESULT             hr          = S_OK;
     ComPtr<IMFSample>   spSample;
     MFTIME              llTime      = 0L;
-
     UNREFERENCED_PARAMETER(pdwStatus);
     UNREFERENCED_PARAMETER(dwFlags);
     CAutoLock lock(lock());
-
+    
     if (FAILED(Active()))
     {
         goto done;
     }
-    
     DMFTCHECKNULL_GOTO(m_queue, done, MF_E_INVALID_STREAM_STATE);
     pOutputSample->dwStatus = S_OK;
+
     DMFTCHECKHR_GOTO(m_queue->Remove(spSample.GetAddressOf()), done);
+    
     if (FAILED(spSample->GetSampleTime(&llTime)))
     {
         llTime = MFGetSystemTime();
@@ -644,9 +622,11 @@ STDMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
     }
     //
     // Any processing before we pass the sample to further in the pipeline should be done here
-    // PROCESSSAMPLE(pSample);
+    // PROCESSSAMPLE(pSample); There is a bug in the pipeline and to circumvent that we have to
+    // keep a reference on the sample. The pipeline is not releasing a reference when the sample
+    // is fed in ProcessInput. We are explicitly releasing it for the pipeline.
     //
-    pOutputSample->pSample = spSample.Get();
+    pOutputSample->pSample = spSample.Detach();
     pOutputSample->dwStatus = S_OK;
 done:
     return hr;
@@ -685,16 +665,7 @@ STDMETHODIMP CAsyncInPin::SendSample(_In_ IMFSample *pSample)
     CAutoLock Lock(lock());
     if (!m_bFlushing)
     {
-        if (m_dwWorkQueueId == MFASYNC_CALLBACK_QUEUE_UNDEFINED)
-        {
-            //
-            // Set the queue now
-            // We will have the work queue id set before we start streaming
-            //
-            m_dwWorkQueueId = Parent()->GetQueueId();
-        }
-        DMFTCHECKHR_GOTO(MFPutWorkItem(m_dwWorkQueueId, &m_asyncCallback, pSample), done);
-        pSample->AddRef();
+        DMFTCHECKHR_GOTO(MFPutWorkItem(m_dwWorkQueueId, static_cast<IMFAsyncCallback*>(m_asyncCallback.Get()), pSample), done);
         if (1 == InterlockedIncrement(&m_dwSamplesInFlight))
         {
             ResetEvent(m_hHandle);
@@ -709,36 +680,40 @@ done:
     return hr;
 }
 
-STDMETHODIMP CAsyncInPin::SendSampleInternal(_In_ IMFSample *pSample)
+STDMETHODIMP CAsyncInPin::Init()
+{
+    m_asyncCallback = new (std::nothrow) CDMFTAsyncCallback<CAsyncInPin, &CAsyncInPin::Invoke>(this);
+    if (!m_asyncCallback)
+        throw bad_alloc();
+    return S_OK;
+}
+
+HRESULT CAsyncInPin::Invoke( _In_ IMFAsyncResult* pResult )
 {
     HRESULT hr = S_OK;
-    CAutoLock Lock(lock());
-    DMFTCHECKNULL_GOTO(pSample, done, E_INVALIDARG);
-    hr = CInPin::SendSample(pSample);
-    pSample->Release();
+    ComPtr<IUnknown> spUnknown;
+    ComPtr<IMFSample> spSample;
+
+    DMFTCHECKNULL_GOTO(pResult, done, E_UNEXPECTED);
+    DMFTCHECKHR_GOTO(pResult->GetState(&spUnknown), done);
+
+    DMFTCHECKHR_GOTO(spUnknown->QueryInterface(__uuidof(IMFSample), reinterpret_cast<PVOID*>(spSample.GetAddressOf())), done);
+
+    DMFTCHECKNULL_GOTO(spSample.Get(), done, E_INVALIDARG);
+
+    COutPin *poPin = static_cast<COutPin*>(m_outpin.Get());
+    DMFTCHECKHR_GOTO(poPin->AddSample(spSample.Get(), this), done);
+
     if (0 == InterlockedDecrement(&m_dwSamplesInFlight))
     {
         // No samples in flight.. Set the Event
         SetEvent(m_hHandle);
     }
+
 done:
     return hr;
 }
-STDMETHODIMP CAsyncInPin::CDMFTAsyncCallback::Invoke(_In_ IMFAsyncResult* pResult)
-{
-    HRESULT hr = S_OK;
-    ComPtr<IUnknown> spUnknown;
-    ComPtr<IMFSample> spSample;
-    DMFTCHECKNULL_GOTO(pResult, done, E_UNEXPECTED);
-    DMFTCHECKHR_GOTO(pResult->GetState(&spUnknown), done);
-    DMFTCHECKHR_GOTO(spUnknown->QueryInterface(__uuidof(IUnknown), reinterpret_cast<PVOID*>(spSample.GetAddressOf())), done);
-    CAsyncInPin *pPin = GetParent();
-    DMFTCHECKNULL_GOTO(pPin, done, E_UNEXPECTED);
-    DMFTCHECKHR_GOTO(pPin->SendSampleInternal(spSample.Get()), done);
-done:
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-    return hr;
-}
+
 
 
 STDMETHODIMP CAsyncInPin::FlushQueues()
@@ -768,4 +743,96 @@ done:
     return hr;
 }
 
+//
+// Pins that need translation like from MJPEG to NV12 or H264 to NV12
+// Return Value: S_OK: media type added, S_FALSE: mediatype skipped. Not an Error
+// Failure: any other catastrophic failure
+//
+STDMETHODIMP CTranslateOutPin::AddMediaType(
+    _Inout_ DWORD *pos,
+    _In_ IMFMediaType *pMediaType)
+{
+    HRESULT hr = S_OK;
+    ComPtr<IMFMediaType> pNewMediaType = nullptr;
+    GUID   guidSubType = GUID_NULL;
 
+    auto needTranslation = [&](IMFMediaType* pMediaType) {
+        if (SUCCEEDED(pMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubType)))
+        {
+            for (UINT32 uiIndex = 0; uiIndex < ARRAYSIZE(tranlateGUIDS); uiIndex++)
+            {
+                if (IsEqualGUID(guidSubType, tranlateGUIDS[uiIndex]))
+                    return true;
+            }
+        }
+        return false;
+    };
+    DMFTCHECKNULL_GOTO(pMediaType, done, E_INVALIDARG);
+    DMFTCHECKHR_GOTO(pMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubType), done);
+
+    // @@@@ README the below lines show how to exclude mediatypes which we don't want
+  /*  if ((guidSubType != MFVideoFormat_H264))
+    {
+        hr = S_FALSE;
+        goto done;
+    }*/
+
+    if (needTranslation(pMediaType))
+    {
+        UINT32 uiWidth = 0, uiHeight = 0, uiImageSize = 0;
+       
+        DMFTCHECKHR_GOTO(MFGetAttributeRatio(pMediaType, MF_MT_FRAME_SIZE, &uiWidth, &uiHeight), done);
+        DMFTCHECKHR_GOTO(MFCreateMediaType(pNewMediaType.GetAddressOf()), done);
+        DMFTCHECKHR_GOTO(pMediaType->CopyAllItems(pNewMediaType.Get()), done);
+        DMFTCHECKHR_GOTO(MFCalculateImageSize(translatedGUID, uiWidth, uiHeight, &uiImageSize), done);
+        DMFTCHECKHR_GOTO(pNewMediaType->SetGUID(MF_MT_SUBTYPE, translatedGUID), done);
+        DMFTCHECKHR_GOTO(pNewMediaType->SetUINT32(MF_MT_SAMPLE_SIZE, uiImageSize), done);
+        hr = ExceptionBoundary([&]()
+        {
+            m_TranslatedMediaTypes.insert(std::pair<IMFMediaType*, IMFMediaType*>( pNewMediaType.Get(), pMediaType));
+        });
+        DMFTCHECKHR_GOTO(hr, done);
+    }
+    else
+    {
+        pNewMediaType = pMediaType;
+    }
+    // Set custom properties here
+    //@@@@ README .. add these lines if you want this media types to be understood as a spherical media type
+#if defined MF_DEVICEMFT_SET_SPHERICAL_ATTRIBUTES
+    pNewMediaType->SetUINT32(MF_SD_VIDEO_SPHERICAL, TRUE);
+    pNewMediaType->SetUINT32(MF_SD_VIDEO_SPHERICAL_FORMAT, MFVideoSphericalFormat_Equirectangular);
+#endif
+    // Add it to the pin media type
+    hr = CBasePin::AddMediaType(pos, pNewMediaType.Get());
+done:
+    return hr;
+}
+STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
+    _In_ IMFMediaType *pMediaType,
+    _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
+    IMFMediaType **ppIMFMediaTypeFull)
+{
+    DWORD dwFlags = 0, dwMatchedFlags = (MF_MEDIATYPE_EQUAL_MAJOR_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_DATA);
+
+    std::map<IMFMediaType*, IMFMediaType*>::iterator found = std::find_if(m_TranslatedMediaTypes.begin(), m_TranslatedMediaTypes.end(),
+        [&](std::pair<IMFMediaType*, IMFMediaType*> p)
+    {
+        return (SUCCEEDED(pMediaType->IsEqual(p.first, &dwFlags))
+            && ((dwFlags & dwMatchedFlags) == (dwMatchedFlags)));
+    });
+
+    if (found != m_TranslatedMediaTypes.end())
+    {
+        if (ppIMFMediaTypeFull)
+        {
+            *ppIMFMediaTypeFull = (*found).second;
+        }
+        return true;
+    }
+    else
+    {
+        // Check if we can find it in the Base list.. maybe the mediatype is originally an uncompressed media type
+        return CBasePin::IsMediaTypeSupported(pMediaType,ppIMFMediaTypeFull);
+    }
+}
