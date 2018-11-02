@@ -154,6 +154,7 @@
     <ClCompile Include="uvcview.c" />
     <ClCompile Include="xmlhelper.cpp">
       <CompileAsManaged>true</CompileAsManaged>
+      <ControlFlowGuard>false</ControlFlowGuard>
       <BasicRuntimeChecks Condition="'$(UseDebugLibraries)'=='true'">
       </BasicRuntimeChecks>
     </ClCompile>
