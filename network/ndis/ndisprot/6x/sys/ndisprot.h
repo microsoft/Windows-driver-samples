@@ -88,7 +88,7 @@ typedef enum _NDISPROT_OPEN_STATE{
 //
 //  While an NDIS binding exists, read IRPs are queued on this
 //  structure, to be processed when packets are received.
-//  If data arrives in the absense of a pended read IRP, we
+//  If data arrives in the absence of a pended read IRP, we
 //  queue it, to the extent of one packet, i.e. we save the
 //  contents of the latest packet received. We fail read IRPs
 //  received when no NDIS binding exists (or is in the process
