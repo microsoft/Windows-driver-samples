@@ -11,7 +11,7 @@ INCLUDES= \
         ..
 
 
-C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS
+C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS -DSYSVAD_USB_SIDEBAND
 #C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ 
 
 DDK_TARGET_PLATFORM=Universal
@@ -41,4 +41,8 @@ SOURCES=$(SOURCES)                         \
         minwavertstream.cpp                \
         speakertopo.cpp                    \
         speakerhptopo.cpp                  \
+        usbhstopo.cpp                      \
+        usbhsmictopo.cpp                   \
+        usbhsspeakertopo.cpp               \
+        usbhsminwavert.cpp                 \
 

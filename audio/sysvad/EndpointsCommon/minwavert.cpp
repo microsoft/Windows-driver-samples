@@ -196,13 +196,13 @@ Return Value:
         m_pAudioModules = NULL;
     }
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     if (IsSidebandDevice())
     {
         m_pSidebandDevice->SetFormatChangeHandler(m_DeviceType, NULL, NULL);
         SAFE_RELEASE(m_pSidebandDevice);
     }
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 } // ~CMiniportWaveRT
 
@@ -1438,11 +1438,13 @@ CMiniportWaveRT::PropertyHandlerProposedFormat
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
         ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
             if (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice)
+                m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice ||
+                m_DeviceType == eUsbHsMicDevice)
             {
                 KSDATAFORMAT_WAVEFORMATEXTENSIBLE *propFormat = (KSDATAFORMAT_WAVEFORMATEXTENSIBLE *)PropertyRequest->Value;
                 ULONG numModes = 0;
@@ -1500,7 +1502,7 @@ CMiniportWaveRT::PropertyHandlerProposedFormat
                 ntStatus = STATUS_SUCCESS;
             }
         }
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
     {
