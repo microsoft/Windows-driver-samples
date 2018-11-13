@@ -120,6 +120,21 @@ Abstract:
 #define MINWAVERT_POOLTAG           'RWNM'
 #define MINTOPORT_POOLTAG           'RTNM'
 #define MINADAPTER_POOLTAG          'uAyS'
+#define USBSIDEBANDTEST_POOLTAG01   '1AyS'
+#define USBSIDEBANDTEST_POOLTAG02   '2AyS'
+#define USBSIDEBANDTEST_POOLTAG03   '3AyS'
+#define USBSIDEBANDTEST_POOLTAG04   '4AyS'
+#define USBSIDEBANDTEST_POOLTAG05   '5AyS'
+#define USBSIDEBANDTEST_POOLTAG06   '6AyS'
+#define USBSIDEBANDTEST_POOLTAG07   '7AyS'
+#define USBSIDEBANDTEST_POOLTAG08   '8AyS'
+#define USBSIDEBANDTEST_POOLTAG09   '9AyS'
+#define USBSIDEBANDTEST_POOLTAG010  'aAyS'
+#define USBSIDEBANDTEST_POOLTAG011  'bAyS'
+#define USBSIDEBANDTEST_POOLTAG012  'cAyS'
+#define USBSIDEBANDTEST_POOLTAG013  'dAyS'
+#define USBSIDEBANDTEST_POOLTAG014  'eAyS'
+#define USBSIDEBANDTEST_POOLTAG015  'fAyS'
 
 typedef enum
 {
@@ -637,7 +652,24 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
        
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+    STDMETHOD_(NTSTATUS,        InitUsbSideband)();
+
+    STDMETHOD_(NTSTATUS,        AddDeviceAsPowerDependency)
+    (
+        _In_ PDEVICE_OBJECT pdo
+    );
+
+    STDMETHOD_(NTSTATUS,        RemoveDeviceAsPowerDependency)
+    (
+        _In_ PDEVICE_OBJECT pdo
+    );
+
+#endif // SYSVAD_USB_SIDEBAND
+
     STDMETHOD_(VOID, Cleanup)();
+
+    STDMETHOD_(NTSTATUS, UpdatePowerRelations)(_In_ PIRP Irp);
 
     STDMETHOD_(NTSTATUS, NotifyEndpointPair) 
     ( 
@@ -670,7 +702,7 @@ NewAdapterCommon
 );
 
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 // Event callback definition.
 typedef VOID (*PFNEVENTNOTIFICATION)(

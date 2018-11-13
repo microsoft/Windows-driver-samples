@@ -31,5 +31,6 @@ SOURCES=\
         ..\kshelper.cpp \
         ..\savedata.cpp \
         ..\tonegenerator.cpp \
+        ..\UsbHsDevice.cpp \
         ..\wavereader.cpp \
 

@@ -35,9 +35,9 @@ class CMiniportTopology :
     eDeviceType             m_DeviceType;
     union {
         PVOID               m_DeviceContext;
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         PSIDEBANDDEVICECOMMON m_pSidebandDevice;
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     };
 
 public:
@@ -55,7 +55,7 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
             if (m_pSidebandDevice != NULL)
@@ -64,7 +64,7 @@ public:
                 m_pSidebandDevice->AddRef(); // strong ref.
             }
         }
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     }
 
     ~CMiniportTopology();
@@ -86,11 +86,13 @@ public:
         _In_        DWORD                                    JackCapabilities
     );
     
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     BOOL IsSidebandDevice()
     {
         return (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice) ? TRUE : FALSE;
+                m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsMicDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice ) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
@@ -136,7 +138,7 @@ public:
     (
         _In_opt_    PVOID   Context
     );
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) defined(SYSVAD_USB_SIDEBAND)
 
     PVOID GetDeviceContext() { return m_DeviceContext;  }
 
@@ -149,6 +151,18 @@ public:
     friend NTSTATUS PropertyHandler_BthHfpMicVolumeLevel(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
     friend NTSTATUS PropertyHandler_BthHfpSpeakerVolumeLevel(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_UsbHsJackContainerId(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest,
+        _In_ ULONG                    cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION * JackDescriptions);
+    friend NTSTATUS PropertyHandler_UsbHsVolumeLevel_BasicSupport(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_UsbHsMicVolumeLevel(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_UsbHsMute_BasicSupport(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_UsbHsMicMute(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
 };
 

@@ -29,6 +29,9 @@ Abstract:
 #ifdef SYSVAD_BTH_BYPASS
 #include "bthhfpminipairs.h"
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+#include "usbhsminipairs.h"
+#endif // SYSVAD_USB_SIDEBAND
 
 
 
@@ -257,6 +260,15 @@ UNICODE_STRING g_RegistryPath;      // This is used to store the registry settin
 DWORD g_DisableBthScoBypass = 0;   // default is SCO bypass enabled.
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+//
+// This driver listens for arrival/removal of the USB Sideband interfaces by 
+// default. Use the registry value DisableUsbSideband (DWORD) > 0 to override 
+// this default.
+//
+DWORD g_DisableUsbSideband = 0;   // default is USB bypass enabled.
+#endif // SYSVAD_USB_SIDEBAND
+
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
@@ -409,6 +421,9 @@ Returns:
 #ifdef SYSVAD_BTH_BYPASS
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableBthScoBypass",  &g_DisableBthScoBypass,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableBthScoBypass,  sizeof(ULONG)},
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+        { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DisableUsbSideband",  &g_DisableUsbSideband,  (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DisableUsbSideband,  sizeof(ULONG)},
+#endif // SYSVAD_USB_SIDEBAND
         { NULL,   0,                                                        NULL,                    NULL,                    0,                                                             NULL,                    0}
     };
 
@@ -456,6 +471,9 @@ Returns:
 #ifdef SYSVAD_BTH_BYPASS
     DPF(D_VERBOSE, ("DisableBthScoBypass: %u", g_DisableBthScoBypass));
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    DPF(D_VERBOSE, ("DisableUsbSideband: %u", g_DisableUsbSideband));
+#endif // SYSVAD_USB_SIDEBAND
 
     //
     // Cleanup.
@@ -635,7 +653,9 @@ Return Value:
     //
     maxObjects += g_MaxBthHfpMiniports; 
 #endif // SYSVAD_BTH_BYPASS
-
+#ifdef SYSVAD_USB_SIDEBAND
+    maxObjects += g_MaxUsbHsMiniports; 
+#endif // SYSVAD_USB_SIDEBAND
 
     // Tell the class driver to add the device.
     //
@@ -1073,6 +1093,16 @@ Return Value:
         IF_FAILED_JUMP(ntStatus, Exit);
     }
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    if (!g_DisableUsbSideband)
+    {
+        //
+        // Init infrastructure for USB Sideband devices.
+        //
+        ntStatus = pAdapterCommon->InitUsbSideband();
+        IF_FAILED_JUMP(ntStatus, Exit);
+    }
+#endif // SYSVAD_USB_SIDEBAND
 
 #ifdef _USE_SingleComponentMultiFxStates
     //
@@ -1147,11 +1177,39 @@ Return Value:
     //
     stack = IoGetCurrentIrpStackLocation(_Irp);
 
-
-    if ((IRP_MN_REMOVE_DEVICE == stack->MinorFunction) ||
-        (IRP_MN_SURPRISE_REMOVAL == stack->MinorFunction) ||
-        (IRP_MN_STOP_DEVICE == stack->MinorFunction))
+    switch (stack->MinorFunction)
     {
+
+    case IRP_MN_QUERY_DEVICE_RELATIONS:
+
+        switch (stack->Parameters.QueryDeviceRelations.Type)
+        {
+        case PowerRelations:
+
+            ext = static_cast<PortClassDeviceContext*>(_DeviceObject->DeviceExtension);
+
+            if (ext->m_pCommon != NULL)
+            {
+                ntStatus = ext->m_pCommon->UpdatePowerRelations(_Irp);
+                if (!NT_SUCCESS(ntStatus))
+                {
+                    // Complete the Irp with failure, no need to further process in PortCls
+                    _Irp->IoStatus.Status = ntStatus;
+                    IoCompleteRequest(_Irp, IO_NO_INCREMENT);
+                    return ntStatus;
+                }
+            }
+
+            break;
+
+        default:
+            break;
+        }
+        break;
+
+    case IRP_MN_REMOVE_DEVICE:
+    case IRP_MN_SURPRISE_REMOVAL:
+    case IRP_MN_STOP_DEVICE:
         ext = static_cast<PortClassDeviceContext*>(_DeviceObject->DeviceExtension);
 
         if (ext->m_pCommon != NULL)
@@ -1161,6 +1219,10 @@ Return Value:
             ext->m_pCommon->Release();
             ext->m_pCommon = NULL;
         }
+        break;
+
+    default:
+        break;
     }
     
     ntStatus = PcDispatchIrp(_DeviceObject, _Irp);

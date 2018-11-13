@@ -30,6 +30,15 @@ Abstract:
 #include "BthhfpDevice.h"
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+#include <usbspec.h>
+#include <usb.h>
+#include <SidebandAudio.h>
+#include <USBSidebandAudio.h>
+#include "UsbHsMinipairs.h"
+#include "UsbHsDevice.h"
+#endif // SYSVAD_USB_SIDEBAND
+
 //-----------------------------------------------------------------------------
 // CSaveData statics
 //-----------------------------------------------------------------------------
@@ -42,6 +51,10 @@ PDEVICE_OBJECT          CSaveData::m_pDeviceObject = NULL;
 #ifdef SYSVAD_BTH_BYPASS
 class BthHfpDevice;     // Forward declaration.
 #endif // SYSVAD_BTH_BYPASS
+
+#ifdef SYSVAD_USB_SIDEBAND
+class UsbHsDevice;     // Forward declaration.
+#endif // SYSVAD_USB_SIDEBAND
 
 ///////////////////////////////////////////////////////////////////////////////
 // CAdapterCommon
@@ -64,6 +77,16 @@ class CAdapterCommon :
         static LONG             m_AdapterInstances;     // # of adapter objects.
 
         DWORD                   m_dwIdleRequests;
+
+#ifdef SYSVAD_USB_SIDEBAND
+        typedef struct _SysvadPowerRelationsDo
+        {
+            LIST_ENTRY          ListEntry;
+            PDEVICE_OBJECT      Pdo;
+        }SysVadPowerRelationsDo, *PSysVadPowerRelationsDo;
+        LIST_ENTRY              m_PowerRelations;
+        FAST_MUTEX              m_PowerRelationsLock;
+#endif//SYSVAD_USB_SIDEBAND
 
     public:
         //=====================================================================
@@ -258,7 +281,25 @@ class CAdapterCommon :
         STDMETHODIMP_(VOID)     CleanupBthScoBypass();
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+        STDMETHODIMP_(NTSTATUS) InitUsbSideband();
+        
+        STDMETHODIMP_(VOID)     CleanupUsbSideband();
+
+        STDMETHODIMP_(NTSTATUS) AddDeviceAsPowerDependency
+        (
+            _In_ PDEVICE_OBJECT     pdo
+        );
+
+        STDMETHODIMP_(NTSTATUS) RemoveDeviceAsPowerDependency
+        (
+            _In_ PDEVICE_OBJECT     pdo
+        );
+#endif // SYSVAD_USB_SIDEBAND
+
         STDMETHODIMP_(VOID) Cleanup();
+
+        STDMETHODIMP_(NTSTATUS) UpdatePowerRelations(_In_ PIRP Irp);
         
         //=====================================================================
         // friends
@@ -310,6 +351,45 @@ class CAdapterCommon :
             _In_ PUNICODE_STRING SymbolicLinkName
         );
 #endif // SYSVAD_BTH_BYPASS
+
+#ifdef SYSVAD_USB_SIDEBAND
+        //=====================================================================
+        // USB Sideband Audio support.
+
+    private:
+        PVOID                   m_UsbSidebandNotificationHandle;
+        FAST_MUTEX              m_UsbSidebandFastMutex;              // To serialize access.
+        WDFWORKITEM             m_UsbSidebandWorkItem;               // Async work-item.
+        LIST_ENTRY              m_UsbSidebandWorkTasks;              // Work-item's tasks.
+        LIST_ENTRY              m_UsbSidebandDevices;                // USB Sideband devices.
+        NPAGED_LOOKASIDE_LIST   m_UsbSidebandWorkTaskPool;           // LookasideList
+        size_t                  m_UsbSidebandWorkTaskPoolElementSize;
+        BOOL                    m_UsbSidebandEnableCleanup;          // Do cleanup if true.
+
+    private:
+        static
+            DRIVER_NOTIFICATION_CALLBACK_ROUTINE  EvtUsbSidebandInterfaceChange;
+
+        static
+            EVT_WDF_WORKITEM                      EvtUsbSidebandInterfaceWorkItem;
+
+    protected:
+        UsbHsDevice * UsbSidebandDeviceFind
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+
+        NTSTATUS UsbSidebandInterfaceArrival
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+
+        NTSTATUS UsbSidebandInterfaceRemoval
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+
+#endif // SYSVAD_USB_SIDEBAND
 
     private:
 
@@ -524,6 +604,7 @@ Return Value:
 
     InterlockedDecrement(&CAdapterCommon::m_AdapterInstances);
     ASSERT(CAdapterCommon::m_AdapterInstances == 0);
+    ASSERT(IsListEmpty(&m_PowerRelations));
 } // ~CAdapterCommon  
 
 //=============================================================================
@@ -640,6 +721,10 @@ Return Value:
     m_BthHfpEnableCleanup = FALSE;
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+    m_UsbSidebandEnableCleanup = FALSE;
+#endif // SYSVAD_USB_SIDEBAND
+
     m_pServiceGroupWave     = NULL;
     m_pDeviceObject         = DeviceObject;
     m_pPhysicalDeviceObject = NULL;
@@ -649,6 +734,11 @@ Return Value:
     m_pPortClsEtwHelper     = NULL;
 
     InitializeListHead(&m_SubdeviceCache);
+
+#ifdef SYSVAD_USB_SIDEBAND
+    InitializeListHead(&m_PowerRelations);
+    ExInitializeFastMutex(&m_PowerRelationsLock);
+#endif//SYSVAD_USB_SIDEBAND
 
     //
     // Get the PDO.
@@ -2193,7 +2283,141 @@ CAdapterCommon::Cleanup()
     CleanupBthScoBypass();
 #endif // SYSVAD_BTH_BYPASS
 
+#ifdef SYSVAD_USB_SIDEBAND
+    //
+    // This ensures USB Sideband notifications are turned off when port class
+    // cleanups and unregisters the static subdevices.
+    //
+    CleanupUsbSideband();
+#endif // SYSVAD_USB_SIDEBAND
+
     EmptySubdeviceCache();
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS 
+CAdapterCommon::UpdatePowerRelations(_In_ PIRP Irp)
+{
+    PDEVICE_RELATIONS   priorRelations = NULL;
+    PDEVICE_RELATIONS   newRelations = NULL;
+    ULONG               qprPdosCount = 0;
+    ULONG               count = 0;
+    size_t              size;
+    NTSTATUS            status = STATUS_SUCCESS;
+    ULONG               i = 0;
+    PLIST_ENTRY         pe = NULL;
+
+    ExAcquireFastMutex(&m_PowerRelationsLock);
+
+    pe = m_PowerRelations.Flink;
+    while (pe != &m_PowerRelations)
+    {
+        pe = pe->Flink;
+        qprPdosCount++;
+    }
+
+    if (0 == qprPdosCount)
+    {
+        DPF(D_ERROR, ("CAdapterCommon::UpdatePowerRelations: No PDOs in power relations"));
+        // Not an error. Just nothing to do.
+        newRelations = (PDEVICE_RELATIONS)(Irp->IoStatus.Information);
+        goto Exit;
+    }
+
+    count = qprPdosCount;
+
+    priorRelations = (PDEVICE_RELATIONS)Irp->IoStatus.Information;
+    if (priorRelations != NULL)
+    {
+        //
+        // Another driver in the stack may have added some entries.
+        // Make sure we allocate space for these additional entries.
+        //
+        count = priorRelations->Count + count;
+    }
+
+    //
+    // Allocate space for the DEVICE_RELATIONS structure (which includes
+    // space for one PDEVICE_OBJECT, and then allocate enough additional
+    // space for the extra PDEVICE_OBJECTs we need.
+    //
+    size = sizeof(DEVICE_RELATIONS) + (count - 1) * sizeof(PDEVICE_OBJECT);
+    newRelations = (PDEVICE_RELATIONS)ExAllocatePoolWithTag(PagedPool, size, USBSIDEBANDTEST_POOLTAG015);
+    ASSERT(newRelations);
+    if (NULL == newRelations)
+    {
+        status = STATUS_INSUFFICIENT_RESOURCES;
+        DPF(D_ERROR, ("CAdapterCommon::UpdatePowerRelations: could not allocate memory"));
+        goto Exit;
+    }
+
+    //
+    // If there was an existing device relations structure, copy
+    // the entries to the new structure.
+    //
+    RtlZeroMemory(newRelations, size);
+    if (priorRelations != NULL && priorRelations->Count > 0)
+    {
+        size = sizeof(DEVICE_RELATIONS) + (priorRelations->Count - 1) * sizeof(PDEVICE_OBJECT);
+        RtlCopyMemory(newRelations, priorRelations, size);
+    }
+
+    //
+    // Add new relations to the DEVICE_RELATIONS structure. Pnp dictates that
+    // each PDO in the list be referenced. Pnp manager will deref the PDO.
+    //
+    pe = m_PowerRelations.Flink;
+    while (pe != &m_PowerRelations)
+    {
+        PSysVadPowerRelationsDo powerDepDo = CONTAINING_RECORD(pe, SysVadPowerRelationsDo, ListEntry);
+        pe = pe->Flink;
+
+        newRelations->Objects[newRelations->Count] = powerDepDo->Pdo;
+
+        // Add a reference on the PDO before returning it as a dependency.
+        // PnP will remove the reference when appropriate as per msdn.
+        // https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/irp-mn-query-device-relations#operation
+        ObReferenceObject(powerDepDo->Pdo);
+
+        //
+        // update the count
+        //
+        newRelations->Count++;
+    }
+
+Exit:
+    ExReleaseFastMutex(&m_PowerRelationsLock);
+
+    if (!NT_SUCCESS(status))
+    {
+        //
+        // Dereference any previously reported relations before exiting. They
+        // are dereferenced here because the PNP manager will see error and not
+        // do anything while the driver which added these objects expects the
+        // pnp manager to do the dereference. Since this device is changing the
+        // status, it must act like the pnp manager.
+        //
+        if (priorRelations != NULL)
+        {
+            for (i = 0; i < priorRelations->Count; ++i)
+            {
+                ObDereferenceObject(priorRelations->Objects[i]);
+            }
+        }
+
+        ASSERT(newRelations == NULL);
+    }
+
+    if (priorRelations != NULL)
+    {
+        ExFreePool(priorRelations);
+    }
+
+    Irp->IoStatus.Status = status;
+    Irp->IoStatus.Information = (ULONG_PTR)newRelations;
+
+    return status;
 }
 
 //=============================================================================
@@ -3148,6 +3372,684 @@ Routine Description:
     ExDeleteNPagedLookasideList(&m_BthHfpWorkTaskPool);
 }
 #endif  // SYSVAD_BTH_BYPASS
+
+#ifdef SYSVAD_USB_SIDEBAND
+//
+// CAdapterCommon USB Sideband function implementation.
+//
+
+//=============================================================================
+#pragma code_seg("PAGE")
+VOID
+CAdapterCommon::EvtUsbSidebandInterfaceWorkItem
+(
+    _In_    WDFWORKITEM WorkItem
+)
+/*++
+
+Routine Description:
+
+The function handles the arrival or removal of a USB Sideband interface.
+
+Arguments:
+
+WorkItem    - WDF work-item object.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[EvtUsbSidebandInterfaceWorkItem]"));
+
+    CAdapterCommon        * This;
+
+    if (WorkItem == NULL)
+    {
+        return;
+    }
+
+    This = GetUsbHsWorkItemContext(WorkItem)->Adapter;
+    ASSERT(This != NULL);
+
+    for (;;)
+    {
+        PLIST_ENTRY         le = NULL;
+        UsbHsWorkTask    * task = NULL;
+
+        //
+        // Retrieve a taask.
+        //
+        ExAcquireFastMutex(&This->m_UsbSidebandFastMutex);
+        if (!IsListEmpty(&This->m_UsbSidebandWorkTasks))
+        {
+            le = RemoveHeadList(&This->m_UsbSidebandWorkTasks);
+            task = CONTAINING_RECORD(le, UsbHsWorkTask, ListEntry);
+            InitializeListHead(le);
+        }
+        ExReleaseFastMutex(&This->m_UsbSidebandFastMutex);
+
+        if (task == NULL)
+        {
+            break;
+        }
+
+        ASSERT(task->Device != NULL);
+        _Analysis_assume_(task->Device != NULL);
+
+        //
+        // Process the task.
+        //
+        switch (task->Action)
+        {
+        case eUsbHsTaskStart:
+            task->Device->Start();
+            break;
+
+        case eUsbHsTaskStop:
+            task->Device->Stop();
+            break;
+
+        default:
+            DPF(D_ERROR, ("EvtUsbSidebandInterfaceWorkItem: invalid action %d", task->Action));
+            break;
+        }
+
+        //
+        // Release the ref we took on the device when we inserted the task in the queue.
+        // For a stop operation this may be the last reference.
+        //
+        SAFE_RELEASE(task->Device);
+
+        //
+        // Free the task.
+        //
+        ExFreeToNPagedLookasideList(&This->m_UsbSidebandWorkTaskPool, task);
+    }
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+UsbHsDevice *
+CAdapterCommon::UsbSidebandDeviceFind
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function looks for the specified device in the adapter's list.
+
+Arguments:
+
+SymbolicLinkName - interface's symbolic link.
+
+Return Value:
+
+UsbSidebandDevice pointer or NULL.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::UsbSidebandDeviceFind]"));
+
+    PLIST_ENTRY     le = NULL;
+    UsbHsDevice  * usbDevice = NULL;
+
+    ExAcquireFastMutex(&m_UsbSidebandFastMutex);
+
+    for (le = m_UsbSidebandDevices.Flink; le != &m_UsbSidebandDevices; le = le->Flink)
+    {
+        UsbHsDevice  *     tmpUsbHsDevice = UsbHsDevice::GetUsbHsDevice(le);
+        ASSERT(tmpUsbHsDevice != NULL);
+
+        PUNICODE_STRING     unicodeStr = tmpUsbHsDevice->GetSymbolicLinkName();
+        ASSERT(unicodeStr != NULL);
+
+        if (unicodeStr->Length == SymbolicLinkName->Length &&
+            0 == wcsncmp(unicodeStr->Buffer, SymbolicLinkName->Buffer, unicodeStr->Length / sizeof(WCHAR)))
+        {
+            // Found it!
+            usbDevice = tmpUsbHsDevice;
+            usbDevice->AddRef();
+            break;
+        }
+    }
+
+    ExReleaseFastMutex(&m_UsbSidebandFastMutex);
+
+    return usbDevice;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::UsbSidebandInterfaceArrival
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function handles the arrival of a new USB Sideband interface.
+
+Arguments:
+
+SymbolicLinkName - new interface's symbolic link.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::UsbSidebandInterfaceArrival]"));
+
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    UsbHsDevice         *usbHsDevice = NULL;
+    UsbHsWorkTask       *usbHsWorkTask = NULL;
+
+    DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: SymbolicLinkName %wZ", SymbolicLinkName));
+
+    //
+    // Check if the USB device is already present.
+    // According to the docs it is possible to receive two notifications for the same
+    // interface.
+    //
+    usbHsDevice = UsbSidebandDeviceFind(SymbolicLinkName);
+    if (usbHsDevice != NULL)
+    {
+        DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: USB device already present"));
+        SAFE_RELEASE(usbHsDevice);
+        ntStatus = STATUS_SUCCESS;
+        goto Done;
+    }
+
+    //
+    // Alloc a new structure for this USB device.
+    //
+    usbHsDevice = new (NonPagedPoolNx, MINADAPTER_POOLTAG) UsbHsDevice(NULL); // NULL -> OuterUnknown
+    if (NULL == usbHsDevice)
+    {
+        DPF(D_ERROR, ("UsbSidebandInterfaceArrival: unable to allocate UsbSidebandDevice, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    DPF(D_VERBOSE, ("UsbSidebandInterfaceArrival: created UsbSidebandDevice 0x%p ", usbHsDevice));
+
+    //
+    // Basic initialization of the USB Sideband interface.
+    // The audio miniport creation is done later by the UsbSidebandDevice.Start()
+    // which is invoked asynchronously by a worker thread.
+    // UsbSidebandDevice->Init() must be invoked just after the creation of the object.
+    //
+    ntStatus = usbHsDevice->Init(this, SymbolicLinkName);
+    IF_FAILED_JUMP(ntStatus, Done);
+
+    //
+    // Get and init a work task.
+    //
+    usbHsWorkTask = (UsbHsWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
+    if (NULL == usbHsWorkTask)
+    {
+        DPF(D_ERROR, ("UsbSidebandInterfaceArrival: unable to allocate UsbSidebandWorkTask, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    // usbWorkTask->L.Size is set to sizeof(UsbSidebandWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
+    RtlZeroMemory(usbHsWorkTask, sizeof(*usbHsWorkTask));
+    usbHsWorkTask->Action = eUsbHsTaskStart;
+    InitializeListHead(&usbHsWorkTask->ListEntry);
+    // Note that usbDevice has one reference at this point.
+    usbHsWorkTask->Device = usbHsDevice;
+
+    ExAcquireFastMutex(&m_UsbSidebandFastMutex);
+
+    //
+    // Insert this new USB Sideband device in our list.
+    //
+    InsertTailList(&m_UsbSidebandDevices, usbHsDevice->GetListEntry());
+
+    //
+    // Add a new task for the worker thread.
+    //
+    InsertTailList(&m_UsbSidebandWorkTasks, &usbHsWorkTask->ListEntry);
+    usbHsDevice->AddRef();    // released when task runs.
+
+                            //
+                            // Schedule a work-item if not already running.
+                            //
+    WdfWorkItemEnqueue(m_UsbSidebandWorkItem);
+
+    ExReleaseFastMutex(&m_UsbSidebandFastMutex);
+
+Done:
+    if (!NT_SUCCESS(ntStatus))
+    {
+        // Release the last ref, this will delete the UsbSidebandDevice 
+        SAFE_RELEASE(usbHsDevice);
+
+        if (usbHsWorkTask != NULL)
+        {
+            ExFreeToNPagedLookasideList(&m_UsbSidebandWorkTaskPool, usbHsWorkTask);
+            usbHsWorkTask = NULL;
+        }
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::UsbSidebandInterfaceRemoval
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function handles the removal of a USB Sideband interface.
+
+Arguments:
+
+SymbolicLinkName - interface's symbolic link to remove.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::UsbSidebandInterfaceRemoval]"));
+
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    UsbHsDevice         *usbHsDevice = NULL;
+    UsbHsWorkTask       *usbHsWorkTask = NULL;
+
+    DPF(D_VERBOSE, ("UsbSidebandInterfaceRemoval: SymbolicLinkName %wZ", SymbolicLinkName));
+
+    //
+    // Check if the USB device is present.
+    //
+    usbHsDevice = UsbSidebandDeviceFind(SymbolicLinkName);
+    if (usbHsDevice == NULL)
+    {
+        // This can happen if the init/start of the UsbSidebandDevice failed.
+        DPF(D_VERBOSE, ("UsbSidebandInterfaceRemoval: USB device not found"));
+        ntStatus = STATUS_SUCCESS;
+        goto Done;
+    }
+
+    //
+    // Init a work task.
+    //
+    usbHsWorkTask = (UsbHsWorkTask*)ExAllocateFromNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
+    if (NULL == usbHsWorkTask)
+    {
+        DPF(D_ERROR, ("UsbSidebandInterfaceRemoval: unable to allocate UsbSidebandWorkTask, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    // usbWorkTask->L.Size is set to sizeof(UsbSidebandWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
+    RtlZeroMemory(usbHsWorkTask, sizeof(*usbHsWorkTask));
+    usbHsWorkTask->Action = eUsbHsTaskStop;
+    InitializeListHead(&usbHsWorkTask->ListEntry);
+    // Work-item callback will release the reference we got above from UsbSidebandDeviceFind.
+    usbHsWorkTask->Device = usbHsDevice;
+
+    ExAcquireFastMutex(&m_UsbSidebandFastMutex);
+
+    //
+    // Remove this USB device from our list and release the associated reference.
+    //
+    RemoveEntryList(usbHsDevice->GetListEntry());
+    InitializeListHead(usbHsDevice->GetListEntry());
+    usbHsDevice->Release();   // This is not the last ref.
+
+                            //
+                            // Add a new task for the worker thread.
+                            //
+    InsertTailList(&m_UsbSidebandWorkTasks, &usbHsWorkTask->ListEntry);
+
+    //
+    // Schedule a work-item if not already running.
+    //
+    WdfWorkItemEnqueue(m_UsbSidebandWorkItem);
+
+    ExReleaseFastMutex(&m_UsbSidebandFastMutex);
+
+    //
+    // All done.
+    //
+    ntStatus = STATUS_SUCCESS;
+
+Done:
+
+    if (!NT_SUCCESS(ntStatus))
+    {
+        // Release the ref we got in find.
+        SAFE_RELEASE(usbHsDevice);
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::EvtUsbSidebandInterfaceChange(
+    _In_          PVOID   NotificationPointer,
+    _Inout_opt_   PVOID   Context
+)
+/*++
+
+Routine Description:
+
+This callback is invoked when a new USB Sideband interface is added or removed.
+
+Arguments:
+NotificationPointer - Interface change notification
+Context - CAdapterCommon ptr.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[EvtUsbSidebandInterfaceChange]"));
+
+    NTSTATUS                              ntStatus = STATUS_SUCCESS;
+    CAdapterCommon                      * This = NULL;
+    PDEVICE_INTERFACE_CHANGE_NOTIFICATION Notification = (PDEVICE_INTERFACE_CHANGE_NOTIFICATION)NotificationPointer;
+
+    //
+    // Make sure this is the interface class we extect. Any other class guid
+    // is an error, but let it go since it is not fatal to the machine.
+    //
+    if (!IsEqualGUID(Notification->InterfaceClassGuid, GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HS_HCIBYPASS))
+    {
+        DPF(D_VERBOSE, ("EvtUsbSidebandInterfaceChange: bad interface ClassGuid"));
+        ASSERTMSG("EvtUsbSidebandInterfaceChange: bad interface ClassGuid ", FALSE);
+
+        goto Done;
+    }
+
+    This = (CAdapterCommon *)Context;
+    ASSERT(This != NULL);
+    _Analysis_assume_(This != NULL);
+
+    //
+    // Take action based on the event. Any other event type is an error, 
+    // but let it go since it is not fatal to the machine.
+    //
+    if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_ARRIVAL))
+    {
+        ntStatus = This->UsbSidebandInterfaceArrival(Notification->SymbolicLinkName);
+    }
+    else if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_REMOVAL))
+    {
+        ntStatus = This->UsbSidebandInterfaceRemoval(Notification->SymbolicLinkName);
+    }
+    else
+    {
+        DPF(D_VERBOSE, ("EvtUsbSidebandInterfaceChange: bad "
+            "GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HCIBYPASS event"));
+        ASSERTMSG("EvtUsbSidebandInterfaceChange: bad "
+            "GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HCIBYPASS event ", FALSE);
+
+        goto Done;
+    }
+
+Done:
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::InitUsbSideband()
+/*++
+
+Routine Description:
+
+Initialize the USB Sideband environment.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::InitUsbSideband]"));
+
+    NTSTATUS                ntStatus = STATUS_SUCCESS;
+    WDF_WORKITEM_CONFIG     wiConfig;
+    WDF_OBJECT_ATTRIBUTES   attributes;
+    UsbHsWorkItemContext * wiContext;
+
+    //
+    // Init spin-lock, linked lists, work-item, event, etc.
+    // Init all members to default values. This basic init should not fail.
+    //
+    m_UsbSidebandWorkItem = NULL;
+    m_UsbSidebandNotificationHandle = NULL;
+    ExInitializeFastMutex(&m_UsbSidebandFastMutex);
+    InitializeListHead(&m_UsbSidebandWorkTasks);
+    InitializeListHead(&m_UsbSidebandDevices);
+    m_UsbSidebandWorkTaskPoolElementSize = sizeof(UsbHsWorkTask);
+    ExInitializeNPagedLookasideList(&m_UsbSidebandWorkTaskPool,
+        NULL,
+        NULL,
+        POOL_NX_ALLOCATION,
+        m_UsbSidebandWorkTaskPoolElementSize,
+        MINADAPTER_POOLTAG,
+        0);
+    //
+    // Enable USB Sideband Cleanup.
+    // Do any allocation/initialization that can fail after this point.
+    //
+    m_UsbSidebandEnableCleanup = TRUE;
+
+    //
+    // Allocate a WDF work-item.
+    //
+    WDF_WORKITEM_CONFIG_INIT(&wiConfig, EvtUsbSidebandInterfaceWorkItem);
+    wiConfig.AutomaticSerialization = FALSE;
+
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, UsbHsWorkItemContext);
+    attributes.ParentObject = GetWdfDevice();
+    ntStatus = WdfWorkItemCreate(&wiConfig,
+        &attributes,
+        &m_UsbSidebandWorkItem);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitUsbSideband: WdfWorkItemCreate failed: 0x%x", ntStatus)),
+        Done);
+
+    wiContext = GetUsbHsWorkItemContext(m_UsbSidebandWorkItem);
+    wiContext->Adapter = this; // weak ref.
+
+                               //
+                               // Register for USB Sideband interface changes.
+                               //
+    ntStatus = IoRegisterPlugPlayNotification(
+        EventCategoryDeviceInterfaceChange,
+        PNPNOTIFY_DEVICE_INTERFACE_INCLUDE_EXISTING_INTERFACES,
+        (PVOID)&GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HS_HCIBYPASS,
+        m_pDeviceObject->DriverObject,
+        EvtUsbSidebandInterfaceChange,
+        (PVOID)this,
+        &m_UsbSidebandNotificationHandle);
+
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitUsbSideband: IoRegisterPlugPlayNotification(GUID_DEVINTERFACE_USB_SIDEBAND_AUDIO_HCIBYPASS) failed: 0x%x", ntStatus)),
+        Done);
+
+    //
+    // Initialization completed.
+    //
+    ntStatus = STATUS_SUCCESS;
+
+Done:
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg()
+NTSTATUS
+CAdapterCommon::AddDeviceAsPowerDependency
+(
+    _In_ PDEVICE_OBJECT pdo
+)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+
+    // allocate SysVadPowerRelationsDo
+    PSysVadPowerRelationsDo powerDepDo = (PSysVadPowerRelationsDo)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(SysVadPowerRelationsDo), USBSIDEBANDTEST_POOLTAG014);
+    if (NULL == powerDepDo)
+    {
+        status = STATUS_INSUFFICIENT_RESOURCES;
+        DPF(D_ERROR, ("CAdapterCommon::AddDeviceAsPowerDependency could not allocate memory for list entry"));
+        goto exit;
+    }
+
+    InitializeListHead(&powerDepDo->ListEntry);
+    powerDepDo->Pdo = pdo;
+    ObReferenceObject(pdo);
+
+    // Add to list
+    ExAcquireFastMutex(&m_PowerRelationsLock);
+
+    InsertTailList(&m_PowerRelations, &powerDepDo->ListEntry);
+
+    ExReleaseFastMutex(&m_PowerRelationsLock);
+
+    IoInvalidateDeviceRelations(m_pPhysicalDeviceObject, PowerRelations);
+
+exit:
+    return status;
+}
+
+//=============================================================================
+#pragma code_seg()
+NTSTATUS
+CAdapterCommon::RemoveDeviceAsPowerDependency
+(
+    _In_ PDEVICE_OBJECT pdo
+)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+
+    // Find in list
+    ExAcquireFastMutex(&m_PowerRelationsLock);
+
+    PLIST_ENTRY pe = m_PowerRelations.Flink;
+    while (pe != &m_PowerRelations)
+    {
+        PSysVadPowerRelationsDo powerDepDo = CONTAINING_RECORD(pe, SysVadPowerRelationsDo, ListEntry);
+        pe = pe->Flink;
+
+        if (powerDepDo->Pdo == pdo)
+        {
+            ObDereferenceObject(powerDepDo->Pdo);
+            RemoveEntryList(&powerDepDo->ListEntry);
+            ExFreePoolWithTag(powerDepDo, USBSIDEBANDTEST_POOLTAG014);
+        }
+    }
+
+    ExReleaseFastMutex(&m_PowerRelationsLock);
+
+    IoInvalidateDeviceRelations(m_pPhysicalDeviceObject, PowerRelations);
+
+    return status;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+VOID
+CAdapterCommon::CleanupUsbSideband()
+/*++
+
+Routine Description:
+
+Cleanup the USB Sideband environment.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::CleanupUsbSideband]"));
+
+    //
+    // Do nothing if USB Sideband environment was not correctly initialized.
+    //
+    if (m_UsbSidebandEnableCleanup == FALSE)
+    {
+        return;
+    }
+
+    //
+    // Unregister for USB Sideband interface changes.
+    //
+    if (m_UsbSidebandNotificationHandle != NULL)
+    {
+        (void)IoUnregisterPlugPlayNotificationEx(m_UsbSidebandNotificationHandle);
+        m_UsbSidebandNotificationHandle = NULL;
+    }
+
+    //
+    // Wait for the USB Sideband worker thread to be done.
+    //
+    if (m_UsbSidebandWorkItem != NULL)
+    {
+        WdfWorkItemFlush(m_UsbSidebandWorkItem);
+        WdfObjectDelete(m_UsbSidebandWorkItem);
+        m_UsbSidebandWorkItem = NULL;
+    }
+
+    ASSERT(IsListEmpty(&m_UsbSidebandWorkTasks));
+
+    //
+    // Stop and delete all UsbSidebandDevices. We are the only thread accessing this list, 
+    // so there is no need to acquire the mutex.
+    //
+    while (!IsListEmpty(&m_UsbSidebandDevices))
+    {
+        UsbHsDevice  * usbHsDevice = NULL;
+        PLIST_ENTRY     le = NULL;
+
+        le = RemoveHeadList(&m_UsbSidebandDevices);
+
+        usbHsDevice = UsbHsDevice::GetUsbHsDevice(le);
+        InitializeListHead(le);
+
+        // usbDevice is invalid after this call.
+        usbHsDevice->Stop();
+
+        // This should be the last reference.
+        usbHsDevice->Release();
+    }
+
+    ASSERT(IsListEmpty(&m_UsbSidebandDevices));
+
+    //
+    // General cleanup.
+    //
+    ExDeleteNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
+}
+#endif  // SYSVAD_USB_SIDEBAND
 
 #pragma code_seg("PAGE")
 NTSTATUS

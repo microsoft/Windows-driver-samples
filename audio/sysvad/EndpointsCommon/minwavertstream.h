@@ -140,10 +140,10 @@ protected:
     DWORD                       m_dwLoopbackCaptureToneInitialPhase; // must be between -31416 to 31416
     // Member variable as config params for tone generator
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     BOOL                        m_SidebandOpen;
     BOOL                        m_SidebandStarted;
-#endif  // defined(SYSVAD_BTH_BYPASS)
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 public:
     
@@ -309,9 +309,9 @@ private:
     );
     NTSTATUS ReadRegistrySettings();
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     NTSTATUS GetSidebandStreamNtStatus();
-#endif  // defined(SYSVAD_BTH_BYPASS)
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     
 };
 typedef CMiniportWaveRTStream *PCMiniportWaveRTStream;

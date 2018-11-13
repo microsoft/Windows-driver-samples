@@ -18,6 +18,9 @@ Abstract:
 #ifdef SYSVAD_BTH_BYPASS
 #include "bthhfpmicwavtable.h"
 #endif // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+#include "usbhsmicwavtable.h"
+#endif // SYSVAD_USB_SIDEBAND
 
 //=============================================================================
 // Referenced Forward
@@ -156,9 +159,9 @@ private:
 
     union {
         PVOID                           m_DeviceContext;
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         PSIDEBANDDEVICECOMMON           m_pSidebandDevice;
-#endif  // defined(SYSVAD_BTH_BYPASS)
+#endif  // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     };
 
     AUDIOMODULE *                       m_pAudioModules;
@@ -330,7 +333,7 @@ public:
             }
         }
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
             if (m_pSidebandDevice != NULL)
@@ -417,6 +420,12 @@ public:
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
 #endif  // SYSVAD_BTH_BYPASS
+#ifdef SYSVAD_USB_SIDEBAND
+    NTSTATUS PropertyHandler_UsbHsAudioEffectsDiscoveryEffectsList  
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+#endif  // SYSVAD_USB_SIDEBAND
 
     //---------------------------------------------------------------------------------------------------------
     // volume
@@ -664,6 +673,7 @@ protected:
                 m_DeviceType == eHdmiRenderDevice  ||
                 m_DeviceType == eSpdifRenderDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice  ||
                 m_DeviceType == eHandsetSpeakerDevice) ? TRUE : FALSE;
     }
 
@@ -844,13 +854,15 @@ protected:
         _In_ ULONG              AudioModuleCount
         );
 
-#if defined(SYSVAD_BTH_BYPASS)
+#if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 public:
 #pragma code_seg()
     BOOL IsSidebandDevice()
     {
         return (m_DeviceType == eBthHfpMicDevice ||
-                m_DeviceType == eBthHfpSpeakerDevice ) ? TRUE : FALSE;
+                m_DeviceType == eBthHfpSpeakerDevice ||
+                m_DeviceType == eUsbHsMicDevice ||
+                m_DeviceType == eUsbHsSpeakerDevice ) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
@@ -870,7 +882,7 @@ public:
         return sidebandDevice;
     }
 #pragma code_seg()
-#endif // defined(SYSVAD_BTH_BYPASS)
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
 #ifdef SYSVAD_BTH_BYPASS
 #pragma code_seg()
