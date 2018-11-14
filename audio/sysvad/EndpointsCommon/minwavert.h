@@ -343,7 +343,8 @@ public:
             }
 
         }
-#endif // defined(SYSVAD_BTH_BYPASS)
+
+#endif // defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 
         KeInitializeSpinLock(&m_DeviceFormatsAndModesLock);
         m_DeviceFormatsAndModesIrql = PASSIVE_LEVEL;
@@ -500,166 +501,25 @@ public:
     );
 
 private:
-#pragma code_seg()
     _IRQL_raises_(DISPATCH_LEVEL)
     _Acquires_lock_(m_DeviceFormatsAndModesLock)
     _Requires_lock_not_held_(m_DeviceFormatsAndModesLock)
     _IRQL_saves_global_(SpinLock, m_DeviceFormatsAndModesIrql)
-    VOID AcquireFormatsAndModesLock()
-    {
-        KeAcquireSpinLock(&m_DeviceFormatsAndModesLock, &m_DeviceFormatsAndModesIrql);
-    }
+    VOID AcquireFormatsAndModesLock();
 
     _Releases_lock_(m_DeviceFormatsAndModesLock)
     _Requires_lock_held_(m_DeviceFormatsAndModesLock)
     _IRQL_restores_global_(SpinLock, m_DeviceFormatsAndModesIrql)
-    VOID ReleaseFormatsAndModesLock()
-    {
-        KeReleaseSpinLock(&m_DeviceFormatsAndModesLock, m_DeviceFormatsAndModesIrql);
-    }
+    VOID ReleaseFormatsAndModesLock();
 
-    //---------------------------------------------------------------------------
-    // GetPinSupportedDeviceFormats 
-    //
-    //  Return supported formats for a given pin.
-    //
-    //  Return value
-    //      The number of KSDATAFORMAT_WAVEFORMATEXTENSIBLE items.
-    //
-    //  Remarks
-    //      Supported formats index array follows same order as filter's pin
-    //      descriptor list.
-    //
     _Post_satisfies_(return > 0)
-    ULONG GetPinSupportedDeviceFormats(_In_ ULONG PinId, _Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats)
-    {
-        PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
+    ULONG GetPinSupportedDeviceFormats(_In_ ULONG PinId, _Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats);
 
-        AcquireFormatsAndModesLock();
-
-        pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
-        ASSERT(m_DeviceFormatsAndModesCount > PinId);
-        ASSERT(pDeviceFormatsAndModes[PinId].WaveFormats != NULL);
-        ASSERT(pDeviceFormatsAndModes[PinId].WaveFormatsCount > 0);
-
-        if (ppFormats != NULL)
-        {
-            *ppFormats = pDeviceFormatsAndModes[PinId].WaveFormats;
-        }
-        
-        ReleaseFormatsAndModesLock();
-
-        return pDeviceFormatsAndModes[PinId].WaveFormatsCount;
-    }
-
-    //---------------------------------------------------------------------------
-    // GetAudioEngineSupportedDeviceFormats 
-    //
-    //  Return supported device formats for the audio engine node.
-    //
-    //  Return value
-    //      The number of KSDATAFORMAT_WAVEFORMATEXTENSIBLE items.
-    //
-    //  Remarks
-    //      Supported formats index array follows same order as filter's pin
-    //      descriptor list. This routine assumes the engine formats are the
-    //      last item in the filter's array of PIN_DEVICE_FORMATS_AND_MODES.
-    //
     _Post_satisfies_(return > 0)
-    ULONG GetAudioEngineSupportedDeviceFormats(_Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats)
-    {
-        ULONG i;
-        PPIN_DEVICE_FORMATS_AND_MODES pDeviceFormatsAndModes = NULL;
+    ULONG GetAudioEngineSupportedDeviceFormats(_Outptr_opt_result_buffer_(return) KSDATAFORMAT_WAVEFORMATEXTENSIBLE **ppFormats);
 
-        AcquireFormatsAndModesLock();
-
-        pDeviceFormatsAndModes = m_DeviceFormatsAndModes;
-
-        // By convention, the audio engine node's device formats are the last
-        // entry in the PIN_DEVICE_FORMATS_AND_MODES list.
-        
-        // Since this endpoint apparently supports offload, there must be at least a system,
-        // offload, and loopback pin, plus the entry for the device formats.
-        ASSERT(m_DeviceFormatsAndModesCount > 3);
-
-        i = m_DeviceFormatsAndModesCount - 1;                       // Index of last list entry
-
-        ASSERT(pDeviceFormatsAndModes[i].PinType == NoPin);
-        ASSERT(pDeviceFormatsAndModes[i].WaveFormats != NULL);
-        ASSERT(pDeviceFormatsAndModes[i].WaveFormatsCount > 0);
-
-        if (ppFormats != NULL)
-        {
-            *ppFormats = pDeviceFormatsAndModes[i].WaveFormats;
-        }
-
-        ReleaseFormatsAndModesLock();
-        return pDeviceFormatsAndModes[i].WaveFormatsCount;
-    }
-
-    //---------------------------------------------------------------------------
-    // GetPinSupportedDeviceModes 
-    //
-    //  Return mode information for a given pin.
-    //
-    //  Return value
-    //      The number of MODE_AND_DEFAULT_FORMAT items or 0 if none.
-    //
-    //  Remarks
-    //      Supported formats index array follows same order as filter's pin
-    //      descriptor list.
-    //
     _Success_(return != 0)
-    ULONG GetPinSupportedDeviceModes(_In_ ULONG PinId, _Outptr_opt_result_buffer_(return) _On_failure_(_Deref_post_null_) MODE_AND_DEFAULT_FORMAT **ppModes)
-    {
-        PMODE_AND_DEFAULT_FORMAT modes;
-        ULONG numModes;
-
-        AcquireFormatsAndModesLock();
-
-        ASSERT(m_DeviceFormatsAndModesCount > PinId);
-        ASSERT((m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormatCount == 0) == (m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormat == NULL));
-
-        modes = m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormat;
-        numModes = m_DeviceFormatsAndModes[PinId].ModeAndDefaultFormatCount;
-
-#ifdef SYSVAD_BTH_BYPASS
-        // Special handling for the SCO bypass endpoint, whose modes are determined at runtime
-        if (m_DeviceType == eBthHfpMicDevice)
-        {
-            ASSERT(m_pSidebandDevice != NULL);
-            if (m_pSidebandDevice->IsNRECSupported())
-            {
-                modes = BthHfpMicPinSupportedDeviceModesNrec;
-                numModes = ARRAYSIZE(BthHfpMicPinSupportedDeviceModesNrec);
-            }
-            else
-            {
-                modes = BthHfpMicPinSupportedDeviceModesNoNrec;
-                numModes = ARRAYSIZE(BthHfpMicPinSupportedDeviceModesNoNrec);
-            }
-        }
-#endif // SYSVAD_BTH_BYPASS
-
-        if (ppModes != NULL)
-        {
-            if (numModes > 0)
-            {
-                *ppModes = modes;
-            }
-            else
-            {
-                // ensure that the returned pointer is NULL
-                // in the event of failure (SAL annotation above
-                // indicates that it must be NULL, and OACR sees a possibility
-                // that it might not be).
-                *ppModes = NULL;
-            }
-        }
-
-        ReleaseFormatsAndModesLock();
-        return numModes;
-    }
+    ULONG GetPinSupportedDeviceModes(_In_ ULONG PinId, _Outptr_opt_result_buffer_(return) _On_failure_(_Deref_post_null_) MODE_AND_DEFAULT_FORMAT **ppModes);
 
 #pragma code_seg()
 
@@ -696,75 +556,19 @@ protected:
         return (m_DeviceFlags & ENDPOINT_OFFLOAD_SUPPORTED) ? TRUE : FALSE;
     }
 
-    BOOL IsSystemCapturePin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
+    BOOL IsSystemCapturePin(ULONG nPinId);
 
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+    BOOL IsCellularBiDiCapturePin(ULONG nPinId);
 
-        ReleaseFormatsAndModesLock();
-        return (pinType == SystemCapturePin);
-    }
+    BOOL IsSystemRenderPin(ULONG nPinId);
 
-    BOOL IsCellularBiDiCapturePin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
+    BOOL IsLoopbackPin(ULONG nPinId);
 
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
+    BOOL IsOffloadPin(ULONG nPinId);
 
-        ReleaseFormatsAndModesLock();
-        return (pinType == TelephonyBidiPin);
-    }
+    BOOL IsBridgePin(ULONG nPinId);
 
-    BOOL IsSystemRenderPin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
-
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
-
-        ReleaseFormatsAndModesLock();
-        return (pinType == SystemRenderPin);
-    }
-
-    BOOL IsLoopbackPin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
-
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
-
-        ReleaseFormatsAndModesLock();
-        return (pinType == RenderLoopbackPin);
-    }
-
-    BOOL IsOffloadPin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
-
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
-
-        ReleaseFormatsAndModesLock();
-        return (pinType == OffloadRenderPin);
-    }
-
-    BOOL IsBridgePin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
-
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
-
-        ReleaseFormatsAndModesLock();
-        return (pinType == BridgePin);
-    }
-
-    BOOL IsKeywordDetectorPin(ULONG nPinId)
-    {
-        AcquireFormatsAndModesLock();
-
-        PINTYPE pinType = m_DeviceFormatsAndModes[nPinId].PinType;
-
-        ReleaseFormatsAndModesLock();
-        return (pinType == KeywordCapturePin);
-    }
+    BOOL IsKeywordDetectorPin(ULONG nPinId);
 
     // These three pins are the pins used by the audio engine for host, loopback, and offload.
     ULONG GetSystemPinId()
