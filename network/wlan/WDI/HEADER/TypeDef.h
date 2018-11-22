@@ -1871,7 +1871,7 @@ typedef enum _CHANNEL_START_MODE
 //
 typedef struct _RT_TURBO_CA
 {
-	BOOLEAN		bEnabled; // TURE if TCA is ON, FALSE o.w..
+	BOOLEAN		bEnabled; // TRUE if TCA is ON, FALSE o.w..
 
 	// Periodical timer for TCA checking.
 	RT_TIMER	TcaCheckTimer;
