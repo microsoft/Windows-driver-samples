@@ -836,7 +836,7 @@ done:
 // is holding on to the buffers, could be the xvp then this function will error
 // out the pipeline. you should see the ALLOCATOR_E_EMPTY error pop up
 //
-_Ret_maybenull_ HRESULT CDecoderTee::GetSample( IMFSample** ppSample )
+HRESULT CDecoderTee::GetSample( IMFSample** ppSample )
 {
     if (!m_bProducesSamples && m_spAllocator.Get())
     {

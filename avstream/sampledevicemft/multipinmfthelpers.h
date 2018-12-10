@@ -362,7 +362,7 @@ public:
 protected:
     STDMETHODIMP StartStreaming();
     STDMETHODIMP StopStreaming();
-    _Ret_maybenull_ HRESULT CDecoderTee::GetSample( _Outptr_ IMFSample**);
+    HRESULT CDecoderTee::GetSample( _Outptr_result_maybenull_ IMFSample**);
     HRESULT ConfigDecoder( _In_ IMFTransform* ,_In_ GUID guidSubType = GUID_NULL);
     HRESULT ConfigRealTimeMFT(_In_ IMFTransform* );
     HRESULT ProcessOutputSync( _COM_Outptr_opt_ IMFSample** );
