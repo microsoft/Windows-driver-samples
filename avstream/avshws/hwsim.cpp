@@ -556,7 +556,6 @@ Return Value:
     // If I could just remap physical in the list to virtual easily here,
     // I wouldn't need to do it.
     //
-#if !defined(_X86_)
     do
     {
         PSCATTER_GATHER_ENTRY Entry =
@@ -589,43 +588,6 @@ Return Value:
 
    }
     while(FALSE);
-
-#else 
-	for (ULONG MappingNum = 0; 
-        MappingNum < MappingsCount &&
-            m_ScatterGatherMappingsQueued < m_ScatterGatherMappingsMax; 
-        MappingNum++) {
-
-        PSCATTER_GATHER_ENTRY Entry =
-            reinterpret_cast <PSCATTER_GATHER_ENTRY> (
-                ExAllocateFromNPagedLookasideList (
-                    &m_ScatterGatherLookaside
-                    )
-                );
-
-        if (!Entry) {
-            break;
-        }
-
-        Entry -> Virtual    = *Buffer;
-        Entry -> ByteCount  = Mappings -> ByteCount;
-
-        //
-        // Move forward a specific number of bytes in chunking this into
-        // mapping sized va buffers.
-        //
-        *Buffer += Entry -> ByteCount;
-        Mappings = reinterpret_cast <PKSMAPPING> (
-            (reinterpret_cast <PUCHAR> (Mappings) + MappingStride)
-            );
-
-        InsertTailList (&m_ScatterGatherMappings, &(Entry -> ListEntry));
-        MappingsInserted++;
-        m_ScatterGatherMappingsQueued++;
-        m_ScatterGatherBytesQueued += Entry -> ByteCount;
-
-    }
-#endif
 
     KeReleaseSpinLock (&m_ListLock, Irql);
 

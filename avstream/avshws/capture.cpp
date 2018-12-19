@@ -28,7 +28,7 @@
 
 #include "avshws.h"
 #include <ksmedia.h>
-#include "ntintsafe.h"
+#include <ntintsafe.h>
 
 /**************************************************************************
 
@@ -1339,27 +1339,6 @@ Return Value:
 
         PKSSTREAM_POINTER NextClone = KsStreamPointerGetNextClone (Clone);
 
-#if defined(_X86_)
-        //
-        // Count up the number of bytes we've completed and mark this
-        // in the Stream Header.  In mapped queues 
-        // (KSPIN_FLAG_GENERATE_MAPPINGS), this is the responsibility of
-        // the minidriver.  In non-mapped queues, AVStream performs this.
-        //
-        ULONG MappingsToCount = 
-            (MappingsRemaining > Clone -> OffsetOut.Remaining) ?
-                 Clone -> OffsetOut.Remaining :
-                 MappingsRemaining;
-
-        //
-        // Update DataUsed according to the mappings.
-        //
-        for (ULONG CurMapping = 0; CurMapping < MappingsToCount; CurMapping++) {
-            Clone -> StreamHeader -> DataUsed +=
-                Clone -> OffsetOut.Mappings [CurMapping].ByteCount;
-        }
-#endif
-
         // 
         // If we have completed all remaining mappings in this clone, it
         // is an indication that the clone is ready to be deleted and the
@@ -1367,11 +1346,7 @@ Return Value:
         // has not yet been set.  If we have a clock, we can timestamp the
         // sample.
         //
-#if !defined(_X86_)
         if (Clone -> StreamHeader -> DataUsed >= Clone -> OffsetOut.Remaining) {
-#else
-        if (MappingsRemaining >= Clone -> OffsetOut.Remaining) {
-#endif
             Clone -> StreamHeader -> Duration =
                 m_VideoInfoHeader -> AvgTimePerFrame;
 
@@ -1434,11 +1409,7 @@ Return Value:
             // delete the clone.  We've already updated DataUsed above.
             //
 
-#if !defined(_X86_)
             MappingsRemaining--;
-#else
-            MappingsRemaining -= Clone -> OffsetOut.Remaining;
-#endif
             KsStreamPointerDelete (Clone);
 
         } else {
@@ -1447,7 +1418,6 @@ Return Value:
             // update the pointers.  Since we're guaranteed this won't advance
             // to a new frame by the check above, it won't fail.
             //
-#if !defined(_X86_)
             (void)KsStreamPointerAdvanceOffsets (
                 Clone,
                 0,
@@ -1455,15 +1425,6 @@ Return Value:
                 FALSE
                 );
 
-#else
-            (void)KsStreamPointerAdvanceOffsets (
-                Clone,
-                0,
-                MappingsRemaining,
-                FALSE
-                );
-
-#endif
             MappingsRemaining = 0;
 
         }
