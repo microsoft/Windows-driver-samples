@@ -1,8 +1,8 @@
 <!---
     name: SimpleMediaSource Sample
-    platform: UMDF1
+    platform: UMDF2
     language: cpp
-    category: 
+    category: general 
     description: Demonstrates how to write a custom media source and driver package.
     samplefwlink: 
 --->
@@ -17,7 +17,6 @@ This sample has accompanying documentation here: https://docs.microsoft.com/en-u
 Contents
 --------
 MediaSource - COM DLL project for the custom media source
-
 SimpleMediaSourceDriver - UMDF driver install package 
 
 Installation
