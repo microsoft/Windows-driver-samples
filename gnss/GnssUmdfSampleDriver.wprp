@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone='yes'?>
+
+<WindowsPerformanceRecorder Version="1.0" Author="Location Dev" Team="Location Dev" Comments="ETW profiles" Company="Microsoft Corporation" Copyright="Microsoft Corporation">
+  <Profiles>
+    <!-- Event Collectors -->
+    <EventCollector Id="EventCollector_SampleGNSS" Name="SampleGNSS Category Event Collector" Private="false" ProcessPrivate="false" Secure="false" Realtime="false">
+      <BufferSize Value="128"/>
+      <Buffers Value="40"/>
+      <MaximumFileSize Value="5" FileMode="Circular"/>
+      <FileMax Value="3"/>
+    </EventCollector>
+
+    <!-- Umdf Gnss Sample Driver providers -->
+    <EventProvider Id="GnssUmdfTraceGuid" Name="CEB3BF01-80E4-4DC7-B3BF-F6B5279EB8C4" Level="5">
+        <Keywords>
+            <Keyword Value="0xFFFFFFFF"/> <!-- Provider is enabled with these keywords throughout the tracing session. -->
+        </Keywords>
+    </EventProvider>
+    
+    <!-- Profiles -->
+    <Profile Id="SampleGNSSCategory.Verbose.File" LoggingMode="File" Name="SampleGNSSCategory" DetailLevel="Verbose" Description="Sample GNSS category profile">
+      <Collectors>
+        <EventCollectorId Value="EventCollector_SampleGNSS">
+          <EventProviders>
+            <EventProviderId Value="GnssUmdfTraceGuid"/>
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+  </Profiles>
+
+</WindowsPerformanceRecorder>
