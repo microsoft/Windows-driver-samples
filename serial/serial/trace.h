@@ -90,7 +90,7 @@ TraceEvents    (
 #define WPP_CHECK_FOR_NULL_STRING  //to prevent exceptions due to NULL strings
 
 #define WPP_CONTROL_GUIDS \
-    WPP_DEFINE_CONTROL_GUID(SerialTraceGuid,(bc6c9364,fc67,42c5,acf7,abed3b12ecc6), \
+    WPP_DEFINE_CONTROL_GUID(SerialTraceGuid,(f3a79ab6,9827,4419,9465,45cf949ef659), \
         WPP_DEFINE_BIT(DBG_INIT)             /* bit  0 = 0x00000001 */ \
         WPP_DEFINE_BIT(DBG_PNP)              /* bit  1 = 0x00000002 */ \
         WPP_DEFINE_BIT(DBG_POWER)            /* bit  2 = 0x00000004 */ \
