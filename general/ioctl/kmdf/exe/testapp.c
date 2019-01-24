@@ -412,7 +412,7 @@ DoIoctls(
 
 
     //
-    // Performing METHOD_NIETHER
+    // Performing METHOD_NEITHER
     //
 
     printf("\nCalling DeviceIoControl METHOD_NEITHER\n");

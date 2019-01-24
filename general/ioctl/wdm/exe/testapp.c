@@ -156,7 +156,7 @@ main(
     printf("    OutBuffer (%d): %s\n", bytesReturned, OutputBuffer);
 
     //
-    // Performing METHOD_NIETHER
+    // Performing METHOD_NEITHER
     //
 
     printf("\nCalling DeviceIoControl METHOD_NEITHER\n");
