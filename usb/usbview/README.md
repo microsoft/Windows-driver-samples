@@ -77,7 +77,20 @@ The routine RefreshTree() is called to enumerate USB host controller, hubs, and 
 
 The file Enum.c contains the routines that enumerate the USB bus and populate the tree view control. The USB device enumeration and information collection process is the main point of this sample application. The enumeration process starts at EnumerateHostControllers() and goes like this:
 
-1.  Enumerate Host Controllers and Root Hubs. Host controllers have symbolic link names of the form HCDx, where x starts at 0. Use CreateFile() to open each host controller symbolic link. Create a node in the tree view to represent each host controller. After a host controller has been opened, send the host controller an IOCTL\_USB\_GET\_ROOT\_HUB\_NAME request to get the symbolic link name of the root hub that is part of the host controller.
+
+1. Enumerate Host Controllers and Root Hubs.
+
+   -   **Option 1:** Host controllers have symbolic link names of the form HCDx, where x starts at 0. Use CreateFile() to open each host controller symbolic link.
+
+   -   **Option 2 (currently used in the UsbView code):** Host controllers have GUID_CLASS_USB_HOST_CONTROLLER device interface class. Use SetupDiGetClassDevs to retrieve device information sets for them. For each host controller device information set:
+       -   Use SetupDiEnumDeviceInfo to get device information elements (to be used later when enumerating the Host Controller). 
+       -   Use SetupDiEnumDeviceInterfaces to enumerate the device interfaces that are contained within the current host controller device information set
+       -   Use SetupDiGetDeviceInterfaceDetail to obtain details about the device interface
+       -   Use DevicePath from device interface details (which is a symbolic link names of the form HCDx, where x starts at 0) to see if we can successfully open the Host Controller.
+
+       After a host controller has been opened, send the host controller an IOCTL\_USB\_GET\_ROOT\_HUB\_NAME request to get the symbolic link name of the root hub that is part of the host controller. Create a node in the tree view to represent each host controller. 
+
+
 2.  Enumerate Hubs (Root Hubs and External Hubs). Given the name of a hub, use CreateFile() to open the hub. Send the hub an IOCTL\_USB\_GET\_NODE\_INFORMATION request to get info about the hub, such as the number of downstream ports. Create a node in the tree view to represent each hub.
 3.  Enumerate Downstream Ports. Given a handle to an open hub and the number of downstream ports on the hub, send the hub an IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION request for each downstream port of the hub to get info about the device (if any) attached to each port. If there is a device attached to a port, send the hub an IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME request to get the symbolic link name of the hub attached to the downstream port. If there is a hub attached to the downstream port, recurse to step (2). Create a node in the tree view to represent each hub port and attached device. USB configuration and string descriptors are retrieved from attached devices in GetConfigDescriptor() and GetStringDescriptor() by sending an IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION() to the hub to which the device is attached.
 
