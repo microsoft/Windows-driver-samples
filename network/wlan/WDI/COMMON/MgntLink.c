@@ -9107,7 +9107,7 @@ MgntLinkRequest(
 	HAL_HiddenSSIDHandleBeforeScan(Adapter);
 
 	// TODO: In order to stable/optimize scan result, we might actually need to save the result for a certain time
-	// TODO: We will leave this as it is at this time since we want to see the ture RF performance
+	// TODO: We will leave this as it is at this time since we want to see the true RF performance
 	// Clear content of bssDesc[] before scanning.
 	if(!CustomScan_InProgress(GET_CUSTOM_SCAN_INFO(Adapter)))
 	{// customized scan shall not have effect on normal scan, here it should not clear the scan list, 2011.01.11, haich
