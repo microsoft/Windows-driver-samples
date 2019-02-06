@@ -86,14 +86,14 @@ TraceEvents    (
 // specified.
 //
 // Name of the logger is PciDrv and the guid is
-//   {BC6C9364-FC67-42c5-ACF7-ABED3B12ECC6}
-//   (0xbc6c9364, 0xfc67, 0x42c5, 0xac, 0xf7, 0xab, 0xed, 0x3b, 0x12, 0xec, 0xc6);
+//   {B4011D96-E169-49FF-A7D7-05FA9DBF6082}
+//   (0xb4011d96, 0xe169, 0x49ff, 0xa7, 0xd7, 0x05, 0xfa, 0x9d, 0xbf, 0x60, 0x82);
 //
 
 #define WPP_CHECK_FOR_NULL_STRING  //to prevent exceptions due to NULL strings
 
 #define WPP_CONTROL_GUIDS \
-    WPP_DEFINE_CONTROL_GUID(PciDrvTraceGuid,(bc6c9364,fc67,42c5,acf7,abed3b12ecc6), \
+    WPP_DEFINE_CONTROL_GUID(PciDrvTraceGuid,(b4011d96,e169,49ff,a7d7,05fa9dbf6082), \
         WPP_DEFINE_BIT(DBG_INIT)             /* bit  0 = 0x00000001 */ \
         WPP_DEFINE_BIT(DBG_PNP)              /* bit  1 = 0x00000002 */ \
         WPP_DEFINE_BIT(DBG_POWER)            /* bit  2 = 0x00000004 */ \

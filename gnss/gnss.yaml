@@ -1,0 +1,10 @@
+### YamlMime:Sample
+sample:
+- name: GPS/GNSS UMDF V2 Device Driver Sample
+  description: Demonstrates how to write a device driver that IHVs and partners can use to extend to build their custom drivers
+  generateZip: true
+  author: windows-driver-samples
+  languages:
+  - cpp
+  technologies:
+  - windows
