@@ -175,12 +175,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;uuid.lib;mfuuid.lib;OneCoreUAP.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Mft0.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
     </Link>
-    <ClCompile>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(IntDir)\Mft0_i.c" />
