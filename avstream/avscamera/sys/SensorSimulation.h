@@ -138,6 +138,14 @@ protected:
     NTSTATUS
     ProgramDefaults();
 
+    virtual
+    NTSTATUS
+    CreateHardwareSimulation(
+        _In_ LONG pinID,
+        _In_ const KSPIN_DESCRIPTOR_EX *pinDescriptors,
+        _Out_ CHardwareSimulation** pSim
+    );
+
 public:
     //
     //  This simulation is based solely on the Descriptors.  Yours might

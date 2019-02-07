@@ -188,6 +188,12 @@ protected:
     NTSTATUS 
     Initialize();
 
+    virtual
+    void
+    SetFramingSizes(
+        PKSALLOCATOR_FRAMING_EX Framing
+    );
+
 public:
     //
     // CCapturePin():

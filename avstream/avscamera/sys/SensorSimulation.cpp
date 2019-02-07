@@ -495,6 +495,38 @@ Return Value:
 
 NTSTATUS
 CSensorSimulation::
+CreateHardwareSimulation(
+    _In_ LONG pinID,
+    _In_ const KSPIN_DESCRIPTOR_EX *pinDescriptors,
+    _Out_ CHardwareSimulation** pSim
+)
+{
+    PAGED_CODE();
+    //  Video pin type
+    if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PIN_CATEGORY_CAPTURE))
+    {
+        *pSim = new (NonPagedPoolNx, 'ediV') CVideoHardwareSimulation(this, pinID);
+        m_VideoMask |= 1 << pinID;
+    }
+    else if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PIN_CATEGORY_PREVIEW))
+    {
+        *pSim = new (NonPagedPoolNx, 'verP') CPreviewHardwareSimulation(this, pinID);
+        m_PreviewMask |= 1 << pinID;      // must set to enable photo confirmation...
+    }
+    else if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PINNAME_IMAGE))
+    {
+        *pSim = new (NonPagedPoolNx, 'litS') CImageHardwareSimulation(this, pinID);
+        m_StillMask |= 1 << pinID;
+    }
+    else {
+        return STATUS_NOT_FOUND;
+    }
+
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS
+CSensorSimulation::
 Initialize()
 /*++
 
@@ -531,26 +563,11 @@ Return Value:
     {
         const KSPIN_DESCRIPTOR_EX *PinDescriptors = m_Descriptors->PinDescriptors;
         CHardwareSimulation *pSim=nullptr;
-
         NT_ASSERT( m_Descriptors->PinDescriptorSize == sizeof( *PinDescriptors ) );
 
-        //  Video pin type
-        if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PIN_CATEGORY_CAPTURE ) )
-        {
-            pSim = new (NonPagedPoolNx, 'ediV') CVideoHardwareSimulation( this, PinIndex );
-            m_VideoMask |= 1<<PinIndex;
-        }
-        else if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PIN_CATEGORY_PREVIEW ) )
-        {
-            pSim = new (NonPagedPoolNx, 'verP') CPreviewHardwareSimulation( this, PinIndex );
-            m_PreviewMask |= 1<<PinIndex;      // must set to enable photo confirmation...
-        }
-        else if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PINNAME_IMAGE ) )
-        {
-            pSim = new (NonPagedPoolNx, 'litS') CImageHardwareSimulation( this, PinIndex );
-            m_StillMask |= 1<<PinIndex;
-        }
-        else
+        NTSTATUS localStatus = CreateHardwareSimulation(PinIndex, PinDescriptors, &pSim);
+        
+        if (localStatus == STATUS_NOT_FOUND)
         {
             // We don't know this pin type, so skip it.
             m_HardwareSimulation[PinIndex] = nullptr;

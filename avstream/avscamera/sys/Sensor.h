@@ -446,6 +446,7 @@ public:
     // stop issuing.  When this call returns, the "fake" hardware has
     // stopped accessing all s/g buffers, etc...
     //
+    virtual
     NTSTATUS
     Stop (
         _In_    PKSPIN

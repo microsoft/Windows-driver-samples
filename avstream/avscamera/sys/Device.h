@@ -106,6 +106,7 @@ protected:
     //  This is a seperate helper function to allow the derived DispatchCreate
     //  implementation to be as simple as is feasible.
     //
+    virtual
     NTSTATUS
     Prepare();
 
@@ -392,11 +393,18 @@ public:
     PDEVICE_OBJECT
     GetDeviceObject();
 
-    PKSDEVICE
-    GetKsDevice()
-    {
-        return m_Device;
-    }
+    static IO_COMPLETION_ROUTINE CCaptureDevice::IrpSynchronousCompletion;
+
+    virtual
+    NTSTATUS
+    QueryForInterface(
+        _In_ PDEVICE_OBJECT TopOfStack,
+        _In_ const GUID* InterfaceType,
+        _Out_ PINTERFACE Interface,
+        _In_ USHORT Size,
+        _In_ USHORT Version,
+        _In_opt_ PVOID InterfaceSpecificData
+    );
 
     ULONG
     GetFilterIndex(PKSFILTER Filter);

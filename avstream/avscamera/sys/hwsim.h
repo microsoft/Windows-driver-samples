@@ -145,6 +145,18 @@ protected:
         _Inout_ PKSSTREAM_HEADER   pStreamHeader
     );
 
+    virtual
+    bool
+    CheckForAvailableBuffer();
+
+    virtual
+    NTSTATUS
+    CommitImageData(PSCATTER_GATHER_ENTRY sGEntry, ULONG stride);
+
+    virtual
+    NTSTATUS
+    ValidateBuffer(PSCATTER_GATHER_ENTRY sGEntry);
+
     //  Helper function to generate random face metadata.
     void
     EmitFaceMetadata(

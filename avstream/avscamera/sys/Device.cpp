@@ -100,6 +100,98 @@ GetFilterIndex(PKSFILTER Filter)
 
 NTSTATUS
 CCaptureDevice::
+IrpSynchronousCompletion(
+    IN PDEVICE_OBJECT   DeviceObject,
+    IN PIRP             Irp,
+    IN PVOID          pKevent
+    )
+{
+    if (Irp->PendingReturned)
+    {
+        NT_ASSERT(pKevent);
+        KeSetEvent((PRKEVENT)pKevent, 0, FALSE);
+    }
+
+    return STATUS_MORE_PROCESSING_REQUIRED;
+}
+
+_Must_inspect_result_
+NTSTATUS
+CCaptureDevice::
+QueryForInterface(
+    _In_ PDEVICE_OBJECT TopOfStack,
+    _In_ const GUID* InterfaceType,
+    _Out_ PINTERFACE Interface,
+    _In_ USHORT Size,
+    _In_ USHORT Version,
+    _In_opt_ PVOID InterfaceSpecificData
+    )
+{
+    PAGED_CODE();
+
+    PIRP pIrp;
+    NTSTATUS status;
+
+    if (TopOfStack == nullptr)
+    {
+        return STATUS_INVALID_PARAMETER;
+    }
+
+    pIrp = IoAllocateIrp(TopOfStack->StackSize, FALSE);
+
+    if (pIrp != NULL)
+    {
+        PIO_STACK_LOCATION stack;
+        KEVENT event;
+
+        KeInitializeEvent(&event, NotificationEvent, FALSE);
+
+        IoSetCompletionRoutine(pIrp,
+            IrpSynchronousCompletion,
+            &event,
+            TRUE,
+            TRUE,
+            TRUE);
+
+        pIrp->IoStatus.Status = STATUS_NOT_SUPPORTED;
+
+        stack = IoGetNextIrpStackLocation(pIrp);
+
+        stack->MajorFunction = IRP_MJ_PNP;
+        stack->MinorFunction = IRP_MN_QUERY_INTERFACE;
+
+        stack->Parameters.QueryInterface.Interface = Interface;
+        stack->Parameters.QueryInterface.InterfaceSpecificData = InterfaceSpecificData;
+        stack->Parameters.QueryInterface.Size = Size;
+        stack->Parameters.QueryInterface.Version = Version;
+        stack->Parameters.QueryInterface.InterfaceType = InterfaceType;
+
+        status = IoCallDriver(TopOfStack, pIrp);
+
+        if (status == STATUS_PENDING)
+        {
+            KeWaitForSingleObject(
+                &event,
+                Executive,
+                KernelMode,
+                FALSE, // Not alertable
+                NULL
+                );
+
+            status = pIrp->IoStatus.Status;
+        }
+
+        IoFreeIrp(pIrp);
+    }
+    else {
+        status = STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    return status;
+}
+
+NTSTATUS
+CCaptureDevice::
 Prepare()
 {
     PAGED_CODE();
@@ -111,6 +203,8 @@ Prepare()
         return Status;
     }
 
+    PKSDEVICE Device = m_Device;
+
     //
     // Add the item to the object bag if we were successful.
     // Whenever the device goes away, the bag is cleaned up and
@@ -120,7 +214,6 @@ Prepare()
     // the device mutex before doing this.  For Windows XP, this is
     // not required, but it is still safe.
     //
-    PKSDEVICE Device = m_Device;
     LockDevice Lock(Device);
 
     Status = KsAddItemToObjectBag (

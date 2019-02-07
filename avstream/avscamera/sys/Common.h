@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include <wdm.h>
+#include <wdmguid.h>
 #include <windef.h>
 #include <unknown.h>
 #include <ks.h>
@@ -190,8 +191,8 @@ void __cdecl operator delete[]
 // The number of ranges supported on the capture pin.
 //
 #define IMAGE_CAPTURE_PIN_DATA_RANGE_COUNT 2
-#define VIDEO_CAPTURE_PIN_DATA_RANGE_COUNT 30
-#define VIDEO_PREVIEW_PIN_DATA_RANGE_COUNT 15
+#define VIDEO_CAPTURE_PIN_DATA_RANGE_COUNT 32
+#define VIDEO_PREVIEW_PIN_DATA_RANGE_COUNT 16
 
 //
 // CAPTURE_FILTER_CATEGORIES_COUNT:
