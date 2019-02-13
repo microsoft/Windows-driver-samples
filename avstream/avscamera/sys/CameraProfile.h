@@ -28,7 +28,7 @@ public:
 
 public:
     CExtendedProfile( ULONGLONG flags=0, ULONG result=STATUS_SUCCESS )
-        : CExtendedProfile( flags, result )
+        : CExtendedHeader( flags, result )
     {
         Size = sizeof(*this);
         m_Profile.ProfileId = KSCAMERAPROFILE_Legacy;

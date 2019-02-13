@@ -792,6 +792,35 @@ EmitMetadata(
     }
 }
 
+bool
+CHardwareSimulation::
+CheckForAvailableBuffer()
+{
+    return true;
+}
+
+NTSTATUS
+CHardwareSimulation::
+CommitImageData(PSCATTER_GATHER_ENTRY sGEntry, ULONG stride)
+{
+    //  Have the synthesizer output a frame to the buffer.
+    ULONG CommitBufferSize = sGEntry->ByteCount;
+    PUCHAR CommitBufferAddress = sGEntry->Virtual;
+
+    ULONG BytesCopied = m_Synthesizer->DoCommit(CommitBufferAddress, CommitBufferSize, stride);
+    NT_ASSERT(BytesCopied);
+    DBG_TRACE("BytesCopied = %d", BytesCopied);
+
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS
+CHardwareSimulation::
+ValidateBuffer(PSCATTER_GATHER_ENTRY sGEntry)
+{
+    return STATUS_SUCCESS;
+}
+
 void
 CHardwareSimulation::
 EmitFaceMetadata(
@@ -1004,18 +1033,17 @@ Return Value:
               m_PinID, m_ImageSize, m_ScatterGatherMappingsQueued, m_ScatterGatherBytesQueued);
 
     NTSTATUS    ntStatus = STATUS_SUCCESS;
-
     ULONG BufferRemaining = m_ImageSize;
 
     //
-    //  If there isn't a frame buffer queued, we justskip the frame and consider 
+    //  If there isn't a frame buffer queued, we just skip the frame and consider 
     //  it starvation.
     //
     while (BufferRemaining &&
             !IsListEmpty(&m_ScatterGatherMappings) &&
-            m_ScatterGatherBytesQueued >= BufferRemaining)
+            (!CheckForAvailableBuffer() || m_ScatterGatherBytesQueued >= BufferRemaining))
     {
-        LIST_ENTRY *listEntry = RemoveHeadList (&m_ScatterGatherMappings);
+        LIST_ENTRY *listEntry = RemoveHeadList(&m_ScatterGatherMappings);
         m_ScatterGatherMappingsQueued--;
 
         PSCATTER_GATHER_ENTRY SGEntry =
@@ -1050,10 +1078,13 @@ Return Value:
             Stride = (ULONG) ABS(FrameInfo->lSurfacePitch);
         }
 
-        //  Have the synthesizer output a frame to the buffer.
-        ULONG   BytesCopied = m_Synthesizer->DoCommit( SGEntry->Virtual, SGEntry->ByteCount, Stride );
-        NT_ASSERT( BytesCopied );
-        DBG_TRACE( "BytesCopied = %d", BytesCopied );
+        ntStatus = ValidateBuffer(SGEntry);
+        if (!NT_SUCCESS(ntStatus))
+        {
+            break;
+        }
+
+        ntStatus = CommitImageData(SGEntry, Stride);
 
         //Adding time stamp
         if(m_PhotoConfirmationEntry.isRequired())
@@ -1091,9 +1122,9 @@ Return Value:
     }
 
     //  Report an error if we used the last buffer.
-    if (BufferRemaining)
+    if (NT_SUCCESS(ntStatus) && BufferRemaining)
     {
-        //DBG_TRACE("BufferRemaining=%u", BufferRemaining);
+        DBG_TRACE("BufferRemaining=%u", BufferRemaining);
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
 

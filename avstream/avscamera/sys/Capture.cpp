@@ -2262,14 +2262,11 @@ UpdateAllocatorFraming()
                 m_Pin->Descriptor->AllocatorFraming
                 );
 
-            Framing->FramingItem[0].Frames = m_DesiredFrames;
-            Framing->FramingItem[0].PhysicalRange.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
-            Framing->FramingItem[0].PhysicalRange.MaxFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
-            Framing->FramingItem [0].FramingRange.Range.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
-            Framing->FramingItem [0].FramingRange.Range.MaxFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
+            SetFramingSizes(Framing);
 
-            Framing->FramingItem [0].PhysicalRange.Stepping = 0;
-            Framing->FramingItem [0].FramingRange.Range.Stepping = 0;
+            Framing->FramingItem[0].Frames = m_DesiredFrames;
+            Framing->FramingItem[0].PhysicalRange.Stepping = 0;
+            Framing->FramingItem[0].FramingRange.Range.Stepping = 0;
 
             DBG_TRACE( "Advertising Frame requirement: %d", m_DesiredFrames );
             DBG_TRACE("Image size estimate of: %d bytes", m_VideoInfoHeader->bmiHeader.biSizeImage );
@@ -2278,5 +2275,17 @@ UpdateAllocatorFraming()
 
     DBG_LEAVE("()=0x%08X",Status);
     return Status;
+}
+
+void
+CCapturePin::
+SetFramingSizes(
+    PKSALLOCATOR_FRAMING_EX Framing
+)
+{
+    Framing->FramingItem[0].PhysicalRange.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
+    Framing->FramingItem[0].PhysicalRange.MaxFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
+    Framing->FramingItem[0].FramingRange.Range.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
+    Framing->FramingItem[0].FramingRange.Range.MaxFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
 }
 
