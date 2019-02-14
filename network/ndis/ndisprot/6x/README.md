@@ -1,3 +1,13 @@
+---
+topic: sample
+name: NDIS Connection-less Protocol WDM Driver Sample
+description: Demonstrates a connection-less NDIS 6.0 protocol WDM driver.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: NDIS Connection-less Protocol WDM Driver Sample
     platform: WDM
@@ -7,13 +17,11 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617917
 --->
 
-
-NDIS Connection-less Protocol WDM Driver Sample
-===============================================
+# NDIS Connection-less Protocol WDM Driver Sample
 
 This sample demonstrates a connection-less NDIS 6.0 protocol WDM driver. The driver supports sending and receiving raw Ethernet frames using `ReadFile`/`WriteFile` calls from user-mode. It only receives frames with a specific EtherType field. As an NDIS protocol, it illustrates how to establish and tear down bindings to Ethernet adapters, i.e. those that export medium type **NdisMedium802\_3**. It shows how to set a packet filter, send and receive data, and handle plug-and-play events.
 
-### INSTALLATION
+## Installation
 
 The driver is installed using the INF file ndisprot.inf, which is provided in the driver directory. In Network Connections UI, select an adapter and open **Properties.**
 
@@ -21,7 +29,7 @@ Click **Install**, then **Protocol**, then **Add**, and then **Have disk**. Then
 
 Select **Sample NDIS Protocol Driver** and click **OK**. After installing the protocol, copy over the test application prottest.exe to a convenient location. Please note that the driver service has been set to manual start in the INF file. As a result, it doesn't get loaded automatically when you install.
 
-### Usage
+## Usage
 
 To start the driver, type **Net start ndisprot**.
 
@@ -54,7 +62,7 @@ Use the **-e** option to enumerate all devices to which NDISPROT is bound:
 
 For more information, see [NDIS Protocol Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff566821) in the network devices design guide.
 
-### File Manifest
+## File Manifest
 
 File | Description 
 -----|------------
@@ -69,5 +77,3 @@ ntdisp.c | NT Entry points and dispatch routines for NDISPROT
 protuser.h | IOCTL and associated structure definitions 
 recv.c | NDIS protocol entry points for receiving data, and IRP_MJ_READ processing 
 send.c | NDIS protocol routines for sending data, and IRP_MJ_WRITE processing 
-
-

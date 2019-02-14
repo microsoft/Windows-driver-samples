@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Sample UMDF Function Driver for OSR USB-FX2 (UMDF version 1)
+description: A UMDF driver for the OSR USB-FX2 device that includes a test application, sample device metadata, and supports impersonation and idle power down.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Sample UMDF Function Driver for OSR USB-FX2 (UMDF version 1)
     platform: UMDF1
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618002
 --->
 
-
-Sample UMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
-============================================================
+# Sample UMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
 
 The umdf\_fx2 sample is a User-Mode Driver Framework (UMDF) driver for the OSR USB-FX2 device. It includes a test app and sample device metadata, and supports impersonation and idle power down.
 
@@ -17,46 +25,39 @@ The sample can also be used with the CustomDeviceAccess MSDK sample. The sample 
 
 The osrusbfx2 sample is divided into three samples:
 
--   **WDF Sample Driver Learning Lab for OSR USB-FX2**: This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
+- **WDF Sample Driver Learning Lab for OSR USB-FX2**: This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
 
--   **kmdf\_fx2**: This sample is the final version of kernel-mode **wdf\_osrfx2** driver. The sample demonstrates KMDF methods.
+- **kmdf\_fx2**: This sample is the final version of kernel-mode **wdf\_osrfx2** driver. The sample demonstrates KMDF methods.
 
--   **umdf\_fx2**: This sample is the final version of the user-mode driver **wdf\_osrfx2**. The sample demonstrates UMDF methods.
+- **umdf\_fx2**: This sample is the final version of the user-mode driver **wdf\_osrfx2**. The sample demonstrates UMDF methods.
 
-Build the sample
-----------------
+## Build the sample
 
-The default Solution build configuration is Debug and Win32. 
+The default Solution build configuration is Debug and Win32.
 
-**To select a configuration and build a driver**
+1. Open the driver project or solution in Visual Studio 2015 (find *filtername*.sln or *filtername*.vcxproj).
+1. Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
+1. From the **Configuration Manager**, select the **Active Solution Configuration** and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+1. From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
-1.  Open the driver project or solution in Visual Studio 2015 (find *filtername*.sln or *filtername*.vcxproj).
-2.  Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
-3.  From the **Configuration Manager**, select the **Active Solution Configuration** and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
-4.  From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
+## Overview
 
-Overview
---------
+- The device is based on the development board supplied with the Cypress EZ-USB FX2 Development Kit (CY3681).
+- It contains 1 interface and 3 endpoints (Interrupt IN, Bulk Out, Bulk IN).
+- Firmware supports vendor commands to query or set LED Bar graph display and 7-segment LED display, and to query toggle switch states.
+- Interrupt Endpoint:
+  - Sends an 8-bit value that represents the state of the switches.
+  - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
+  - Firmware does not de-bounce the switch pack.
+  - One switch change can result in multiple bytes being sent.
+  - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+- Bulk Endpoints are configured for loopback:
+  - The device moves data from IN endpoint to OUT endpoint.
+  - The device does not change the values of the data it receives nor does it internally create any data.
+  - Endpoints are always double buffered.
+  - Maximum packet size depends on speed (64 full speed, 512 high speed).
 
-Here is the overview of the device:
-
--   The device is based on the development board supplied with the Cypress EZ-USB FX2 Development Kit (CY3681).
--   It contains 1 interface and 3 endpoints (Interrupt IN, Bulk Out, Bulk IN).
--   Firmware supports vendor commands to query or set LED Bar graph display and 7-segment LED display, and to query toggle switch states.
--   Interrupt Endpoint:
-    -   Sends an 8-bit value that represents the state of the switches.
-    -   Sent on startup, resume from suspend, and whenever the switch pack setting changes.
-    -   Firmware does not de-bounce the switch pack.
-    -   One switch change can result in multiple bytes being sent.
-    -   Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
--   Bulk Endpoints are configured for loopback:
-    -   The device moves data from IN endpoint to OUT endpoint.
-    -   The device does not change the values of the data it receives nor does it internally create any data.
-    -   Endpoints are always double buffered.
-    -   Maximum packet size depends on speed (64 full speed, 512 high speed).
-
-Testing the driver
-------------------
+## Testing the driver
 
 You can use the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample to test the umdf\_fx2 sample.
 
@@ -64,14 +65,14 @@ This sample also includes a test application, osrusbfx2.exe, that you can use to
 
 Usage for Read/Write test:
 
--   -r [*n*], where *n* is number of bytes to read.
--   -w [*n*], where *n* is number of bytes to write.
--   -c [*n*], where *n* is number of iterations (default = 1).
--   -v, shows verbose read data.
--   -p, plays with Bar Display, Dip Switch, 7-Segment Display.
--   -a, performs asynchronous I/O operation.
--   -u, dumps USB configuration and pipe information.
--   -f \<*filename*\> [*interval-seconds*], where *interval-seconds* is a delay in milliseconds, to send a text file to the seven-segment display (UMDF only)
+- -r [*n*], where *n* is number of bytes to read.
+- -w [*n*], where *n* is number of bytes to write.
+- -c [*n*], where *n* is number of iterations (default = 1).
+- -v, shows verbose read data.
+- -p, plays with Bar Display, Dip Switch, 7-Segment Display.
+- -a, performs asynchronous I/O operation.
+- -u, dumps USB configuration and pipe information.
+- -f \<*filename*\> [*interval-seconds*], where *interval-seconds* is a delay in milliseconds, to send a text file to the seven-segment display (UMDF only)
 
 **Playing with the 7 segment display, toggle switches, and bar graph display**
 

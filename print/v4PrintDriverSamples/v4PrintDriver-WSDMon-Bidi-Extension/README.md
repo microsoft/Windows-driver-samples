@@ -1,3 +1,13 @@
+---
+topic: sample
+name: WSDMon Bidi Extension Sample
+description: Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
+languages:
+  - xml
+products:
+  - windows
+---
+
 <!---
     name: WSDMon Bidi Extension Sample
     platform: Utility
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617949
 --->
 
-
-WSDMon Bidi Extension Sample
-============================
+# WSDMon Bidi Extension Sample
 
 This sample demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
 
@@ -27,29 +35,28 @@ A *value* is a leaf in the schema hierarchy that represents either a single data
 
 The WSDMON port monitor can:
 
--   Discover network printers and install them.
+- Discover network printers and install them.
 
--   Send jobs to WSD printers.
+- Send jobs to WSD printers.
 
--   Monitor the status and configuration of the WSD printers and update the printer object status accordingly.
+- Monitor the status and configuration of the WSD printers and update the printer object status accordingly.
 
--   Respond to bidirectional (bidi) queries for supported bidi schemas.
+- Respond to bidirectional (bidi) queries for supported bidi schemas.
 
--   Monitor bidi Schema value changes and send notifications.
+- Monitor bidi Schema value changes and send notifications.
 
 WSDMON supports the following Xcv commands:
 
--   CleanupPort
+- CleanupPort
 
--   DeviceID
+- DeviceID
 
--   PnPXID
+- PnPXID
 
--   ResetCommunication
+- ResetCommunication
 
--   ServiceID
+- ServiceID
 
 **Note** This sample is for the v4 print driver model.
 
 For more information, see [V4 Driver Connectivity Architecture](http://msdn.microsoft.com/en-us/library/windows/hardware/) and [Bidirectional Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
-

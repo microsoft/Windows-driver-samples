@@ -1,3 +1,13 @@
+---
+topic: sample
+name:  GPIO Sample Drivers
+description: Illustrates how to write a GPIO controller driver that works in conjunction with the GPIO framework extension (GpioClx).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: GPIO Sample Drivers
     platform: KMDF UMDF1
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617729
 --->
 
-
-GPIO Sample Drivers
-===================
+# GPIO Sample Drivers
 
 The GPIO samples contain annotated code to illustrate how to write a [GPIO controller driver](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439509) that works in conjunction with the [GPIO framework extension](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439512) (GpioClx) to handle GPIO I/O control requests, and a peripheral driver that runs in kernel mode and uses GPIO resources. For a sample that shows how to write a GPIO peripheral driver that runs in user mode, please refer to the SPB accelerometer sample driver (SPB\\peripherals\\accelerometer).
 

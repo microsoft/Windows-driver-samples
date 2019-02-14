@@ -1,3 +1,13 @@
+---
+topic: sample
+name: NDIS 6.0 Filter Driver
+description: A pass-through NDIS 6 filter driver demonstrating the basic principles of an NDIS 6.0 Filter driver.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: NDIS 6.0 Filter Driver
     platform: WDM
@@ -7,14 +17,11 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617915
 --->
 
-
-NDIS 6.0 Filter Driver
-======================
+# NDIS 6.0 Filter Driver
 
 The Ndislwf sample is a do-nothing pass-through NDIS 6 filter driver that demonstrates the basic principles underlying an NDIS 6.0 Filter driver. The sample replaces the NDIS 5 Sample Intermediate Driver (Passthru driver).
 
 Although this sample filter driver is installed as a modifying filter driver, it doesn't modify any packets; it only repackages and sends down all OID requests. You can modify this filter driver to change packets before passing them along. Or you can use the filter to originate new packets to send or receive. For example, the filter could encrypt/compress outgoing and decrypt/decompress incoming data.
-
 
 For more information, see [NDIS Filter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565492) in the network devices design guide.
 

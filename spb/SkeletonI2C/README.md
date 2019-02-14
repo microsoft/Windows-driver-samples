@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Skeleton I2C Sample Driver
+description: Demonstrates how to design a KMDF controller driver for Windows that conforms to the simple peripheral bus (SPB) device driver interface (DDI).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Skeleton I2C Sample Driver
     platform: KMDF
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617969
 --->
 
-
-Skeleton I2C Sample Driver
-==========================
+# Skeleton I2C Sample Driver
 
 The SkeletonI2C sample demonstrates how to design a KMDF controller driver for Windows that conforms to the [simple peripheral bus](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450903) (SPB) device driver interface (DDI). SPB is an abstraction for low-speed serial buses (for example, I<sup>2</sup>C and SPI) that allows peripheral drivers to be developed for cross-platform use without any knowledge of the underlying bus hardware or device connections. While this sample implements an empty I<sup>2</sup>C driver, it could just as easily be the starting point for an SPI driver with only minor modifications.
 
@@ -17,26 +25,22 @@ Note that the SkeletonI2C sample is simplified to show the overall structure of 
 
 The simplified structure of the SkeletonI2C sample driver makes it a convenient starting point for development of a real SPB controller driver that manages the hardware functions in an SPB controller.
 
-Modifying the sample
---------------------
+## Modifying the sample
 
 Here are some high-level points to consider when modifying the SkeletonI2C sample for use on real hardware:
 
--   Edit (and likely rename) Skeletoni2c.h to describe your hardware's register set.
--   Modify Controller.cpp and Device.cpp to translate the SPB DDI and primitives into I<sup>2</sup>C or SPI protocol for your hardware. This includes initialization, I/O configuration, and interrupt processing.
--   Address any comments marked with "TODO" in the sample, especially those that short circuit the I/O path to complete requests synchronously.
--   Modify the HWID (`ACPI\skeletoni2c`) in Skeletoni2c.inf to match the device node in your firmware.
--   Generate and specify a unique trace GUID in I2ctrace.h.
--   Refactor the driver name, functions, comments, etc., to better describe your implementation.
+- Edit (and likely rename) Skeletoni2c.h to describe your hardware's register set.
+- Modify Controller.cpp and Device.cpp to translate the SPB DDI and primitives into I<sup>2</sup>C or SPI protocol for your hardware. This includes initialization, I/O configuration, and interrupt processing.
+- Address any comments marked with "TODO" in the sample, especially those that short circuit the I/O path to complete requests synchronously.
+- Modify the HWID (`ACPI\skeletoni2c`) in Skeletoni2c.inf to match the device node in your firmware.
+- Generate and specify a unique trace GUID in I2ctrace.h.
+- Refactor the driver name, functions, comments, etc., to better describe your implementation.
 
-Code tour
----------
+## Code tour
+
+### Implementing the SPB DDI
 
 The following are relevant functions in the SkeletonI2C driver for implementing the SPB DDI.
-
-Function
-
-Description
 
 INITIALIZATION
 
@@ -90,11 +94,9 @@ Sets the number of bytes completed for a request and invokes the [**SpbRequestCo
 
 \*An atomic transfer in SPB is implemented using Sequence or a Lock/Unlock pair. For I<sup>2</sup>C, this means a set of reads and writes with restarts in between. For SPI, this means a set of reads and writes with the chip select-line asserted throughout.
 
+### Implementing controller-specific I2C protocol
+
 The following are relevant functions in the SkeletonI2C driver for implementing controller-specific I2C protocol. For the most part, these are placeholders and must be filled in appropriately.
-
-Function
-
-Description
 
 INITIALIZATION
 

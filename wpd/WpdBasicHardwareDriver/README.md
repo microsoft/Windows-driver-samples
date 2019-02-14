@@ -1,3 +1,13 @@
+---
+topic: sample
+name: WPD Basic Hardware Sample Driver
+description: Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: WPD Basic Hardware Sample Driver
     platform: UMDF1
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620318
 --->
 
-
-WPD Basic Hardware Sample Driver (UMDF Version 1)
-=================================================
+# WPD Basic Hardware Sample Driver (UMDF Version 1)
 
 The WpdBasicHardwareDriver is a WPD driver that supports nine devices. These devices were selected because of their simplicity. This simplicity allowed the sample to focus on the tasks that are common to portable devices without getting bogged down in hardware complexities.
 
@@ -25,9 +33,7 @@ The microcontroller firmware for each of the nine circuits is included in the **
 
 For a complete description of this sample and its underlying code and functionality, refer to the [WPD Basic Hardware Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597697) description in the Windows Driver Kit documentation.
 
-
-Related topics
---------------
+## Related topics
 
 [WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 
@@ -35,21 +41,17 @@ Related topics
 
 [WPD Programming Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/)
 
-
-Installation
-------------
+## Installation
 
 To test this sample, you must have a test computer. This can be a second computer or, if necessary, your development computer.
 
 To install the WpdBasicHardwareDriver sample, do the following:
 
-1.  Copy the driver binary and the wpdbasichardwaredriver.inf file to a directory on your test computer (for example, C:\\wpdbasichardwaredriver.)
-
-2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\wpdbasichardwaredriver).
+1. Copy the driver binary and the wpdbasichardwaredriver.inf file to a directory on your test computer (for example, C:\\wpdbasichardwaredriver.)
+1. Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\wpdbasichardwaredriver).
 
     **Note** You can obtain the co-installers by downloading and installing the "Windows Driver Framework (WDF)" package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
 
-3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\wpdbasichardwaredriver), and run DevCon.exe as follows:
+1. Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\wpdbasichardwaredriver), and run DevCon.exe as follows:
     **devcon.exe install wpdbasichardwaredriver.inf WUDF\\WpdBasicHardware**
     You can find DevCon.exe in the \\tools directory of the WDK (for example, \\tools\\devcon\\i386\\devcon.exe).
-

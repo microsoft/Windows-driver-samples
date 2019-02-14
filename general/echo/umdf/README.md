@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Echo Sample (UMDF Version 1)
+description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Echo Sample (UMDF Version 1)
     platform: UMDF1
@@ -7,16 +17,13 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617707
 --->
 
-
-Echo Sample (UMDF Version 1)
-============================
+# Echo Sample (UMDF Version 1)
 
 This sample demonstrates how to use User-Mode Driver Framework (UMDF) version 1 to write a driver and demonstrates best practices.
 
 It also demonstrates the use of a default Serial Dispatch I/O Queue, its request start events, cancellation event, and synchronizing with another thread. The preferred I/O retrieval mode is set to Direct I/O. So, whenever a request is received by the framework, UMDF looks at the size of the buffer and determines, whether it should copy the buffer (if the length is less than 2 full pages) or map it (if the length is greater or equal to 2 full pages).
 
 This sample driver is a minimal driver meant to demonstrate the usage of the User-Mode Driver Framework. It is not intended for use in a production environment.
-
 
 Related technologies
 --------------------
@@ -30,7 +37,7 @@ To test the Echo driver, you can run echoapp.exe which is built from \\echo\\exe
 
 First install the device as described above. Then run echoapp.exe.
 
-```
+```cmd
 D:\>echoapp /?
 Usage:
 Echoapp.exe --- Send single write and read request synchronously
@@ -124,4 +131,3 @@ File Manifest
 
 - This file lists the WPP trace control GUID(s) for the sample driver. This file can be used with the tracelog command's -guid flag to enable the collection of these trace events within an established trace session.
 - These GUIDs must remain in sync with the trace control GUIDs defined in internal.h.
-

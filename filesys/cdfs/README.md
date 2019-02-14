@@ -1,3 +1,13 @@
+---
+topic: sample
+name: CDFS File System Driver
+description: The CD-ROM file system driver (cdfs) sample is a file system driver for removable media.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: CDFS File System Driver
     platform: WDM
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617642
 --->
 
-
-CDFS File System Driver
-=======================
+# CDFS File System Driver
 
 The CD-ROM file system driver (cdfs) sample is a sample file system driver that you can use to write new file systems.
 

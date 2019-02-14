@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Cancel-Safe IRP Queue Sample
+description: Demonstrates the use of the cancel-safe queue routines.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Cancel-Safe IRP Queue Sample
     platform: WDM
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617705
 --->
 
-
-Cancel-Safe IRP Queue Sample
-============================
+# Cancel-Safe IRP Queue Sample
 
 This sample demonstrates the use of the cancel-safe queue routines [**IoCsqInitialize**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549054), [**IoCsqInsertIrp**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549066), [**IoCsqRemoveIrp**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549070), [**IoCsqRemoveNextIrp**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549072). These routines were introduced in Windows for queuing IRPs in the driver's internal device queue. By using these routines, driver developers do not have to worry about IRP cancellation race conditions. A common problem with cancellation of IRPs in a driver is synchronization between the cancel lock or the InterlockedExchange in the I/O Manager with the driver's queue lock. The **IoCsq*Xxx*** routines abstract the cancel logic while allowing the driver to implement the queue and associated synchronization.
 
@@ -23,13 +31,10 @@ Look in the Startio directory for another version of the sample driver that show
 
 For more information, see [Cancel-Safe IRP Queues](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540755).
 
-
-Run the sample
---------------
+## Run the sample
 
 To test this driver, run Testapp.exe, which is a simple Win32 multithreaded console application. The driver will automatically load and start. When you exit the application, the driver will stop and be removed.
 
 `Usage: testapp <NumberOfThreads>`
 
 **Note** The `NumberOfThreads` command-line parameter is limited to a maximum of 10 threads; the default value if no parameter is specified is 1. The main thread waits for user input. If you press Q, the application exits gracefully; otherwise, it exits the process abruptly and forces all the threads to be terminated and all pending I/O operations to be canceled. Other threads perform I/O asynchronously in a loop. After every overlapped read, the thread goes into an alertable sleep and wakes as soon as the completion routine runs, which occurs when the driver completes the read IRP. You should run multiple instances of the application to stress test the driver.
-

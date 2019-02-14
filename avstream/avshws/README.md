@@ -1,3 +1,13 @@
+---
+topic: sample
+name: AVStream simulated hardware sample driver (Avshws)
+description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: AVStream simulated hardware sample driver (Avshws)
     platform: WDM
@@ -7,8 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620185
 --->
 
-AVStream simulated hardware sample driver (Avshws)
-==================================================
+# AVStream simulated hardware sample driver (Avshws)
 
 The AVStream simulated hardware sample driver (Avshws) provides a pin-centric [AVStream](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554240) capture driver for a simulated piece of hardware. This streaming media driver performs video captures at 320 x 240 pixels in either RGB24 or YUV422 format using direct memory access (DMA) into capture buffers. The purpose of the sample is to demonstrate how to write a pin-centric AVStream minidriver. The sample also shows how to implement DMA by using the related functionality provided by the AVStream class driver.
 

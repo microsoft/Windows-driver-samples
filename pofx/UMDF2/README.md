@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Power Framework (PoFx) Sample (UMDF Version 2)
+description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Power Framework (PoFx) Sample (UMDF Version 2)
     platform: UMDF2
@@ -7,13 +17,12 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617936
 --->
 
-
-Power Framework (PoFx) Sample (UMDF Version 2)
-==============================================
+# Power Framework (PoFx) Sample (UMDF Version 2)
 
 This solution demonstrates how a User-Mode Driver Framework (UMDF) version 2 driver can implement F-state-based power management. The SingleComp project demonstrates how a UMDF version 2 driver can implement F-state-based power management for a device that has only a single component.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Related technologies
@@ -60,4 +69,3 @@ As an alternative to building the driver sample in Visual Studio, you can build 
 **msbuild /p:configuration="Release" /p:platform="Win32" PoFx.sln**
 
 For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
-

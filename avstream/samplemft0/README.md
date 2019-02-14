@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Driver MFT Sample
+description: A driver MFT for use with a camera's Windows device app.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Driver MFT Sample
     platform: WDM
@@ -7,8 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617126
 --->
 
-Driver MFT Sample
-=================
+# Driver MFT Sample
 
 Provides a *driver MFT* for use with a camera's UWP device app.A *driver MFT* is a Media Foundation Transform that's used with a specific camera when capturing video. The driver MFT is also known as MFT0 because it is the first MFT applied to the video stream captured from the camera. This MFT can provide a video effect or other processing when capturing photos or video from the camera. It can be distributed along with the driver package for a camera.
 

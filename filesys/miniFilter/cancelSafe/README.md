@@ -1,3 +1,13 @@
+---
+topic: sample
+name: CancelSafe File System Minifilter Driver
+description: A minifilter demonstrating the use of cancel-safe queues.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: CancelSafe File System Minifilter Driver
     platform: WDM
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617645
 --->
 
-
-CancelSafe File System Minifilter Driver
-========================================
+# CancelSafe File System Minifilter Driver
 
 The CancelSafe filter is a sample minifilter that you use if you want to use cancel-safe queues.
 

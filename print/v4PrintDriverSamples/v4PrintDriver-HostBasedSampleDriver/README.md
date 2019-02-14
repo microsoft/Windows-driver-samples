@@ -1,3 +1,14 @@
+---
+topic: sample
+name: USB Host-Based Print Driver Sample
+description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
+languages:
+  - javascript
+  - xml
+products:
+  - windows
+---
+
 <!---
     name: USB Host-Based Print Driver Sample
     platform: Utility
@@ -7,10 +18,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617947
 --->
 
-
-
-USB Host-Based Print Driver Sample
-==================================
+# USB Host-Based Print Driver Sample
 
 This driver sample demonstrates how to support host-based devices that use the v4 print driver model, and are connected via USB.
 
@@ -28,44 +36,35 @@ The Bidi schema is a hierarchy of printer attributes, some of which are properti
 
 *Property*
 
-A property is a node in the schema hierarchy. A property can have one or more children, and these children can be other properties or values.
+- A property is a node in the schema hierarchy. A property can have one or more children, and these children can be other properties or values.
 
 *Value*
 
-A value is a leaf in the schema hierarchy that represents either a single data item or a list of related data items. A value has a name, a data type, and a data value. A value cannot have child elements.
+- A value is a leaf in the schema hierarchy that represents either a single data item or a list of related data items. A value has a name, a data type, and a data value. A value cannot have child elements.
 
 For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx) and [Bidi Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
 
 Here are the core files that you will find in this sample:
 
-File name
+**usb\_host\_based\_sample.js**
 
-Description
+- A USB Bidi Extension JavaScript file which includes support for controlling printing for host-based devices. This is the only code in the driver sample. It is invoked by USBMon and it communicates with the device to do the following:
+  - Determine if the device is ready to receive data
+  - Check to see if there is an error condition
+  - Read the device status
 
-usb\_host\_based\_sample.js
+**usb\_host\_based\_sample\_events.xml**
 
-A USB Bidi Extension JavaScript file which includes support for controlling printing for host-based devices. This is the only code in the driver sample. It is invoked by USBMon and it communicates with the device to do the following:
+- A 'driver events' XML file that specifies an event which detects when the user needs to flip over the paper in the tray.
 
--   Determine if the device is ready to receive data
--   Check to see if there is an error condition
--   Read the device status
+**usb\_host\_based\_sample\_extension.xml**
 
-usb\_host\_based\_sample\_events.xml
+- A USB Bidi Extension XML file that specifies the supported Bidi Schema elements for this driver.
 
-A 'driver events' XML file that specifies an event which detects when the user needs to flip over the paper in the tray.
-
-usb\_host\_based\_sample\_extension.xml
-
-A USB Bidi Extension XML file that specifies the supported Bidi Schema elements for this driver.
-
-
-Build the sample
-----------------
+## Build the sample
 
 For information and instructions about how to test and deploy drivers, see [Developing, Testing, and Deploying Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554651(v=vs.85).aspx).
 
-Run the sample
---------------
+## Run the sample
 
 To understand how to run this sample as a Windows driver, see the [v4 Printer Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/hh706306(v=vs.85).aspx) collection of topics.
-

@@ -1,3 +1,13 @@
+---
+topic: sample
+name: WPD service sample driver
+description: Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: WPD service sample driver
     platform: UMDF1
@@ -7,14 +17,11 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618010
 --->
 
-
-WPD service sample driver
-=================================
+# WPD service sample driver
 
 Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service.
 
-Related topics
---------------
+## Related topics
 
 [WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 

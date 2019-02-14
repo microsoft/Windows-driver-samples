@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Non-PnP Driver Sample
+description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Non-PnP Driver Sample
     platform: KMDF
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620307
 --->
 
-
-Non-PnP Driver Sample
-====================
+# Non-PnP Driver Sample
 
 This sample is primarily meant to demonstrate how to write a NON-PNP driver using the Kernel Mode Driver Framework.
 
@@ -19,25 +27,23 @@ This sample would be useful for writing a driver that does not interact with any
 
 (Examples: FileMon, Regmon, DeviceTree are examples of tools that use this type of driver.)
 
--   How to Write a NON PNP driver
+- How to Write a NON PNP driver
 
--   How to register EvtPreProcessCallback to handle requests in the context of the calling thread
+- How to register EvtPreProcessCallback to handle requests in the context of the calling thread
 
--   Show how to probe and lock buffers in the preprocess callback for METHOD\_NEITHER IOCTL requests
+- Show how to probe and lock buffers in the preprocess callback for METHOD\_NEITHER IOCTL requests
 
--   Also show how to handle other 3 types of IOCTLs (METHOD\_BUFFERED, METHOD\_IN\_DIRECT & METHOD\_OUT\_DIRECT)
+- Also show how to handle other 3 types of IOCTLs (METHOD\_BUFFERED, METHOD\_IN\_DIRECT & METHOD\_OUT\_DIRECT)
 
--   How to open a file in Kernel-mode and Read & Write to it
+- How to open a file in Kernel-mode and Read & Write to it
 
--   Finally show event tracing and dumping variable length data in the tracelog using HEXDUMP format.
+- Finally show event tracing and dumping variable length data in the tracelog using HEXDUMP format.
 
 The sample is accompanied by a simple multithreaded Win32 console application to test the driver.
 
 *Disclaimer*: This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
-
-Build the sample
-----------------
+## Build the sample
 
 For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
 
@@ -70,4 +76,3 @@ KmdfService = \<your driver service name here\>, \<driver service install subsec
 KmdfLibraryVersion = \<version bound to here, in Major.minor format\>
 
 For example, for V1.0 KmdfLibraryVersion is "1.0"
-

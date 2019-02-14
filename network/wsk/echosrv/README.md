@@ -1,3 +1,13 @@
+---
+topic: sample
+name: WSK TCP Echo Server
+description: A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: WSK TCP Echo Server
     platform: WDM
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617935
 --->
 
-
-WSK TCP Echo Server
-===================
+# WSK TCP Echo Server
 
 This sample driver is a minimal driver meant to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
 

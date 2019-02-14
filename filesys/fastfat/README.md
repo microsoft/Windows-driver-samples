@@ -1,3 +1,13 @@
+---
+topic: sample
+name: fastfat File System Driver
+description: A file system driver based on the Windows inbox FastFAT file system used as a model for new file systems.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: fastfat File System Driver
     platform: WDM
@@ -7,10 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620305
 --->
 
-
-
-fastfat File System Driver
-==========================
+# fastfat File System Driver
 
 The *fastfat* sample is file system driver that you can use as a model to write new file systems.
 
