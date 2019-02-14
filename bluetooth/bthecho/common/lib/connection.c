@@ -1160,7 +1160,7 @@ Arguments:
     WDF_OBJECT_ATTRIBUTES attributes;
     WDFMEMORY memoryArg1    = NULL;
 
-    if (!Brb || BrbSize != Brb->BrbHeader.Length) 
+    if (Brb == NULL || BrbSize != Brb->BrbHeader.Length) 
     {        
         TraceEvents(TRACE_LEVEL_ERROR, DBG_UTIL, 
             "Invalid Brb value. Brb:%p, BrbSize:%zu\n",
