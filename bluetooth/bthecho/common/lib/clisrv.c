@@ -274,7 +274,7 @@ Notes:
     if (Brb == NULL || BrbSize != Brb->BrbHeader.Length)
     {
         TraceEvents(TRACE_LEVEL_ERROR, DBG_CONT_READER,
-            "Invalid Brb value. Brb:%p, BrbSize:%zu\n",
+            "Invalid Brb value. Brb:0x%p, BrbSize:%zu\n",
             Brb,
             BrbSize
             );
