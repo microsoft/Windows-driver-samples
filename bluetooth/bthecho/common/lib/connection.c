@@ -1163,7 +1163,7 @@ Arguments:
     if (Brb == NULL || BrbSize != Brb->BrbHeader.Length) 
     {        
         TraceEvents(TRACE_LEVEL_ERROR, DBG_UTIL, 
-            "Invalid Brb value. Brb:%p, BrbSize:%zu\n",
+            "Invalid Brb value. Brb:0x%p, BrbSize:%zu\n",
             Brb,
             BrbSize
             );
