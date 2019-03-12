@@ -97,7 +97,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 ### Manual deployment
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 1.  Copy all of the files in your driver package to a folder on the target computer (for example, c:\\KbfiltrDriverPackage).
 2.  On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the Devcon command with the correct hardware ID, such as:
