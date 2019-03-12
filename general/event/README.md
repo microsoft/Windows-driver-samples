@@ -1,4 +1,14 @@
-<!--- 
+---
+topic: sample
+name: Hardware Event Sample
+description: Demonstrates different ways a kernel-mode driver can notify an application about a hardware event.
+languages:
+  - cpp
+products:
+  - windows
+---
+
+<!---
     name: Hardware Event Sample
     platform: WDM
     language: cpp
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617711
 --->
 
-
-Hardware Event Sample
-=====================
+# Hardware Event Sample
 
 This sample demonstrates two different ways a Windows kernel-mode driver can notify an application about a hardware event. One way uses an event-based method, and the other uses an IRP-based method. Because the sample driver is not talking to any real hardware, it uses a timer DPC to simulate hardware events. The test application informs the driver whether it wants to be notified by signaling an event or by completing the pending IRP. Additionally, the test application specifies a relative time at which the DPC timer must fire.
 
@@ -21,9 +29,7 @@ There are two advantages of IRP-based approach over the event-based approach. Fi
 
 **Note** This sample driver is not a Plug and Play driver. This is a minimal driver meant to demonstrate a feature of the operating system. Neither this driver nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
-
-Run the sample
---------------
+## Run the sample
 
 To test this driver, copy the test application, event.exe, and the driver to the same directory, and run the application. The application will automatically load the driver, if it's not already loaded, and interact with the driver. When you exit the app, the driver will be stopped, unloaded, and removed.
 
@@ -32,4 +38,3 @@ To run the test application, enter the following command in the command window:
 `C:\>event.exe <Delay> <0|1>`
 
 The first command-line parameter, `Delay`, equals the time, in seconds, to delay the event signal. For the second command-line parameter, specify 0 for IRP-based notification and 1 for event-based notification.
-

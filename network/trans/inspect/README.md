@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Windows Filtering Platform Traffic Inspection Sample
+description: Demonstrates the traffic inspection capabilities of the Windows Filtering Platform (WFP).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Windows Filtering Platform Traffic Inspection Sample
     platform: KMDF
@@ -7,9 +17,8 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617931
 --->
 
+# Windows Filtering Platform Traffic Inspection Sample
 
-Windows Filtering Platform Traffic Inspection Sample
-====================================================
 
 This sample driver demonstrates the traffic inspection capabilities of the Windows Filtering Platform (WFP).
 
@@ -22,6 +31,7 @@ Inspect.sys implements the `ClassifyFn` callout functions for the ALE Connect, R
 Connect/Packet inspection is done out-of-band by a system worker thread by using the reference-drop-clone-reinject mechanism as well as the ALE pend/complete mechanism. Therefore, the sample can serve as a basis for scenarios in which a filtering decision cannot be made within the `classifyFn()` callout and instead must be made, for example, by a user-mode application.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Automatic deployment

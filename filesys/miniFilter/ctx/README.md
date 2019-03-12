@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Ctx File System Minifilter Driver
+description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Ctx File System Minifilter Driver
     platform: WDM
@@ -7,17 +17,15 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617648
 --->
 
-
-Ctx File System Minifilter Driver
-=================================
+# Ctx File System Minifilter Drive
 
 The Ctx minifilter is an example that demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Design and Operation
---------------------
+## Design and Operation
 
 The *Ctx* minifilter demonstrates how to attach and remove contexts from instances, files, steams, and stream handles. *Ctx* attaches a context whenever one of these objects is created. While attaching a context to a file, the sample also creates a stream and stream handle context. All contexts are ultimately deleted by the filter manager using the callback function that the *Ctx* minifilter provides.
 

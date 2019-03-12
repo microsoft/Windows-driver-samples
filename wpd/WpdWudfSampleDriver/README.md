@@ -1,3 +1,13 @@
+---
+topic: sample
+name: WPD WUDF sample driver
+description: Demonstrates virtually all aspects of the WPD device driver interface (DDI).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: WPD WUDF sample driver
     platform: UMDF1
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618011
 --->
 
-
-WPD WUDF sample driver
-======================
+# WPD WUDF sample driver
 
 The comprehensive WPD sample driver (WpdWudfSampleDriver) demonstrates virtually all aspects of the Microsoft Windows Portable Devides (WPD) device driver interface (DDI). This driver is built as a normal User-Mode Driver Framework (UMDF) driver that also processes the WPD command set. Although this driver does not interact with actual hardware, it simulates communicating with a device that supports phone contacts, pictures, music, and video.
 
@@ -19,9 +27,7 @@ Some of the tasks that are accomplished by the WpdWudfSampleDriver are written f
 
 For a complete description of this sample and its underlying code and functionality, refer to the [WPD WUDF Sample Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597723) description in the Windows Driver Kit documentation.
 
-
-Related topics
---------------
+## Related topics
 
 [WPD Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff597864)
 

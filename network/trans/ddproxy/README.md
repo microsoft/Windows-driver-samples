@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Windows Filtering Platform Packet Modification Sample
+description: Demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Windows Filtering Platform Packet Modification Sample
     platform: KMDF
@@ -7,13 +17,12 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617930
 --->
 
-
-Windows Filtering Platform Packet Modification Sample
-=====================================================
+# Windows Filtering Platform Packet Modification Sample
 
 The sample driver demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Run the sample

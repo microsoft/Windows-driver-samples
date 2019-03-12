@@ -1,3 +1,13 @@
+---
+topic: sample
+name: KMDF Echo Sample
+description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: KMDF Echo Sample
     platform: KMDF
@@ -7,24 +17,21 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617706
 --->
 
-
-KMDF Echo Sample
-================
+# KMDF Echo Sample
 
 The ECHO (KMDF) sample demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
 
 It also shows how to synchronize execution of these events with other asynchronous events such as request cancellation and DPC.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Related technologies
---------------------
+## Related technologies
 
 [Kernel-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544396)
 
-Code Tour
----------
+## Code Tour
 
 DriverEntry - Creates a framework driver object.
 
@@ -40,8 +47,7 @@ EvtIoRead: Retrieves request memory buffer and copies the data from the buffer c
 
 Since the queue is a sequential queue, only one request is outstanding in the driver.
 
-Testing
--------
+## Testing
 
 **Usage:**
 
@@ -51,8 +57,7 @@ Echoapp.exe -Async --- Send 100 reads and writes asynchronously
 
 Exit the app anytime by pressing Ctrl-C
 
-File Manifest
--------------
+## File Manifest
 
 File
 
@@ -91,4 +96,3 @@ This file merely redirects to the real makefile that is shared by all the driver
 Sources
 
 Generic file that lists source files and all the build options.
-

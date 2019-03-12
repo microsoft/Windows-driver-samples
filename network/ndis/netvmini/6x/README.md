@@ -1,3 +1,13 @@
+---
+topic: sample
+name: NDIS Virtual Miniport Driver
+description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: NDIS Virtual Miniport Driver
     platform: WDM
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617918
 --->
 
-
-NDIS Virtual Miniport Driver
-============================
+# NDIS Virtual Miniport Driver
 
 The NDIS Virtual Miniport Driver sample illustrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
 
@@ -22,4 +30,3 @@ To test the miniport driver, install more than one miniport driver instance. You
 **Note** This sample provides an example of minimal driver intended for education purposes. The driver and its sample test programs are not intended for use in a production environment.
 
 For more information on creating NDIS Miniport Drivers, see [NDIS Miniport Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565949).
-

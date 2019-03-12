@@ -1,3 +1,13 @@
+---
+topic: sample
+name: OpenXPS Documents Print Sample
+description: Contains a set of documents that exercise a variety of features of OpenXPS.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: OpenXPS Documents Print Sample
     platform: Application
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617941
 --->
 
-
-OpenXPS Documents Print Sample
-==============================
+# OpenXPS Documents Print Sample
 
 This sample contains a set of documents that were generated from a variety of sources, including those generated from the Windows Presentation Foundation in the .NET Framework, from Office 2007, and from the Microsoft XPS Document Writer (MXDW). A few of the documents were either hand-built from scratch or hand-modified from another source. They have been included to provide you with a few documents that exercise a variety of features of the XML Paper Specification.
 

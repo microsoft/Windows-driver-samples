@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Windows Filtering Platform Sample
+description: A sample firewall that has a command-line interface which allows adding filters at various WFP layers.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Windows Filtering Platform Sample
     platform: KMDF
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620198
 --->
 
-
-Windows Filtering Platform Sample
-=================================
+# Windows Filtering Platform Sample
 
 The WFPSampler sample driver is a sample firewall. It has a command-line interface which allows adding filters at various WFP layers with a wide variety of conditions. Additionally it exposes callout functions for injection, basic action, proxying, and stream inspection.
 

@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Sensors Combo Driver Sample
+description: Demonstrates how to write UMDF v2 drivers to control various types of virtual sensors.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Sensors Combo Driver Sample
     platform: UMDF2

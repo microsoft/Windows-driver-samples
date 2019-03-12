@@ -1,3 +1,13 @@
+---
+topic: sample
+name: HIDUSBFX2 sample driver
+description: Demonstrates mapping of a non-HID USB device to a HID device.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: HIDUSBFX2 sample driver
     platform: KMDF
@@ -7,10 +17,8 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620190
 --->
 
+# HIDUSBFX2 sample driver
 
-
-HIDUSBFX2 sample driver
-=======================
 The HIDUSBFX2 sample driver (hidusbfx2.sys) demonstrates how to map a non-HID USB device to a HID device.
 
 The sample also demonstrates how to write a HID minidriver using Windows Driver Frameworks (WDF). The minidriver is written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf). Although the device is not HID-compliant, the sample exposes it as a HID device.

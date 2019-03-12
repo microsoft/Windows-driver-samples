@@ -1,3 +1,13 @@
+---
+topic: sample
+name: System Trace Control
+description: Demonstrates how to use event tracing control APIs to collect events from the system trace provider.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: System Trace Control
     platform: Application
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617725
 --->
 
-
-SystemTraceProvider
-===================
+# SystemTraceProvider
 
 This sample application demonstrates how to use event tracing control APIs to collect events from the system trace provider.
 
@@ -18,4 +26,3 @@ The sample code provided shows how to start an [Event Tracing](http://msdn.micro
 You can process the Systemtrace.etl file using Tracerpt.exe, a command-line trace tool included in Windows that formats trace events. It also analyzes the events and generates summary reports. For more information about how to use this tool, see [Tracerpt](http://go.microsoft.com/fwlink/p/?linkid=179389) topic on the TechNet website.
 
 You can also process the file using the [Windows Performance Toolkit](http://go.microsoft.com/fwlink/p/?linkid=250774) (WPT), which is available in the SDK.
-

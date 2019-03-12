@@ -1,3 +1,13 @@
+---
+topic: sample
+name: UMDF SocketEcho Sample (UMDF Version 1)
+description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: UMDF SocketEcho Sample (UMDF Version 1)
     platform: UMDF1
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617709
 --->
 
-
-UMDF SocketEcho Sample (UMDF Version 1)
-=======================================
+# UMDF SocketEcho Sample (UMDF Version 1)
 
 The UMDF SocketEcho sample demonstrates how to use the User-Mode Driver Framework (UMDF) to write a driver and demonstrates best practices.
 
@@ -38,13 +46,13 @@ To test this sample, you must have a test computer. This test computer can be a 
 
 To install the UMDF Echo sample driver from the command line, do the following:
 
-1.  Copy the driver binary and the socketecho.inf file to a directory on your test computer (for example, C:\\ socketechoSample.)
+1. Copy the driver binary and the socketecho.inf file to a directory on your test computer (for example, C:\\ socketechoSample.)
 
-2.  Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\socketechoSample).
+1. Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\socketechoSample).
 
     **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
-3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\socketechoSample), and run DevCon.exe as follows:
+1. Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\socketechoSample), and run DevCon.exe as follows:
 
     `devcon.exe install socketecho.inf WUDF\\socketecho`
 
@@ -52,21 +60,21 @@ To install the UMDF Echo sample driver from the command line, do the following:
 
 To update the socketecho driver after you make any changes, do the following:
 
-1.  Increment the version number in the INF file. This change is not necessary, but it will help ensure that Plug and Play (PnP) selects your new driver as a better match for the device.
+1. Increment the version number in the INF file. This change is not necessary, but it will help ensure that Plug and Play (PnP) selects your new driver as a better match for the device.
 
-2.  Copy the updated driver binary and the socketecho.inf file to a directory on your test computer (for example, C:\\ socketechoSample.)
+1. Copy the updated driver binary and the socketecho.inf file to a directory on your test computer (for example, C:\\ socketechoSample.)
 
-3.  Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\ socketechoSample), and run devcon.exe as follows:
+1. Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\ socketechoSample), and run devcon.exe as follows:
 
   `devcon.exe update socketecho.inf WUDF\\socketecho`
 
 To test this sample drivers on a checked operating system that you have installed (in contrast to the standard retail installations), you must modify the INF file to use the checked version of the UMDF co-installer. That is, you must do the following:
 
-1.  In the INX file, replace all occurrences of WudfUpdate\_*MMmmmm*.dll with WudfUpdate\_*MMmmmm*\_chk.dll.
+1. In the INX file, replace all occurrences of WudfUpdate\_*MMmmmm*.dll with WudfUpdate\_*MMmmmm*\_chk.dll.
 
-2.  Copy the WudfUpdate\_*MMmmmm*\_chk.dll file from the \\redist\\wdf\\\<architecture\> directory to your driver package instead of WudfUpdate\_*MMmmmm*.dll.
+1. Copy the WudfUpdate\_*MMmmmm*\_chk.dll file from the \\redist\\wdf\\\<architecture\> directory to your driver package instead of WudfUpdate\_*MMmmmm*.dll.
 
-3.  If WdfCoinstaller*MMmmmm*.dll or WinUsbCoinstaller.dll is included in your driver package, repeat step 1 and step 2 for them.
+1. If WdfCoinstaller*MMmmmm*.dll or WinUsbCoinstaller.dll is included in your driver package, repeat step 1 and step 2 for them.
 
 Testing
 -------
@@ -79,7 +87,8 @@ First, you must install the device as described earlier. Then, run socketechoser
 
 Usage
 ------
-```
+
+```cmd
 socketechoserver Display Usage
 
 socketechoserver -h Display Usage
@@ -167,5 +176,3 @@ File Manifest
 -------------
 
 **Dllsup.cpp**: The DLL support code that provides the DLL's entry point and the single required export (DllGetClassObject).
-
-

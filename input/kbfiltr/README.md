@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Keyboard Input WDF Filter Driver (Kbfiltr)
+description: A WDF example of a keyboard input filter driver.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Keyboard Input WDF Filter Driver (Kbfiltr)
     platform: KMDF
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620194
 --->
 
-
-Keyboard Input WDF Filter Driver (Kbfiltr)
-==========================================
+# Keyboard Input WDF Filter Driver (Kbfiltr)
 
 The Kbdfltr sample is an example of a keyboard input filter driver.
 
@@ -23,6 +31,7 @@ This driver filters input for a particular keyboard on the system. If you want t
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}\UpperFilters`
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Set the hardware ID in the inx file
@@ -110,4 +119,3 @@ Testing
 To use the test application provided with the sample, it must be copied to the target computer manually. Save the kbftest.exe file from the folder where the build result is placed (for example, exe\\Debug). This file is copied somewhere on the target, possibly where the driver package files are located. The test application is the executed on the target computer in a Command Prompt using **kbftest** as the command.
 
 **Tip** To avoid DLL dependencies for kbftext.exe, and the need to copy additional files, select the statically linked run-time library when building.
-

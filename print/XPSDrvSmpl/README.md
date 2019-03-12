@@ -1,3 +1,13 @@
+---
+topic: sample
+name: XPSDrv Driver and Filter Sample
+description: Provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: XPSDrv Driver and Filter Sample
     platform: DLL
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617950
 --->
 
-
-XPSDrv Driver and Filter Sample
-===============================
+# XPSDrv Driver and Filter Sample
 
 This sample is intended to provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver. This goal is accomplished by implementing a number of real-world features within a set of XPS print pipeline filters that are configured through a configuration plug-in that supports custom UI content and PrintTicket handling.
 
@@ -19,44 +27,41 @@ This sample is intended to provide a starting point for developing XPSDrv printe
 
 The sample broadly consists of three components: a set of filters, a configuration plug-in for handling custom UI content, and a configuration plug-in for handling more advanced PrintTicket features. For more information, see [XPS Printing Features](https://docs.microsoft.com/en-us/windows-hardware/drivers/print/xps-printing-features).
 
-
-Build the sample
-----------------
+## Build the sample
 
 To build a driver solution using Windows Driver Kit (WDK) 10 and Visual Studio 2017, perform the following steps.
 
 1. Open the solution file in Visual Studio 2017.
-2. Add all non-binary files (usually located in the \\install directory of the sample) to the Package project:
+1. Add all non-binary files (usually located in the \\install directory of the sample) to the Package project:
    1. In the **Solution Explorer**, expand the **package** project and right click **Driver Files**
-   2. Select **Add**, then click **Existing Item**
-   3. Navigate to the location to which you downloaded the sample, and select all the files in the **install** directory, or the equivalent set of non-binary files such as INFs, INIs, GPD, PPD files, etc.
-   4. Click **Add**
-3. Configure these files to be added into the driver package:
+   1. Select **Add**, then click **Existing Item**
+   1. Navigate to the location to which you downloaded the sample, and select all the files in the **install** directory, or the equivalent set of non-binary files such as INFs, INIs, GPD, PPD files, etc.
+   1. Click **Add**
+1. Configure these files to be added into the driver package:
    1. In the **Solution Explorer**, right click on the solution and choose **Add** > **New Project**. Choose **Driver Install Package** under Visual C++/Windows Driver/Package.
-   2. In the **Solution Explorer**, right click the **Driver Package** project and select **Properties**.
-   3. In the left pane, click **Configuration Properties** \> **Driver Install** \> **Package Files**. (If **Package Files** is not available, you may need to re-install the **Windows Driver Kit**.)
-   4. In the right pane, click **<Edit...>** and use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All of the data files added in **Step 2.iii**, except the INF file, should be added. This configuration is per architecture, so this configuration must be repeated for each architecture that will be built.
-   5. Click **OK**.
-4. Add a reference to the driver package.
+   1. In the **Solution Explorer**, right click the **Driver Package** project and select **Properties**.
+   1. In the left pane, click **Configuration Properties** \> **Driver Install** \> **Package Files**. (If **Package Files** is not available, you may need to re-install the **Windows Driver Kit**.)
+   1. In the right pane, click **<Edit...>** and use the ellipsis button (...) to browse to the set of files that needs to be added to the driver package. All of the data files added in **Step 2.iii**, except the INF file, should be added. This configuration is per architecture, so this configuration must be repeated for each architecture that will be built.
+   1. Click **OK**.
+1. Add a reference to the driver package.
    1. In the **Solution Explorer**, right click the **package** project and select **Add Reference**.
-   2. In the right pane, check the **Driver Package** created in step 3.
-   3. Click **OK**.
-5. Open the INF file and edit it to match the built output.
+   1. In the right pane, check the **Driver Package** created in step 3.
+   1. Click **OK**.
+1. Open the INF file and edit it to match the built output.
    1. Open the INF file.
-   2. In the Version section, add a reference to a catalog file like this: CatalogFile=XpsDrvSmpl.cat.
-   3. In the SourceDisksFiles section, change the location of the DLL files you are building to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually.
+   1. In the Version section, add a reference to a catalog file like this: CatalogFile=XpsDrvSmpl.cat.
+   1. In the SourceDisksFiles section, change the location of the DLL files you are building to =1. This indicates that there is no architecture specific directory in this driver. If you ship multiple architectures simultaneously, you will need to collate the driver INF manually.
 
 At this point, Visual Studio 2017 will be able to build a driver package and output the files to disk. In order to configure driver signing and deployment, see [Developing, Testing, and Deploying Drivers](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/).
 
 **Note** If you compile your sample driver with Microsoft Visual Studio version 10, or 11 with the \_DEBUG flag set, then you should not use CComVariant on the following two XPS Print Filter Pipeline properties:
 
--   XPS\_FP\_USER\_TOKEN
--   XPS\_FP\_PRINTER\_HANDLE
+- XPS\_FP\_USER\_TOKEN
+- XPS\_FP\_PRINTER\_HANDLE
 
 There is a known issue with the current implementation of the Print Filter Pipeline, where the variant type for these two properties is set to VT\_BYREF. And as a result of this known issue, any filter binary that is compiled with the \_DEBUG flag set will experience the ATLASSERT() failure. This is because when you use the CComVariant, its destructor checks the returned value from the Clear() function, as shown:
 
-
-```c_cpp
+```cpp
 ~CComVariant() throw()
 {
    HRESULT hr = Clear();
@@ -67,18 +72,16 @@ There is a known issue with the current implementation of the Print Filter Pipel
 
 When you compile this sample driver with Visual Studio version 9, you don't experience this problem because the destructor for CComVariant doesn't perform this check on the returned value from the Clear() function.
 
-Installation
-------------
+## Installation
 
 The sample has the following prerequisites:
 
--   Microsoft XPS Document Writer print driver and the XPS filter-pipeline infrastructure.
--   Microsoft MSXML 6.0
+- Microsoft XPS Document Writer print driver and the XPS filter-pipeline infrastructure.
+- Microsoft MSXML 6.0
 
 Install the driver through the **Add Printer Wizard** by selecting \<driver root\>\\install as the source for the driver install.
 
-Design and Operation
---------------------
+## Design and Operation
 
 ### Overview
 
@@ -88,9 +91,9 @@ The Page Scaling filter is written by using the stream interface to attempt to d
 
 Two interfaces are defined in *ipkarch.h* and *ipkfile.h* that need support from an additional PK archive handling module called pkarch.dll. Pkarch.dll is a file that is included in the [PKWare SDK](http://www.pkware.com/software/developer-tools/sdk/pkzip-standard-toolkit). If this module is not present, the page scaling filter sample will revert to merely copying the data from the read stream to the write stream. Developers who are using this sample can choose one of the following options:
 
--   Simplify the scaling filter to use the XPS interfaces (like the other four filters)
--   License the third-party zip library that is used in the sample
--   Modify the sample to use another ZIP library. For example, you can modify the sample to use the [Packaging API Reference](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/opc/packaging-programming-reference)
+- Simplify the scaling filter to use the XPS interfaces (like the other four filters)
+- License the third-party zip library that is used in the sample
+- Modify the sample to use another ZIP library. For example, you can modify the sample to use the [Packaging API Reference](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/opc/packaging-programming-reference)
 
 IPKArch defines an interface for initializing, controlling, and accessing the PK archive. IPKFile defines an interface that abstracts the details of a PK archive file header record from the XPS container handling. Access to the files within the archive is provided through a map between the file name and file objects that support the IPKFile interface. This allows the XPS processing code to retrieve file data by name (a convenience as the interaction between parts and relationships between parts is defined using the part name).
 
@@ -100,10 +103,10 @@ There are five filters that are split into two types: four use the XPS filter in
 
 The four filters that use the XPS interface provide support for the following:
 
--   The Watermark Filter is responsible for adding mark-up to Fixed Page content to express textual, bitmap, and vector-based watermarks.
--   The Booklet Filter is responsible for page re-ordering and padding page insertion to create booklets from the XPS document. Note that this filter re-uses the NUp filter to provide appropriate page transformation.
--   The NUp Filter is responsible for transforming and combining logical pages onto physical pages to provide multiple page per sheet support.
--   The Color Management Filter is responsible for constructing and applying color transforms to Fixed Page content.
+- The Watermark Filter is responsible for adding mark-up to Fixed Page content to express textual, bitmap, and vector-based watermarks.
+- The Booklet Filter is responsible for page re-ordering and padding page insertion to create booklets from the XPS document. Note that this filter re-uses the NUp filter to provide appropriate page transformation.
+- The NUp Filter is responsible for transforming and combining logical pages onto physical pages to provide multiple page per sheet support.
+- The Color Management Filter is responsible for constructing and applying color transforms to Fixed Page content.
 
 The stream interface filter provides Page Scaling support (that is, wrapping content with the appropriate transforms to scale from a source Fixed Page to the destination).
 
@@ -139,9 +142,9 @@ The Watermark filter is intended to demonstrate adding presentation content to t
 
 The filter is configured by parsing an input PrintTicket by using DOM to extract the relevant features and options. If the functionality is enabled, the filter processes the document as required. The PrintTicket is constructed through the following algorithm to provide settings at the appropriate scope (Fixed Document Sequence, Fixed Document and Fixed Page):
 
-1.  Validate and merge the print ticket from the FDS with the default PrintTicket converted from the default DevMode in the property bag. The resultant ticket will be the Job level ticket.
-2.  Validate and merge the print ticket from the current FD with the Job level ticket from step 1. The resultant ticket will be the document level ticket.
-3.  Validate and merge the print ticket from the current FP with the Doc level ticket from step 2. The resultant ticket will be the page level ticket.
+1. Validate and merge the print ticket from the FDS with the default PrintTicket converted from the default DevMode in the property bag. The resultant ticket will be the Job level ticket.
+1. Validate and merge the print ticket from the current FD with the Job level ticket from step 1. The resultant ticket will be the document level ticket.
+1. Validate and merge the print ticket from the current FP with the Doc level ticket from step 2. The resultant ticket will be the page level ticket.
 
 When a watermark is enabled in the PrintTicket, the filter creates a watermark of the appropriate type (text, raster, or vector). This is returned as a generic watermark interface that abstracts the watermark type from the filter. The filter then calls the watermark object to send any resources that it may require to the filter pipeline (the font for text, the bitmap for raster, and none for vector). All resources are added through a resource cache that enables the watermark object to ignore any problems with sending repeated resources (the cache checks if the resource is present and only sends it if it has not seen the resource before). With the resource in place, the filter instantiates a SAX handler passing the watermark object. The SAX handler is used to parse the Fixed Page, allowing the filter to control when it inserts the watermark into the Fixed Page; when underlay is required, the mark-up is inserted when the FixedPage start element is encountered and when overlay is required the mark-up is inserted when FixedPage end element is encountered. By passing the abstracted watermark object, the SAX handler can be re-used for any watermark as it merely requests appropriate mark-up from the watermark object and inserts it into the Fixed Page mark-up as appropriate.
 
@@ -149,16 +152,16 @@ When a watermark is enabled in the PrintTicket, the filter creates a watermark o
 
 XPS documents can contain a range of vector elements that contain color data that describes how the elements should be rendered on a specific device. The following elements support color data:
 
--   Color
--   Fill
--   Stroke
+- Color
+- Fill
+- Stroke
 
 When any of these elements are found in a fixed page, the SAX handler passes the associated color data to a color conversion object. This uses the following algorithm to convert the color:
 
-1.  The XML mark-up is broken down into color channel values, color channel value types, color format, and any other color details contained in the color mark-up string.
-2.  The resulting values are color transformed in conjunction with preferences defined in the PrintTicket. The result is a new set of color values.
-3.  These new values are used to reconstructs a color reference containing the new color values.
-4.  The newly constructed color reference is used in place of the original color reference, resulting in the transformed color output.
+1. The XML mark-up is broken down into color channel values, color channel value types, color format, and any other color details contained in the color mark-up string.
+1. The resulting values are color transformed in conjunction with preferences defined in the PrintTicket. The result is a new set of color values.
+1. These new values are used to reconstructs a color reference containing the new color values.
+1. The newly constructed color reference is used in place of the original color reference, resulting in the transformed color output.
 
 ### Bitmap Resources
 
@@ -170,11 +173,11 @@ After the color managed bitmap object is created, the object is passed to a reso
 
 If a bitmap has not been handled yet, the caching manager calls a write data method in the color bitmap object to indicate that the bitmap should write itself out to the filter pipeline. The write process also includes the application of a color transform to the bitmap. The following steps occur to apply the transform:
 
-1.  A stream is created to the bitmap itself and the bitmap is loaded into memory.
-2.  A bitmap codec object is created that takes the bitmap and uses an appropriate codec to decompress the bitmap and present the bitmap data and values.
-3.  The bitmap data is then converted by using a color transform supplied by the color profile management class.
-4.  The bitmap codec object re-encodes the bitmap by using a matching codec to that used to decode the bitmap.
-5.  The encoded bitmap is streamed back out to the container.
+1. A stream is created to the bitmap itself and the bitmap is loaded into memory.
+1. A bitmap codec object is created that takes the bitmap and uses an appropriate codec to decompress the bitmap and present the bitmap data and values.
+1. The bitmap data is then converted by using a color transform supplied by the color profile management class.
+1. The bitmap codec object re-encodes the bitmap by using a matching codec to that used to decode the bitmap.
+1. The encoded bitmap is streamed back out to the container.
 
 ### Booklet Filter
 
@@ -196,58 +199,53 @@ New canvases are added to the new fixed page mark-up until the document contains
 
 In addition to the NUp feature processing, the NUp filter is re-used to apply the 2-Up processing required for booklet printing. This is achieved by looking for a valid binding option in the PrintTicket and applying 2-Up as appropriate.
 
-Page Scaling Filter
--------------------
+## Page Scaling Filter
 
 The page scaling filter is intended to demonstrate how a filter can transform vector mark-up within a XPS container by using the stream interface as the source of the XPS document. The PrintTicket can contain page scaling preferences that the filter uses to amend page dimension values in each fixed page processed.
 
 Within the filter, SAX is used to parse the XPS container with each fixed page being read, amended, and written back out. The modification of the fixed page mark-up begins by modifying the fixed page dimensions to match the target page size specified in the print ticket for the current fixed page. Subsequently, the fixed page content is scaled to correctly fit the target scale by applying a canvas around the source content that includes a transformation matrix. The SAX handler is supported by a page scale class which manages the creation of a transformation matrix and the presentation of the matrix correctly formatted for use in the fixed page.
 
-XPS Container Handling
-----------------------
+## XPS Container Handling
 
 The stream filter is required to handle the Open Packaging conventions that are used by an XPS document. These conventions can be thought of as the document structure above that of the PK archive itself. Sources for a set of classes are provided that support processing of the XPS document in terms of the constituent files in the PK archive. This includes:
 
--   Initiating the document processing based on the root relationships part defined in the package.
--   Validation of the parts within the package against their content type and usage.
--   Processing of Fixed Document Sequence and all resources associated with it.
--   Processing of the Fixed Documents within the Fixed Document Sequence and all resources associated with them.
--   Processing of the Fixed Page parts with the Fixed Documents and all resources associated with them.
--   Passing Fixed Page content processing to a registered FP handler for modification.
--   Passing all parts on to a PK archive handling module with valid ordering.
+- Initiating the document processing based on the root relationships part defined in the package.
+- Validation of the parts within the package against their content type and usage.
+- Processing of Fixed Document Sequence and all resources associated with it.
+- Processing of the Fixed Documents within the Fixed Document Sequence and all resources associated with them.
+- Processing of the Fixed Page parts with the Fixed Documents and all resources associated with them.
+- Passing Fixed Page content processing to a registered FP handler for modification.
+- Passing all parts on to a PK archive handling module with valid ordering.
 
 The XPS processor is not responsible for extracting or decompressing part data from the PK archive. This task is the responsibility of an additional module that implements an interface known to the XPS container handling code.
 
-UI Plug-in
-----------
+## UI Plug-in details
 
 The UI Plug-in is intended to demonstrate how to extend the standard Unidrv UI to add additional property sheets and controls and to provide support for custom features that are not supported by the core Unidrv UI. Three new pages have been added that allow control of the sample filters:
 
--   Color--enables configuration of the color conversion filter.
--   Watermarks--enables a watermark to be selected and enable configuration of its properties for use in the watermark filter.
--   Features--includes controls to configure the page scaling, booklet, and NUp filters. In addition, the standard driver settings--duplex, intent, and page borders--can also be modified.
+- Color--enables configuration of the color conversion filter.
+- Watermarks--enables a watermark to be selected and enable configuration of its properties for use in the watermark filter.
+- Features--includes controls to configure the page scaling, booklet, and NUp filters. In addition, the standard driver settings--duplex, intent, and page borders--can also be modified.
 
 Various UI control types have been implemented on these property pages to enable a user to modify settings in the driver. The UI supports the following control types:
 
--   Check-box
--   Combo-box
--   List-Box
--   Edit-Box
--   Edit number (with buddy up/down control)
+- Check-box
+- Combo-box
+- List-Box
+- Edit-Box
+- Edit number (with buddy up/down control)
 
 The settings that associated with each of these controls are stored as one the following types:
 
--   GPD options. These settings are defined in the sample driver GPD configuration file and are handled by the Unidrv core via the CPSUI interface. All GPD options that are managed from the UI plug-in are hidden from the standard Unidrv Treeview dialog box.
--   OEM private DevMode. These settings are settings that cannot be represented in the GPD file format (for example, numerical values and strings). They are instead added to the DevMode at a private offset.
+- GPD options. These settings are defined in the sample driver GPD configuration file and are handled by the Unidrv core via the CPSUI interface. All GPD options that are managed from the UI plug-in are hidden from the standard Unidrv Treeview dialog box.
+- OEM private DevMode. These settings are settings that cannot be represented in the GPD file format (for example, numerical values and strings). They are instead added to the DevMode at a private offset.
 
 The Unidrv UI Plug-in interface includes methods that allow additional property pages to be inserted into the drivers property sheet. In the sample, only additional document property pages are implemented because there are no device property pages required. A collection of property page objects are stored at the plug-in interface level, each of which is responsible for the three property pages (Color, Watermarks, and Features). Each property page object creates a Microsoft Windows property page from a dialog resource and handles all Windows Messages that are received through a common dialog procedure. A collection of UI control objects are stored in the property page, one for each Windows control on the page.
 
 When a property page receives a message for a control, it looks up the relevant control in the collection (by using the resource identifier) and calls the appropriate method in the control interface, given the Windows message. Each control object is responsible for handling its own initialization and any user input through the appropriate get and set functions. The sample get and set functions provide an interface to read and update the GPD options and OEM private DevMode.
 
-PrintTicket Provider Plug-in
-----------------------------
+## PrintTicket Provider Plug-in
 
 The sample Print Ticket Provider plug-in is intended to demonstrate how to validate and map driver settings from a DevMode description to a Print Ticket description and back again. The driver allows configuration of custom settings through a custom user interface. These custom settings are represented as either GPD options or in the OEM private DevMode and are mapped to and from the Print Ticket using an XML schema.
 
 To support Print Ticket handling, the Unidrv UI Plug-in Print Ticket Provider Interface is utilized. The Unidrv UI Plug-in interface includes methods that allow mapping of DevMode to and from a Print Ticket Schema. A collection of feature conversion objects are stored at the plug-in interface level, each of which is responsible for the conversion of a specific feature (Color, Watermark, Booklet, Scaling, and NUp). Whenever the Unidrv core calls through the external interface of the plug-in to convert from DevMode to Print Ticket or Print Ticket to DevMode, the collection is iterated through calling each conversion object in turn; each then perform its own DevMode/Print Ticket mapping via the appropriate get and set functions. The sample get and set functions provide an interface to read and write the GPD options, OEM private DevMode, and Print Ticket keyword value pairs.
-

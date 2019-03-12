@@ -1,3 +1,13 @@
+---
+topic: sample
+name: AddFilter Storage Filter Tool
+description: A command-line application that adds and removes filter drivers for a given drive or volume.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: AddFilter Storage Filter Tool
     platform: Application
@@ -7,14 +17,11 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617980
 --->
 
-
-AddFilter Storage Filter Tool
-=============================
+# AddFilter Storage Filter Tool
 
 Addfilter is a command-line application that adds and removes filter drivers for a given drive or volume. This application demonstrates how to insert a filter driver into the driver stack of a device. The sample illustrates how to insert such a filter driver by using the SetupDi API.
 
-Installation and Operation
---------------------------
+## Installation and Operation
 
 This initial sample does not check the filter for validity before it is added to the driver stack. If an invalid filter is added, the specified device might no longer be accessible.
 
@@ -30,7 +37,6 @@ Because the sample currently enumerates only disk devices, the sample can operat
 
 The following is the command line usage for addfilter:
 
-**addfilter [/listdevices] [/device device\_name] [/add filter] [/remove filter]**
+    **addfilter [/listdevices] [/device device\_name] [/add filter] [/remove filter]**
 
 If the device name is not supplied, settings will apply to all devices. If there is no /add or /remove argument, a list of currently installed drivers will be printed.
-

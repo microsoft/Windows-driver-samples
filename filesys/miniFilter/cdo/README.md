@@ -1,3 +1,13 @@
+---
+topic: sample
+name: CDO File System Minifilter Driver
+description: An example of using a control device object (CDO) with a minifilter.
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: CDO File System Minifilter Driver
     platform: WDM
@@ -7,15 +17,14 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617646
 --->
 
-
-CDO File System Minifilter Driver
-=================================
+# CDO File System Minifilter Driver
 
 The CDO minifilter sample is an example if you intend to use a control device object (CDO) with your minifilters.
 
 Although the filter manager infrastructure provides a message interface for communication between applications and minifilters, you might need explicit CDOs while the minifilters interface with legacy software. This sample shows how to create and use a CDO with minifilters.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Design and Operation

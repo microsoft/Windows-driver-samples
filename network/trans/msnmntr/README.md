@@ -1,3 +1,13 @@
+---
+topic: sample
+name: Windows Filtering Platform MSN Messenger Monitor Sample
+description: Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP).
+languages:
+  - cpp
+products:
+  - windows
+---
+
 <!---
     name: Windows Filtering Platform MSN Messenger Monitor Sample
     platform: KMDF
@@ -7,9 +17,7 @@
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617932
 --->
 
-
-Windows Filtering Platform MSN Messenger Monitor Sample
-=======================================================
+# Windows Filtering Platform MSN Messenger Monitor Sample
 
 This sample application and driver demonstrate the stream inspection capabilities of the Windows Filtering Platform (WFP).
 
