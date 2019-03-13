@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: SimThermalClient - Simulated Thermal Client Sample Driver
 description: Simulates a device that is a Windows thermal management client.
 languages:
 - cpp
