@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Power Framework (PoFx) Sample (UMDF Version 2)
 description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
 languages:
   - cpp

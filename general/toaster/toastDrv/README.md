@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Toaster Sample Driver
 description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
 languages:
   - cpp

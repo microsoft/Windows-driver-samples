@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Eventdrv
 description: Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver.
 languages:
   - cpp

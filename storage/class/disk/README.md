@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Disk Class Driver
 description: A class driver for disk devices.
 languages:
   - cpp

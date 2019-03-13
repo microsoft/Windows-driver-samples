@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Scanner File System Minifilter Driver
 description: A file data scanner example. Typically, anti-virus filters are of this type.
 languages:
   - cpp

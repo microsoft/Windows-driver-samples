@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: HClient sample application
 description: Demonstrates how to write a user-mode client application that communicates with HID devices.
 languages:
   - cpp

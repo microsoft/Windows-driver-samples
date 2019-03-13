@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: NDIS Connection-less Protocol WDM Driver Sample
 description: Demonstrates a connection-less NDIS 6.0 protocol WDM driver.
 languages:
   - cpp

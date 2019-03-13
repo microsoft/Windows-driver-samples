@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: AVStream simulated hardware sample driver (Avshws)
 description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
 languages:
   - cpp

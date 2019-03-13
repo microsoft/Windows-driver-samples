@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: AddFilter Storage Filter Tool
 description: A command-line application that adds and removes filter drivers for a given drive or volume.
 languages:
   - cpp

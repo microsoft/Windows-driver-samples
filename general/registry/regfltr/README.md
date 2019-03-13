@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: RegFltr Sample Driver
 description: Demonstrates how to write a registry filter driver.
 languages:
   - cpp

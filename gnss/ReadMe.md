@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: GNSS UMDF Sample Driver (UMDF Version 2)
 description: Provides base sample driver that IHVs and partners can use to extend to build their custom Windows GPS/GNSS drivers.
 languages:
   - cpp

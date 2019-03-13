@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: PLX9x5x PCI Driver
 description: Demonstrates how to write a driver for a generic PCI device using Windows Driver Frameworks (WDF).
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Keyboard Input WDF Filter Driver (Kbfiltr)
 description: A WDF example of a keyboard input filter driver.
 languages:
   - cpp

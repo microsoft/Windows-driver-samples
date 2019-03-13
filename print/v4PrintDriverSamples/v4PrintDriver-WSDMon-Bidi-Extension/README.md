@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WSDMon Bidi Extension Sample
 description: Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
 languages:
   - xml

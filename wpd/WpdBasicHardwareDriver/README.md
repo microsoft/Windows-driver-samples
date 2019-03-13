@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WPD Basic Hardware Sample Driver
 description: Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller.
 languages:
   - cpp

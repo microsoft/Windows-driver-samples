@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Filtering Platform MSN Messenger Monitor Sample
 description: Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP).
 languages:
   - cpp

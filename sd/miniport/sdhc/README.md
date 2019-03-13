@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Standard SD Host Controller Miniport
 description: Provides a functional miniport implementation for a standard SD host controller.
 languages:
   - cpp

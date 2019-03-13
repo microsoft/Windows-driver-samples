@@ -1,7 +1,6 @@
 ---
 topic: sample
-name: iSCSI WMI Client
-description: A WMI iSCSI miniport that can be tested using the iSCSICLI.exe tool, the iSCSI Initiator Properties page, the WBEMTEST.exe tool, and customized WMI scripts.
+description: A WMI iSCSI miniport that can be tested using the iSCSICLI.exe tool.
 languages:
   - cpp
 products:

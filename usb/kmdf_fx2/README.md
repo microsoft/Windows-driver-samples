@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Sample KMDF Function Driver for OSR USB-FX2
 description: Demonstrates how to use KMDF to perform bulk and interrupt data transfers to a USB device.
 languages:
   - cpp

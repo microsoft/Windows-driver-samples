@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WPD Hello World Sample
 description: Supports four objects - a device object, a storage object, a folder object, and a file object.
 languages:
   - cpp

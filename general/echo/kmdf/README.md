@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: KMDF Echo Sample
 description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
 languages:
   - cpp

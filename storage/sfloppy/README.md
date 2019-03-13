@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Super Floppy (sfloppy) Storage Class Driver
 description: A sample class driver for Super Floppy disk drives.
 languages:
   - cpp

@@ -17,7 +17,7 @@ products:
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617992
 --->
 
-# SimThermalClient: Simulated Thermal Client Sample Driver
+# SimThermalClient - Simulated Thermal Client Sample Driver
 
 This sample is a driver for a simulated device that is a client of Windows thermal management. This driver publishes a [GUID\_THERMAL\_COOLING\_INTERFACE](http://msdn.microsoft.com/en-us/library/windows/hardware/hh698265) driver interface. Drivers publish this interface so that they can participate in global thermal management under the coordination of the Windows operating system.
 

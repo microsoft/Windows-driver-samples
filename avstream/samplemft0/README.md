@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Driver MFT Sample
 description: A driver MFT for use with a camera's Windows device app.
 languages:
   - cpp

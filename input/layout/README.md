@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Keyboard Layout Samples
 description: Demonstrates how to generate layouts for various keyboards and locales.
 languages:
   - cpp

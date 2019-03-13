@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Print Driver Constraints Sample
 description: Demonstrates how to implement advanced constraint handling and PrintTicket/PrintCapabilities handling using JavaScript.
 languages:
   - javascript

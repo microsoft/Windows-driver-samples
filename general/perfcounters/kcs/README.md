@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Kernel Counter Sample (Kcs)
 description: Demonstrates the use of the kernel-mode performance library.
 languages:
   - cpp

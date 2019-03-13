@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Filtering Platform Stream Edit Sample
 description: Demonstrates replacing a string pattern for a Transmission Control Protocol (TCP) connection using the Windows Filtering Platform (WFP).
 languages:
   - cpp

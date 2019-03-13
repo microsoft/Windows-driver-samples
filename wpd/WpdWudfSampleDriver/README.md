@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WPD WUDF sample driver
 description: Demonstrates virtually all aspects of the WPD device driver interface (DDI).
 languages:
   - cpp

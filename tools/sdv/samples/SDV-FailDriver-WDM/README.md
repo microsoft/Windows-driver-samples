@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: SDV-FailDriver-WDM
 description: Demonstrates how Static Driver Verifier (SDV) can find errors in a WDM driver.
 languages:
   - cpp

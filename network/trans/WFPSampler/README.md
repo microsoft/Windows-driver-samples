@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Filtering Platform Sample
 description: A sample firewall that has a command-line interface which allows adding filters at various WFP layers.
 languages:
   - cpp

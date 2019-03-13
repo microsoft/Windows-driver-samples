@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Delete File System Minifilter Driver
 description: Demonstrates how to detect deletions of files or streams.
 languages:
   - cpp

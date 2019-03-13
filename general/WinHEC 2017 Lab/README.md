@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WinHEC 2017 Lab
 description: WinHEC 2017 Lab
 languages:
   - cpp

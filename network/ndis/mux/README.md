@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: NDIS MUX Intermediate Driver and Notify Object
 description: An NDIS 6.0 driver that demonstrates the operation of an N:1 MUX driver.
 languages:
   - cpp

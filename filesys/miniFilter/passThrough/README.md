@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: PassThrough File System Minifilter Driver
 description: Demonstrates how to specify callback functions for different types of I/O requests.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Printer Extension Sample
 description: Demonstrates how to use .NET to build a customized, desktop UI for a v4 print driver.
 languages:
 - csharp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: OEM Printer Customization Plug-in Samples
 description: Provides examples of how to build OEM printer customization plug-ins.
 languages:
   - cpp

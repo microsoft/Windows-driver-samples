@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: SDV-FailDriver-STORPORT
 description: Demonstrates how Static Driver Verifier (SDV) can find errors in a Storport driver.
 languages:
   - cpp

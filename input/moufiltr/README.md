@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Mouse Input WDF Filter Driver (Moufiltr)
 description: A WDF example of a mouse input filter driver.
 languages:
   - cpp

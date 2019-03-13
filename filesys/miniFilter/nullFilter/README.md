@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: NullFilter File System Minifilter Driver
 description: A minifilter that demonstrates registration with the filter manager.
 languages:
   - cpp

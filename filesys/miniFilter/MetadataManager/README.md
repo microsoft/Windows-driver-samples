@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Metadata Manager File System Minifilter Driver
 description:  An example of how to use files for storing metadata that corresponds to minifilters.
 languages:
   - cpp

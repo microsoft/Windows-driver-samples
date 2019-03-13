@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WPD multi-transport sample driver
 description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
 languages:
   - cpp

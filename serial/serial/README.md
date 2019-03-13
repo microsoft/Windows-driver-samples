@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Serial Port Driver
 description: The Serial (16550-based RS-232) sample driver is a WDF version of the inbox Serial.sys driver.
 languages:
   - cpp

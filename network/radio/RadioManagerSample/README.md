@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Radio Management Sample
 description: Demonstrates how to structure a Radio Manager for use with the Windows Radio Management APIs.
 languages:
   - cpp

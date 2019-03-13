@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Print auto-configuration sample
 description: Demonstrates how to implement auto-configuration in v4 print drivers.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: UcmTcpciCx Port Controller Client Driver
 description: Demonstrates how to create a Windows USB Type-C port controller driver using the USB Connector Manager Type-C Port Controller Interface class extension driver (UcmTcpciCx).
 languages:
   - cpp

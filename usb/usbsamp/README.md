@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Usbsamp Generic USB Driver
 description: Demonstrates how to perform full speed, high speed, and SuperSpeed transfers to and from bulk and isochronous endpoints of a generic USB device.
 languages:
   - cpp

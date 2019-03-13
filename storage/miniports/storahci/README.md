@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: StorAHCI StorPort Miniport
 description: A sample Storport ACHI miniport driver.
 languages:
   - cpp

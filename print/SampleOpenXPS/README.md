@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: OpenXPS Documents Print Sample
 description: Contains a set of documents that exercise a variety of features of OpenXPS.
 languages:
   - cpp

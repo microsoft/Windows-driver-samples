@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: XPS Rasterization Filter Service Sample
 description: Implements an XPSDrv filter that rasterizes fixed pages in an XPS document.
 languages:
   - cpp

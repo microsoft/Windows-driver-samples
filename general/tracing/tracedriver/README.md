@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Tracedrv
 description: A sample driver instrumented for software tracing.
 languages:
   - cpp

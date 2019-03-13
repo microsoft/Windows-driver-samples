@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Change File System Minifilter Driver
 description: A transaction-aware filter that monitors file changes in real time.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Magnetic Stripe Reader Driver Sample
 description: This UMDF version 2 sample serves as a template for creating a new Magnetic Stripe Reader driver.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: IOCTL
 description: Demonstrates usage of four different types of IOCTLs.
 languages:
   - cpp

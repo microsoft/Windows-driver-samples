@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: NameChanger File System Minifilter Driver
 description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
 languages:
   - cpp

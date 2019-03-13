@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Ctx File System Minifilter Driver
 description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter.
 languages:
   - cpp

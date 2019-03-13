@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: TrEE sample
 description: The Trusted Execution Environment (TrEE) sample.
 languages:
   - cpp

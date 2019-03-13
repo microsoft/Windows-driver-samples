@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: UMDF SocketEcho Sample (UMDF Version 1)
 description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices.
 languages:
   - cpp

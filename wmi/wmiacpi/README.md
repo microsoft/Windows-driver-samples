@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WMIACPI Sample
 description: Contains ACPI BIOS and WMI sample code that enables instrumentation of the ACPI BIOS from within ACPI Source Language (ASL) code.
 languages:
   - cpp

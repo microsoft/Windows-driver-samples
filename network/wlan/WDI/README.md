@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: WDI samples
 description: Demonstrates use of the WLAN WDI.
 languages:
   - cpp

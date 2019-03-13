@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Sample UMDF Function Driver for OSR USB-FX2 (UMDF version 1)
 description: A UMDF driver for the OSR USB-FX2 device that includes a test application, sample device metadata, and supports impersonation and idle power down.
 languages:
   - cpp

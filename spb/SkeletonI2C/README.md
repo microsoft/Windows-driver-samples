@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Skeleton I2C Sample Driver
 description: Demonstrates how to design a KMDF controller driver for Windows that conforms to the simple peripheral bus (SPB) device driver interface (DDI).
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: HIDUSBFX2 sample driver
 description: Demonstrates mapping of a non-HID USB device to a HID device.
 languages:
   - cpp

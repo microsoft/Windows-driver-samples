@@ -1,7 +1,6 @@
 ﻿---
 topic: sample
-name: Windows Image Acquisition (WIA) Driver Samples
-description: Contains samples and test tools for Windows Image Acquisition (WIA), a driver architecture and user interface for acquiring images from still image devices such as scanners.
+description: Contains samples and test tools for Windows Image Acquisition (WIA).
 languages:
   - cpp
 products:

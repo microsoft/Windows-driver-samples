@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: The Serial (16550-based RS-232) sample driver is a WDF version of the inbox Serial.sys driver.
 description: Demonstrates a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
 languages:
   - cpp

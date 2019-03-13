@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: CancelSafe File System Minifilter Driver
 description: A minifilter demonstrating the use of cancel-safe queues.
 languages:
   - cpp

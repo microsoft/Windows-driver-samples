@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: XPSDrv Driver and Filter Sample
 description: Provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver.
 languages:
   - cpp

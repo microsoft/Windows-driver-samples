@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Print Pipeline Simple Filter
 description: This sample shows how to use the print pipeline's filter interfaces.
 languages:
   - cpp

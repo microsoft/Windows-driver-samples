@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: ObCallback Callback Registration Driver
 description: Demonstrates the use of registered callbacks for process protection.
 languages:
   - cpp

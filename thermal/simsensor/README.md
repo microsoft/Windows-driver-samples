@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: SimSensor - Simulated Temperature Sensor Sample Driver
 description: Demonstrates a simulated temperature sensor device.
 languages:
   - cpp
@@ -17,7 +16,7 @@ products:
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617991
 --->
 
-# SimSensor: Simulated Temperature Sensor Sample Driver
+# SimSensor - Simulated Temperature Sensor Sample Driver
 
 This sample is a driver for a simulated temperature sensor device.
 

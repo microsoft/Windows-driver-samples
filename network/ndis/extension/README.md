@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Hyper-V Extensible Switch extension filter driver
 description: A base library used to implement a Hyper-V Extensible Switch extension filter driver.
 languages:
   - cpp

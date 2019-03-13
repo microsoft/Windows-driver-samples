@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: NDIS Virtual Miniport Driver
 description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
 languages:
   - cpp

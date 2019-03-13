@@ -1,7 +1,6 @@
 ---
 topic: sample
-name: AvsCamera - AVStream Camera Sample Driver
-description: Provides a pin-centric AVStream capture driver for a simulated front and back camera that performs simulated captures at 320x240 or 640x480 in RGB24, RGB32, YUY2 and NV12 formats at various frame rates.
+description: Provides a pin-centric AVStream capture driver for a simulated front and back camera that performs simulated captures..
 urlFragment: avscamera
 languages:
   - cpp

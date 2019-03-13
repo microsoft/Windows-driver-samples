@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Radio Switch Test Driver for OSR USB-FX2 Development Board
 description: Demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Near-Field Proximity Sample Driver (UMDF Version 1)
 description: Demonstrates how to use UMDF version 1 to write a near-field proximity driver.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: UMDF Driver Skeleton Sample (UMDF version 1)
 description: Demonstrates how to use UDMF to write a minimal driver.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: AVStream filter-centric simulated capture sample driver (Avssamp)
 description: An AVStream filter-centric simulated capture sample driver with functional audio.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: USB Host-Based Print Driver Sample
 description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
 languages:
   - javascript

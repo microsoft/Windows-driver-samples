@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Biometric Driver Samples (UMDF Version 1)
 description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
 languages:
   - cpp

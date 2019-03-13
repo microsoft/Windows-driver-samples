@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: CDROM Storage Class Driver
 description: Provide access to CD, DVD and Blu-ray drives, supports Plug and Play, Power Management, and AutoRun (media change notification).
 languages:
   - cpp

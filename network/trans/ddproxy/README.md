@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Windows Filtering Platform Packet Modification Sample
 description: Demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
 languages:
   - cpp

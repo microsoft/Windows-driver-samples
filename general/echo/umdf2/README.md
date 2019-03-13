@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Echo Sample (UMDF Version 2)
 description: Demonstrates how to use UMDF 2 to write a driver and to employ best practices.
 languages:
   - cpp

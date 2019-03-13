@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Common Property Sheet User Interface (CPSUI) Sample
 description: The CPSUISAM application causes the CPSUI to call the print spooler to create property sheet pages for the default printer.
 languages:
   - cpp

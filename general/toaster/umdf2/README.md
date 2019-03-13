@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Toaster Sample (UMDF version 2)
 description: An iterative series of samples that demonstrate driver development using UMDF version 2.
 languages:
   - cpp

@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: IHV Sample UI
 description: Demonstrates the WLAN IHV UI.
 languages:
   - cpp

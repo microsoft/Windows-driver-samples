@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Power Engine Plugin (PEP) ACPI Sample
 description: Demonstrates an interface which allows PEP to implement ACPI runtime methods natively via a driver.
 languages:
   - cpp

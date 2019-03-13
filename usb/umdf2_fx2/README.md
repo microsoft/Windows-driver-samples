@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Sample Function Driver for OSR USB-FX2 (UMDF Version 2)
 description: Demonstrates a UMDF version 2 driver for the OSR USB-FX2 device.
 languages:
   - cpp

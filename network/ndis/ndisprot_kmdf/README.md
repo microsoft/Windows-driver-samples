@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Connection-less NDIS 6.0 Protocol KMDF Sample Driver
 description: Demonstrates a connection-less NDIS 6.0 protocol KMDF driver.
 languages:
   - cpp

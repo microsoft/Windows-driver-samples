@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: Fakemodem Driver
 description: Demonstrates a simple controller-less modem driver.
 languages:
   - cpp

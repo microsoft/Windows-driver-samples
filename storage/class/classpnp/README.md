@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: ClassPnP Class Driver Library
 description: A library storage class driver used by disk, CDROM, and the tape class drivers.
 languages:
   - cpp

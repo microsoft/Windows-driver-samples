@@ -1,6 +1,5 @@
 ---
 topic: sample
-name: System Trace Control
 description: Demonstrates how to use event tracing control APIs to collect events from the system trace provider.
 languages:
   - cpp
