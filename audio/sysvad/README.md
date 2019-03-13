@@ -41,7 +41,6 @@ KeywordDetectorAdapter | Sample Keyword Detector Adapter.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
-
 Build the sample
 ----------------
 

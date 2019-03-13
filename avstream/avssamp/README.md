@@ -66,4 +66,3 @@ Video.cpp | Video capture pin implementation.
 Video.h | Video capture pin header.
 Wave.cpp | Wave object implementation
 Wave.h | Wave object header
-

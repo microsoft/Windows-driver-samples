@@ -23,4 +23,3 @@ The AvScan minifilter is a transaction-aware file scanner. This is an example fo
 
 ## Universal Windows Driver Compliant
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
-

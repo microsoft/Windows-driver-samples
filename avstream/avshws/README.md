@@ -88,7 +88,7 @@ Code tour
 
 ### File Manifest
 
-File | Description 
+File | Description
 -----|------------
 Avshws.h | Main header file for the sample
 Avshws.inf | Sample installation file
