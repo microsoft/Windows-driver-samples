@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to implement advanced constraint handling and PrintTicket/PrintCapabilities handling using JavaScript.
 languages:
-  - javascript
+- javascript
 products:
-  - windows
+- windows
 ---
 
 <!---

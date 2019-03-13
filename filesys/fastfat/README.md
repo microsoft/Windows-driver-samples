@@ -3,9 +3,9 @@ topic: sample
 name: fastfat File System Driver
 description: A file system driver based on the Windows inbox FastFAT file system used as a model for new file systems.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

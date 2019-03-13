@@ -2,9 +2,9 @@
 topic: sample
 description: A library storage class driver used by disk, CDROM, and the tape class drivers.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

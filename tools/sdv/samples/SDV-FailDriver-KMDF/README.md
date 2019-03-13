@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how Static Driver Verifier (SDV) can find errors in a KMDF driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

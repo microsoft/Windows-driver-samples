@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

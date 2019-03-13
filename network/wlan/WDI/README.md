@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates use of the WLAN WDI.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

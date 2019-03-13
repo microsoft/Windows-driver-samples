@@ -2,9 +2,9 @@
 topic: sample
 description: Illustrates how to write a GPIO controller driver that works in conjunction with the GPIO framework extension (GpioClx).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

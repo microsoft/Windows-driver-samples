@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

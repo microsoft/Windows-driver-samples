@@ -2,9 +2,9 @@
 topic: sample
 description: WinHEC 2017 Lab
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

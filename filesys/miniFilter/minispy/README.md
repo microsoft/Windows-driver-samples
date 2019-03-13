@@ -2,9 +2,9 @@
 topic: sample
 description: A tool to monitor and log any I/O and transaction activity that occurs in the system.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

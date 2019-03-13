@@ -2,9 +2,9 @@
 topic: sample
 description: Grafts a directory from one part of a volume's namespace to another part using a mapping.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

@@ -2,9 +2,9 @@
 topic: sample
 description: Sample code for creating a NFC driver using the NFC Class Extension.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 # NFC CX client driver sample

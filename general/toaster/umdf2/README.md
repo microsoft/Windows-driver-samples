@@ -2,9 +2,9 @@
 topic: sample
 description: An iterative series of samples that demonstrate driver development using UMDF version 2.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

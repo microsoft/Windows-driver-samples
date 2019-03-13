@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates virtually all aspects of the WPD device driver interface (DDI).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

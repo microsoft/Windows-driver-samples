@@ -2,9 +2,9 @@
 topic: sample
 description: Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

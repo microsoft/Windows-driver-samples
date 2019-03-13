@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates a simple controller-less modem driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

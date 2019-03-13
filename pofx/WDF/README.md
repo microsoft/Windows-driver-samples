@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrate how a KMDF driver can implement F-state-based power management.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

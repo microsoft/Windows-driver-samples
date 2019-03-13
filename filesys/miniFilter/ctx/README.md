@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to attach contexts to instances, files, streams, and stream handles in your minifilter.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

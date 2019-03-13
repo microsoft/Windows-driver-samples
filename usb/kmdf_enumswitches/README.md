@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to use KMDF as a bus driver using the OSR USB-FX2 device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---
@@ -55,7 +55,7 @@ Here is the overview of the device:
     For example, bit 0x80 is labeled 1 on the pack
 
 - Bulk Endpoints are configured for loopback:
-  - Device moves data from IN endpoint to OUT endpoint.
+- Device moves data from IN endpoint to OUT endpoint.
   - Device does not change the values of the data it receives nor does it internally create any data.
   - Endpoints are always double buffered.
   - Maximum packet size depends on speed (64 Full speed, 512 High speed).

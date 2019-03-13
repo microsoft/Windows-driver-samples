@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to write a non-PnP driver using the Kernel Mode Driver Framework.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

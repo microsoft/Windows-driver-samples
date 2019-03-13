@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to write a KMDF driver for a PCI device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

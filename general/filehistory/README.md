@@ -2,9 +2,9 @@
 topic: sample
 description: A console application that starts the file history service, if it is stopped, and schedules regular backups.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates mapping of a non-HID USB device to a HID device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

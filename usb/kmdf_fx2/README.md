@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to use KMDF to perform bulk and interrupt data transfers to a USB device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

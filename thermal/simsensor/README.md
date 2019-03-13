@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates a simulated temperature sensor device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

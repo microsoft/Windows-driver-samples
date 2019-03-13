@@ -2,9 +2,9 @@
 topic: sample
 description: An NDIS 6.0 driver that demonstrates the operation of an N to 1 MUX driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

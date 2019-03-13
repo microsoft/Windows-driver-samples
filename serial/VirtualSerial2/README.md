@@ -3,9 +3,9 @@ topic: sample
 urlFragment: virtual-serial-driver-sample-v2
 description: Demonstrates UMDF version 2 serial drivers and includes a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

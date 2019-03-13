@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the WLAN IHV UI.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the use of registered callbacks for process protection.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

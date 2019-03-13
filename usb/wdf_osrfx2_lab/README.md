@@ -2,9 +2,9 @@
 topic: sample
 description: Contains a console test application and a series of iterative drivers for both KMDF and UMDF version 1.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

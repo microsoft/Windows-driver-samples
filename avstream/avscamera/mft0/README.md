@@ -2,9 +2,9 @@
 topic: sample
 description: Provides a pin-centric AVStream capture driver for a simulated front and back camera that performs simulated captures.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

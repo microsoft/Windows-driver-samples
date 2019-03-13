@@ -2,10 +2,10 @@
 topic: sample
 description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
 languages:
-  - javascript
+- javascript
   - xml
 products:
-  - windows
+- windows
 ---
 
 <!---
@@ -48,7 +48,7 @@ Here are the core files that you will find in this sample:
 **usb\_host\_based\_sample.js**
 
 - A USB Bidi Extension JavaScript file which includes support for controlling printing for host-based devices. This is the only code in the driver sample. It is invoked by USBMon and it communicates with the device to do the following:
-  - Determine if the device is ready to receive data
+- Determine if the device is ready to receive data
   - Check to see if there is an error condition
   - Read the device status
 

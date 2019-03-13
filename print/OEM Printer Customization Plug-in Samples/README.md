@@ -2,9 +2,9 @@
 topic: sample
 description: Provides examples of how to build OEM printer customization plug-ins.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

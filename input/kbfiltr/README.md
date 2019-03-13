@@ -2,9 +2,9 @@
 topic: sample
 description: A WDF example of a keyboard input filter driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

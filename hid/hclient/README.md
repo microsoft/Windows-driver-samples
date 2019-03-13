@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to write a user-mode client application that communicates with HID devices.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

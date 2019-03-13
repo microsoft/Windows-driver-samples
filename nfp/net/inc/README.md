@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to use UMDF version 1 to write a near-field proximity driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

@@ -2,9 +2,9 @@
 topic: sample
 description: An iterative series of samples that demonstrate KDMF and UDMF1 driver development.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

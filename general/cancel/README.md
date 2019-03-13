@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the use of the cancel-safe queue routines.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

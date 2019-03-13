@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to generate layouts for various keyboards and locales.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

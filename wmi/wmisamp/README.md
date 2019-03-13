@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to register WMI providers in KMDF, create provider instances, and handle WMI queries sent to a device.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

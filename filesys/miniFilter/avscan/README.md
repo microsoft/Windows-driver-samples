@@ -2,9 +2,9 @@
 topic: sample
 description: This filter is a transaction-aware file scanner that examines data in files.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

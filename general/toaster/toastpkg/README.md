@@ -2,9 +2,9 @@
 topic: sample
 description: Simulates hardware-first and software-first installation of the toaster sample driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

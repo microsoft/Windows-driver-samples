@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to use UMDF 2 to write a driver and to employ best practices.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

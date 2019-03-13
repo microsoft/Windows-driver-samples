@@ -2,9 +2,9 @@
 topic: sample
 description: Illustrates DCHU principles of universal driver design.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

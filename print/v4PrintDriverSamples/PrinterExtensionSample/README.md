@@ -4,7 +4,7 @@ description: Demonstrates how to use .NET to build a customized, desktop UI for 
 languages:
 - csharp
 products:
-  - windows
+- windows
 ---
 
 <!---

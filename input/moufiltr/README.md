@@ -2,9 +2,9 @@
 topic: sample
 description: A WDF example of a mouse input filter driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

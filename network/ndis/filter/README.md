@@ -2,9 +2,9 @@
 topic: sample
 description: A pass-through NDIS 6 filter driver demonstrating the basic principles of an NDIS 6.0 Filter driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

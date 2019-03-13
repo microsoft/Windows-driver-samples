@@ -2,9 +2,9 @@
 topic: sample
 description: An AVStream filter-centric simulated capture sample driver with functional audio.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

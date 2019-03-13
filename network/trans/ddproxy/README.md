@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

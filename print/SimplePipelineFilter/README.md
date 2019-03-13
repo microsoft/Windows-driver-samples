@@ -2,9 +2,9 @@
 topic: sample
 description: This sample shows how to use the print pipeline's filter interfaces.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

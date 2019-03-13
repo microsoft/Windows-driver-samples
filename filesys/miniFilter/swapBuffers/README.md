@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to switch buffers between reads and writes of data. This technique is particularly useful for encryption filters.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

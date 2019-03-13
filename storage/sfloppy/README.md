@@ -2,9 +2,9 @@
 topic: sample
 description: A sample class driver for Super Floppy disk drives.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

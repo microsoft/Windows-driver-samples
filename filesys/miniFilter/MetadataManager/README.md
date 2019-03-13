@@ -2,9 +2,9 @@
 topic: sample
 description:  An example of how to use files for storing metadata that corresponds to minifilters.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

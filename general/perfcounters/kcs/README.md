@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates the use of the kernel-mode performance library.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

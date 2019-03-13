@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to implement auto-configuration in v4 print drivers.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

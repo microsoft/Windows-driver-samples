@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to write a registry filter driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

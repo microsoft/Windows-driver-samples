@@ -2,9 +2,9 @@
 topic: sample
 description: A sample Storport ACHI miniport driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

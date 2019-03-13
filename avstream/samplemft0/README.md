@@ -2,9 +2,9 @@
 topic: sample
 description: A driver MFT for use with a camera's Windows device app.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

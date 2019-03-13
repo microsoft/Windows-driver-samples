@@ -2,9 +2,9 @@
 topic: sample
 description: The Trusted Execution Environment (TrEE) sample.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

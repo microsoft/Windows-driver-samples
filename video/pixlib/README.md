@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to implement the CPixel class for use by a display driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

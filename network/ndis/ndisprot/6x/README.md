@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates a connection-less NDIS 6.0 protocol WDM driver.
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---

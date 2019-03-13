@@ -2,9 +2,9 @@
 topic: sample
 description: Demonstrates how to write a driver for a generic PCI device using Windows Driver Frameworks (WDF).
 languages:
-  - cpp
+- cpp
 products:
-  - windows
+- windows
 ---
 
 <!---
