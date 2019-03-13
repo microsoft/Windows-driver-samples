@@ -2,9 +2,6 @@
 topic: sample
 name: KMDF Power Framework (PoFx) Sample
 description: Demonstrate how a KMDF driver can implement F-state-based power management.
-
-
-
 languages:
   - cpp
 products:
