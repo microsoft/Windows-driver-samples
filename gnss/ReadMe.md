@@ -85,14 +85,14 @@ Customer should validate their driver after customizing it.
 
 ### Test method 3
 
-* Test the [Windows Geolocation API](https://docs.microsoft.com/en-us/windows/desktop/locationapi/windows-location-api-portal) layer on real apps.
+* Test the [Windows Geolocation API](https://docs.microsoft.com/windows/desktop/locationapi/windows-location-api-portal) layer on real apps.
 * Get current location by clicking on "Show my location" from the In-box Windows Maps app.
 * Run the tracking scenario from the [Geolocation Sample app](https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/Geolocation).
 * Get current location by clicking on "Start" from GPS Satellite app in Windows Store.
 
 ## Resources
 
-* [GNSS DDI reference](https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/gnssdriver/index)
-* [Getting started with Windows drivers](https://docs.microsoft.com/en-us/windows-hardware/drivers/gettingstarted)
-* [Windows Driver Kit documentation](https://docs.microsoft.com/en-us/windows-hardware/drivers)
+* [GNSS DDI reference](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/gnssdriver/index)
+* [Getting started with Windows drivers](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted)
+* [Windows Driver Kit documentation](https://docs.microsoft.com/windows-hardware/drivers)
 * [NMEA format documentation](http://navspark.mybigcommerce.com/content/NMEA_Format_v0.1.pdf)

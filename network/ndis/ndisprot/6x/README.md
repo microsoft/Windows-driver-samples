@@ -75,4 +75,4 @@ ndisprot.inf | INF file for installing NDISPROT
 ntdisp.c | NT Entry points and dispatch routines for NDISPROT 
 protuser.h | IOCTL and associated structure definitions 
 recv.c | NDIS protocol entry points for receiving data, and IRP_MJ_READ processing 
-send.c | NDIS protocol routines for sending data, and IRP_MJ_WRITE processing 
+send.c | NDIS protocol routines for sending data, and IRP_MJ_WRITE processing
