@@ -276,4 +276,3 @@ Hidusbfx2.inx | INX file for the driver
 Sources | WDK sources file
 Makefile | WDK build environment make file
 Makefile.inc | A makefile that defines custom build actions, including the conversion of the .INX file into a .INF file
- 

@@ -130,4 +130,3 @@ Common.hpp | Header file containing the common include files for the project
 dllmain.cpp |  Handles loading/unloading of Wdf Coinstaller and the notify object dll
 ProtNotify.idl |  Defines the interfaces for the notify object dll
 ProtNotify.rc |  Resource file for the notify object dll
-

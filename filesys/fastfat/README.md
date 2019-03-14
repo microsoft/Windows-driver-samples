@@ -23,6 +23,7 @@ The *fastfat* sample is file system driver that you can use as a model to write 
 *fastfat* is a complete file system that addresses various issues such as storing data on disk, interacting with the cache manager, and handling various I/O operations such as file creation, performing read/writes on a file, setting information on a file, and performing control operations on the file system.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
 Build the sample

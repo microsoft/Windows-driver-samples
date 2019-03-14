@@ -115,4 +115,3 @@ Simply change the values in the registry. For example, change the radio state fr
 ### Removing a Radio Instance ###
 
 Delete the corresponding registry key.
-

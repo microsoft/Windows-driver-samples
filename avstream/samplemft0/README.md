@@ -24,7 +24,6 @@ In this sample, the driver MFT, when enabled, replaces a portion of the captured
 
 This sample is designed to be used with a specific camera. To run the sample, you need the your camera's device ID and device metadata package.
 
-
 Related topics
 --------------
 

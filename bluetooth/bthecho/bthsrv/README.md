@@ -155,7 +155,7 @@ The device tree for echo client device is similar to the one shown for the echo 
 
 Run BthEcho.exe on the client machine. You should see client sending data to the server and receiving the same data echoed back. Press Ctrl+c to terminate the application. You will see output similar to below:
 
-```
+```batch
 D:\bth\wdfcli>BthEcho.exe
 DevicePath: \\?\bthenum#{c07508f2-b970-43ca-b5dd-cc4f2391bef4}_localmfg&000a#7&3
 62d0a3&0&000c55ff727a_c00000001#{fc71b33d-d528-4763-a86c-78777c7bcd7b}

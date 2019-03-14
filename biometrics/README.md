@@ -28,7 +28,6 @@ This sample implements the Windows Biometric Driver Interface (WBDI). It contain
 *Windows Biometric Service Adapters*
 These samples provide skeleton code that developers can use as a basis for writing Sensor, Engine, and Storage Adapters for the Windows Biometric Service. Note that the stubs in these samples are non-functional, and Adapter writers will need to follow the programming guidelines in the WinBio Service documentation in order produce a working Adapter component.
 
-
 Build the sample
 ----------------
 

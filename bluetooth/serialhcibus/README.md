@@ -74,4 +74,4 @@ device.h - header file for device.c
 
 driver.rc - driver version and name
 
-SerialBusWdk.inx - device specific INF file to install this driver. The vendor will need to add the hardware ID to match the "\_HID" for the Serial Bus Device (Bluetooth) in the DSDT.asl file. For example, in SerialBusWDK.inx, the hardware ID is "ACPI\\<*vendor*\>\_BTH0" where <*vendor*\> could be a 4 digit vendor name
+SerialBusWdk.inx - device specific INF file to install this driver. The vendor will need to add the hardware ID to match the "\_HID" for the Serial Bus Device (Bluetooth) in the DSDT.asl file. For example, in SerialBusWDK.inx, the hardware ID is "ACPI\\<*vendor*\>\_BTH0" where <*vendor*\> could be a 4 digit vendor name.

@@ -26,7 +26,6 @@ In this sample, the Device Transform , when enabled, will replicate a photo sequ
 
 This sample is designed to be used with a specific camera. To run the sample, you need the your camera's device ID and device metadata package.
 
-
 Related topics
 --------------
 

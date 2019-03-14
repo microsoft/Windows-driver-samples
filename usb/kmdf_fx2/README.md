@@ -383,5 +383,3 @@ To trace, you can use the in-box tools, logman and tracerpt, or download XPerf (
 4.  View the trace file using Xperf:
 
     `xperfview OSRUSBFX2.etl`
-
-

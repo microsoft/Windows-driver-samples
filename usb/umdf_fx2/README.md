@@ -342,4 +342,3 @@ This directory contains a test application that can be used to drive the UMDF dr
 usb\\umdf\_fx2\\deviceMetadata
 
 This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see [Custom driver access sample](http://go.microsoft.com/fwlink/p/?LinkID=248288).
-

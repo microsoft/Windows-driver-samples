@@ -93,4 +93,3 @@ As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Stu
 **msbuild /p:configuration="Release" /p:platform="Win32" msnmntr.sln**
 
 For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
-

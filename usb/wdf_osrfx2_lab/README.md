@@ -383,5 +383,3 @@ The most basic step. The source file contains a minimal amount of code to get th
 </tr>
 </tbody>
 </table>
-
-

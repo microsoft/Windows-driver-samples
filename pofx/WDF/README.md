@@ -125,4 +125,3 @@ Additional Information
 ----------------------
 
 For detailed information about implementing F-state-based power management for a multiple component device, see [Supporting Multiple Functional Power States for Multiple-Component Devices](http://msdn.microsoft.com/en-us/library/windows/hardware/hh451028).
-

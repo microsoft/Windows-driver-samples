@@ -81,4 +81,3 @@ Packet modification is done out-of-band by a system worker thread by using the r
 Ddproxy.sys acts as a redirector for both Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6) traffic.
 
 For more information on creating a Windows Filtering Platform Callout Driver, see [Windows Filtering Platform Callout Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff571068).
-

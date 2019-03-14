@@ -118,5 +118,3 @@ What the Ndislwf sample driver does:
 6.  All indications arriving from an underlying NDIS driver are forwarded up by Ndislwf filter driver.
 7.  NDIS calls the filter's [*FilterPause*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549957) handler when NDIS needs to detach the filter from the stack or there is some configuration changes in the stack. In processing the pause request from NDIS, the Ndislwf driver waits for all its own outstanding requests to be completed before it completes the pause request.
 8.  NDIS calls the Ndislwf driver's [*FilterDetach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549918) entry point when NDIS needs to detach a filter module from NDIS stack. The *FilterDetach* handler should free all the memory allocation done in [*FilterAttach*](http://msdn.microsoft.com/en-us/library/windows/hardware/ff549905), and undo the operations it did in *FilterAttach* Handler.
-
-

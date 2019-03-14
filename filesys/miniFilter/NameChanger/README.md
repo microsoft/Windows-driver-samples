@@ -20,7 +20,6 @@ products:
 
 The *NameChanger* minifilter grafts a directory from one part of a volume's namespace to another part using a mapping. The minifilter maintains this illusion by acting as a name provider, injecting entries into directory enumerations and forwarding directory change notifications.
 
-
 Build the sample
 ----------------
 

@@ -195,4 +195,3 @@ Protocol.c | Protocol related routines for the MUX driver
 Public.h | Contains the common declarations shared by driver and user applications
 
 For more information, see [NDIS Intermediate Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
-

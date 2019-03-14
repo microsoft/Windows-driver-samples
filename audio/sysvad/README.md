@@ -166,4 +166,3 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
 Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample* driver.
-

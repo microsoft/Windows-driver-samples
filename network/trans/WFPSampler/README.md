@@ -195,4 +195,3 @@ If you want to test whether your TraceView.exe session is working, you can enter
 For more information, see [Creating a Trace Session with a PDB File](http://msdn.microsoft.com/en-us/library/windows/hardware/ff543582).
 
 Tracing for the sample driver can be started at any time before the driver is started or while the driver is already running.
-
