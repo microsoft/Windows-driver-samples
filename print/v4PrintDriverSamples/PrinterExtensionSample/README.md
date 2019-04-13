@@ -24,6 +24,6 @@ This sample demonstrates how to use .NET to build a customized, desktop UI for a
 
 # Related topics
 
-[Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644)
+[Building a Driver](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/building-a-driver)
 
-[v4 Print Driver Interfaces and Enumerations](http://msdn.microsoft.com/en-us/library/hh464103(v=vs.85).aspx)
+[v4 Print Driver Interfaces and Enumerations](https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/_print/index)
