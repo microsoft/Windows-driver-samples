@@ -32,6 +32,13 @@ Environment:
 #define NT_DEVICE_NAME      L"\\Device\\SIOCTL"
 #define DOS_DEVICE_NAME     L"\\DosDevices\\IoctlTest"
 
+#define DEVICE_DRIVER_MESSAGE "This String is from Device Driver !!!"
+
+PCCHAR DeviceDriverMessage = DEVICE_DRIVER_MESSAGE;
+ULONG DeviceDriverMessageLength = sizeof(DEVICE_DRIVER_MESSAGE) - 1;
+
+#undef DEVICE_DRIVER_MESSAGE
+
 #if DBG
 #define SIOCTL_KDPRINT(_x_) \
                 DbgPrint("SIOCTL.SYS: ");\
@@ -46,6 +53,7 @@ Environment:
 //
 
 DRIVER_INITIALIZE DriverEntry;
+
 
 _Dispatch_type_(IRP_MJ_CREATE)
 _Dispatch_type_(IRP_MJ_CLOSE)
@@ -73,7 +81,49 @@ PrintChars(
 #pragma alloc_text( PAGE, SioctlUnloadDriver)
 #pragma alloc_text( PAGE, PrintIrpInfo)
 #pragma alloc_text( PAGE, PrintChars)
+#pragma alloc_text( PAGE, Min)
+#pragma alloc_text( PAGE, SioctlMethodBuffered)
+#pragma alloc_text( PAGE, SioctlMethodNeither)
+#pragma alloc_text( PAGE, SioctlMethodOutDirect)
+#pragma alloc_text( PAGE, SioctlMethodInDirect)
+#pragma alloc_text( PAGE, CheckBufferAccess)
 #endif // ALLOC_PRAGMA
+
+
+ULONG 
+Min(ULONG a, ULONG b) {
+	return (a > b) ? a : b;
+}
+
+//
+// Device driver IOCTL dispatchers
+//
+
+NTSTATUS
+SioctlMethodBuffered(
+	PIRP Irp,
+	ULONG inputBufferLength
+);
+
+NTSTATUS 
+SioctlMethodNeither(
+	PIRP Irp,
+	PIO_STACK_LOCATION IrpSp,
+	ULONG inputBufferLength
+);
+
+NTSTATUS
+SioctlMethodOutDirect(
+	PIRP Irp,
+	ULONG inputBufferLength
+);
+
+NTSTATUS 
+SioctlMethodInDirect(
+	PIRP Irp,
+	ULONG inputBufferLength
+);
+
 
 
 NTSTATUS
@@ -247,16 +297,13 @@ Return Value:
         IoDeleteDevice( deviceObject );
     }
 
-
-
 }
+
 
 NTSTATUS
 SioctlDeviceControl(
-    PDEVICE_OBJECT DeviceObject,
-    PIRP Irp
-    )
-
+	PDEVICE_OBJECT DeviceObject,
+	PIRP Irp)
 /*++
 
 Routine Description:
@@ -282,21 +329,16 @@ Return Value:
     NTSTATUS            ntStatus = STATUS_SUCCESS;// Assume success
     ULONG               inBufLength; // Input buffer length
     ULONG               outBufLength; // Output buffer length
-    PCHAR               inBuf, outBuf; // pointer to Input and output buffer
-    PCHAR               data = "This String is from Device Driver !!!";
-    size_t              datalen = strlen(data)+1;//Length of data including null
-    PMDL                mdl = NULL;
-    PCHAR               buffer = NULL;
 
     UNREFERENCED_PARAMETER(DeviceObject);
 
     PAGED_CODE();
 
-    irpSp = IoGetCurrentIrpStackLocation( Irp );
+    irpSp = IoGetCurrentIrpStackLocation(Irp);
     inBufLength = irpSp->Parameters.DeviceIoControl.InputBufferLength;
     outBufLength = irpSp->Parameters.DeviceIoControl.OutputBufferLength;
 
-    if (!inBufLength || !outBufLength)
+    if (!(inBufLength && outBufLength > DeviceDriverMessageLength))
     {
         ntStatus = STATUS_INVALID_PARAMETER;
         goto End;
@@ -308,362 +350,24 @@ Return Value:
 
     switch ( irpSp->Parameters.DeviceIoControl.IoControlCode )
     {
-    case IOCTL_SIOCTL_METHOD_BUFFERED:
-
-        //
-        // In this method the I/O manager allocates a buffer large enough to
-        // to accommodate larger of the user input buffer and output buffer,
-        // assigns the address to Irp->AssociatedIrp.SystemBuffer, and
-        // copies the content of the user input buffer into this SystemBuffer
-        //
-
-        SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_BUFFERED\n"));
-        PrintIrpInfo(Irp);
-
-        //
-        // Input buffer and output buffer is same in this case, read the
-        // content of the buffer before writing to it
-        //
-
-        inBuf = Irp->AssociatedIrp.SystemBuffer;
-        outBuf = Irp->AssociatedIrp.SystemBuffer;
-
-        //
-        // Read the data from the buffer
-        //
-
-        SIOCTL_KDPRINT(("\tData from User :"));
-        //
-        // We are using the following function to print characters instead
-        // DebugPrint with %s format because we string we get may or
-        // may not be null terminated.
-        //
-        PrintChars(inBuf, inBufLength);
-
-        //
-        // Write to the buffer over-writes the input buffer content
-        //
-
-        RtlCopyBytes(outBuf, data, outBufLength);
-
-        SIOCTL_KDPRINT(("\tData to User : "));
-        PrintChars(outBuf, datalen  );
-
-        //
-        // Assign the length of the data copied to IoStatus.Information
-        // of the Irp and complete the Irp.
-        //
-
-        Irp->IoStatus.Information = (outBufLength<datalen?outBufLength:datalen);
-
-        //
-        // When the Irp is completed the content of the SystemBuffer
-        // is copied to the User output buffer and the SystemBuffer is
-        // is freed.
-        //
-
+  
+	case IOCTL_SIOCTL_METHOD_BUFFERED:
+		ntStatus = SioctlMethodBuffered(Irp, inBufLength);
        break;
 
     case IOCTL_SIOCTL_METHOD_NEITHER:
 
-        //
-        // In this type of transfer the I/O manager assigns the user input
-        // to Type3InputBuffer and the output buffer to UserBuffer of the Irp.
-        // The I/O manager doesn't copy or map the buffers to the kernel
-        // buffers. Nor does it perform any validation of user buffer's address
-        // range.
-        //
-
-
-        SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_NEITHER\n"));
-
-        PrintIrpInfo(Irp);
-
-        //
-        // A driver may access these buffers directly if it is a highest level
-        // driver whose Dispatch routine runs in the context
-        // of the thread that made this request. The driver should always
-        // check the validity of the user buffer's address range and check whether
-        // the appropriate read or write access is permitted on the buffer.
-        // It must also wrap its accesses to the buffer's address range within
-        // an exception handler in case another user thread deallocates the buffer
-        // or attempts to change the access rights for the buffer while the driver
-        // is accessing memory.
-        //
-
-        inBuf = irpSp->Parameters.DeviceIoControl.Type3InputBuffer;
-        outBuf =  Irp->UserBuffer;
-
-        //
-        // Access the buffers directly if only if you are running in the
-        // context of the calling process. Only top level drivers are
-        // guaranteed to have the context of process that made the request.
-        //
-
-        try {
-            //
-            // Before accessing user buffer, you must probe for read/write
-            // to make sure the buffer is indeed an userbuffer with proper access
-            // rights and length. ProbeForRead/Write will raise an exception if it's otherwise.
-            //
-            ProbeForRead( inBuf, inBufLength, sizeof( UCHAR ) );
-
-            //
-            // Since the buffer access rights can be changed or buffer can be freed
-            // anytime by another thread of the same process, you must always access
-            // it within an exception handler.
-            //
-
-            SIOCTL_KDPRINT(("\tData from User :"));
-            PrintChars(inBuf, inBufLength);
-
-        }
-        except(EXCEPTION_EXECUTE_HANDLER)
-        {
-
-            ntStatus = GetExceptionCode();
-            SIOCTL_KDPRINT((
-                "Exception while accessing inBuf 0X%08X in METHOD_NEITHER\n",
-                            ntStatus));
-            break;
-        }
-
-
-        //
-        // If you are accessing these buffers in an arbitrary thread context,
-        // say in your DPC or ISR, if you are using it for DMA, or passing these buffers to the
-        // next level driver, you should map them in the system process address space.
-        // First allocate an MDL large enough to describe the buffer
-        // and initilize it. Please note that on a x86 system, the maximum size of a buffer
-        // that an MDL can describe is 65508 KB.
-        //
-
-        mdl = IoAllocateMdl(inBuf, inBufLength,  FALSE, TRUE, NULL);
-        if (!mdl)
-        {
-            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-            break;
-        }
-
-        try
-        {
-
-            //
-            // Probe and lock the pages of this buffer in physical memory.
-            // You can specify IoReadAccess, IoWriteAccess or IoModifyAccess
-            // Always perform this operation in a try except block.
-            //  MmProbeAndLockPages will raise an exception if it fails.
-            //
-            MmProbeAndLockPages(mdl, UserMode, IoReadAccess);
-        }
-        except(EXCEPTION_EXECUTE_HANDLER)
-        {
-
-            ntStatus = GetExceptionCode();
-            SIOCTL_KDPRINT((
-                "Exception while locking inBuf 0X%08X in METHOD_NEITHER\n",
-                    ntStatus));
-            IoFreeMdl(mdl);
-            break;
-        }
-
-        //
-        // Map the physical pages described by the MDL into system space.
-        // Note: double mapping the buffer this way causes lot of
-        // system overhead for large size buffers.
-        //
-
-        buffer = MmGetSystemAddressForMdlSafe( mdl, NormalPagePriority | MdlMappingNoExecute );
-
-        if (!buffer) {
-                ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-                MmUnlockPages(mdl);
-                IoFreeMdl(mdl);
-                break;
-        }
-
-        //
-        // Now you can safely read the data from the buffer.
-        //
-        SIOCTL_KDPRINT(("\tData from User (SystemAddress) : "));
-        PrintChars(buffer, inBufLength);
-
-        //
-        // Once the read is over unmap and unlock the pages.
-        //
-
-        MmUnlockPages(mdl);
-        IoFreeMdl(mdl);
-
-        //
-        // The same steps can be followed to access the output buffer.
-        //
-
-        mdl = IoAllocateMdl(outBuf, outBufLength,  FALSE, TRUE, NULL);
-        if (!mdl)
-        {
-            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-            break;
-        }
-
-
-        try {
-            //
-            // Probe and lock the pages of this buffer in physical memory.
-            // You can specify IoReadAccess, IoWriteAccess or IoModifyAccess.
-            //
-
-            MmProbeAndLockPages(mdl, UserMode, IoWriteAccess);
-        }
-        except(EXCEPTION_EXECUTE_HANDLER)
-        {
-
-            ntStatus = GetExceptionCode();
-            SIOCTL_KDPRINT((
-                "Exception while locking outBuf 0X%08X in METHOD_NEITHER\n",
-                    ntStatus));
-            IoFreeMdl(mdl);
-            break;
-        }
-
-
-        buffer = MmGetSystemAddressForMdlSafe( mdl, NormalPagePriority | MdlMappingNoExecute );
-
-        if (!buffer) {
-            MmUnlockPages(mdl);
-            IoFreeMdl(mdl);
-            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-            break;
-        }
-        //
-        // Write to the buffer
-        //
-
-        RtlCopyBytes(buffer, data, outBufLength);
-
-        SIOCTL_KDPRINT(("\tData to User : %s\n", buffer));
-        PrintChars(buffer, datalen);
-
-        MmUnlockPages(mdl);
-
-        //
-        // Free the allocated MDL
-        //
-
-        IoFreeMdl(mdl);
-
-        //
-        // Assign the length of the data copied to IoStatus.Information
-        // of the Irp and complete the Irp.
-        //
-
-        Irp->IoStatus.Information = (outBufLength<datalen?outBufLength:datalen);
-
+		ntStatus = SioctlMethodNeither(Irp, irpSp, inBufLength);
         break;
 
     case IOCTL_SIOCTL_METHOD_IN_DIRECT:
 
-        //
-        // In this type of transfer,  the I/O manager allocates a system buffer
-        // large enough to accommodatethe User input buffer, sets the buffer address
-        // in Irp->AssociatedIrp.SystemBuffer and copies the content of user input buffer
-        // into the SystemBuffer. For the user output buffer, the  I/O manager
-        // probes to see whether the virtual address is readable in the callers
-        // access mode, locks the pages in memory and passes the pointer to
-        // MDL describing the buffer in Irp->MdlAddress.
-        //
-
-        SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_IN_DIRECT\n"));
-
-        PrintIrpInfo(Irp);
-
-        inBuf = Irp->AssociatedIrp.SystemBuffer;
-
-        SIOCTL_KDPRINT(("\tData from User in InputBuffer: "));
-        PrintChars(inBuf, inBufLength);
-
-        //
-        // To access the output buffer, just get the system address
-        // for the buffer. For this method, this buffer is intended for transfering data
-        // from the application to the driver.
-        //
-
-        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
-
-        if (!buffer) {
-            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-            break;
-        }
-
-        SIOCTL_KDPRINT(("\tData from User in OutputBuffer: "));
-        PrintChars(buffer, outBufLength);
-
-        //
-        // Return total bytes read from the output buffer.
-        // Note OutBufLength = MmGetMdlByteCount(Irp->MdlAddress)
-        //
-
-        Irp->IoStatus.Information = MmGetMdlByteCount(Irp->MdlAddress);
-
-        //
-        // NOTE: Changes made to the  SystemBuffer are not copied
-        // to the user input buffer by the I/O manager
-        //
-
-      break;
+		ntStatus = SioctlMethodInDirect(Irp, inBufLength);
+		break;
 
     case IOCTL_SIOCTL_METHOD_OUT_DIRECT:
 
-        //
-        // In this type of transfer, the I/O manager allocates a system buffer
-        // large enough to accommodate the User input buffer, sets the buffer address
-        // in Irp->AssociatedIrp.SystemBuffer and copies the content of user input buffer
-        // into the SystemBuffer. For the output buffer, the I/O manager
-        // probes to see whether the virtual address is writable in the callers
-        // access mode, locks the pages in memory and passes the pointer to MDL
-        // describing the buffer in Irp->MdlAddress.
-        //
-
-
-        SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_OUT_DIRECT\n"));
-
-        PrintIrpInfo(Irp);
-
-
-        inBuf = Irp->AssociatedIrp.SystemBuffer;
-
-        SIOCTL_KDPRINT(("\tData from User : "));
-        PrintChars(inBuf, inBufLength);
-
-        //
-        // To access the output buffer, just get the system address
-        // for the buffer. For this method, this buffer is intended for transfering data
-        // from the driver to the application.
-        //
-
-        buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
-
-        if (!buffer) {
-            ntStatus = STATUS_INSUFFICIENT_RESOURCES;
-            break;
-        }
-
-        //
-        // Write data to be sent to the user in this buffer
-        //
-
-        RtlCopyBytes(buffer, data, outBufLength);
-
-        SIOCTL_KDPRINT(("\tData to User : "));
-        PrintChars(buffer, datalen);
-
-        Irp->IoStatus.Information = (outBufLength<datalen?outBufLength:datalen);
-
-        //
-        // NOTE: Changes made to the  SystemBuffer are not copied
-        // to the user input buffer by the I/O manager
-        //
-
+		ntStatus = SioctlMethodOutDirect(Irp, inBufLength);
         break;
 
     default:
@@ -689,6 +393,385 @@ End:
     IoCompleteRequest( Irp, IO_NO_INCREMENT );
 
     return ntStatus;
+}
+
+
+NTSTATUS
+SioctlMethodBuffered(
+	PIRP Irp,
+	ULONG inputBufferLength
+)
+/*++
+
+Routine Description:
+
+	In this method the I/O manager allocates a buffer large enough to
+	to accommodate larger of the user input buffer and output buffer,
+	assigns the address to Irp->AssociatedIrp.SystemBuffer, and
+	copies the content of the user input buffer into this SystemBuffer
+*/
+{
+
+	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_BUFFERED\n"));
+	PrintIrpInfo(Irp);
+
+	//
+	// Input buffer and output buffer is same in this case, read the
+	// content of the buffer before writing to it
+	//
+
+	PCHAR inBuf = (PCHAR)Irp->AssociatedIrp.SystemBuffer;
+	PCHAR outBuf = (PCHAR)Irp->AssociatedIrp.SystemBuffer;
+	
+	//
+	// Read the data from the buffer
+	//
+
+	SIOCTL_KDPRINT(("\tData from User :"));
+	//
+	// We are using the following function to print characters instead
+	// DebugPrint with %s format because we string we get may or
+	// may not be null terminated.
+	//
+	PrintChars(inBuf, inputBufferLength);
+
+	//
+	// Write to the buffer over-writes the input buffer content
+	//
+	RtlCopyBytes(outBuf, DeviceDriverMessage, DeviceDriverMessageLength + 1);
+
+	SIOCTL_KDPRINT(("\tData to User : "));
+
+	PrintChars(outBuf, DeviceDriverMessageLength);
+
+	//
+	// Assign the length of the data copied to IoStatus.Information
+	// of the Irp and complete the Irp.
+	//
+	Irp->IoStatus.Information = DeviceDriverMessageLength + 1;
+
+	//
+	// When the Irp is completed the content of the SystemBuffer
+	// is copied to the User output buffer and the SystemBuffer is
+	// is freed.
+	//
+	return STATUS_SUCCESS;
+
+}
+
+NTSTATUS
+CheckBufferAccess(PVOID Buffer, ULONG Length) {
+	try {
+		//
+		// Before accessing user buffer, you must probe for read/write
+		// to make sure the buffer is indeed an userbuffer with proper access
+		// rights and length. ProbeForRead/Write will raise an exception if it's otherwise.
+		//
+		ProbeForRead(Buffer, Length, sizeof(UCHAR));
+
+		//
+		// Since the buffer access rights can be changed or buffer can be freed
+		// anytime by another thread of the same process, you must always access
+		// it within an exception handler.
+		//
+
+		SIOCTL_KDPRINT(("\tData from User :"));
+		PrintChars(Buffer, Length);
+
+	}
+	except(EXCEPTION_EXECUTE_HANDLER)
+	{
+
+		NTSTATUS ntStatus = GetExceptionCode();
+		SIOCTL_KDPRINT((
+			"Exception while accessing inBuf 0X%08X in METHOD_NEITHER\n",
+			ntStatus));
+
+		return ntStatus;
+	}
+
+	return STATUS_SUCCESS;
+
+}
+
+NTSTATUS 
+MapUserModeAddress(
+	_In_ PVOID Buffer, 
+	_In_ ULONG Length,
+	_In_ LOCK_OPERATION Operation,
+	_Out_ PMDL* OutputMdl, 
+	_Out_ PCHAR* MappedBuffer
+) {
+	
+	//
+	// If you are accessing these buffers in an arbitrary thread context,
+	// say in your DPC or ISR, if you are using it for DMA, or passing these buffers to the
+	// next level driver, you should map them in the system process address space.
+	// First allocate an MDL large enough to describe the buffer
+	// and initilize it. Please note that on a x86 system, the maximum size of a buffer
+	// that an MDL can describe is 65508 KB.
+	//
+
+	PMDL mdl = IoAllocateMdl(Buffer, Length, FALSE, TRUE, NULL);
+
+	if (!mdl)
+	{
+		return STATUS_INSUFFICIENT_RESOURCES;
+	}
+
+	try
+	{
+
+		//
+		// Probe and lock the pages of this buffer in physical memory.
+		// You can specify IoReadAccess, IoWriteAccess or IoModifyAccess
+		// Always perform this operation in a try except block.
+		//  MmProbeAndLockPages will raise an exception if it fails.
+		//
+		MmProbeAndLockPages(mdl, UserMode, Operation);
+	}
+	except(EXCEPTION_EXECUTE_HANDLER)
+	{
+
+		NTSTATUS ntStatus = GetExceptionCode();
+		SIOCTL_KDPRINT((
+			"Exception while locking inBuf 0X%08X in METHOD_NEITHER\n",
+			ntStatus));
+		IoFreeMdl(mdl);
+		return ntStatus;
+	}
+
+	//
+	// Map the physical pages described by the MDL into system space.
+	// Note: double mapping the buffer this way causes lot of
+	// system overhead for large size buffers.
+	//
+
+	PCHAR buffer = MmGetSystemAddressForMdlSafe(mdl, NormalPagePriority | MdlMappingNoExecute);
+
+	if (!buffer) {
+		NTSTATUS ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+		MmUnlockPages(mdl);
+		IoFreeMdl(mdl);
+		return ntStatus;
+	}
+
+	*OutputMdl = mdl;
+	*MappedBuffer = buffer;
+
+	return STATUS_SUCCESS;
+}
+
+VOID 
+FreeAndUnlockMdl(PMDL mdl) {
+	//
+	// Once the read is over unmap and unlock the pages.
+	//
+	MmUnlockPages(mdl);
+	IoFreeMdl(mdl);
+}
+
+NTSTATUS 
+SioctlMethodNeither(
+	PIRP Irp,
+	PIO_STACK_LOCATION IrpSp,
+	ULONG inputBufferLength
+)
+/*+++
+Routine Description:
+
+	In this type of transfer the I/O manager assigns the user input
+	to Type3InputBuffer and the output buffer to UserBuffer of the Irp.
+	The I/O manager doesn't copy or map the buffers to the kernel
+	buffers. Nor does it perform any validation of user buffer's address
+	range.
+*/
+{
+	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_NEITHER\n"));
+
+	PrintIrpInfo(Irp);
+
+	//
+	// A driver may access these buffers directly if it is a highest level
+	// driver whose Dispatch routine runs in the context
+	// of the thread that made this request. The driver should always
+	// check the validity of the user buffer's address range and check whether
+	// the appropriate read or write access is permitted on the buffer.
+	// It must also wrap its accesses to the buffer's address range within
+	// an exception handler in case another user thread deallocates the buffer
+	// or attempts to change the access rights for the buffer while the driver
+	// is accessing memory.
+	//
+
+	PVOID inBuf = IrpSp->Parameters.DeviceIoControl.Type3InputBuffer;
+	PVOID outBuf = Irp->UserBuffer;
+
+	NTSTATUS ntStatus = STATUS_SUCCESS;
+
+	//
+	// Access the buffers directly if only if you are running in the
+	// context of the calling process. Only top level drivers are
+	// guaranteed to have the context of process that made the request.
+	//
+	ntStatus = CheckBufferAccess(inBuf, inputBufferLength);
+
+	if (ntStatus != STATUS_SUCCESS) {
+		return ntStatus;
+	}
+	
+	PMDL inputMdl;
+	PCHAR mappedInputBuffer;
+	ntStatus = MapUserModeAddress(inBuf, inputBufferLength, IoReadAccess, &inputMdl, &mappedInputBuffer);
+
+	if (ntStatus != STATUS_SUCCESS) {
+		return ntStatus;
+	}
+
+	//
+	// Now you can safely read the data from the buffer.
+	//
+	SIOCTL_KDPRINT(("\tData from User (SystemAddress) : "));
+	PrintChars(mappedInputBuffer, inputBufferLength);
+
+	FreeAndUnlockMdl(inputMdl);
+
+	PMDL outputMdl;
+	PCHAR mappedOutputBuffer;
+	ntStatus = MapUserModeAddress(outBuf, DeviceDriverMessageLength+1, IoWriteAccess, &outputMdl, &mappedOutputBuffer);
+
+	if (ntStatus != STATUS_SUCCESS) {
+		return ntStatus;
+	}
+
+	//
+	// Write to the buffer
+	//
+	RtlCopyBytes(mappedOutputBuffer, DeviceDriverMessage, DeviceDriverMessageLength + 1);
+
+	SIOCTL_KDPRINT(("\tData to User : %s\n", mappedOutputBuffer));
+	PrintChars(mappedOutputBuffer, DeviceDriverMessageLength);
+
+	FreeAndUnlockMdl(outputMdl);
+
+	//
+	// Assign the length of the data copied to IoStatus.Information
+	// of the Irp and complete the Irp.
+	//
+
+	Irp->IoStatus.Information = DeviceDriverMessageLength + 1;
+	return STATUS_SUCCESS;
+}
+
+
+NTSTATUS 
+SioctlMethodInDirect(
+	PIRP Irp,
+	ULONG inputBufferLength
+)
+/*++
+Routine Description:
+
+	In this type of transfer,  the I/O manager allocates a system buffer
+	large enough to accommodatethe User input buffer, sets the buffer address
+	in Irp->AssociatedIrp.SystemBuffer and copies the content of user input buffer
+	into the SystemBuffer. For the user output buffer, the  I/O manager
+	probes to see whether the virtual address is readable in the callers
+	access mode, locks the pages in memory and passes the pointer to
+	MDL describing the buffer in Irp->MdlAddress.
+*/
+{
+
+	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_IN_DIRECT\n"));
+
+	PrintIrpInfo(Irp);
+
+	PVOID inBuf = Irp->AssociatedIrp.SystemBuffer;
+
+	SIOCTL_KDPRINT(("\tData from User in InputBuffer: "));
+	PrintChars(inBuf, inputBufferLength);
+
+	//
+	// To access the output buffer, just get the system address
+	// for the buffer. For this method, this buffer is intended for transfering data
+	// from the application to the driver.
+	//
+	PCHAR buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
+	
+	if (!buffer) {
+		return STATUS_INSUFFICIENT_RESOURCES;
+	}
+
+	SIOCTL_KDPRINT(("\tData from User in OutputBuffer: "));
+	PrintChars(buffer, MmGetMdlByteCount(Irp->MdlAddress) - 1);
+
+	//
+	// Return total bytes read from the output buffer.
+	// Note OutBufLength = MmGetMdlByteCount(Irp->MdlAddress)
+	//
+
+	Irp->IoStatus.Information = MmGetMdlByteCount(Irp->MdlAddress);
+
+	//
+	// NOTE: Changes made to the  SystemBuffer are not copied
+	// to the user input buffer by the I/O manager
+	//
+	return STATUS_SUCCESS;
+}
+
+
+NTSTATUS
+SioctlMethodOutDirect(
+	PIRP Irp,
+	ULONG inputBufferLength
+)
+/*++
+Routine Description:
+	In this type of transfer, the I/O manager allocates a system buffer
+	large enough to accommodate the User input buffer, sets the buffer address
+	in Irp->AssociatedIrp.SystemBuffer and copies the content of user input buffer
+	into the SystemBuffer. For the output buffer, the I/O manager
+	probes to see whether the virtual address is writable in the callers
+	access mode, locks the pages in memory and passes the pointer to MDL
+	describing the buffer in Irp->MdlAddress.
+*/
+{
+	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_OUT_DIRECT\n"));
+
+	PrintIrpInfo(Irp);
+
+
+	PVOID inBuf = Irp->AssociatedIrp.SystemBuffer;
+
+	SIOCTL_KDPRINT(("\tData from User : "));
+	PrintChars(inBuf, inputBufferLength);
+
+	//
+	// To access the output buffer, just get the system address
+	// for the buffer. For this method, this buffer is intended for transfering data
+	// from the driver to the application.
+	//
+	PCHAR buffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute);
+
+	if (!buffer) {
+		return STATUS_INSUFFICIENT_RESOURCES;
+	}
+
+	//
+	// Write data to be sent to the user in this buffer
+	//
+	RtlCopyBytes(buffer, DeviceDriverMessage, DeviceDriverMessageLength + 1);
+
+	SIOCTL_KDPRINT(("\tData to User : "));
+	PrintChars(buffer, DeviceDriverMessageLength);
+
+	Irp->IoStatus.Information = DeviceDriverMessageLength + 1;
+
+	//
+	// NOTE: Changes made to the  SystemBuffer are not copied
+	// to the user input buffer by the I/O manager
+	//
+	return STATUS_SUCCESS;
+
 }
 
 VOID
