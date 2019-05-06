@@ -32,12 +32,9 @@ Environment:
 #define NT_DEVICE_NAME      L"\\Device\\SIOCTL"
 #define DOS_DEVICE_NAME     L"\\DosDevices\\IoctlTest"
 
-#define DEVICE_DRIVER_MESSAGE "This String is from Device Driver !!!"
+const CHAR DeviceDriverMessage[] = "This String is from Device Driver !!!";
+const ULONG DeviceDriverMessageLength = sizeof(DeviceDriverMessage) - 1;
 
-PCCHAR DeviceDriverMessage = DEVICE_DRIVER_MESSAGE;
-ULONG DeviceDriverMessageLength = sizeof(DEVICE_DRIVER_MESSAGE) - 1;
-
-#undef DEVICE_DRIVER_MESSAGE
 
 #if DBG
 #define SIOCTL_KDPRINT(_x_) \
@@ -74,26 +71,6 @@ PrintChars(
     _In_ size_t CountChars
     );
 
-#ifdef ALLOC_PRAGMA
-#pragma alloc_text( INIT, DriverEntry )
-#pragma alloc_text( PAGE, SioctlCreateClose)
-#pragma alloc_text( PAGE, SioctlDeviceControl)
-#pragma alloc_text( PAGE, SioctlUnloadDriver)
-#pragma alloc_text( PAGE, PrintIrpInfo)
-#pragma alloc_text( PAGE, PrintChars)
-#pragma alloc_text( PAGE, Min)
-#pragma alloc_text( PAGE, SioctlMethodBuffered)
-#pragma alloc_text( PAGE, SioctlMethodNeither)
-#pragma alloc_text( PAGE, SioctlMethodOutDirect)
-#pragma alloc_text( PAGE, SioctlMethodInDirect)
-#pragma alloc_text( PAGE, CheckBufferAccess)
-#endif // ALLOC_PRAGMA
-
-
-ULONG 
-Min(ULONG a, ULONG b) {
-	return (a > b) ? a : b;
-}
 
 //
 // Device driver IOCTL dispatchers
@@ -125,6 +102,31 @@ SioctlMethodInDirect(
 );
 
 
+NTSTATUS
+CheckBufferAccess(
+	PVOID Buffer,
+	ULONG Length
+);
+
+VOID
+FreeAndUnlockMdl(
+	PMDL mdl
+);
+
+#ifdef ALLOC_PRAGMA
+#pragma alloc_text( INIT, DriverEntry )
+#pragma alloc_text( PAGE, SioctlCreateClose)
+#pragma alloc_text( PAGE, SioctlDeviceControl)
+#pragma alloc_text( PAGE, SioctlUnloadDriver)
+#pragma alloc_text( PAGE, PrintIrpInfo)
+#pragma alloc_text( PAGE, PrintChars)
+#pragma alloc_text( PAGE, SioctlMethodBuffered)
+#pragma alloc_text( PAGE, SioctlMethodNeither)
+#pragma alloc_text( PAGE, SioctlMethodOutDirect)
+#pragma alloc_text( PAGE, SioctlMethodInDirect)
+#pragma alloc_text( PAGE, CheckBufferAccess)
+#pragma alloc_text( PAGE, FreeAndUnlockMdl)
+#endif // ALLOC_PRAGMA
 
 NTSTATUS
 DriverEntry(
@@ -412,6 +414,8 @@ Routine Description:
 */
 {
 
+	PAGED_CODE();
+
 	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_BUFFERED\n"));
 	PrintIrpInfo(Irp);
 
@@ -460,13 +464,23 @@ Routine Description:
 }
 
 NTSTATUS
-CheckBufferAccess(PVOID Buffer, ULONG Length) {
+CheckBufferAccess(
+	PVOID Buffer, 
+	ULONG Length
+) 
+/*++
+Routine Description:
+	
+	Before accessing user buffer, you must probe for read/write
+	to make sure the buffer is indeed an userbuffer with proper access
+	rights and length. ProbeForRead/Write will raise an exception if it's otherwise.
+	
+*/
+
+{
+	PAGED_CODE();
+
 	try {
-		//
-		// Before accessing user buffer, you must probe for read/write
-		// to make sure the buffer is indeed an userbuffer with proper access
-		// rights and length. ProbeForRead/Write will raise an exception if it's otherwise.
-		//
 		ProbeForRead(Buffer, Length, sizeof(UCHAR));
 
 		//
@@ -503,6 +517,8 @@ MapUserModeAddress(
 	_Out_ PCHAR* MappedBuffer
 ) {
 	
+	PAGED_CODE();
+
 	//
 	// If you are accessing these buffers in an arbitrary thread context,
 	// say in your DPC or ISR, if you are using it for DMA, or passing these buffers to the
@@ -563,10 +579,18 @@ MapUserModeAddress(
 }
 
 VOID 
-FreeAndUnlockMdl(PMDL mdl) {
-	//
-	// Once the read is over unmap and unlock the pages.
-	//
+FreeAndUnlockMdl(
+	PMDL mdl
+) 
+/*++
+Routine Description:
+
+	Once the read/write is over unmap and unlock the pages.
+
+*/
+{
+	PAGED_CODE();
+
 	MmUnlockPages(mdl);
 	IoFreeMdl(mdl);
 }
@@ -587,6 +611,8 @@ Routine Description:
 	range.
 */
 {
+	PAGED_CODE();
+
 	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_NEITHER\n"));
 
 	PrintIrpInfo(Irp);
@@ -680,6 +706,7 @@ Routine Description:
 	MDL describing the buffer in Irp->MdlAddress.
 */
 {
+	PAGED_CODE();
 
 	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_IN_DIRECT\n"));
 
@@ -735,6 +762,8 @@ Routine Description:
 	describing the buffer in Irp->MdlAddress.
 */
 {
+	PAGED_CODE();
+
 	SIOCTL_KDPRINT(("Called IOCTL_SIOCTL_METHOD_OUT_DIRECT\n"));
 
 	PrintIrpInfo(Irp);
@@ -776,10 +805,11 @@ Routine Description:
 
 VOID
 PrintIrpInfo(
-    PIRP Irp)
+    PIRP Irp
+)
 {
     PIO_STACK_LOCATION  irpSp;
-    irpSp = IoGetCurrentIrpStackLocation( Irp );
+    irpSp = IoGetCurrentIrpStackLocation(Irp);
 
     PAGED_CODE();
 
