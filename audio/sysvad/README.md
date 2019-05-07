@@ -1,23 +1,5 @@
----
-topic: sample
-description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
-languages:
-- cpp
-products:
-- windows
-urlFragment: sysvad-virtual-audio-device-driver-sample
----
-
-<!---
-    name: SysVAD Virtual Audio Device Driver Sample
-    platform: WDM
-    language: cpp
-    category: Audio
-    description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620183
---->
-
-# SysVAD Virtual Audio Device Driver Sample
+SysVAD Virtual Audio Device Driver Sample
+========================================
 
 The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
@@ -40,6 +22,7 @@ SwapAPO | Sample APO.
 KeywordDetectorAdapter | Sample Keyword Detector Adapter.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
+
 
 Build the sample
 ----------------
@@ -139,7 +122,7 @@ Create a folder on the target for the built driver package (for example, *C:\\Sy
 
 Create a folder on the target computer for the certificate created by the build process. For example, you could create a folder named *C:\\Certificates* on the target computer, and then copy *package.cer* to it from the host computer. You can find this certificate in the same folder on the host computer, as the *package* folder that contains the built driver files. On the target computer, right-click the certificate file, and click **Install**, then follow the prompts to install the test certificate.
 
-If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
+If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
 
 **2. Install the driver**
 
@@ -166,3 +149,4 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
 Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample* driver.
+

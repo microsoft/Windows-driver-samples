@@ -129,6 +129,11 @@ public:
     STDMETHODIMP GetFormat(UINT nFormat, IAudioMediaType** ppFormat);
     STDMETHODIMP GetFormatRepresentation(UINT nFormat, _Outptr_ LPWSTR* ppwstrFormatRep);
 
+    // IAudioProcessingObject
+    STDMETHODIMP IsOutputFormatSupported(IAudioMediaType *pOppositeFormat, IAudioMediaType *pRequestedOutputFormat, IAudioMediaType **ppSupportedOutputFormat);
+
+    STDMETHODIMP CheckCustomFormats(IAudioMediaType *pRequestedFormat);
+    
 public:
     LONG                                    m_fEnableSwapMFX;
     GUID                                    m_AudioProcessingMode;

@@ -23,6 +23,7 @@ C_DEFINES= $(C_DEFINES) -DDEBUG_LEVEL=DEBUGLVL_TERSE
 #C_DEFINES= $(C_DEFINES) -DDEBUG_LEVEL=DEBUGLVL_BLAB
 
 SOURCES=\
+        ..\A2dpHpDevice.cpp \
         ..\adapter.cpp  \
         ..\basetopo.cpp \
         ..\BthhfpDevice.cpp \

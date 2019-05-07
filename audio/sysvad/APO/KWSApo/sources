@@ -1,0 +1,11 @@
+!include ..\sources.inc
+
+TARGETNAME=KwsAPO
+DLLDEF=KWSApoDll.def
+
+SOURCES=KWSApoInterface.idl \
+        KWSApoEFX.cpp \
+        KWSApo.cpp \
+        KWSApoDll.idl \
+        KWSApoDll.rc \
+        KWSApoDll.cpp \

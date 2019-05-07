@@ -11,7 +11,7 @@ INCLUDES= \
         ..
 
 
-C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS -DSYSVAD_USB_SIDEBAND
+C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ -DSYSVAD_BTH_BYPASS -DSYSVAD_USB_SIDEBAND -DSYSVAD_A2DP_SIDEBAND
 #C_DEFINES = $(C_DEFINES) -D_USE_WAVERT_ 
 
 DDK_TARGET_PLATFORM=Universal
@@ -28,6 +28,9 @@ KMDF_VERSION_MAJOR=1
 
 
 SOURCES=$(SOURCES)                         \
+        a2dphptopo.cpp                      \
+        a2dphpspeakertopo.cpp               \
+        a2dphpminwavert.cpp                 \
         AudioModuleHelper.cpp              \
         bthhfptopo.cpp                     \
         bthhfpmictopo.cpp                  \

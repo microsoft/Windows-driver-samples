@@ -32,6 +32,9 @@ Abstract:
 #ifdef SYSVAD_USB_SIDEBAND
 #include "usbhsminipairs.h"
 #endif // SYSVAD_USB_SIDEBAND
+#ifdef SYSVAD_A2DP_SIDEBAND
+#include "a2dphpminipairs.h"
+#endif // SYSVAD_A2DP_SIDEBAND
 
 
 
@@ -648,14 +651,14 @@ Return Value:
     maxObjects = g_MaxMiniports;
 
 #ifdef SYSVAD_BTH_BYPASS
-    // 
-    // Allow three (3) Bluetooth hands-free profile devices.
-    //
     maxObjects += g_MaxBthHfpMiniports; 
 #endif // SYSVAD_BTH_BYPASS
 #ifdef SYSVAD_USB_SIDEBAND
     maxObjects += g_MaxUsbHsMiniports; 
 #endif // SYSVAD_USB_SIDEBAND
+#ifdef SYSVAD_A2DP_SIDEBAND
+    maxObjects += g_MaxA2dpHpMiniports; 
+#endif // SYSVAD_A2DP_SIDEBAND
 
     // Tell the class driver to add the device.
     //

@@ -15,7 +15,7 @@ Abstract:
 #ifndef _SYSVAD_SPEAKERHPTOPTABLE_H_
 #define _SYSVAD_SPEAKERHPTOPTABLE_H_
 
-#include "mintopo.h"
+#include <mintopo.h>
 
 //=============================================================================
 static
