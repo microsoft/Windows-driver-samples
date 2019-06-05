@@ -4660,7 +4660,7 @@ Return Value:
 {
     UCHAR Log = 0;
 
-#if FASTFATDBG
+#ifdef FASTFATDBG
     ULONG OrigValue = Value;
 #endif
 
