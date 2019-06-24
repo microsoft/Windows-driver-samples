@@ -1,0 +1,40 @@
+//
+// KWSAPODll.idl -- Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Author:
+//
+// Description:
+//
+// KWSAPODll.idl : Definition of COM interfaces and coclasses for the DLL.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "KWSApoInterface.idl";
+
+//-------------------------------------------------------------------------
+// KWSApoDlllib
+//
+[
+    uuid(E928E566-CBA7-4181-9B8B-8822E2BD28AB),
+    version(1.0)
+]
+library KWSApoDlllib
+{
+    importlib("stdole2.tlb");
+
+    // for KWS APO - EFX
+    [
+        uuid(9D89F614-F9D6-40DD-9F21-5E69FA3981ED)
+    ]
+    coclass KWSApoEFX
+    {
+        interface IAudioProcessingObject;
+        interface IAudioProcessingObjectRT;
+        interface IAudioProcessingObjectConfiguration;
+        interface IMMNotificationClient;
+        interface IAudioSystemEffects;
+        [default] interface IKWSApoEFX;
+    };
+
+
+}

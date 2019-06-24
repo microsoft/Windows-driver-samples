@@ -667,6 +667,7 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
 
 #endif // SYSVAD_USB_SIDEBAND
 
+
     STDMETHOD_(VOID, Cleanup)();
 
     STDMETHOD_(NTSTATUS, UpdatePowerRelations)(_In_ PIRP Irp);

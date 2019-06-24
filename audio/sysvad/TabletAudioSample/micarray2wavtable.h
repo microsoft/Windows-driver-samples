@@ -3,38 +3,37 @@
 Copyright (c) Microsoft Corporation All Rights Reserved
 
 Module Name:
-
-    micarraywavtable.h
+    micarray2wavtable.h
 
 Abstract:
 
-    Declaration of wave miniport tables for the mic array.
+    Declaration of wave miniport tables for the rear mic array.
 
 --*/
 
-#ifndef _SYSVAD_MICARRAYWAVTABLE_H_
-#define _SYSVAD_MICARRAYWAVTABLE_H_
+#ifndef _SYSVAD_MICARRAY2WAVTABLE_H_
+#define _SYSVAD_MICARRAY2WAVTABLE_H_
 
 //
 // Mic array range.
 //
-#define MICARRAY_RAW_CHANNELS                   2       // Channels for raw mode
-#define MICARRAY_PROCESSED_CHANNELS             1       // Channels for default mode
-#define MICARRAY_DEVICE_MAX_CHANNELS            2       // Max channels overall
-#define MICARRAY_16_BITS_PER_SAMPLE_PCM         16      // 16 Bits Per Sample
-#define MICARRAY_32_BITS_PER_SAMPLE_PCM         32      // 32 Bits Per Sample
-#define MICARRAY_RAW_SAMPLE_RATE                48000   // Raw sample rate
-#define MICARRAY_PROCESSED_MIN_SAMPLE_RATE      8000    // Min Sample Rate
-#define MICARRAY_PROCESSED_MAX_SAMPLE_RATE      48000   // Max Sample Rate
+#define MICARRAY2_RAW_CHANNELS                   2       // Channels for raw mode
+#define MICARRAY2_PROCESSED_CHANNELS             1       // Channels for default mode
+#define MICARRAY2_DEVICE_MAX_CHANNELS            2       // Max channels overall
+#define MICARRAY2_16_BITS_PER_SAMPLE_PCM         16      // 16 Bits Per Sample
+#define MICARRAY2_32_BITS_PER_SAMPLE_PCM         32      // 32 Bits Per Sample
+#define MICARRAY2_RAW_SAMPLE_RATE                48000   // Raw sample rate
+#define MICARRAY2_PROCESSED_MIN_SAMPLE_RATE      8000    // Min Sample Rate
+#define MICARRAY2_PROCESSED_MAX_SAMPLE_RATE      48000   // Max Sample Rate
 
 //
 // Max # of pin instances.
 //
-#define MICARRAY_MAX_INPUT_STREAMS              4
+#define MICARRAY2_MAX_INPUT_STREAMS              4
 
 //=============================================================================
 static 
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicArrayPinSupportedDeviceFormats[] =
+KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicArray2PinSupportedDeviceFormats[] =
 {
     // 0 - Note the ENDPOINT_MINIPAIR structures for the mic arrays use this first element as the proposed DEFAULT format
     // 48 KHz 16-bit mono
@@ -285,32 +284,43 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicArrayPinSupportedDeviceFormats[] =
 // Supported modes (only on streaming pins).
 //
 static
-MODE_AND_DEFAULT_FORMAT MicArrayPinSupportedDeviceModes[] =
+MODE_AND_DEFAULT_FORMAT MicArray2PinSupportedDeviceModes[] =
 {
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
-        &MicArrayPinSupportedDeviceFormats[SIZEOF_ARRAY(MicArrayPinSupportedDeviceFormats)-1].DataFormat
+        &MicArray2PinSupportedDeviceFormats[SIZEOF_ARRAY(MicArray2PinSupportedDeviceFormats)-1].DataFormat
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
-        &MicArrayPinSupportedDeviceFormats[0].DataFormat
+        &MicArray2PinSupportedDeviceFormats[0].DataFormat
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_SPEECH,
-        &MicArrayPinSupportedDeviceFormats[3].DataFormat
+        &MicArray2PinSupportedDeviceFormats[3].DataFormat
     },
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,
-        &MicArrayPinSupportedDeviceFormats[5].DataFormat
+        &MicArray2PinSupportedDeviceFormats[5].DataFormat
     }
+};
+
+// This structure goes along with the keyword supported device format,
+// to indicate that the audio is interleaved microphone and loopback data.
+INTERLEAVED_AUDIO_FORMAT_INFORMATION InterleavedFormatInformation = 
+{
+    sizeof(INTERLEAVED_AUDIO_FORMAT_INFORMATION),
+    4, // Microphone channel count
+    0, // Microphone channel start position
+    0, // No channel configuration for unprocessed mic array
+    2, // Channel count for interleaved data
+    2,  // Interleaved audio start position
+    KSAUDIO_SPEAKER_STEREO // Channel mask for interleaved loopback data
 };
 
 //=============================================================================
 static
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE KeywordPinSupportedDeviceFormats[] =
+KSDATAFORMAT_WAVEFORMATEXTENSIBLE KeywordPin2SupportedDeviceFormats[] =
 {
-    // 0 - Note the ENDPOINT_MINIPAIR structures for the mic arrays use this element as the proposed SPEECH format for KWD pin
-    // 16 KHz 16-bit mono
     {
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
@@ -324,26 +334,31 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE KeywordPinSupportedDeviceFormats[] =
         {
             {
                 WAVE_FORMAT_EXTENSIBLE,
-                1,      // One channel
-                16000,  // 16KHz
-                32000,  // average bytes per second
-                2,      // 2 bytes per frame
-                16,     // 16 bits per sample container
+                6,       // six channels, make sure this matches InterleavedFormatInformation, if interleaving loopback audio
+                16000,   // 16KHz
+                192000,  // average bytes per second
+                12,      // 8 bytes per frame
+                16,      // 16 bits per sample container
                 sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)
             },
             16,         // valid bits per sample
-            KSAUDIO_SPEAKER_MONO,
+            0, // No channel configuration for unprocessed mic array
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
         }
     },
 };
 
 static
-MODE_AND_DEFAULT_FORMAT KeywordPinSupportedDeviceModes[] =
+MODE_AND_DEFAULT_FORMAT KeywordPin2SupportedDeviceModes[] =
 {
+    // NOTE: Because we're using the KWS apo as an EFX, this endpoint may only support a single mode.
+    // You can not have an EFX when there are multiple modes supported by the driver, EFX must be implemented
+    // in the driver in that case. Because we are exposing a single mode the audio engine can insert the KWSAPO
+    // as an EFX. Further, in the INF associated to this driver the KWS EFX APO is registered as supporting default
+    // mode. That registration is not coupled to the mode enumerated in this list.
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_SPEECH,
-        &KeywordPinSupportedDeviceFormats[SIZEOF_ARRAY(KeywordPinSupportedDeviceFormats) - 1].DataFormat
+        &KeywordPin2SupportedDeviceFormats[SIZEOF_ARRAY(KeywordPin2SupportedDeviceFormats) - 1].DataFormat
     },
 };
 
@@ -352,7 +367,7 @@ MODE_AND_DEFAULT_FORMAT KeywordPinSupportedDeviceModes[] =
 // descriptor array.
 //
 static 
-PIN_DEVICE_FORMATS_AND_MODES MicArrayPinDeviceFormatsAndModes[] = 
+PIN_DEVICE_FORMATS_AND_MODES MicArray2PinDeviceFormatsAndModes[] = 
 {
     {
         BridgePin,
@@ -363,17 +378,17 @@ PIN_DEVICE_FORMATS_AND_MODES MicArrayPinDeviceFormatsAndModes[] =
     },
     {
         SystemCapturePin,
-        MicArrayPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(MicArrayPinSupportedDeviceFormats),
-        MicArrayPinSupportedDeviceModes,
-        SIZEOF_ARRAY(MicArrayPinSupportedDeviceModes)
+        MicArray2PinSupportedDeviceFormats,
+        SIZEOF_ARRAY(MicArray2PinSupportedDeviceFormats),
+        MicArray2PinSupportedDeviceModes,
+        SIZEOF_ARRAY(MicArray2PinSupportedDeviceModes)
     },
     {
         KeywordCapturePin,
-        KeywordPinSupportedDeviceFormats,
-        SIZEOF_ARRAY(KeywordPinSupportedDeviceFormats),
-        KeywordPinSupportedDeviceModes,
-        SIZEOF_ARRAY(KeywordPinSupportedDeviceModes)
+        KeywordPin2SupportedDeviceFormats,
+        SIZEOF_ARRAY(KeywordPin2SupportedDeviceFormats),
+        KeywordPin2SupportedDeviceModes,
+        SIZEOF_ARRAY(KeywordPin2SupportedDeviceModes)
     }
 };
 
@@ -387,7 +402,7 @@ PIN_DEVICE_FORMATS_AND_MODES MicArrayPinDeviceFormatsAndModes[] =
 // separate data for each supported channel count.
 //
 static
-KSDATARANGE_AUDIO MicArrayPinDataRangesRawStream[] =
+KSDATARANGE_AUDIO MicArray2PinDataRangesRawStream[] =
 {
     {
         {
@@ -399,16 +414,16 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesRawStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_RAW_CHANNELS,           
-        MICARRAY_32_BITS_PER_SAMPLE_PCM,    
-        MICARRAY_32_BITS_PER_SAMPLE_PCM,    
-        MICARRAY_RAW_SAMPLE_RATE,            
-        MICARRAY_RAW_SAMPLE_RATE             
+        MICARRAY2_RAW_CHANNELS,           
+        MICARRAY2_32_BITS_PER_SAMPLE_PCM,    
+        MICARRAY2_32_BITS_PER_SAMPLE_PCM,    
+        MICARRAY2_RAW_SAMPLE_RATE,            
+        MICARRAY2_RAW_SAMPLE_RATE             
     },
 };
 
 static
-KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
+KSDATARANGE_AUDIO MicArray2PinDataRangesProcessedStream[] =
 {
     {
         {
@@ -420,11 +435,11 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_PROCESSED_MIN_SAMPLE_RATE,
-        MICARRAY_PROCESSED_MIN_SAMPLE_RATE
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_MIN_SAMPLE_RATE,
+        MICARRAY2_PROCESSED_MIN_SAMPLE_RATE
     },
     {
         {
@@ -436,9 +451,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         11025,
         11025
     },
@@ -452,9 +467,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         16000,
         16000
     },
@@ -468,9 +483,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         22050,
         22050
     },
@@ -484,9 +499,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         24000,
         24000
     },
@@ -500,9 +515,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         32000,
         32000
     },
@@ -516,9 +531,9 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
         44100,
         44100
     },
@@ -532,44 +547,44 @@ KSDATARANGE_AUDIO MicArrayPinDataRangesProcessedStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        MICARRAY_PROCESSED_CHANNELS,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_16_BITS_PER_SAMPLE_PCM,
-        MICARRAY_PROCESSED_MAX_SAMPLE_RATE,
-        MICARRAY_PROCESSED_MAX_SAMPLE_RATE
+        MICARRAY2_PROCESSED_CHANNELS,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_16_BITS_PER_SAMPLE_PCM,
+        MICARRAY2_PROCESSED_MAX_SAMPLE_RATE,
+        MICARRAY2_PROCESSED_MAX_SAMPLE_RATE
     },
 };
 
-// if MicArrayPinDataRangesProcessedStream is changed, we MUST update MicArrayPinDataRangePointersStream too!
-C_ASSERT(SIZEOF_ARRAY(MicArrayPinDataRangesProcessedStream) == 8);
+// if MicArray2PinDataRangesProcessedStream is changed, we MUST update MicArray2PinDataRangePointersStream too!
+C_ASSERT(SIZEOF_ARRAY(MicArray2PinDataRangesProcessedStream) == 8);
 
 static
-PKSDATARANGE MicArrayPinDataRangePointersStream[] =
+PKSDATARANGE MicArray2PinDataRangePointersStream[] =
 {
     // All supported device formats should be listed in the DataRange.
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[0]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[0]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[1]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[1]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[2]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[2]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[3]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[3]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[4]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[4]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[5]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[5]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[6]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[6]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesProcessedStream[7]),
+    PKSDATARANGE(&MicArray2PinDataRangesProcessedStream[7]),
     PKSDATARANGE(&PinDataRangeAttributeList),
-    PKSDATARANGE(&MicArrayPinDataRangesRawStream[0]),
+    PKSDATARANGE(&MicArray2PinDataRangesRawStream[0]),
     PKSDATARANGE(&PinDataRangeAttributeList),
 };
 
 //=============================================================================
 static
-KSDATARANGE MicArrayPinDataRangesBridge[] =
+KSDATARANGE MicArray2PinDataRangesBridge[] =
 {
     {
         sizeof(KSDATARANGE),
@@ -583,13 +598,13 @@ KSDATARANGE MicArrayPinDataRangesBridge[] =
 };
 
 static
-PKSDATARANGE MicArrayPinDataRangePointersBridge[] =
+PKSDATARANGE MicArray2PinDataRangePointersBridge[] =
 {
-    &MicArrayPinDataRangesBridge[0]
+    &MicArray2PinDataRangesBridge[0]
 };
 
 static
-KSDATARANGE_AUDIO KeywordPinDataRangesStream[] =
+KSDATARANGE_AUDIO KeywordPin2DataRangesStream[] =
 {
     {
         {
@@ -601,7 +616,7 @@ KSDATARANGE_AUDIO KeywordPinDataRangesStream[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
-        1,      // max channels
+        6,      // max channels
         16,     // min bits per sample
         16,     // max bits per sample
         16000,  // min sample rate
@@ -610,15 +625,15 @@ KSDATARANGE_AUDIO KeywordPinDataRangesStream[] =
 };
 
 static
-PKSDATARANGE KeywordPinDataRangePointersStream[] =
+PKSDATARANGE KeywordPin2DataRangePointersStream[] =
 {
-    PKSDATARANGE(&KeywordPinDataRangesStream[0]),
+    PKSDATARANGE(&KeywordPin2DataRangesStream[0]),
     PKSDATARANGE(&PinDataRangeAttributeList),
 };
 
 //=============================================================================
 static
-PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
+PCPIN_DESCRIPTOR MicArray2WaveMiniportPins[] =
 {
     // Wave In Bridge Pin (Capture - From Topology) KSPIN_WAVE_BRIDGE
     {
@@ -631,8 +646,8 @@ PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
             NULL,
             0,
             NULL,
-            SIZEOF_ARRAY(MicArrayPinDataRangePointersBridge),
-            MicArrayPinDataRangePointersBridge,
+            SIZEOF_ARRAY(MicArray2PinDataRangePointersBridge),
+            MicArray2PinDataRangePointersBridge,
             KSPIN_DATAFLOW_IN,
             KSPIN_COMMUNICATION_NONE,
             &KSCATEGORY_AUDIO,
@@ -642,8 +657,8 @@ PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
     },
     // Wave In Streaming Pin (Capture) KSPIN_WAVE_HOST
     {
-        MICARRAY_MAX_INPUT_STREAMS,
-        MICARRAY_MAX_INPUT_STREAMS,
+        MICARRAY2_MAX_INPUT_STREAMS,
+        MICARRAY2_MAX_INPUT_STREAMS,
         0,
         NULL,
         {
@@ -651,8 +666,8 @@ PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
             NULL,
             0,
             NULL,
-            SIZEOF_ARRAY(MicArrayPinDataRangePointersStream),
-            MicArrayPinDataRangePointersStream,
+            SIZEOF_ARRAY(MicArray2PinDataRangePointersStream),
+            MicArray2PinDataRangePointersStream,
             KSPIN_DATAFLOW_OUT,
             KSPIN_COMMUNICATION_SINK,
             &KSCATEGORY_AUDIO,
@@ -671,8 +686,8 @@ PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
             NULL,
             0,
             NULL,
-            SIZEOF_ARRAY(KeywordPinDataRangePointersStream),
-            KeywordPinDataRangePointersStream,
+            SIZEOF_ARRAY(KeywordPin2DataRangePointersStream),
+            KeywordPin2DataRangePointersStream,
             KSPIN_DATAFLOW_OUT,
             KSPIN_COMMUNICATION_SINK,
             &KSNODETYPE_AUDIO_KEYWORDDETECTOR,
@@ -684,7 +699,7 @@ PCPIN_DESCRIPTOR MicArrayWaveMiniportPins[] =
 
 //=============================================================================
 static
-PCNODE_DESCRIPTOR MicArrayWaveMiniportNodes[] =
+PCNODE_DESCRIPTOR MicArray2WaveMiniportNodes[] =
 {
     // KSNODE_WAVE_ADC
     {
@@ -697,7 +712,7 @@ PCNODE_DESCRIPTOR MicArrayWaveMiniportNodes[] =
 
 //=============================================================================
 static
-PCCONNECTION_DESCRIPTOR MicArrayWaveMiniportConnections[] =
+PCCONNECTION_DESCRIPTOR MicArray2WaveMiniportConnections[] =
 {
     { PCFILTER_NODE,        KSPIN_WAVE_BRIDGE,      KSNODE_WAVE_ADC,     1 },    
     { KSNODE_WAVE_ADC,      0,                      PCFILTER_NODE,       KSPIN_WAVEIN_HOST },
@@ -717,10 +732,11 @@ DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorArmed2);
 DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorArmed2);
 DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorReset2);
 DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorStreamingSupport2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_InterleavedFormatInformation);
 
 
 static
-SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
+SYSVADPROPERTY_ITEM PropertiesMicArray2WaveFilter[] =
 {
     {
         {
@@ -741,7 +757,7 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         {
             &KSPROPSETID_Pin,
             KSPROPERTY_PIN_PROPOSEDATAFORMAT,
-            KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+            KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
             PropertyHandler_WaveFilter,
         },
         0,
@@ -917,6 +933,21 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         NULL,
         0
     },
+    {
+        {
+            &KSPROPSETID_InterleavedAudio,
+            KSPROPERTY_INTERLEAVEDAUDIO_FORMATINFORMATION,
+            KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSP_PIN) - sizeof(KSPROPERTY),
+        sizeof(INTERLEAVED_AUDIO_FORMAT_INFORMATION),
+        CMiniportWaveRT_Get_InterleavedFormatInformation,
+        NULL,
+        NULL,
+        &InterleavedFormatInformation, // format interleaving information for this endpoint
+        sizeof(InterleavedFormatInformation)
+    },
 };
 
 NTSTATUS CMiniportWaveRT_EventHandler_SoundDetectorMatchDetected(
@@ -924,7 +955,7 @@ NTSTATUS CMiniportWaveRT_EventHandler_SoundDetectorMatchDetected(
     );
 
 static
-PCEVENT_ITEM EventsMicArrayWaveFilter[] =
+PCEVENT_ITEM EventsMicArray2WaveFilter[] =
 {
     {
         &KSEVENTSETID_SoundDetector,
@@ -934,25 +965,26 @@ PCEVENT_ITEM EventsMicArrayWaveFilter[] =
     }
 };
 
-DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationMicArrayWaveFilter, PropertiesMicArrayWaveFilter, EventsMicArrayWaveFilter);
+DEFINE_PCAUTOMATION_TABLE_PROP_EVENT(AutomationMicArray2WaveFilter, PropertiesMicArray2WaveFilter, EventsMicArray2WaveFilter);
 
 //=============================================================================
 static
-PCFILTER_DESCRIPTOR MicArrayWaveMiniportFilterDescriptor =
+PCFILTER_DESCRIPTOR MicArray2WaveMiniportFilterDescriptor =
 {
     0,                                              // Version
-    &AutomationMicArrayWaveFilter,                  // AutomationTable
+    &AutomationMicArray2WaveFilter,                  // AutomationTable
     sizeof(PCPIN_DESCRIPTOR),                       // PinSize
-    SIZEOF_ARRAY(MicArrayWaveMiniportPins),         // PinCount
-    MicArrayWaveMiniportPins,                       // Pins
+    SIZEOF_ARRAY(MicArray2WaveMiniportPins),         // PinCount
+    MicArray2WaveMiniportPins,                       // Pins
     sizeof(PCNODE_DESCRIPTOR),                      // NodeSize
-    SIZEOF_ARRAY(MicArrayWaveMiniportNodes),        // NodeCount
-    MicArrayWaveMiniportNodes,                      // Nodes
-    SIZEOF_ARRAY(MicArrayWaveMiniportConnections),  // ConnectionCount
-    MicArrayWaveMiniportConnections,                // Connections
+    SIZEOF_ARRAY(MicArray2WaveMiniportNodes),        // NodeCount
+    MicArray2WaveMiniportNodes,                      // Nodes
+    SIZEOF_ARRAY(MicArray2WaveMiniportConnections),  // ConnectionCount
+    MicArray2WaveMiniportConnections,                // Connections
     0,                                              // CategoryCount
     NULL                                            // Categories  - use defaults (audio, render, capture)
 };
 
-#endif // _SYSVAD_MICARRAYWAVTABLE_H_
+
+#endif // _SYSVAD_MICARRAY2WAVTABLE_H_
 

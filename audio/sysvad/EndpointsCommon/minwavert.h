@@ -40,13 +40,13 @@ public:
     CKeywordDetector();
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
-    VOID ResetDetector();
+    NTSTATUS ResetDetector(_In_ GUID eventId);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
-    VOID DownloadDetectorData(_In_ LONGLONG Data);
+    NTSTATUS DownloadDetectorData(_In_ GUID eventId, _In_ LONGLONG Data);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
-    LONGLONG GetDetectorData();
+    NTSTATUS GetDetectorData(_In_ GUID eventId, _Out_ LONGLONG *Data);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
     ULONGLONG GetStartTimestamp();
@@ -55,10 +55,16 @@ public:
     ULONGLONG GetStopTimestamp();
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
-    NTSTATUS SetArmed(_In_ BOOL Arm);
+    NTSTATUS SetArmed(_In_ GUID eventId, _In_ BOOL Arm);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
-    BOOL GetArmed();
+    VOID NotifyDetection();
+
+    _IRQL_requires_max_(PASSIVE_LEVEL)
+    NTSTATUS GetArmed(_In_ GUID eventId, _Out_ BOOL *Arm);
+
+    _IRQL_requires_max_(PASSIVE_LEVEL)
+    NTSTATUS GetStreamingSupport(_In_ GUID eventId, _Out_ BOOL *Support);
 
     _IRQL_requires_max_(PASSIVE_LEVEL)
     VOID Run();
@@ -95,10 +101,15 @@ private:
         UINT16      Samples[SamplesPerPacket];
     } PACKET_ENTRY;
 
-    BOOL            m_SoundDetectorArmed;
-    LONGLONG        m_SoundDetectorData;
+    BOOL            m_streamRunning;
+
+    BOOL            m_SoundDetectorArmed1;
+    BOOL            m_SoundDetectorArmed2;
+    LONGLONG        m_SoundDetectorData1;
+    LONGLONG        m_SoundDetectorData2;
 
     LONGLONG        m_qpcStartCapture;
+    LONGLONG        m_qpcFrequency;
     LONGLONG        m_nLastQueuedPacket;
 
     ULONGLONG       m_ullKeywordStartTimestamp;
@@ -181,7 +192,17 @@ public:
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Set_SoundDetectorArmed);
     DECLARE_PROPERTYHANDLER(Get_SoundDetectorMatchResult);
-    
+
+    DECLARE_PROPERTYHANDLER(Get_SoundDetectorSupportedPatterns2);
+    DECLARE_PROPERTYHANDLER(Set_SoundDetectorPatterns2);
+    DECLARE_PROPERTYHANDLER(Get_SoundDetectorArmed2);
+    DECLARE_PROPERTYHANDLER(Set_SoundDetectorArmed2);
+    DECLARE_PROPERTYHANDLER(Set_SoundDetectorReset2);
+    DECLARE_PROPERTYHANDLER(Get_SoundDetectorStreamingSupport2);
+
+    DECLARE_PROPERTYHANDLER(Get_InterleavedFormatInformation);
+
+
     NTSTATUS EventHandler_PinCapsChange
     (
         _In_  PPCEVENT_REQUEST EventRequest
@@ -249,6 +270,12 @@ protected:
         _In_        BOOL        NodeEvent,
         _In_        ULONG       NodeId
     );
+
+    VOID SendPNPNotification(
+        _In_ const GUID *                   NotificationId,
+        _In_ PVOID                          NotificationBuffer, 
+        _In_ USHORT                         NotificationBufferCb
+        );
 
 public:
     DECLARE_STD_UNKNOWN();
@@ -319,13 +346,13 @@ public:
                 else
                 {
                     //
-                    // >= comparison here because capture bridge pin comes first in the enumeration
+                    // capture bridge pin comes first in the enumeration
                     //
-                    if (m_FilterDesc.PinCount >= KSPIN_WAVEIN_HOST)
+                    if (m_FilterDesc.PinCount > KSPIN_WAVEIN_HOST)
                     {
                         m_ulMaxSystemStreams = m_FilterDesc.Pins[KSPIN_WAVEIN_HOST].MaxFilterInstanceCount;
                     }
-                    if (m_FilterDesc.PinCount >= KSPIN_WAVEIN_KEYWORD)
+                    if (m_FilterDesc.PinCount > KSPIN_WAVEIN_KEYWORD)
                     {
                         m_ulMaxKeywordDetectorStreams = m_FilterDesc.Pins[KSPIN_WAVEIN_KEYWORD].MaxFilterInstanceCount;
                     }
@@ -534,6 +561,7 @@ protected:
                 m_DeviceType == eSpdifRenderDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice ||
                 m_DeviceType == eUsbHsSpeakerDevice  ||
+                m_DeviceType == eA2dpHpSpeakerDevice ||
                 m_DeviceType == eHandsetSpeakerDevice) ? TRUE : FALSE;
     }
 
@@ -595,7 +623,6 @@ protected:
         return KSPIN_WAVE_RENDER_SINK_OFFLOAD;
     }
 
-#pragma code_seg()
 
     ULONG
     GetAudioModuleDescriptorListCount()
@@ -666,7 +693,8 @@ public:
         return (m_DeviceType == eBthHfpMicDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice ||
                 m_DeviceType == eUsbHsMicDevice ||
-                m_DeviceType == eUsbHsSpeakerDevice ) ? TRUE : FALSE;
+                m_DeviceType == eUsbHsSpeakerDevice ||
+                m_DeviceType == eA2dpHpSpeakerDevice ) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.

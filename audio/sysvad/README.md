@@ -1,23 +1,5 @@
----
-topic: sample
-description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
-languages:
-- cpp
-products:
-- windows
-urlFragment: sysvad-virtual-audio-device-driver-sample
----
-
-<!---
-    name: SysVAD Virtual Audio Device Driver Sample
-    platform: WDM
-    language: cpp
-    category: Audio
-    description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620183
---->
-
-# SysVAD Virtual Audio Device Driver Sample
+SysVAD Virtual Audio Device Driver Sample
+========================================
 
 The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
@@ -36,10 +18,13 @@ Directory | Description
 TabletAudioSample | Endpoints that are present in TabletAudioSample driver.
 PhoneAudioSample | Endpoints that are present in PhoneAudioSample driver.
 EndpointsCommon | Endpoints that are present in both TabletAudioSample and PhoneAudioSample. It also contains other common code shared by both sample drivers.
-SwapAPO | Sample APO.
+SwapAPO | Sample APO that installs onto endpoints exposed by the SysVAD sample driver and swaps the left and right channels.
+DelayAPO | Sample APO that adds a delay to the input samples.
+KwsAPO | Sample APO that uses KSPROPERTY_INTERLEAVEDAUDIO_FORMATINFORMATION to determine if the keyword spotter pin is interleaving loopback audio with the microphone audio and identify which channels contain loopback audio. If it is interleaved the APO will strip out the loopback audio and deliver only the microphone audio upstream. Because channel data is removed, the APO negotiates an output format which is different than the input format.
 KeywordDetectorAdapter | Sample Keyword Detector Adapter.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
+
 
 Build the sample
 ----------------
@@ -52,11 +37,11 @@ Perform the following steps to build this sample driver.
 
 In Microsoft Visual Studio, Click **File** \> **Open** \> **Project/Solution...** and navigate to the folder that contains the sample files (for example, *C:\Windows-driver-samples\audio\sysvad*). Double-click the *sysvad* solution file.
 
-In Visual Studio locate the Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has four projects.
+In Visual Studio locate the Solution Explorer. (If this is not already open, choose **Solution Explorer** from the **View** menu.) In Solution Explorer, you can see one solution that has eight projects.
 
 **2. Set the sample's configuration and platform**
 
-In Solution Explorer, right-click **Solution 'sysvad' (4 projects)**, and choose **Configuration Manager**. Make sure that the configuration and platform settings are the same for the four projects. By default, the configuration is set to **Debug**, and the platform is set to **Win32** for all the projects. If you make any configuration and/or platform changes for one project, you must make the same changes for the remaining three projects.
+In Solution Explorer, right-click **Solution 'sysvad' (8 projects)**, and choose **Configuration Manager**. Make sure that the configuration and platform settings are the same for the eight projects. By default, the configuration is set to **Debug**, and the platform is set to **Win32** for all the projects. If you make any configuration and/or platform changes for one project, you must make the same changes for the remaining three projects.
 
 **3. Build the sample using Visual Studio**
 
@@ -73,8 +58,9 @@ The package should contain these files:
 File | Description 
 -----|------------
 TabletAudioSample.sys OR PhoneAudioSample.sys| The driver file.
-SwapAPO.dll | A sample APO. 
-DelayAPO.dll | A sample APO. 
+SwapAPO.dll | The swap APO.
+DelayAPO.dll | The delay APO. 
+KWSApo.dll | The KWS APO.
 sysvad.cat | A signed catalog file, which serves as the signature for the entire package. 
 TabletAudioSample.inf | An information (INF) file that contains information needed to install the driver. 
 PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver.
@@ -139,7 +125,7 @@ Create a folder on the target for the built driver package (for example, *C:\\Sy
 
 Create a folder on the target computer for the certificate created by the build process. For example, you could create a folder named *C:\\Certificates* on the target computer, and then copy *package.cer* to it from the host computer. You can find this certificate in the same folder on the host computer, as the *package* folder that contains the built driver files. On the target computer, right-click the certificate file, and click **Install**, then follow the prompts to install the test certificate.
 
-If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
+If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
 
 **2. Install the driver**
 
@@ -166,3 +152,4 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
 Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *Microsoft Virtual Audio Device (WDM) - Tablet Audio Sample* driver.
+

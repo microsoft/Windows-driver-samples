@@ -39,6 +39,7 @@ Abstract:
 #include "UsbHsDevice.h"
 #endif // SYSVAD_USB_SIDEBAND
 
+
 //-----------------------------------------------------------------------------
 // CSaveData statics
 //-----------------------------------------------------------------------------
@@ -55,6 +56,7 @@ class BthHfpDevice;     // Forward declaration.
 #ifdef SYSVAD_USB_SIDEBAND
 class UsbHsDevice;     // Forward declaration.
 #endif // SYSVAD_USB_SIDEBAND
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // CAdapterCommon
@@ -297,6 +299,7 @@ class CAdapterCommon :
         );
 #endif // SYSVAD_USB_SIDEBAND
 
+
         STDMETHODIMP_(VOID) Cleanup();
 
         STDMETHODIMP_(NTSTATUS) UpdatePowerRelations(_In_ PIRP Irp);
@@ -390,6 +393,7 @@ class CAdapterCommon :
         );
 
 #endif // SYSVAD_USB_SIDEBAND
+
 
     private:
 
@@ -724,6 +728,7 @@ Return Value:
 #ifdef SYSVAD_USB_SIDEBAND
     m_UsbSidebandEnableCleanup = FALSE;
 #endif // SYSVAD_USB_SIDEBAND
+
 
     m_pServiceGroupWave     = NULL;
     m_pDeviceObject         = DeviceObject;
@@ -2291,6 +2296,7 @@ CAdapterCommon::Cleanup()
     CleanupUsbSideband();
 #endif // SYSVAD_USB_SIDEBAND
 
+
     EmptySubdeviceCache();
 }
 
@@ -2373,6 +2379,7 @@ CAdapterCommon::UpdatePowerRelations(_In_ PIRP Irp)
         PSysVadPowerRelationsDo powerDepDo = CONTAINING_RECORD(pe, SysVadPowerRelationsDo, ListEntry);
         pe = pe->Flink;
 
+#pragma prefast(suppress: __WARNING_BUFFER_OVERFLOW, "the access to newRelation->Objects is in-range")
         newRelations->Objects[newRelations->Count] = powerDepDo->Pdo;
 
         // Add a reference on the PDO before returning it as a dependency.
@@ -4050,6 +4057,7 @@ Cleanup the USB Sideband environment.
     ExDeleteNPagedLookasideList(&m_UsbSidebandWorkTaskPool);
 }
 #endif  // SYSVAD_USB_SIDEBAND
+
 
 #pragma code_seg("PAGE")
 NTSTATUS

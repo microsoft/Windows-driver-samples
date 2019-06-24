@@ -648,9 +648,6 @@ Return Value:
     maxObjects = g_MaxMiniports;
 
 #ifdef SYSVAD_BTH_BYPASS
-    // 
-    // Allow three (3) Bluetooth hands-free profile devices.
-    //
     maxObjects += g_MaxBthHfpMiniports; 
 #endif // SYSVAD_BTH_BYPASS
 #ifdef SYSVAD_USB_SIDEBAND

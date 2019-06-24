@@ -40,6 +40,7 @@ Abstract:
 #include "micarray2toptable.h"
 #include "micarray3toptable.h"
 #include "micarraywavtable.h"
+#include "micarray2wavtable.h"
 #include "micarray3wavtable.h"
 
 NTSTATUS
@@ -446,11 +447,12 @@ ENDPOINT_MINIPAIR MicArray2Miniports =
     L"WaveMicArray2",                       // make sure this or the template name matches with KSNAME_WaveMicArray2 in the inf's [Strings] section
     NULL,                                   // optional template name
     CreateMiniportWaveRTSYSVAD,
-    &MicArrayWaveMiniportFilterDescriptor,
-    0, NULL,                                // Interface properties
-    MICARRAY_DEVICE_MAX_CHANNELS,
-    MicArrayPinDeviceFormatsAndModes,
-    SIZEOF_ARRAY(MicArrayPinDeviceFormatsAndModes),
+    &MicArray2WaveMiniportFilterDescriptor,
+    ARRAYSIZE(SysvadWaveFilterInterfacePropertiesCapture),  // Interface properties
+    SysvadWaveFilterInterfacePropertiesCapture,
+    MICARRAY2_DEVICE_MAX_CHANNELS,
+    MicArray2PinDeviceFormatsAndModes,
+    SIZEOF_ARRAY(MicArray2PinDeviceFormatsAndModes),
     MicArray2TopologyPhysicalConnections,
     SIZEOF_ARRAY(MicArray2TopologyPhysicalConnections),
     ENDPOINT_SOUNDDETECTOR_SUPPORTED,
