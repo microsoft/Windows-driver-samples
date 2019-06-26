@@ -4979,8 +4979,8 @@ NTSTATUS PerformBasicPacketModificationAtOutboundTransport(_In_ CLASSIFY_DATA** 
    if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                      FWPS_METADATA_FIELD_TRANSPORT_CONTROL_DATA))
    {
-      pSendParams->controlData       = pMetadata->controlData;
-      pSendParams->controlDataLength = pMetadata->controlDataLength;
+      pCompletionData->pSendParams->controlData       = pMetadata->controlData;
+      pCompletionData->pSendParams->controlDataLength = pMetadata->controlDataLength;
    }
 
    pAddressValue = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
