@@ -1,3 +1,22 @@
+---
+topic: sample
+description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
+languages:
+- cpp
+products:
+- windows
+urlFragment: sysvad-virtual-audio-device-driver-sample
+---
+
+<!---
+    name: SysVAD Virtual Audio Device Driver Sample
+    platform: WDM
+    language: cpp
+    category: Audio
+    description: The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
+    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620183
+--->
+
 SysVAD Virtual Audio Device Driver Sample
 ========================================
 
@@ -125,7 +144,7 @@ Create a folder on the target for the built driver package (for example, *C:\\Sy
 
 Create a folder on the target computer for the certificate created by the build process. For example, you could create a folder named *C:\\Certificates* on the target computer, and then copy *package.cer* to it from the host computer. You can find this certificate in the same folder on the host computer, as the *package* folder that contains the built driver files. On the target computer, right-click the certificate file, and click **Install**, then follow the prompts to install the test certificate.
 
-If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571(v=vs.85).aspx).
+If you need more detailed instructions for setting up the target computer, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 **2. Install the driver**
 
