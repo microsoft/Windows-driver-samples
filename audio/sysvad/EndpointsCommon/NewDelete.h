@@ -10,10 +10,6 @@ Abstract:
 
 Declaration of placement new and delete operators.
 
-//@@BEGIN_DDKSPLIT
-Revision History:
-
-//@@END_DDKSPLIT
 
 --*/
 #pragma once
@@ -114,3 +110,4 @@ void __cdecl operator delete[]
 );
 
 #endif//_NEW_DELETE_OPERATORS_
+

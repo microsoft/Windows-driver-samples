@@ -889,8 +889,7 @@ Done:
 //
 // Return value
 //
-//  Returns STATUS_OPERATION_IN_PROGRESS if no new packets are available and
-//  the next packet is in progress.
+//  Returns STATUS_DEVICE_NOT_READY if no new packets are available.
 //
 // IRQL - PASSIVE_LEVEL
 //
@@ -900,6 +899,7 @@ Done:
 //
 // ISSUE-2014/10/4 Will this work correctly across pause/play?
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetReadPacket
 (
     _Out_ ULONG     *PacketNumber,
@@ -993,24 +993,11 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
     // Update the last packet read by the OS
     m_ulLastOsReadPacket = availablePacketNumber;
 
-#if 0
-    // For test, embed packet number and timestamp into first two LONGLONGs of the packet
-    LONG packetIndex = availablePacketNumber % m_ulNotificationsPerBuffer;
-    SIZE_T packetSize = m_ulDmaBufferSize / m_ulNotificationsPerBuffer;
-    BYTE *packetDataAsBytes = m_pDmaBuffer + (packetIndex * packetSize);
-    LONGLONG *packetDataAsLonglongs = (LONGLONG*)packetDataAsBytes;
-    for (int i = 0; i < packetSize / sizeof(LONGLONG); i++)
-    {
-        packetDataAsLonglongs[i] = i;
-    }
-    packetDataAsLonglongs[0] = availablePacketNumber;
-    packetDataAsLonglongs[1] = timeOfAvailablePacketInQpc;
-#endif
-
     return STATUS_SUCCESS;
 }
 
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::SetWritePacket
 (
     _In_ ULONG      PacketNumber,
@@ -1103,6 +1090,7 @@ NTSTATUS CMiniportWaveRTStream::SetWritePacket
 
 //=============================================================================
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 (
     _Out_ KSAUDIO_PRESENTATION_POSITION *pPresentationPosition
@@ -1121,6 +1109,7 @@ NTSTATUS CMiniportWaveRTStream::GetOutputStreamPresentationPosition
 
 //=============================================================================
 #pragma code_seg()
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS CMiniportWaveRTStream::GetPacketCount
 (
     _Out_ ULONG *pPacketCount

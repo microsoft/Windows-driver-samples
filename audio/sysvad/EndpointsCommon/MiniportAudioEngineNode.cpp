@@ -851,10 +851,10 @@ NTSTATUS CMiniportWaveRT::GetVolumeSteppings(_Out_writes_bytes_(_ui32DataSize) P
 //=============================================================================
 // The volume control should be implemented as follows:
 //
-// #1 If the Sideband device supports volume control, then the audio driver should 
+// #1 If the USB headset supports volume control, then the audio driver should 
 //  pipe the volume change requests through the Sideband Interface
 //
-// #2 If the Sideband device does not implement a hardware volume, and the codec 
+// #2 If the USB headset does not implement a hardware volume, and the codec 
 //  (or DSP) has a hardware volume, the audio driver should handle the volume 
 //  control on the codec (or DSP).
 //

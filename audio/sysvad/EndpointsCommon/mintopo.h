@@ -92,7 +92,8 @@ public:
         return (m_DeviceType == eBthHfpMicDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice ||
                 m_DeviceType == eUsbHsMicDevice ||
-                m_DeviceType == eUsbHsSpeakerDevice ) ? TRUE : FALSE;
+                m_DeviceType == eUsbHsSpeakerDevice ||
+                m_DeviceType == eA2dpHpSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
@@ -163,6 +164,14 @@ public:
     friend NTSTATUS PropertyHandler_UsbHsMute_BasicSupport(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
     friend NTSTATUS PropertyHandler_UsbHsMicMute(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_A2dpHpJackContainerId(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest,
+        _In_ ULONG                    cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION * JackDescriptions);
+    friend NTSTATUS PropertyHandler_A2dpHpVolumeLevel_BasicSupport(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_A2dpHpMute_BasicSupport(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
 };
 

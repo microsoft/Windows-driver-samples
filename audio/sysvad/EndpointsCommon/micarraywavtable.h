@@ -711,6 +711,14 @@ DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorArmed);
 DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorArmed);
 DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorMatchResult);
 
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorSupportedPatterns2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorPatterns2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorArmed2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorArmed2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Set_SoundDetectorReset2);
+DECLARE_CLASSPROPERTYHANDLER(CMiniportWaveRT, Get_SoundDetectorStreamingSupport2);
+
+
 static
 SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
 {
@@ -725,7 +733,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         0,
         NULL,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -738,7 +748,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         0,
         NULL,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -751,7 +763,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         0,
         NULL,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -764,7 +778,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         0,
         NULL,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -777,7 +793,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         sizeof(CONTOSO_SUPPORTEDPATTERNSVALUE),
         CMiniportWaveRT_Get_SoundDetectorSupportedPatterns,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -790,7 +808,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         (sizeof(KSMULTIPLE_ITEM) + sizeof(CONTOSO_KEYWORDCONFIGURATION)),
         NULL,
         CMiniportWaveRT_Set_SoundDetectorPatterns,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -803,7 +823,9 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         sizeof(BOOL),
         CMiniportWaveRT_Get_SoundDetectorArmed,
         CMiniportWaveRT_Set_SoundDetectorArmed,
-        NULL
+        NULL,
+        NULL,
+        0
     },
     {
         {
@@ -816,7 +838,84 @@ SYSVADPROPERTY_ITEM PropertiesMicArrayWaveFilter[] =
         sizeof(CONTOSO_KEYWORDDETECTIONRESULT),
         CMiniportWaveRT_Get_SoundDetectorMatchResult,
         NULL,
-        NULL
+        NULL,
+        NULL,
+        0
+    },
+    {
+        {
+            &KSPROPSETID_SoundDetector2,
+            KSPROPERTY_SOUNDDETECTOR_SUPPORTEDPATTERNS,
+            KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSSOUNDDETECTORPROPERTY) - sizeof(KSPROPERTY),
+        sizeof(CONTOSO_SUPPORTEDPATTERNSVALUE),
+        CMiniportWaveRT_Get_SoundDetectorSupportedPatterns2,
+        NULL,
+        NULL,
+        NULL,
+        0
+    },
+    {
+        {
+            &KSPROPSETID_SoundDetector2,
+            KSPROPERTY_SOUNDDETECTOR_PATTERNS,
+            KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSSOUNDDETECTORPROPERTY) - sizeof(KSPROPERTY),
+        (sizeof(KSMULTIPLE_ITEM) + sizeof(CONTOSO_KEYWORDCONFIGURATION)),
+        NULL,
+        CMiniportWaveRT_Set_SoundDetectorPatterns2,
+        NULL,
+        NULL,
+        0
+    },
+    {
+        {
+            &KSPROPSETID_SoundDetector2,
+            KSPROPERTY_SOUNDDETECTOR_ARMED,
+            KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSSOUNDDETECTORPROPERTY) - sizeof(KSPROPERTY),
+        sizeof(BOOL),
+        CMiniportWaveRT_Get_SoundDetectorArmed2,
+        CMiniportWaveRT_Set_SoundDetectorArmed2,
+        NULL,
+        NULL,
+        0
+    },
+    {
+        {
+            &KSPROPSETID_SoundDetector2,
+            KSPROPERTY_SOUNDDETECTOR_RESET,
+            KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSSOUNDDETECTORPROPERTY) - sizeof(KSPROPERTY),
+        sizeof(BOOL),
+        NULL,
+        CMiniportWaveRT_Set_SoundDetectorReset2,
+        NULL,
+        NULL,
+        0
+    },
+    {
+        {
+            &KSPROPSETID_SoundDetector2,
+            KSPROPERTY_SOUNDDETECTOR_STREAMINGSUPPORT,
+            KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+            SysvadPropertyDispatch,
+        },
+        sizeof(KSSOUNDDETECTORPROPERTY) - sizeof(KSPROPERTY),
+        sizeof(BOOL),
+        CMiniportWaveRT_Get_SoundDetectorStreamingSupport2,
+        NULL,
+        NULL,
+        NULL,
+        0
     },
 };
 
