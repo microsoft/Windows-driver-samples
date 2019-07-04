@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to write UMDF v2 drivers to control various types of virtual sensors.
+description: "Demonstrates how to write UMDF v2 drivers to control various types of virtual sensors."
 languages:
 - cpp
 products:

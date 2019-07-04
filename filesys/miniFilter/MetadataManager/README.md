@@ -1,6 +1,6 @@
 ---
 topic: sample
-description:  An example of how to use files for storing metadata that corresponds to minifilters.
+description:  "An example of how to use files for storing metadata that corresponds to minifilters."
 languages:
 - cpp
 products:

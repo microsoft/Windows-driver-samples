@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to use UDMF to write a minimal driver.
+description: "Demonstrates how to use UDMF to write a minimal driver."
 languages:
 - cpp
 products:

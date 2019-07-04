@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
+description: "Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver."
 languages:
 - cpp
 products:

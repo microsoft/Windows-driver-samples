@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates mapping of a non-HID USB device to a HID device.
+description: "Demonstrates mapping of a non-HID USB device to a HID device."
 languages:
 - cpp
 products:

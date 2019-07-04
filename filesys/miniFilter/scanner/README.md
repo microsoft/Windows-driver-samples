@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A file data scanner example. Typically, anti-virus filters are of this type.
+description: "A file data scanner example. Typically, anti-virus filters are of this type."
 languages:
 - cpp
 products:

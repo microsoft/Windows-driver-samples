@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP).
+description: "Demonstrates the stream inspection capabilities of the Windows Filtering Platform (WFP)."
 languages:
 - cpp
 products:

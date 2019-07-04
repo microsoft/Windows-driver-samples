@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A transaction-aware filter that monitors file changes in real time.
+description: "A transaction-aware filter that monitors file changes in real time."
 languages:
 - cpp
 products:

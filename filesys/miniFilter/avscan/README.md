@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: This filter is a transaction-aware file scanner that examines data in files.
+description: "This filter is a transaction-aware file scanner that examines data in files."
 languages:
 - cpp
 products:

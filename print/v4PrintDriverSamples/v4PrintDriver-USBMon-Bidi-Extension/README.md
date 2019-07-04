@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
+description: "Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML."
 languages:
 - javascript
 - xml

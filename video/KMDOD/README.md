@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Implements most DDIs that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM).
+description: "Implements most DDIs that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM)."
 languages:
 - cpp
 products:

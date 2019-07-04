@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates a connection-less NDIS 6.0 protocol KMDF driver.
+description: "Demonstrates a connection-less NDIS 6.0 protocol KMDF driver."
 languages:
 - cpp
 products:

@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to communicate with a SCSI device using pass-through IOCTLs in an application using DeviceIoControl API.
+description: "Demonstrates how to communicate with a SCSI device using pass-through IOCTLs in an application using DeviceIoControl API."
 languages:
 - cpp
 products:

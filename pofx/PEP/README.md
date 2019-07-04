@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates an interface which allows PEP to implement ACPI runtime methods natively via a driver.
+description: "Demonstrates an interface which allows PEP to implement ACPI runtime methods natively via a driver."
 languages:
 - cpp
 products:

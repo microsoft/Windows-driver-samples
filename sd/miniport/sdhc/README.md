@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Provides a functional miniport implementation for a standard SD host controller.
+description: "Provides a functional miniport implementation for a standard SD host controller."
 languages:
 - cpp
 products:

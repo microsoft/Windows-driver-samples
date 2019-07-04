@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A library storage class driver used by disk, CDROM, and the tape class drivers.
+description: "A library storage class driver used by disk, CDROM, and the tape class drivers."
 languages:
 - cpp
 products:

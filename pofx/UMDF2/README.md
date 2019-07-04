@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
+description: "Demonstrates how a UMDF version 2 driver can implement F-state-based power management."
 languages:
 - cpp
 products:

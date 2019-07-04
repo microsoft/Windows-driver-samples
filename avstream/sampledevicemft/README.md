@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A driver device transform which loads in a process streaming an Avstream based camera device using Media Foundation.
+description: "A driver device transform which loads in a process streaming an Avstream based camera device using Media Foundation."
 languages:
 - cpp
 products:

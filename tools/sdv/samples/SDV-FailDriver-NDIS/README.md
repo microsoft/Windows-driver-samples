@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how Static Driver Verifier (SDV) can find errors in a NDIS driver.
+description: "Demonstrates how Static Driver Verifier (SDV) can find errors in a NDIS driver."
 languages:
 - cpp
 products:

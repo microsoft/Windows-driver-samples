@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
+description: "Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer."
 languages:
 - xml
 products:

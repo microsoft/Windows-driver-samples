@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Contains a set of documents that exercise a variety of features of OpenXPS.
+description: "Contains a set of documents that exercise a variety of features of OpenXPS."
 languages:
 - cpp
 products:

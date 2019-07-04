@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates the use of registered callbacks for process protection.
+description: "Demonstrates the use of registered callbacks for process protection."
 languages:
 - cpp
 products:

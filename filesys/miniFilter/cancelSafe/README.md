@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A minifilter demonstrating the use of cancel-safe queues.
+description: "A minifilter demonstrating the use of cancel-safe queues."
 languages:
 - cpp
 products:

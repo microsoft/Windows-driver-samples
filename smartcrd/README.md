@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader.
+description: "Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader."
 languages:
 - cpp
 products:

@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Sample code for creating a NFC driver using the NFC Class Extension.
+description: "Sample code for creating a NFC driver using the NFC Class Extension."
 languages:
 - cpp
 products:

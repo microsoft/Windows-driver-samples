@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Simulates a device that is a Windows thermal management client.
+description: "Simulates a device that is a Windows thermal management client."
 languages:
 - cpp
 products:

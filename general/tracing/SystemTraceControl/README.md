@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to use event tracing control APIs to collect events from the system trace provider.
+description: "Demonstrates how to use event tracing control APIs to collect events from the system trace provider."
 languages:
 - cpp
 products:

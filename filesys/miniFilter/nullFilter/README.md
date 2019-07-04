@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A minifilter that demonstrates registration with the filter manager.
+description: "A minifilter that demonstrates registration with the filter manager."
 languages:
 - cpp
 products:

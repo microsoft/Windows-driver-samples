@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports.
+description: "Demonstrates how to extend the WpdHelloWorldDriver for a device that supports multiple transports."
 languages:
 - cpp
 products:

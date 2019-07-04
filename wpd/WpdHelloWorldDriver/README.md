@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Supports four objects - a device object, a storage object, a folder object, and a file object.
+description: "Supports four objects - a device object, a storage object, a folder object, and a file object."
 languages:
 - cpp
 products:

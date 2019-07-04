@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: WinHEC 2017 Lab
+description: "Toaster samples from the WinHEC 2017 Lab: Toaster Driver, PlugInToaster, and Toaster Support App."
 languages:
 - cpp
 products:

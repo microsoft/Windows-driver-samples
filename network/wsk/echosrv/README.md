@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface.
+description: "A minimal sample driver to demonstrate the usage of the Winsock Kernel (WSK) programming interface."
 languages:
 - cpp
 products:

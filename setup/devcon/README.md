@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers.
+description: "DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers."
 languages:
 - cpp
 products:

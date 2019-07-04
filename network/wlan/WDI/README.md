@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates use of the WLAN WDI.
+description: "Demonstrates use of the WLAN WDI."
 languages:
 - cpp
 products:

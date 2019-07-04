@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A sample firewall that has a command-line interface which allows adding filters at various WFP layers.
+description: "A sample firewall that has a command-line interface which allows adding filters at various WFP layers."
 languages:
 - cpp
 products:

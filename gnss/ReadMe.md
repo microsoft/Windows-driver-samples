@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Provides base sample driver that IHVs and partners can use to extend to build their custom Windows GPS/GNSS drivers.
+description: "Provides base sample driver that IHVs and partners can use to extend to build their custom Windows GPS/GNSS drivers."
 languages:
 - cpp
 products:

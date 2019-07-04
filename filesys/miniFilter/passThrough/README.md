@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to specify callback functions for different types of I/O requests.
+description: "Demonstrates how to specify callback functions for different types of I/O requests."
 languages:
 - cpp
 products:

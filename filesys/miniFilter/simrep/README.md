@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path.
+description: "Demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path."
 languages:
 - cpp
 products:

@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
+description: "A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware."
 languages:
 - cpp
 products:

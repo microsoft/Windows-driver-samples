@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB.
+description: "Demonstrates how to support host-based devices that use the v4 print driver model and are connected via USB."
 languages:
 - javascript
 - xml

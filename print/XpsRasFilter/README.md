@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Implements an XPSDrv filter that rasterizes fixed pages in an XPS document.
+description: "Implements an XPSDrv filter that rasterizes fixed pages in an XPS document."
 languages:
 - cpp
 products:

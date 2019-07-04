@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates the WLAN IHV UI.
+description: "Demonstrates the WLAN IHV UI."
 languages:
 - cpp
 products:

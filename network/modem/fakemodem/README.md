@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates a simple controller-less modem driver.
+description: "Demonstrates a simple controller-less modem driver."
 languages:
 - cpp
 products:

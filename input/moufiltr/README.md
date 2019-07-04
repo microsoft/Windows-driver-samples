@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A WDF example of a mouse input filter driver.
+description: "A WDF example of a mouse input filter driver."
 languages:
 - cpp
 products:

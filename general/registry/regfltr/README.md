@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to write a registry filter driver.
+description: "Demonstrates how to write a registry filter driver."
 languages:
 - cpp
 products:

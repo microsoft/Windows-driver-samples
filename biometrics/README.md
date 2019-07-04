@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
+description: "Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples."
 languages:
 - cpp
 products:

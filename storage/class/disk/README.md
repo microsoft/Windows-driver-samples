@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A class driver for disk devices.
+description: "A class driver for disk devices."
 languages:
 - cpp
 products:

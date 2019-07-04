@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Contains samples and test tools for Windows Image Acquisition (WIA).
+description: "Contains samples and test tools for Windows Image Acquisition (WIA)."
 languages:
 - cpp
 products:

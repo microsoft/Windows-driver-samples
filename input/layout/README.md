@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to generate layouts for various keyboards and locales.
+description: "Demonstrates how to generate layouts for various keyboards and locales."
 languages:
 - cpp
 products:

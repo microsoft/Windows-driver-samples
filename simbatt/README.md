@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates a KMDF-based implementation of Windows battery driver interfaces.
+description: "Demonstrates a KMDF-based implementation of Windows battery driver interfaces."
 languages:
 - cpp
 products:

@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A sample Storport ACHI miniport driver.
+description: "A sample Storport ACHI miniport driver."
 languages:
 - cpp
 products:

@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: An example of using a control device object (CDO) with a minifilter.
+description: "An example of using a control device object (CDO) with a minifilter."
 languages:
 - cpp
 products:

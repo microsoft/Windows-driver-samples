@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem).
+description: "Demonstrates a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem)."
 languages:
 - cpp
 products:

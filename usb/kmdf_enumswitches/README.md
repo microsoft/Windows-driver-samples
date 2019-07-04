@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to use KMDF as a bus driver using the OSR USB-FX2 device.
+description: "Demonstrates how to use KMDF as a bus driver using the OSR USB-FX2 device."
 languages:
 - cpp
 products:

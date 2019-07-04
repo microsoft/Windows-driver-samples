@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
+description: "Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter."
 languages:
 - cpp
 products:

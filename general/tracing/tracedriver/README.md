@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: A sample driver instrumented for software tracing.
+description: "A sample driver instrumented for software tracing."
 languages:
 - cpp
 products:

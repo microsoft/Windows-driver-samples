@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates a simulated temperature sensor device.
+description: "Demonstrates a simulated temperature sensor device."
 languages:
 - cpp
 products:

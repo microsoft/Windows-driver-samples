@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates how to write a UMDF v2 driver to control an activity sensor.
+description: "Demonstrates how to write a UMDF v2 driver to control an activity sensor."
 languages:
 - cpp
 products:

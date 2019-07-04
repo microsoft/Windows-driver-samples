@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates the use of the kernel-mode performance library.
+description: "Demonstrates the use of the kernel-mode performance library."
 languages:
 - cpp
 products:

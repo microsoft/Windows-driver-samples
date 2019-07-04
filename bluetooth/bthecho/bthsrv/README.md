@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: Demonstrates development of Bluetooth L2CAP profile drivers using the Bluetooth L2CAP DDIs.
+description: "Demonstrates development of Bluetooth L2CAP profile drivers using the Bluetooth L2CAP DDIs."
 languages:
 - cpp
 products:
