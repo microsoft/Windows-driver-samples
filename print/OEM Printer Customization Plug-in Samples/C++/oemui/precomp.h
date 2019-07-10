@@ -5,7 +5,7 @@
 //
 //  Copyright  1997 - 2003  Microsoft Corporation.  All Rights Reserved.
 //
-//  FILE:	pecomp.H
+//  FILE:	precomp.H
 //    
 //  PURPOSE:	Optimize compilation of headers that don't change frequently.
 //
