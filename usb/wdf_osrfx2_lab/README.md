@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Contains a console test application and a series of iterative drivers for both KMDF and UMDF version 1."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Contains a set of documents that exercise a variety of features of OpenXPS."
 languages:
 - cpp

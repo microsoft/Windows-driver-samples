@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "The Trusted Execution Environment (TrEE) sample."
 languages:
 - cpp

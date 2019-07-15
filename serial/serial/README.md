@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "The Serial (16550-based RS-232) sample driver is a WDF version of the inbox Serial.sys driver."
 languages:
 - cpp

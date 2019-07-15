@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to open a handle to the SPB controller, use the SPB interface from a KMDF driver, and employ GPIO."
 languages:
 - cpp

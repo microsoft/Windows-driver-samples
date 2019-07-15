@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "An application that demonstrates how to use INetCfg APIs to enumerate, install, uninstall, bind and unbind network components."
 languages:
 - cpp

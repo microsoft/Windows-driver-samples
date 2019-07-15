@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A class driver for disk devices."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Provides examples of how to build OEM printer customization plug-ins."
 languages:
 - cpp

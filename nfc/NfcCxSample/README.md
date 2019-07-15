@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Sample code for creating a NFC driver using the NFC Class Extension."
 languages:
 - cpp

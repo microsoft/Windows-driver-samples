@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Illustrates using remote I/O target interfaces to open a HID collection in kernel-mode and send IOCTL requests to set and get feature reports."
 languages:
 - cpp

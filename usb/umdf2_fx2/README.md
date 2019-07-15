@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates a UMDF version 2 driver for the OSR USB-FX2 device."
 languages:
 - cpp

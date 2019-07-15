@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to receive notifications about the initialization of regular boot start drivers in an Early Launch Anti-Malware driver."
 languages:
 - cpp

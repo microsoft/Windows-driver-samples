@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrate how a KMDF driver can implement F-state-based power management."
 languages:
 - cpp

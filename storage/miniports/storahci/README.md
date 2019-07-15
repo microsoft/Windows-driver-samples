@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A sample Storport ACHI miniport driver."
 languages:
 - cpp

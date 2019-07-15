@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "An adapter driver for use with Parallel SCSI Host Bus Adapters or on-motherboard solutions that use the LSI 53C1010 SCSI ASIC."
 languages:
 - cpp

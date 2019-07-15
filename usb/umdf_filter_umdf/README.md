@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to load a UMDF filter driver as an upper filter driver above the umdf_fx2 sample driver."
 languages:
 - cpp

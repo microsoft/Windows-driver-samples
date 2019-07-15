@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to extend the WpdHelloWorldDriver sample so that it supports a simulated device with a Contacts device service."
 languages:
 - cpp

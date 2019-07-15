@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how Driver Verifier (DV) can find errors in a WDM driver."
 languages:
 - cpp

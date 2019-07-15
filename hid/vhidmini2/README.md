@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF)."
 languages:
 - cpp

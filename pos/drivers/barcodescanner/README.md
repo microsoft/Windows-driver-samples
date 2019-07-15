@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "This UDMF version 2 sample serves as a template for creating a new Barcode Scanner driver."
 languages:
 - cpp

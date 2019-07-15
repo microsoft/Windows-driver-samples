@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board."
 languages:
 - cpp

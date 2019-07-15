@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device."
 languages:
 - cpp

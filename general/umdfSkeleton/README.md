@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to use UDMF to write a minimal driver."
 languages:
 - cpp

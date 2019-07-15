@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Contains ACPI BIOS and WMI sample code that enables instrumentation of the ACPI BIOS from within ACPI Source Language (ASL) code."
 languages:
 - cpp

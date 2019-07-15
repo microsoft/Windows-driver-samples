@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A WMI iSCSI miniport that can be tested using the iSCSICLI.exe tool."
 languages:
 - cpp

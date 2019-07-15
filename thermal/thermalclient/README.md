@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Simulates a device that is a Windows thermal management client."
 languages:
 - cpp

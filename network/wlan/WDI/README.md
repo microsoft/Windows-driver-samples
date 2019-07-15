@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates use of the WLAN WDI."
 languages:
 - cpp

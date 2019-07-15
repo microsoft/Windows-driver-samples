@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates a KMDF-based implementation of Windows battery driver interfaces."
 languages:
 - cpp

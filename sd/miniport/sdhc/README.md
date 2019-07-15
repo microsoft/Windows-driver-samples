@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Provides a functional miniport implementation for a standard SD host controller."
 languages:
 - cpp

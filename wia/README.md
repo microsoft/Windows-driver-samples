@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Contains samples and test tools for Windows Image Acquisition (WIA)."
 languages:
 - cpp

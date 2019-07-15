@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Provide access to CD, DVD and Blu-ray drives, supports Plug and Play, Power Management, and AutoRun (media change notification)."
 languages:
 - cpp

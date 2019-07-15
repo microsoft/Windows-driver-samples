@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to implement advanced constraint handling and PrintTicket/PrintCapabilities handling using JavaScript."
 languages:
 - javascript

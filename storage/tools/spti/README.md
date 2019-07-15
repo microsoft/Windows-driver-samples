@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to communicate with a SCSI device using pass-through IOCTLs in an application using DeviceIoControl API."
 languages:
 - cpp

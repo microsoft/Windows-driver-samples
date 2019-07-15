@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "This sample shows how to use the print pipeline's filter interfaces."
 languages:
 - cpp

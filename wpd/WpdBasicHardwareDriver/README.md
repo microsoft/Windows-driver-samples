@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Supports nine sensor devices that integrate with the Parallax BS2 programmable microcontroller."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates a simple controller-less modem driver."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver."
 languages:
 - cpp

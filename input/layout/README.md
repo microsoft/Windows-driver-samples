@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to generate layouts for various keyboards and locales."
 languages:
 - cpp

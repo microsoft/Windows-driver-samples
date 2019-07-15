@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A sample class driver for Super Floppy disk drives."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Supports four objects - a device object, a storage object, a folder object, and a file object."
 languages:
 - cpp

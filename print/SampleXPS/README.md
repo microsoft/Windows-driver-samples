@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Contains a set of documents that exercise a variety of features of the XML Paper Specification."
 languages:
 - cpp
