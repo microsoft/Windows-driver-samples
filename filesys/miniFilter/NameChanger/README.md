@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Grafts a directory from one part of a volume's namespace to another part using a mapping."
 languages:
 - cpp

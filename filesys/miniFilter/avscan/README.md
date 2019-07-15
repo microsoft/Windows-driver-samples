@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "This filter is a transaction-aware file scanner that examines data in files."
 languages:
 - cpp

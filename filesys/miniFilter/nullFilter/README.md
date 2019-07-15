@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A minifilter that demonstrates registration with the filter manager."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A sample driver instrumented for software tracing."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A driver device transform which loads in a process streaming an Avstream based camera device using Media Foundation."
 languages:
 - cpp

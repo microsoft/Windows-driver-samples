@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates usage of four different types of IOCTLs."
 languages:
 - cpp

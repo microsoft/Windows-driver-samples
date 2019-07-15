@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A file system driver based on the Windows inbox FastFAT file system used as a model for new file systems."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices."
 languages:
 - cpp

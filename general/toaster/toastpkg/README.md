@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Simulates hardware-first and software-first installation of the toaster sample driver."
 languages:
 - cpp

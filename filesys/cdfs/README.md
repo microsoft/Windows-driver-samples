@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "The CD-ROM file system driver (CDFS) sample is a file system driver for removable media."
 languages:
 - cpp

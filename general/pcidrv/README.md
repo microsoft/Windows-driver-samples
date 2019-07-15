@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to write a KMDF driver for a PCI device."
 languages:
 - cpp

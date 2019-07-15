@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how a driver could use a system DMA controller to write data to a hardware location using V3 System DMA."
 languages:
 - cpp

@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A minifilter demonstrating the use of cancel-safe queues."
 languages:
 - cpp

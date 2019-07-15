@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates the use of the cancel-safe queue routines."
 languages:
 - cpp

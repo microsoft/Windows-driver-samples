@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A console application that starts the file history service, if it is stopped, and schedules regular backups."
 languages:
 - cpp

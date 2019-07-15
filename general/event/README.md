@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates different ways a kernel-mode driver can notify an application about a hardware event."
 languages:
 - cpp

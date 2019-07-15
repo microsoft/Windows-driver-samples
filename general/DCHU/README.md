@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Illustrates DCHU principles of universal driver design."
 languages:
 - cpp

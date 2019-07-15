@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "An AVStream filter-centric simulated capture sample driver with functional audio."
 languages:
 - cpp

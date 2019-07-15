@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "A transaction-aware filter that monitors file changes in real time."
 languages:
 - cpp

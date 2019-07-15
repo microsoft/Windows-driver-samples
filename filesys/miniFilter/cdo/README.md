@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "An example of using a control device object (CDO) with a minifilter."
 languages:
 - cpp

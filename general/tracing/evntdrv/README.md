@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates the use of the Event Tracing for Windows (ETW) API in a driver."
 languages:
 - cpp

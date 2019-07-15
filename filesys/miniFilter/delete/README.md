@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to detect deletions of files or streams."
 languages:
 - cpp

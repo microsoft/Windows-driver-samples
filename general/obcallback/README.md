@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates the use of registered callbacks for process protection."
 languages:
 - cpp

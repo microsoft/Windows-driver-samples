@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description:  "An example of how to use files for storing metadata that corresponds to minifilters."
 languages:
 - cpp

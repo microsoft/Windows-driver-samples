@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates the use of the kernel-mode performance library."
 languages:
 - cpp

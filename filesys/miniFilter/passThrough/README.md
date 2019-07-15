@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to specify callback functions for different types of I/O requests."
 languages:
 - cpp

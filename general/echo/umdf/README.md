@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices."
 languages:
 - cpp
