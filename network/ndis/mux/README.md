@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "An NDIS 6.0 driver that demonstrates the operation of an N to 1 MUX driver."
 languages:
 - cpp
@@ -22,8 +22,7 @@ The MUX Intermediate Miniport (IM) driver is an NDIS 6.0 driver that demonstrate
 
 For more information, see [NDIS Intermediate Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565773) in the network devices design guide.
 
-INSTALLING THE SAMPLE
----------------------
+## Installing the sample
 
 MUX is installed as a protocol (called *Sample Mux-IM Protocol Driver* in the supplied INFs/notification object).
 
