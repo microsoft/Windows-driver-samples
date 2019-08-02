@@ -19,7 +19,7 @@
 
 **************************************************************************/
 #pragma once
-
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
 
 enum MetadataId_Custom
 {
@@ -373,3 +373,4 @@ struct _KSCAMERA_ATTRIBUTES_HEADER
     ULONG   PinId;          //  The Pin this payload affects.
 } KSCAMERA_ATTRIBUTES_HEADER, *PKSCAMERA_ATTRIBUTES_HEADER;
 #endif
+#endif // (NTDDI_VERSION >= NTDDI_WINBLUE)

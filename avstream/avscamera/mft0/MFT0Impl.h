@@ -246,7 +246,7 @@ protected:
     HRESULT GetPreviewMediaType(
         _Outptr_result_maybenull_ IMFMediaType **ppType
     );
-
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
     HRESULT ProcessMetadata();
 
     HRESULT ParseMetadata_PreviewAggregation(
@@ -268,7 +268,7 @@ protected:
         _In_ PKSCAMERA_METADATA_ITEMHEADER pItem,
         _In_ IMFAttributes *pMetaDataAttributes
     );
-
+#endif // (NTDDI_VERSION >= NTDDI_WINBLUE)
     HRESULT FillBufferLengthFromMediaType(
         _In_ IMFMediaType *pPreviewType,
         _Inout_ IMFMediaBuffer *pBuffer
