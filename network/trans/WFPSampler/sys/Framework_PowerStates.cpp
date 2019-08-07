@@ -20,6 +20,76 @@
 #include "Framework_WFPSamplerCalloutDriver.h" /// .
 #include "Framework_PowerStates.tmh"           /// $(OBJ_PATH)\$(O)\
 
+KGUARDED_MUTEX guardedMutex = {0};
+
+/**
+ @framework_function="ActOnPowerStateTransition"
+
+   Purpose:  Passive function to handle power state transition behaviors.  If going into a power state, the  <br>
+             callouts are unregistered.  This prevents the driver from potentially taking any more           <br>
+             references on NBLs, and instead causes the filters to return BLOCK.  This should also allow     <br>
+             adequate time to drain currently queued NBLs.  If coming out a a power state, the callouts are  <br>
+             reregistered and normal processing of NBLs will commence.                                       <br>
+                                                                                                             <br>
+   Notes:                                                                                                    <br>    
+                                                                                                             <br>
+   MSDN_Ref: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/wdm/nc-wdm-kstart_routine <br>
+*/
+_IRQL_requires_min_(PASSIVE_LEVEL)
+_IRQL_requires_max_(PASSIVE_LEVEL)
+_IRQL_requires_same_
+VOID ActOnPowerStateTransition(_In_ PVOID pOperationNormal)  /// BOOLEAN*
+{
+#if DBG
+
+    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
+        DPFLTR_INFO_LEVEL,
+        " ---> ActOnPowerStateTransition()\n");
+
+#endif /// DBG
+
+   NTSTATUS status = STATUS_SUCCESS;
+
+   KeAcquireGuardedMutex(&guardedMutex);
+
+   if (*((BOOLEAN*)pOperationNormal) == TRUE)
+   {
+      if (g_calloutsRegistered == FALSE)
+      {
+          status = KrnlHlprExposedCalloutsRegister();
+          HLPR_BAIL_ON_FAILURE(status);
+
+         g_calloutsRegistered = TRUE;
+      }
+   }
+   else
+   {
+      if (g_calloutsRegistered == TRUE)
+      {
+          status = KrnlHlprExposedCalloutsUnregister();
+          HLPR_BAIL_ON_FAILURE(status);
+
+          g_calloutsRegistered = FALSE;
+      }
+   }
+
+   HLPR_BAIL_LABEL:
+
+   KeReleaseGuardedMutex(&guardedMutex);
+
+#if DBG
+
+       DbgPrintEx(DPFLTR_IHVNETWORK_ID,
+           DPFLTR_INFO_LEVEL,
+           " <--- PreventFurtherCalloutProcessing()\n");
+
+#endif /// DBG
+
+   PsTerminateSystemThread(status);
+
+   return;
+}
+
 /**
  @framework_function="PowerStateCallback"
  
@@ -47,32 +117,32 @@ VOID PowerStateCallback(_In_ VOID* pCallbackContext,
 
    if(pPowerStateEvent == (VOID*)PO_CB_SYSTEM_STATE_LOCK)
    {
-      NTSTATUS status = STATUS_SUCCESS;
+      NTSTATUS status          = STATUS_SUCCESS;
+      HANDLE   sysThreadHandle = 0;
+      BOOLEAN  normalOperation = TRUE;
 
       if(pEventSpecifics)
       {
          /// entering the ON state (S0), so return operation to normal
-         if(g_calloutsRegistered == FALSE)
-         {
-            status = KrnlHlprExposedCalloutsRegister();
-            HLPR_BAIL_ON_FAILURE(status);
-
-            g_calloutsRegistered = TRUE;
-         }
       }
       else
       {
          /// leaving the ON state (S0) to sleep (S1/S2/S3) or hibernate (S4)
-         /// Unregister the callouts so no more injection will take place.  By default, the filters 
-         /// invoking the callouts will return block.
-         if(g_calloutsRegistered == TRUE)
-         {
-            status = KrnlHlprExposedCalloutsUnregister();
-            HLPR_BAIL_ON_FAILURE(status);
-
-            g_calloutsRegistered = FALSE;
-         }
+         /// Need to stop callouts from taking further references on NBLs, and 
+         /// drain what is in the current queues
+         normalOperation = FALSE;
       }
+
+      status = PsCreateSystemThread(&sysThreadHandle,
+                                    THREAD_ALL_ACCESS,
+                                    0,
+                                    0,
+                                    0,
+                                    ActOnPowerStateTransition,
+                                    &normalOperation);
+      HLPR_BAIL_ON_FAILURE(status);
+
+      ZwClose(sysThreadHandle);
    }
 
    HLPR_BAIL_LABEL:
@@ -89,7 +159,7 @@ VOID PowerStateCallback(_In_ VOID* pCallbackContext,
 }
 
 /**
- @framework_function="RegisterPowerStateChangeCallback"
+ @framework_function="UnregisterPowerStateChangeCallback"
  
    Purpose:  Unregister a callback that handled notifications of power state changes.           <br>
                                                                                                 <br>
@@ -167,6 +237,8 @@ NTSTATUS RegisterPowerStateChangeCallback(_Inout_ DEVICE_EXTENSION* pDeviceExten
    NTSTATUS          status           = STATUS_SUCCESS;
    OBJECT_ATTRIBUTES objectAttributes = {0};
    UNICODE_STRING    unicodeString    = {0};
+
+   KeInitializeGuardedMutex(&guardedMutex);
 
    RtlInitUnicodeString(&unicodeString,
                         L"\\Callback\\PowerState");
