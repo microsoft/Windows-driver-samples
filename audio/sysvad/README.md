@@ -5,6 +5,7 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 urlFragment: sysvad-virtual-audio-device-driver-sample
 ---
 

@@ -5,6 +5,7 @@ languages:
 - csharp
 products:
 - windows
+- windows-wdk
 ---
 
 <!---

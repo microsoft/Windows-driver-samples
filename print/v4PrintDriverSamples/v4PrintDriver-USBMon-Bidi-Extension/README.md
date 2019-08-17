@@ -6,6 +6,7 @@ languages:
 - xml
 products:
 - windows
+- windows-wdk
 ---
 
 <!---
