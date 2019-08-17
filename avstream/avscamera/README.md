@@ -6,6 +6,7 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
 
 <!---

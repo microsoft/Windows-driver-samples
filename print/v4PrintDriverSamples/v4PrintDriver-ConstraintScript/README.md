@@ -5,6 +5,7 @@ languages:
 - javascript
 products:
 - windows
+- windows-wdk
 ---
 
 <!---

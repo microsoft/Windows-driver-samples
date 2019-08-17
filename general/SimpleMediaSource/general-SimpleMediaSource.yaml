@@ -8,3 +8,4 @@ sample:
 - cpp
   technologies:
 - windows
+- windows-wdk
