@@ -72,7 +72,7 @@ Return Value:
     KdPrint(("Toaster Function Driver Sample - Driver Framework Edition.\n"));
 
     //
-    // Initiialize driver config to control the attributes that
+    // Initialize driver config to control the attributes that
     // are global to the driver. Note that framework by default
     // provides a driver unload routine. If DriverEntry creates any resources
     // that require clean-up in driver unload,

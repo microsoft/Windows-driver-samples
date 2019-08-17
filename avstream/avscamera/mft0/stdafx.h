@@ -16,9 +16,11 @@
 #endif
 
 #include "targetver.h"
+#if (NTDDI_VERSION <= NTDDI_WIN7)
+#pragma message("MFT0 is in not supported in this target Windows version - Change project settings to target a newer version of Windows")
+#endif
 
 #include <wrl.h>
-
 #include <initguid.h>
 #include <mfapi.h>
 #include <mfidl.h>
