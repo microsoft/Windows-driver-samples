@@ -1,3 +1,13 @@
+---
+page_type: sample
+description: "Demonstrates development of Bluetooth L2CAP profile drivers using the Bluetooth L2CAP DDIs."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
+
 <!---
     name: Bluetooth Echo L2CAP Profile Driver
     platform: WDM
@@ -217,5 +227,3 @@ One transition to note here is that if disconnect is received in the connecting 
 **Sending and receiving data from server**: When application writes data to the client, client sends this data to server on the connection opened for the given handle. Server would echo back this data. This data is retrieved by the application using a read operation. Echo Sample Client doesn't do any draining of echoed data on its own. Application read/write are handled using a parallel WDF I/O queue.
 
 **Shutdown**: Client doesn't need any specific shutdown code as connection open/close and read/write are done within the context of application's handle open.
-
-
