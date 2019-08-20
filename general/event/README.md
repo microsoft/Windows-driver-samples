@@ -9,6 +9,7 @@ products:
 ---
 
 
+
 <!---
     name: Hardware Event Sample
     platform: WDM
