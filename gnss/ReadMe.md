@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: GPS/GNSS UMDF Sample Driver (UMDF Version 2)
     platform: UMDF2

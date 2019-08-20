@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: SimThermalClient - Simulated Thermal Client Sample Driver
     platform: KMDF

@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Kernel Counter Sample (Kcs)
     platform: WDM

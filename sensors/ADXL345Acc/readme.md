@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: ADXL345 Accelerometer Sample Driver
     platform: UMDF2

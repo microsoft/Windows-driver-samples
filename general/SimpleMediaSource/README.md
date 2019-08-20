@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: SimpleMediaSource sample
     platform: UMDF2

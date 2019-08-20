@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Simple Device Orientation Sensor Sample
     platform: UMDF2

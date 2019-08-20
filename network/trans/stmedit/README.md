@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Windows Filtering Platform Stream Edit Sample
     platform: KMDF

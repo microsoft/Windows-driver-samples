@@ -9,6 +9,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Virtual serial driver sample (UMDF version 2)
     platform: UMDF2

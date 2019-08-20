@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Magnetic Stripe Reader Driver Sample
     platform: UMDF2

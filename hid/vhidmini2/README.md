@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: HID Minidriver Sample (UMDF version 2)
     platform: UMDF2

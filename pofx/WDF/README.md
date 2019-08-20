@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: KMDF Power Framework (PoFx) Sample
     platform: KMDF

@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Activity Sensor Driver Sample
     platform: UMDF2

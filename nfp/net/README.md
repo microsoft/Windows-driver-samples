@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Near-Field Proximity Sample Driver (UMDF Version 1)
     platform: UMDF1
@@ -31,4 +32,5 @@ Typically, a near-field proximity driver would use near-field technologies such 
 ## See also
 
 [Getting Started with UMDF](https://docs.microsoft.com/windows-hardware/drivers/wdf/getting-started-with-umdf-version-2)
+
 [UMDF 1.x Design Guide](https://docs.microsoft.com/windows-hardware/drivers/wdf/user-mode-driver-framework-design-guide)

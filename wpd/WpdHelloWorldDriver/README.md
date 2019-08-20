@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: WPD Hello World Sample
     platform: UMDF1

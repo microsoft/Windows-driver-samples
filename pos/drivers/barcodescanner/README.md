@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Barcode Scanner Driver Sample
     platform: UMDF2

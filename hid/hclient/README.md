@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name:  HClient sample application
     platform: WDM
