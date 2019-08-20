@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Keyboard Layout Samples
     platform: Application

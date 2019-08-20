@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Windows Biometric Driver Samples (UMDF Version 1)
     platform: UMDF1

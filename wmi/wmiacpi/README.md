@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: WMIACPI Sample
     platform: WDM

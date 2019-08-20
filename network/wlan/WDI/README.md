@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: WDI samples
     platform: KMDF

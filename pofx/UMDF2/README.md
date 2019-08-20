@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Power Framework (PoFx) Sample (UMDF Version 2)
     platform: UMDF2

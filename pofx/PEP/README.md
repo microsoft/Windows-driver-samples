@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Power Engine Plugin (PEP) ACPI Sample
     platform: KMDF

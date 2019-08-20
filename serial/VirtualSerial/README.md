@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Virtual serial driver sample
     platform: UMDF1

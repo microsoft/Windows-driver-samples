@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Pedometer Sensor Sample
     platform: UMDF2

@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Windows Image Acquisition (WIA) Driver Samples
     platform: WDM

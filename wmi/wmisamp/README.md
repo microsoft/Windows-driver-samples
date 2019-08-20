@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: WmiSamp WMI Provider
     platform: KMDF

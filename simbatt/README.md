@@ -8,6 +8,7 @@ products:
 - windows-wdk
 ---
 
+
 <!---
     name: Simulated Battery Driver Sample
     platform: KMDF
