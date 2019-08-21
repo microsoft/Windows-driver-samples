@@ -9,6 +9,7 @@ products:
 ---
 
 
+
 <!---
     name: Print auto-configuration sample
     platform: Utility

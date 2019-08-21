@@ -9,6 +9,7 @@ products:
 ---
 
 
+
 <!---
     name: Printer Extension Sample
     platform: Application
