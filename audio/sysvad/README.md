@@ -9,7 +9,6 @@ products:
 urlFragment: sysvad-virtual-audio-device-driver-sample
 ---
 
-
 <!---
     name: SysVAD Virtual Audio Device Driver Sample
     platform: WDM
@@ -45,9 +44,7 @@ KeywordDetectorAdapter | Sample Keyword Detector Adapter.
 
 For more information about the Windows audio engine, see [Exposing Hardware-Offloaded Audio Processing in Windows](http://msdn.microsoft.com/en-us/windows/hardware/br259116), and note that audio hardware that is offload-capable replicates the architecture that is presented in the diagram shown in the topic.
 
-
-Build the sample
-----------------
+## Build the sample
 
 If you simply want to Build this sample driver and don't intend to run or test it, then you do not need a target computer (also called a test computer). If, however, you would like to deploy, run and test this sample driver, then you need a second computer that will server as your target computer. Instructions are provided in the **Run the sample** section to show you how to set up the target computer - also referred to as *provisioning* a target computer.
 
@@ -86,8 +83,7 @@ TabletAudioSample.inf | An information (INF) file that contains information need
 PhoneAudioSample.inf | An information (INF) file that contains information needed to install the driver.
 KeywordDetectorContosoAdapter.dll | Sample Keyword detector adapter.
 
-Run the sample
---------------
+## Run the sample
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from the computer on which you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
