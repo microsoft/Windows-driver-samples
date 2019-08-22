@@ -1,5 +1,5 @@
 ---
-topic: sample
+page_type: sample
 description: "Demonstrates how to write a UMDF v2 driver to control a custom sensor."
 languages:
 - cpp
@@ -7,7 +7,6 @@ products:
 - windows
 - windows-wdk
 ---
-
 
 <!---
     name: Custom Sensor Driver Sample

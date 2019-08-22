@@ -1,6 +1,6 @@
 ---
 topic: sample
-description: "Demonstrates how to write a UMDF v2 sensor driver to output Simple Device Orientation values."
+description: "Demonstrates how to write a UMDF v2 sensor driver to output simple device orientation values."
 languages:
 - cpp
 products:
@@ -8,16 +8,15 @@ products:
 - windows-wdk
 ---
 
-
 <!---
-    name: Simple Device Orientation Sensor Sample
+    name: Simple device orientation sensor sample
     platform: UMDF2
     language: cpp
     category: Sensors
-    description: Demonstrates how to write a UMDF v2 sensor driver to output Simple Device Orientation values.
+    description: Demonstrates how to write a UMDF v2 sensor driver to output simple device orientation values.
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617960
 --->
 
-# Simple Device Orientation Sensor Sample
+# Simple device orientation sensor sample
 
-The SimpleDeviceOrientationSensor sample shows how to write a UMDF v2 sensor driver to output Simple Device Orientation values.
+The SimpleDeviceOrientationSensor sample shows how to write a UMDF v2 sensor driver to output simple oevice orientation values.
