@@ -17,6 +17,6 @@ products:
     samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617960
 --->
 
-# Simple device orientation sensor sample
+# Simple Device Orientation Sensor sample
 
-The SimpleDeviceOrientationSensor sample shows how to write a UMDF v2 sensor driver to output simple oevice orientation values.
+This sample shows you how to write a UMDF v2 sensor driver to output simple device orientation values.
