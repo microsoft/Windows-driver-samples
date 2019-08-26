@@ -104,6 +104,7 @@ VOID EventCleanupDriverObject(_In_ WDFOBJECT driverObject)
    Notes:                                                                                       <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF540840.aspx             <br>
+             HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF549133.aspx             <br>
 */
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(PASSIVE_LEVEL)
@@ -159,10 +160,24 @@ VOID EventCleanupDeviceObject(_In_ WDFOBJECT deviceObject)
 
    FwpmBfeStateUnsubscribeChanges(g_bfeSubscriptionHandle);
 
-   UnregisterPowerStateChangeCallback(&g_deviceExtension);
-
    if(g_pNDISPoolData)
       KrnlHlprNDISPoolDataDestroy(&g_pNDISPoolData);
+
+   UnregisterPowerStateChangeCallback(&g_deviceExtension);
+
+   if(g_pPowerStateExitIOWorkItem)
+   {
+      IoFreeWorkItem(g_pPowerStateExitIOWorkItem);
+
+      g_pPowerStateExitIOWorkItem = 0;
+   }
+
+   if(g_pPowerStateEnterIOWorkItem)
+   {
+      IoFreeWorkItem(g_pPowerStateEnterIOWorkItem);
+
+      g_pPowerStateEnterIOWorkItem = 0;
+   }
 
 #if DBG
    
