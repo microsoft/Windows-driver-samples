@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: UcmUcsiCx Client Driver
-    platform: KMDF
-    language: cpp
-    category: USB
-    description: Demonstrates how to create a Windows UCSI client UCSI class extension driver (UcmUcsiCx).
-    samplefwlink: https://github.com/Microsoft/Windows-driver-samples/tree/master/usb/UcmUcsiAcpiSample
---->
-
 # UcmUcsiCx ACPI Client Driver
 
 This is a sample driver that shows how to create a Windows USB Type-C port controller driver using the USB Connector Manager class extension driver (UcmCx). The sample is a driver for an embedded controller which is compliant with the [USB Type-C Connector System Software Interface (UCSI)](http://www.intel.com/content/www/us/en/io/universal-serial-bus/usb-type-c-ucsi-spec.html).

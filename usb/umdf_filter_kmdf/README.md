@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Sample UMDF Filter above KMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
-    platform: KMDF
-    language: cpp
-    category: USB
-    description: Demonstrates how to load a UMDF filter driver as an upper filter driver above the kmdf_fx2 sample driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620316
---->
-
 # Sample UMDF Filter above KMDF Function Driver for OSR USB-FX2 (UMDF Version 1)
 
 The umdf\_filter\_kmdf sample demonstrates how to load a UMDF filter driver as an upper filter driver above the kmdf\_fx2 sample driver.
@@ -60,7 +49,7 @@ The default Solution build configuration is **Debug** and **Win32**.
 
 ## Testing the driver
 
-You can test this sample either by using the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](http://msdn.microsoft.com/en-us/library/windows/hardware/) sample.
+You can test this sample either by using the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-kmdf-function-driver-for-osr-usb-fx2/) sample.
 
 ## Code tour
 

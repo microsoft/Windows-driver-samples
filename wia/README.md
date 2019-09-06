@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Windows Image Acquisition (WIA) Driver Samples
-    platform: WDM
-    language: cpp
-    category: Image Scan
-    description: Contains samples and test tools for Windows Image Acquisition (WIA), a driver architecture and user interface for acquiring images from still image devices such as scanners.
-    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856747
---->
-
 # Windows Image Acquisition (WIA) Driver Samples
 
 The Windows Image Acquisition driver sample set contains samples and test tools for Windows Image Acquisition (WIA), a driver architecture and user interface for acquiring images from still image devices such as scanners.
@@ -30,7 +20,7 @@ The ProdScan directory contains a sample WIA 2.0 mini-driver. This sample shows 
 
 The Wiadriverex directory contains a sample WIA 2.0 mini-driver. This sample shows how to write a WIA 2.0 mini-driver that uses the stream-based WIA 2.0 transfer model. It also shows an implementation of a very simple segmentation filter, image processing filter, and error handling extension for the WIA 2.0 mini-driver.
 
-For more information, see [Introduction to WIA](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542835).
+For more information, see [Introduction to WIA](https://docs.microsoft.com/windows-hardware/drivers/image/introduction-to-wia).
 
 ## Build the sample
 

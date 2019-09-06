@@ -8,19 +8,10 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: PCMCIA Smart Card Driver
-    platform: KMDF
-    language: cpp
-    category: SmartCard
-    description: Demonstrates how to write a KMDF driver for the SCM Microsystems PCMCIA smart card reader.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617968
---->
-
 # PCMCIA Smart Card Driver
 
-**Warning: This sample and its documentation are known to be out of date. They will be updated soon. Please be aware that some functionality may not work as expected.**
+> [!WARNING]
+> This sample and its documentation are known to be out of date. They will be updated soon. Please be aware that some functionality may not work as expected.
 
 The PCMCIA Smart Card Driver is used for the SCM PCMCIA smart card reader. This driver is written using Kernel-Mode Driver Framework.
 
@@ -32,9 +23,10 @@ A card reader will not see any card insertion or removal events in these modes, 
 
 ## Build the sample
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
-**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+> [!NOTE]
+> You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=253170).
 
 ## Run the sample
 
@@ -52,4 +44,4 @@ The driver will not unload as long as you have Ifdtest.exe running and connected
 
 ISO 7816 Part 3 describes smart cards and smart card protocols in detail. Refer to the PC99 Handbook for smart card reader requirements.
 
-For more information about Windows smart card reader drivers, see [Smart Card Reader Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+For more information about Windows smart card reader drivers, see [Smart Card Reader Devices Design Guide](https://docs.microsoft.com/windows-hardware/drivers/smartcard/).

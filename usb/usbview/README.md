@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: USBView sample application
-    platform: WDM
-    language: cpp
-    category: USB
-    description: Provides an application that allows you to browse all USB controllers and connected USB devices on your system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618004
---->
-
 # USBView sample application
 
 Usbview.exe is a Windows GUI application that allows you to browse all USB controllers and connected USB devices on your system. The left pane in the main application window displays a connection-oriented tree view, and the right pane displays the USB data structures pertaining to the selected USB device, such as the Device, Configuration, Interface, and Endpoint Descriptors, as well as the current device configuration.
@@ -27,15 +16,15 @@ This functional application sample demonstrates how a user-mode application can 
 
 The IOCTL calls (see the system include file USBIOCTL.H) demonstrated by this sample include:
 
-- [**IOCTL\_GET\_HCD\_DRIVERKEY\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537236)
-- [**IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537310)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_DRIVERKEY\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537317)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537319)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537323)
-- [**IOCTL\_USB\_GET\_NODE\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537324)
-- [**IOCTL\_USB\_GET\_ROOT\_HUB\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537326)
+- [**IOCTL\_GET\_HCD\_DRIVERKEY\_NAME**](https://docs.microsoft.com/windows/win32/api/usbuser/ni-usbuser-ioctl_get_hcd_driverkey_name)
+- [**IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_descriptor_from_node_connection)
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_DRIVERKEY\_NAME**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_driverkey_name)
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_information)
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_name)
+- [**IOCTL\_USB\_GET\_NODE\_INFORMATION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_information)
+- [**IOCTL\_USB\_GET\_ROOT\_HUB\_NAME**](https://docs.microsoft.com/windows/win32/api/usbuser/ni-usbuser-ioctl_usb_get_root_hub_name)
 
-For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff538930).
+For information about USB, see [Universal Serial Bus (USB) Drivers](https://docs.microsoft.com/windows-hardware/drivers/usbcon/).
 
 ## Run the sample
 
@@ -49,7 +38,7 @@ For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.
 If you want to debug the sample app on a remote computer,
 
 1. Copy the executable to a folder on the remote computer.
-1. Specify project properties as per the instructions given in [Set Up Remote Debugging for a Visual Studio Project](http://msdn.microsoft.com/en-us/library/8x6by8d2.aspx).
+1. Specify project properties as per the instructions given in [Remote Debugging](https://docs.microsoft.com/visualstudio/debugger/remote-debugging?view=vs-2015).
 1. Change **Debugger** to launch to **Remote Windows Debugger**.
 1. On the **Debug** menu, select **Start debugging** or hit **F5**.
 
