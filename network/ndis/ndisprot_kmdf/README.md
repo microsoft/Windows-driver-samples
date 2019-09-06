@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Connection-less NDIS 6.0 Protocol KMDF Sample Driver
-    platform: KMDF
-    language: cpp
-    category: Network
-    description: Demonstrates a connection-less NDIS 6.0 protocol KMDF driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620197
---->
-
 # Connection-less NDIS 6.0 Protocol KMDF Sample Driver
 
 This sample demonstrates a connection-less NDIS 6.0 protocol KMDF driver.
