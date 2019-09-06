@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Skeleton I2C Sample Driver
-    platform: KMDF
-    language: cpp
-    category: SimplePeripheralBus
-    description: Demonstrates how to design a KMDF controller driver for Windows that conforms to the simple peripheral bus (SPB) device driver interface (DDI).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617969
---->
-
 # Skeleton I2C Sample Driver
 
 The SkeletonI2C sample demonstrates how to design a KMDF controller driver for Windows that conforms to the [simple peripheral bus](http://msdn.microsoft.com/en-us/library/windows/hardware/hh450903) (SPB) device driver interface (DDI). SPB is an abstraction for low-speed serial buses (for example, I<sup>2</sup>C and SPI) that allows peripheral drivers to be developed for cross-platform use without any knowledge of the underlying bus hardware or device connections. While this sample implements an empty I<sup>2</sup>C driver, it could just as easily be the starting point for an SPI driver with only minor modifications.

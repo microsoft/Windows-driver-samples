@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Device Console (DevCon) Tool
-    platform: Tool
-    language: cpp
-    category: Setup
-    description: DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers.
-    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=856741
---->
-
 # Device Console (DevCon) Tool
 
 [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) is a command-line tool that displays detailed information about devices, and lets you search for and manipulate devices from the command line. DevCon enables, disables, installs, configures, and removes devices on the local computer and displays detailed information about devices on local and remote computers. DevCon is included in the WDK.
@@ -55,17 +45,17 @@ Type "devcon status \*PNP05\*" to list status of all COM ports.
 
 ### How DevCon works
 
-Running "devcon help" will provide a list of commands along with short descriptions of what each command does. "devcon help \<command\>" will give more detailed help on that command. The interpretation of each command is done via a dispatch table "DispatchTable" that is at the bottom of "cmds.cpp". Some of the commands make use of a generic device enumerator "EnumerateDevices". A few of these commands will work when given a remote target computer, and will also work if using the 32-bit devcon on Wow64. 
+Running "devcon help" will provide a list of commands along with short descriptions of what each command does. "devcon help \<command\>" will give more detailed help on that command. The interpretation of each command is done via a dispatch table "DispatchTable" that is at the bottom of "cmds.cpp". Some of the commands make use of a generic device enumerator "EnumerateDevices". A few of these commands will work when given a remote target computer, and will also work if using the 32-bit devcon on Wow64.
 
 A description of some of the more interesting functions and the APIs they use follows:
 
 cmdClasses  
 
-- This command demonstrates the use of [**SetupDiBuildClassInfoListEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550911) to enumerate all device class GUID's. The function [**SetupDiClassNameFromGuidEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550950) and [**SetupDiGetClassDescriptionEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551058) are used to obtain more information about each device class.
+- This command demonstrates the use of [**SetupDiBuildClassInfoListEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550911) to enumerate all device class GUIDs. The function [**SetupDiClassNameFromGuidEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550950) and [**SetupDiGetClassDescriptionEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551058) are used to obtain more information about each device class.
 
 cmdListClass  
 
-- This command demonstrates the use of [**SetupDiClassGuidsFromNameEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550941) to enumerate one or more class GUID's that match the class name. This command also demonstrates the use of [**SetupDiGetClassDevsEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551072) to list all the devices for each class GUID.
+- This command demonstrates the use of [**SetupDiClassGuidsFromNameEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff550941) to enumerate one or more class GUIDs that match the class name. This command also demonstrates the use of [**SetupDiGetClassDevsEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff551072) to list all the devices for each class GUID.
 
 cmdFind cmdFindAll cmdStatus  
 

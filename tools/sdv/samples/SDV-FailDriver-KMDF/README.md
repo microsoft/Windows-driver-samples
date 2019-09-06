@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: SDV-FailDriver-KMDF
-    platform: KMDF
-    language: cpp
-    category: StaticDriverVerifier Tools
-    description: Demonstrates how Static Driver Verifier (SDV) can find errors in a KMDF driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617993
---->
-
 # SDV-FailDriver-KMDF
 
 The SDV-FailDriver-KMDF sample driver contains intentional code errors that are designed to show the capabilities and features of [Static Driver Verifier](http://msdn.microsoft.com/en-us/library/windows/hardware/ff552808) (SDV). SDV is a static verification tool that systematically analyzes the source code of Windows kernel-mode drivers. SDV is included in the Windows Driver Kit (WDK) and can be run from Microsoft Visual Studio. The sample demonstrates how SDV can find errors in a KMDF driver.

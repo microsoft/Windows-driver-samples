@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Multipath I/O (MPIO) DSM Sample
-    platform: WDM
-    language: cpp
-    category: Storage
-    description: Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620203
---->
-
 # Multipath I/O (MPIO) DSM Sample
 
 The MPIO DSM Sample is intended to serve as an example to follow when building your own vendor specific device specific modules (DSM). This sample DSM supports iSCSI and Fibre Channel devices.
@@ -105,7 +94,8 @@ AddReg         = mydsm_addreg
 
 This next section contains the Hardware ID strings for your devices. You can have more than one. Sample format: "VENDOR PRODUCT " - remember to use spaces in a field (vendor, product ID) to pad this to be eight characters for the vendor name (as registered with STA) and sixteen for the product ID (unless the supported devices share a common prefix, in which case the product ID can be less than 16 characters).
 
-**Note** Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
+> [!NOTE]
+> Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
 
 In this sample, there are two different strings:
 
@@ -211,6 +201,8 @@ You should be aware of the following when you install the MPIO DSM sample:
 
 It is expected that the adapter that hosts the system volumes (boot/paging) will not restart, but that should not be problem if you are not multipathing the boot volume. However, if you are multipathing the boot volume, you will need to restart the system.
 
-**Note** Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
+> [!NOTE]
+> Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
 
-**Note** Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.
+> [!NOTE]
+> Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.
