@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Mouse Input WDF Filter Driver (Moufiltr)
-    platform: KMDF
-    language: cpp
-    category: HID WDF
-    description: A WDF example of a mouse input filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620195
---->
-
 # Mouse Input WDF Filter Driver (Moufiltr)
 
 The Moufiltr sample is an example of a mouse input filter driver.
