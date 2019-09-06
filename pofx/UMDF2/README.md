@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Power Framework (PoFx) Sample (UMDF Version 2)
-    platform: UMDF2
-    language: cpp
-    category: Power
-    description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617936
---->
-
 # Power Framework (PoFx) Sample (UMDF Version 2)
 
 This solution demonstrates how a User-Mode Driver Framework (UMDF) version 2 driver can implement F-state-based power management. The SingleComp project demonstrates how a UMDF version 2 driver can implement F-state-based power management for a device that has only a single component.

@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: OEM Printer Customization Plug-in Samples
-    platform: DLL
-    language: cpp
-    category: Print
-    description: Provides examples of how to build OEM printer customization plug-ins.
-    samplefwlink: https://go.microsoft.com/fwlink/?linkid=862105
---->
-
 # OEM Printer Customization Plug-in Samples
 
 The OEMDLL samples are an illustration of OEM customization plug-ins. The BITMAP, OEMPS, OEMUI, OEMUNI, OEMPREAN, CUSTHLP, SyncSet, ThemeUI, PSUIRep, and Watermark samples do not affect the printer output. They are only examples of how to build OEM Customization DLLs of various types. 

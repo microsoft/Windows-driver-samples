@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Windows Filtering Platform Packet Modification Sample
-    platform: KMDF
-    language: cpp
-    category: Network
-    description: Demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617930
---->
-
 # Windows Filtering Platform Packet Modification Sample
 
 The sample driver demonstrates the packet modification capabilities of the Windows Filtering Platform (WFP).

@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: NDIS 6.0 Filter Driver
-    platform: WDM
-    language: cpp
-    category: Network
-    description: A pass-through NDIS 6 filter driver demonstrating the basic principles of an NDIS 6.0 Filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617915
---->
-
 # NDIS 6.0 Filter Driver
 
 The Ndislwf sample is a do-nothing pass-through NDIS 6 filter driver that demonstrates the basic principles underlying an NDIS 6.0 Filter driver. The sample replaces the NDIS 5 Sample Intermediate Driver (Passthru driver).
