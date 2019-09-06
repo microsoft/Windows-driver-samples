@@ -201,7 +201,7 @@
     <ResourceCompile Include="AvsCameraMft0.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inf" />
+    <Inf Exclude="@(Inf)" Include="*.inf;*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>
