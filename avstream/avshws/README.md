@@ -8,18 +8,9 @@ products:
 - windows-wdk
 ---
 
-<!---
-    name: AVStream simulated hardware sample driver (Avshws)
-    platform: WDM
-    language: cpp
-    category: Camera
-    description: A simulated hardware sample driver providing a pin-centric capture driver to simulate AV capture hardware.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620185
---->
-
 # AVStream simulated hardware sample driver (Avshws)
 
-The AVStream simulated hardware sample driver (Avshws) provides a pin-centric [AVStream](http://msdn.microsoft.com/library/windows/hardware/ff554240) capture driver for a simulated piece of hardware. This streaming media driver performs video captures at 320 x 240 pixels in either RGB24 or YUV422 format using direct memory access (DMA) into capture buffers. The purpose of the sample is to demonstrate how to write a pin-centric AVStream minidriver. The sample also shows how to implement DMA by using the related functionality provided by the AVStream class driver.
+The AVStream simulated hardware sample driver (Avshws) provides a pin-centric [AVStream](https://docs.microsoft.com/windows-hardware/drivers/stream/avstream-overview) capture driver for a simulated piece of hardware. This streaming media driver performs video captures at 320 x 240 pixels in either RGB24 or YUV422 format using direct memory access (DMA) into capture buffers. The purpose of the sample is to demonstrate how to write a pin-centric AVStream minidriver. The sample also shows how to implement DMA by using the related functionality provided by the AVStream class driver.
 
 This sample features enhanced parameter validation and overflow detection.
 
@@ -27,9 +18,9 @@ This sample features enhanced parameter validation and overflow detection.
 
 After you've installed the sample on your host computer, run Visual Studio, and from the **File** menu, select **Open**, then **Project/Solution...**, navigate to the directory where you've copied the Avshws sample, then to the C++ folder, and select **avshws.vcxproj** (the VC++ Project).
 
-In the **Solution Explorer** pane in Visual Studio, at the top is **Solution 'avshws'**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with the WDK](http://msdn.microsoft.com/library/windows/hardware/ff554644) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
+In the **Solution Explorer** pane in Visual Studio, at the top is **Solution 'avshws'**. Right-click this and select **Configuration Manager**. Follow the instructions in [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver) to set the platform, operating system, and debug configuration you want to use, and to build the sample. This sample project will automatically sign the driver package.
 
-Provision your target computer using instructions in, for example, [Preparing a Computer for Provisioning](http://msdn.microsoft.com/library/windows/hardware/dn265573). Ensure that in the **Network and Sharing Center** control panel your target computer has **Network Discovery** and **File and Printer Sharing** enabled.
+Provision your target computer using instructions in, for example, [Provision a computer for driver deployment and testing](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1). Ensure that in the **Network and Sharing Center** control panel your target computer has **Network Discovery** and **File and Printer Sharing** enabled.
 
 ## Deploy the driver to the target computer
 
