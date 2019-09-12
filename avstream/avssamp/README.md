@@ -8,15 +8,6 @@ products:
 - windows-wdk
 ---
 
-<!---
-    name: AVStream filter-centric simulated capture sample driver (Avssamp)
-    platform: WDM
-    language: cpp
-    category: Camera
-    description: An AVStream filter-centric simulated capture sample driver with functional audio.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620186
---->
-
 # AVStream filter-centric simulated capture sample driver (Avssamp)
 
 The AVStream filter-centric simulated capture sample driver (Avssamp) provides a filter-centric [AVStream](https://docs.microsoft.com/windows-hardware/drivers/stream/avstream-overview) capture driver with functional audio. This streaming media driver performs video captures at 320 x 240 pixel resolution in RGB24 or YUV422 format while playing a user-provided Pulse Code Modulation (PCM) wave audio file in a loop. The sample demonstrates how to write a filter-centric AVStream minidriver.
