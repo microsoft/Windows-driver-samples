@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: NullFilter File System Minifilter Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: A minifilter that demonstrates registration with the filter manager.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617653
---->
-
 # NullFilter File System Minifilter Driver
 
 The NullFilter minifilter is a sample minifilter that shows how to register a minifilter with the filter manager.
@@ -30,4 +20,4 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The *NullFilter* minifilter is a simple minifilter that registers itself with the filter manager for no callback operations.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://docs.microsoft.com/windows-hardware/drivers/ifs/file-system-minifilter-drivers) section in the Installable File Systems Design Guide.

@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: SimRep File System Minifilter Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: Demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617656
---->
-
 # SimRep File System Minifilter Driver
 
 SimRep is a sample filter that demonstrates how a file system filter can simulate file-system like reparse-point behavior to redirect a file open to an alternate path.
@@ -34,4 +24,4 @@ SimRep decides to reparse according to a mapping. The mapping is made up of a "N
 
 It is important to note that SimRep does not take long and short names into account. It literally does a string comparison to detect overlap with the mapping paths. SimRep also handles IRP\_MJ\_NETWORK\_QUERY\_OPEN. Because network query opens are FastIo operations, they cannot be reparsed. This means network query opens which need to be redirected must be failed with FLT\_PREOP\_DISALLOW\_FASTIO. This will cause the Io Manager to reissue the open as a regular IRP based open. To prevent performance regression, SimRep only fails network query opens which need to be reparsed.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://docs.microsoft.com/windows-hardware/drivers/ifs/file-system-minifilter-drivers) section in the Installable File Systems Design Guide.
