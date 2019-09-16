@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: PassThrough File System Minifilter Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: Demonstrates how to specify callback functions for different types of I/O requests.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617654
---->
-
 # PassThrough File System Minifilter Driver
 
 The PassThrough minifilter demonstrates how to specify callback functions for different types of I/O requests.
@@ -30,4 +20,4 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The *PassThrough* minifilter does not have any real functionality. For each type of I/O operation, the same pre and post callback functions are called. These callback functions simply forward the I/O request to the next filter on the stack.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://docs.microsoft.com/windows-hardware/drivers/ifs/file-system-minifilter-drivers) section in the Installable File Systems Design Guide.

@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Minispy File System Minifilter Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: A tool to monitor and log any I/O and transaction activity that occurs in the system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617651
---->
-
 # Minispy File System Minifilter Driver
 
 The Minispy sample is a tool to monitor and log any I/O and transaction activity that occurs in the system. Minispy is implemented as a minifilter.
@@ -32,4 +22,4 @@ Minispy consists of both user-mode and kernel-mode components. The kernel-mode c
 
 To observe I/O activity on a device, you must explicitly attach Minispy to that device by using the Minispy user-mode component. Similarly, you can request Minispy to stop logging data for a particular device.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://docs.microsoft.com/windows-hardware/drivers/ifs/file-system-minifilter-drivers) section in the Installable File Systems Design Guide.
