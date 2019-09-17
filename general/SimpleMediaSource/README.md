@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: SimpleMediaSource sample
-    platform: UMDF2
-    language: cpp
-    category: general
-    description: Demonstrates how to write a custom media source and driver package.
-    samplefwlink:
---->
-
 # SimpleMediaSource sample
 
 This sample demonstrates how to create a custom media source and driver package that can be installed as a camera and produce frames.
