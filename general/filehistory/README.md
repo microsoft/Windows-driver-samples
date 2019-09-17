@@ -8,22 +8,11 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: File History Sample
-    platform: WDM
-    language: cpp
-    category: General
-    description: A console application that starts the file history service, if it is stopped, and schedules regular backups.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617712
---->
-
 # File History Sample
 
 The FileHistory sample is a console application that starts the file history service, if it is stopped, and schedules regular backups. The application requires, as a command-line parameter, the path name of a storage device to use as the default backup target.
 
-This sample application uses the [File History API](http://msdn.microsoft.com/en-us/library/windows/hardware/hh829789). The File History API enables third parties to automatically configure the File History feature on a Windows platform and customize it in accordance with their unique needs.
+This sample application uses the [File History API](https://docs.microsoft.com/windows/win32/devnotes/file-history-api). The File History API enables third parties to automatically configure the File History feature on a Windows platform and customize it in accordance with their unique needs.
 
 ## Run the sample
 
