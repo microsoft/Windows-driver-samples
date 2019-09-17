@@ -8,24 +8,14 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: System DMA sample
-    platform: WDM
-    language: cpp
-    category: General
-    description: Demonstrates how a driver could use a system DMA controller to write data to a hardware location using V3 System DMA.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617722
---->
-
 # System DMA
 
 This sample demonstrates the usage of V3 System DMA. It shows how a driver could use a system DMA controller supported by Windows to write data to a hardware location using DMA.
 
-The sample consists of a legacy device driver and a Win32 console mode test application. The test application opens a handle to the device exposed by the driver and makes a DeviceIoControl call to initiate the example system DMA. To understand how the V3 system DMA calls are invoked please study SDmaWrite() in SDma.c.
+The sample consists of a legacy device driver and a Win32 console mode test application. The test application opens a handle to the device exposed by the driver and makes a DeviceIoControl call to initiate the example system DMA. To understand how the V3 system DMA calls are invoked, see the SDmaWrite function in sdma.c.
 
-**Note** This sample driver is not a PnP driver. This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
+> [!NOTE]
+> This sample driver is not a PnP driver. This is a minimal driver meant to demonstrate an OS feature. Neither it nor its sample programs are intended for use in a production environment. Rather, they are intended for educational purposes and as a skeleton driver.
 
 ## Run the sample
 
