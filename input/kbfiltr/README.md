@@ -19,6 +19,7 @@ This is an upper device filter driver sample for PS/2 keyboard. This driver laye
 This sample also creates a raw PDO and registers an interface so that applications can talk to the filter driver directly without going through the PS/2 devicestack. The reason for providing this additional interface is because the keyboard device is an exclusive secure device and it's not possible to open the device from usermode and send custom ioctls through it.
 
 This driver filters input for a particular keyboard on the system. If you want to filter keyboard inputs from all the keyboards plugged into the system, you can install this driver as a class filter below the KbdClass filter driver by adding the service name of this filter driver before the KbdClass filter in the registry at:
+
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}\UpperFilters`
 
 ## Universal Windows Driver Compliant
@@ -29,7 +30,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 This step is required for automatic deployment (described later) to work properly. In the kbfiltr.inx file (located with the driver source files), find the [DDK\_Ex.Mfg.NT\$ARCH\$] section. Change the hardware ID in the %DDK\_Ex% entry from the dummy value to the hardware ID of the PS/2 keyboard on the target computer. The following example shows the hardware ID change.
 
-```INF
+```inf
 ; For XP and above
 [DDK_Ex.Mfg.NT$ARCH$]
 ;%DDK_Ex% = kbfiltr, *PNP0BAAD
@@ -40,7 +41,7 @@ This step is required for automatic deployment (described later) to work properl
 
 In Visual Studio, on the **Build** menu, choose **Build Solution**.
 
-For more information about using Visual Studio to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using Visual Studio to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
 The test application, *kbftest.exe* is also built as part of the solution under the 'exe' folder.
 
@@ -59,13 +60,13 @@ The package contains these files:
 
 ## Using MSBuild
 
-As an alternative to building the Kbfiltr Filter Driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, kbfiltr.sln. Use the [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
+As an alternative to building the Kbfiltr Filter Driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, kbfiltr.sln. Use the [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild?view=vs-2019) command to build the solution. Here are some examples:
 
 - **msbuild /p:configuration="Debug" /p:platform="x64" kbfiltr.sln**
 
 - **msbuild /p:configuration="Release" /p:platform="Win32" kbfiltr.sln**
 
-For more information about using [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild?view=vs-2019) to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
 ## Run the sample
 
@@ -75,7 +76,7 @@ The process of moving the driver package to the target computer and installing t
 
 ### Automatic deployment
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Provision a computer for driver deployment and testing](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1).
 
 1. On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
 
@@ -85,7 +86,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 ### Manual deployment
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\KbfiltrDriverPackage).
 

@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: NDIS Virtual Miniport Driver
-    platform: WDM
-    language: cpp
-    category: Network
-    description: Demonstrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617918
---->
-
 # NDIS Virtual Miniport Driver
 
 The NDIS Virtual Miniport Driver sample illustrates the functionality of an NDIS miniport driver without requiring a physical network adapter.
@@ -31,4 +20,4 @@ To test the miniport driver, install more than one miniport driver instance. You
 
 **Note** This sample provides an example of minimal driver intended for education purposes. The driver and its sample test programs are not intended for use in a production environment.
 
-For more information on creating NDIS Miniport Drivers, see [NDIS Miniport Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff565949).
+For more information on creating NDIS Miniport Drivers, see [NDIS Miniport Drivers](https://docs.microsoft.com/windows-hardware/drivers/network/ndis-miniport-drivers).

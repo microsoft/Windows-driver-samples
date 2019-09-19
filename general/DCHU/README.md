@@ -23,7 +23,7 @@ There are three Visual Studio solutions in this sample.  Each one represents a s
 Both `osrfx2_DCHU_extension_loose` and `osrfx2_DCHU_extension_tight` provide the same functionality, so installing both on the same OSR FX2 device is unnecessary.  They are intended to show a different way to use extension and component INFs depending on a project's needs.
 
 > [!NOTE]
-> Information the user should notice even if skimmingosrfx2_DCHU_extension_tight will not currently build on Windows 10 version 1703.  You will see an error saying that the directive CopyINF does not work from extension INFs.  This has been fixed for the Windows 10 Fall Creators Update.
+> osrfx2_DCHU_extension_tight will not currently build on Windows 10 version 1703.  You will see an error saying that the directive CopyINF does not work from extension INFs.  This has been fixed for the Windows 10 Fall Creators Update.
 
 Each of these solutions can be built with the latest WDK on Visual Studio 2015.  Additionally, you can also download a [Universal Windows Platform app (UWP)](https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/CustomCapability) that controls the OSR FX2 Learning Kit's device.  To learn how to pair a UWP app with a device, see [Hardware access for Universal Windows Platform apps](https://docs.microsoft.com/windows-hardware/drivers/devapps/hardware-access-for-universal-windows-platform-apps)
 
