@@ -23,7 +23,7 @@ Evntdrv registers as a provider by calling the [**EtwRegister**](https://docs.mi
 
     `wevtutil im evntdrv.xml`
 
-    Installing the manifest creates registry keys that enable tools to find the resource and message files that contain event provider information. For further details about the WevtUtil.exe tool, see the MSDN Library.
+    Installing the manifest creates registry keys that enable tools to find the resource and message files that contain event provider information. For further details, see [wevtutil](https://docs.microsoft.com/windows-server/administration/windows-commands/wevtutil).
 
     > [!NOTE]
     > Using a Visual Studio Command windows sets up the environment variables you need to run the tracing tools for this sample.

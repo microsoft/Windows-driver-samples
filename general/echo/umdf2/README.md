@@ -74,4 +74,4 @@ As an alternative to building the driver sample in Visual Studio, you can build 
 
 `msbuild /p:configuration="Release" /p:platform="Win32" umdf2echo.sln`
 
-For more information about using MSBuild to build a driver package, see [MSBuild primer for WDK developers](https://docs.microsoft.com/en-us/windows-hardware/drivers/devtest/msbuild-primer-for-wdk-developers).
+For more information about using MSBuild to build a driver package, see [MSBuild primer for WDK developers](https://docs.microsoft.com/windows-hardware/drivers/devtest/msbuild-primer-for-wdk-developers).

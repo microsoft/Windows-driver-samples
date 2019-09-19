@@ -30,7 +30,7 @@ This sample driver is a minimal driver that is intended to demonstrate how to us
 
 ## Installation
 
-In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
+In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](https://docs.microsoft.com/windows-hardware/drivers/develop/deploying-a-driver-to-a-test-computer). Alternatively, you can install the sample from the command line.
 
 To test this sample, you must have a test computer. This test computer can be a second computer or, if necessary, your development computer.
 

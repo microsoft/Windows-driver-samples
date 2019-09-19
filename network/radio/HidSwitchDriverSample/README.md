@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Radio Switch Test Driver for OSR USB-FX2 Development Board
-    platform: KMDF
-    language: cpp
-    category: Network Radio
-    description: Demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617919
---->
-
 # Radio Switch Test Driver for OSR USB-FX2 Development Board
 
 This sample demonstrates how to structure a HID driver for radio switches for the OSR USB-FX2 Development Board.
@@ -29,9 +18,9 @@ The hardware switch or button to control wireless transmission and the global so
 
 ### Switch Mapping
 
- 1 | 2 | 3 | 4 | 5 | 7 | 8
----|---|---|---|---|---|---
- Mode Select Bit 3 |  Mode Select Bit 2 |  Mode Select Bit 1 | - | - | - | Radio Switch
+| 1 | 2 | 3 | 4 | 5 | 7 | 8 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Mode Select Bit 3 |  Mode Select Bit 2 |  Mode Select Bit 1 | - | - | - | Radio Switch |
 
 ## Testing
 
@@ -41,16 +30,16 @@ The driver supports five modes representing the valid combinations of HID descri
 
 ### Switch Mapping Modes
 
- 1 | 2 | 3 | Mode
----|---|---|-----
- 0 | 0 | 0 | Mode 1
- 0 | 0 | 1 | Mode 1
- 0 | 1 | 0 | Mode 2
- 0 | 1 | 1 | Mode 3
- 1 | 0 | 0 | Mode 4
- 1 | 0 | 1 | Mode 5
- 1 | 1 | 0 | Mode 1
- 1 | 1 | 1 | Mode 1
+| 1 | 2 | 3 | Mode |
+| --- | --- | --- | --- |
+| 0 | 0 | 0 | Mode 1 |
+| 0 | 0 | 1 | Mode 1 |
+| 0 | 1 | 0 | Mode 2 |
+| 0 | 1 | 1 | Mode 3 |
+| 1 | 0 | 0 | Mode 4 |
+| 1 | 0 | 1 | Mode 5 |
+| 1 | 1 | 0 | Mode 1 |
+| 1 | 1 | 1 | Mode 1 |
 
 ### Mode 1 Radio Push Button
 
