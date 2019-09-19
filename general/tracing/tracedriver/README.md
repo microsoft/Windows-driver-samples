@@ -8,33 +8,23 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Tracedrv
-    platform: Application
-    language: cpp
-    category: General Tracing
-    description: A sample driver instrumented for software tracing.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617726
---->
-
 # Tracedrv
 
 Tracedrv is a sample driver instrumented for software tracing. The driver does not control any hardware; it simply generates trace messages. It is designed to show how to use WPP software tracing macros in a driver.
 
 Tracedrv initializes tracing (by using WPP\_INIT\_TRACING) and, when it receives a DeviceIOControl call, it starts a thread that logs 100 trace messages. The WPP software tracing directives, calls, and macros in the code are accompanied by comments that explain their purpose
 
-While examining Tracedrv, read the [WPP Software Tracing](http://msdn.microsoft.com/en-us/library/windows/hardware/ff556204) in the Windows Driver Kit (WDK). This section includes a reference section that describes the directives, macros, and calls required for WPP software tracing.
+While examining Tracedrv, read the [WPP Software Tracing](https://docs.microsoft.com/windows-hardware/drivers/devtest/wpp-software-tracing) in the Windows Driver Kit (WDK). This section includes a reference section that describes the directives, macros, and calls required for WPP software tracing.
 
 ## Run the sample
 
 To test the Tracedrv event tracing provider, use the following procedure.
 
 1. Copy the Tracectl.exe file that was created when you built the Tracedrv solution from the Tracectl directory (for example, \\Documents\\Visual Studio 2015\\Projects\\tracedrv\\tracectl\\*platform*) to the Tracedrv directory (for example, \\Documents\\Visual Studio 2015\\Projects\\tracedrv\\tracedrv\\*platform*).
+
 1. Use Tracepdb to create a trace message format (TMF) file and a trace message control (TMC) file from the Tracedrv.pdb file. Tracepdb is located in the C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*platform* directory. The PDB file that is used in this command is created when you the build the solution. Open a Visual Studio Command prompt window and navigate to the target build platform and configuration directory. Type the following command:
 
-    **tracepdb -f tracedrv.pdb**
+  `tracepdb -f tracedrv.pdb`
 
 1. In the same Tracedrv target build directory, create a control GUID file for Tracedrv by opening a text file, adding the following content, and saving the file as Tracedrv.ctl.
 
@@ -44,26 +34,22 @@ To test the Tracedrv event tracing provider, use the following procedure.
 
 1. Use Tracelog to start a trace session that is called *TestTracedrv*. Tracelog is located in the C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*platform* directory. The Tracedrv.ctl file that is used in this command was created in the previous step. The following command starts a trace session and creates a trace log file, tracedrv.etl, in the local directory.
 
-  ``` 
-  tracelog -start TestTracedrv -guid tracedrv.ctl -f tracedrv.etl -flag 1
-  ```
+  `tracelog -start TestTracedrv -guid tracedrv.ctl -f tracedrv.etl -flag 1`
 
-  **Note** Without the -flag parameter, Tracedrv will not generate any trace messages.
+  > [!NOTE]
+  > Without the -flag parameter, Tracedrv will not generate any trace messages.
 
 1. To generate trace messages, run Tracectl.exe. This executable file is built when you build the solution. Each time you type a character, other than **Q** or **q**, Tracectl sends an IOCTL to the driver that signals it to generate trace messages. To stop Tracectl, type **Q** or **q**.
+
 1. To stop the trace session, use the following Tracelog command.
 
-  ``` 
-  tracelog -stop TestTracedrv
-  ```
+  `tracelog -stop TestTracedrv`
 
 1. To display the trace messages in the Tracedrv.etl file, use Tracefmt.exe. Tracefmt.exe is located in the C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*platform*. The TMF file used in this command was created by Tracepdb.exe in step 2. The **-p** option specifies the directory of the TMF file. In this case, the TMF file is in the current directory. Type the following command:
 
-  ```
-  tracefmt tracedrv.etl -p . -o Tracedrv.out
-  ```
+  `tracefmt tracedrv.etl -p . -o Tracedrv.out`
 
-The resulting Tracedrv.out file is a human-readable text file of the Tracedrv trace messages. To interpret the trace messages, in the Tracedrv.c file, search for the [**DoTraceMessage**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544918) macros.
+The resulting Tracedrv.out file is a human-readable text file of the Tracedrv trace messages. To interpret the trace messages, in the Tracedrv.c file, search for the [**DoTraceMessage**](https://docs.microsoft.com/previous-versions/windows/hardware/previsioning-framework/ff544918(v=vs.85)) macros.
 
 ## Notes
 
@@ -71,6 +57,6 @@ This sample driver should not be used in a production environment.
 
 Also, because it is not a Plug and Play driver, Tracedrv does not demonstrate tracing in a Plug and Play environment.
 
-Tracedrv demonstrates the basic elements required for software tracing. It does not demonstrate more advanced tracing techniques, such as writing customized tracing calls (variations of [**DoTraceMessage**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544918)), or the use of WMI calls for software tracing.
+Tracedrv demonstrates the basic elements required for software tracing. It does not demonstrate more advanced tracing techniques, such as writing customized tracing calls (variations of [**DoTraceMessage**](https://docs.microsoft.com/previous-versions/windows/hardware/previsioning-framework/ff544918(v=vs.85))), or the use of WMI calls for software tracing.
 
-If you are building the Tracedrv sample to test on a 64-bit version of Windows, you need to sign the driver. All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554809) and [Signing a Driver During Development and Testing](http://msdn.microsoft.com/en-us/library/windows/hardware/hh967733). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484) and [**BCDEdit /set**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff542202).
+If you are building the Tracedrv sample to test on a 64-bit version of Windows, you need to sign the driver.  All 64-bit versions of Windows require driver code to have a digital signature for the driver to load. See [Signing a Driver](https://docs.microsoft.com/windows-hardware/drivers/develop/signing-a-driver) and [Signing a Driver During Development and Testing](https://docs.microsoft.com/windows-hardware/drivers/install/signing-drivers-during-development-and-test). You might also need to configure the test computer so that it can load test-signed kernel mode code, see [The TESTSIGNING Boot Configuration Option](https://docs.microsoft.com/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) and [**BCDEdit /set**](https://docs.microsoft.com/windows-hardware/drivers/devtest/bcdedit--set).

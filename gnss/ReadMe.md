@@ -8,15 +8,6 @@ products:
 - windows-wdk
 ---
 
-<!---
-    name: GPS/GNSS UMDF Sample Driver (UMDF Version 2)
-    platform: UMDF2
-    language: cpp
-    category: GPS/GNSS
-    description: Provides base sample driver that IHVs and partners can use to extend to build their custom Windows GPS/GNSS drivers
-    samplefwlink: https://go.microsoft.com/fwlink/?linkid=2045369
---->
-
 # GNSS UMDF Sample Driver (UMDF Version 2)
 
 Provides a base sample driver that IHVs and partners can use to extend to build their custom Windows GPS/GNSS drivers.
@@ -38,7 +29,9 @@ Provides a base sample driver that IHVs and partners can use to extend to build 
 ### What is not covered
 
 - This sample currently doesn't support Geofence, SUPL, and AGNSS, as this is not mandatory GNSS DDI functionality.
+
 - SUPL and AGNSS are mandatory only if required by mobile operator, and the sample does not support them currently.
+
 - Not a production driver.
 
 ### What a Partner needs to do

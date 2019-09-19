@@ -37,15 +37,15 @@ To install the driver:
 
 1. You may need to make Group Policy changes in order to replace the existing mouse driver. If you are unable to perform steps 3-9, do the following:
 
-    1. Open **gpedit.msd**.
+   1. Open **gpedit.msd**.
 
-    1. In the Group Policy Object Editor navigation pane, open the Computer Configuration folder. Then open Administrative Templates, open System, open Device Installation, and then open Device Installation Restrictions.
+   1. In the Group Policy Object Editor navigation pane, open the Computer Configuration folder. Then open Administrative Templates, open System, open Device Installation, and then open Device Installation Restrictions.
 
-    1. Enable *Prevent installation of devices not described by other policy settings*. This will prevent Windows from automatically installing the default mouse driver so that you can then install Firefly.
+   1. Enable *Prevent installation of devices not described by other policy settings*. This will prevent Windows from automatically installing the default mouse driver so that you can then install Firefly.
 
-    1. Enable *Allow administrators to override device installation policy*. This will allow you to bypass the ""The installation of this device is forbidden by system policy" error that you may otherwise receive when you attempt to install Firefly.
+   1. Enable *Allow administrators to override device installation policy*. This will allow you to bypass the ""The installation of this device is forbidden by system policy" error that you may otherwise receive when you attempt to install Firefly.
 
-    1. You may need to reboot.
+   1. You may need to reboot.
 
 1. Bring up the Device Manager (type **devmgmt.msc** in the Start/Run window and press enter).
 
