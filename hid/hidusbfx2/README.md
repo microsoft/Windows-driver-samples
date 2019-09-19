@@ -16,19 +16,17 @@ The sample also demonstrates how to write a HID minidriver using Windows Driver 
 
 ## Related topics
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://docs.microsoft.com/windows-hardware/drivers/hid/)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/_hid/)
 
 ## Related technologies
 
-[Creating Framework-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540774)
-
-[Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
+[Creating WDF HID Minidrivers](https://docs.microsoft.com/windows-hardware/drivers/wdf/creating-umdf-hid-minidrivers)
 
 ## Build the sample
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
 ## Theory of Operation
 
@@ -36,7 +34,7 @@ A HID USB device provides a HID descriptor (through an interface descriptor) tha
 
 ### Overview of the Device
 
-You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](http://go.microsoft.com/fwlink/p/?linkid=64091) document.
+You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf) document.
 
 The device is loosely based on the development board that is supplied with the Cypress EZ-USB FX2 Development Kit (CY3681) and contains one interface and three endpoints (Interrupt IN, Bulk Out, and Bulk IN). The firmware supports vendor commands to query or set the LED bar graph display and 7-segment LED display, and to query toggle switch states.
 
@@ -111,7 +109,7 @@ To start installing the sample, you must:
     - The WDF coinstaller from the *\<WDK ROOT\>\\redist\\wdf\\\<platform\>* directory.
 
     > [!NOTE]
-    > Information the user should notice even if skimmingYou can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+    > Information the user should notice even if skimmingYou can obtain redistributable framework updates by downloading the **wdfcoinstaller.msi** package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=253170). This package performs a silent install into the directory of your WDK installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 1. Plug in the device and follow these steps:
 

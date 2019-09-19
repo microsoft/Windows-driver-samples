@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: HID Minidriver Sample (UMDF version 2)
-    platform: UMDF2
-    language: cpp
-    category: HID
-    description: Demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617731
---->
-
 # HID Minidriver Sample (UMDF version 2)
 
 The *HID minidriver* sample demonstrates how to write a HID minidriver using User-Mode Driver Framework (UMDF).
@@ -26,10 +16,10 @@ The sample demonstrates how to communicate with an HID minidriver from an HID cl
 
 ## Related topics
 
-[Creating UMDF-based HID Minidrivers](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439579)
+[Creating WDF HID Minidrivers](https://docs.microsoft.com/windows-hardware/drivers/wdf/creating-umdf-hid-minidrivers)
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://docs.microsoft.com/windows-hardware/drivers/hid/)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/_hid/)
 
-[UMDF HID Minidriver IOCTLs](http://msdn.microsoft.com/en-us/library/windows/hardware/hh463977)
+[UMDF HID Minidriver IOCTLs](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/hidport/)

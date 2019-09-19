@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name:  HClient sample application
-    platform: WDM
-    language: cpp
-    category: HID
-    description: Demonstrates how to write a user-mode client application that communicates with HID devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617730
---->
-
 # HClient sample application
 
 The *HClient* sample demonstrates how to write a user-mode client application that communicates with HID devices. (These are devices that conform to the HID device class specification.)
@@ -26,6 +16,6 @@ You will find this sample useful if you need to develop an application that comm
 
 ## Related topics
 
-[Human Input Devices Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539952)
+[Human Input Devices Design Guide](https://docs.microsoft.com/windows-hardware/drivers/hid/)
 
-[Human Input Devices Reference](http://msdn.microsoft.com/en-us/library/windows/hardware/ff539956)
+[Human Input Devices Reference](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/_hid/)
