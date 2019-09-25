@@ -82,7 +82,7 @@ On the host computer, in **Visual Studio**, in the **Debug** menu, choose **Atta
 > [!NOTE]
 > If you see a dialog box that asks you to allow the debugger to communicate through the firewall, click the boxes for all types of networks. Click **Allow Access**.
 
-For more information, see [Setting Up Kernel-Mode Debugging in Visual Studio](http://msdn.microsoft.com/library/windows/hardware/hh439376).
+For more information, see [Setting Up Kernel-Mode Debugging in Visual Studio](https://docs.microsoft.com/windows-hardware/drivers/debugger/setting-up-kernel-mode-debugging-in-visual-studio).
 
 ### Setting up kernel-mode debugging manually
 

@@ -16,7 +16,7 @@ Windows includes a print architecture and a document format known as XPS (XML Pa
 
 This sample is intended to provide a starting point for developing XPSDrv printer drivers and to illustrate the facility and potential of an XPSDrv print driver. This goal is accomplished by implementing a number of real-world features within a set of XPS print pipeline filters that are configured through a configuration plug-in that supports custom UI content and PrintTicket handling.
 
-The sample broadly consists of three components: a set of filters, a configuration plug-in for handling custom UI content, and a configuration plug-in for handling more advanced PrintTicket features. For more information, see [XPS Printing Features](https://docs.microsoft.com/en-us/windows-hardware/drivers/print/xps-printing-features).
+The sample broadly consists of three components: a set of filters, a configuration plug-in for handling custom UI content, and a configuration plug-in for handling more advanced PrintTicket features. For more information, see [XPS Printing Features](https://docs.microsoft.com/windows-hardware/drivers/print/xps-printing-features).
 
 ## Build the sample
 
@@ -80,11 +80,11 @@ This sample can be used as a basis for implementing a driver based on the new XP
 
 The Page Scaling filter is written by using the stream interface to attempt to demonstrate how to use the stream interface. It thus depends on a ZIP library to handle the PK archive structure. The sample does not include the code for the PK archive handling.
 
-Two interfaces are defined in *ipkarch.h* and *ipkfile.h* that need support from an additional PK archive handling module called pkarch.dll. Pkarch.dll is a file that is included in the [PKWare SDK](http://www.pkware.com/software/developer-tools/sdk/pkzip-standard-toolkit). If this module is not present, the page scaling filter sample will revert to merely copying the data from the read stream to the write stream. Developers who are using this sample can choose one of the following options:
+Two interfaces are defined in *ipkarch.h* and *ipkfile.h* that need support from an additional PK archive handling module called pkarch.dll. Pkarch.dll is a file that is included in the [PKWare SDK](https://support.pkware.com/pages/viewpage.action?pageId=721433). If this module is not present, the page scaling filter sample will revert to merely copying the data from the read stream to the write stream. Developers who are using this sample can choose one of the following options:
 
 - Simplify the scaling filter to use the XPS interfaces (like the other four filters)
 - License the third-party zip library that is used in the sample
-- Modify the sample to use another ZIP library. For example, you can modify the sample to use the [Packaging API Reference](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/opc/packaging-programming-reference)
+- Modify the sample to use another ZIP library. For example, you can modify the sample to use the [Packaging API Reference](https://docs.microsoft.com/previous-versions/windows/desktop/opc/packaging-programming-reference)
 
 IPKArch defines an interface for initializing, controlling, and accessing the PK archive. IPKFile defines an interface that abstracts the details of a PK archive file header record from the XPS container handling. Access to the files within the archive is provided through a map between the file name and file objects that support the IPKFile interface. This allows the XPS processing code to retrieve file data by name (a convenience as the interaction between parts and relationships between parts is defined using the part name).
 

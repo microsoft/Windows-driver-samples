@@ -8,16 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Near-Field Proximity Sample Driver (UMDF Version 1)
-    platform: UMDF1
-    language: cpp
-    category: Proximity
-    description: Demonstrates how to use UMDF version 1 to write a near-field proximity driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620200
---->
-
 # Near-Field Proximity Sample Driver (UMDF Version 1)
 
 > [!WARNING]
