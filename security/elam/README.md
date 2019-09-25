@@ -8,19 +8,9 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Early Launch Anti-Malware Driver
-    platform: KMDF
-    language: cpp
-    category: Security
-    description: Demonstrates how to receive notifications about the initialization of regular boot start drivers in an Early Launch Anti-Malware driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617954
---->
-
 # Early Launch Anti-Malware Driver
 
-This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439379) and [**IoUnRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439394) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
+This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/ntddk/nf-ntddk-ioregisterbootdrivercallback) and [**IoUnRegisterBootDriverCallback**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/ntddk/nf-ntddk-iounregisterbootdrivercallback) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
 
 This sample driver is a minimal driver meant to demonstrate the usage of the APIs mentioned above. It is not intended for use in a production environment.
 
@@ -34,13 +24,13 @@ Early Launch drivers are required to be signed with a code-signing certificate t
 
 1. Copy the signed elamsample.sys file to the %WINDIR%\\System32\\Drivers directory on your test machine.
 
-2. Use the sc.exe tool present in Windows to install the driver:
+1. Use the sc.exe tool present in Windows to install the driver:
 
-      `sc create ElamSample binpath=%windir%\\system32\\drivers\\elamsample.sys type=kernel start=boot error=critical group=Early-Launch`
- 
-3. Enable test signing:
+    `sc create ElamSample binpath=%windir%\\system32\\drivers\\elamsample.sys type=kernel start=boot error=critical group=Early-Launch`
 
-      `bcdedit /set testsigning on`
+1. Enable test signing:
+
+    `bcdedit /set testsigning on`
 
 ## Code tour
 

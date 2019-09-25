@@ -9,36 +9,28 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: Print Driver USB Monitor and Bidi Sample
-    platform: Utility
-    language: js xml
-    category: Print
-    description: Demonstrates how to support bidirectional (Bidi) communication over the USB bus using JavaScript and XML.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617948
---->
-
 # Print Driver USB Monitor and Bidi Sample
 
 This sample demonstrates how to support bidirectional (Bidi) communication over the USB bus, using JavaScript and XML. This sample supports bidirectional status while not printing, and unsolicited status from the printer while printing.
 
+## File manifest
+
 The following files are included in the sample:
 
-**USBMON\_Bidi\_JavaScript\_File.js**
+### USBMON\_Bidi\_JavaScript\_File.js
 
-- This JavaScript file demonstrates the implementation of a Bidi support for USBMon with a v4 print driver. The JavaScript file supports three functions: getSchemas() is used to make Bidi GET queries to a device, setSchema() is used to make a single Bidi SET query to the device, and getStatus() is called repeatedly during printing in order to retrieve unsolicited status from the printer using the data from the read channel of the device.
+This JavaScript file demonstrates the implementation of a Bidi support for USBMon with a v4 print driver. The JavaScript file supports three functions: getSchemas() is used to make Bidi GET queries to a device, setSchema() is used to make a single Bidi SET query to the device, and getStatus() is called repeatedly during printing in order to retrieve unsolicited status from the printer using the data from the read channel of the device.
 
-**USBMON\_Bidi\_XML\_File.xml**
+### USBMON\_Bidi\_XML\_File.xml
 
-- This XML file demonstrates how to build a Bidi Schema extension for USB. It describes the supported schema elements that can be queried or set, along with their restrictions.
+This XML file demonstrates how to build a Bidi Schema extension for USB. It describes the supported schema elements that can be queried or set, along with their restrictions.
 
-For more information, see [USB Bidi Extender](http://msdn.microsoft.com/en-us/library/windows/hardware/jj659903(v=vs.85).aspx).
+For more information, see [USB Bidi Extender](https://docs.microsoft.com/windows-hardware/drivers/print/usb-bidi-extender).
 
-**Note** This sample is for the v4 print driver model.
+> [!NOTE]
+> This sample is for the v4 print driver model.
 
-**Note** When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following JavaScript code can be used to copy the returned array into a new array, and also to remove the additional element.
+When you make calls to printerStream.read() in the sample, the printer returns an array which includes an additional element that represents the array length. The following JavaScript code can be used to copy the returned array into a new array, and also to remove the additional element.
 
 ```js
 var readBuffer = [];

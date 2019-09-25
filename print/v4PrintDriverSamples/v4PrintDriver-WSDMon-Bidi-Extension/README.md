@@ -8,24 +8,14 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: WSDMon Bidi Extension Sample
-    platform: Utility
-    language: xml
-    category: Print
-    description: Demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617949
---->
-
 # WSDMon Bidi Extension Sample
 
 This sample demonstrates how to use an XML extension file to support bidirectional (Bidi) communication with a WSD connected printer.
 
 The v4 print driver model continues to employ the WSDMon Bidi Extension file format, as well as the SNMP Bidi Extension file format.
 
-**Note** Third-party port monitors and language monitors are not supported in the v4 driver model or with print class drivers.
+> [!NOTE]
+> Third-party port monitors and language monitors are not supported in the v4 driver model or with print class drivers.
 
 The WSDMON port monitor is a printer port monitor that supports printing to network printers that comply with the Web Services for Devices (WSD) technology. The WSDMON port monitor listens for WSD events and updates the printer status accordingly.
 
@@ -59,6 +49,7 @@ WSDMON supports the following Xcv commands:
 
 - ServiceID
 
-**Note** This sample is for the v4 print driver model.
+> [!NOTE]
+> This sample is for the v4 print driver model.
 
-For more information, see [V4 Driver Connectivity Architecture](http://msdn.microsoft.com/en-us/library/windows/hardware/) and [Bidirectional Communication Schema](http://msdn.microsoft.com/en-us/library/windows/hardware/ff545169(v=vs.85).aspx).
+For more information, see [v4 Driver Connectivity Architecture](https://docs.microsoft.com/windows-hardware/drivers/print/v4-driver-connectivity-architecture) and [Bidirectional Communication Schema](https://docs.microsoft.com/windows-hardware/drivers/print/bidirectional-communication-schema).

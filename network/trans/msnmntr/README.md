@@ -86,4 +86,4 @@ As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Stu
 
 `msbuild /p:configuration="Release" /p:platform="Win32" msnmntr.sln`
 
-For more information about using [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild?view=vs-2019) to build a driver package, see [Building a Driver Using the Command Line (MSBuild)](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/building-a-driver#building-a-driver-using-the-command-line-msbuild).
+For more information about using [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild?view=vs-2019) to build a driver package, see [Building a Driver Using the Command Line (MSBuild)](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver#building-a-driver-using-the-command-line-msbuild).
