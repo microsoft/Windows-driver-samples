@@ -8,21 +8,11 @@ products:
 - windows-wdk
 ---
 
-
-<!---
-    name: Kernel mode display-only miniport driver (KMDOD) sample
-    platform: WDM
-    language: cpp
-    category: Video
-    description: Implements most DDIs that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620317
---->
-
 # Kernel mode display-only miniport driver (KMDOD) sample
 
 The kernel mode display-only miniport driver (KMDOD) sample implements most of the device driver interfaces (DDIs) that a display-only miniport driver should provide to the Windows Display Driver Model (WDDM). The code is useful to understand how to write a miniport driver for a display-only device, or how to develop a full WDDM driver.
 
-For more info on how a KMDOD works, see [Kernel Mode Display-Only Driver (KMDOD) Interface](http://msdn.microsoft.com/en-us/library/windows/hardware/jj673962). For more info on WDDM drivers, see [Windows Display Driver Model (WDDM) Design Guide](http://msdn.microsoft.com/en-us/library/windows/hardware/ff570593).
+For more info on WDDM drivers, see [Windows Display Driver Model (WDDM) Design Guide](https://docs.microsoft.com/windows-hardware/drivers/display/windows-vista-display-driver-model-design-guide).
 
 This code can also help you to understand the use and implementation of display-related DDIs. The INF file shows how to make a display miniport driver visible to other WDDM components.
 
@@ -34,14 +24,18 @@ If the current display driver is not a WDDM 1.2 compliant driver, the sample dri
 
 ## Installation
 
-In Microsoft Visual Studio, press **F5** to build the sample and then deploy it to a target machine. For more info, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834).
+In Microsoft Visual Studio, press **F5** to build the sample and then deploy it to a target machine. For more info, see [Deploying a Driver to a Test Computer](https://docs.microsoft.com/windows-hardware/drivers/develop/deploying-a-driver-to-a-test-computer).
 
 In some cases you might need to install the driver manually, as follows.
 
 1. Add the following files to the directory given by ...\\[x64]\\C++\\Package:
+
     - SampleDriver.cat
+
     - SampleDriver.inf
+
     - SampleDriver.sys
+
     - SampleDriver.cer
 
 1. Unless you've provided a production certificate, you should manually install the SampleDriver.cer digital certificate with the following command:
@@ -52,9 +46,10 @@ In some cases you might need to install the driver manually, as follows.
 
     `Bcdedit.exe -set TESTSIGNING ON`
 
-    **Note** After you change the TESTSIGNING boot configuration option, restart the computer for the change to take effect.
+    > [!NOTE]
+    > After you change the TESTSIGNING boot configuration option, restart the computer for the change to take effect.
 
-    For more info, see [The TESTSIGNING Boot Configuration Option](http://msdn.microsoft.com/en-us/library/windows/hardware/ff553484).
+    For more info, see [The TESTSIGNING Boot Configuration Option](https://docs.microsoft.com/windows-hardware/drivers/install/the-testsigning-boot-configuration-option).
 
 1. Manually install the driver using Device Manager, which is available from Control Panel.
 
