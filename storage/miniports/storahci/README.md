@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: StorAHCI StorPort Miniport
-    platform: WDM
-    language: cpp
-    category: Storage
-    description: A sample Storport ACHI miniport driver.  
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617983
---->
-
 # StorAhci StorPort Miniport Driver
 
 The StorAhci sample is a Storport ACHI miniport driver.

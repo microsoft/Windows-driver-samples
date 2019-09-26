@@ -21,8 +21,11 @@ You build a driver the same way you build any project or solution in Visual Stud
 The default Solution build configuration is **Debug** and **Win32**.
 
 1. Open the driver project or solution in Visual Studio (find *samplename*.sln or *samplename*.vcxproj).
+
 1. Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
+
 1. From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+
 1. From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
 ## Building a Driver Using the Command Line (MSBuild)
@@ -30,9 +33,10 @@ The default Solution build configuration is **Debug** and **Win32**.
 You can build a driver from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe) Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. You can now use the Visual Studio Command Prompt window for all build configurations.
 
 1. Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
+
 1. Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command:
 
-    **msbuild /t:clean /t:build .\\<*samplename*>.vcxproj**.
+    `msbuild /t:clean /t:build .\<samplename>.vcxproj`
 
 ## Installation and Operation
 

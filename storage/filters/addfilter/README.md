@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: AddFilter Storage Filter Tool
-    platform: Application
-    language: cpp
-    category: Storage
-    description: A command-line application that adds and removes filter drivers for a given drive or volume.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617980
---->
-
 # AddFilter Storage Filter Tool
 
 Addfilter is a command-line application that adds and removes filter drivers for a given drive or volume. This application demonstrates how to insert a filter driver into the driver stack of a device. The sample illustrates how to insert such a filter driver by using the SetupDi API.
@@ -29,7 +18,8 @@ This initial sample does not check the filter for validity before it is added to
 
 The minifilter identifies implicit locks when it sees a non-shared write open request on a volume object. In this scenario, the minifilter closes its metadata file and sets a trigger that corresponds to the volume in its instance object. Later, each close operation is examined to identify if the implicit lock on the volume is being released and, if so, a re-open of the minifilter's metadata file is triggered.
 
-**Important** If you attempt to add a non-existing filter to a boot device and then restart, the system might show the INACCESSIBLE\_BOOT\_DEVICE error message. If this message appears, you will be unable to start the computer. To fix this problem, when the startup menu is displayed when the computer starts up, go to the Advanced Options screen and select **Use Last Known Good Profile**.
+> [!IMPORTANT]
+> If you attempt to add a non-existing filter to a boot device and then restart, the system might show the INACCESSIBLE\_BOOT\_DEVICE error message. If this message appears, you will be unable to start the computer. To fix this problem, when the startup menu is displayed when the computer starts up, go to the Advanced Options screen and select **Use Last Known Good Profile**.
 
 The sample is intended for use with upper filter drivers only.
 
@@ -39,6 +29,6 @@ Because the sample currently enumerates only disk devices, the sample can operat
 
 The following is the command line usage for addfilter:
 
-    **addfilter [/listdevices] [/device device\_name] [/add filter] [/remove filter]**
+`addfilter [/listdevices] [/device device_name] [/add filter] [/remove filter]`
 
 If the device name is not supplied, settings will apply to all devices. If there is no /add or /remove argument, a list of currently installed drivers will be printed.
