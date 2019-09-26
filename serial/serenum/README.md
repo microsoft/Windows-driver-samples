@@ -36,4 +36,4 @@ Windows provides Serenum to support Serial and other serial port function driver
 | String.c  | String handling support, mainly ASCII to UNICODE functionality |
 | Serenum.rc | Resource script |
 
-For more information, see [Features of Serial and Serenum](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
+For more information, see [Features of Serial and Serenum](https://docs.microsoft.com/windows-hardware/drivers/serports/features-of-serial-and-serenum).
