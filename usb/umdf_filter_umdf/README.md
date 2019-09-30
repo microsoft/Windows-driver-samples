@@ -17,19 +17,32 @@ This sample is written for the OSR USB-FX2 Learning Kit. The specification for t
 ## Overview
 
 - The device is based on the development board supplied with the Cypress EZ-USB FX2 Development Kit (CY3681).
+
 - It contains 1 interface and 3 endpoints (Interrupt IN, Bulk Out, Bulk IN).
+
 - Firmware supports vendor commands to query or set LED Bar graph display and 7-segment LED display, and to query toggle switch states.
+
 - Interrupt Endpoint:
-- Sends an 8-bit value that represents the state of the switches.
-  - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
-  - Firmware does not de-bounce the switch pack.
-  - One switch change can result in multiple bytes being sent.
-  - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+
+  - Sends an 8-bit value that represents the state of the switches.
+
+    - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
+
+    - Firmware does not de-bounce the switch pack.
+
+    - One switch change can result in multiple bytes being sent.
+
+    - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+
 - Bulk Endpoints are configured for loopback:
-- The device moves data from IN endpoint to OUT endpoint.
-  - The device does not change the values of the data it receives nor does it internally create any data.
-  - Endpoints are always double buffered.
-  - Maximum packet size depends on speed (64 full speed, 512 high speed).
+
+  - The device moves data from IN endpoint to OUT endpoint.
+
+    - The device does not change the values of the data it receives nor does it internally create any data.
+
+    - Endpoints are always double buffered.
+
+    - Maximum packet size depends on speed (64 full speed, 512 high speed).
 
 ## Testing the driver
 

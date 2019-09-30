@@ -19,33 +19,56 @@ The sample includes Event Tracing for Windows (ETW) tracing support, and is writ
 The default Solution build configuration is **Debug** and **Win32**.
 
 1. Open the driver project or solution in Visual Studio (find *filtername*.sln or *filtername*.vcxproj).
+
 1. Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
+
 1. From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+
 1. From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
 
 ## Overview
 
 - The device is based on the development board supplied with the Cypress EZ-USB FX2 Development Kit (CY3681).
+
 - It contains 1 interface and 3 endpoints (Interrupt IN, Bulk Out, Bulk IN).
+
 - Firmware supports vendor commands to query or set LED Bar graph display and 7-segment LED display, and to query toggle switch states.
+
 - Interrupt Endpoint:
-- Sends an 8-bit value that represents the state of the switches.
-  - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
-  - Firmware does not de-bounce the switch pack.
-  - One switch change can result in multiple bytes being sent.
-  - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+
+  - Sends an 8-bit value that represents the state of the switches.
+
+    - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
+
+    - Firmware does not de-bounce the switch pack.
+
+    - One switch change can result in multiple bytes being sent.
+
+    - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+
 - Bulk Endpoints are configured for loopback:
-- The device moves data from IN endpoint to OUT endpoint.
-  - The device does not change the values of the data it receives nor does it internally create any data.
-  - Endpoints are always double buffered.
-  - Maximum packet size depends on speed (64 full speed, 512 high speed).
+
+  - The device moves data from IN endpoint to OUT endpoint.
+
+    - The device does not change the values of the data it receives nor does it internally create any data.
+
+    - Endpoints are always double buffered.
+
+    - Maximum packet size depends on speed (64 full speed, 512 high speed).
+
 - ETW events:
-- Included osrusbfx2.man, which describes events added.
-  - Three events are targeted to the event log:
-    - Failure during the add device routine.
-    - Failure to start the OSR device on a USB 1.1 controller.
-    - Invocation of the "re-enumerate device" IOCTL.
-  - Read/write start/stop events can be used to measure the time taken.
+
+  - Included osrusbfx2.man, which describes events added.
+
+    - Three events are targeted to the event log:
+
+      - Failure during the add device routine.
+
+      - Failure to start the OSR device on a USB 1.1 controller.
+
+      - Invocation of the "re-enumerate device" IOCTL.
+
+    - Read/write start/stop events can be used to measure the time taken.
 
 ## Testing the driver
 

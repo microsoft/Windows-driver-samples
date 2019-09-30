@@ -10,7 +10,7 @@ products:
 
 # DV-FailDriver-WDM
 
-The DV-FailDriver-WDM sample driver contains intentional code errors that are designed to show the capabilities and features of [Driver Verifier](https://docs.microsoft.com/windows-hardware/drivers/devtest/driver-verifier) (DV) and the [Device Fundamentals tests](https://docs.microsoft.com/en-us/windows-hardware/drivers/devtest/device-fundamentals-tests).  Driver Verifier is a component of the Windows kernel designed to detect drivers that are behaving poorly and stop their execution via a bugcheck; the Device Fundamentals tests are a series of tests provided in the Windows Driver Kit (WDK) designed to provide a good basic set of tests against a driver.
+The DV-FailDriver-WDM sample driver contains intentional code errors that are designed to show the capabilities and features of [Driver Verifier](https://docs.microsoft.com/windows-hardware/drivers/devtest/driver-verifier) (DV) and the [Device Fundamentals tests](https://docs.microsoft.com/windows-hardware/drivers/devtest/device-fundamentals-tests).  Driver Verifier is a component of the Windows kernel designed to detect drivers that are behaving poorly and stop their execution via a bugcheck; the Device Fundamentals tests are a series of tests provided in the Windows Driver Kit (WDK) designed to provide a good basic set of tests against a driver.
 
 > [!CAUTION]
 > This sample driver contains intentional code errors that are designed to show the capabilities and features of DV and SDV. This sample driver is not intended as an example for real driver development projects.
