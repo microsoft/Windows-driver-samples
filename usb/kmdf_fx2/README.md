@@ -20,8 +20,7 @@ The specification for the device is at <http://www.osronline.com/hardware/OSRFX2
 
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Overview
---------
+## Overview
 
 Here is the overview of the device:
 

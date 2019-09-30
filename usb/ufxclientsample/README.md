@@ -8,17 +8,6 @@ products:
 - windows-wdk
 ---
 
-
-
-<!---
-    name: USB Function Client Driver
-    platform: KMDF
-    language: cpp
-    category: USB
-    description: Demonstrates how to create a Windows USB function controller driver using the USB function class extension driver (UFX).
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620315
---->
-
 # USB Function Client Driver
 
 This is a skeleton sample driver that shows how to create a Windows USB function controller driver using the USB function class extension driver (UFX).
@@ -26,10 +15,15 @@ This is a skeleton sample driver that shows how to create a Windows USB function
 This sample demonstrates the following:
 
 - Registration with the UFX class extension driver
+
 - Handling USB transfers
+
 - Handling function controller events
+
 - Handling attach and detach notifications
+
 - Handling charger/port detection
+
 - Power management
 
 ## Operating system requirements
