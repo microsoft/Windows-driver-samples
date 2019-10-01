@@ -16,13 +16,13 @@ In the Windows Driver Kit (WDK) for Windows 7 and earlier versions of Windows, t
 
 Starting in Windows 8.1, the osrusbfx2 sample has been divided into these samples:
 
-- [wdf\_osrfx2](https://docs.microsoft.com/en-us/samples/microsoft/windows-driver-samples/wdf-sample-driver-learning-lab-for-osr-usb-fx2/): This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
+- [wdf\_osrfx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/wdf-sample-driver-learning-lab-for-osr-usb-fx2/): This sample is a series of iterative drivers that demonstrate how to write a "Hello World" driver and adds additional features in each step.
 
-- [kmdf\_fx2](https://docs.microsoft.com/en-us/samples/microsoft/windows-driver-samples/sample-kmdf-bus-driver-for-osr-usb-fx2/): This sample is the final version of kernel-mode wdf\_osrfx2 driver. The sample demonstrates KMDF methods.
+- [kmdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-kmdf-bus-driver-for-osr-usb-fx2/): This sample is the final version of kernel-mode wdf\_osrfx2 driver. The sample demonstrates KMDF methods.
 
-- [umdf\_fx2](https://docs.microsoft.com/en-us/samples/microsoft/windows-driver-samples/sample-umdf-function-driver-for-osr-usb-fx2-umdf-version-1/): This sample is the final version of the user-mode driver wdf\_osrfx2. The sample demonstrates UMDF methods.
+- [umdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-umdf-function-driver-for-osr-usb-fx2-umdf-version-1/): This sample is the final version of the user-mode driver wdf\_osrfx2. The sample demonstrates UMDF methods.
 
-This sample is written for the OSR USB-FX2 Learning Kit. The specification for the device is at <http://www.osronline.com/hardware/OSRFX2_32.pdf>.
+This sample is written for the OSR USB-FX2 Learning Kit. For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf).
 
 ## Build the sample
 
@@ -35,6 +35,7 @@ The default Solution build configuration is Windows 8.1 Debug and Win32. You ca
 1. Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
 
 1. From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Windows 8.1 Debug or Windows 8.1 Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+
 1. Each driver project in this iterative sample creates a binary with the same name, osrusbfx2.sys. As a result, you can build only the single project you're currently working on, as well as the package project. You can do this by selecting only these two projects in **Configuration Manager**.
 
 1. From the **Build** menu, click **Build Solution** (Ctrl+Shift+B).
@@ -44,48 +45,48 @@ The default Solution build configuration is Windows 8.1 Debug and Win32. You ca
 Here is the overview of the device:
 
 - The device is based on the development board supplied with the Cypress EZ-USB FX2 Development Kit (CY3681).
+
 - It contains 1 interface and 3 endpoints (Interrupt IN, Bulk Out, Bulk IN).
+
 - Firmware supports vendor commands to query or set LED Bar graph display and 7-segment LED display, and to query toggle switch states.
+
 - Interrupt Endpoint:
+  
   - Sends an 8-bit value that represents the state of the switches.
+  
   - Sent on startup, resume from suspend, and whenever the switch pack setting changes.
+  
   - Firmware does not de-bounce the switch pack.
+  
   - One switch change can result in multiple bytes being sent.
+  
   - Bits are in the reverse order of the labels on the pack (for example, bit 0x80 is labeled 1 on the pack).
+
 - Bulk Endpoints are configured for loopback:
+  
   - The device moves data from IN endpoint to OUT endpoint.
+  
   - The device does not change the values of the data it receives nor does it internally create any data.
+  
   - Endpoints are always double buffered.
+  
   - Maximum packet size depends on speed (64 full speed, 512 high speed).
 
 ## Sample Contents for KMDF
 
-The KMDF sample contains a console test application and a series of drivers. The driver is iterative as a series of steps, starting with a basic "Hello World" driver. Each step is describe in the following table.
+The KMDF sample contains a console test application and a series of drivers. The driver is iterative as a series of steps, starting with a basic "Hello World" driver.
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Folder
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">usb\wdf_osrfx2_lab\kmdf\step1<br><br>
-The most basic step. The source file contains a minimal amount of code to get the driver loaded in memory and respond to PnP and Power events. You can install, uninstall, disable, enable, suspend, and resume the system.</td>
-<td align="left">usb\wdf_osrfx2_lab\kmdf\step2
-<ol>
-<li>Creates a context with the WDFDEVICE object.</li>
-<li>Initializes the USB device by registering a <em>EvtPrepareHardware</em> callback.</li>
-<li>Registers an interface so that application can open a handle to the device.</li>
-</ol></td>
-</tr>
-</tbody>
-</table>
+### usb\wdf_osrfx2_lab\kmdf\step1
+
+The most basic step. The source file contains a minimal amount of code to get the driver loaded in memory and respond to PnP and Power events. You can install, uninstall, disable, enable, suspend, and resume the system.
+
+### usb\wdf_osrfx2_lab\kmdf\step2
+
+- Creates a context with the WDFDEVICE object
+
+- Initializes the USB device by registering a **EvtPrepareHardware** callback
+
+- Registers an interface so that application can open a handle to the device
 
 ## Testing the driver
 
@@ -94,18 +95,24 @@ The sample includes a test application, osrusbfx2.exe, that you can use to test 
 Usage for Read/Write test:
 
 - -r [*n*], where *n* is number of bytes to read.
+
 - -w [*n*], where *n* is number of bytes to write.
+
 - -c [*n*], where *n* is number of iterations (default = 1).
+
 - -v, shows verbose read data.
+
 - -p, plays with Bar Display, Dip Switch, 7-Segment Display.
+
 - -a, performs asynchronous I/O operation.
+
 - -u, dumps USB configuration and pipe information.
 
 ### Playing with the 7 segment display, toggle switches and bar graph display
 
 Use the command `osrusbfx2.exe -p` with options 1-9 to set and clear bar graph display, set and get 7-segment state, and read the toggle switch states. The following list shows the function options:
 
-```txt
+```cmd
 1. Light bar
 2. Clear bar
 3. Light entire bar graph
@@ -157,216 +164,202 @@ The following command displays all the descriptors and endpoint information.
 
 If the device is operating in high speed mode, you get the following information:
 
-```txt
-`===================`
+```cmd
+===================
 
-`USB_CONFIGURATION_DESCRIPTOR`
+USB_CONFIGURATION_DESCRIPTOR
 
-`bLength = 0x9, decimal 9`
+bLength = 0x9, decimal 9
 
-`bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )
 
-`wTotalLength = 0x27, decimal 39`
+wTotalLength = 0x27, decimal 39
 
-`bNumInterfaces = 0x1, decimal 1`
+bNumInterfaces = 0x1, decimal 1
 
-`bConfigurationValue = 0x1, decimal 1`
+bConfigurationValue = 0x1, decimal 1
 
-`iConfiguration = 0x4, decimal 4`
+iConfiguration = 0x4, decimal 4
 
-`bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )`
+bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )
 
-`MaxPower = 0x32, decimal 50`
+MaxPower = 0x32, decimal 50
 
-`-----------------------------`
+-----------------------------
 
-`USB_INTERFACE_DESCRIPTOR #0`
+USB_INTERFACE_DESCRIPTOR #0
 
-`bLength = 0x9`
+bLength = 0x9
 
-`bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )
 
-`bInterfaceNumber = 0x0`
+bInterfaceNumber = 0x0
 
-`bAlternateSetting = 0x0`
+bAlternateSetting = 0x0
 
-`bNumEndpoints = 0x3`
+bNumEndpoints = 0x3
 
-`bInterfaceClass = 0xff`
+bInterfaceClass = 0xff
 
-`bInterfaceSubClass = 0x0`
+bInterfaceSubClass = 0x0
 
-`bInterfaceProtocol = 0x0`
+bInterfaceProtocol = 0x0
 
-`bInterface = 0x0`
+bInterface = 0x0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe00`
+USB_ENDPOINT_DESCRIPTOR for Pipe00
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x81 ( INPUT )`
+bEndpointAddress= 0x81 ( INPUT )
 
-`bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )`
+bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )
 
-`wMaxPacketSize= 0x49, decimal 73`
+wMaxPacketSize= 0x49, decimal 73
 
-`bInterval = 0x1, decimal 1`
+bInterval = 0x1, decimal 1
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe01`
+USB_ENDPOINT_DESCRIPTOR for Pipe01
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x6 ( OUTPUT )`
+bEndpointAddress= 0x6 ( OUTPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x200, `
+wMaxPacketSize= 0x200,
 
-`decimal 512 bInterval = 0x0, `
+decimal 512 bInterval = 0x0,
 
-`decimal 0`
+decimal 0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe02`
+USB_ENDPOINT_DESCRIPTOR for Pipe02
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x88 ( INPUT )`
+bEndpointAddress= 0x88 ( INPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x200, decimal 512`
+wMaxPacketSize= 0x200, decimal 512
 
-`bInterval = 0x0, decimal 0`
+bInterval = 0x0, decimal 0
 ```
 
 If the device is operating in low speed mode, you will get the following information:
 
 ```txt
-`===================`
+===================
 
-`USB_CONFIGURATION_DESCRIPTOR`
+USB_CONFIGURATION_DESCRIPTOR
 
-`bLength = 0x9, decimal 9`
+bLength = 0x9, decimal 9
 
-`bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x2 ( USB_CONFIGURATION_DESCRIPTOR_TYPE )
 
-`wTotalLength = 0x27, decimal 39`
+wTotalLength = 0x27, decimal 39
 
-`bNumInterfaces = 0x1, decimal 1`
+bNumInterfaces = 0x1, decimal 1
 
-`bConfigurationValue = 0x1, decimal 1`
+bConfigurationValue = 0x1, decimal 1
 
-`iConfiguration = 0x3, decimal 3`
+iConfiguration = 0x3, decimal 3
 
-`bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )`
+bmAttributes = 0xa0 ( USB_CONFIG_BUS_POWERED )
 
-`MaxPower = 0x32, decimal 50 `
+MaxPower = 0x32, decimal 50
 
-`-----------------------------`
+-----------------------------
 
-`USB_INTERFACE_DESCRIPTOR #0`
+USB_INTERFACE_DESCRIPTOR #0
 
-`bLength = 0x9`
+bLength = 0x9
 
-`bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x4 ( USB_INTERFACE_DESCRIPTOR_TYPE )
 
-`bInterfaceNumber = 0x0 bAlternateSetting = 0x0`
+bInterfaceNumber = 0x0 bAlternateSetting = 0x0
 
-`bNumEndpoints = 0x3`
+bNumEndpoints = 0x3
 
-`bInterfaceClass = 0xff`
+bInterfaceClass = 0xff
 
-`bInterfaceSubClass = 0x0`
+bInterfaceSubClass = 0x0
 
-`bInterfaceProtocol = 0x0`
+bInterfaceProtocol = 0x0
 
-`bInterface = 0x0`
+bInterface = 0x0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe00`
+USB_ENDPOINT_DESCRIPTOR for Pipe00
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x81 ( INPUT )`
+bEndpointAddress= 0x81 ( INPUT )
 
-`bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )`
+bmAttributes= 0x3 ( USB_ENDPOINT_TYPE_INTERRUPT )
 
-`wMaxPacketSize= 0x49, decimal 73`
+wMaxPacketSize= 0x49, decimal 73
 
-`bInterval = 0x1, decimal 1`
+bInterval = 0x1, decimal 1
 
-`-------  -----------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe01`
+USB_ENDPOINT_DESCRIPTOR for Pipe01
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x6 ( OUTPUT )`
+bEndpointAddress= 0x6 ( OUTPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x40, decimal 64`
+wMaxPacketSize= 0x40, decimal 64
 
-`bInterval = 0x0, decimal 0`
+bInterval = 0x0, decimal 0
 
-`------------------------------`
+------------------------------
 
-`USB_ENDPOINT_DESCRIPTOR for Pipe02`
+USB_ENDPOINT_DESCRIPTOR for Pipe02
 
-`bLength = 0x7`
+bLength = 0x7
 
-`bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )`
+bDescriptorType = 0x5 ( USB_ENDPOINT_DESCRIPTOR_TYPE )
 
-`bEndpointAddress= 0x88 ( INPUT )`
+bEndpointAddress= 0x88 ( INPUT )
 
-`bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )`
+bmAttributes= 0x2 ( USB_ENDPOINT_TYPE_BULK )
 
-`wMaxPacketSize= 0x40, decimal 64`
+wMaxPacketSize= 0x40, decimal 64
 
-`bInterval = 0x0, decimal 0 `
+bInterval = 0x0, decimal 0
 ```
 
 ## Sample Contents for UMDF
 
-The UMDF sample driver is developed as a series of steps, starting with a basic "Hello World" driver. Each step progressively adds functionality to the previous step. Each step is described in the following table.
+The UMDF sample driver is developed as a series of steps, starting with a basic "Hello World" driver. Each step progressively adds functionality to the previous step.
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Folder
-Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">usb\wdf_osrfx2_lab\umdf\step1<br><br>
-The most basic step. The source file contains a minimal amount of code to get the driver loaded in memory and respond to PnP and Power events. You can install, uninstall, disable, enable, suspend, and resume the system.</td>
-<td align="left">usb\wdf_osrfx2_lab\umdf\step2
-<ol>
-<li>The device registers a PnP device interface so that application can open a handle to the device.</li>
-<li>The device object implements <strong>IPnpCallbackHardware</strong> interface and initializes USB I/O targets in <strong>IPnpCallbackHardware::OnPrepareHardware</strong> method.</li>
-</ol></td>
-</tr>
-</tbody>
-</table>
+### usb\wdf_osrfx2_lab\umdf\step1
+
+The most basic step. The source file contains a minimal amount of code to get the driver loaded in memory and respond to PnP and Power events. You can install, uninstall, disable, enable, suspend, and resume the system.
+
+### usb\wdf_osrfx2_lab\umdf\step2
+
+- The device registers a PnP device interface so that application can open a handle to the device.
+
+- The device object implements **IPnpCallbackHardware** interface and initializes USB I/O targets in **IPnpCallbackHardware::OnPrepareHardware** method.
