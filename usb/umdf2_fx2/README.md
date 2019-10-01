@@ -12,11 +12,11 @@ products:
 
 The umdf2\_fx2 sample is a User-Mode Driver Framework (UMDF) version 2 driver for the OSR USB-FX2 device.
 
-The specification for the device can be found at <http://www.osronline.com/hardware/OSRFX2_32.pdf>. The driver and sample device metadata also work with the [Custom driver access](http://go.microsoft.com/fwlink/p/?LinkID=248288) sample.
+ For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf). The driver and sample device metadata also work with the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample.
 
 ## Related technologies
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://docs.microsoft.com/windows-hardware/drivers/wdf/getting-started-with-umdf-version-2)
 
 ## Run the sample
 
@@ -29,8 +29,11 @@ The process of moving the driver package to the target computer and installing t
 Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Provision a computer for driver deployment and testing (WDK 10)](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1).
 
 1. Plug in the OSR USB-FX2 board to the target computer.
+
 1. On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
+
 1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Install and Verify**. Click **OK**.
+
 1. On the **Build** menu, choose **Deploy Package** or **Build Solution**.
 
 ### Manual deployment (FX2 board)
@@ -38,14 +41,16 @@ Before you automatically deploy a driver, you must provision the target computer
 Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\umdf2\_fx2).
+
 1. Plug in the OSR USB-FX2 board to the target computer. Open a Command Prompt window and enter **dvmgmt** to open Device Manager. In Device Manager, locate the node for the OSR USB-FX2 board. Right click the node, and choose **Properties**. In the **Details** tab, under **Properties**, choose **Hardware Ids**. Note the hardware IDs listed for your FX2 board. One of these IDs should match one of the IDs in the osrusbfx2um.inf file. For example, Device Manager might show an ID of USB\\VID\_0547&PID\_1002, which matches one of the IDs in the [Microsoft.*xxx*] section of osrusbfx2um.inf.
+
 1. On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter this command:
 
-    **devcon update osrusbfx2um.inf"***HardwareID***"**
+    `devcon update osrusbfx2um.inf"***HardwareID***"`
 
     where *HardwareID* is the hardware ID of your FX2 board. Here is an example:
 
-    **devcon update osrusbfx2um.inf "USB\\VID\_0547&PID\_1002"**
+    `devcon update osrusbfx2um.inf "USB\VID_0547&PID_1002"`
 
 ## View the driver for the OSR USB-FX2 board in Device Manager
 
@@ -57,6 +62,6 @@ In Device Manager, on the **View** menu, choose **Devices by connection**. Locat
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, umdf2echo.sln. Use the MSBuild command to build the solution. Here is an example:
 
-    **msbuild /p:configuration=Win8 Release /p:platform=Win32 umdf2\_fx2.sln**
+`msbuild /p:configuration=Win8 Release /p:platform=Win32 umdf2_fx2.sln`
 
 For more information about using MSBuild to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).

@@ -24,7 +24,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The sample driver can be loaded as the function driver for any of these devices:
 
-- OSR FX2 learning kit. You can get the kit from [OSR Online](http://www.osronline.com/).
+- OSR FX2 learning kit. You can get the kit from [OSR Online](http://www.osronline.com/). For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf)
 - [MUTT devices](https://docs.microsoft.com/windows-hardware/drivers/usbcon/microsoft-usb-test-tool--mutt--devices). To order those devices, see [How to get MUTT devices](https://docs.microsoft.com/windows-hardware/drivers/usbcon/microsoft-usb-test-tool--mutt--devices#how-to-get-mutt-devices).
 - Intel 82930 USB test board.
 
@@ -48,7 +48,7 @@ The driver folder contains these files:
 
 | File | Description |
 | --- | --- |
-| usbsamp.sys | The driver file. |
+| usbsamp.sys | The driver file |
 | usbsamp.inf | An information (INF) file that contains information needed to install the driver. |
 | kmdfsamples.cat | A signed catalog file, which serves as the signature for the entire package. |
 
@@ -63,7 +63,9 @@ The process of moving the driver package to the target computer and installing t
 Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Provision a computer for driver deployment and testing (WDK 10)](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1).
 
 1. On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
+
 1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Install and Verify**. Click **OK**.
+
 1. On the **Build** menu, choose **Deploy Package** or **Build Solution**.
 
 ### Manual deployment
@@ -71,9 +73,10 @@ Before you automatically deploy a driver, you must provision the target computer
 Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\Usbsamp).
+
 1. On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
-    **devcon install usbsamp.inf USB\\VID\_045E&PID\_078F**
+    `devcon install usbsamp.inf USB\VID_045E&PID_078F`
 
 ## View the device in Device Manager
 
@@ -83,9 +86,9 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 
 As an alternative to building the USBSAMP sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, Usbsamp.sln. Use the MSBuild command to build the solution. Here are some examples:
 
-    **msbuild /p:configuration="Debug" /p:platform="x64" Usbsamp.sln**
+    `msbuild /p:configuration="Debug" /p:platform="x64" Usbsamp.sln`
 
-    **msbuild /p:configuration="Release" /p:platform="Win32" Usbsamp.sln**
+    `msbuild /p:configuration="Release" /p:platform="Win32" Usbsamp.sln`
 
 For more information about using MSBuild to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
@@ -94,53 +97,55 @@ For more information about using MSBuild to build a driver package, see [Buildin
 The sample includes a test application, usbsamp.exe. This console application enumerates the interface registered by the driver and opens the device to send Read, Write, or DeviceIoControl requests based on the command line options. To test the sample,
 
 1. In Visual Studio, choose **Solution Explorer** from the **View** menu. Locate the application project named **usbsamp**, under the **Exe** folder.
+
 1. Right-click and choose **Build**. For example, if your settings are Debug and x64, the application executable is in your solution folder under the exe\\Debug\\usbsamp.exe.
+
 1. Run the executable on the target machine.
 
 - To view all descriptors and endpoint information, use the following command.
 
-    **usbsamp.exe -u**
+    `usbsamp.exe -u`
 
     You can use the preceding command to view pipe numbers for read and write requests.
 
 - To send a Read-Write request, use the following command.
 
-    **usbsamp.exe -r 1024 -w 1024 -c 100 -v**
+    `usbsamp.exe -r 1024 -w 1024 -c 100 -v`
 
     The preceding command first writes 1024 bytes of data to bulk out endpoint (pipe 1), then reads 1024 bytes from bulk in endpoint (pipe 0), and compares the read buffer with write buffer to see if they match. If the buffer contents match, it performs this operation 100 times.
 
 - To send Read-Write requests to bulk endpoints, use any of the following commands, simultaneously. If Read-Write requests are sent to a SuperSpeed bulk endpoint with streams, the sample driver always uses the first underlying stream associated with that endpoint. The driver is multi-thread safe so it can handle multiple requests at a time.
 
-    **usbsamp.exe -r 65536**
+    `usbsamp.exe -r 65536`
 
     The preceding command reads 65536 bytes from pipe 0.
 
-    **usbsamp.exe -w 65536**
+    `usbsamp.exe -w 65536`
 
     The preceding command writes 65536 bytes to pipe 1.
 
-    **usbsamp.exe -r 65536 -i pipe02**
+    `usbsamp.exe -r 65536 -i pipe02`
 
     The preceding command reads 65536 bytes from pipe 2.
 
-    **usbsamp.exe -w 65536 -o pipe03**
+    `usbsamp.exe -w 65536 -o pipe03`
 
     The preceding command writes 65536 bytes to pipe 3.
 
 - To send Read and Write requests to isochronous endpoints you can use one or more of these commands simultaneously.
 
-    **usbsamp.exe -r 512 -i pipe04**
+    `usbsamp.exe -r 512 -i pipe04`
 
     The preceding command reads 512 bytes from pipe 4.
 
-    **usbsamp.exe -w 512 -o pipe05**
+    `usbsamp.exe -w 512 -o pipe05`
 
     The preceding command writes 512 bytes to pipe 5.
 
-    **usbsamp.exe -w 1024 -o pipe05 -r 1024 -i pipe04 -c 100 -v**
+    `usbsamp.exe -w 1024 -o pipe05 -r 1024 -i pipe04 -c 100 -v`
 
     The preceding command writes 1024 bytes to pipe 5, then reads 1024 bytes from pipe 4, and compares the buffers to see if they match. If the buffer contents match, it performs this operation 100 times.
 
 - To skip validation of the data to be read or written in a particular request, use the command with **-x** option as follows:
 
-    **usbsamp.exe -r 1024 -w 1024 -c 100 -x**
+    usbsamp.exe -r 1024 -w 1024 -c 100 -x
