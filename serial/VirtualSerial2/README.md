@@ -9,7 +9,7 @@ products:
 - windows-wdk
 ---
 
-# Virtual serial driver sample
+# Virtual serial driver sample (V2)
 
 This sample demonstrates these two serial drivers:
 
