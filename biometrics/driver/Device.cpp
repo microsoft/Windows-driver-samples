@@ -569,14 +569,14 @@ Return Value:
 
     if (SUCCEEDED(hr)) 
     {
-        UCHAR NumInterfaces = pIUsbTargetDevice->GetNumInterfaces();
+        UCHAR NumInterfaces = m_pIUsbTargetDevice->GetNumInterfaces();
         TraceEvents(TRACE_LEVEL_INFORMATION,
                     BIOMETRIC_TRACE_DEVICE,
                     "%!FUNC! Found %u interfaces",
                     NumInterfaces
                     );
 
-        hr = pIUsbTargetDevice->RetrieveUsbInterface(0, &pIUsbInterface);
+        hr = m_pIUsbTargetDevice->RetrieveUsbInterface(0, &pIUsbInterface);
         if (FAILED(hr))
         {
             TraceEvents(TRACE_LEVEL_ERROR, 
@@ -595,7 +595,7 @@ Return Value:
 
     if (SUCCEEDED(hr)) 
     {
-        NumEndPoints = pIUsbInterface->GetNumEndPoints();
+        NumEndPoints = m_pIUsbInterface->GetNumEndPoints();
 
         if (NumEndPoints != NUM_WBDI_ENDPOINTS) 
         {
@@ -614,7 +614,7 @@ Return Value:
     {
         for (UCHAR PipeIndex = 0; PipeIndex < NumEndPoints; PipeIndex++)
         {
-            hr = pIUsbInterface->RetrieveUsbPipeObject(PipeIndex, 
+            hr = m_pIUsbInterface->RetrieveUsbPipeObject(PipeIndex,
                                                   &pIUsbPipe);
 
             if (FAILED(hr))
@@ -637,11 +637,12 @@ Return Value:
                     else if ( UsbdPipeTypeBulk == pIUsbPipe->GetType() )
                     {
                         m_pIUsbInputPipe = pIUsbPipe;
+						m_pIUsbInterruptPipe = pIUsbPipe;
                     }
                     else
                     {
                         pIUsbPipe->DeleteWdfObject();
-                    }                      
+                    }
                 }
                 else if ( pIUsbPipe->IsOutEndPoint() && (UsbdPipeTypeBulk == pIUsbPipe->GetType()) )
                 {
