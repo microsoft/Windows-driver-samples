@@ -255,3 +255,25 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
+VOID
+DeviceDoPLDR(
+    _In_ WDFDEVICE _Fdo
+    )
+/*++
+
+Routine Description:
+
+    This vendor-specific routine takes appropriate actions necessary to fully reset the device.
+
+Arguments:
+
+    _Fdo - Framework device object representing the FDO.
+
+Return Value:
+
+    VOID.
+
+--*/
+{
+    UNREFERENCED_PARAMETER(_Fdo);
+}
