@@ -255,9 +255,10 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
+_Use_decl_annotations_
 VOID
 DeviceDoPLDR(
-    _In_ WDFDEVICE _Fdo
+    WDFDEVICE _Fdo
     )
 /*++
 

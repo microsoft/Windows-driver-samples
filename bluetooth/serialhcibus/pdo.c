@@ -28,6 +28,7 @@ Environment:
 #pragma alloc_text(PAGE, PdoDevReleaseHardware)
 #pragma alloc_text(PAGE, PdoResetHandler)
 #ifdef DYNAMIC_ENUM
+#pragma alloc_text(PAGE, PdoCreateDynamic)
 #pragma alloc_text(PAGE, PdoResetHandlerDynamic)
 #endif // DYNAMIC_ENUM
 #endif // ALLOC_PRAGMA
@@ -36,13 +37,13 @@ Environment:
 
 #ifdef DYNAMIC_ENUM
 
-_IRQL_requires_max_(PASSIVE_LEVEL)
+_Use_decl_annotations_
 NTSTATUS
 PdoResetHandlerDynamic(
-    _In_ PVOID              _InterfaceContext,
-    _In_ DEVICE_RESET_TYPE  _ResetType,
-    _In_ ULONG              _Flags,
-    _In_opt_ PVOID          _ResetParameters
+    PVOID               _InterfaceContext,
+    DEVICE_RESET_TYPE   _ResetType,
+    ULONG               _Flags,
+    PVOID               _ResetParameters
     )
 /*++
 
@@ -93,12 +94,13 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
+_Use_decl_annotations_
 NTSTATUS
 PdoCreateDynamic(
-    _In_ WDFDEVICE       _Device,
-    _In_ PWDFDEVICE_INIT _DeviceInit,
-    _In_ PWCHAR          _HardwareIds,
-    _In_ ULONG           _SerialNo
+    WDFDEVICE       _Device,
+    PWDFDEVICE_INIT _DeviceInit,
+    PWCHAR          _HardwareIds,
+    ULONG           _SerialNo
     )
 /*++
 
@@ -394,13 +396,13 @@ Cleanup:
 
 #endif
 
-_IRQL_requires_max_(PASSIVE_LEVEL)
+_Use_decl_annotations_
 NTSTATUS
 PdoResetHandler(
-    _In_ PVOID              _InterfaceContext,
-    _In_ DEVICE_RESET_TYPE  _ResetType,
-    _In_ ULONG              _Flags,
-    _In_opt_ PVOID          _ResetParameters
+    PVOID               _InterfaceContext,
+    DEVICE_RESET_TYPE   _ResetType,
+    ULONG               _Flags,
+    PVOID               _ResetParameters
 )
 /*++
 

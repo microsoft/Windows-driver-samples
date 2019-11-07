@@ -433,6 +433,7 @@ PdoResetHandlerDynamic(_In_ PVOID              _InterfaceContext,
 
 EVT_WDF_CHILD_LIST_CREATE_DEVICE FdoEvtDeviceListCreatePdo;
 
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS
 PdoCreateDynamic(_In_ WDFDEVICE       Device,
                  _In_ PWDFDEVICE_INIT DeviceInit,
