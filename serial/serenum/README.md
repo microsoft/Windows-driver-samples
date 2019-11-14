@@ -1,30 +1,23 @@
 ---
-topic: sample
-description: Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device.
+page_type: sample
+description: "Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Serenum sample
-    platform: WDM
-    language: cpp
-    category: Serial
-    description: Enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617961
---->
 
 # Serenum sample
 
 Serenum enumerates Plug-n-Play RS-232 devices that are compliant with the current revision of Plug and Play External COM Device. It loads as an upper filter driver to many different RS-232 device drivers that are compliant with its requirements and performs this service for them.
 
-Serenum implements the Serenum service; its executable image is serenum.sys.
+Serenum implements the Serenum service and its executable image is serenum.sys.
 
 Serenum is an upper-level device filter driver that is used with a serial port function driver to enumerate the following types of devices that are connected to an RS-232 port:
 
 - Plug and Play serial devices that comply with Plug and Play External COM Device Specification, Version 1.00, February 28, 1995.
+
 - Pointer devices that comply with legacy mouse detection in Windows.
 
 The combined operation of Serial and Serenum provides the function of a Plug and Play bus driver for an RS-232 port. Serenum supports Plug and Play and power management.
@@ -33,14 +26,14 @@ Windows provides Serenum to support Serial and other serial port function driver
 
 ## File Manifest
 
-File | Description 
------|------------
-Enum.c | Functions that enumerate external serial devices (the main purpose of this driver)
-Pnp.c | Plug and Play support code 
-Power.c | Power support code 
-Serenum.c | Basic driver functionality 
-Serenum.h | Local header with defines, prototypes 
-String.c  | String handling support; mainly ASCII to UNICODE functionality 
-Serenum.rc | Resource script 
+| File | Description |
+| --- | --- |
+| Enum.c | Functions that enumerate external serial devices (the main purpose of this driver) |
+| Pnp.c | Plug and Play support code |
+| Power.c | Power support code |
+| Serenum.c | Basic driver functionality |
+| Serenum.h | Local header with defines, prototypes |
+| String.c  | String handling support, mainly ASCII to UNICODE functionality |
+| Serenum.rc | Resource script |
 
-For more information, see [Features of Serial and Serenum](http://msdn.microsoft.com/en-us/library/windows/hardware/ff546505).
+For more information, see [Features of Serial and Serenum](https://docs.microsoft.com/windows-hardware/drivers/serports/features-of-serial-and-serenum).

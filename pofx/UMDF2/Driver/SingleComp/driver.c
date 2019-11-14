@@ -70,7 +70,7 @@ Return Value:
     Trace(TRACE_LEVEL_INFORMATION, "%!FUNC! Entry of driver");
     
     //
-    // Initiialize driver config to control the attributes that are global to
+    // Initialize driver config to control the attributes that are global to
     // the driver. Note that framework by default provides a driver unload 
     // routine. If DriverEntry creates any resources that require clean-up in
     // driver unload, you can manually override the default by supplying a 

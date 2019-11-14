@@ -1,20 +1,12 @@
 ---
-topic: sample
-description: Demonstrates a simple controller-less modem driver.
+page_type: sample
+description: "Demonstrates a simple controller-less modem driver."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Fakemodem Driver
-    platform: KMDF
-    language: cpp
-    category: Network
-    description: Demonstrates a simple controller-less modem driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617733
---->
 
 # Fakemodem Driver
 

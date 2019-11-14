@@ -1,20 +1,12 @@
 ---
-topic: sample
-description: This UMDF version 2 sample serves as a template for creating a new Magnetic Stripe Reader driver.
+page_type: sample
+description: "This UMDF version 2 sample serves as a template for creating a new Magnetic Stripe Reader driver."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Magnetic Stripe Reader Driver Sample
-    platform: UMDF2
-    language: cpp
-    category: POS
-    description: This UMDF version 2 sample serves as a template for creating a new Magnetic Stripe Reader driver. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620202
---->
 
 # Magnetic Stripe Reader Driver Sample
 

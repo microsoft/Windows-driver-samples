@@ -34,6 +34,7 @@
 #include <d3d11_4.h>
 #include <vector>
 #include <map>
+#include <stdexcept>
 using namespace std;
 #include <Windows.Foundation.h>
 #include <wrl\client.h>

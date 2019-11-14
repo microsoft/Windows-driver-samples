@@ -1,20 +1,12 @@
 ---
-topic: sample
-description: Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices.
+page_type: sample
+description: "Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Multipath I/O (MPIO) DSM Sample
-    platform: WDM
-    language: cpp
-    category: Storage
-    description: Provides a sample for building vendor-specific device-specific modules (DSM), supports iSCSI and Fibre Channel devices.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620203
---->
 
 # Multipath I/O (MPIO) DSM Sample
 
@@ -29,8 +21,11 @@ You build a driver the same way you build any project or solution in Visual Stud
 The default Solution build configuration is **Debug** and **Win32**.
 
 1. Open the driver project or solution in Visual Studio (find *samplename*.sln or *samplename*.vcxproj).
+
 1. Right-click the solution in the **Solutions Explorer** and select **Configuration Manager**.
+
 1. From the **Configuration Manager**, select the **Active Solution Configuration** (for example, Debug or Release) and the **Active Solution Platform** (for example, Win32) that correspond to the type of build you are interested in.
+
 1. From the Build menu, click **Build Solution** (Ctrl+Shift+B).
 
 ## Building a Driver Using the Command Line (MSBuild)
@@ -38,9 +33,10 @@ The default Solution build configuration is **Debug** and **Win32**.
 You can build a driver from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe) Previous versions of the WDK used the Windows Build utility (Build.exe) and provided separate build environment windows for each of the supported build configurations. You can now use the Visual Studio Command Prompt window for all build configurations.
 
 1. Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
+
 1. Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command:
 
-    **msbuild /t:clean /t:build .\\<*samplename*>.vcxproj**.
+    `msbuild /t:clean /t:build .\<samplename>.vcxproj`
 
 ## Installation and Operation
 
@@ -102,7 +98,8 @@ AddReg         = mydsm_addreg
 
 This next section contains the Hardware ID strings for your devices. You can have more than one. Sample format: "VENDOR PRODUCT " - remember to use spaces in a field (vendor, product ID) to pad this to be eight characters for the vendor name (as registered with STA) and sixteen for the product ID (unless the supported devices share a common prefix, in which case the product ID can be less than 16 characters).
 
-**Note** Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
+> [!NOTE]
+> Underscores that are part of the inquiry string (applies to vendor ID as well as product ID fields) must NOT be replaced with spaces.
 
 In this sample, there are two different strings:
 
@@ -208,6 +205,8 @@ You should be aware of the following when you install the MPIO DSM sample:
 
 It is expected that the adapter that hosts the system volumes (boot/paging) will not restart, but that should not be problem if you are not multipathing the boot volume. However, if you are multipathing the boot volume, you will need to restart the system.
 
-**Note** Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
+> [!NOTE]
+> Other filter drivers installed as port filters may interfere with the proper operation of the MPIO port filter. Microsoft does not recommend the use of such filter drivers which may be supplied by HBA miniport vendors.
 
-**Note** Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.
+> [!NOTE]
+> Since your DSM binary is not signed, you will get Unsigned Driver Pop-Ups. Ignore these and accept the installation of the new driver. Once your package has been successfully qualified by WHQL, your binaries will get signed and your customers will not get unsigned driver popups.

@@ -1046,13 +1046,14 @@ STDMETHODIMP CSocMft0::ProcessOutput(
     {
         return MF_E_TRANSFORM_NEED_MORE_INPUT;
     }
-
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
     hr = ProcessMetadata();
     if (FAILED(hr))
     {
         //Log the failure
         hr = S_OK;
     }
+#endif // (NTDDI_VERSION >= NTDDI_WINBLUE)
     hr = CreateOutputSample(&pOutputSamples[0].pSample);
     if (FAILED(hr))
     {
@@ -1404,6 +1405,7 @@ HRESULT CSocMft0::GetPreviewMediaType(
     return MF_E_NOT_FOUND;
 }
 
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
 /////////////////////////////////////////////////////////////////////
 //
 // Handle the Metadata with the buffer
@@ -1820,7 +1822,7 @@ HRESULT CSocMft0::ParseMetadata_ImageAggregation(
     }
     return S_OK;
 }
-
+#endif // (NTDDI_VERSION >= NTDDI_WINBLUE)
 struct HistogramData
 {
     HistogramDataHeader     Header;
@@ -1863,6 +1865,7 @@ struct Histogram
     }
 };
 
+#if (NTDDI_VERSION >= NTDDI_WINBLUE)
 #define MF_HISTOGRAM_RGB    (MF_HISTOGRAM_CHANNEL_R | MF_HISTOGRAM_CHANNEL_G  | MF_HISTOGRAM_CHANNEL_B )
 #define MF_HISTOGRAM_YCrCb  (MF_HISTOGRAM_CHANNEL_Y | MF_HISTOGRAM_CHANNEL_Cr | MF_HISTOGRAM_CHANNEL_Cb)
 
@@ -1999,11 +2002,13 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
         goto done;
     }
 
+#if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
     //  Include characterization data if any of the associated bits were set.
     if (pFaceHeader->Flags & KSCAMERA_EXTENDEDPROP_FACEDETECTION_ADVANCED_MASK)
     {
         hr = pMetaDataAttributes->SetBlob(MF_CAPTURE_METADATA_FACEROICHARACTERIZATIONS, pCharBuf, cbCharSize);
     }
+#endif // (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 
 done:
     delete[] pRectBuf;
@@ -2011,7 +2016,7 @@ done:
 
     return hr;
 }
-
+#endif // (NTDDI_VERSION >= NTDDI_WINBLUE)
 HRESULT CSocMft0::FillBufferLengthFromMediaType(
     _In_ IMFMediaType *pPreviewType,
     _Inout_ IMFMediaBuffer *pBuffer

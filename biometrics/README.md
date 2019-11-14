@@ -1,58 +1,45 @@
 ---
-topic: sample
-description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
+page_type: sample
+description: "Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Windows Biometric Driver Samples (UMDF Version 1)
-    platform: UMDF1
-    language: cpp
-    category: Security Biometrics
-    description: Contains the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620189
---->
 
 # Windows Biometric Driver Samples (UMDF Version 1)
 
 The Windows Biometric Driver Samples contain the Windows Biometric Driver Interface sample and the Windows Biometric Service Adapter samples.
 
-The following table describes the samples contained in this sample set:
+## Windows Biometric Driver Interface
 
-*Windows Biometric Driver Interface*
 This sample implements the Windows Biometric Driver Interface (WBDI). It contains skeleton code for handling the mandatory IOCTLs necessary to interoperate with the Windows Biometric Framework. A WBDI driver can be deployed in conjunction with an engine adapter DLL to allow a sensor to be exposed from the Windows Biometric Framework. This sample has been written to make use of the UMDF framework, which allows for ease of development and system stability.
 
-*Windows Biometric Service Adapters*
+## Windows Biometric Service Adapters
+
 These samples provide skeleton code that developers can use as a basis for writing Sensor, Engine, and Storage Adapters for the Windows Biometric Service. Note that the stubs in these samples are non-functional, and Adapter writers will need to follow the programming guidelines in the WinBio Service documentation in order produce a working Adapter component.
 
-Build the sample
-----------------
+## Build the sample
 
-For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For information on how to build a driver solution using Microsoft Visual Studio, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
-**Note** You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396).
+> [!NOTE]
+> You can obtain the co-installers by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=253170).
 
-Run the sample
---------------
+## Installation
 
-Installation
-------------
-
-### Windows Biometric Driver Interface
+### Windows Biometric Driver Interface installation
 
 The sample requires the use of a suitable fingerprint sensor. It does not capture real data, but it does create a biometric unit in the Windows Biometric Framework.
 
-### Windows Biometric Service Adapters
+### Windows Biometric Service Adapters installation
 
 To write and test an Adapter plug-in, it will be necessary to have a biometric device and a working WBDI driver for the device.
 
 Adapters are generally installed along with the WBDI driver for the corresponding device. Consult the WinBio Service documentation for information on the INF file commands used for installing Adapters. Note that Adapters are trusted plug-in components, so they can only be installed using a privileged account.
 
-Design and Operation
---------------------
+## Design and operation
 
 ### Windows Biometric Driver Interface
 

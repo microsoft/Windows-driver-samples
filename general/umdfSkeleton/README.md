@@ -1,20 +1,12 @@
 ---
-topic: sample
-description: Demonstrates how to use UDMF to write a minimal driver.
+page_type: sample
+description: "Demonstrates how to use UDMF to write a minimal driver."
 languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: UMDF Driver Skeleton Sample (UMDF version 1)
-    platform: UMDF1
-    language: cpp
-    category: General WDF
-    description: Demonstrates how to use UDMF to write a minimal driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617727
---->
 
 # UMDF Driver Skeleton Sample (UMDF Version 1)
 
