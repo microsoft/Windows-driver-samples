@@ -50,14 +50,6 @@ Abstract:
 
 #define Add2Ptr(P,I) ((PVOID)((PUCHAR)(P) + (I)))
 
-#ifndef MAX_ULONG
-#define MAX_ULONG ((ULONG)-1)
-#endif
-
-#ifndef MAX_USHORT
-#define MAX_USHORT ((USHORT)-1)
-#endif
-
 //
 //  We must explicitly tag our allocations.
 //
