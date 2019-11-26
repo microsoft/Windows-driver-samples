@@ -637,7 +637,7 @@ Return Value:
                     else if ( UsbdPipeTypeBulk == pIUsbPipe->GetType() )
                     {
                         m_pIUsbInputPipe = pIUsbPipe;
-						m_pIUsbInterruptPipe = pIUsbPipe;
+                        m_pIUsbInterruptPipe = pIUsbPipe;
                     }
                     else
                     {
