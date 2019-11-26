@@ -36,7 +36,7 @@ For more information about the Windows audio engine, see [Hardware-Offloaded Aud
 
 ## Build the sample
 
-If you simply want to Build this sample driver and don't intend to run or test it, then you do not need a target computer (also called a test computer). If, however, you would like to deploy, run and test this sample driver, then you need a second computer that will server as your target computer. Instructions are provided in the **Run the sample** section to show you how to set up the target computer - also referred to as *provisioning* a target computer.
+If you simply want to Build this sample driver and don't intend to run or test it, then you do not need a target computer (also called a test computer). If, however, you would like to deploy, run and test this sample driver, then you need a second computer that will serve as your target computer. Instructions are provided in the **Run the sample** section to show you how to set up the target computer - also referred to as *provisioning* a target computer.
 
 Perform the following steps to build this sample driver.
 
@@ -72,7 +72,7 @@ The package should contain these files:
 | sysvad.cat | A signed catalog file, which serves as the signature for the entire package. |
 | ComponentizedApoSample.inf | A componentized information (INF) file that installs an APO device. |
 | ComponentizedAudioSample.inf | A componentized information (INF) file that contains information needed to install the Tablet Audio Sample driver. |
-| ComponentizedAudioSampleExtension.inf | An extension information (INF) file that extends the Tablet Audio Sample driver functionality by asociating an APO device to it. |
+| ComponentizedAudioSampleExtension.inf | An extension information (INF) file that extends the Tablet Audio Sample driver functionality by associating an APO device to it. |
 | TabletAudioSample.inf | A non-componentized information (INF) file that contains information needed to install the driver. |
 
 For more information on extension INF files, see [Using an extension INF file](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/using-an-extension-inf-file).
@@ -114,9 +114,9 @@ If you need more detailed instructions for setting up the target computer, see [
 
 #### A note on signatures
 
-Since most of these binary files are executed in kernel mode, it is important that they are signed and, optionally, to have a kernel debugger atached.
+Since most of these binary files are executed in kernel mode, it is important that they are signed and, optionally, to have a kernel debugger attached.
 
-Without any signature or kernel debugger, the driver will not be installed in the target computer. With a kernel debugger attached, the driver can be installed and the driver files (.sys extension) would be loaded, but any APO or keyword spotter files (.dll files) will not be loaded.
+Without any signature or kernel debugger, the driver will not be installed in the target computer. With a kernel debugger attached, the driver can be installed and the driver files (.sys extension) would be loaded, but any user mode files (.dll files) will not be loaded.
 
 The only way of installing and executing the whole driver sample is to have all the files (.sys, .dll and .cat) signed with a trusted certificate. This will allow the entire driver to be loaded even without a kernel debugger attached.
 
@@ -126,7 +126,7 @@ For more information on the subject, see [Driver signing](https://docs.microsoft
 
 #### Componentized INF files
 
-The TabletAudioSample driver package contains a sample driver and 2 driver extension samples. The following instructions show you how to install and test the sample driver and then the two extensions.
+The TabletAudioSample driver package contains a sample driver, an extension sample and an APO software component. The following instructions show you how to install and test the sample driver, the APO component and then the extension to apply the software component to the driver.
 
 First, the base INF, *ComponentizedAudioSample.inf*, has to be installed. To install it, open a Command Prompt window as administrator on the target computer, then navigate to your driver package folder and enter the following command:
 
@@ -152,9 +152,9 @@ For more detailed instructions, see [Provision a computer for driver deployment 
 
 #### Single INF files
 
-TabletAudioSample also contains an INF file, tabletaudiosample.inf, which install the sample driver using just one, large and complex INF file.
+TabletAudioSample also contains an INF file, tabletaudiosample.inf, which install the sample driver using a single INF file.
 
-Going forward, the componentized INFs are preferred over the previous single INF files that included code for all scenarios and configurations. However, for backward compatibility, instructions on how to install the TabletAudioSample.inf are provided below.
+Componentized driver packages are required since Windows 10 1809 release. However, for backward compatibility, instructions on how to install the TabletAudioSample.inf are provided below.
 
 On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
