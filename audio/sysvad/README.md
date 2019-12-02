@@ -11,6 +11,12 @@ urlFragment: sysvad-virtual-audio-device-driver-sample
 
 # SysVAD Virtual Audio Device Driver Sample
 
+## Important note
+
+With the [end of support for Windows 10 Mobile](https://support.microsoft.com/en-us/help/4484693/windows-10-mobile-end-of-support), the Phone Audio sample has been also removed from the SysVAD driver sample.
+
+## Introduction
+
 The Microsoft SysVAD Virtual Audio Device Driver (SYSVAD) shows how to develop a WDM audio driver that exposes support for multiple audio devices.
 
 Some of these audio devices are embedded in the system (for example, speakers, microphone arrays) while others are pluggable (like headphones, Bluetooth headsets etc.). The driver uses WaveRT and audio offloading for rendering devices. The driver uses a "virtual audio device" instead of an actual hardware-based adapter, and highlights the different aspects of the audio offloading WDM audio driver architecture.
