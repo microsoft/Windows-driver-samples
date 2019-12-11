@@ -18,7 +18,7 @@ Take a look at the compilation of the new and changed driver-related content for
 
 ### Universal Windows drivers
 
-Write one driver that runs on both Windows 10 for desktop editions and Windows 10 Mobile devices, as well as other Windows 10 editions that share a common set of interfaces.
+Write one driver that runs on Windows 10 for desktop editions, as well as other Windows 10 editions that share a common set of interfaces.
 
 [Getting Started with Universal Windows drivers](https://docs.microsoft.com/windows-hardware/drivers/develop/getting-started-with-universal-drivers)
 
