@@ -13,7 +13,7 @@ urlFragment: sysvad-virtual-audio-device-driver-sample
 
 ## Important note
 
-With the [end of support for Windows 10 Mobile](https://support.microsoft.com/en-us/help/4484693/windows-10-mobile-end-of-support), the Phone Audio sample has been also removed from the SysVAD driver sample.
+With the [end of support for Windows 10 Mobile](https://support.microsoft.com/help/4484693/windows-10-mobile-end-of-support), the Phone Audio sample has been also removed from the SysVAD driver sample.
 
 ## Introduction
 
