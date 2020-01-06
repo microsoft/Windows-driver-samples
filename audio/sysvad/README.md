@@ -81,7 +81,7 @@ The package should contain these files:
 | ComponentizedAudioSampleExtension.inf | An extension information (INF) file that extends the Tablet Audio Sample driver functionality by associating an APO device to it. |
 | TabletAudioSample.inf | A non-componentized information (INF) file that contains information needed to install the driver. |
 
-For more information on extension INF files, see [Using an extension INF file](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/using-an-extension-inf-file).
+For more information on extension INF files, see [Using an extension INF file](https://docs.microsoft.com/windows-hardware/drivers/install/using-an-extension-inf-file).
 
 ## Run the sample
 
@@ -101,8 +101,8 @@ Open a Command Prompt window as Administrator. Then enter the following command:
 
 and reboot the target computer.
 
-[!IMPORTANT]
-Before using BCDEdit to change boot information you may need to temporarily suspend Windows security features such as BitLocker and Secure Boot on the test PC.
+> [!IMPORTANT]
+> Before using BCDEdit to change boot information you may need to temporarily suspend Windows security features such as BitLocker and Secure Boot on the test PC.
 
 Re-enable these security features when testing is complete and appropriately manage the test PC, when the security features are disabled.
 
@@ -126,7 +126,7 @@ Without any signature or kernel debugger, the driver will not be installed in th
 
 The only way of installing and executing the whole driver sample is to have all the files (.sys, .dll and .cat) signed with a trusted certificate. This will allow the entire driver to be loaded even without a kernel debugger attached.
 
-For more information on the subject, see [Driver signing](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/driver-signing).
+For more information on the subject, see [Driver signing](https://docs.microsoft.com/windows-hardware/drivers/install/driver-signing).
 
 ### Install the driver
 
