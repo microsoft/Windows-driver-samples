@@ -12,7 +12,7 @@ products:
 
 The umdf\_filter\_umdf sample demonstrates how to load a User-Mode Driver Framework (UMDF) filter driver as an upper filter driver above the umdf\_fx2 sample driver.
 
-This sample is written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf).
+This sample is written for the [OSR USB-FX2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf).
 
 ## Overview
 

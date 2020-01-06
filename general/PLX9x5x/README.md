@@ -10,7 +10,7 @@ products:
 
 # PLX9x5x PCI Driver
 
-This sample demonstrates how to write driver for a generic PCI device using Windows Driver Framework. The target hardware for this driver is PLX9656/9653RDK-LITE board. The product kit and the hardware specification are available at the [PLX Technology](http://www.plxtech.com) website.
+This sample demonstrates how to write driver for a generic PCI device using Windows Driver Framework. The target hardware for this driver is PLX9656/9653RDK-LITE board. The product kit and the hardware specification are available at the [PLX Technology](https://www.plxtech.com) website.
 
 For more information, see the [PCI driver programming guide](https://docs.microsoft.com/windows-hardware/drivers/pci/).
 

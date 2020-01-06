@@ -12,7 +12,7 @@ products:
 
 The HIDUSBFX2 sample driver (hidusbfx2.sys) demonstrates how to map a non-HID USB device to a HID device.
 
-The sample also demonstrates how to write a HID minidriver using Windows Driver Frameworks (WDF). The minidriver is written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf). Although the device is not HID-compliant, the sample exposes it as a HID device.
+The sample also demonstrates how to write a HID minidriver using Windows Driver Frameworks (WDF). The minidriver is written for the [OSR USB-FX2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf). Although the device is not HID-compliant, the sample exposes it as a HID device.
 
 ## Related topics
 
@@ -34,7 +34,7 @@ A HID USB device provides a HID descriptor (through an interface descriptor) tha
 
 ### Overview of the Device
 
-You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf) document.
+You can view the specification for the device in the [Using the OSR USB FX-2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf) document.
 
 The device is loosely based on the development board that is supplied with the Cypress EZ-USB FX2 Development Kit (CY3681) and contains one interface and three endpoints (Interrupt IN, Bulk Out, and Bulk IN). The firmware supports vendor commands to query or set the LED bar graph display and 7-segment LED display, and to query toggle switch states.
 
