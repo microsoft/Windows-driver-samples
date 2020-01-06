@@ -12,7 +12,7 @@ products:
 
 The umdf\_filter\_kmdf sample demonstrates how to load a UMDF filter driver as an upper filter driver above the kmdf\_fx2 sample driver.
 
-The sample includes Event Tracing for Windows (ETW) tracing support, and is written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf0.
+The sample includes Event Tracing for Windows (ETW) tracing support, and is written for the [OSR USB-FX2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf0.
 
 ## Build the sample
 

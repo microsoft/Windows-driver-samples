@@ -12,7 +12,7 @@ products:
 
 Provides a *driver MFT* for use with a camera's UWP device app.A *driver MFT* is a Media Foundation Transform that's used with a specific camera when capturing video. The driver MFT is also known as MFT0 because it is the first MFT applied to the video stream captured from the camera. This MFT can provide a video effect or other processing when capturing photos or video from the camera. It can be distributed along with the driver package for a camera.
 
-In this sample, the driver MFT, when enabled, replaces a portion of the captured video with a green box. To test this sample, download the [UWP device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442) and the [Camera Capture UI sample](http://go.microsoft.com/fwlink/p/?linkid=249441).
+In this sample, the driver MFT, when enabled, replaces a portion of the captured video with a green box. To test this sample, download the [UWP device app for camera sample](https://go.microsoft.com/fwlink/p/?linkid=249442) and the [Camera Capture UI sample](https://go.microsoft.com/fwlink/p/?linkid=249441).
 
 The **UWP device app for camera sample** provides a *UWP device app* that controls the effect implemented by the driver MFT.
 
@@ -34,6 +34,6 @@ This sample is designed to be used with a specific camera. To run the sample, yo
 
 ### Samples
 
-[Device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
+[Device app for camera sample](https://go.microsoft.com/fwlink/p/?linkid=249442)
 
-[Camera Capture UI sample](http://go.microsoft.com/fwlink/p/?linkid=249441%20)
+[Camera Capture UI sample](https://go.microsoft.com/fwlink/p/?linkid=249441%20)

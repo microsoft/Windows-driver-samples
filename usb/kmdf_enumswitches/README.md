@@ -12,7 +12,7 @@ products:
 
 The kmdf\_enumswitches sample demonstrates how to use Kernel-Mode Driver Framework (KMDF) as a bus driver using the OSR USB-FX2 device.
 
-This sample is written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf).
+This sample is written for the [OSR USB-FX2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf).
 
 ## Testing the Device
 

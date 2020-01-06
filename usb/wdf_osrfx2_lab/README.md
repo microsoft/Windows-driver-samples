@@ -22,7 +22,7 @@ Starting in Windows 8.1, the osrusbfx2 sample has been divided into these sampl
 
 - [umdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-umdf-function-driver-for-osr-usb-fx2-umdf-version-1/): This sample is the final version of the user-mode driver wdf\_osrfx2. The sample demonstrates UMDF methods.
 
-This sample is written for the OSR USB-FX2 Learning Kit. For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf).
+This sample is written for the OSR USB-FX2 Learning Kit. For more information, see the specification for the [OSR USB FX-2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf).
 
 ## Build the sample
 
