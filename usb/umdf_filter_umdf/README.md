@@ -46,7 +46,7 @@ This sample is written for the [OSR USB-FX2 Learning Kit](https://www.osronline.
 
 ## Testing the driver
 
-You can test this sample either by using the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [umdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-umdf-filter-above-umdf-function-driver-for-osr-usb-fx2-umdf-version-1/) sample.
+You can test this sample either by using the [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [umdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-umdf-filter-above-umdf-function-driver-for-osr-usb-fx2-umdf-version-1/) sample.
 
 ## Sample Contents
 
