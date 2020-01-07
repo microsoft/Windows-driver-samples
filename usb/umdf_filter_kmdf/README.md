@@ -72,7 +72,7 @@ The default Solution build configuration is **Debug** and **Win32**.
 
 ## Testing the driver
 
-You can test this sample either by using the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-kmdf-function-driver-for-osr-usb-fx2/) sample.
+You can test this sample either by using the [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample application, or by using the osrusbfx2.exe test application. For information on how to build and use the osrusbfx2.exe application, see the test instructions for the [kmdf\_fx2](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/sample-kmdf-function-driver-for-osr-usb-fx2/) sample.
 
 ## Code tour
 
