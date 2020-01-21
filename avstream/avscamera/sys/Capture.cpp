@@ -2100,7 +2100,18 @@ Return Value:
 {
     PAGED_CODE( );
 
+    //  If the host process did not stop the pin, we need to do that before
+    //  the CCapturePin object gets freed.
+    if (m_Pin->DeviceState != KSSTATE_STOP)
+    {
+        //  Skip straight to the STOP state because our simulation doesn't
+        //  really need the PAUSE and ACQUIRE transitions when stopping.
+        SetState(KSSTATE_STOP, m_Pin->DeviceState);
+    }
+
     //  Some reasonable default behavior.
+    GetFilter()->setPin(nullptr, m_Pin->Id);
+
     return STATUS_SUCCESS;
 }
 

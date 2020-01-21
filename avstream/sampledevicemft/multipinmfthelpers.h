@@ -32,9 +32,9 @@ template< typename T ,  HRESULT ( __stdcall T::*Func) ( IMFAsyncResult* ) >
 class CDMFTAsyncCallback : public IMFAsyncCallback
 {
 public:
-    CDMFTAsyncCallback( T* parent ) :
-        m_cRef(1),
-        m_Parent(parent)
+    CDMFTAsyncCallback( T* parent , DWORD dwWorkQueueId = MFASYNC_CALLBACK_QUEUE_STANDARD) :
+        m_Parent(parent),
+        m_dwQueueId(dwWorkQueueId)
     { }
     virtual ~CDMFTAsyncCallback() { }
 
@@ -77,25 +77,40 @@ public:
 
     STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue)
     {
-        // Implementation of this method is optional.
-        UNREFERENCED_PARAMETER(pdwFlags);
-        UNREFERENCED_PARAMETER(pdwQueue);
+        *pdwFlags = 0;
+        *pdwQueue = m_dwQueueId;
         return E_NOTIMPL;
     }
 
     STDMETHODIMP Invoke( IMFAsyncResult* pAsyncResult )
     {
-        return (m_Parent->*Func)(pAsyncResult);
+        ComPtr<T> spParent;
+        {
+            // Take a reference on the parent so that
+            // shutdown may not yank it from us
+            CAutoLock Lock(&m_Lock);
+            spParent = m_Parent;
+        }
+        if (spParent.Get())
+        {
+            return ((spParent.Get())->*Func)(pAsyncResult);
+        }
+        return MF_E_SHUTDOWN;
     }
-    // TODO: Implement this method. 
-
+    VOID Shutdown()
+    {
+        CAutoLock Lock(&m_Lock);
+        m_Parent = nullptr; //Break the reference
+    }
     T GetParent()
     {
         return m_Parent;
     }
 protected:
-    T*       m_Parent; // Weak reference to the parent
-    long    m_cRef;
+    CCritSec    m_Lock;
+    ComPtr<T>   m_Parent; 
+    long        m_cRef = 0;
+    DWORD       m_dwQueueId = MFASYNC_CALLBACK_QUEUE_STANDARD;
 };
 
 
@@ -107,7 +122,18 @@ public:
     STDMETHODIMP_(VOID) InsertInternal  ( _In_  IMFSample *pSample = nullptr );
     STDMETHODIMP Insert                 ( _In_ IMFSample *pSample );
     STDMETHODIMP Remove                 (_Outptr_result_maybenull_ IMFSample **pSample);
-    virtual STDMETHODIMP RecreateTee    ( _In_  IMFMediaType *inMediatype, _In_ IMFMediaType *outMediatype, _In_opt_ IUnknown* punkManager );
+    virtual STDMETHODIMP RecreateTee    (
+        _In_  IMFMediaType *inMediatype,
+        _In_ IMFMediaType *outMediatype,
+        _In_opt_ IUnknown* punkManager);
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    STDMETHODIMP RecreateTeeByAllocatorMode(
+        _In_  IMFMediaType* inMediatype,
+        _In_ IMFMediaType* outMediatype,
+        _In_opt_ IUnknown* punkManager,
+        _In_ MFSampleAllocatorUsage allocatorUsage,
+        _In_opt_ IMFVideoSampleAllocator* pAllcoator);
+#endif
     STDMETHODIMP_(VOID) Clear();
   
     //
@@ -179,7 +205,7 @@ private:
     GUID                 m_streamCategory;
     ULONG                m_cRef;
 protected:
-    Ctee*                m_teer;                /*Tee that acts as a passthrough or an XVP  */
+    ComPtr<Ctee>         m_spTeer;                /*Tee that acts as a passthrough or an XVP  */
  };
 
 
@@ -197,8 +223,20 @@ public:
 // The below classes are used to add the
 // XVP and the Decoder components.
 //
-class Ctee{
+class Ctee: public IUnknown{
 public:
+    // This is a helper class to release the interface
+    // It will first call shutdowntee to break any circular
+    // references any components might have with their composed
+    // objects
+    static VOID ReleaseTee( _In_ ComPtr<Ctee> &tee)
+    {
+        if (tee)
+        {
+            tee->ShutdownTee();
+            tee = nullptr;
+        }
+    }
     STDMETHOD(Start)()
     {
         return S_OK;
@@ -208,35 +246,85 @@ public:
         return S_OK;
     }
    virtual STDMETHODIMP PassThrough( _In_ IMFSample * ) = 0;
+
+   STDMETHOD_(VOID, ShutdownTee)()
+   {
+       return; // NOOP
+   }
+   STDMETHODIMP QueryInterface(REFIID riid, void** ppv)
+   {
+       HRESULT hr = S_OK;
+       if (ppv != nullptr)
+       {
+           *ppv = nullptr;
+           if (riid == __uuidof(IUnknown))
+           {
+               AddRef();
+               *ppv = static_cast<IUnknown*>(this);
+           }
+           else
+           {
+               hr = E_NOINTERFACE;
+           }
+       }
+       else
+       {
+           hr = E_POINTER;
+       }
+       return hr;
+   }
+   Ctee()
+   {
+   }
+   virtual ~Ctee()
+   {}
+   STDMETHODIMP_(ULONG) AddRef()
+   {
+       return InterlockedIncrement(&m_cRef);
+   }
+   STDMETHODIMP_(ULONG) Release()
+   {
+       long cRef = InterlockedDecrement(&m_cRef);
+       if (cRef == 0)
+       {
+           delete this;
+       }
+       return cRef;
+   }
+
+protected:
+    ULONG m_cRef = 0;
 };
 
 
 class CNullTee:public Ctee{
 public:
-    CNullTee(_In_ CPinQueue* q) :m_Queue(q) {}
+    CNullTee(_In_ CPinQueue* q)
+        : m_Queue(q)
+    {
+    }
     STDMETHODIMP PassThrough( _In_ IMFSample* );
+
 protected:
     // Store the queue here for simplicity
     ComPtr<CPinQueue> m_Queue;
 };
 
 
-class CWrapTee : public Ctee{
+class CWrapTee : public Ctee
+{
 public:
     CWrapTee( _In_ Ctee *tee=nullptr ) 
-:   m_objectWrapped(tee)
+    : m_spObjectWrapped(tee)
     , m_pInputMediaType(nullptr)
     , m_pOutputMediaType(nullptr)
     {
 
     }
-    virtual ~CWrapTee()=0
+    virtual ~CWrapTee()
     {
-        if (m_objectWrapped)
-        {
-            delete(m_objectWrapped);
-        }
     }
+
     STDMETHODIMP PassThrough        ( _In_ IMFSample* );
     virtual STDMETHODIMP Do         ( _In_ IMFSample* pSample, _Out_ IMFSample ** , _Inout_ bool &newSample) = 0;
     STDMETHODIMP SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMediaType* pOutMediaType);
@@ -262,7 +350,7 @@ protected:
     
     ComPtr< IMFMediaType > m_pInputMediaType;
     ComPtr< IMFMediaType > m_pOutputMediaType;
-    Ctee *m_objectWrapped;
+    ComPtr<Ctee> m_spObjectWrapped;
 };
 
 //
@@ -272,20 +360,26 @@ class CVideoProcTee: public CWrapTee
 {
 public:
 
-    CVideoProcTee( _In_ Ctee* p,  _In_ GUID category = PINNAME_PREVIEW ) :CWrapTee(p)
+    CVideoProcTee( _In_ Ctee* p,  _In_ GUID category = PINNAME_PREVIEW
+        , _In_ IMFVideoSampleAllocator* sampleAllocator=nullptr
+    )
+        :CWrapTee(p)
         , m_bProducesSamples(FALSE)
+        , m_asyncHresult(S_OK)
         , m_streamCategory(category)
         , m_fSetD3DManager(FALSE)
+        , m_spDefaultAllocator(sampleAllocator)
     {}
     __inline IMFTransform* Transform()
     {
-        return m_videoProcessor.Get();
+        return m_spVideoProcessor.Get();
     }
 
     VOID SetD3DManager( _In_opt_ IUnknown* pUnk )
     {
-            m_spDeviceManagerUnk = pUnk;
+        m_spDeviceManagerUnk = pUnk;
     }
+
     STDMETHODIMP SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMediaType* pOutMediaType);
     virtual STDMETHODIMP Configure(_In_ IMFMediaType *, _In_ IMFMediaType *, _Inout_ IMFTransform**) = 0;
     STDMETHOD(CreateAllocator)();
@@ -294,19 +388,33 @@ public:
         HRESULT hr = S_OK;
         if (SUCCEEDED(hr = StopStreaming()))
         {
-            if (m_objectWrapped)
+            if (m_spObjectWrapped)
             {
-                hr = m_objectWrapped->Stop();
+                hr = m_spObjectWrapped->Stop();
             }
         }
         return hr;
     }
+    virtual ~CVideoProcTee()
+    {}
 protected:
+    CCritSec m_Lock;
+    __inline VOID SetAsyncStatus(_In_ HRESULT hrStatus)
+    {
+        InterlockedCompareExchange(&m_asyncHresult, hrStatus, S_OK);
+    }
+    HRESULT GetAsyncStatus()
+    {
+        return InterlockedCompareExchange(&m_asyncHresult, S_OK, S_OK);
+    }
     STDMETHOD(StartStreaming)() = 0;
     STDMETHOD(StopStreaming)()  = 0;
-    ComPtr< IMFTransform > m_videoProcessor;
+    HRESULT              m_asyncHresult;
+    ComPtr< IMFTransform > m_spVideoProcessor;
     ComPtr<IUnknown>       m_spDeviceManagerUnk;
-    ComPtr<IMFVideoSampleAllocatorEx> m_spAllocator;
+    ComPtr<IMFVideoSampleAllocatorEx> m_spPrivateAllocator;
+    ComPtr<IMFVideoSampleAllocator> m_spDefaultAllocator;
+
     BOOL                   m_bProducesSamples;
     GUID                   m_streamCategory;
     BOOL                   m_fSetD3DManager;
@@ -315,11 +423,12 @@ protected:
 class CXvptee :public CVideoProcTee{
 public:
     CXvptee( _In_ Ctee *, _In_ GUID category = PINNAME_PREVIEW );
-    ~CXvptee();
+    virtual ~CXvptee();
     STDMETHOD(StartStreaming)();
     STDMETHOD(StopStreaming)();
     STDMETHODIMP Do             (   _In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
     STDMETHODIMP Configure      (   _In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform** );
+
 };
 
 class CDecoderTee : public CVideoProcTee {
@@ -338,23 +447,11 @@ public:
         , m_dwMFTInputId(0)
         , m_dwMFTOutputId(0)
         , m_dwQueueId(dwQueueId)
-        ,m_dwCameraStreamWorkQueueId(0)
-        , m_ulProcessOutputsInFlight(0)
-        , m_hSyncHandle(INVALID_HANDLE_VALUE)
-        , m_StoppedAndWaiting(FALSE)
+        , m_dwCameraStreamWorkQueueId(0)
     {
         m_streamCategory = category;
     }
-    ~CDecoderTee();
-
-    __inline VOID SetAsyncStatus( _In_ HRESULT hrStatus )
-    {
-        InterlockedCompareExchange(&m_asyncHresult, hrStatus, S_OK);
-    }
-    HRESULT GetAsyncStatus()
-    {
-        return InterlockedCompareExchange(&m_asyncHresult, S_OK, S_OK);
-    }
+    virtual ~CDecoderTee();
 
     STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
     STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
@@ -362,16 +459,17 @@ public:
 protected:
     STDMETHODIMP StartStreaming();
     STDMETHODIMP StopStreaming();
-    _Ret_maybenull_ HRESULT CDecoderTee::GetSample( _Outptr_ IMFSample**);
+    HRESULT GetSample( _Outptr_result_maybenull_ IMFSample**);
     HRESULT ConfigDecoder( _In_ IMFTransform* ,_In_ GUID guidSubType = GUID_NULL);
     HRESULT ConfigRealTimeMFT(_In_ IMFTransform* );
     HRESULT ProcessOutputSync( _COM_Outptr_opt_ IMFSample** );
     HRESULT ProcessFormatChange();
+    STDMETHOD_(VOID, ShutdownTee)();
 
     BOOL                 m_fAsyncMFT;
     BOOL                 m_D3daware;
     BOOL                 m_hwMFT;
-    ComPtr<CDMFTAsyncCallback<CDecoderTee,&CDecoderTee::Invoke> >     m_asyncCallback;
+    ComPtr<CDMFTAsyncCallback<CDecoderTee, &CDecoderTee::Invoke> >     m_asyncCallback;
     HRESULT              m_asyncHresult;
     DWORD                m_lNeedInputRequest;
     GUID                 m_streamCategory; // Needed for bind flags
@@ -381,12 +479,20 @@ protected:
     ComPtr<IMFSample>    m_spUnprocessedSample;
     DWORD                m_dwQueueId;
     DWORD                m_dwCameraStreamWorkQueueId;
-    CCritSec             m_critSec;
     std::deque<ComPtr<IMFSample> > m_InputSampleList;
-    ULONG                      m_ulProcessOutputsInFlight;
-    HANDLE                     m_hSyncHandle;
-    BOOL                       m_StoppedAndWaiting;
 
+};
+
+class CSampleCopytee :public CVideoProcTee {
+public:
+    CSampleCopytee(_In_ Ctee*, _In_ GUID category = PINNAME_PREVIEW
+        , _In_ IMFVideoSampleAllocator* sampleAllocator = nullptr
+    );
+    ~CSampleCopytee();
+    STDMETHOD(StartStreaming)();
+    STDMETHOD(StopStreaming)();
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
 };
 
 #ifdef MF_DEVICEMFT_ADD_GRAYSCALER_
@@ -499,6 +605,7 @@ public:
         DMFT_PIN_INPUT,
         DMFT_PIN_OUTPUT,
         DMFT_PIN_CUSTOM,
+        DMFT_PIN_ALLOCATOR_PIN,
         DMFT_MAX
     }type_pin;
     HRESULT CreatePin( _In_ ULONG ulInputStreamId, _In_ ULONG ulOutStreamId, _In_ type_pin type,_Outptr_ CBasePin** ppPin, _In_ BOOL& isCustom);
@@ -506,7 +613,7 @@ public:
     }
 };
 HRESULT CheckPinType(_In_ IMFAttributes* pAttributes, _In_ GUID pinType, _Out_ PBOOL pbIsImagePin);
-HRESULT CheckImagePin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin);
+BOOL    CheckImagePin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsImagePin);
 HRESULT CheckPreviewPin(_In_ IMFAttributes* pAttributes, _Out_ PBOOL pbIsPreviewPin);
 
 

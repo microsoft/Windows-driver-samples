@@ -291,7 +291,7 @@ HRESULT ExceptionBoundary(Lambda&& lambda)
     }
     catch (...)
     {
-        return E_FAIL;
+        return E_UNEXPECTED;
     }
 }
 
@@ -581,7 +581,7 @@ public:
                 pcbBuffer);
             if (dwHeightInPixels* abs(*plStride) > *pcbBuffer)
             {
-                hr = E_FAIL;
+                hr = E_UNEXPECTED;
             }
         } else if (m_sp2DBuffer)
         {
@@ -651,6 +651,13 @@ HRESULT IsDXFormatSupported(
     _In_ GUID subType,
     _Outptr_opt_ ID3D11Device** ppDevice,
     _In_opt_ PUINT32 pSupportedFormat);
+
+HRESULT ConfigureAllocator(
+    _In_ IMFMediaType* pOutputMediaType,
+    _In_ GUID streamCategory,
+    _In_ IUnknown* pDeviceManagerUnk,
+    _In_ BOOL &isDxAllocator,
+    _In_ IMFVideoSampleAllocator* pAllocator);
 
 HRESULT CreateAllocator( _In_ IMFMediaType* pOutputMediaType,
     _In_ GUID streamCategory,

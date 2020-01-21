@@ -1950,14 +1950,14 @@ HRESULT CSocMft0::ParseMetadata_FaceDetection(
     }
     PMETADATA_FACEDATA  pFaceData = (PMETADATA_FACEDATA)(pFaceHeader + 1);
     UINT32 cbRectSize = sizeof(FaceRectInfoBlobHeader) + (sizeof(FaceRectInfo) * (pFaceHeader->Count));
-    BYTE *pRectBuf = new BYTE[cbRectSize];
+    BYTE *pRectBuf = new (std::nothrow) BYTE[cbRectSize];
     if (pRectBuf == NULL)
     {
         return E_OUTOFMEMORY;
     }
 
     UINT32 cbCharSize = sizeof(FaceCharacterizationBlobHeader) + (sizeof(FaceCharacterization) * (pFaceHeader->Count));
-    BYTE *pCharBuf = new BYTE[cbCharSize];
+    BYTE *pCharBuf = new (std::nothrow) BYTE[cbCharSize];
     if (pCharBuf == NULL)
     {
         delete[] pRectBuf;
