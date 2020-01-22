@@ -128,24 +128,36 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>ctrpp -o kcsCounters.h -rc kcsCounters.rc kcs.man</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>ctrpp -o kcsCounters.h -rc kcsCounters.rc kcs.man</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>ctrpp -o kcsCounters.h -rc kcsCounters.rc kcs.man</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>ctrpp -o kcsCounters.h -rc kcsCounters.rc kcs.man</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Target Name="Run Ctrpp" BeforeTargets="ClCompile">
     <PropertyGroup>
