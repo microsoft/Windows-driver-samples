@@ -1487,15 +1487,16 @@ done:
 HRESULT MergeSampleAttributes( _In_ IMFSample* pInSample, _Inout_ IMFSample* pOutSample)
 {
     HRESULT hr = S_OK;
-    DMFTCHECKNULL_GOTO(pInSample, done, E_INVALIDARG);
-    DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
     UINT32 cAttributes = 0;
     GUID guidAttribute;
     PROPVARIANT varAttribute;
     PROPVARIANT varAttributeExists;
-
+    
     PropVariantInit(&varAttribute);
     PropVariantInit(&varAttributeExists);
+
+    DMFTCHECKNULL_GOTO(pInSample, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
 
     DMFTCHECKHR_GOTO(pInSample->GetCount(&cAttributes), done);
     for (UINT32 i = 0; i < cAttributes; i++)
