@@ -72,7 +72,7 @@ int __cdecl main(int argc, wchar_t *argv[])
     }
     printf("Device created\n\n");
     
-    // No wait for user to indicate the device should be stopped
+    // Now wait for user to indicate the device should be stopped
     printf("Press 'x' to exit and destory the software device\n");
     bool bExit = false;
     do
