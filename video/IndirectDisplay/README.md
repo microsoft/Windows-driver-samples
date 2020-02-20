@@ -8,6 +8,8 @@ products:
 - windows-wdk
 name: 'IddSample'
 description: "Implements a sample IddCx 1.4 driver and a sample application that instantiates a software device using it."
+statusNotificationTargets:
+- dspkdev@microsoft.com
 ---
 
 # Indirect Display Driver Sample #
