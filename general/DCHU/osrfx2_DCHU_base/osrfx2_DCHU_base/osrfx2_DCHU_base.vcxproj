@@ -26,7 +26,7 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <SampleGuid>{F915ED95-7BE9-4CDB-B09A-0D3F4C9657FE}</SampleGuid>
     <ProjectName>osrfx2_DCHU_base</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
