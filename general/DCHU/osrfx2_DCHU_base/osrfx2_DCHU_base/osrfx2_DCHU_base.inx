@@ -23,7 +23,7 @@ Class = USBDevice
 ClassGuid = {88BAE032-5A81-49f0-BC3D-A4FF138216D6}
 Provider = %ManufacturerName%
 CatalogFile = osrfx2_DCHU_base.cat
-PnpLockdown = 1
+PnpLockDown = 1
 
 [Manufacturer]
 %ManufacturerName% = OsrBase, NT$ARCH$
