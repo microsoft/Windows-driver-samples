@@ -29,6 +29,39 @@ Revision History:
 #include "generic.h"
 
 //
+// Array of ETW Event IDs specific to ChannelExtension that require throttling.
+//
+AHCI_ETW_EVENT_ID g_AhciThrottledUnitEtwEventIds[] = {
+    AhciEtwEventUnitHandleInterrupt,
+    AhciEtwEventUnitCompletedPnp,
+    AhciEtwEventUnitPortErrorRecovery,
+    AhciEtwEventUnitSrbConvertToATACommandError,
+    AhciEtwEventUnitFinishedIoError,
+    AhciEtwEventUnitHandleInterruptAdapterRemoved,
+    AhciEtwEventPortResetPowerUp,
+    AhciEtwEventPortResetBusChange,
+    AhciEtwEventUnitStartFailure,
+    AhciEtwEventPortResetIOProbablyStuckInDriver,
+    AhciEtwEventPortResetErrorRecovery
+};
+
+ULONG g_AhciThrottledUnitEtwEventIdsCount = (sizeof(g_AhciThrottledUnitEtwEventIds) / 
+                                             sizeof(AHCI_ETW_EVENT_ID));
+
+//
+// Array of ETW Event IDs specific to AdapterExtension that require throttling.
+//
+AHCI_ETW_EVENT_ID g_AhciThrottledAdapterEtwEventIds[] = {
+    AhciEtwEventAdapterBuildIoPortNoDevice,
+    AhciEtwEventAdapterBuildIoAdapterRemoved,
+    AhciEtwEventAdapterStartIoPnp,
+    AhciEtwEventAdapterStartIoPortNoDevice
+};
+
+ULONG g_AhciThrottledAdapterEtwEventIdsCount = (sizeof(g_AhciThrottledAdapterEtwEventIds) / 
+                                                sizeof(AHCI_ETW_EVENT_ID));
+
+//
 // This structure is used as a wrapper of a MODE_PARAMETER_HEADER
 // or MODE_PARAMETER_HEADER10. Code that uses this structure can be
 // agnostic as to the underlying structure.
@@ -91,10 +124,63 @@ AtaAlwaysSuccessRequestCompletion (
     _In_ PSTORAGE_REQUEST_BLOCK  Srb
     );
 
+__inline
+BOOLEAN
+IsExceptionCommand(
+    _In_ PCDB Cdb
+    )
+/*
+    Return true for enumeration and power transition related command.
+*/
+{
+    return ((Cdb->CDB10.OperationCode == SCSIOP_REPORT_LUNS) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_INQUIRY) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_START_STOP_UNIT) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_OUT) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_SYNCHRONIZE_CACHE) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_READ_CAPACITY) ||
+            (Cdb->CDB10.OperationCode == SCSIOP_READ_CAPACITY16));
+}
+
+__inline
+BOOLEAN
+RetryCommand(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PCDB Cdb
+    )
+/*
+    If power up/device init in progress, return false; else if port start in
+    progress or restore preserved settings command outstanding, and command
+    (e.g. enumeration and power transition related) is not in exception list,
+    return true;
+
+    Otherwise, return false.
+*/
+{
+    //
+    // If power up or device start in progress, do not retry anything.
+    //
+    if (ChannelExtension->StateFlags.PowerUpInitializationInProgress ||
+        ChannelExtension->AdapterExtension->InRunningPortsProcess ||
+        ChannelExtension->StateFlags.InitCommandInProgress) {
+        return FALSE;
+    }
+
+    if ((ChannelExtension->StateFlags.ReservedSlotInUse ||
+         ((ChannelExtension->StartState.ChannelNextStartState != StartComplete) &&
+          (ChannelExtension->StartState.ChannelNextStartState != StartFailed))) &&
+        (!IsExceptionCommand(Cdb))) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 ULONG
 SCSItoATA(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    _In_ PSTORAGE_REQUEST_BLOCK Srb
     )
 /*
     Note: If there is a need to send a command to device,
@@ -103,9 +189,9 @@ SCSItoATA(
           Not setting this field can cause the Srb being completed earlier than expected.
 */
 {
-    ULONG   status;
-    ULONG   cdbLength = 0;
-    PCDB    cdb = RequestGetSrbScsiData(Srb, &cdbLength, NULL, NULL, NULL);
+    ULONG status;
+    ULONG cdbLength = 0;
+    PCDB cdb = RequestGetSrbScsiData(Srb, &cdbLength, NULL, NULL, NULL);
 
     if (cdb != NULL) {
         if (IsAtapiDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
@@ -114,8 +200,25 @@ SCSItoATA(
         } else if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters) ||
                    (cdb->CDB10.OperationCode == SCSIOP_REPORT_LUNS) ||
                    (cdb->CDB10.OperationCode == SCSIOP_INQUIRY) ) {
-            // Ata command, or device enumeration commands.
-            status = SrbConvertToATACommand(ChannelExtension, Srb, cdb, cdbLength);
+            //
+            // Fail SRB directly with no device if fast fail enabled and device is stuck.
+            //
+            if (FastFailCommand(ChannelExtension)) {
+                Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
+                return STOR_STATUS_UNSUCCESSFUL;
+            }
+
+            //
+            // Fail SRB with busy status to storport if port start is in progress or init/restore
+            // preserved settings command outstanding. Storport will retry these IOs later.
+            //
+            if (RetryCommand(ChannelExtension, cdb)) {
+                Srb->SrbStatus = SRB_STATUS_BUSY;
+                status = STOR_STATUS_BUSY;
+            } else {
+                // Ata command, or device enumeration commands.
+                status = SrbConvertToATACommand(ChannelExtension, Srb, cdb, cdbLength);
+            }
         } else {
             Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
             status = STOR_STATUS_INVALID_DEVICE_REQUEST;
@@ -306,7 +409,7 @@ Return value:
 
     if (Srb->SrbStatus == SRB_STATUS_BUS_RESET) {
         if (srbExtension->DataBuffer != NULL) {
-            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer);
+            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
             srbExtension->DataBuffer = NULL;
         }
         return;
@@ -317,7 +420,7 @@ Return value:
         (srbExtension->DataTransferLength < sizeof(MODE_PARAMETER_HEADER)) ) {
         // free the memory and mark the Srb with error status.
         if (srbExtension->DataBuffer != NULL) {
-            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer);
+            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
             srbExtension->DataBuffer = NULL;
         }
 
@@ -370,7 +473,7 @@ Return value:
     }
 
     if (srbExtension->DataBuffer != NULL) {
-        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer);
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
         srbExtension->DataBuffer = NULL;
     }
 
@@ -388,9 +491,8 @@ AtapiModeSenseRequest (
 {
     ULONG       status;
     ULONG       modeSenseBufferSize;
-    ULONG       tempLength;
     PMODE_PARAMETER_HEADER10    modeSenseBuffer;
-    STOR_PHYSICAL_ADDRESS       modeSensePhysialAddress;
+    STOR_PHYSICAL_ADDRESS       modeSensePhysicalAddress = {0};
     PUCHAR      origBuffer;
     UCHAR       bytesAdjust;
 
@@ -432,7 +534,7 @@ AtapiModeSenseRequest (
     }
 
     // We need to allocate a new data buffer since the size is different
-    status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, modeSenseBufferSize, (PVOID*)&modeSenseBuffer);
+    status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, modeSenseBufferSize, (PVOID*)&modeSenseBuffer, &modeSensePhysicalAddress);
     if ( (status != STOR_STATUS_SUCCESS) ||
          (modeSenseBuffer == NULL) ) {
         // memory allocation failed
@@ -442,7 +544,6 @@ AtapiModeSenseRequest (
     }
 
     AhciZeroMemory((PCHAR)modeSenseBuffer, modeSenseBufferSize);
-    modeSensePhysialAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, (PVOID)modeSenseBuffer, &tempLength);
 
     // fill information in the new MODE_SENSE10 header
     allocationLength = Cdb->MODE_SENSE.AllocationLength;
@@ -472,13 +573,14 @@ AtapiModeSenseRequest (
     srbExtension->Flags |= ATA_FLAGS_NEW_CDB;
     srbExtension->Flags |= ATA_FLAGS_DATA_IN;
     srbExtension->DataBuffer = modeSenseBuffer;
+    srbExtension->DataBufferPhysicalAddress.QuadPart = modeSensePhysicalAddress.QuadPart;
     srbExtension->DataTransferLength = modeSenseBufferSize;
     srbExtension->CompletionRoutine = AtapiModeCommandRequestCompletion;
     srbExtension->CompletionContext = (PVOID)modeSenseBufferSize;    // preserve the buffer size, it's needed for freeing the memory
 
     srbExtension->LocalSgl.NumberOfElements = 1;
-    srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = modeSensePhysialAddress.LowPart;
-    srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = modeSensePhysialAddress.HighPart;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = modeSensePhysicalAddress.LowPart;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = modeSensePhysicalAddress.HighPart;
     srbExtension->LocalSgl.List[0].Length = modeSenseBufferSize;
     srbExtension->Sgl = &srbExtension->LocalSgl;
 
@@ -486,7 +588,7 @@ Done:
 
     if (status != STOR_STATUS_SUCCESS) {
         if (modeSenseBuffer != NULL) {
-            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, modeSenseBufferSize, modeSenseBuffer);
+            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, modeSenseBufferSize, modeSenseBuffer, modeSensePhysicalAddress);
         }
         srbExtension->DataBuffer = NULL;
     }
@@ -508,8 +610,7 @@ AtapiModeSelectRequest (
     ULONG   status;
     PVOID   modeSelectBuffer;
     ULONG   modeSelectBufferSize;
-    ULONG   tempLength;
-    STOR_PHYSICAL_ADDRESS   modeSelectPhysialAddress;
+    STOR_PHYSICAL_ADDRESS   modeSelectPhysicalAddress = {0};
     UCHAR   bytesToSkip;
     PUCHAR  origBuffer;
     UCHAR   bytesAdjust;
@@ -556,7 +657,7 @@ AtapiModeSelectRequest (
     modeSelectBufferSize = srbDataBufferLength + bytesAdjust - header->BlockDescriptorLength;
 
     // allocate buffer for the new cdb
-    status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, modeSelectBufferSize, (PVOID*)&modeSelectBuffer);
+    status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, modeSelectBufferSize, (PVOID*)&modeSelectBuffer, &modeSelectPhysicalAddress);
 
     if ( (status != STOR_STATUS_SUCCESS) ||
          (modeSelectBuffer == NULL) ) {
@@ -567,7 +668,6 @@ AtapiModeSelectRequest (
     }
 
     AhciZeroMemory((PCHAR)modeSelectBuffer, modeSelectBufferSize);
-    modeSelectPhysialAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, (PVOID)modeSelectBuffer, &tempLength);
 
     header10 = (PMODE_PARAMETER_HEADER10)modeSelectBuffer;
 
@@ -610,6 +710,7 @@ AtapiModeSelectRequest (
     srbExtension->Flags |= ATA_FLAGS_NEW_CDB;
     srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
     srbExtension->DataBuffer = modeSelectBuffer;
+    srbExtension->DataBufferPhysicalAddress.QuadPart = modeSelectPhysicalAddress.QuadPart;
     srbExtension->DataTransferLength = modeSelectBufferSize;
     srbExtension->CompletionRoutine = AtapiModeCommandRequestCompletion;
     srbExtension->CompletionContext = (PVOID)modeSelectBufferSize;    // preserve the buffer size, it's needed for freeing the memory
@@ -626,8 +727,8 @@ AtapiModeSelectRequest (
     cdb->MODE_SELECT10.Control                = Cdb->MODE_SELECT.Control;
 
     srbExtension->LocalSgl.NumberOfElements = 1;
-    srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = modeSelectPhysialAddress.LowPart;
-    srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = modeSelectPhysialAddress.HighPart;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = modeSelectPhysicalAddress.LowPart;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = modeSelectPhysicalAddress.HighPart;
     srbExtension->LocalSgl.List[0].Length = modeSelectBufferSize;    // preserve the buffer size, it's needed for freeing the memory
     srbExtension->Sgl = &srbExtension->LocalSgl;
 
@@ -635,7 +736,7 @@ Done:
 
     if (status != STOR_STATUS_SUCCESS) {
         if (modeSelectBuffer != NULL) {
-            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, modeSelectBufferSize, modeSelectBuffer);
+            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, modeSelectBufferSize, modeSelectBuffer, modeSelectPhysicalAddress);
         }
         srbExtension->DataBuffer = NULL;
     }
@@ -660,7 +761,7 @@ SrbConvertToATACommand(
           Not setting this field can cause the Srb being completed earlier than expected.
 */
 {
-    ULONG status;
+    ULONG status = STOR_STATUS_INVALID_DEVICE_REQUEST;
 
     // translate the cdb to task file register values
     switch (Cdb->CDB10.OperationCode) {
@@ -693,9 +794,27 @@ SrbConvertToATACommand(
         break;
 
     case SCSIOP_READ_CAPACITY:
-    case SCSIOP_READ_CAPACITY16:
 
         status = AtaReadCapacityRequest(ChannelExtension, Srb, Cdb, CdbLength);
+        break;
+
+    case SCSIOP_READ_CAPACITY16:
+
+        //
+        // Get physical element status & Remove element and truncate command share the same operation code 0x9e
+        // with read capacity 16 command.
+        //
+
+        if (Cdb->READ_CAPACITY16.ServiceAction == SERVICE_ACTION_READ_CAPACITY16) {
+            status = AtaReadCapacityRequest(ChannelExtension, Srb, Cdb, CdbLength);
+        } else if (Cdb->GET_PHYSICAL_ELEMENT_STATUS.ServiceAction == SERVICE_ACTION_GET_PHYSICAL_ELEMENT_STATUS) {
+            status = AtaGetPhysicalElementStatusRequest(ChannelExtension, Srb, Cdb);
+        } else if (Cdb->REMOVE_ELEMENT_AND_TRUNCATE.ServiceAction == SERVICE_ACTION_REMOVE_ELEMENT_AND_TRUNCATE) {
+            status = AtaRemoveElementAndTruncateRequest(ChannelExtension, Srb, Cdb);
+        } else {
+            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        }
+
         break;
 
     case SCSIOP_INQUIRY:
@@ -746,11 +865,51 @@ SrbConvertToATACommand(
         status = AtaWriteBufferRequest(ChannelExtension, Srb, Cdb);
         break;
 
+    case SCSIOP_ZBC_IN:
+        if (Cdb->REPORT_ZONES.ServiceAction == SERVICE_ACTION_REPORT_ZONES) {
+            status = AtaReportZonesRequest(ChannelExtension, Srb, Cdb);
+        } else {
+            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        }
+
+        break;
+
+    case SCSIOP_ZBC_OUT:
+        if (Cdb->CLOSE_ZONE.ServiceAction == SERVICE_ACTION_CLOSE_ZONE) {
+            status = AtaCloseZoneRequest(ChannelExtension, Srb, Cdb);
+        } else if (Cdb->FINISH_ZONE.ServiceAction == SERVICE_ACTION_FINISH_ZONE) {
+            status = AtaFinishZoneRequest(ChannelExtension, Srb, Cdb);
+        } else if (Cdb->OPEN_ZONE.ServiceAction == SERVICE_ACTION_OPEN_ZONE) {
+            status = AtaOpenZoneRequest(ChannelExtension, Srb, Cdb);
+        } else if (Cdb->RESET_WRITE_POINTER.ServiceAction == SERVICE_ACTION_RESET_WRITE_POINTER) {
+            status = AtaResetWritePointerRequest(ChannelExtension, Srb, Cdb);
+        } else {
+            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        }
+
+        break;
+
+
+    case SCSIOP_READ_DATA_BUFF16:
+
+        if (Cdb->READ_BUFFER_16.Mode == READ_BUFFER_MODE_ERROR_HISTORY) {
+            if (Cdb->READ_BUFFER_16.BufferId == BUFFER_ID_RETURN_ERROR_HISTORY_DIRECTORY) {
+                status = AtaGetDeviceCurrentInternalStatusDataHeader(ChannelExtension, Srb, Cdb);
+            } else if((Cdb->READ_BUFFER_16.BufferId >= BUFFER_ID_RETURN_ERROR_HISTORY_MINIMUM_THRESHOLD) &&
+                      (Cdb->READ_BUFFER_16.BufferId <= BUFFER_ID_RETURN_ERROR_HISTORY_MAXIMUM_THRESHOLD)) {
+                status = AtaGetDeviceCurrentInternalStatusData(ChannelExtension, Srb, Cdb);
+            } else {
+                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+            }
+        } else {
+            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        }
+
+        break;
 
     default:
 
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-        status = STOR_STATUS_INVALID_DEVICE_REQUEST;
         break;
     }
 
@@ -852,7 +1011,7 @@ HybridWriteThroughEvictCompletion(
     //
     // Free DMA buffer that allocated for EVICT command.
     //
-    AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer);
+    AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
 
     return;
 }
@@ -880,7 +1039,6 @@ Return Value:
 --*/
 {
     ULONG                   status;
-    ULONG                   i;
     PATA_LBA_RANGE          buffer = NULL;     // DMA buffer allocated for EVICT command
     STOR_PHYSICAL_ADDRESS   bufferPhysicalAddress;
     PAHCI_SRB_EXTENSION     srbExtension;
@@ -897,7 +1055,7 @@ Return Value:
     //
     // allocate DMA buffer, this buffer will be used to store the ATA LBA Range for EVICT command
     //
-    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, (PVOID*)&buffer);
+    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, (PVOID*)&buffer, &bufferPhysicalAddress);
 
     if ( (status != STOR_STATUS_SUCCESS) || (buffer == NULL) ) {
         Srb->SrbStatus = SRB_STATUS_ERROR;
@@ -925,9 +1083,9 @@ Return Value:
     srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
     srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
     srbExtension->DataBuffer = buffer;
+    srbExtension->DataBufferPhysicalAddress.QuadPart = bufferPhysicalAddress.QuadPart;
     srbExtension->DataTransferLength = ATA_BLOCK_SIZE;
 
-    bufferPhysicalAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, buffer, &i);
     srbExtension->LocalSgl.NumberOfElements = 1;
     srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = bufferPhysicalAddress.LowPart;
     srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = bufferPhysicalAddress.HighPart;
@@ -1163,7 +1321,6 @@ Notes:
             hybridPriorityPassedIn = TRUE;
         }
     }
-
 
     return;
 }
@@ -1741,9 +1898,9 @@ AtaReadCapacityCompletion (
     if (srbDataBuffer != NULL) {
 
         if (cdbLength == 0x10) {
-            // 16 byte CDB
+            // 16 byte CDB, set return data length default to sizeof(READ_CAPACITY_DATA_EX).
             PREAD_CAPACITY16_DATA readCap16 = (PREAD_CAPACITY16_DATA)srbDataBuffer;
-            ULONG                 returnDataLength = 12;    //default to sizeof(READ_CAPACITY_DATA_EX)
+            ULONG                 returnDataLength = sizeof(READ_CAPACITY_DATA_EX);
 
             if (srbDataBufferLength < sizeof(READ_CAPACITY_DATA_EX)) {
                 Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -1780,7 +1937,11 @@ AtaReadCapacityCompletion (
                     readCap16->LBPRZ = 0;
                 }
 
-                returnDataLength = FIELD_OFFSET(READ_CAPACITY16_DATA, Reserved3);
+                if (srbDataBufferLength >= sizeof(READ_CAPACITY16_DATA)) {
+                    returnDataLength = sizeof(READ_CAPACITY16_DATA);
+                } else {
+                    returnDataLength = (ULONG)FIELD_OFFSET(READ_CAPACITY16_DATA, Reserved3);
+                }
             }
 
             SrbSetDataTransferLength(Srb, returnDataLength);
@@ -1939,7 +2100,7 @@ AtaGenerateInquiryData (
 
     AhciZeroMemory((PCHAR)InquiryData, ATA_INQUIRYDATA_SIZE);
 
-    InquiryData->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE;
+    InquiryData->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
     InquiryData->RemovableMedia = IsRemovableMedia(&ChannelExtension->DeviceExtension->DeviceParameters) ? 1 : 0;
     InquiryData->ResponseDataFormat = 0x2; //data format is defined in SPC standard
     InquiryData->CommandQueue = 1;  //support NCQ for AHCI controller
@@ -2143,7 +2304,11 @@ AtaInquiryRequest(
     _In_ PCDB                    Cdb
     )
 /*
-  NOTE: the command should be completed after calling this function as no real command will be sent to device.
+  NOTE:
+  In most cases the command should be completed after calling this function as
+  no real command will be sent to device.  The exceptions being if we're on the
+  dump stack or if a firmware activate was just performed and the identify data
+  needs to be refreshed.
 */
 {
     ULONG status = STOR_STATUS_SUCCESS;
@@ -2157,18 +2322,17 @@ AtaInquiryRequest(
         status = STOR_STATUS_INVALID_PARAMETER;
     } else if (Cdb->CDB6INQUIRY3.EnableVitalProductData == 0) {
 
-        if (IsDumpMode(ChannelExtension->AdapterExtension) && !DeviceIdentificationComplete(ChannelExtension->AdapterExtension)) {
+        if (IsDumpMode(ChannelExtension->AdapterExtension) && !DeviceIdentificationCompletedSuccess(ChannelExtension->AdapterExtension)) {
             // the enumeration command from dump stack.
             IssueIdentifyCommand(ChannelExtension, Srb);
-        } else if (ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData == 1) {
-            ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData = 0;
+        } else if (ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData == 1) {            
             IssueIdentifyCommand(ChannelExtension, Srb);
         } else {
             status = InquiryComplete(ChannelExtension, Srb);
         }
     } else {
-        PVOID   srbDataBuffer = SrbGetDataBuffer(Srb);
-        ULONG   srbDataBufferLength = SrbGetDataTransferLength(Srb);
+        PVOID srbDataBuffer = SrbGetDataBuffer(Srb);
+        ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
 
         if (srbDataBuffer == NULL) {
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -2184,7 +2348,16 @@ AtaInquiryRequest(
             //
             // Input buffer should be at least the size of page header plus count of supported pages, each page needs one byte.
             //
-            ULONG   requiredBufferSize = sizeof(VPD_SUPPORTED_PAGES_PAGE) + 6;
+
+            ULONG requiredBufferSize = 0;
+            UCHAR supportedPageCount = 8;
+            ULONG i = 0;
+
+            if (IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+                supportedPageCount += 1;
+            }
+
+            requiredBufferSize = sizeof(VPD_SUPPORTED_PAGES_PAGE) + supportedPageCount;
 
             if (srbDataBufferLength < requiredBufferSize) {
                 Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -2192,16 +2365,30 @@ AtaInquiryRequest(
             } else {
                 PVPD_SUPPORTED_PAGES_PAGE outputBuffer = (PVPD_SUPPORTED_PAGES_PAGE)srbDataBuffer;
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                //
+                // Report supported page in ascending order beginning with page code 00h.
+                //
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_SUPPORTED_PAGES;
-                outputBuffer->PageLength = 0x06;        // supports 6 VPD pages
-                outputBuffer->SupportedPageList[0] = VPD_SUPPORTED_PAGES;
-                outputBuffer->SupportedPageList[1] = VPD_SERIAL_NUMBER;
-                outputBuffer->SupportedPageList[2] = VPD_ATA_INFORMATION;
-                outputBuffer->SupportedPageList[3] = VPD_BLOCK_LIMITS;
-                outputBuffer->SupportedPageList[4] = VPD_BLOCK_DEVICE_CHARACTERISTICS;
-                outputBuffer->SupportedPageList[5] = VPD_LOGICAL_BLOCK_PROVISIONING;
+                outputBuffer->PageLength = supportedPageCount;
+                outputBuffer->SupportedPageList[i++] = VPD_SUPPORTED_PAGES;
+                outputBuffer->SupportedPageList[i++] = VPD_SERIAL_NUMBER;
+                // Support device identification page(VPD: 0x83) to resolve PCS test failure.
+                outputBuffer->SupportedPageList[i++] = VPD_DEVICE_IDENTIFIERS;
+                // According to SAT4, if the SATL supports the Read Buffer command with mode field set to 0x1C(Error History mode),
+                // then the SATL shall support the Extended Inquiry Data VPD page.
+                outputBuffer->SupportedPageList[i++] = VPD_EXTENDED_INQUIRY_DATA;
+                outputBuffer->SupportedPageList[i++] = VPD_ATA_INFORMATION;
+                outputBuffer->SupportedPageList[i++] = VPD_BLOCK_LIMITS;
+                outputBuffer->SupportedPageList[i++] = VPD_BLOCK_DEVICE_CHARACTERISTICS;
+                outputBuffer->SupportedPageList[i++] = VPD_LOGICAL_BLOCK_PROVISIONING;
+
+                if (IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+                    outputBuffer->SupportedPageList[i++] = VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS;
+                }
+
+                NT_ASSERT(supportedPageCount == i);
 
                 SrbSetDataTransferLength(Srb, requiredBufferSize);
 
@@ -2211,13 +2398,19 @@ AtaInquiryRequest(
             break;
         }
         case VPD_BLOCK_LIMITS: {
-            if (srbDataBufferLength < 0x14) {
-                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-                status = STOR_STATUS_INVALID_PARAMETER;
+            if (srbDataBufferLength < sizeof(VPD_BLOCK_LIMITS_PAGE)) {
+                SrbSetSrbStatus(Srb, SRB_STATUS_DATA_OVERRUN);
+                SrbSetDataTransferLength(Srb, 0);
+                status = STOR_STATUS_BUFFER_TOO_SMALL;
             } else {
                 PVPD_BLOCK_LIMITS_PAGE outputBuffer = (PVPD_BLOCK_LIMITS_PAGE)srbDataBuffer;
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                //
+                // Resetting the VPD page buffer
+                //
+                AhciZeroMemory((PCHAR)outputBuffer, sizeof(VPD_BLOCK_LIMITS_PAGE));
+
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_BLOCK_LIMITS;
 
@@ -2225,9 +2418,8 @@ AtaInquiryRequest(
                 // leave outputBuffer->Descriptors[0 : 15] as '0' indicating 'not supported' for those fields.
                 //
 
-                if ( (srbDataBufferLength >= 0x24) &&
-                     IsDeviceSupportsTrim(ChannelExtension) ) {
-                    // not worry about multiply overflow as max of DsmCapBlockCount is min(AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE, 0xFFFF)
+                if ( IsDeviceSupportsTrim(ChannelExtension) ) {
+                    // not worry about multiply overflow as max of DsmCapBlockCount is min(AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE, 0xFFFF)
                     // calculate how many LBA ranges can be associated with one DSM - Trim command
                     ULONG   maxLbaRangeEntryCountPerCmd = ChannelExtension->DeviceExtension[0].DeviceParameters.DsmCapBlockCount * (ATA_BLOCK_SIZE / sizeof(ATA_LBA_RANGE));
                     // calculate how many LBA can be associated with one DSM - Trim command
@@ -2250,8 +2442,9 @@ AtaInquiryRequest(
 
                     // keep original 'Srb->DataTransferLength' value.
                 } else {
-                    outputBuffer->PageLength[1] = 0x10;
-                    SrbSetDataTransferLength(Srb, 0x14);
+                    outputBuffer->PageLength[1] = 0x3C;
+
+                    // keep original 'Srb->DataTransferLength' value.
                 }
 
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
@@ -2266,13 +2459,18 @@ AtaInquiryRequest(
             } else {
                 PVPD_BLOCK_DEVICE_CHARACTERISTICS_PAGE outputBuffer = (PVPD_BLOCK_DEVICE_CHARACTERISTICS_PAGE)srbDataBuffer;
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_BLOCK_DEVICE_CHARACTERISTICS;
                 outputBuffer->PageLength = 0x3C;        // must be 0x3C per spec
                 outputBuffer->MediumRotationRateMsb = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate >> 8) & 0x00FF);
                 outputBuffer->MediumRotationRateLsb = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate & 0x00FF);
                 outputBuffer->NominalFormFactor = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalFormFactor);
+
+                // unfortunately, cannot use RTL_SIZEOF_THROUGH_FIELD as "ZONED" is a bit field.
+                if (srbDataBufferLength >= 0x09) {
+                    outputBuffer->ZONED = (UCHAR)ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities;
+                }
 
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
                 status = STOR_STATUS_SUCCESS;
@@ -2286,7 +2484,7 @@ AtaInquiryRequest(
             } else {
                 PVPD_LOGICAL_BLOCK_PROVISIONING_PAGE outputBuffer = (PVPD_LOGICAL_BLOCK_PROVISIONING_PAGE)srbDataBuffer;
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_LOGICAL_BLOCK_PROVISIONING;
                 outputBuffer->PageLength[1] = 0x04;      // 8 bytes data in total
@@ -2319,7 +2517,7 @@ AtaInquiryRequest(
                 PVPD_SERIAL_NUMBER_PAGE outputBuffer = (PVPD_SERIAL_NUMBER_PAGE)srbDataBuffer;
                 UCHAR i;
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_SERIAL_NUMBER;
                 outputBuffer->PageLength = 20;      // 24 bytes data in total
@@ -2347,7 +2545,7 @@ AtaInquiryRequest(
 
                 AhciZeroMemory((PCHAR)outputBuffer, sizeof(VPD_ATA_INFORMATION_PAGE));
 
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType; //DIRECT_ACCESS_DEVICE; ;
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
                 outputBuffer->DeviceTypeQualifier = 0;
                 outputBuffer->PageCode = VPD_ATA_INFORMATION;
                 outputBuffer->PageLength[0] = 0x02;
@@ -2397,6 +2595,178 @@ AtaInquiryRequest(
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
                 status = STOR_STATUS_SUCCESS;
             }
+            break;
+        }
+        case VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS: {
+            if (srbDataBufferLength < RTL_SIZEOF_THROUGH_FIELD(VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE, MaxNumberOfOpenSequentialWriteRequiredZone)) {
+                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+                status = STOR_STATUS_INVALID_PARAMETER;
+            } else {
+                PVPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE outputBuffer = (PVPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE)srbDataBuffer;
+
+                AhciZeroMemory((PCHAR)outputBuffer, srbDataBufferLength);
+
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
+                outputBuffer->DeviceTypeQualifier = 0;
+                outputBuffer->PageCode = VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS;
+                outputBuffer->PageLength[0] = 0;
+                outputBuffer->PageLength[1] = 0x3C;      // must be 0x3C per spec.
+
+                outputBuffer->URSWRZ = ChannelExtension->DeviceExtension->ZonedDeviceInfo.URSWRZ ? 1 : 0;
+
+                REVERSE_BYTES(outputBuffer->OptimalNumberOfOpenSequentialWritePreferredZone,
+                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfOpenSequentialWritePreferredZones);
+
+                REVERSE_BYTES(outputBuffer->OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZone,
+                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones);
+
+                REVERSE_BYTES(outputBuffer->MaxNumberOfOpenSequentialWriteRequiredZone,
+                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.MaxNumberOfOpenSequentialWriteRequiredZones);
+
+                Srb->SrbStatus = SRB_STATUS_SUCCESS;
+                status = STOR_STATUS_SUCCESS;
+            }
+            break;
+        }
+
+        case VPD_DEVICE_IDENTIFIERS: {
+
+            BOOLEAN supportWorldWideName = (ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetActive.WWN64Bit == 1) ? (TRUE) : (FALSE);
+            ULONG requiredOutputBufferSize = (ULONG)FIELD_OFFSET(VPD_IDENTIFICATION_PAGE, Descriptors) + 
+                                             (ULONG)FIELD_OFFSET(VPD_IDENTIFICATION_DESCRIPTOR_EX, Designator) + 
+                                             ((supportWorldWideName) ? (sizeof(NAA_IEEE_REGISTERED_DESIGNATOR)) : (T10_VENDOR_ID_BASED_DESIGNATOR_LENGTH));
+
+            if (srbDataBufferLength < requiredOutputBufferSize) {
+
+                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+                status = STOR_STATUS_INVALID_PARAMETER;
+            } else {
+
+                PVPD_IDENTIFICATION_PAGE outputBuffer = (PVPD_IDENTIFICATION_PAGE)srbDataBuffer;
+                PVPD_IDENTIFICATION_DESCRIPTOR_EX identificationDescriptor = (PVPD_IDENTIFICATION_DESCRIPTOR_EX)outputBuffer->Descriptors;
+
+                AhciZeroMemory((PCHAR)outputBuffer, srbDataBufferLength);
+
+                outputBuffer->DeviceType = 0;
+                outputBuffer->DeviceTypeQualifier = DEVICE_QUALIFIER_ACTIVE;
+                outputBuffer->PageCode = VPD_DEVICE_IDENTIFIERS;
+
+                if (supportWorldWideName) {
+                    //
+                    // ATA device supports WORLD WIDE NAME.
+                    //
+                    PNAA_IEEE_REGISTERED_DESIGNATOR naaDesignator = (PNAA_IEEE_REGISTERED_DESIGNATOR)identificationDescriptor->Designator;
+
+                    identificationDescriptor->ProtocolIdentifier = 0;
+                    identificationDescriptor->CodeSet = VpdCodeSetBinary;
+                    identificationDescriptor->PIV = 0;
+                    identificationDescriptor->Association = VpdAssocDevice;
+                    identificationDescriptor->DesignatorType = VpdIdentifierTypeFCPHName;
+                    NT_ASSERT(sizeof(NAA_IEEE_REGISTERED_DESIGNATOR) == 0x8);
+                    identificationDescriptor->DesignatorLength = (UCHAR)sizeof(NAA_IEEE_REGISTERED_DESIGNATOR);
+
+                    // NAA Byte 4 bits 7:4 IDENTIFY DEVICE word 108 bits 15:12
+                    // This 4-bit field is required to be set to 5h (i.e., IEEE Registered) by ACS-4.
+                    naaDesignator->Naa = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] >> 12) & (0xf);
+                    NT_ASSERT(naaDesignator->Naa == 0x5);
+                    // IEEE COMPANY_ID Byte 4 bits 3:0 IDENTIFY DEVICE word 108 bits 11:8
+                    naaDesignator->IeeeCompanyId0 = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] >> 8) & (0xf);
+                    // IEEE COMPANY_ID Byte 5 IDENTIFY DEVICE word 108 bits 7:0
+                    naaDesignator->IeeeCompanyId1[0] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] & 0xff);
+                    // IEEE COMPANY_ID Byte 6 IDENTIFY DEVICE word 109 bits 15:8
+                    naaDesignator->IeeeCompanyId1[1] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] >> 8) & 0xff);
+                    // IEEE COMPANY_ID Byte 7 bits 7:4 IDENTIFY DEVICE word 109 bits 7:4
+                    naaDesignator->IeeeCompanyId2 = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] >> 4) & (0xf);
+                    // Vendor Specific Identifier Byte 7 bits 3:0 IDENTIFY DEVICE word 109 bits 3:0
+                    naaDesignator->VendorSpecificData0 = ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] & 0xf;
+                    // Vendor Specific Identifier Byte 8 IDENTIFY DEVICE word 110 bits 15:8
+                    naaDesignator->VendorSpecificData1[0] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[2] >> 8) & 0xff);
+                    // Vendor Specific Identifier Byte 9 IDENTIFY DEVICE word 110 bits 7:0
+                    naaDesignator->VendorSpecificData1[1] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[2] & 0xff);
+                    // Vendor Specific Identifier Byte 10 IDENTIFY DEVICE word 111 bits 15:8
+                    naaDesignator->VendorSpecificData1[2] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[3] >> 8) & 0xff);
+                    // Vendor Specific Identifier Byte 11 IDENTIFY DEVICE word 111 bits 7:0
+                    naaDesignator->VendorSpecificData1[3] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[3] & 0xff);
+
+                } else {
+                    //
+                    // ATA device does not support WORLD WIDE NAME.
+                    //
+                    PT10_VENDOR_ID_BASED_DESIGNATOR t10VendorIdBasedDesignator = (PT10_VENDOR_ID_BASED_DESIGNATOR)identificationDescriptor->Designator;
+                    ULONG length = 0;
+
+                    identificationDescriptor->ProtocolIdentifier = 0;
+                    identificationDescriptor->CodeSet = VpdCodeSetAscii;
+                    identificationDescriptor->PIV = 0;
+                    identificationDescriptor->Association = VpdAssocDevice;
+                    identificationDescriptor->DesignatorType = VpdIdentifierTypeVendorId;
+                    identificationDescriptor->DesignatorLength = T10_VENDOR_ID_BASED_DESIGNATOR_LENGTH;
+
+                    // T10 VENDOR IDENTIFICATION Shall be set to the string ‘ATA¬¬¬¬¬’.
+                    t10VendorIdBasedDesignator->T10VendorIdentification[0] = ' ';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[1] = ' ';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[2] = ' ';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[3] = ' ';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[4] = ' ';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[5] = 'A';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[6] = 'T';
+                    t10VendorIdBasedDesignator->T10VendorIdentification[7] = 'A';
+
+                    // Vendor Specific Identifier Bytes: 0 - 39  Model Numer(Identify device data word: 27 - 46).
+                    length = sizeof(ChannelExtension->DeviceExtension->DeviceParameters.VendorId) - 1;
+                    NT_ASSERT(length == 40);
+                    StorPortCopyMemory(t10VendorIdBasedDesignator->VendorSpecificIdentifier, 
+                                       ChannelExtension->DeviceExtension->DeviceParameters.VendorId, 
+                                       length);
+
+                    // Vendor Specific Identifier Bytes: 40 - 59  Serial Numer(Identify device data word: 10 - 19).
+                    NT_ASSERT((sizeof(ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber) - 1) == 20);
+                    StorPortCopyMemory(t10VendorIdBasedDesignator->VendorSpecificIdentifier + length, 
+                                       ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber, 
+                                       sizeof(ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber) - 1);
+
+                }
+
+                outputBuffer->PageLength = (UCHAR)FIELD_OFFSET(VPD_IDENTIFICATION_DESCRIPTOR_EX, Designator) + (UCHAR)identificationDescriptor->DesignatorLength;
+
+                Srb->SrbStatus = SRB_STATUS_SUCCESS;
+                status = STOR_STATUS_SUCCESS;
+            }
+
+            break;
+        }
+
+        case VPD_EXTENDED_INQUIRY_DATA: {
+            if (srbDataBufferLength < RTL_SIZEOF_THROUGH_FIELD(VPD_EXTENDED_INQUIRY_DATA_PAGE, MaxSupportedSenseDataLength)) {
+                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+                status = STOR_STATUS_INVALID_PARAMETER;
+            } else {
+                PVPD_EXTENDED_INQUIRY_DATA_PAGE outputBuffer = (PVPD_EXTENDED_INQUIRY_DATA_PAGE)srbDataBuffer;
+
+                AhciZeroMemory((PCHAR)outputBuffer, srbDataBufferLength);
+
+                // Below fields are required for Read Buffer command(Error history mode) support in SAT-4.
+                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
+                outputBuffer->DeviceTypeQualifier = 0;
+                outputBuffer->PageCode = VPD_EXTENDED_INQUIRY_DATA;
+                outputBuffer->PageLength[0] = 0;
+                outputBuffer->PageLength[1] = 0x3C;      // must be 0x3C per spec.
+                outputBuffer->HssRelef = 1;
+
+                // Populate below fields according to SAT-2.
+                if (ChannelExtension->DeviceExtension->IdentifyDeviceData->NVCacheCapabilities.NVCachePowerModeEnabled == 1 ||
+                    ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.NonVolatileWriteCache == 1) {
+                    outputBuffer->NvSup = 1;
+                }
+                if (ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetActive.WriteCache ||
+                    ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetActive.LookAhead) {
+                    outputBuffer->VSup = 1;
+                }
+
+                Srb->SrbStatus = SRB_STATUS_SUCCESS;
+                status = STOR_STATUS_SUCCESS;
+            }
+
             break;
         }
 
@@ -2905,7 +3275,7 @@ Return Value:
 
     } else {
         if (buffer != NULL) {
-            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, buffer);
+            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, buffer, srbExtension->DataBufferPhysicalAddress);
         }
 
         if (trimContext != NULL) {
@@ -2938,6 +3308,7 @@ AtaUnmapRequest (
 
     PVOID               srbDataBuffer = SrbGetDataBuffer(Srb);
     ULONG               srbDataBufferLength = SrbGetDataTransferLength(Srb);
+    STOR_PHYSICAL_ADDRESS bufferPhysicalAddress = {0};
 
     unmapList = (PUNMAP_LIST_HEADER)srbDataBuffer;
 
@@ -2957,8 +3328,6 @@ AtaUnmapRequest (
     } else {
         // some preparation work before actually starting to process the request
         ULONG                 i = 0;
-        ULONG                 length = 0;
-        STOR_PHYSICAL_ADDRESS bufferPhysicalAddress;
 
         status = StorPortAllocatePool(ChannelExtension->AdapterExtension, sizeof(ATA_TRIM_CONTEXT), AHCI_POOL_TAG, (PVOID*)&trimContext);
         if ( (status != STOR_STATUS_SUCCESS) || (trimContext == NULL) ) {
@@ -3007,7 +3376,7 @@ AtaUnmapRequest (
         }
 
         // 1.4 allocate buffer, this buffer will be used to store ATA LBA Ranges for DSM command
-        status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, (PVOID*)&buffer);
+        status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, (PVOID*)&buffer, &bufferPhysicalAddress);
 
         if ( (status != STOR_STATUS_SUCCESS) || (buffer == NULL) ) {
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -3021,10 +3390,10 @@ AtaUnmapRequest (
         srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
         srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
         srbExtension->DataBuffer = buffer;
+        srbExtension->DataBufferPhysicalAddress.QuadPart = bufferPhysicalAddress.QuadPart;
         srbExtension->DataTransferLength = trimContext->AllocatedBufferLength;
         srbExtension->CompletionContext = (PVOID)trimContext;
 
-        bufferPhysicalAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, buffer, &length);
         srbExtension->LocalSgl.NumberOfElements = 1;
         srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = bufferPhysicalAddress.LowPart;
         srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = bufferPhysicalAddress.HighPart;
@@ -3039,7 +3408,7 @@ Exit:
     // the process failed before DSM command can be sent. Free allocated resources.
     if (status != STOR_STATUS_SUCCESS) {
         if (buffer != NULL) {
-            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, buffer);
+            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, trimContext->AllocatedBufferLength, buffer, bufferPhysicalAddress);
         }
 
         if (trimContext != NULL) {
@@ -3060,8 +3429,9 @@ AtaSecurityProtocolRequest (
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
     PCDB                securityCdb = Cdb;
+    UCHAR               protocol;
     ULONG               dataLength = 0;
-    UCHAR               commandReg;
+    UCHAR               command;
     UCHAR               nonDataTrustedReceive = 0;
 
     if (ChannelExtension->DeviceExtension->IdentifyDeviceData->TrustedComputing.FeatureSupported == 0) {
@@ -3073,29 +3443,29 @@ AtaSecurityProtocolRequest (
     } else {
 
         dataLength = (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 24) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 16) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 8) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0]);
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[1] << 16) |
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2] << 8) |
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);
+
+        protocol = securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocol;
 
         if (dataLength > 0xFFFF) {
             // ATA TRUSTED commands can only process 2 bytes of data transfer length.
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         } else {
             // get command to be used
-            if ((securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3] == 0) &&
-                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2] == 0) &&
-                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[1] == 0) &&
-                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] == 0)) {
+            if (dataLength == 0) {
                 // Non-data transfer
-                commandReg = IDE_COMMAND_TRUSTED_NON_DATA;
+                command = IDE_COMMAND_TRUSTED_NON_DATA;
                 nonDataTrustedReceive = (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) ? 1 : 0;
             } else {
                 NT_ASSERT((SrbGetSrbFlags(Srb) & SRB_FLAGS_UNSPECIFIED_DIRECTION) != 0);
+
                 if (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) {
-                    commandReg = IDE_COMMAND_TRUSTED_RECEIVE_DMA;
+                    command = IDE_COMMAND_TRUSTED_RECEIVE_DMA;
                     srbExtension->Flags |= ATA_FLAGS_DATA_IN;
                 } else {
-                    commandReg = IDE_COMMAND_TRUSTED_SEND_DMA;
+                    command = IDE_COMMAND_TRUSTED_SEND_DMA;
                     srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
                 }
                 srbExtension->Flags |= ATA_FLAGS_USE_DMA;
@@ -3104,14 +3474,37 @@ AtaSecurityProtocolRequest (
             // Set up taskfile in SrbExtension.
             srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
 
-            SetCommandReg((&srbExtension->TaskFile.Current), commandReg);
-            SetFeaturesReg((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocol);
+            SetCommandReg((&srbExtension->TaskFile.Current), command);
+            SetFeaturesReg((&srbExtension->TaskFile.Current), protocol);
 
-            SetSectorCount((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);           //low byte of transfer length
-            SetSectorNumber((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2]);          //high byte of transfer length
+            if (protocol == SECURITY_PROTOCOL_IEEE1667) {
 
-            SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //SILO_INDEX, high byte of protocol specific
-            SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //FUNCTION_ID, low byte of protocol specific
+                SetSectorCount((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);           //low byte of transfer length
+                SetSectorNumber((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2]);          //high byte of transfer length
+
+                SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //SILO_INDEX, high byte of protocol specific
+                SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //FUNCTION_ID, low byte of protocol specific
+
+            } else if ((protocol == TCG_SECURITY_PROTOCOL_ID_0) ||
+                       (protocol == TCG_SECURITY_PROTOCOL_ID_1) ||
+                       (protocol == TCG_SECURITY_PROTOCOL_ID_2)) {
+
+                // dataLength is number of 512-byte data units
+                // and has to fit in bSectorCountReg (UCHAR)
+                if (dataLength > 0xFF) {
+                    Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+                } else {
+
+                    SetSectorCount((&srbExtension->TaskFile.Current), (UCHAR)dataLength); //Number of 512-byte data units
+
+                    if ((protocol == TCG_SECURITY_PROTOCOL_ID_1) ||
+                        (protocol == TCG_SECURITY_PROTOCOL_ID_2)) {
+
+                        SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //high byte of ComID
+                        SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //low byte of ComID
+                    }
+                }
+            }
 
             SetDeviceReg((&srbExtension->TaskFile.Current), nonDataTrustedReceive);
         }
@@ -3121,6 +3514,111 @@ AtaSecurityProtocolRequest (
 }
 
 
+VOID UpdateFirmwareIoctlReturnCode(
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    )
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    PSRB_IO_CONTROL srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
+
+    if (srbControl == NULL) {
+        return;
+    }
+
+    if (srbExtension->AtaError & IDE_ERROR_CRC_ERROR) {
+        
+        // bit 7: Interface CRC error.
+        srbControl->ReturnCode = FIRMWARE_STATUS_INTERFACE_CRC_ERROR;
+
+    } else if (srbExtension->AtaError & IDE_ERROR_DATA_ERROR) {
+    
+        // bit 6: Uncorrectable Error.
+        srbControl->ReturnCode = FIRMWARE_STATUS_DEVICE_ERROR;
+            
+    } else if (srbExtension->AtaError & IDE_ERROR_MEDIA_CHANGE) {
+    
+        // bit 5: Media Changed (legacy).
+        srbControl->ReturnCode = FIRMWARE_STATUS_MEDIA_CHANGE;
+
+    } else if (srbExtension->AtaError & IDE_ERROR_ID_NOT_FOUND) {
+    
+        // bit 4: ID Not Found.
+        srbControl->ReturnCode = FIRMWARE_STATUS_ID_NOT_FOUND;
+
+    } else if (srbExtension->AtaError & IDE_ERROR_MEDIA_CHANGE_REQ) {
+    
+        // bit 3: Media Change Request (legacy).
+        srbControl->ReturnCode = FIRMWARE_STATUS_MEDIA_CHANGE_REQUEST;
+
+    } else if (srbExtension->AtaError & IDE_ERROR_COMMAND_ABORTED) {
+    
+        // bit 2: Command Aborted.
+        srbControl->ReturnCode = FIRMWARE_STATUS_COMMAND_ABORT;
+        
+    } else if (srbExtension->AtaError & IDE_ERROR_END_OF_MEDIA) {
+    
+        // bit 1: End of Media (legacy).
+        srbControl->ReturnCode = FIRMWARE_STATUS_END_OF_MEDIA;
+        
+    } else if (srbExtension->AtaError & IDE_ERROR_ILLEGAL_LENGTH) {
+    
+        // bit 0: Media Error (legacy).
+        srbControl->ReturnCode = FIRMWARE_STATUS_ILLEGAL_LENGTH;
+        
+    } else {
+    
+        // Should not be here, need investigation if get here.
+        NT_ASSERT(FALSE);
+        srbControl->ReturnCode = FIRMWARE_STATUS_ERROR;
+    }
+
+    return;
+}
+
+
+VOID
+AtaFirmwareDownloadCompletion (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    )
+{           
+    if (Srb->SrbStatus != SRB_STATUS_SUCCESS) {
+
+        PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+        PSRB_IO_CONTROL srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
+
+        UpdateFirmwareIoctlReturnCode(Srb);
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareDownloadComplete,
+                          L"Firmware Download Completion",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ReturnCode",
+                          (srbControl != NULL) ? (srbControl->ReturnCode) : (0),
+                          L"FeaturesReg",
+                          srbExtension->TaskFile.Current.bFeaturesReg,
+                          L"SectorCountReg",
+                          srbExtension->TaskFile.Current.bSectorCountReg,
+                          L"DriveHeadReg",
+                          srbExtension->TaskFile.Current.bDriveHeadReg,
+                          L"CommandReg",
+                          srbExtension->TaskFile.Current.bCommandReg,
+                          NULL,
+                          0,
+                          NULL,
+                          0);
+
+    }
+
+    return;
+}
+
 VOID
 AtaWriteBufferFirmwareDownload (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
@@ -3128,11 +3626,14 @@ AtaWriteBufferFirmwareDownload (
     _In_ PCDB                    Cdb
     )
 {
-
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    PSRB_IO_CONTROL     srbControl = NULL;
     ULONG               bufferOffset = 0;
     ULONG               dataLength = 0;
-    UCHAR               commandReg;
+    UCHAR               commandReg = 0;
+    BOOLEAN             invalidCommand = FALSE;
+
+    srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
 
     bufferOffset = (ULONG)Cdb->WRITE_BUFFER.BufferOffset[0] << 16 |
                    (ULONG)Cdb->WRITE_BUFFER.BufferOffset[1] << 8 |
@@ -3146,6 +3647,8 @@ AtaWriteBufferFirmwareDownload (
         ((dataLength % ATA_BLOCK_SIZE) != 0)) {
         // Report invalid command.
         AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
+        invalidCommand = TRUE;
         goto exit;
     }
 
@@ -3157,6 +3660,8 @@ AtaWriteBufferFirmwareDownload (
         (dataLength < ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks)) {
         // Report invalid command.
         AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
+        invalidCommand = TRUE;
         goto exit;
     }
 
@@ -3165,6 +3670,8 @@ AtaWriteBufferFirmwareDownload (
             ((Cdb->WRITE_BUFFER.ModeSpecific & SCSI_WRITE_BUFFER_MODE_0D_MODE_SPECIFIC_HR_ACT) != 0)) {
             // Report invalid command.
             AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+            srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
+            invalidCommand = TRUE;
             goto exit;
         }
     }
@@ -3182,6 +3689,8 @@ AtaWriteBufferFirmwareDownload (
 
     // Set up taskfile in SrbExtension.
     srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
+
+    srbExtension->CompletionRoutine = AtaFirmwareDownloadCompletion;
 
     SetCommandReg((&srbExtension->TaskFile.Current), commandReg);
 
@@ -3201,6 +3710,37 @@ exit:
     // If the ATA command completes without error and the ATA device returns a COUNT field set to 03h, then the
     // SATL shall remember that the new microcode shall be activated by whichever event in table 48 occurs first.
 
+    if (invalidCommand) {
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareDownload,
+                          L"Firmware Download",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"BufferOffset",
+                          bufferOffset,
+                          L"DataLength",
+                          dataLength,
+                          L"MaxTransBlocks",
+                          ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks,
+                          L"MinTransBlocks",
+                          ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks,
+                          L"Mode",
+                          Cdb->WRITE_BUFFER.Mode,
+                          L"ModeSpecific",
+                          Cdb->WRITE_BUFFER.ModeSpecific,
+                          L"CommandReg",
+                          commandReg,
+                          L"ReturnCode",
+                          srbControl->ReturnCode);
+
+    }
+
+
+
     return;
 }
 
@@ -3216,6 +3756,38 @@ AtaFirmwareActivateCompletion (
     //
     if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
         ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData = 1;
+    } else {
+
+        PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+        PSRB_IO_CONTROL srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
+
+        UpdateFirmwareIoctlReturnCode(Srb);
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareActivateComplete,
+                          L"Firmware Activate Completion",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ReturnCode",
+                          (srbControl != NULL) ? (srbControl->ReturnCode) : (0),
+                          L"FeaturesReg",
+                          srbExtension->TaskFile.Current.bFeaturesReg,
+                          L"SectorCountReg",
+                          srbExtension->TaskFile.Current.bSectorCountReg,
+                          L"DriveHeadReg",
+                          srbExtension->TaskFile.Current.bDriveHeadReg,
+                          L"CommandReg",
+                          srbExtension->TaskFile.Current.bCommandReg,
+                          NULL,
+                          0,
+                          NULL,
+                          0);
+
     }
 
     return;
@@ -3231,6 +3803,9 @@ AtaWriteBufferFirmwareActivate (
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
     UCHAR               commandReg;
+    PSRB_IO_CONTROL     srbControl = NULL;
+
+    srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
 
     if ((Cdb->WRITE_BUFFER.ModeSpecific != 0) ||
         (Cdb->WRITE_BUFFER.BufferID != 0) ||
@@ -3242,6 +3817,33 @@ AtaWriteBufferFirmwareActivate (
         (Cdb->WRITE_BUFFER.ParameterListLength[2] != 0)) {
         // Report invalid command.
         AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+
+        srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareActivate,
+                          L"Firmware Activate",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"Operation Code",
+                          Cdb->WRITE_BUFFER.ModeSpecific,
+                          L"Buffer ID",
+                          Cdb->WRITE_BUFFER.BufferID,
+                          L"Buffer Offset0",
+                          Cdb->WRITE_BUFFER.BufferOffset[0],
+                          L"Buffer Offset1",
+                          Cdb->WRITE_BUFFER.BufferOffset[1],
+                          L"Buffer Offset2",
+                          Cdb->WRITE_BUFFER.BufferOffset[2],
+                          L"ParaList Len0",
+                          Cdb->WRITE_BUFFER.ParameterListLength[0],
+                          L"ParaList Len1",
+                          Cdb->WRITE_BUFFER.ParameterListLength[1],
+                          L"ParaList Len2",
+                          Cdb->WRITE_BUFFER.ParameterListLength[2]);
 
     } else {
         NT_ASSERT((SrbGetSrbFlags(Srb) & SRB_FLAGS_UNSPECIFIED_DIRECTION) == 0);
@@ -3291,12 +3893,1113 @@ AtaWriteBufferRequest (
 
     return STOR_STATUS_SUCCESS;
 }
+VOID
+AtaReportZonesRequestCompletion (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    )
+/*++
+    This routine translates the data format returned from ATA REPORT ZONES EXT command
+    into data format of SCSI REPORT ZONES command.
 
+Arguments:
+
+    ChannelExtension
+    Srb
+
+Return Value:
+    None
+
+--*/
+{
+    ULONG                   srbDataBufferLength = SrbGetDataTransferLength(Srb);
+    ULONG                   tempLength = 0;
+    ULONGLONG               tempUlonglong = 0;
+
+    PREPORT_ZONES_EXT_DATA  ataDataBuffer = (PREPORT_ZONES_EXT_DATA)SrbGetDataBuffer(Srb);
+    PATA_ZONE_DESCRIPTOR    ataZoneDescriptor = (PATA_ZONE_DESCRIPTOR)(ataDataBuffer + 1);
+
+    PREPORT_ZONES_DATA      scsiDataBuffer = (PREPORT_ZONES_DATA)ataDataBuffer;
+    PZONE_DESCRIPTIOR       scsiZoneDescriptor = scsiDataBuffer->ZoneDescriptors;
+
+    UNREFERENCED_PARAMETER(ChannelExtension);
+
+    //
+    // ATA command return data structure is REPORT_ZONES_EXT_DATA, following by ATA_ZONE_DESCRIPTOR(s).
+    // SCSI command return data structure is REPORT_ZONES_DATA, following by ZONE_DESCRIPTIOR(s).
+    // The data fields for SCSI and ATA are almost identical, except the endianness difference for Length and LBA fields.
+    //
+    if (Srb->SrbStatus != SRB_STATUS_SUCCESS) {
+        goto exit;
+    }
+
+    //
+    // We are changing the data fields endianness in place.
+    // The use of ata... and scsi... variables is to make the code more readable.
+    //
+    REVERSE_LONG(&ataDataBuffer->ZoneListLength);
+
+    tempUlonglong = ataDataBuffer->MaxLBA;
+    REVERSE_BYTES_QUAD(scsiDataBuffer->MaxLBA, &tempUlonglong);
+
+    tempLength = sizeof(REPORT_ZONES_EXT_DATA) + sizeof(ATA_ZONE_DESCRIPTOR);
+
+    do {
+        tempUlonglong = ataZoneDescriptor->ZoneLength;
+        REVERSE_BYTES_QUAD(scsiZoneDescriptor->ZoneLength, &tempUlonglong);
+
+        tempUlonglong = ataZoneDescriptor->ZoneStartLBA;
+        REVERSE_BYTES_QUAD(scsiZoneDescriptor->ZoneStartLBA, &tempUlonglong);
+
+        tempUlonglong = ataZoneDescriptor->WritePointerLBA;
+        REVERSE_BYTES_QUAD(scsiZoneDescriptor->WritePointerLBA, &tempUlonglong);
+
+        ataZoneDescriptor += 1;
+        scsiZoneDescriptor += 1;
+        tempLength += sizeof(ATA_ZONE_DESCRIPTOR);
+
+    } while (tempLength <= srbDataBufferLength);
+
+    SrbSetDataTransferLength(Srb, ALIGN_DOWN_BY(srbDataBufferLength, ATA_BLOCK_SIZE));
+
+exit:
+
+    MarkSrbToBeCompleted(Srb);
+
+    return;
+}
+
+ULONG
+AtaReportZonesRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - REPORT ZONES command into ATA - REPORT ZONES EXT command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONG               srbDataBufferLength = SrbGetDataTransferLength(Srb);
+    ULONG               blockCount = ALIGN_DOWN_BY(srbDataBufferLength, ATA_BLOCK_SIZE) / ATA_BLOCK_SIZE;
+    ULONGLONG           startingLBA = 0;
+
+    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
+
+    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    if (blockCount == 0) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_BUFFER_TOO_SMALL;
+    }
+
+    if (blockCount > MAXUINT16) {
+        //
+        // Transfer length should not over ATA physical transfer limitation (two 8-bits registers).
+        //
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+    srbExtension->Flags |= ATA_FLAGS_DATA_IN;
+
+    srbExtension->CompletionRoutine = AtaReportZonesRequestCompletion;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_IN;
+    cfis->Device |= IDE_LBA_MODE;
+
+    cfis->Feature7_0 = ZM_ACTION_REPORT_ZONES;
+    cfis->Feature15_8 = Cdb->REPORT_ZONES.ReportingOptions;
+
+    if (Cdb->REPORT_ZONES.Partial == 1) {
+        cfis->Feature15_8 |= (1 << 7);      // Feature Bit 15 is PARTIAL bit.
+    }
+
+    cfis->Count7_0 = (blockCount & 0x00ff);
+    cfis->Count15_8 = (blockCount & 0xff00) >> 8;
+
+    REVERSE_BYTES_QUAD(&startingLBA, Cdb->REPORT_ZONES.ZoneStartLBA);
+
+    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
+
+    return STOR_STATUS_SUCCESS;
+}
+
+ULONG
+AtaResetWritePointerRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - RESET WRITE POINTER command into ATA - RESET WRITE POINTER EXT command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONGLONG           startingLBA = 0;
+
+    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
+
+    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
+    cfis->Device |= IDE_LBA_MODE;
+
+    cfis->Feature7_0 = ZM_ACTION_RESET_WRITE_POINTER;
+
+    if (Cdb->RESET_WRITE_POINTER.All == 1) {
+        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is RESET ALL bit.
+    }
+
+    REVERSE_BYTES_QUAD(&startingLBA, Cdb->RESET_WRITE_POINTER.ZoneId);
+
+    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
+
+    return STOR_STATUS_SUCCESS;
+}
+
+ULONG
+AtaOpenZoneRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - OPEN ZONE command into ATA - OPEN ZONE EXT command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONGLONG           startingLBA = 0;
+
+    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
+
+    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
+    cfis->Device |= IDE_LBA_MODE;
+
+    cfis->Feature7_0 = ZM_ACTION_OPEN_ZONE;
+
+    if (Cdb->OPEN_ZONE.All == 1) {
+        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is OPEN ALL bit.
+    }
+
+    REVERSE_BYTES_QUAD(&startingLBA, Cdb->OPEN_ZONE.ZoneId);
+
+    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
+
+    return STOR_STATUS_SUCCESS;
+}
+
+ULONG
+AtaFinishZoneRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - FINISH ZONE command into ATA - FINISH ZONE EXT command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONGLONG           startingLBA = 0;
+
+    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
+
+    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
+    cfis->Device |= IDE_LBA_MODE;
+
+    cfis->Feature7_0 = ZM_ACTION_FINISH_ZONE;
+
+    if (Cdb->FINISH_ZONE.All == 1) {
+        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is FINISH ALL bit.
+    }
+
+    REVERSE_BYTES_QUAD(&startingLBA, Cdb->FINISH_ZONE.ZoneId);
+
+    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
+
+    return STOR_STATUS_SUCCESS;
+}
+
+ULONG
+AtaCloseZoneRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - CLOSE ZONE command into ATA - CLOSE ZONE EXT command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONGLONG           startingLBA = 0;
+
+    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
+
+    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
+    cfis->Device |= IDE_LBA_MODE;
+
+    cfis->Feature7_0 = ZM_ACTION_CLOSE_ZONE;
+
+    if (Cdb->CLOSE_ZONE.All == 1) {
+        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is CLOSE ALL bit.
+    }
+
+    REVERSE_BYTES_QUAD(&startingLBA, Cdb->CLOSE_ZONE.ZoneId);
+
+    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
+
+    return STOR_STATUS_SUCCESS;
+}
+
+VOID
+AtaGetPhysicalElementStatusCompletion (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    )
+/*++
+    This is the completion point of Get Physical Element Status command for ATA devices.
+    
+    This routine translates an ATA output of Get Physical Element Status command into 
+    SCSI format if the command is successful.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+
+Return Value:
+    None
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+
+    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+
+        ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
+        ULONG transferLength = RequestGetDataTransferLength(Srb);
+        ULONG tempScsiBufferLength = 0;
+        ULONG tempAtaBufferLength = 0;
+
+        PATA_GET_PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA ataDataBuffer = (PATA_GET_PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA)srbExtension->DataBuffer;
+        PPHYSICAL_ELEMENT_STATUS_PARAMETER_DATA scsiDataBuffer = (PPHYSICAL_ELEMENT_STATUS_PARAMETER_DATA)SrbGetDataBuffer(Srb);
+
+        NT_ASSERT((srbExtension->DataBuffer != NULL) && (transferLength >= sizeof(ATA_GET_PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA)));
+
+        //
+        // Translate ATA get physical element status data to SCSI format.
+        //
+        tempScsiBufferLength = sizeof(PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA);
+        tempAtaBufferLength = sizeof(ATA_GET_PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA);
+
+        REVERSE_BYTES(scsiDataBuffer->DescriptorCount, &ataDataBuffer->NumberOfDescriptors);
+        REVERSE_BYTES(scsiDataBuffer->ReturnedDescriptorCount, &ataDataBuffer->NumberOfDescriptorsReturned);
+        REVERSE_BYTES(scsiDataBuffer->ElementIdentifierBeingDepoped, &ataDataBuffer->ElementIdentifierBeingDepoped);
+
+        for (ULONG i = 0; i < ataDataBuffer->NumberOfDescriptorsReturned; ++i) {
+
+            if ((tempScsiBufferLength > srbDataBufferLength) || (tempAtaBufferLength > transferLength)) {
+                goto Exit;
+            }
+
+            scsiDataBuffer->Descriptors[i].PhysicalElementType = ataDataBuffer->Descriptors[i].PhysicalElementType;
+            scsiDataBuffer->Descriptors[i].PhysicalElementHealth = ataDataBuffer->Descriptors[i].PhysicalElementHealth;
+            REVERSE_BYTES(scsiDataBuffer->Descriptors[i].ElementIdentifier, &ataDataBuffer->Descriptors[i].ElementIdentifier);
+            REVERSE_BYTES_QUAD(scsiDataBuffer->Descriptors[i].AssociatedCapacity, &ataDataBuffer->Descriptors[i].AssociatedCapacity);
+
+            tempScsiBufferLength += sizeof(PHYSICAL_ELEMENT_STATUS_DATA_DESCRIPTOR);
+            tempAtaBufferLength += sizeof(ATA_PHYSICAL_ELEMENT_STATUS_DESCRIPTOR);
+        }
+    }
+
+Exit:
+
+    if (srbExtension->DataBuffer != NULL) {
+
+        // srbExtension->CompletionContext contains the allocated buffer size.
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->CompletionContext, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
+        srbExtension->DataBuffer = NULL;
+    }
+
+    if (Srb->SrbStatus != SRB_STATUS_SUCCESS) {
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitGetPhysicalElementStatusComplete,
+                          L"Get Physical Element status",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ErrorReg",
+                          ChannelExtension->ReceivedFIS->D2hRegisterFis.Error,
+                          L"StatusReg",
+                          ChannelExtension->ReceivedFIS->D2hRegisterFis.Status,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0
+                          );
+    }
+
+    return;
+}
+
+ULONG
+AtaGetPhysicalElementStatusRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - Get Physical Element Status command into 
+    ATA - Get Physical Element Status command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    ULONG status = STOR_STATUS_SUCCESS;
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    PVOID srbDataBuffer = SrbGetDataBuffer(Srb);
+    ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
+    PVOID physicalElementStatusBuffer = NULL;
+    ULONG physicalElementStatusBufferSize = 0;
+    STOR_PHYSICAL_ADDRESS physicalElementStatusPhysicalAddress = {0};
+    PAHCI_H2D_REGISTER_FIS cfis = &srbExtension->Cfis;
+    ULONG tempUlong = 0;
+
+    if ((srbDataBuffer == NULL) || 
+        (srbDataBufferLength < sizeof(PHYSICAL_ELEMENT_STATUS_PARAMETER_DATA))) {
+
+        Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Done;
+    }
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= (ATA_FLAGS_48BIT_COMMAND | ATA_FLAGS_DATA_IN | ATA_FLAGS_USE_DMA);
+    srbExtension->CompletionRoutine = AtaGetPhysicalElementStatusCompletion;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_GET_PHYSICAL_ELEMENT_STATUS;
+
+    cfis->Feature7_0 = 0;
+    cfis->Feature15_8 = (Cdb->GET_PHYSICAL_ELEMENT_STATUS.Filter << 6) | (Cdb->GET_PHYSICAL_ELEMENT_STATUS.ReportType);
+
+    REVERSE_BYTES(&tempUlong, Cdb->GET_PHYSICAL_ELEMENT_STATUS.AllocationLength);
+
+    tempUlong = (tempUlong + (ATA_BLOCK_SIZE - 1)) / ATA_BLOCK_SIZE;
+    physicalElementStatusBufferSize = tempUlong * ATA_BLOCK_SIZE;
+
+    status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, physicalElementStatusBufferSize, (PVOID*)&physicalElementStatusBuffer, &physicalElementStatusPhysicalAddress);
+
+    if ((status != STOR_STATUS_SUCCESS) || (physicalElementStatusBuffer == NULL) ) {
+
+        Srb->SrbStatus = SRB_STATUS_ERROR;
+        status = STOR_STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    AhciZeroMemory((PCHAR)physicalElementStatusBuffer, physicalElementStatusBufferSize);
+
+    srbExtension->DataBuffer = physicalElementStatusBuffer;
+    srbExtension->DataBufferPhysicalAddress.QuadPart = physicalElementStatusPhysicalAddress.QuadPart;
+    srbExtension->DataTransferLength = physicalElementStatusBufferSize;
+    srbExtension->CompletionContext = (PVOID)physicalElementStatusBufferSize;    // preserve the buffer size, it's needed for freeing the memory
+
+    srbExtension->LocalSgl.NumberOfElements = 1;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = physicalElementStatusPhysicalAddress.LowPart;
+    srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = physicalElementStatusPhysicalAddress.HighPart;
+    srbExtension->LocalSgl.List[0].Length = physicalElementStatusBufferSize;    // preserve the buffer size, it's needed for freeing the memory
+    srbExtension->Sgl = &srbExtension->LocalSgl;
+
+    cfis->Count7_0 = (UCHAR)tempUlong;
+    cfis->Count15_8 = (UCHAR)(tempUlong >> 8);
+
+    REVERSE_BYTES(&tempUlong, Cdb->GET_PHYSICAL_ELEMENT_STATUS.StartingElement);
+    cfis->LBA7_0 =   (UCHAR)((tempUlong & 0x000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((tempUlong & 0x0000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((tempUlong & 0x00ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((tempUlong & 0xff000000) >> 24);
+
+Done:
+
+    if (status != STOR_STATUS_SUCCESS) {
+        if (physicalElementStatusBuffer != NULL) {
+            AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, physicalElementStatusBufferSize, physicalElementStatusBuffer, physicalElementStatusPhysicalAddress);
+        }
+        srbExtension->DataBuffer = NULL;
+    }
+
+    return status;
+}
+
+VOID
+AtaRemoveElementAndTruncateCompletion (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+    )
+/*++
+    This is the completion point of Remove Element And Truncate command for ATA devices.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+
+Return Value:
+    None
+
+--*/
+{
+    if (Srb->SrbStatus != SRB_STATUS_SUCCESS) {
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitRemoveElementAndTruncateComplete,
+                          L"Remove Element And Truncate",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ErrorReg",
+                          ChannelExtension->ReceivedFIS->D2hRegisterFis.Error,
+                          L"StatusReg",
+                          ChannelExtension->ReceivedFIS->D2hRegisterFis.Status,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0
+                          );
+    }
+
+    return;
+}
+
+ULONG
+AtaRemoveElementAndTruncateRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - Remove Element and Truncate command into 
+    ATA - Remove Element and Truncate command.
+
+Arguments:
+
+    ChannelExtension
+    Srb
+    Cdb
+
+Return Value:
+    ULONG - status
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    PAHCI_H2D_REGISTER_FIS cfis = &srbExtension->Cfis;
+    ULONGLONG tempUlonglong = 0;
+
+    UNREFERENCED_PARAMETER(ChannelExtension);
+
+    //
+    // According to SAT-5 Repurposing Depopulation Translation:
+    // -  If requested capacity is 0, SATL shall set the ATA REQUESTED MAX field to 0;
+    // -  If requested capacity is 1, remove element and truncate command shall be terminated with a checked condition status
+    //    with the sense key set to illegal request and additional sense code set to INVALID FIELD IN CDB;
+    // -  If requested capacity is greater than 1, SATL shall set ATA REQUESTED MAX field in the ATA REMOVE ELEMENT AND 
+    //    TRUNCATE command to the value of the REQUESTED CAPACITY field minus 1.
+    //
+    REVERSE_BYTES_QUAD(&tempUlonglong, Cdb->REMOVE_ELEMENT_AND_TRUNCATE.RequestedCapacity);
+    if (tempUlonglong == 1) {
+
+        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
+        return STOR_STATUS_INVALID_DEVICE_REQUEST;
+    }
+
+    tempUlonglong = (tempUlonglong == 0) ? (0) : (tempUlonglong - 1);
+    cfis->LBA7_0 =   (UCHAR)((tempUlonglong & 0x00000000000000ff) >> 0);
+    cfis->LBA15_8 =  (UCHAR)((tempUlonglong & 0x000000000000ff00) >> 8);
+    cfis->LBA23_16 = (UCHAR)((tempUlonglong & 0x0000000000ff0000) >> 16);
+    cfis->LBA31_24 = (UCHAR)((tempUlonglong & 0x00000000ff000000) >> 24);
+    cfis->LBA39_32 = (UCHAR)((tempUlonglong & 0x000000ff00000000) >> 32);
+    cfis->LBA47_40 = (UCHAR)((tempUlonglong & 0x0000ff0000000000) >> 40);
+
+    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
+    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
+    srbExtension->CompletionRoutine = AtaRemoveElementAndTruncateCompletion;
+
+    //
+    // Set up ATA command.
+    //
+    cfis->Command = IDE_COMMAND_REMOVE_ELEMENT_AND_TRUNCATE;
+
+    cfis->Feature7_0 = Cdb->REMOVE_ELEMENT_AND_TRUNCATE.ElementIdentifier[1];
+    cfis->Feature15_8 = Cdb->REMOVE_ELEMENT_AND_TRUNCATE.ElementIdentifier[0];
+    cfis->Count7_0 = Cdb->REMOVE_ELEMENT_AND_TRUNCATE.ElementIdentifier[3];
+    cfis->Count15_8 = Cdb->REMOVE_ELEMENT_AND_TRUNCATE.ElementIdentifier[2];
+
+    return STOR_STATUS_SUCCESS;
+}
+
+VOID
+AtaGetDeviceCurrentInternalStatusDataHeaderCompletion(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+  )
+/*++
+    This is the completion point of Read Log Ext command that is used to read device
+    internal data header for ATA devices.
+
+Arguments:
+
+    ChannelExtension - Channel Extension.
+
+    Srb - Supplies a pointer to the srb request.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+
+        PCURRENT_DEVICE_INTERNAL_STATUS_LOG ataCurrentDeviceInternalStatusDataHeader = NULL;
+        PERROR_HISTORY_DIRECTORY scsiErrorHistoryDirectory = (PERROR_HISTORY_DIRECTORY)SrbGetDataBuffer(Srb);
+
+        ULONG transferLength = RequestGetDataTransferLength(Srb);
+        UCHAR tmpT10VendorId[] = "ATA     ";
+
+        NT_ASSERT((scsiErrorHistoryDirectory != NULL) &&
+                  (transferLength >= sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) &&
+                  (SrbGetDataTransferLength(Srb) >= sizeof(ERROR_HISTORY_DIRECTORY)));
+
+        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
+
+        AhciZeroMemory((PVOID)scsiErrorHistoryDirectory, sizeof(ERROR_HISTORY_DIRECTORY));
+
+        if (transferLength < sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) {
+            NT_ASSERT(FALSE);
+            return;
+        }
+
+        //
+        // Parse current device internal status data header(page 0) content.
+        //
+        ataCurrentDeviceInternalStatusDataHeader = (PCURRENT_DEVICE_INTERNAL_STATUS_LOG)ChannelExtension->DeviceExtension->ReadLogExtPageData;
+        NT_ASSERT(ataCurrentDeviceInternalStatusDataHeader->LogAddress == CURRENT_DEVICE_INTERNAL_STATUS_DATA_LOG_ADDRESS);
+
+        NT_ASSERT(sizeof(tmpT10VendorId) >= SCSI_VENDOR_ID_LENGTH);
+        StorPortCopyMemory(scsiErrorHistoryDirectory->T10VendorId, tmpT10VendorId, SCSI_VENDOR_ID_LENGTH);
+
+        if (ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage > 0) {
+
+            USHORT errorhistoryDirectoryEntryLength = (USHORT)sizeof(ERROR_HISTORY_DIRECTORY_ENTRY);
+            ULONG maxAvailableLength = (ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage + 1UL) * IDE_GP_LOG_SECTOR_SIZE;
+            REVERSE_BYTES_SHORT(scsiErrorHistoryDirectory->DirectoryLength, &errorhistoryDirectoryEntryLength);
+            scsiErrorHistoryDirectory->ErrorHistoryDirectoryList[0].SupportedBufferId = BUFFER_ID_RETURN_ERROR_HISTORY_MINIMUM_THRESHOLD;
+            scsiErrorHistoryDirectory->ErrorHistoryDirectoryList[0].BufferFormat = BUFFER_FORMAT_CURRENT_INTERNAL_STATUS_DATA;
+            scsiErrorHistoryDirectory->ErrorHistoryDirectoryList[0].BufferSource = BUFFER_SOURCE_CREATED_DUE_TO_CURRENT_COMMAND;
+            REVERSE_BYTES(scsiErrorHistoryDirectory->ErrorHistoryDirectoryList[0].MaxAvailableLength, &maxAvailableLength);
+        }
+
+        SrbSetDataTransferLength(Srb, sizeof(ERROR_HISTORY_DIRECTORY));
+
+    } else {
+
+        PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+
+        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitGetInternalStatusDataHeaderComplete,
+                          L"Internal Status Data Header",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ErrorReg",
+                          srbExtension->TaskFile.Current.bFeaturesReg,
+                          L"StatusReg",
+                          srbExtension->TaskFile.Current.bCommandReg,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0
+                          );
+    }
+
+    return;
+}
+
+ULONG
+AtaGetDeviceCurrentInternalStatusDataHeader(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - Read Buffer command(Mode: 0x1c Error History Directory)
+    into ATA - Read Log Ext command to read device current internal status data header.
+
+Arguments:
+
+    ChannelExtension - Channel Extension.
+
+    Srb - Supplies a pointer to the srb request.
+
+    Cdb - SCSI Command Descriptor Block carried by Srb.
+
+Return Value:
+
+    ULONG - status.
+
+--*/
+{
+    PVOID srbDataBuffer = SrbGetDataBuffer(Srb);
+    ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
+
+    UNREFERENCED_PARAMETER(Cdb);
+
+    if ((srbDataBuffer == NULL) || (srbDataBufferLength < sizeof(ERROR_HISTORY_DIRECTORY))) {
+
+        Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
+        return STOR_STATUS_INVALID_PARAMETER;
+    }
+
+    ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
+
+    IssueReadLogExtCommand(ChannelExtension,
+                           Srb,
+                           IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS,
+                           0,                  // Starting page number
+                           1,                  // Number of sectors
+                           1,                  // Features field set to 1
+                           &ChannelExtension->DeviceExtension->ReadLogExtPageDataPhysicalAddress,
+                           (PVOID)ChannelExtension->DeviceExtension->ReadLogExtPageData,
+                           AtaGetDeviceCurrentInternalStatusDataHeaderCompletion
+                           );
+
+    return STOR_STATUS_SUCCESS;
+}
+
+VOID
+AtaGetDeviceCurrentInternalStatusDataCompletion(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+  )
+/*++
+    This is the completion point of Read Log Ext command that is used to read device
+    internal data for ATA devices.
+
+Arguments:
+
+    ChannelExtension - Channel Extension.
+
+    Srb - Supplies a pointer to the srb request.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    ULONG currentLogPageOffset = (ULONG)srbExtension->CompletionContext;
+    BOOLEAN requestFailed = FALSE;
+
+    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+
+        PCURRENT_DEVICE_INTERNAL_STATUS_LOG ataCurrentDeviceInternalStatusDataHeader = NULL;
+        PCURRENT_INTERNAL_STATUS_PARAMETER_DATA scsiCurrentInternalStatusData = (PCURRENT_INTERNAL_STATUS_PARAMETER_DATA)SrbGetDataBuffer(Srb);
+
+        ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
+        ULONG transferLength = RequestGetDataTransferLength(Srb);
+
+        NT_ASSERT((srbExtension->DataBuffer != NULL) &&
+                  (srbExtension->DataTransferLength >= sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) &&
+                  (scsiCurrentInternalStatusData != NULL) && 
+                  (srbDataBufferLength >= transferLength));
+
+        NT_ASSERT((transferLength % IDE_GP_LOG_SECTOR_SIZE) == 0);
+
+        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
+
+        if (!IsDumpMode(ChannelExtension->AdapterExtension)) {
+            AhciZeroMemory((PVOID)scsiCurrentInternalStatusData, srbDataBufferLength);
+        }
+
+        //
+        // Parse current device internal status data header(page 0) and/or copy other pages back to SRB databuffer.
+        //
+        ataCurrentDeviceInternalStatusDataHeader = (PCURRENT_DEVICE_INTERNAL_STATUS_LOG)srbExtension->DataBuffer;
+
+        if (currentLogPageOffset == 0) {
+
+            if (transferLength >= sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) {
+
+                NT_ASSERT(ataCurrentDeviceInternalStatusDataHeader->LogAddress == CURRENT_DEVICE_INTERNAL_STATUS_DATA_LOG_ADDRESS);
+                NT_ASSERT((ataCurrentDeviceInternalStatusDataHeader->Area2LastLogPage >= ataCurrentDeviceInternalStatusDataHeader->Area1LastLogPage) &&
+                          (ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage >= ataCurrentDeviceInternalStatusDataHeader->Area2LastLogPage));
+
+                if (!IsDumpMode(ChannelExtension->AdapterExtension)) {
+
+                    REVERSE_BYTES(scsiCurrentInternalStatusData->IEEECompanyId, &ataCurrentDeviceInternalStatusDataHeader->OrganizationID);
+                    REVERSE_BYTES_SHORT(scsiCurrentInternalStatusData->CurrentInternalStatusDataSetOneLength, &ataCurrentDeviceInternalStatusDataHeader->Area1LastLogPage);
+                    REVERSE_BYTES_SHORT(scsiCurrentInternalStatusData->CurrentInternalStatusDataSetTwoLength, &ataCurrentDeviceInternalStatusDataHeader->Area2LastLogPage);
+                    REVERSE_BYTES_SHORT(scsiCurrentInternalStatusData->CurrentInternalStatusDataSetThreeLength, &ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage);
+                    scsiCurrentInternalStatusData->NewSavedDataAvailable = ataCurrentDeviceInternalStatusDataHeader->SavedDataAvailable;
+                    scsiCurrentInternalStatusData->SavedDataGenerationNumber = ataCurrentDeviceInternalStatusDataHeader->SavedDataGenerationNumber;
+                    StorPortCopyMemory(scsiCurrentInternalStatusData->CurrentReasonIdentifier,
+                                       ataCurrentDeviceInternalStatusDataHeader->ReasonIdentifier,
+                                       sizeof(scsiCurrentInternalStatusData->CurrentReasonIdentifier)
+                                       );
+                } else {
+
+                    //
+                    // Reorder in place if this is dump mode.
+                    //
+                    REVERSE_LONG(&ataCurrentDeviceInternalStatusDataHeader->OrganizationID);
+                    REVERSE_SHORT(&ataCurrentDeviceInternalStatusDataHeader->Area1LastLogPage);
+                    REVERSE_SHORT(&ataCurrentDeviceInternalStatusDataHeader->Area2LastLogPage);
+                    REVERSE_SHORT(&ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage);
+                }
+            } else {
+
+                NT_ASSERT(FALSE);
+                requestFailed = TRUE;
+                goto Exit;
+            }
+
+            //
+            // Assume that size of this log hadn't changed since we read the directory.
+            //
+            NT_ASSERT(transferLength <= 
+                      (sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG) + (ULONG)(ataCurrentDeviceInternalStatusDataHeader->Area3LastLogPage) * IDE_GP_LOG_SECTOR_SIZE));
+
+            if ((transferLength > sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) &&
+                (srbDataBufferLength >= transferLength) &&
+                (!IsDumpMode(ChannelExtension->AdapterExtension))) {
+                StorPortCopyMemory(scsiCurrentInternalStatusData->CurrentInternalStatusData, 
+                                   (PUCHAR)(ataCurrentDeviceInternalStatusDataHeader + 1),
+                                   (transferLength - IDE_GP_LOG_SECTOR_SIZE));
+            }
+        } else {
+            if ((transferLength > sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) &&
+                (srbDataBufferLength >= transferLength) &&
+                (!IsDumpMode(ChannelExtension->AdapterExtension))) {
+                StorPortCopyMemory((PUCHAR)scsiCurrentInternalStatusData, 
+                                   (PUCHAR)ataCurrentDeviceInternalStatusDataHeader,
+                                   transferLength);
+            }
+        }
+
+        SrbSetDataTransferLength(Srb, transferLength);
+    }
+
+Exit:
+
+    if (requestFailed) {
+
+        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitGetInternalStatusDataComplete,
+                          L"Internal Status Data",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ErrorReg",
+                          srbExtension->TaskFile.Current.bFeaturesReg,
+                          L"StatusReg",
+                          srbExtension->TaskFile.Current.bCommandReg,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0,
+                          NULL,
+                          0
+                          );
+    }
+
+    if ((srbExtension->DataBuffer != NULL) && !IsDumpMode(ChannelExtension->AdapterExtension)) {
+
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, (ULONG_PTR)srbExtension->DataTransferLength, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
+        srbExtension->DataBuffer = NULL;
+    }
+
+    return;
+}
+
+ULONG
+AtaGetDeviceCurrentInternalStatusData(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    )
+/*++
+    This routine translates a SCSI - Read Buffer command(Mode: 0x1c Error History)
+    into ATA - Read Log Ext command to read device current internal status data.
+
+Arguments:
+
+    ChannelExtension - Channel Extension.
+
+    Srb - Supplies a pointer to the srb request.
+
+    Cdb - SCSI Command Descriptor Block carried by Srb.
+
+Return Value:
+
+    ULONG - status.
+
+--*/
+{
+    ULONG status = STOR_STATUS_SUCCESS;
+    PVOID srbDataBuffer = SrbGetDataBuffer(Srb);
+    ULONG srbDataBufferLength = SrbGetDataTransferLength(Srb);
+    PVOID internalStatusBuffer = NULL;
+    STOR_PHYSICAL_ADDRESS internalStatusBufferPhysicalAddress = {0};
+    ULONG bufferSize = 0;
+    ULONG bufferSizeDumpMode = 0;
+    LONGLONG bufferOffset = 0;
+    ULONG tempUlong = 0;
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+
+    if ((srbDataBuffer == NULL) || (srbDataBufferLength < (ULONG)FIELD_OFFSET(CURRENT_INTERNAL_STATUS_PARAMETER_DATA, CurrentInternalStatusData))) {
+
+        Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Done;
+    }
+
+    REVERSE_BYTES(&tempUlong, Cdb->READ_BUFFER_16.AllocationLength);
+    bufferSize = tempUlong * IDE_GP_LOG_SECTOR_SIZE;
+    REVERSE_BYTES_QUAD(&bufferOffset, Cdb->READ_BUFFER_16.BufferOffset);
+
+    if (!IsDumpMode(ChannelExtension->AdapterExtension)) {
+        status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, bufferSize, &internalStatusBuffer, &internalStatusBufferPhysicalAddress);
+        if ((status != STOR_STATUS_SUCCESS) || (internalStatusBuffer == NULL) ) {
+
+            Srb->SrbStatus = SRB_STATUS_ERROR;
+            status = STOR_STATUS_INSUFFICIENT_RESOURCES;
+            goto Done;
+        }
+    } else {
+        internalStatusBufferPhysicalAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, srbDataBuffer, &bufferSizeDumpMode);
+        if ((internalStatusBufferPhysicalAddress.QuadPart == 0) || (bufferSizeDumpMode == 0)) {
+
+            Srb->SrbStatus = SRB_STATUS_ERROR;
+            status = STOR_STATUS_INSUFFICIENT_RESOURCES;
+            goto Done;
+        }
+        internalStatusBuffer = srbDataBuffer;
+        bufferSize = min(bufferSize, bufferSizeDumpMode);
+        bufferSize = ALIGN_DOWN_BY(bufferSize, IDE_GP_LOG_SECTOR_SIZE);
+    }
+
+    AhciZeroMemory((PCHAR)internalStatusBuffer, bufferSize);
+    AhciZeroMemory((PCHAR)srbExtension, sizeof(AHCI_SRB_EXTENSION));
+
+    srbExtension->DataTransferLength = bufferSize;
+    srbExtension->CompletionContext = (PVOID)((ULONG)(bufferOffset / IDE_GP_LOG_SECTOR_SIZE));
+
+    IssueReadLogExtCommand(ChannelExtension,
+                           Srb,
+                           IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS,
+                           (USHORT)(bufferOffset / IDE_GP_LOG_SECTOR_SIZE), // Starting page number
+                           (USHORT)tempUlong,  // Number of sectors
+                           1,                  // Features field set to 1
+                           &internalStatusBufferPhysicalAddress,
+                           (PVOID)internalStatusBuffer,
+                           AtaGetDeviceCurrentInternalStatusDataCompletion
+                           );
+
+    return status;
+
+Done:
+
+    if ((internalStatusBuffer != NULL) && !IsDumpMode(ChannelExtension->AdapterExtension)) {
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, bufferSize, internalStatusBuffer, internalStatusBufferPhysicalAddress);
+        internalStatusBuffer = NULL;
+    }
+
+    return status;
+}
 
 UCHAR
 AtaMapError(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PSTORAGE_REQUEST_BLOCK Srb,
     _In_ BOOLEAN FUAcommand
     )
 /*++
@@ -3317,11 +5020,11 @@ Return Value:
 --*/
 
 {
-    BOOLEAN     removableMedia;
-    SENSE_DATA  senseBuffer = {0};
-    ULONG       length = sizeof(SENSE_DATA);
-    PVOID      srbSenseBuffer = NULL;
-    UCHAR      srbSenseBufferLength = 0;
+    BOOLEAN removableMedia;
+    SENSE_DATA senseBuffer = {0};
+    ULONG length = sizeof(SENSE_DATA);
+    PVOID srbSenseBuffer = NULL;
+    UCHAR srbSenseBufferLength = 0;
 
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
 
@@ -3358,6 +5061,12 @@ Return Value:
     if (Srb->SrbStatus != SRB_STATUS_ERROR) {
         // non device errors. Don't care
         ChannelExtension->DeviceExtension[0].IoRecord.SuccessCount++;
+
+        // Update IO success counter for device stuck detection.
+        if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) &&
+            ((ULONG)InterlockedAdd((LONG volatile *)&ChannelExtension->DeviceExtension->IoRecord.SuccessCountSinceLastDeviceReset, 0) != (ULONG)(-1))) {
+            InterlockedIncrement((LONG volatile*)&ChannelExtension->DeviceExtension->IoRecord.SuccessCountSinceLastDeviceReset);
+        }
 
         return Srb->SrbStatus;
     }
@@ -3514,10 +5223,10 @@ Return Value:
         }
     }
 
-    if ( (senseBuffer.Valid == 1) && (srbSenseBuffer != NULL) ) {
+    if ((senseBuffer.Valid == 1) && (srbSenseBuffer != NULL)) {
 
-        if ( (srbSenseBufferLength > 0) &&
-             (srbSenseBufferLength < length) ) {
+        if ((srbSenseBufferLength > 0) &&
+            (srbSenseBufferLength < length)) {
             length = srbSenseBufferLength;
         }
 
@@ -3883,7 +5592,12 @@ Return Value:
         BOOLEAN isBigLba = FALSE;
 
         deviceParameters->MaximumLun = 0;
-        deviceParameters->ScsiDeviceType = DIRECT_ACCESS_DEVICE;
+        if (IsHostManagedZonedDevice(deviceParameters)) {
+            deviceParameters->ScsiDeviceType = HOST_MANAGED_ZONED_BLOCK_DEVICE;
+        } else {
+            deviceParameters->ScsiDeviceType = DIRECT_ACCESS_DEVICE;
+        }
+
         deviceParameters->StateFlags.RemovableMedia = identifyDeviceData->GeneralConfiguration.RemovableMedia;
 
         deviceParameters->MaxDeviceQueueDepth = min(ChannelExtension->MaxPortQueueDepth, (UCHAR)identifyDeviceData->QueueDepth);
@@ -3937,15 +5651,15 @@ Return Value:
         // Fill some firmware support information.
         //
         if (identifyDeviceData->MinBlocksPerDownloadMicrocodeMode03 > 0) {
-            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = (USHORT)min(identifyDeviceData->MinBlocksPerDownloadMicrocodeMode03, AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE);
+            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = (USHORT)min(identifyDeviceData->MinBlocksPerDownloadMicrocodeMode03, AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE);
         } else {
             ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = 1;
         }
 
         if (identifyDeviceData->MaxBlocksPerDownloadMicrocodeMode03 > 0) {
-            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = (USHORT)min(identifyDeviceData->MaxBlocksPerDownloadMicrocodeMode03, AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE);
+            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = (USHORT)min(identifyDeviceData->MaxBlocksPerDownloadMicrocodeMode03, AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE);
         } else {
-            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE;
+            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE;
         }
     }
 
@@ -4062,7 +5776,7 @@ IOCTLtoATA(
             nvCacheRequest = (PNVCACHE_REQUEST_BLOCK)(srbControl + 1);
 
             if ( ((srbDataBufferLength - sizeof(SRB_IO_CONTROL) - sizeof(NVCACHE_REQUEST_BLOCK)) < nvCacheRequest->DataBufSize) || 
-                 (nvCacheRequest->DataBufSize > AHCI_MAX_TRANSFER_LENGTH) ) {
+                 (nvCacheRequest->DataBufSize > AHCI_MAX_TRANSFER_LENGTH_DEFAULT) ) {
 
                 nvCacheRequest->NRBStatus = NRB_INVALID_PARAMETER;
                 Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
@@ -4073,7 +5787,6 @@ IOCTLtoATA(
             // process NVCACHE request according to function
             switch (nvCacheRequest->Function) {
 
-
             default:
                 status = NVCacheGeneric (ChannelExtension, Srb);
                 break;
@@ -4082,8 +5795,6 @@ IOCTLtoATA(
 
             break;
         }
-
-
 
         case IOCTL_SCSI_MINIPORT_DSM_GENERAL:
             status = DsmGeneralIoctlProcess(ChannelExtension, Srb);
@@ -4128,6 +5839,19 @@ IOCTLtoATA(
             status = STOR_STATUS_INVALID_PARAMETER;
             break;
     }
+
+    StorPortEtwEvent2(ChannelExtension->AdapterExtension,
+                      (PSTOR_ADDRESS) &(ChannelExtension->DeviceExtension->DeviceAddress),
+                      AhciEtwEventIOCTLtoATA,
+                      L"IOCTLtoATA finished",
+                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                      StorportEtwLevelInformational,
+                      StorportEtwEventOpcodeInfo,
+                      (PSCSI_REQUEST_BLOCK)Srb,
+                      L"SrbStatus",
+                      Srb->SrbStatus,
+                      L"SrbControl",
+                      srbControl->ControlCode);
 
     return status;
 }
@@ -4491,6 +6215,7 @@ NVCacheGeneric(
     ULONG                       srbDataBufferLength = SrbGetDataTransferLength(Srb);
     ULONG                       srbFlags = SrbGetSrbFlags(Srb);
     PVOID                       resultBuffer = NULL;
+    PHYSICAL_ADDRESS            resultBufferPhysicalAddress = {0};
             
     srbExtension = GetSrbExtension(Srb);
     srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
@@ -4586,7 +6311,8 @@ NVCacheGeneric(
     //
     status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension,
                                    sizeof(ATA_TASK_FILE),
-                                   &resultBuffer);
+                                   &resultBuffer,
+                                   &resultBufferPhysicalAddress);
 
     if ( (status != STOR_STATUS_SUCCESS) ||
          (resultBuffer == NULL) ) {
@@ -4599,6 +6325,7 @@ NVCacheGeneric(
 
     AhciZeroMemory((PCHAR)resultBuffer, sizeof(ATA_TASK_FILE));
     srbExtension->ResultBuffer = resultBuffer;
+    srbExtension->ResultBufferPhysicalAddress.QuadPart = resultBufferPhysicalAddress.QuadPart;
     srbExtension->ResultBufferLength = sizeof(ATA_TASK_FILE);
 
     //
@@ -4697,7 +6424,7 @@ HybridInfoCompletion(
                               0);
         }
 
-        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer);
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
         StorPortDebugPrint(3, "StorAHCI - Hybrid: Port %02d - Hybrid Info log read failed. \n", ChannelExtension->PortNumber);
         return;
     }
@@ -4815,7 +6542,7 @@ HybridInfoCompletion(
                           hybridInfo->Priorities.DirtyThresholdHigh);
     }
 
-    AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer);
+    AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
 
     StorPortDebugPrint(3, "StorAHCI - Hybrid: Port %02d - Hybrid Info log read successfully. \n", ChannelExtension->PortNumber);
 
@@ -4897,13 +6624,12 @@ Return Value:
 
     } else {
         PVOID                   logPageBuffer = NULL;
-        STOR_PHYSICAL_ADDRESS   logPagePhysialAddress;
-        ULONG                   tempLength;
+        STOR_PHYSICAL_ADDRESS   logPagePhysicalAddress;
 
         //
         // We need to allocate a new data buffer for log page
         //
-        status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, &logPageBuffer);
+        status = AhciAllocateDmaBuffer(ChannelExtension->AdapterExtension, ATA_BLOCK_SIZE, &logPageBuffer, &logPagePhysicalAddress);
 
         if ( (status != STOR_STATUS_SUCCESS) || (logPageBuffer == NULL) ) {
             //
@@ -4916,7 +6642,6 @@ Return Value:
         }
 
         AhciZeroMemory((PCHAR)logPageBuffer, ATA_BLOCK_SIZE);
-        logPagePhysialAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, (PVOID)logPageBuffer, &tempLength);
 
         //
         // Note that logPageBuffer will be released in completion routine.
@@ -4927,7 +6652,7 @@ Return Value:
                                 0,
                                 1,
                                 0,      // feature field
-                                &logPagePhysialAddress,
+                                &logPagePhysicalAddress,
                                 logPageBuffer,
                                 HybridInfoCompletion
                                 );
@@ -6480,7 +8205,7 @@ Return Value:
         }
 
         if (buffer != NULL) {
-            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, buffer);
+            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, buffer, srbExtension->DataBufferPhysicalAddress);
         }
 
         if (evictContext != NULL) {
@@ -6517,7 +8242,7 @@ HybridEvict(
 
     ULONG                   i;
     PVOID                   buffer = NULL;     // DMA buffer allocated for EVICT command
-    STOR_PHYSICAL_ADDRESS   bufferPhysicalAddress;
+    STOR_PHYSICAL_ADDRESS   bufferPhysicalAddress = {0};
 
     logicalSectorSize = BytesPerLogicalSector(&ChannelExtension->DeviceExtension->DeviceParameters);
 
@@ -6644,7 +8369,7 @@ HybridEvict(
     //
     // allocate DMA buffer, this buffer will be used to store ATA LBA Ranges for EVICT command
     //
-    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, &buffer);
+    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, &buffer, &bufferPhysicalAddress);
 
     if ( (status != STOR_STATUS_SUCCESS) || (buffer == NULL) ) {
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
@@ -6660,10 +8385,10 @@ HybridEvict(
     srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
     srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
     srbExtension->DataBuffer = buffer;
+    srbExtension->DataBufferPhysicalAddress.QuadPart = bufferPhysicalAddress.QuadPart;
     srbExtension->DataTransferLength = evictContext->AllocatedBufferLength;
     srbExtension->CompletionContext = (PVOID)evictContext;
 
-    bufferPhysicalAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, buffer, &i);
     srbExtension->LocalSgl.NumberOfElements = 1;
     srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = bufferPhysicalAddress.LowPart;
     srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = bufferPhysicalAddress.HighPart;
@@ -6703,7 +8428,7 @@ Exit:
     //
     if (status != STOR_STATUS_SUCCESS) {
         if (buffer != NULL) {
-            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, buffer);
+            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, evictContext->AllocatedBufferLength, buffer, bufferPhysicalAddress);
         }
 
         if (evictContext != NULL) {
@@ -6736,9 +8461,9 @@ Return Value:
 --*/
 {
     ULONG                       status = STOR_STATUS_SUCCESS;
-    PSRB_IO_CONTROL             srbControl;
-    PFIRMWARE_REQUEST_BLOCK     firmwareRequest;
-    PSTORAGE_FIRMWARE_INFO_V2   firmwareInfo;
+    PSRB_IO_CONTROL             srbControl = NULL;
+    PFIRMWARE_REQUEST_BLOCK     firmwareRequest = NULL;
+    PSTORAGE_FIRMWARE_INFO_V2   firmwareInfo = NULL;
 
     srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
 
@@ -6748,7 +8473,7 @@ Return Value:
         srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
         status = STOR_STATUS_INVALID_PARAMETER;
-        return status;
+        goto Exit;
     }
 
     //
@@ -6764,7 +8489,7 @@ Return Value:
         srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
         status = STOR_STATUS_INVALID_PARAMETER;
-        return status;
+        goto Exit;
     }
 
     AhciZeroMemory((PCHAR)firmwareInfo, firmwareRequest->DataBufferLength);
@@ -6807,6 +8532,37 @@ Return Value:
         status = STOR_STATUS_SUCCESS;
     }
 
+Exit:
+
+    if (status != STOR_STATUS_SUCCESS) {
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareInfo,
+                          L"Get Firmware Info",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"Status",
+                          status,
+                          L"DataBufferLen",
+                          firmwareRequest->DataBufferLength,
+                          L"ReturnCode",
+                          srbControl->ReturnCode,
+                          L"Version",
+                          (firmwareInfo == NULL) ? (0) : (firmwareInfo->Version),
+                          L"Size",
+                          (firmwareInfo == NULL) ? (0) : (firmwareInfo->Size),
+                          L"UpgradeSupport",
+                          (firmwareInfo == NULL) ? (0) : (firmwareInfo->UpgradeSupport),
+                          NULL,
+                          0);
+
+    }
+
     return status;
 }
 
@@ -6830,10 +8586,10 @@ Return Value:
 
 --*/
 {
-    ULONG                   status;
+    ULONG                   status = STOR_STATUS_SUCCESS;
     ULONG                   srbDataBufferLength = 0;
-    PSRB_IO_CONTROL         srbControl;
-    PFIRMWARE_REQUEST_BLOCK firmwareRequest;
+    PSRB_IO_CONTROL         srbControl = NULL;
+    PFIRMWARE_REQUEST_BLOCK firmwareRequest = NULL;
 
     srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
     srbDataBufferLength = SrbGetDataTransferLength(Srb);
@@ -6842,8 +8598,10 @@ Return Value:
     // A Firmware request must have at least SRB_IO_CONTROL and FIRMWARE_REQUEST_BLOCK in input buffer.
     //
     if (srbDataBufferLength < (sizeof(SRB_IO_CONTROL) + sizeof(FIRMWARE_REQUEST_BLOCK))) {
+        srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
-        return STOR_STATUS_INVALID_PARAMETER;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Exit;
     }
 
     firmwareRequest = (PFIRMWARE_REQUEST_BLOCK)(srbControl + 1);
@@ -6851,13 +8609,15 @@ Return Value:
     if ((ULONGLONG)(srbDataBufferLength) < ((ULONGLONG)firmwareRequest->DataBufferOffset + firmwareRequest->DataBufferLength)) {
         srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
-        return STOR_STATUS_INVALID_PARAMETER;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Exit;
     }
 
     if (firmwareRequest->Version < FIRMWARE_REQUEST_BLOCK_STRUCTURE_VERSION) {
         srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
-        return STOR_STATUS_INVALID_PARAMETER;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Exit;
     }
 
     //
@@ -6866,7 +8626,8 @@ Return Value:
     if (firmwareRequest->DataBufferOffset < ALIGN_UP(sizeof(SRB_IO_CONTROL) + sizeof(FIRMWARE_REQUEST_BLOCK), PVOID)) {
         srbControl->ReturnCode = FIRMWARE_STATUS_INVALID_PARAMETER;
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
-        return STOR_STATUS_INVALID_PARAMETER;
+        status = STOR_STATUS_INVALID_PARAMETER;
+        goto Exit;
     }
 
     //
@@ -6884,6 +8645,37 @@ Return Value:
         Srb->SrbStatus = SRB_STATUS_BAD_SRB_BLOCK_LENGTH;
         status = STOR_STATUS_INVALID_PARAMETER;
         break;
+
+    }
+
+Exit:
+
+    if (status != STOR_STATUS_SUCCESS) {
+
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventUnitFirmwareIoctl,
+                          L"Firmware Ioctl",
+                          STORPORT_ETW_EVENT_KEYWORD_IO,
+                          StorportEtwLevelError,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"SrbDataBufLen",
+                          srbDataBufferLength,
+                          L"SrbStatus",
+                          Srb->SrbStatus,
+                          L"ReturnCode",
+                          srbControl->ReturnCode,
+                          L"FWReqVersion",
+                          (firmwareRequest == NULL) ? (0) : (firmwareRequest->Version),
+                          L"FWReqFunction",
+                          (firmwareRequest == NULL) ? (0) : (firmwareRequest->Function),
+                          L"FWBufOffset",
+                          (firmwareRequest == NULL) ? (0) : (firmwareRequest->DataBufferOffset),
+                          L"Status",
+                          status,
+                          NULL,
+                          0);
 
     }
 
@@ -7543,7 +9335,10 @@ QueryTemperatureInfoCompletion(
         NT_ASSERT(FALSE);
     }
 
-    srbExtension->DataBuffer = NULL;
+    if (srbExtension->DataBuffer != NULL) {
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
+        srbExtension->DataBuffer = NULL;
+    }
     srbExtension->CompletionContext = NULL;
     srbExtension->CompletionRoutine = NULL;
     srbExtension->AtaFunction = 0;
@@ -7581,7 +9376,6 @@ Return Value:
 
     PVOID                   buffer = NULL;
     STOR_PHYSICAL_ADDRESS   bufferPhysicalAddress = {0};
-    ULONG                   tempLength = 0;
 
     srbControl = (PSRB_IO_CONTROL)SrbGetDataBuffer(Srb);
     srbDataBufferLength = SrbGetDataTransferLength(Srb);
@@ -7616,7 +9410,7 @@ Return Value:
     //
     // allocate DMA buffer to retrieve temperature statistics log.
     //
-    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, (PVOID*)&buffer);
+    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, (PVOID*)&buffer, &bufferPhysicalAddress);
 
     if ( (status != STOR_STATUS_SUCCESS) || (buffer == NULL) ) {
         Srb->SrbStatus = SRB_STATUS_ERROR;
@@ -7625,8 +9419,6 @@ Return Value:
     }
 
     AhciZeroMemory((PCHAR)buffer, IDE_GP_LOG_SECTOR_SIZE);
-
-    bufferPhysicalAddress = StorPortGetPhysicalAddress(ChannelExtension->AdapterExtension, NULL, buffer, &tempLength);
 
     IssueReadLogExtCommand(ChannelExtension,
                            Srb,
@@ -7911,6 +9703,153 @@ exit:
     return status;
 }
 
+BOOLEAN
+AhciIsEventAllowedWithinThrottleLimit(
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
+    _In_opt_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ AHCI_ETW_EVENT_ID EventId,
+    _Out_opt_ PULONG ThrottledInstanceCount
+    )
+/*++
+
+Routine Description:
+
+    Check whether specified event is allowed at a given time.
+    The interval and number of events allowed are determined by the ThrottleContext.
+    When this function is called the first time (currentThrottleContext->LastTimeStamp == 0), 
+    set LastTimeStamp to current time and allow the event. 
+    If it has been longer than Interval since LastTimeStamp, reset LastTimeStamp
+    and allow the event.
+    Otherwise, we allow the event only if there have been less than EventsAllowedPerInterval
+    since LastTimeStamp.
+
+    If throttling for the event id is tracked at the channel level (separate ThrottleContext
+    for each channel), the function should be called with a non-null ChannelExtension. 
+    Otherwise, if the event id is tracked at the adapter level (one ThrottleContext for the
+    whole adapter), the function should be called with a null ChannelExtension.
+
+Arguments:
+
+    AdapterExtension
+    ChannelExtension - (Optional) If non-null, throttling is decided on a per-channel basis, so
+                       get the ThrottleContext from ChannelExtension instead of AdapterExtension.
+    EventId
+    ThrottledInstanceCount - Number of events throttled since LastTimeStamp.
+
+Return Value:
+
+    BOOLEAN - Returns whether the event is allowed based on the events allowed per interval.
+
+--*/
+{
+    PAHCI_THROTTLE_CONTEXT currentThrottleContext = NULL;
+    PAHCI_THROTTLE_CONTEXT throttleContextArray = NULL;
+    ULONG throttleContextCount = 0;
+    ULONG i = 0;
+    LARGE_INTEGER temp;
+    ULONGLONG currentTime = 0;
+    ULONGLONG timeDifference = 0;
+    BOOLEAN lessEventsThanAllowed;
+
+    //
+    // Check the parameters to see if we should use the throttleContextArray and
+    // throttleContextCount from the AdapterExtension or the ChannelExtension.
+    //
+    if ((AdapterExtension != NULL) && 
+        (ChannelExtension == NULL)) {
+        throttleContextArray = AdapterExtension->ThrottleContextArray;
+        throttleContextCount = AdapterExtension->ThrottleContextCount;
+    } else if ((AdapterExtension != NULL) && 
+               (ChannelExtension != NULL)) {
+        throttleContextArray = ChannelExtension->ThrottleContextArray;
+        throttleContextCount = ChannelExtension->ThrottleContextCount;
+    } else {
+        NT_ASSERT(FALSE);
+        return TRUE;
+    }
+
+    //
+    // Search throttleContextArray for the ThrottleContext that goes with the
+    // current event id.
+    //
+    if (throttleContextArray != NULL) {
+        for (i = 0; i < throttleContextCount; i++) {
+            if (throttleContextArray[i].EventId == EventId) {
+                currentThrottleContext = &throttleContextArray[i];
+                break;
+            }
+        }
+    }
+
+    if (currentThrottleContext == NULL) {
+        //
+        // If there exists no valid context, return TRUE as there are no active throttle settings.
+        //
+        if (ThrottledInstanceCount != NULL) {
+            *ThrottledInstanceCount = 0;
+        }
+        return TRUE;
+    }
+
+
+    //
+    // Now we have found the currentThrottleContext.
+    // Get the time difference since the last interval.
+    //
+    StorPortQuerySystemTime(&temp);
+    currentTime = (ULONGLONG)temp.QuadPart;
+    timeDifference = currentTime - currentThrottleContext->LastTimeStamp;
+
+    lessEventsThanAllowed = currentThrottleContext->EventsSinceLastTimeStamp < 
+                            currentThrottleContext->EventsAllowedPerInterval;
+
+    if ((currentThrottleContext->LastTimeStamp == 0) ||
+        (timeDifference >= currentThrottleContext->Interval)) {
+        //
+        // It has been longer than Interval since LastTimeStamp.
+        // Start a new interval, reset the counter, and return TRUE. 
+        //
+        if (ThrottledInstanceCount != NULL) {
+            if (lessEventsThanAllowed) {
+                //
+                // Nothing was throttled during this interval.
+                //
+                *ThrottledInstanceCount = 0;
+            } else {
+                *ThrottledInstanceCount = currentThrottleContext->EventsSinceLastTimeStamp - 
+                                          currentThrottleContext->EventsAllowedPerInterval;
+            }
+        }
+
+        currentThrottleContext->LastTimeStamp = currentTime;
+        currentThrottleContext->EventsSinceLastTimeStamp = 1; // Starts at 1 since this will be the first event.
+        return TRUE;
+    } else {
+        //
+        // It has been less time than Interval since LastTimeStamp.
+        // Update the counter and return TRUE only if we are allowed
+        // to log more events during this interval.
+        //
+        currentThrottleContext->EventsSinceLastTimeStamp++;
+
+        if (ThrottledInstanceCount != NULL) {
+            if (lessEventsThanAllowed) {
+                //
+                // Nothing has been throttled this interval so far.
+                //
+                *ThrottledInstanceCount = 0;
+            } else {
+                //
+                // Note that this includes the event we're throttling now.
+                //
+                *ThrottledInstanceCount = currentThrottleContext->EventsSinceLastTimeStamp - 
+                                          currentThrottleContext->EventsAllowedPerInterval;
+            }
+        }
+
+        return lessEventsThanAllowed;
+    }
+}
 
 
 #if _MSC_VER >= 1200
@@ -7920,4 +9859,3 @@ exit:
 #pragma warning(default:4201)
 #pragma warning(default:26015)
 #endif
-

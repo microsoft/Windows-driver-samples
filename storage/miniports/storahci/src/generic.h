@@ -19,14 +19,13 @@ Revision History:
 
 // common header files
 #include "miniport.h"
-#include "storport.h"
+#include "storport_p.h"
 #include "ata.h"  
 
 #include "devioctl.h"
 #include "ntddscsi.h"
 #include "ntddstor.h"
 #include "srbhelper.h"
-
 
 
 // storahci header files
@@ -36,6 +35,11 @@ Revision History:
 #include "pnppower.h"
 #include "hbastat.h"
 #include "io.h"
+
+#if !DBG
+#define StorPortDebugPrint __noop
+#endif
+
 #include "util.h"
 
 //
@@ -168,4 +172,3 @@ typedef struct _SENDCMDOUTPARAMS {
 #define DISABLE_SMART           0xD9
 #define RETURN_SMART_STATUS     0xDA
 #define ENABLE_DISABLE_AUTO_OFFLINE 0xDB
-

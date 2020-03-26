@@ -23,6 +23,7 @@ Authors:
 #pragma warning(disable:4214)   // bit field types other than int
 #pragma warning(disable:4201)   // nameless struct/union
 
+#include "data.h"
 
 #define AHCI_POOL_TAG               'ichA'  // "Ahci" - StorAHCI miniport driver
 
@@ -34,10 +35,10 @@ Authors:
 #define AHCI_MAX_NCQ_REQUEST_COUNT  32
 
 #define KB                          (1024)
-#define AHCI_MAX_TRANSFER_LENGTH    (128 * KB)
+#define AHCI_MAX_TRANSFER_LENGTH_DEFAULT    (128 * KB)
+#define AHCI_MAX_TRANSFER_LENGTH            (1024 * KB)
 #define MAX_SETTINGS_PRESERVED      32
 #define MAX_CRB_LOG_INDEX           64
-#define MAX_EXECUTION_HISTORY_ENTRY_COUNT   100
 
 #define INQUIRYDATABUFFERSIZE       36
 
@@ -49,6 +50,18 @@ Authors:
 
 #define AHCI_PORT_WAIT_ON_DET_COUNT         3       // in unit of 10ms, default 30ms.
 
+#define AHCI_ERROR_ETW_THROTTLE_INTERVAL_IN_US_DEFAULT  3600000000 // in usecs, default 60 minutes (3600000000 us).
+#define AHCI_ERROR_ETW_EVENTS_PER_INTERVAL_DEFAULT      10         // Events allowed per interval for throttling, default 10.
+
+//
+// At least 6 consecutive IO timeout without any successful IO completion needed to trigger fast fail IO.
+//
+#define AHCI_MINIMUM_PORT_RESET_TOLERANCE_COUNT_FOR_FAST_FAIL 5
+
+//
+// Defines the threshold used to determine DPC starvation.
+//
+#define AHCI_DPC_STARVATION_DETECTION_THRESHOLD_IN_SECONDS 10
 
 // port start states
 #define WaitOnDET       0x11
@@ -71,22 +84,18 @@ Authors:
 // registry flags apply to port or device
 typedef struct _CHANNEL_REGISTRY_FLAGS {
 
-
     ULONG Reserved : 20;
-
 
 } CHANNEL_REGISTRY_FLAGS, *PCHANNEL_REGISTRY_FLAGS;
 
 // registry flags apply to the whole adapter
 typedef struct _ADAPTER_REGISTRY_FLAGS {
 
-    ULONG Reserved2 : 16;
-
+    ULONG Reserved2 : 12;
 
 } ADAPTER_REGISTRY_FLAGS, *PADAPTER_REGISTRY_FLAGS;
 
 typedef struct _CHANNEL_STATE_FLAGS {
-
     ULONG Initialized : 1;
     ULONG NoMoreIO : 1;
     ULONG QueuePaused : 1;
@@ -112,30 +121,20 @@ typedef struct _CHANNEL_STATE_FLAGS {
     ULONG NcqErrorRecoveryInProcess : 1;
     ULONG PuisEnabled : 1;
 
-    ULONG Reserved0 : 12;
+    ULONG IdentifyDeviceSuccess : 1;
+    ULONG NeedQDR : 1;
+    ULONG PowerUpInitializationInProgress : 1; //Note: this field indicates that init/preserved settings commands(invoked by power up) are not completed yet.
+    ULONG DeviceResetTriggeredByUpperLayer : 1;
 
-    ULONG Reserved1;
+    ULONG DeviceResetTriggeredByBusChange : 1;
+    ULONG InitCommandInProgress : 1;
+    ULONG LogPageUpdatedUsingCachedData : 1;
+    ULONG DeviceIOStuck : 1;
+
+    ULONG Reserved0 : 4;
+
+        ULONG Reserved1;
 } CHANNEL_STATE_FLAGS, *PCHANNEL_STATE_FLAGS;
-
-typedef struct _ATA_IO_RECORD {
-
-    ULONG   SuccessCount;
-
-    ULONG   CrcErrorCount;
-    ULONG   MediaErrorCount;
-    ULONG   EndofMediaCount;
-    ULONG   IllegalCommandCount;
-    ULONG   AbortedCommandCount;
-    ULONG   DeviceFaultCount;
-
-    ULONG   OtherErrorCount;
-
-    ULONG   NcqReadLogErrorCount;   // used to record the READ LOG EXT command error count when used for NCQ Error Recovery.
-
-    ULONG   PortDriverResetCount;
-    ULONG   TotalResetCount;
-
-} ATA_IO_RECORD, *PATA_IO_RECORD;
 
 //
 // Data structure to retrieve a Log Page 
@@ -175,7 +174,8 @@ typedef struct _ATA_SUPPORTED_GPL_PAGES {
         ULONG  LogAddressSupported : 1;     // Log Address 0x30
         ULONG  SATA : 1;                        // Log Page 0x08
         ULONG  SupportedCapabilities : 1;       // Log Page 0x03
-        ULONG  Reserved : 29;
+        ULONG  ZonedDeviceInformation : 1;      // Log Page 0x09
+        ULONG  Reserved : 28;
     } IdentifyDeviceData;
 
     struct {
@@ -200,7 +200,14 @@ typedef struct _ATA_COMMAND_SUPPORTED {
 
     ULONG  SetDateAndTime           : 1;
 
-    ULONG  Reserved                 : 27;
+    ULONG  ReportZonesExt           : 1;
+    ULONG  OpenZoneExt              : 1;
+    ULONG  FinishZoneExt            : 1;
+
+    ULONG  CloseZoneExt             : 1;
+    ULONG  ResetWritePointersExt    : 1;
+
+    ULONG  Reserved                 : 22;
 
 } ATA_COMMAND_SUPPORTED, *PATA_COMMAND_SUPPORTED;
 
@@ -214,6 +221,20 @@ typedef struct _DOWNLOAD_MICROCODE_CAPABILITIES {
     UCHAR   Reserved[3];
 
 } DOWNLOAD_MICROCODE_CAPABILITIES, *PDOWNLOAD_MICROCODE_CAPABILITIES;
+
+typedef struct _ZONED_DEVICE_INFO {
+
+    BOOLEAN URSWRZ;
+    BOOLEAN Reserved;
+    USHORT  ZacMinorVersion;
+
+    ULONG   MaxNumberOfOpenSequentialWriteRequiredZones;
+
+    ULONG   OptimalNumberOfOpenSequentialWritePreferredZones;
+
+    ULONG   OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones;
+
+} ZONED_DEVICE_INFO, *PZONED_DEVICE_INFO;
 
 
 typedef struct _AHCI_DEVICE_EXTENSION {
@@ -238,11 +259,25 @@ typedef struct _AHCI_DEVICE_EXTENSION {
     LONG                                HybridCachingMediumEnableRefs;
 
     DOWNLOAD_MICROCODE_CAPABILITIES FirmwareUpdate;
+    ZONED_DEVICE_INFO       ZonedDeviceInfo;
 
     PUSHORT                 ReadLogExtPageData;
     STOR_PHYSICAL_ADDRESS   ReadLogExtPageDataPhysicalAddress;
 
+    BOOLEAN                 UpdateCachedLogPageInfo;
+    UCHAR                   Reserved[3];
 } AHCI_DEVICE_EXTENSION, *PAHCI_DEVICE_EXTENSION;
+
+typedef struct _AHCI_DEVICE_LOG_PAGE_INFO {
+
+    ATA_GPL_PAGES_TO_QUERY  QueryLogPages;
+
+    ATA_SUPPORTED_GPL_PAGES SupportedGPLPages;
+    ATA_COMMAND_SUPPORTED   SupportedCommands;
+
+    DOWNLOAD_MICROCODE_CAPABILITIES FirmwareUpdate;
+
+} AHCI_DEVICE_LOG_PAGE_INFO, *PAHCI_DEVICE_LOG_PAGE_INFO;
 
 typedef struct _COMMAND_HISTORY {
     union {                              //0x10 bytes
@@ -257,36 +292,6 @@ typedef struct _COMMAND_HISTORY {
     ULONG Function;
     ULONG SrbStatus;
 } COMMAND_HISTORY, *PCOMMAND_HISTORY;
-
-typedef struct _SLOT_MANAGER {
-    ULONG HighPriorityAttribute;
-
-    ULONG NCQueueSlice;
-    ULONG NormalQueueSlice;
-    ULONG SingleIoSlice;
-
-    ULONG CommandsIssued;
-    ULONG CommandsToComplete;
-
-    //
-    // These issued slices are used to determine the type of command
-    // being programmed to adapter.
-    // They are used instead of reading PxCI and PxSACT.
-    //
-    ULONG NCQueueSliceIssued;
-    ULONG NormalQueueSliceIssued;
-    ULONG SingleIoSliceIssued;
-
-    ULONG Reserved;
-
-} SLOT_MANAGER, *PSLOT_MANAGER;
-
-typedef struct _EXECUTION_HISTORY {
-    ULONG        Function;
-    ULONG        IS;
-    SLOT_MANAGER SlotManager;   //SLOT_MANAGER from _AHCI_CHANNEL_EXTENSION
-    ULONG        Px[0x10];      //Px registers value, end to AHCI_SNOTIFICATION -- SNTF
-} EXECUTION_HISTORY, *PEXECUTION_HISTORY;
 
 typedef struct _SLOT_STATE_FLAGS {
     UCHAR FUA :1;
@@ -356,9 +361,13 @@ typedef struct _LOCAL_SCATTER_GATHER_LIST {
     ULONG                       NumberOfElements;
     ULONG_PTR                   Reserved;
     _Field_size_(NumberOfElements)
-    STOR_SCATTER_GATHER_ELEMENT List[33];
+    STOR_SCATTER_GATHER_ELEMENT List[257];
 } LOCAL_SCATTER_GATHER_LIST, *PLOCAL_SCATTER_GATHER_LIST;
 
+//
+// Note: When adding new members to AHCI SRB extension, make sure the uncached extension allocation
+//       is successful in dump mode because there is MAX size limitation.
+//
 typedef struct _AHCI_SRB_EXTENSION {
     AHCI_COMMAND_TABLE CommandTable;        // this field MUST to be the first one as it's asked to be 128 aligned
     USHORT             AtaFunction;         // if this field is 0, it means the command does not need to be sent to device
@@ -371,6 +380,7 @@ typedef struct _AHCI_SRB_EXTENSION {
         AHCI_H2D_REGISTER_FIS   Cfis;           // info related to Host to Device FIS (0x27) 
     };
     PVOID              DataBuffer;          // go with Cdb field when needed.
+    STOR_PHYSICAL_ADDRESS DataBufferPhysicalAddress; // Physical address of DataBuffer.
     ULONG              DataTransferLength;  // go with Cdb field when needed.
     PLOCAL_SCATTER_GATHER_LIST  Sgl;        // pointer to the local or port provided SGL
     LOCAL_SCATTER_GATHER_LIST   LocalSgl;   // local SGL
@@ -381,6 +391,7 @@ typedef struct _AHCI_SRB_EXTENSION {
     ULONGLONG          StartTime;
 
     PVOID               ResultBuffer;       // for requests marked with ATA_FLAGS_RETURN_RESULTS
+    STOR_PHYSICAL_ADDRESS ResultBufferPhysicalAddress; // Physical address of ResultBuffer.
     ULONG               ResultBufferLength;
 } AHCI_SRB_EXTENSION, *PAHCI_SRB_EXTENSION;
 
@@ -411,10 +422,24 @@ typedef struct _STORAHCI_QUEUE {
     ULONG DeepestDepth;
     ULONG DepthHistoryIndex;
     ULONG DepthHistory[100];
+    LARGE_INTEGER LastTimeStampAddQueue;
+    LARGE_INTEGER LastTimeStampRemoveQueue;
 } STORAHCI_QUEUE, *PSTORAHCI_QUEUE;
 
 typedef struct _AHCI_ADAPTER_EXTENSION  AHCI_ADAPTER_EXTENSION, *PAHCI_ADAPTER_EXTENSION;
 
+typedef struct _AHCI_THROTTLE_CONTEXT {
+    AHCI_ETW_EVENT_ID      EventId;
+    ULONGLONG              LastTimeStamp;            // Denoted in 100 ns, updated for every valid usage
+    ULONGLONG              Interval;                 // Denoted in 100 ns
+    ULONG                  EventsAllowedPerInterval; // Number of events allowed within the interval
+    ULONG                  EventsSinceLastTimeStamp; // Number of events that have happened since LastTimeStamp
+} AHCI_THROTTLE_CONTEXT, *PAHCI_THROTTLE_CONTEXT;
+
+//
+// Note: When adding new members to AHCI channel extension, make sure the uncached extension allocation
+//       is successful in dump mode because there is MAX size limitation.
+//
 typedef struct _AHCI_CHANNEL_EXTENSION {
 //Adapter Characteristics
     PAHCI_ADAPTER_EXTENSION AdapterExtension;
@@ -457,7 +482,6 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
         ULONG SlumberSuccessCount;  // Number of times we succeeded in going to Slumber
     } AutoPartialToSlumberDbgStats;
 
-
     struct {
         ULONG RestorePreservedSettings :1;  //NOTE: this field is accessed in InterlockedBitTestAndReset, bit position (currently: 0) is used there.
         ULONG BusChange :1;                 //NOTE: this field is accessed in InterlockedBitTestAndReset, bit position (currently: 1) is used there.
@@ -499,7 +523,33 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
     UCHAR                   CommandHistoryNextAvailableIndex;
     COMMAND_HISTORY         CommandHistory[64];
     UCHAR                   ExecutionHistoryNextAvailableIndex;
-    EXECUTION_HISTORY       ExecutionHistory[MAX_EXECUTION_HISTORY_ENTRY_COUNT];
+    PEXECUTION_HISTORY      ExecutionHistory;       // For non-dump mode, contains MAX_EXECUTION_HISTORY_ENTRY_COUNT elements.
+
+//Statistics counters for telemetry event.
+    ULONG                   TotalCountPortReset;
+    ULONG                   TotalCountRunningStartFailed;
+    ULONG                   TotalCountPortErrorRecovery;
+    ULONG                   TotalCountNonQueuedErrorRecovery;
+    ULONG                   TotalCountNCQError;
+    ULONG                   TotalCountNCQErrorRecoveryComplete;
+    ULONG                   TotalCountSurpriseRemove;
+    ULONG                   TotalCountPowerSettingNotification;
+    ULONGLONG               LastLogResetErrorRecoveryTime;
+    ULONG                   TotalCountPowerUp;
+    ULONG                   TotalCountPowerDown;
+    ULONG                   TotalPortStartTime;
+    ULONG                   TotalCountBusChange;
+    ULONG                   DeviceFailureThrottleFlag;
+    ULONG                   TotalCountUnsolicitedInterrupt;
+
+//Statistics for tracking DPC.
+    LARGE_INTEGER           LastTimeStampDpcStart;
+    LARGE_INTEGER           LastTimeStampDpcCompletion;
+
+    PAHCI_THROTTLE_CONTEXT  ThrottleContextArray;
+    ULONG                   ThrottleContextCount;
+
+    ULONG                   ConsecutivePortResetWithoutSuccessfulIO;
 
 } AHCI_CHANNEL_EXTENSION, *PAHCI_CHANNEL_EXTENSION;
 
@@ -517,8 +567,9 @@ typedef struct _ADAPTER_STATE_FLAGS {
     ULONG D3ColdSupported : 1;
     ULONG D3ColdEnabled : 1;
     ULONG UseAdapterF1InsteadOfD3 : 1;
+    ULONG Removable : 1;
 
-    ULONG Reserved : 21;
+    ULONG Reserved : 20;
 
 } ADAPTER_STATE_FLAGS, *PADAPTER_STATE_FLAGS;
 
@@ -592,9 +643,25 @@ typedef struct _AHCI_ADAPTER_EXTENSION {
 //buffer to preserve MSI message affinity information.
     PGROUP_AFFINITY         MessageGroupAffinity;
 
+    PAHCI_THROTTLE_CONTEXT  ThrottleContextArray;
+    ULONG                   ThrottleContextCount;
+
 } AHCI_ADAPTER_EXTENSION, *PAHCI_ADAPTER_EXTENSION;
 
 // information that will be transferred to dump/hibernate environment
+
+typedef struct _AHCI_DUMP_PORT_CONTEXT {
+
+    ULONG                            PortNumber;
+    CHANNEL_REGISTRY_FLAGS           PortRegistryFlags;
+
+    //
+    // Hybrid Disk Information Log
+    //
+    GP_LOG_HYBRID_INFORMATION_HEADER HybridInfo;
+
+} AHCI_DUMP_PORT_CONTEXT, *PAHCI_DUMP_PORT_CONTEXT;
+
 typedef struct _AHCI_DUMP_CONTEXT {
     // adapter information
     USHORT                  VendorID;
@@ -607,10 +674,6 @@ typedef struct _AHCI_DUMP_CONTEXT {
     ADAPTER_LOG_FLAGS       LogFlags;       // internal log levels
     ADAPTER_REGISTRY_FLAGS  AdapterRegistryFlags;
 
-    // port information
-    ULONG                   DumpPortNumber;
-    CHANNEL_REGISTRY_FLAGS  PortRegistryFlags;
-
     //
     // Device telemetry descriptors for the boot device
     //
@@ -618,12 +681,52 @@ typedef struct _AHCI_DUMP_CONTEXT {
     ULONG                   PrivateGPLogPageAddress;
 
     //
-    // Hybrid Disk Information Log
+    // Port information of dump devices
     //
-    GP_LOG_HYBRID_INFORMATION_HEADER    HybridInfo;
+    ULONG                   PortCount;
+    AHCI_DUMP_PORT_CONTEXT  Ports[1];
 
 } AHCI_DUMP_CONTEXT, *PAHCI_DUMP_CONTEXT;
 
+typedef struct _ATA_COMMAND_ERROR_LOG {
+    ULONG Version;
+    ULONG Size;
+    CHANNEL_STATE_FLAGS StateFlags;
+    CHANNEL_START_STATE StartState;
+    STORAGE_REQUEST_BLOCK Srb;
+    CDB Cdb; // To differentiate SRBs if the struct is reused
+    UCHAR Command; // ATA taksfile/AHCI FIS payload
+    UCHAR AtaStatus;
+    UCHAR AtaError;
+    ULONG ThrottleCount;
+} ATA_COMMAND_ERROR, *PATA_COMMAND_ERROR;
+
+typedef struct _AHCI_DEVICE_FAILURE_LOG {
+
+    ULONG Version;
+    ULONG Size;
+
+    CHANNEL_STATE_FLAGS StateFlags;
+    CHANNEL_START_STATE StartState;
+
+    ATA_IO_RECORD IoRecord;
+    SLOT_MANAGER SlotManager;
+
+    ULONG PortResetCount;
+    ULONG StartFailedCount;
+    ULONG PortErrorRecoveryCount;
+    ULONG NonQueuedErrorRecoveryCount;
+    ULONG NCQErrorCount;
+    ULONG NCQErrorRecoveryCompleteCount;
+    ULONG SurpriseRemoveCount;
+    ULONG PowerSettingNotificationCount;
+    ULONG PowerUpCount;
+    ULONG PowerDownCount;
+    ULONG PortStartTime;
+    ULONG BusChangeCount;
+    ULONG UnsolicitedInterruptCount;
+
+} AHCI_DEVICE_FAILURE_LOG, *PAHCI_DEVICE_FAILURE_LOG;
 
 // Storport miniport driver entry routines, with prefix: "AhciHw"
 sp_DRIVER_INITIALIZE DriverEntry;
@@ -669,13 +772,10 @@ AhciDeviceStart (
 extern ULONG AhciPublicGPLogTableAddresses[TC_PUBLIC_DEVICEDUMP_CONTENT_GPLOG_MAX];
 extern ULONG AhciGPLogPageIntoPrivate;
 
-
-
 #if _MSC_VER >= 1200
 #pragma warning(pop)
 #else
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-
 

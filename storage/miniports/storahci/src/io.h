@@ -118,8 +118,14 @@ AhciPortFailAllIos(
     _In_ BOOLEAN AtDIRQL
     );
 
+__inline
+ULONGLONG
+CalculateTimeDurationIn100ns (
+    _In_ ULONGLONG TimeDuration,
+    _In_ ULONGLONG CounterFrequency
+    );
+
 HW_DPC_ROUTINE AhciPortSrbCompletionDpcRoutine;
 
 HW_DPC_ROUTINE AhciPortBusChangeDpcRoutine;
-
 
