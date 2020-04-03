@@ -3191,24 +3191,24 @@ Wdi_Set_Add_Pm_Protocol_Offload(
 
 
 	//2 DOT11 RSN REKey Offload
-	if(Params->DOT11RSNREKeyOffload.ProtocolOffloadId)
+	if(Params->DOT11RSNREKeyOffload.RsnKeyInfo.ProtocolOffloadId)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("ProtocolOffloadId = %d\n",
-			Params->DOT11RSNREKeyOffload.ProtocolOffloadId));
+			Params->DOT11RSNREKeyOffload.RsnKeyInfo.ProtocolOffloadId));
 
 		pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eGTKOffloadIdx]
-			= Params->DOT11RSNREKeyOffload.ProtocolOffloadId;
+			= Params->DOT11RSNREKeyOffload.RsnKeyInfo.ProtocolOffloadId;
 
 		//Copy kck, kek
 		PlatformMoveMemory(&(pMgntInfo->PMDot11RSNRekeyPara.KCK),
-			Params->DOT11RSNREKeyOffload.KCK_CONTENT, 32);
+			&Params->DOT11RSNREKeyOffload.RsnKeyInfo.KCK_CONTENT, 32);
 
 		RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("KCK_CONTENT:\n"),
 			pMgntInfo->PMDot11RSNRekeyPara.KCK, 16);
 		RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("KEK_CONTENT:\n"),
 			pMgntInfo->PMDot11RSNRekeyPara.KEK, 16);
 
-		pMgntInfo->PMDot11RSNRekeyPara.KeyReplayCounter = Params->DOT11RSNREKeyOffload.ReplayCounter;
+		pMgntInfo->PMDot11RSNRekeyPara.KeyReplayCounter = Params->DOT11RSNREKeyOffload.RsnKeyInfo.ReplayCounter;
 
 		if(pPSC->RegGTKOffloadEnable)
 			pPSC->GTKOffloadEnable = TRUE;
