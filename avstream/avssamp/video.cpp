@@ -210,7 +210,7 @@ Return Value:
             VideoInfoHeader);
 
     m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-        ExAllocatePoolWithTag (
+        ExAllocatePoolZero (
             NonPagedPool,
             KS_SIZE_VIDEOHEADER (ConnectionHeader),
             AVSSMP_POOLTAG
@@ -864,7 +864,7 @@ Return Value:
     if (FromState == KSSTATE_STOP) {
 
         m_SynthesisBuffer = reinterpret_cast <PUCHAR> (
-            ExAllocatePoolWithTag (
+            ExAllocatePoolZero (
                 NonPagedPool, 
                 m_VideoInfoHeader -> bmiHeader.biSizeImage,
                 AVSSMP_POOLTAG

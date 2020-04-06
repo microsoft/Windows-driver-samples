@@ -266,7 +266,7 @@ Return Value:
                (m_Pin->ConnectionFormat))->ImageInfoHeader);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag (
+            ExAllocatePoolZero (
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->biSize + KS_SIZE_PREHEADER),
                 AVSHWS_POOLTAG
@@ -308,7 +308,7 @@ Return Value:
                 VideoInfoHeader);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag (
+            ExAllocatePoolZero (
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), KS_SIZE_VIDEOHEADER (ConnectionHeader)),
                 AVSHWS_POOLTAG
@@ -339,7 +339,7 @@ Return Value:
                 VideoInfoHeader2);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag(
+            ExAllocatePoolZero(
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->bmiHeader.biSize + KS_SIZE_PREHEADER),
                 AVSHWS_POOLTAG

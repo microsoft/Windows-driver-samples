@@ -265,7 +265,7 @@ Return Value:
             VideoInfoHeader);
 
     m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-        ExAllocatePoolWithTag (
+        ExAllocatePoolZero (
             NonPagedPoolNx,
             KS_SIZE_VIDEOHEADER (ConnectionHeader),
             AVSHWS_POOLTAG
