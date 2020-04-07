@@ -522,7 +522,6 @@ public:
         CSynthesizer::Attribute Attrib;
         LONGLONG Info;
         LONG PinId;
-
     };
 
     void

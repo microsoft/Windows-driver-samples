@@ -637,9 +637,7 @@ Return Value:
                                                      (PVOID)&pld)
                 );
 
-                //Also set Panel ID manually, because PnP does not do this for the interface currently
-                // TODO: This is a bug in PnP that they will fix, so don't check the return code
-                // It will be read only when fixed.
+                // Also set Panel ID manually, because PnP does not do this for the interface currently
                 IoSetDeviceInterfacePropertyData(SymbolicLinkName,
                     &DEVPKEY_Device_PanelId,
                     LOCALE_NEUTRAL,

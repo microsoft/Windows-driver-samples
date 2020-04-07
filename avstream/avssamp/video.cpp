@@ -1,4 +1,4 @@
-/**************************************************************************
+/**************************************************************************
 
     AVStream Filter-Centric Sample
 
@@ -23,7 +23,7 @@
 /**************************************************************************
 
     PAGEABLE CODE
-
+
 **************************************************************************/
 
 #ifdef ALLOC_PRAGMA
@@ -557,7 +557,7 @@ Routine Description:
            selected in order to change the format for the pin.  In this case,
            OldFormat will not be NULL.
 
-    Validate that the format is acceptible and perform the actions necessary
+    Validate that the format is acceptable and perform the actions necessary
     to change format if appropriate.
 
 Arguments:

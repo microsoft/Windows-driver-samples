@@ -742,7 +742,7 @@ done:
 
 STDMETHODIMP CAsyncInPin::Init()
 {
-    m_asyncCallback = new (std::nothrow) CDMFTAsyncCallback<CAsyncInPin, &CAsyncInPin::Invoke>(this,m_dwWorkQueueId);
+    m_asyncCallback = new (std::nothrow) CDMFTAsyncCallback<CAsyncInPin, &CAsyncInPin::Invoke>(this, m_dwWorkQueueId);
     if (!m_asyncCallback)
         throw bad_alloc();
     return S_OK;

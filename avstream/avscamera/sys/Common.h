@@ -33,7 +33,6 @@
 
 #include <wdm.h>
 #include <windef.h>
-//#include <handleapi.h>
 #include <unknown.h>
 #include <ks.h>
 #include <ksmedia.h>

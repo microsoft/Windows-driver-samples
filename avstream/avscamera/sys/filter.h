@@ -58,7 +58,7 @@ private:
     // The AVStream filter object associated with this CCaptureFilter.
     //
     CCapturePin **m_pinArray;
-    ULONG* m_pMinimumRequestedFrames;
+    ULONG        *m_pMinimumRequestedFrames;
 
 protected:
     //

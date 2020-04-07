@@ -413,7 +413,7 @@ Return Value:
     NTSTATUS Status = STATUS_SUCCESS;
     LONG lPindex = Pin->Id;
 
-    //  Hold off all image generation while we muck with the capture pin and synthensizer arrays.
+    //  Hold off all image generation while we manipulate the capture pin and synthensizer arrays.
     KScopedMutex    Lock(m_SensorMutex);
 
     //
