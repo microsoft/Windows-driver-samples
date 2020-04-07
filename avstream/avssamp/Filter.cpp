@@ -268,17 +268,17 @@ Return Value:
     //
     PKSDATARANGE_AUDIO DataRangeAudio = 
         reinterpret_cast <PKSDATARANGE_AUDIO> (
-            ExAllocatePoolWithTag (PagedPool, sizeof (KSDATARANGE_AUDIO), AVSSMP_POOLTAG)
+            ExAllocatePoolZero (PagedPool, sizeof (KSDATARANGE_AUDIO), AVSSMP_POOLTAG)
             );
 
     PKSDATARANGE_AUDIO *DataRanges =
         reinterpret_cast <PKSDATARANGE_AUDIO *> (
-            ExAllocatePoolWithTag (PagedPool, sizeof (PKSDATARANGE_AUDIO), AVSSMP_POOLTAG)
+            ExAllocatePoolZero (PagedPool, sizeof (PKSDATARANGE_AUDIO), AVSSMP_POOLTAG)
             );
 
     PKSALLOCATOR_FRAMING_EX Framing =
         reinterpret_cast <PKSALLOCATOR_FRAMING_EX> (
-            ExAllocatePoolWithTag (PagedPool, sizeof (KSALLOCATOR_FRAMING_EX), AVSSMP_POOLTAG)
+            ExAllocatePoolZero (PagedPool, sizeof (KSALLOCATOR_FRAMING_EX), AVSSMP_POOLTAG)
             );
 
     if (DataRangeAudio && DataRanges && Framing) {

@@ -319,7 +319,7 @@ Return Value:
     //
     if (NT_SUCCESS (Status)) {
         m_WaveData = reinterpret_cast <PUCHAR> (
-            ExAllocatePoolWithTag (NonPagedPool, DataBlockSize, AVSSMP_POOLTAG)
+            ExAllocatePoolZero (NonPagedPool, DataBlockSize, AVSSMP_POOLTAG)
             );
 
         if (!m_WaveData) {

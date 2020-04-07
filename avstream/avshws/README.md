@@ -84,3 +84,14 @@ In the upper-left corner of the image, a counter counts the number of frames tha
 | --- | --- |
 | Avshws.h | Main header file for the sample |
 | Avshws.inf | Sample installation file |
+Capture.cpp | Capture pin implementation for all capture pins on the sample filter.
+Capture.h | Capture pin level header for all capture pins on the sample filter.
+Device.cpp | Device level implementation of the simulated hardware.
+Device.h | Device level header for the simulated hardware.
+Filter.cpp | Capture filter implementation (including frame synthesis) for the fake capture filter.
+Filter.h | Filter level header for the filter-centric capture filter.
+HWSim.cpp | Hardware simulation implementation, including fake "DMA" transfers, scatter gather mapping handling, ISRs, etc.
+HWSim.h | Hardware simulation header.
+Image.cpp | Image synthesis and overlay code. These objects provide image synthesis (pixel, color-bar, etc) onto RGB24 and UYVY buffers as well as software string overlay into these buffers.
+Image.h | Image synthesis and overlay header.
+Purecall.h | _purecall stub necessary for virtual function usage in drivers.

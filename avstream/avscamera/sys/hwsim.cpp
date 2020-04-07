@@ -1207,7 +1207,7 @@ Return Value:
 {
     PAGED_CODE();
 
-    KScopedMutex Lock( m_ListLock );
+    KScopedMutex Lock(m_ListLock);
 
     m_InterruptTime++;
 
@@ -1218,10 +1218,10 @@ Return Value:
     //
     if (m_PinState == PinRunning)
     {
-        LONGLONG Qpc = (LONGLONG) ConvertQPCtoTimeStamp(nullptr);
+        LONGLONG Qpc = (LONGLONG)ConvertQPCtoTimeStamp(nullptr);
         LARGE_INTEGER Now;
 
-        KeQuerySystemTimePrecise( &Now );
+        KeQuerySystemTimePrecise(&Now);
         //
         // Generate a "time stamp" just to overlay it onto the capture image.
         // It makes it more exciting than bars that do nothing.
@@ -1230,12 +1230,16 @@ Return Value:
         //        the most recent streaming pin's index.
         if (!m_Sensor->IsStillIndex(m_PinID))
         {
+            CSensor::SynthesizerAttributeEntry AttributeList[] =
+            {
+                { CSynthesizer::FrameNumber, m_InterruptTime, m_PinID },
+                { CSynthesizer::RelativePts, (m_InterruptTime + 1) * m_TimePerFrame, m_PinID },
+                { CSynthesizer::QpcTime, Qpc, m_PinID }
+            };
             DBG_TRACE("QPC=0x%016llX", Qpc);
 
             //  Broadcast the preview pin's info to all pin simulations.
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::FrameNumber, m_InterruptTime, m_PinID);
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::RelativePts, (m_InterruptTime + 1) * m_TimePerFrame, m_PinID);
-            m_Sensor->SetSynthesizerAttribute(CSynthesizer::QpcTime, Qpc, m_PinID);
+            m_Sensor->SetSynthesizerAttributeList(SIZEOF_ARRAY(AttributeList), AttributeList);
         }
 
         m_Synthesizer->DoSynthesize();
@@ -1243,13 +1247,13 @@ Return Value:
         CHAR Text[64];
 
         CExtendedProperty   Control;
-        m_Sensor->GetVideoStabilization( &Control );
+        m_Sensor->GetVideoStabilization(&Control);
         RtlStringCbPrintfA(Text, sizeof(Text), "DVS: %s", DVS_Text(Control.Flags));
-        m_Synthesizer->OverlayText( 0, m_Height-38, 1, Text, TRANSPARENT, TEXT_COLOR );
+        m_Synthesizer->OverlayText(0, m_Height - 38, 1, Text, TRANSPARENT, TEXT_COLOR);
 
-        m_Sensor->GetOpticalImageStabilization( &Control );
+        m_Sensor->GetOpticalImageStabilization(&Control);
         RtlStringCbPrintfA(Text, sizeof(Text), "OIS: %s", OIS_Text(Control.Flags));
-        m_Synthesizer->OverlayText( 0, m_Height-48, 1, Text, TRANSPARENT, TEXT_COLOR );
+        m_Synthesizer->OverlayText(0, m_Height - 48, 1, Text, TRANSPARENT, TEXT_COLOR);
 
         //
         //  Add the Missed frame count
@@ -1257,7 +1261,7 @@ Return Value:
         size_t  len = 0;
         RtlStringCchLengthA(Text, sizeof(Text), &len);
         m_Synthesizer->OverlayText(
-            (m_Width - (((ULONG)len*8))),    // right-adjust text.
+            (m_Width - (((ULONG)len * 8))),    // right-adjust text.
             (m_Height - 48),
             1,
             Text,
@@ -1268,12 +1272,12 @@ Return Value:
         //
         //  Add the estimated FPS
         LONGLONG Target = NANOSECONDS / m_TimePerFrame;
-        LONGLONG FPS = ((LONGLONG)m_InterruptTime * NANOSECONDS) / ( (Now.QuadPart - m_StartTime.QuadPart) + (NANOSECONDS/2) );
+        LONGLONG FPS = ((LONGLONG)m_InterruptTime * NANOSECONDS) / ((Now.QuadPart - m_StartTime.QuadPart) + (NANOSECONDS / 2));
         RtlStringCbPrintfA(Text, sizeof(Text), "%lld/%lld FPS", FPS, Target);
         len = 0;
         RtlStringCchLengthA(Text, sizeof(Text), &len);
-        m_Synthesizer->OverlayText (
-            (m_Width - (((ULONG)len*8))),    // right-adjust text.
+        m_Synthesizer->OverlayText(
+            (m_Width - (((ULONG)len * 8))),    // right-adjust text.
             (m_Height - 38),
             1,
             Text,
@@ -1284,7 +1288,7 @@ Return Value:
         //
         // Fill scatter gather buffers
         //
-        if (!NT_SUCCESS (FillScatterGatherBuffers ()))
+        if (!NT_SUCCESS(FillScatterGatherBuffers()))
         {
             m_NumFramesSkipped++;
         }
@@ -1294,28 +1298,28 @@ Return Value:
     // Issue an interrupt to our hardware sink.  This is a "fake" interrupt.
     // It will occur at DISPATCH_LEVEL.
     //
-    m_Sensor -> Interrupt (m_PinID);
+    m_Sensor->Interrupt(m_PinID);
 
     //
     //  Schedule the timer for the next interrupt time, if the pin is still running.
     //
-    if( m_PinState == PinRunning )
+    if (m_PinState == PinRunning)
     {
         LARGE_INTEGER NextTime;
         NextTime.QuadPart = m_StartTime.QuadPart +
-                            (m_TimePerFrame * (m_InterruptTime + 1));
+            (m_TimePerFrame * (m_InterruptTime + 1));
 
 #ifdef ENABLE_TRACING  // To keep us from a tight spin when trying to debug this code...
         LARGE_INTEGER Now;
         KeQuerySystemTime(&Now);
 
-        if( Now.QuadPart >= NextTime.QuadPart )
+        if (Now.QuadPart >= NextTime.QuadPart)
         {
-            NextTime.QuadPart = 0LL - m_TimePerFrame ;
+            NextTime.QuadPart = 0LL - m_TimePerFrame;
         }
 
 #endif
-        m_IsrTimer.Set( NextTime );
+        m_IsrTimer.Set(NextTime);
     }
 }
 
