@@ -172,6 +172,7 @@ AhciLpmSettingsModes(
     _In_ AHCI_LPM_POWER_SETTINGS LpmMode
     );
 
+
 #if _MSC_VER >= 1200
 #pragma warning(pop)
 #else

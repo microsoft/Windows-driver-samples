@@ -19,7 +19,7 @@ Revision History:
 
 // common header files
 #include "miniport.h"
-#include "storport_p.h"
+#include "storport.h"
 #include "ata.h"  
 
 #include "devioctl.h"
@@ -35,11 +35,6 @@ Revision History:
 #include "pnppower.h"
 #include "hbastat.h"
 #include "io.h"
-
-#if !DBG
-#define StorPortDebugPrint __noop
-#endif
-
 #include "util.h"
 
 //

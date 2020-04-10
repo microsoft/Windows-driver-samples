@@ -19,13 +19,9 @@ Revision History:
 
 #pragma once
 
-#define MS_TO_100NS(ms)     ((ULONGLONG)10000 *(ms))                // Converts milliseconds to 100ns.
-#define MS_TO_US(ms)        ((ULONGLONG)1000 *(ms))                 // Converts milliseconds to microseconds.
-#define TICKS_TO_US(ticks)  ((ticks / 10))                          // Converts ticks (100ns) to microseconds.
-#define US_TO_100NS(us)     ((ULONGLONG)10*(us))                    // Converts microseconds to 100ns.
-#define SECONDS_TO_100NS(s) (((ULONGLONG)(s)) * 1000 * 1000 * 10)   // Converts seconds to 100ns.
-
-extern ULONG g_AhciPortIoFailureCount[AHCI_MAX_PORT_COUNT];
+#define MS_TO_100NS(ms) ((ULONGLONG)10000 *(ms)) // Converts milliseconds to 100ns.
+#define MS_TO_US(ms) ((ULONGLONG)1000 *(ms))      // Converts milliseconds to microseconds.
+#define TICKS_TO_US(ticks) ((ticks / 10)) // Converts ticks (100ns) to microseconds.
 
 _At_buffer_(Buffer, _I_, BufferSize, _Post_equal_to_(0))
 __inline
@@ -1178,6 +1174,8 @@ IsFirmwareUpdateSupported(
 {
     BOOLEAN support;
 
+
+
     if (ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported) {
         support =  TRUE;
     } else {
@@ -1328,6 +1326,7 @@ GetHybridMaxLbaRangeCountForChangeLba (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     //
     // If CacheBehavior is supported, disk doesn't move data from primary medium to caching medium when
     // executes HybridChangeByLba command. Use 64 as default MaxLbaRangeCountForChangeLba value.
@@ -1691,34 +1690,6 @@ AhciPortMarkDeviceFailed(
     _In_ BOOLEAN SuppressFailure
     );
 
-VOID
-AhciPortLogIoFailureStatistics(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ ULONG MinimumIntervalInMs
-    );
-
-VOID
-AhciPortLogDeviceStartFailure(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_reads_or_z_(STORPORT_ETW_MAX_DESCRIPTION_LENGTH) PWSTR FailureReason,
-    _In_ ULONGLONG Parameter1Value,
-    _In_ ULONGLONG Parameter2Value,
-    _In_ ULONGLONG Parameter3Value,
-    _In_ ULONGLONG Parameter4Value
-    );
-
-VOID
-AhciPortLogDeviceReset(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ BOOLEAN DpcLatencyRelated
-    );
-
-VOID
-AhciPortCheckIOStatusAndConfigureFastFail(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ BOOLEAN DpcLatencyRelated
-    );
-
 _Success_(return != FALSE)
 BOOLEAN
 CompareId (
@@ -1751,9 +1722,9 @@ VOID
 FillAtaCommandErrorStruct(
     _Out_ PATA_COMMAND_ERROR DataBuffer,
     _In_ PSTORAGE_REQUEST_BLOCK Srb,
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ ULONG ThrottleCount
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     );
+
 
 VOID
 FORCEINLINE
@@ -1859,13 +1830,6 @@ AhciTelemetryLogResetErrorRecovery(
     ULONGLONG elapsedTime;
 
     if (ChannelExtension != NULL) {
-
-        //
-        // Ignore ATAPI device reset telemetry.
-        //
-        if (IsAtapiDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-            return;
-        }
 
         StorPortQuerySystemTime(&time);
         elapsedTime = time.QuadPart - ChannelExtension->LastLogResetErrorRecoveryTime;
@@ -2013,448 +1977,6 @@ AhciTelemetryLogPortStart(
                              );
         }
     }
-
-    return;
-}
-
-__inline
-void
-AhciRegisterThrottling(
-    _In_ PAHCI_THROTTLE_CONTEXT ThrottleContext,
-    _In_ AHCI_ETW_EVENT_ID EventId,
-    _In_ ULONG ThrottleInterval,
-    _In_ ULONG EventsAllowedPerInterval
-    )
-/*++
-
-Routine Description:
-    Registers throttling for an event id.
-
-Arguments:
-    ThrottleContext - Uninitialized throttle context
-    EventId - Event id to register throttling for
-    ThrottleInterval - Sampling period, denoted in us
-    EventsAllowedPerInterval - Number of events of this type to log in an interval
-
-Return Value:
-    None.
-
---*/
-{
-    //
-    // Populate the throttle context information
-    //
-    ThrottleContext->EventId = EventId;
-    ThrottleContext->LastTimeStamp = 0;
-    ThrottleContext->Interval = (US_TO_100NS(ThrottleInterval));
-    ThrottleContext->EventsAllowedPerInterval = EventsAllowedPerInterval;
-    ThrottleContext->EventsSinceLastTimeStamp = 0;
-}
-
-__inline
-ULONG
-AhciEnableThrottlingAdapter(
-    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
-    )
-/*++
-
-Routine Description:
-    Initialize throttling for all event ids that are tracked at the adapter level.
-    These come from g_AhciThrottledAdapterEtwEventIds.
-
-Arguments:
-    AdapterExtension
-
-Return Value:
-    None.
-
---*/
-{
-    ULONG status;
-    ULONG i = 0;
-    AHCI_ETW_EVENT_ID currentId = 0;
-
-    if (AdapterExtension == NULL) {
-        NT_ASSERT(FALSE);
-        return STOR_STATUS_INVALID_PARAMETER;
-    }
-
-    status = StorPortAllocatePool(AdapterExtension,
-                                  sizeof(AHCI_THROTTLE_CONTEXT) * g_AhciThrottledAdapterEtwEventIdsCount,
-                                  AHCI_POOL_TAG,
-                                  (PVOID*)&AdapterExtension->ThrottleContextArray);
-
-    if (status != STOR_STATUS_SUCCESS) {
-        NT_ASSERT(FALSE);
-        AdapterExtension->ThrottleContextCount = 0;
-        return status;
-    }
-
-    AdapterExtension->ThrottleContextCount = g_AhciThrottledAdapterEtwEventIdsCount;
-
-    for (i = 0; i < g_AhciThrottledAdapterEtwEventIdsCount; i++) {
-        //
-        // By default, log ETW error 10 times in every 60 minutes 
-        // (defined by AHCI_ERROR_ETW_THROTTLE_INTERVAL_IN_US_DEFAULT and AHCI_ERROR_ETW_EVENTS_PER_INTERVAL_DEFAULT)
-        //
-        currentId = g_AhciThrottledAdapterEtwEventIds[i];
-        AhciRegisterThrottling(&AdapterExtension->ThrottleContextArray[i], 
-                               currentId,
-                               AdapterExtension->RegistryFlags.EtwThrottleInterval,
-                               AdapterExtension->RegistryFlags.EtwEventsPerInterval);
-    }
-    return STOR_STATUS_SUCCESS;
-}
-
-__inline
-ULONG
-AhciEnableThrottlingChannel(
-    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-/*++
-
-Routine Description:
-    Initialize throttling for all event ids that are tracked at the channel level.
-    These come from g_AhciThrottledUnitEtwEventIds.
-
-Arguments:
-    AdapterExtension
-    ChannelExtension
-
-Return Value:
-    Stor status.
-
---*/
-{
-    ULONG status;
-    ULONG i = 0;
-    AHCI_ETW_EVENT_ID currentId = 0;
-
-    if ((AdapterExtension == NULL) || 
-        (ChannelExtension == NULL)) {
-        NT_ASSERT(FALSE);
-        return STOR_STATUS_INVALID_PARAMETER;
-    }
-
-    status = StorPortAllocatePool(AdapterExtension,
-                                  sizeof(AHCI_THROTTLE_CONTEXT) * g_AhciThrottledUnitEtwEventIdsCount,
-                                  AHCI_POOL_TAG,
-                                  (PVOID*)&ChannelExtension->ThrottleContextArray);
-
-    if (status != STOR_STATUS_SUCCESS) {
-        NT_ASSERT(FALSE);
-        ChannelExtension->ThrottleContextCount = 0;
-        return status;
-    }
-
-    ChannelExtension->ThrottleContextCount = g_AhciThrottledUnitEtwEventIdsCount;
-
-    for (i = 0; i < g_AhciThrottledUnitEtwEventIdsCount; i++) {
-        //
-        // By default, log ETW error 10 times in every 60 minutes 
-        // (defined by AHCI_ERROR_ETW_THROTTLE_INTERVAL_IN_US_DEFAULT and AHCI_ERROR_ETW_EVENTS_PER_INTERVAL_DEFAULT)
-        //
-        currentId = g_AhciThrottledUnitEtwEventIds[i];
-        AhciRegisterThrottling(&ChannelExtension->ThrottleContextArray[i], 
-                               currentId,
-                               AdapterExtension->RegistryFlags.EtwThrottleInterval,
-                               AdapterExtension->RegistryFlags.EtwEventsPerInterval);
-    }
-    return STOR_STATUS_SUCCESS;
-}
-
-__inline
-VOID
-AhciSimulateThrottledEtwEvent(
-    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
-    _In_opt_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ AHCI_ETW_EVENT_ID EventId
-    )
-/*++
-
-Routine Description:
-    Simulates a throttled event of type EventId to test whether event throttling works.
-    If ChannelExtension is non-null, throttling is checked for the channel level. Otherwise,
-    throttling is checked at the adapter level.
-
-Arguments:
-    AdapterExtension
-    ChannelExtension - (Optional) Should be non-null if EventId is tracked at the channel level.
-    EventId
-
-Return Value:
-    None.
-
---*/
-{
-    ULONG throttleCount = 0;
-    if (AhciIsEventAllowedWithinThrottleLimit(AdapterExtension, 
-                                              ChannelExtension,
-                                              EventId, 
-                                              &throttleCount)) {
-        StorPortEtwChannelEvent2(AdapterExtension,
-                                 (ChannelExtension == NULL) ? NULL : (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                                 StorportEtwEventOperational,
-                                 EventId,
-                                 (ChannelExtension == NULL) ? L"TestEventThrottling: Adapter" : L"TestEventThrottling: Channel",
-                                 STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                 StorportEtwLevelError,
-                                 StorportEtwEventOpcodeInfo,
-                                 NULL,
-                                 L"ThrottleCount",
-                                 throttleCount,
-                                 NULL,
-                                 0);
-    }
-}
-
-__inline
-BOOLEAN
-IsNewIoFailureGenerated(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-{
-    ULONG currentTotalIoFailureCount;
-
-    //
-    // Don't care the overflow case since it should be rare, and we should already got enough
-    // events before it happens.
-    //
-    currentTotalIoFailureCount = ChannelExtension->DeviceExtension[0].IoRecord.CrcErrorCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.MediaErrorCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.EndofMediaCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.IllegalCommandCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.AbortedCommandCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.DeviceFaultCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.OtherErrorCount +
-                                 ChannelExtension->DeviceExtension[0].IoRecord.NcqReadLogErrorCount;
-
-    if (currentTotalIoFailureCount > g_AhciPortIoFailureCount[ChannelExtension->PortNumber]) {
-        g_AhciPortIoFailureCount[ChannelExtension->PortNumber] = currentTotalIoFailureCount;
-        return TRUE;
-    } else {
-        NT_ASSERT(currentTotalIoFailureCount == g_AhciPortIoFailureCount[ChannelExtension->PortNumber]);
-        return FALSE;
-    }
-}
-
-__inline
-BOOLEAN
-IsThereIoPendingInSlot(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-{
-    if ((ChannelExtension->SlotManager.NCQueueSlice != 0) ||
-        (ChannelExtension->SlotManager.NormalQueueSlice != 0) ||
-        (ChannelExtension->SlotManager.SingleIoSlice != 0)) {
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-__inline
-BOOLEAN
-IsThereIoOutstandingInDevice(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-{
-    if ((ChannelExtension->SlotManager.CommandsIssued != 0) ||
-        (ChannelExtension->SlotManager.NCQueueSliceIssued != 0) ||
-        (ChannelExtension->SlotManager.NormalQueueSliceIssued != 0) ||
-        (ChannelExtension->SlotManager.SingleIoSliceIssued != 0)) {
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-__inline
-VOID
-GetLogInfoRegValueName(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _Out_writes_(ValueNameLength) PCHAR ValueName,
-    _In_ ULONG ValueNameLength
-    )
-/*++
-
-Routine Description:
-
-    This function append Port Number to "LogPageInfo" as name of registry value.
-    This is a work around as StorAHCI doesn't have access to RtlStringCbPrintfA().
-
-Arguments:
-
-    ChannelExtension - Pointer to the device extension for channel.
-
-    ValueName - Registry name to be written.
-
-    ValueNameLength - Registry name length.
-
-Return Value:
-
-    None.
-
---*/
-{
-    NT_ASSERT(ChannelExtension->PortNumber <= 255);
-
-    if (ValueNameLength >= 14) {
-
-        ULONG portNumber = ChannelExtension->PortNumber;
-        ULONG remainder = 0; 
-
-        StorPortCopyMemory(ValueName, "LogPageInfo", 12);
-        ValueName[13] = '\0';
-
-        remainder = portNumber % 16;  // use HEX value, base is 16.
-        ValueName[12] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
-
-        portNumber /= 16;
-        remainder = portNumber % 16;
-        ValueName[11] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
-    }
-
-    return;
-}
-
-__inline
-BOOLEAN
-AhciPortUpdateLogPageUsingCachedData(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-/*++
-
-Routine Description:
-
-    This function will try read cached log page data in registry and use the cached data
-    to populate device extension structure.
-
-Arguments:
-
-    ChannelExtension - Pointer to the device extension for channel.
-
-Return Value:
-
-    TRUE if read cached log page data success and device extension structure is populated.
-
---*/
-{
-    ULONG storStatus = STOR_STATUS_UNSUCCESSFUL;
-    CHAR valueName[16] = { 0 };
-    AHCI_DEVICE_LOG_PAGE_INFO logPageInfo = { 0 };
-    PVOID dataBuffer = &logPageInfo;
-    ULONG dataLength = sizeof(AHCI_DEVICE_LOG_PAGE_INFO);
-
-    GetLogInfoRegValueName(ChannelExtension, valueName, sizeof(valueName));
-
-    storStatus = StorPortRegistryReadAdapterKey(ChannelExtension->AdapterExtension,
-                                                (PUCHAR)"StorAHCI",
-                                                (PUCHAR)valueName,
-                                                MINIPORT_REG_BINARY,
-                                                &dataBuffer,
-                                                &dataLength);
-
-    if ((storStatus == STOR_STATUS_SUCCESS) && (dataLength == sizeof(AHCI_DEVICE_LOG_PAGE_INFO))) {
-
-        StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].QueryLogPages, &logPageInfo.QueryLogPages, sizeof(ATA_GPL_PAGES_TO_QUERY));
-        StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedGPLPages, &logPageInfo.SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
-        StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedCommands, &logPageInfo.SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
-        StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].FirmwareUpdate, &logPageInfo.FirmwareUpdate, sizeof(DOWNLOAD_MICROCODE_CAPABILITIES));
-
-        InterlockedBitTestAndSet((LONG*)&ChannelExtension->StateFlags, 26); //LogPageUpdatedUsingCachedData field is at bit 26
-
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-__inline
-BOOLEAN
-FastFailCommand(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
-    )
-/*
-    Return true if fast fail IO enabled by registry and device is stuck;
-    Otherwise, return false.
-*/
-{
-    if (ChannelExtension->AdapterExtension->RegistryFlags.FastFailIO &&
-        (ChannelExtension->AdapterExtension->RegistryFlags.DeviceResetToleranceCount != (ULONG)(-1)) &&
-        (ChannelExtension->AdapterExtension->RegistryFlags.DeviceResetToleranceCount >= AHCI_MINIMUM_PORT_RESET_TOLERANCE_COUNT_FOR_FAST_FAIL) &&
-        ChannelExtension->StateFlags.DeviceIOStuck) {
-
-        NT_ASSERT(ChannelExtension->ConsecutivePortResetWithoutSuccessfulIO >= ChannelExtension->AdapterExtension->RegistryFlags.DeviceResetToleranceCount);
-
-        //
-        // Check success IO counter again to confirm.
-        //
-        if (InterlockedAdd((LONG volatile *)&ChannelExtension->DeviceExtension->IoRecord.SuccessCountSinceLastDeviceReset, 0) == 0) {
-            return TRUE;
-        } else {
-            //
-            // Success IO counter is non-zero here, so clear the device stuck flag since device is still responsive.
-            //
-            // Possible scenarios to get here:
-            // - Internal command issued during device reset success;
-            // - Internal command issued during resume from runtime D3 success.
-            //
-            InterlockedBitTestAndReset((LONG volatile*)&(ChannelExtension->StateFlags), 27); //DeviceIOStuck is at bit 27.
-            InterlockedExchange((LONG volatile *)&ChannelExtension->ConsecutivePortResetWithoutSuccessfulIO, 0);
-        }
-    }
-
-    return FALSE;
-}
-
-__inline
-VOID
-AhciFillDeviceFailureLog(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _Inout_ PAHCI_DEVICE_FAILURE_LOG DeviceFailureLog
-    )
-/*++
-
-Routine Description:
-
-    This function populates device failure log data structure.
-
-Arguments:
-
-    ChannelExtension - Pointer to the device extension for channel.
-
-    DeviceFailureLog - Pointer to the address of the log structure.
-
-Return Value:
-
-    None.
-
---*/
-{
-    DeviceFailureLog->Version = sizeof(AHCI_DEVICE_FAILURE_LOG);
-    DeviceFailureLog->Size = sizeof(AHCI_DEVICE_FAILURE_LOG);
-
-    DeviceFailureLog->StateFlags = ChannelExtension->StateFlags;
-    DeviceFailureLog->StartState = ChannelExtension->StartState;
-
-    DeviceFailureLog->IoRecord = ChannelExtension->DeviceExtension[0].IoRecord;
-    DeviceFailureLog->SlotManager = ChannelExtension->SlotManager;
-
-    DeviceFailureLog->PortResetCount = ChannelExtension->TotalCountPortReset;
-    DeviceFailureLog->StartFailedCount= ChannelExtension->TotalCountRunningStartFailed;
-    DeviceFailureLog->PortErrorRecoveryCount = ChannelExtension->TotalCountPortErrorRecovery;
-    DeviceFailureLog->NonQueuedErrorRecoveryCount = ChannelExtension->TotalCountNonQueuedErrorRecovery;
-    DeviceFailureLog->NCQErrorCount = ChannelExtension->TotalCountNCQError;
-    DeviceFailureLog->NCQErrorRecoveryCompleteCount = ChannelExtension->TotalCountNCQErrorRecoveryComplete;
-    DeviceFailureLog->SurpriseRemoveCount = ChannelExtension->TotalCountSurpriseRemove;
-    DeviceFailureLog->PowerSettingNotificationCount = ChannelExtension->TotalCountPowerSettingNotification;
-    DeviceFailureLog->PowerUpCount = ChannelExtension->TotalCountPowerUp;
-    DeviceFailureLog->PowerDownCount = ChannelExtension->TotalCountPowerDown;
-    DeviceFailureLog->PortStartTime = ChannelExtension->TotalPortStartTime;
-    DeviceFailureLog->BusChangeCount = ChannelExtension->TotalCountBusChange;
-    DeviceFailureLog->UnsolicitedInterruptCount = ChannelExtension->TotalCountUnsolicitedInterrupt;
 
     return;
 }

@@ -128,15 +128,12 @@ Return Values:
 NOTE: as this routine is invoked from FindAdapter where the adapter might not be fully initialized, do not retrieve registry information.
 --*/
     PAHCI_ADAPTER_EXTENSION adapterExtension = NULL;
-    PAHCI_MEMORY_REGISTERS abar = NULL;
+    PAHCI_MEMORY_REGISTERS  abar = NULL;
 
-    //these are throw away variables
-    ULONG mappedLength = 0;
+   //these are throw away variables
+    ULONG   mappedLength = 0;
 
-    ULONG storStatus;
-    ULONG cachedLogPageInfoUsable = 0;
-
-    //1.1 Initialize variables
+  //1.1 Initialize variables
     adapterExtension = ChannelExtension->AdapterExtension;
     if (LogExecuteFullDetail(adapterExtension->LogFlags)) {
         RecordExecutionHistory(ChannelExtension, 0x00000024);//AhciPortInitialize
@@ -148,16 +145,16 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
     abar = (PAHCI_MEMORY_REGISTERS)adapterExtension->ABAR_Address;
     ChannelExtension->Px = &abar->PortList[ChannelExtension->PortNumber];
 
-    // NonCachedExtension is for CommandList, Receive FIS, SRB Extension for Local SRB and Sense SRB., READ_LOG/IDENTIFY buffer
-    // (sizeof(AHCI_COMMAND_HEADER) * paddedNCS) + sizeof(AHCI_RECEIVED_FIS) + 2*sizeof(AHCI_SRB_EXTENSION) + sizeof(AHCI_READ_LOG_EXT_DATA);
+  // NonCachedExtension is for CommandList, Receive FIS, SRB Extension for Local SRB and Sense SRB., READ_LOG/IDENTIFY buffer
+  // (sizeof(AHCI_COMMAND_HEADER) * paddedNCS) + sizeof(AHCI_RECEIVED_FIS) + 2*sizeof(AHCI_SRB_EXTENSION) + sizeof(AHCI_READ_LOG_EXT_DATA);
 
-    //4.2 Setup the CommandList
+  //4.2 Setup the CommandList
     ChannelExtension->CommandListPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->CommandList, &mappedLength);
     if (ChannelExtension->CommandListPhysicalAddress.QuadPart == 0) {
         RecordExecutionHistory(ChannelExtension, 0xff02);//Command List Failed
         return FALSE;
     }
-    //3.1.1 PxCLB and PxCLBU (AHCI 1.1 Section 10.1.2 - 5)
+  //3.1.1 PxCLB and PxCLBU (AHCI 1.1 Section 10.1.2 - 5)
     if ( (ChannelExtension->CommandListPhysicalAddress.LowPart % 1024) == 0 ) {
         // validate the alignment is fine
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->CLB.AsUlong, ChannelExtension->CommandListPhysicalAddress.LowPart);
@@ -169,14 +166,14 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->CLBU, ChannelExtension->CommandListPhysicalAddress.HighPart);
     }
 
-    //4.3 Setup the Receive FIS buffer
+  //4.3 Setup the Receive FIS buffer
     ChannelExtension->ReceivedFisPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->ReceivedFIS, &mappedLength);
     if (ChannelExtension->ReceivedFisPhysicalAddress.QuadPart == 0) {
         RecordExecutionHistory(ChannelExtension, 0xff04);//Receive FIS failed
         return FALSE;
     }
 
-    //3.1.2 PxFB and PxFBU (AHCI 1.1 Section 10.1.2 - 5)
+  //3.1.2 PxFB and PxFBU (AHCI 1.1 Section 10.1.2 - 5)
     if ((ChannelExtension->ReceivedFisPhysicalAddress.LowPart % 256) == 0) {
         // validate the alignment is fine
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->FB.AsUlong, ChannelExtension->ReceivedFisPhysicalAddress.LowPart);
@@ -188,19 +185,19 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->FBU, ChannelExtension->ReceivedFisPhysicalAddress.HighPart);
     }
 
-    //4.4 Setup the Local SRB Extension
+  //4.4 Setup the Local SRB Extension
     ChannelExtension->Local.SrbExtensionPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->Local.SrbExtension, &mappedLength);
     ChannelExtension->Sense.SrbExtensionPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->Sense.SrbExtension, &mappedLength);
 
-    //4.6 Setup Device Identify Data and Inquiry Data buffers
+  //4.6 Setup Device Identify Data and Inquiry Data buffers
     ChannelExtension->DeviceExtension[0].IdentifyDataPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->DeviceExtension[0].IdentifyDeviceData, &mappedLength);
     ChannelExtension->DeviceExtension[0].InquiryDataPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->DeviceExtension[0].InquiryData, &mappedLength);
 
-    //4.8 Setup STOR_ADDRESS for the device. StorAHCI uses Bus/Target/Lun addressing model, thus uses STOR_ADDRESS_TYPE_BTL8.
-    //        Port - not need to be set by miniport, Storport has this knowledge. miniport can get the value by calling StorPortGetSystemPortNumber().
-    //        Path - StorAHCI reports (highest implemented port number + 1) as bus number, thus "port number" will be "Path" value.
-    //        Target - StorAHCI only supports single device on each port, the "Target" value will be 0.
-    //        Lun - StorAHCI only supports single device on each port, the "Lun" value will be 0.
+  //4.8 Setup STOR_ADDRESS for the device. StorAHCI uses Bus/Target/Lun addressing model, thus uses STOR_ADDRESS_TYPE_BTL8.
+  //        Port - not need to be set by miniport, Storport has this knowledge. miniport can get the value by calling StorPortGetSystemPortNumber().
+  //        Path - StorAHCI reports (highest implemented port number + 1) as bus number, thus "port number" will be "Path" value.
+  //        Target - StorAHCI only supports single device on each port, the "Target" value will be 0.
+  //        Lun - StorAHCI only supports single device on each port, the "Lun" value will be 0.
     ChannelExtension->DeviceExtension[0].DeviceAddress.Type = STOR_ADDRESS_TYPE_BTL8;
     ChannelExtension->DeviceExtension[0].DeviceAddress.Port = 0;
     ChannelExtension->DeviceExtension[0].DeviceAddress.AddressLength = STOR_ADDR_BTL8_ADDRESS_LENGTH;
@@ -213,11 +210,11 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
     //
     ChannelExtension->DevicePowerState = StorPowerDeviceD0;
 
-    //3.2 Clear Enable Interrupts on the Channel (AHCI 1.1 Section 10.1.2 - 7)
-    //We will enable interrupt after channel started
+  //3.2 Clear Enable Interrupts on the Channel (AHCI 1.1 Section 10.1.2 - 7)
+  //We will enable interrupt after channel started
     PortClearPendingInterrupt(ChannelExtension);
 
-    //5.1 Enable Command Processing
+  //5.1 Enable Command Processing
     ChannelExtension->StateFlags.Initialized = TRUE;
 
     if (adapterExtension->CAP.NCS > 0) { //this leaves one emergency slot free if possible, as CAP.NCS is 0-based.
@@ -239,25 +236,6 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
             AhciCOMRESET(ChannelExtension, ChannelExtension->Px);
         }
     }
-
-    //
-    // Check to determine whether use cached device settings.
-    //
-    storStatus = StorPortIsDeviceOperationAllowed(ChannelExtension->AdapterExtension,
-                                                  NULL,
-                                                  &STORPORT_DEVICEOPERATION_CACHED_SETTINGS_INIT_GUID,
-                                                  (PULONG)(&cachedLogPageInfoUsable));
-
-    if ((storStatus == STOR_STATUS_SUCCESS) &&
-        cachedLogPageInfoUsable &&
-        (ChannelExtension->DeviceExtension[0].UpdateCachedLogPageInfo == FALSE)) {
-        AhciPortUpdateLogPageUsingCachedData(ChannelExtension);
-    }
-
-    //
-    // Initialize IO success counter for device stuck detection.
-    //
-    ChannelExtension->DeviceExtension[0].IoRecord.SuccessCountSinceLastDeviceReset = (ULONG)(-1);
 
     RecordExecutionHistory(ChannelExtension, 0x10000024);//Exit AhciPortInitialize
     return TRUE;
@@ -660,6 +638,55 @@ ReportLunsComplete(
     return;
 }
 
+__inline
+VOID
+GetLogInfoRegValueName(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _Out_writes_(ValueNameLength) PCHAR ValueName,
+    _In_ ULONG ValueNameLength
+    )
+/*++
+
+Routine Description:
+
+    This function append Port Number to "LogPageInfo" as name of registry value.
+    This is a work around as StorAHCI doesn't have access to RtlStringCbPrintfA().
+
+Arguments:
+
+    ChannelExtension - Pointer to the device extension for channel.
+
+    ValueName - Registry name to be written.
+
+    ValueNameLength - Registry name length.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    NT_ASSERT(ChannelExtension->PortNumber <= 255);
+    
+    if (ValueNameLength >= 14) {
+
+        ULONG portNumber = ChannelExtension->PortNumber;
+        ULONG remainder = 0; 
+        
+        StorPortCopyMemory(ValueName, "LogPageInfo", 12);
+        ValueName[13] = '\0';
+        
+        remainder = portNumber % 16;  // use HEX value, base is 16.
+        ValueName[12] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
+        
+        portNumber /= 16;
+        remainder = portNumber % 16;
+        ValueName[11] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
+    }
+    
+    return;
+}
+
 _Function_class_(HW_WORKITEM)
 VOID
 AhciRegistryWriteWorker(
@@ -969,7 +996,6 @@ Return Values:
         srbExtension->DataTransferLength = ATA_BLOCK_SIZE * (ULONG)BlockCount;
     }
 
-
     return;
 }
 
@@ -1014,7 +1040,7 @@ ReadQueryLogPage (
     _In_ USHORT                  Index
 )
 {
-    IssueReadLogExtCommand(ChannelExtension,
+    IssueReadLogExtCommand( ChannelExtension,
                            Srb,
                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].LogAddress,
                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].PageNumber,
@@ -1545,8 +1571,6 @@ LogPageDiscoveryCompletion (
 
         ReportLunsComplete(ChannelExtension, Srb);
 
-        InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 26); //LogPageUpdatedUsingCachedData field is at bit 26
-
         // Use a work itme to preserve information from Log Pages into registry.
         PreserveLogPageInformation(ChannelExtension);
     }
@@ -1579,15 +1603,10 @@ Return Value:
 {
     PATA_DEVICE_PARAMETERS deviceParameters = &ChannelExtension->DeviceExtension->DeviceParameters;
 
-    //
-    // Update device type for below scenarios:
-    // 1. During device enumeration, port is not started yet and signature register is 0xffffffff,
-    //    which will result in the AtaDeviceType is set to DeviceUnknown;
-    // 2. If a device is unplugged(device type corresponding to this channel will be not exist),
-    //    then there is device plugged in the same port and start slow, the enumeration may fail.
-    //
-    if (IsUnknownDevice(deviceParameters) ||
-        IsDeviceNotExist(deviceParameters)) {
+    // There is chance that during device enumeration, port is not started yet and signature register is 0xffffffff,
+    // which will result in the AtaDeviceType is set to DeviceUnknown.
+    // Update it here if above situation is true.
+    if (IsUnknownDevice(deviceParameters)) {
 
         ULONG sig = 0;
         sig = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SIG.AsUlong);
@@ -1679,15 +1698,56 @@ AhciPortIdentifyDevice(
     // INQUIRY command (for disk in dump environment)
     if ((cdb != NULL) && (cdb->CDB10.OperationCode == SCSIOP_REPORT_LUNS)) {
 
+        BOOLEAN cachedLogPageInfoUsable = FALSE;
+
         if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) &&
             IsDeviceGeneralPurposeLoggingSupported(ChannelExtension)) {
+
+            ULONG storStatus;
+
+            //
+            // Check to determine whether use cached device settings.
+            //
+            storStatus = StorPortIsDeviceOperationAllowed(ChannelExtension->AdapterExtension,
+                                                          NULL,
+                                                          &STORPORT_DEVICEOPERATION_CACHED_SETTINGS_INIT_GUID,
+                                                          (PULONG)(&cachedLogPageInfoUsable));
+
+            cachedLogPageInfoUsable = (cachedLogPageInfoUsable && (ChannelExtension->DeviceExtension[0].UpdateCachedLogPageInfo == FALSE));
+            
+            if (cachedLogPageInfoUsable) {
+                // In case this is not a newly plugged in device and it's allowed to use cached Log Page Information.
+                CHAR valueName[16] = { 0 };
+                AHCI_DEVICE_LOG_PAGE_INFO logPageInfo = { 0 };
+                PVOID dataBuffer = &logPageInfo;
+                ULONG dataLength = sizeof(AHCI_DEVICE_LOG_PAGE_INFO);
+
+                GetLogInfoRegValueName(ChannelExtension, valueName, sizeof(valueName));
+
+                storStatus = StorPortRegistryReadAdapterKey(ChannelExtension->AdapterExtension,
+                                                            (PUCHAR)"StorAHCI",
+                                                            (PUCHAR)valueName,
+                                                            MINIPORT_REG_BINARY,
+                                                            &dataBuffer,
+                                                            &dataLength);
+
+                if ((storStatus == STOR_STATUS_SUCCESS) && (dataLength == sizeof(AHCI_DEVICE_LOG_PAGE_INFO))) {
+
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].QueryLogPages, &logPageInfo.QueryLogPages, sizeof(ATA_GPL_PAGES_TO_QUERY));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedGPLPages, &logPageInfo.SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedCommands, &logPageInfo.SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].FirmwareUpdate, &logPageInfo.FirmwareUpdate, sizeof(DOWNLOAD_MICROCODE_CAPABILITIES));
+
+                    ReportLunsComplete(ChannelExtension, Srb);
+                } else {
+                    cachedLogPageInfoUsable = FALSE;
+                }
+            }
 
             //
             // Start log page discovery process if decide not use cached log page data.
             //
-            if (ChannelExtension->StateFlags.LogPageUpdatedUsingCachedData != 0) {
-                ReportLunsComplete(ChannelExtension, Srb);
-            } else {
+            if (!cachedLogPageInfoUsable) {
 
                 USHORT index;
 
@@ -1823,18 +1883,20 @@ AhciPortNVCacheCompletion(
 VOID
 AhciPortSmartCompletion(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK Srb
-    )
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+  )
 {
-    PSENDCMDOUTPARAMS outParams;
-    PAHCI_SRB_EXTENSION srbExtension;
-    PUCHAR buffer; //to make the pointer arithmatic easier
+    PSENDCMDOUTPARAMS           outParams;
+    PAHCI_SRB_EXTENSION         srbExtension;
+    PUCHAR                      buffer;//to make the pointer arithmatic easier
 
-    buffer = (PUCHAR)SrbGetDataBuffer(Srb) + sizeof(SRB_IO_CONTROL);
-    outParams = (PSENDCMDOUTPARAMS) buffer; //26015: "Potential overflow using expression 'outParams->DriverStatus.bDriverError'  Buffer access is apparently unbounded by the buffer size.
+    UNREFERENCED_PARAMETER(ChannelExtension);
+
+    buffer       = (PUCHAR)SrbGetDataBuffer(Srb) + sizeof(SRB_IO_CONTROL);
+    outParams    = (PSENDCMDOUTPARAMS) buffer;                          //26015: "Potential overflow using expression 'outParams->DriverStatus.bDriverError'  Buffer access is apparently unbounded by the buffer size.
     srbExtension = GetSrbExtension(Srb);
 
-    Srb->SrbStatus &= ~SRB_STATUS_AUTOSENSE_VALID; // remove this flag as there is no data copy back to original Sense Buffer
+    Srb->SrbStatus &= ~SRB_STATUS_AUTOSENSE_VALID;  // remove this flag as there is no data copy back to original Sense Buffer
 
     if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
         outParams->DriverStatus.bDriverError = 0;
@@ -1852,14 +1914,6 @@ AhciPortSmartCompletion(
         outParams->DriverStatus.bDriverError = SMART_IDE_ERROR;
         outParams->DriverStatus.bIDEError = srbExtension->AtaStatus;
         outParams->cBufferSize = 0;
-    }
-
-    //
-    // Log IO record when upper layer sends smart request(limit to RETURN_SMART_STATUS to avoid noise).
-    // And the logging will be throttled by minimum interval 50mins.
-    //
-    if (srbExtension->TaskFile.Current.bFeaturesReg == RETURN_SMART_STATUS) {
-        AhciPortLogIoFailureStatistics(ChannelExtension, AHCI_LOG_IO_FAILURE_STATISTICS_MIN_INTERVAL_IN_MS);
     }
 
     return;
@@ -1977,7 +2031,6 @@ Affected Variables/Registers:
 
         InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 3); //ReservedSlotInUse field is at bit 3
         InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 22); //PowerUpInitializationInProgress field is at bit 22
-        InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 25); //InitCommandInProgress field is at bit 25
 
         return;
     }
@@ -2182,7 +2235,6 @@ AhciDeviceInitialize (
 
         //1.2 Persist Write Cache
         UpdateSetFeatureCommands(ChannelExtension, IDE_FEATURE_INVALID, IDE_FEATURE_ENABLE_WRITE_CACHE, 0, 0);
-
 
     } else if (IsAtapiDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
       //2.1 Persist SATA transfer mode for some SATAI/PATAPI bridge chips
@@ -3166,6 +3218,7 @@ Exit:
 
     return;
 }
+
 
 #pragma warning(pop) // un-sets any local warning changes
 

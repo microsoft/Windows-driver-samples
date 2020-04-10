@@ -50,18 +50,6 @@ Authors:
 
 #define AHCI_PORT_WAIT_ON_DET_COUNT         3       // in unit of 10ms, default 30ms.
 
-#define AHCI_ERROR_ETW_THROTTLE_INTERVAL_IN_US_DEFAULT  3600000000 // in usecs, default 60 minutes (3600000000 us).
-#define AHCI_ERROR_ETW_EVENTS_PER_INTERVAL_DEFAULT      10         // Events allowed per interval for throttling, default 10.
-
-//
-// At least 6 consecutive IO timeout without any successful IO completion needed to trigger fast fail IO.
-//
-#define AHCI_MINIMUM_PORT_RESET_TOLERANCE_COUNT_FOR_FAST_FAIL 5
-
-//
-// Defines the threshold used to determine DPC starvation.
-//
-#define AHCI_DPC_STARVATION_DETECTION_THRESHOLD_IN_SECONDS 10
 
 // port start states
 #define WaitOnDET       0x11
@@ -91,7 +79,7 @@ typedef struct _CHANNEL_REGISTRY_FLAGS {
 // registry flags apply to the whole adapter
 typedef struct _ADAPTER_REGISTRY_FLAGS {
 
-    ULONG Reserved2 : 12;
+    ULONG Reserved2 : 13;
 
 } ADAPTER_REGISTRY_FLAGS, *PADAPTER_REGISTRY_FLAGS;
 
@@ -124,16 +112,9 @@ typedef struct _CHANNEL_STATE_FLAGS {
     ULONG IdentifyDeviceSuccess : 1;
     ULONG NeedQDR : 1;
     ULONG PowerUpInitializationInProgress : 1; //Note: this field indicates that init/preserved settings commands(invoked by power up) are not completed yet.
-    ULONG DeviceResetTriggeredByUpperLayer : 1;
+    ULONG Reserved0 : 9;
 
-    ULONG DeviceResetTriggeredByBusChange : 1;
-    ULONG InitCommandInProgress : 1;
-    ULONG LogPageUpdatedUsingCachedData : 1;
-    ULONG DeviceIOStuck : 1;
-
-    ULONG Reserved0 : 4;
-
-        ULONG Reserved1;
+    ULONG Reserved1;
 } CHANNEL_STATE_FLAGS, *PCHANNEL_STATE_FLAGS;
 
 //
@@ -255,6 +236,7 @@ typedef struct _AHCI_DEVICE_EXTENSION {
 
     ATA_SUPPORTED_GPL_PAGES SupportedGPLPages;
     ATA_COMMAND_SUPPORTED   SupportedCommands;
+
     GP_LOG_HYBRID_INFORMATION_HEADER    HybridInfo;
     LONG                                HybridCachingMediumEnableRefs;
 
@@ -428,14 +410,6 @@ typedef struct _STORAHCI_QUEUE {
 
 typedef struct _AHCI_ADAPTER_EXTENSION  AHCI_ADAPTER_EXTENSION, *PAHCI_ADAPTER_EXTENSION;
 
-typedef struct _AHCI_THROTTLE_CONTEXT {
-    AHCI_ETW_EVENT_ID      EventId;
-    ULONGLONG              LastTimeStamp;            // Denoted in 100 ns, updated for every valid usage
-    ULONGLONG              Interval;                 // Denoted in 100 ns
-    ULONG                  EventsAllowedPerInterval; // Number of events allowed within the interval
-    ULONG                  EventsSinceLastTimeStamp; // Number of events that have happened since LastTimeStamp
-} AHCI_THROTTLE_CONTEXT, *PAHCI_THROTTLE_CONTEXT;
-
 //
 // Note: When adding new members to AHCI channel extension, make sure the uncached extension allocation
 //       is successful in dump mode because there is MAX size limitation.
@@ -482,6 +456,8 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
         ULONG SlumberSuccessCount;  // Number of times we succeeded in going to Slumber
     } AutoPartialToSlumberDbgStats;
 
+
+
     struct {
         ULONG RestorePreservedSettings :1;  //NOTE: this field is accessed in InterlockedBitTestAndReset, bit position (currently: 0) is used there.
         ULONG BusChange :1;                 //NOTE: this field is accessed in InterlockedBitTestAndReset, bit position (currently: 1) is used there.
@@ -522,6 +498,7 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
 //Logging
     UCHAR                   CommandHistoryNextAvailableIndex;
     COMMAND_HISTORY         CommandHistory[64];
+
     UCHAR                   ExecutionHistoryNextAvailableIndex;
     PEXECUTION_HISTORY      ExecutionHistory;       // For non-dump mode, contains MAX_EXECUTION_HISTORY_ENTRY_COUNT elements.
 
@@ -540,16 +517,10 @@ typedef struct _AHCI_CHANNEL_EXTENSION {
     ULONG                   TotalPortStartTime;
     ULONG                   TotalCountBusChange;
     ULONG                   DeviceFailureThrottleFlag;
-    ULONG                   TotalCountUnsolicitedInterrupt;
 
 //Statistics for tracking DPC.
     LARGE_INTEGER           LastTimeStampDpcStart;
     LARGE_INTEGER           LastTimeStampDpcCompletion;
-
-    PAHCI_THROTTLE_CONTEXT  ThrottleContextArray;
-    ULONG                   ThrottleContextCount;
-
-    ULONG                   ConsecutivePortResetWithoutSuccessfulIO;
 
 } AHCI_CHANNEL_EXTENSION, *PAHCI_CHANNEL_EXTENSION;
 
@@ -562,6 +533,7 @@ typedef struct _ADAPTER_STATE_FLAGS {
 
     ULONG SupportsAcpiDSM : 1;      // indicates if the system has _DSM method implemented to control port/device power. when the value is 1, the _DSM method at least supports powering on all connected devices.
     ULONG Removed : 1;
+
     ULONG InterruptMessagePerPort : 1;
 
     ULONG D3ColdSupported : 1;
@@ -643,9 +615,6 @@ typedef struct _AHCI_ADAPTER_EXTENSION {
 //buffer to preserve MSI message affinity information.
     PGROUP_AFFINITY         MessageGroupAffinity;
 
-    PAHCI_THROTTLE_CONTEXT  ThrottleContextArray;
-    ULONG                   ThrottleContextCount;
-
 } AHCI_ADAPTER_EXTENSION, *PAHCI_ADAPTER_EXTENSION;
 
 // information that will be transferred to dump/hibernate environment
@@ -698,35 +667,8 @@ typedef struct _ATA_COMMAND_ERROR_LOG {
     UCHAR Command; // ATA taksfile/AHCI FIS payload
     UCHAR AtaStatus;
     UCHAR AtaError;
-    ULONG ThrottleCount;
 } ATA_COMMAND_ERROR, *PATA_COMMAND_ERROR;
 
-typedef struct _AHCI_DEVICE_FAILURE_LOG {
-
-    ULONG Version;
-    ULONG Size;
-
-    CHANNEL_STATE_FLAGS StateFlags;
-    CHANNEL_START_STATE StartState;
-
-    ATA_IO_RECORD IoRecord;
-    SLOT_MANAGER SlotManager;
-
-    ULONG PortResetCount;
-    ULONG StartFailedCount;
-    ULONG PortErrorRecoveryCount;
-    ULONG NonQueuedErrorRecoveryCount;
-    ULONG NCQErrorCount;
-    ULONG NCQErrorRecoveryCompleteCount;
-    ULONG SurpriseRemoveCount;
-    ULONG PowerSettingNotificationCount;
-    ULONG PowerUpCount;
-    ULONG PowerDownCount;
-    ULONG PortStartTime;
-    ULONG BusChangeCount;
-    ULONG UnsolicitedInterruptCount;
-
-} AHCI_DEVICE_FAILURE_LOG, *PAHCI_DEVICE_FAILURE_LOG;
 
 // Storport miniport driver entry routines, with prefix: "AhciHw"
 sp_DRIVER_INITIALIZE DriverEntry;

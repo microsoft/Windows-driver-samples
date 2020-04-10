@@ -58,23 +58,21 @@ typedef struct _EXECUTION_HISTORY {
 
 typedef struct _ATA_IO_RECORD {
 
-    ULONG SuccessCount;
+    ULONG   SuccessCount;
 
-    ULONG CrcErrorCount;
-    ULONG MediaErrorCount;
-    ULONG EndofMediaCount;
-    ULONG IllegalCommandCount;
-    ULONG AbortedCommandCount;
-    ULONG DeviceFaultCount;
+    ULONG   CrcErrorCount;
+    ULONG   MediaErrorCount;
+    ULONG   EndofMediaCount;
+    ULONG   IllegalCommandCount;
+    ULONG   AbortedCommandCount;
+    ULONG   DeviceFaultCount;
 
-    ULONG OtherErrorCount;
+    ULONG   OtherErrorCount;
 
-    ULONG NcqReadLogErrorCount;   // used to record the READ LOG EXT command error count when used for NCQ Error Recovery.
+    ULONG   NcqReadLogErrorCount;   // used to record the READ LOG EXT command error count when used for NCQ Error Recovery.
 
-    ULONG PortDriverResetCount;
-    ULONG TotalResetCount;
-
-    ULONG SuccessCountSinceLastDeviceReset;
+    ULONG   PortDriverResetCount;
+    ULONG   TotalResetCount;
 
 } ATA_IO_RECORD, *PATA_IO_RECORD;
 

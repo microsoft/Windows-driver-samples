@@ -29,39 +29,6 @@ Revision History:
 #include "generic.h"
 
 //
-// Array of ETW Event IDs specific to ChannelExtension that require throttling.
-//
-AHCI_ETW_EVENT_ID g_AhciThrottledUnitEtwEventIds[] = {
-    AhciEtwEventUnitHandleInterrupt,
-    AhciEtwEventUnitCompletedPnp,
-    AhciEtwEventUnitPortErrorRecovery,
-    AhciEtwEventUnitSrbConvertToATACommandError,
-    AhciEtwEventUnitFinishedIoError,
-    AhciEtwEventUnitHandleInterruptAdapterRemoved,
-    AhciEtwEventPortResetPowerUp,
-    AhciEtwEventPortResetBusChange,
-    AhciEtwEventUnitStartFailure,
-    AhciEtwEventPortResetIOProbablyStuckInDriver,
-    AhciEtwEventPortResetErrorRecovery
-};
-
-ULONG g_AhciThrottledUnitEtwEventIdsCount = (sizeof(g_AhciThrottledUnitEtwEventIds) / 
-                                             sizeof(AHCI_ETW_EVENT_ID));
-
-//
-// Array of ETW Event IDs specific to AdapterExtension that require throttling.
-//
-AHCI_ETW_EVENT_ID g_AhciThrottledAdapterEtwEventIds[] = {
-    AhciEtwEventAdapterBuildIoPortNoDevice,
-    AhciEtwEventAdapterBuildIoAdapterRemoved,
-    AhciEtwEventAdapterStartIoPnp,
-    AhciEtwEventAdapterStartIoPortNoDevice
-};
-
-ULONG g_AhciThrottledAdapterEtwEventIdsCount = (sizeof(g_AhciThrottledAdapterEtwEventIds) / 
-                                                sizeof(AHCI_ETW_EVENT_ID));
-
-//
 // This structure is used as a wrapper of a MODE_PARAMETER_HEADER
 // or MODE_PARAMETER_HEADER10. Code that uses this structure can be
 // agnostic as to the underlying structure.
@@ -138,9 +105,7 @@ IsExceptionCommand(
             (Cdb->CDB10.OperationCode == SCSIOP_START_STOP_UNIT) ||
             (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_OUT) ||
             (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) ||
-            (Cdb->CDB10.OperationCode == SCSIOP_SYNCHRONIZE_CACHE) ||
-            (Cdb->CDB10.OperationCode == SCSIOP_READ_CAPACITY) ||
-            (Cdb->CDB10.OperationCode == SCSIOP_READ_CAPACITY16));
+            (Cdb->CDB10.OperationCode == SCSIOP_SYNCHRONIZE_CACHE));
 }
 
 __inline
@@ -150,20 +115,17 @@ RetryCommand(
     _In_ PCDB Cdb
     )
 /*
-    If power up/device init in progress, return false; else if port start in
-    progress or restore preserved settings command outstanding, and command
-    (e.g. enumeration and power transition related) is not in exception list,
-    return true;
-
+    If initialization triggered by power up in progress, return false;
+    else if port start/init/restore preserved settings command outstanding, and
+    command(e.g. enumeration and power transition related) is not in exception
+    list, return true;
     Otherwise, return false.
 */
 {
     //
-    // If power up or device start in progress, do not retry anything.
+    // If power up in progress, do not retry anything.
     //
-    if (ChannelExtension->StateFlags.PowerUpInitializationInProgress ||
-        ChannelExtension->AdapterExtension->InRunningPortsProcess ||
-        ChannelExtension->StateFlags.InitCommandInProgress) {
+    if (ChannelExtension->StateFlags.PowerUpInitializationInProgress) {
         return FALSE;
     }
 
@@ -200,14 +162,6 @@ SCSItoATA(
         } else if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters) ||
                    (cdb->CDB10.OperationCode == SCSIOP_REPORT_LUNS) ||
                    (cdb->CDB10.OperationCode == SCSIOP_INQUIRY) ) {
-            //
-            // Fail SRB directly with no device if fast fail enabled and device is stuck.
-            //
-            if (FastFailCommand(ChannelExtension)) {
-                Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
-                return STOR_STATUS_UNSUCCESSFUL;
-            }
-
             //
             // Fail SRB with busy status to storport if port start is in progress or init/restore
             // preserved settings command outstanding. Storport will retry these IOs later.
@@ -889,7 +843,6 @@ SrbConvertToATACommand(
 
         break;
 
-
     case SCSIOP_READ_DATA_BUFF16:
 
         if (Cdb->READ_BUFFER_16.Mode == READ_BUFFER_MODE_ERROR_HISTORY) {
@@ -911,6 +864,46 @@ SrbConvertToATACommand(
 
         Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         break;
+    }
+
+    if (status != STOR_STATUS_SUCCESS) {
+        ATA_COMMAND_ERROR dataBuffer;
+        FillAtaCommandErrorStruct(&dataBuffer, Srb, ChannelExtension);
+        StorPortEtwLogError(ChannelExtension->AdapterExtension,
+                            (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                            AhciEtwEventBuildIO,
+                            L"SrbConvertToATACommand error",
+                            dataBuffer.Size,
+                            &dataBuffer);
+    } else {
+        PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+        AHCI_H2D_REGISTER_FIS cfis = srbExtension->Cfis; // Size is 20 bytes (shares first 16 with TaskFile)
+        // Convert the Cfis to an array of ULONGs to log the struct in pieces
+        PULONG cfisAsUlong = (PULONG)&cfis; // Length is 5 ULONGs
+        StorPortEtwEvent8(ChannelExtension->AdapterExtension,
+                          (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                          AhciEtwEventBuildIO,
+                          L"SrbConvertToATACommand finished",
+                          STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                          StorportEtwLevelInformational,
+                          StorportEtwEventOpcodeInfo,
+                          (PSCSI_REQUEST_BLOCK)Srb,
+                          L"AtaFunction",
+                          srbExtension->AtaFunction,
+                          L"Cfis 0-7",
+                          ((ULONGLONG)cfisAsUlong[0] << 32) + cfisAsUlong[1],
+                          L"Cfis 8-15",
+                          ((ULONGLONG)cfisAsUlong[2] << 32) + cfisAsUlong[3],
+                          L"Cfis 16-20",
+                          ((ULONGLONG)cfisAsUlong[4] << 32),
+                          L"CDB 0-7",
+                          ((ULONGLONG)Cdb->AsUlong[0] << 32) + Cdb->AsUlong[1],
+                          L"CDB 8-15",
+                          ((ULONGLONG)Cdb->AsUlong[2] << 32) + Cdb->AsUlong[3],
+                          NULL,
+                          0,
+                          NULL,
+                          0);
     }
 
     return status;
@@ -3429,9 +3422,8 @@ AtaSecurityProtocolRequest (
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
     PCDB                securityCdb = Cdb;
-    UCHAR               protocol;
     ULONG               dataLength = 0;
-    UCHAR               command;
+    UCHAR               commandReg;
     UCHAR               nonDataTrustedReceive = 0;
 
     if (ChannelExtension->DeviceExtension->IdentifyDeviceData->TrustedComputing.FeatureSupported == 0) {
@@ -3443,29 +3435,29 @@ AtaSecurityProtocolRequest (
     } else {
 
         dataLength = (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 24) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[1] << 16) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2] << 8) |
-                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);
-
-        protocol = securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocol;
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 16) |
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] << 8) |
+                     (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0]);
 
         if (dataLength > 0xFFFF) {
             // ATA TRUSTED commands can only process 2 bytes of data transfer length.
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
         } else {
             // get command to be used
-            if (dataLength == 0) {
+            if ((securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3] == 0) &&
+                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2] == 0) &&
+                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[1] == 0) &&
+                (securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[0] == 0)) {
                 // Non-data transfer
-                command = IDE_COMMAND_TRUSTED_NON_DATA;
+                commandReg = IDE_COMMAND_TRUSTED_NON_DATA;
                 nonDataTrustedReceive = (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) ? 1 : 0;
             } else {
                 NT_ASSERT((SrbGetSrbFlags(Srb) & SRB_FLAGS_UNSPECIFIED_DIRECTION) != 0);
-
                 if (Cdb->CDB10.OperationCode == SCSIOP_SECURITY_PROTOCOL_IN) {
-                    command = IDE_COMMAND_TRUSTED_RECEIVE_DMA;
+                    commandReg = IDE_COMMAND_TRUSTED_RECEIVE_DMA;
                     srbExtension->Flags |= ATA_FLAGS_DATA_IN;
                 } else {
-                    command = IDE_COMMAND_TRUSTED_SEND_DMA;
+                    commandReg = IDE_COMMAND_TRUSTED_SEND_DMA;
                     srbExtension->Flags |= ATA_FLAGS_DATA_OUT;
                 }
                 srbExtension->Flags |= ATA_FLAGS_USE_DMA;
@@ -3474,37 +3466,14 @@ AtaSecurityProtocolRequest (
             // Set up taskfile in SrbExtension.
             srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
 
-            SetCommandReg((&srbExtension->TaskFile.Current), command);
-            SetFeaturesReg((&srbExtension->TaskFile.Current), protocol);
+            SetCommandReg((&srbExtension->TaskFile.Current), commandReg);
+            SetFeaturesReg((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocol);
 
-            if (protocol == SECURITY_PROTOCOL_IEEE1667) {
+            SetSectorCount((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);           //low byte of transfer length
+            SetSectorNumber((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2]);          //high byte of transfer length
 
-                SetSectorCount((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[3]);           //low byte of transfer length
-                SetSectorNumber((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.AllocationLength[2]);          //high byte of transfer length
-
-                SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //SILO_INDEX, high byte of protocol specific
-                SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //FUNCTION_ID, low byte of protocol specific
-
-            } else if ((protocol == TCG_SECURITY_PROTOCOL_ID_0) ||
-                       (protocol == TCG_SECURITY_PROTOCOL_ID_1) ||
-                       (protocol == TCG_SECURITY_PROTOCOL_ID_2)) {
-
-                // dataLength is number of 512-byte data units
-                // and has to fit in bSectorCountReg (UCHAR)
-                if (dataLength > 0xFF) {
-                    Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-                } else {
-
-                    SetSectorCount((&srbExtension->TaskFile.Current), (UCHAR)dataLength); //Number of 512-byte data units
-
-                    if ((protocol == TCG_SECURITY_PROTOCOL_ID_1) ||
-                        (protocol == TCG_SECURITY_PROTOCOL_ID_2)) {
-
-                        SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //high byte of ComID
-                        SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //low byte of ComID
-                    }
-                }
-            }
+            SetCylinderHigh((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[0]);  //SILO_INDEX, high byte of protocol specific
+            SetCylinderLow((&srbExtension->TaskFile.Current), securityCdb->SECURITY_PROTOCOL_IN.SecurityProtocolSpecific[1]);   //FUNCTION_ID, low byte of protocol specific
 
             SetDeviceReg((&srbExtension->TaskFile.Current), nonDataTrustedReceive);
         }
@@ -4626,8 +4595,6 @@ Return Value:
                   (transferLength >= sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) &&
                   (SrbGetDataTransferLength(Srb) >= sizeof(ERROR_HISTORY_DIRECTORY)));
 
-        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
-
         AhciZeroMemory((PVOID)scsiErrorHistoryDirectory, sizeof(ERROR_HISTORY_DIRECTORY));
 
         if (transferLength < sizeof(CURRENT_DEVICE_INTERNAL_STATUS_LOG)) {
@@ -4660,8 +4627,6 @@ Return Value:
     } else {
 
         PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-
-        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
 
         StorPortEtwEvent8(ChannelExtension->AdapterExtension,
                           (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
@@ -4728,8 +4693,6 @@ Return Value:
         return STOR_STATUS_INVALID_PARAMETER;
     }
 
-    ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
-
     IssueReadLogExtCommand(ChannelExtension,
                            Srb,
                            IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS,
@@ -4783,8 +4746,6 @@ Return Value:
                   (srbDataBufferLength >= transferLength));
 
         NT_ASSERT((transferLength % IDE_GP_LOG_SECTOR_SIZE) == 0);
-
-        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
 
         if (!IsDumpMode(ChannelExtension->AdapterExtension)) {
             AhciZeroMemory((PVOID)scsiCurrentInternalStatusData, srbDataBufferLength);
@@ -4861,8 +4822,6 @@ Return Value:
 Exit:
 
     if (requestFailed) {
-
-        ChannelExtension->DeviceExtension->ReadLogExtPageDataType = (UCHAR)-1;
 
         StorPortEtwEvent8(ChannelExtension->AdapterExtension,
                           (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
@@ -4996,10 +4955,11 @@ Done:
     return status;
 }
 
+
 UCHAR
 AtaMapError(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK Srb,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
     _In_ BOOLEAN FUAcommand
     )
 /*++
@@ -5020,11 +4980,11 @@ Return Value:
 --*/
 
 {
-    BOOLEAN removableMedia;
-    SENSE_DATA senseBuffer = {0};
-    ULONG length = sizeof(SENSE_DATA);
-    PVOID srbSenseBuffer = NULL;
-    UCHAR srbSenseBufferLength = 0;
+    BOOLEAN     removableMedia;
+    SENSE_DATA  senseBuffer = {0};
+    ULONG       length = sizeof(SENSE_DATA);
+    PVOID      srbSenseBuffer = NULL;
+    UCHAR      srbSenseBufferLength = 0;
 
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
 
@@ -5061,12 +5021,6 @@ Return Value:
     if (Srb->SrbStatus != SRB_STATUS_ERROR) {
         // non device errors. Don't care
         ChannelExtension->DeviceExtension[0].IoRecord.SuccessCount++;
-
-        // Update IO success counter for device stuck detection.
-        if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) &&
-            ((ULONG)InterlockedAdd((LONG volatile *)&ChannelExtension->DeviceExtension->IoRecord.SuccessCountSinceLastDeviceReset, 0) != (ULONG)(-1))) {
-            InterlockedIncrement((LONG volatile*)&ChannelExtension->DeviceExtension->IoRecord.SuccessCountSinceLastDeviceReset);
-        }
 
         return Srb->SrbStatus;
     }
@@ -5223,10 +5177,10 @@ Return Value:
         }
     }
 
-    if ((senseBuffer.Valid == 1) && (srbSenseBuffer != NULL)) {
+    if ( (senseBuffer.Valid == 1) && (srbSenseBuffer != NULL) ) {
 
-        if ((srbSenseBufferLength > 0) &&
-            (srbSenseBufferLength < length)) {
+        if ( (srbSenseBufferLength > 0) &&
+             (srbSenseBufferLength < length) ) {
             length = srbSenseBufferLength;
         }
 
@@ -5842,7 +5796,7 @@ IOCTLtoATA(
 
     StorPortEtwEvent2(ChannelExtension->AdapterExtension,
                       (PSTOR_ADDRESS) &(ChannelExtension->DeviceExtension->DeviceAddress),
-                      AhciEtwEventIOCTLtoATA,
+                      AhciEtwEventBuildIO,
                       L"IOCTLtoATA finished",
                       STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                       StorportEtwLevelInformational,
@@ -9702,155 +9656,6 @@ exit:
 
     return status;
 }
-
-BOOLEAN
-AhciIsEventAllowedWithinThrottleLimit(
-    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
-    _In_opt_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ AHCI_ETW_EVENT_ID EventId,
-    _Out_opt_ PULONG ThrottledInstanceCount
-    )
-/*++
-
-Routine Description:
-
-    Check whether specified event is allowed at a given time.
-    The interval and number of events allowed are determined by the ThrottleContext.
-    When this function is called the first time (currentThrottleContext->LastTimeStamp == 0), 
-    set LastTimeStamp to current time and allow the event. 
-    If it has been longer than Interval since LastTimeStamp, reset LastTimeStamp
-    and allow the event.
-    Otherwise, we allow the event only if there have been less than EventsAllowedPerInterval
-    since LastTimeStamp.
-
-    If throttling for the event id is tracked at the channel level (separate ThrottleContext
-    for each channel), the function should be called with a non-null ChannelExtension. 
-    Otherwise, if the event id is tracked at the adapter level (one ThrottleContext for the
-    whole adapter), the function should be called with a null ChannelExtension.
-
-Arguments:
-
-    AdapterExtension
-    ChannelExtension - (Optional) If non-null, throttling is decided on a per-channel basis, so
-                       get the ThrottleContext from ChannelExtension instead of AdapterExtension.
-    EventId
-    ThrottledInstanceCount - Number of events throttled since LastTimeStamp.
-
-Return Value:
-
-    BOOLEAN - Returns whether the event is allowed based on the events allowed per interval.
-
---*/
-{
-    PAHCI_THROTTLE_CONTEXT currentThrottleContext = NULL;
-    PAHCI_THROTTLE_CONTEXT throttleContextArray = NULL;
-    ULONG throttleContextCount = 0;
-    ULONG i = 0;
-    LARGE_INTEGER temp;
-    ULONGLONG currentTime = 0;
-    ULONGLONG timeDifference = 0;
-    BOOLEAN lessEventsThanAllowed;
-
-    //
-    // Check the parameters to see if we should use the throttleContextArray and
-    // throttleContextCount from the AdapterExtension or the ChannelExtension.
-    //
-    if ((AdapterExtension != NULL) && 
-        (ChannelExtension == NULL)) {
-        throttleContextArray = AdapterExtension->ThrottleContextArray;
-        throttleContextCount = AdapterExtension->ThrottleContextCount;
-    } else if ((AdapterExtension != NULL) && 
-               (ChannelExtension != NULL)) {
-        throttleContextArray = ChannelExtension->ThrottleContextArray;
-        throttleContextCount = ChannelExtension->ThrottleContextCount;
-    } else {
-        NT_ASSERT(FALSE);
-        return TRUE;
-    }
-
-    //
-    // Search throttleContextArray for the ThrottleContext that goes with the
-    // current event id.
-    //
-    if (throttleContextArray != NULL) {
-        for (i = 0; i < throttleContextCount; i++) {
-            if (throttleContextArray[i].EventId == EventId) {
-                currentThrottleContext = &throttleContextArray[i];
-                break;
-            }
-        }
-    }
-
-    if (currentThrottleContext == NULL) {
-        //
-        // If there exists no valid context, return TRUE as there are no active throttle settings.
-        //
-        if (ThrottledInstanceCount != NULL) {
-            *ThrottledInstanceCount = 0;
-        }
-        return TRUE;
-    }
-
-
-    //
-    // Now we have found the currentThrottleContext.
-    // Get the time difference since the last interval.
-    //
-    StorPortQuerySystemTime(&temp);
-    currentTime = (ULONGLONG)temp.QuadPart;
-    timeDifference = currentTime - currentThrottleContext->LastTimeStamp;
-
-    lessEventsThanAllowed = currentThrottleContext->EventsSinceLastTimeStamp < 
-                            currentThrottleContext->EventsAllowedPerInterval;
-
-    if ((currentThrottleContext->LastTimeStamp == 0) ||
-        (timeDifference >= currentThrottleContext->Interval)) {
-        //
-        // It has been longer than Interval since LastTimeStamp.
-        // Start a new interval, reset the counter, and return TRUE. 
-        //
-        if (ThrottledInstanceCount != NULL) {
-            if (lessEventsThanAllowed) {
-                //
-                // Nothing was throttled during this interval.
-                //
-                *ThrottledInstanceCount = 0;
-            } else {
-                *ThrottledInstanceCount = currentThrottleContext->EventsSinceLastTimeStamp - 
-                                          currentThrottleContext->EventsAllowedPerInterval;
-            }
-        }
-
-        currentThrottleContext->LastTimeStamp = currentTime;
-        currentThrottleContext->EventsSinceLastTimeStamp = 1; // Starts at 1 since this will be the first event.
-        return TRUE;
-    } else {
-        //
-        // It has been less time than Interval since LastTimeStamp.
-        // Update the counter and return TRUE only if we are allowed
-        // to log more events during this interval.
-        //
-        currentThrottleContext->EventsSinceLastTimeStamp++;
-
-        if (ThrottledInstanceCount != NULL) {
-            if (lessEventsThanAllowed) {
-                //
-                // Nothing has been throttled this interval so far.
-                //
-                *ThrottledInstanceCount = 0;
-            } else {
-                //
-                // Note that this includes the event we're throttling now.
-                //
-                *ThrottledInstanceCount = currentThrottleContext->EventsSinceLastTimeStamp - 
-                                          currentThrottleContext->EventsAllowedPerInterval;
-            }
-        }
-
-        return lessEventsThanAllowed;
-    }
-}
-
 
 #if _MSC_VER >= 1200
 #pragma warning(pop)

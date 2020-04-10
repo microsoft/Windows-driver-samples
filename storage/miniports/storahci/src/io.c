@@ -1204,15 +1204,6 @@ Note: This routine can be called even the Port is stopped.
         return TRUE;
     }
 
-    // 1.2 Fail command with status no device if fast fail enabled and device is stuck, except for internal command.
-    if (FastFailCommand(ChannelExtension) &&
-        (!IsMiniportInternalSrb(ChannelExtension, Srb))) {
-        Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
-        MarkSrbToBeCompleted(Srb);
-        AhciCompleteRequest(ChannelExtension, Srb, AtDIRQL);
-        return TRUE;
-    }
-
     // 2. central place for command special handling. this part cannot be put in command translation layer, as there might be internal command also needs special handling.
     // 2.1 central place for special handling of Enable/Disable WRITE CACHE, update persistent settings command.
     if ((srbExtension->AtaFunction == ATA_FUNCTION_ATA_COMMAND) &&
@@ -1740,17 +1731,12 @@ AhciPortSrbCompletionDpcRoutine(
                 }
 
                 if (!IsMiniportInternalSrb(channelExtension, srb)) {
-                    ULONG throttleCount = 0;
-                    if ((SRB_STATUS(srb->SrbStatus) != SRB_STATUS_SUCCESS) &&
-                        AhciIsEventAllowedWithinThrottleLimit(channelExtension->AdapterExtension, 
-                                                              channelExtension, 
-                                                              AhciEtwEventUnitFinishedIoError,
-                                                              &throttleCount)) {
+                    if (SRB_STATUS(srb->SrbStatus) != SRB_STATUS_SUCCESS) {
                         ATA_COMMAND_ERROR dataBuffer;
-                        FillAtaCommandErrorStruct(&dataBuffer, srb, channelExtension, throttleCount);
+                        FillAtaCommandErrorStruct(&dataBuffer, srb, channelExtension);
                         StorPortEtwLogError(channelExtension->AdapterExtension,
                                             (PSTOR_ADDRESS) &(channelExtension->DeviceExtension->DeviceAddress),
-                                            AhciEtwEventUnitFinishedIoError,
+                                            AhciEtwEventBuildIO,
                                             L"Finished I/O with error",
                                             dataBuffer.Size,
                                             &dataBuffer);

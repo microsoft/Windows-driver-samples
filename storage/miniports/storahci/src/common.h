@@ -104,7 +104,7 @@ Revision History:
 #define CLRMASK(x, mask)     ((x) &= ~(mask));
 #define SETMASK(x, mask)     ((x) |=  (mask));
 
-typedef enum _AHCI_ETW_EVENT_ID {
+typedef enum _AHCI_ETW_EVENT_IDS {
     AhciEtwEventSystemPowerHint = 0,
     AhciEtwEventUnitHybridGetInfo = 6,
     AhciEtwEventUnitHybridCachingMediumEnable = 7,
@@ -126,49 +126,10 @@ typedef enum _AHCI_ETW_EVENT_ID {
     AhciEtwEventUnitGetInternalStatusDataComplete = 23,
     AhciEtwEventBuildIO = 24,
     AhciEtwEventStartIO = 25,
-    AhciEtwEventUnitHandleInterrupt = 26,
-    AhciEtwEventPortResetPowerUp = 27,
-    AhciEtwEventIOCompletion = 28,
-    AhciEtwEventUnitIoFailureStatistics = 29,
-    AhciEtwEventUnitStartFailure = 30,
-    AhciEtwEventPortResetBusChange = 31,
-    AhciEtwEventPortResetIOTimeoutByDevice = 32,
-    AhciEtwEventPortResetIOProbablyStuckInDriver = 33,
-    AhciEtwEventPortResetIOTimeoutDpcLatencyRelated = 34,
-    AhciEtwEventPortResetErrorRecovery = 35,
-    AhciEtwEventPortResetUnknownReason = 36,
-    AhciEtwEventAdapterBuildIoPortNoDevice = 37,
-    AhciEtwEventAdapterStartIoPortNoDevice = 38,
-    AhciEtwEventAdapterStartIoPnp = 39,
-    AhciEtwEventUnitCompletedPnp = 40,
-    AhciEtwEventAdapterGetDumpInfo = 41,
-    AhciEtwEventAdapterFreeDumpInfo = 42,
-    AhciEtwEventUnitDumpPointers = 43,
-    AhciEtwEventUnitFreeDumpPointers = 44,
-    AhciEtwEventShutdown = 45,
-    AhciEtwEventStartIoInvalidRequest = 46,
-    AhciEtwEventUnitHandleInterruptAdapterRemoved = 47,
-    AhciEtwEventUnitPortErrorRecovery = 48,
-    AhciEtwEventFinishedSrbConvertToATACommand = 49,
-    AhciEtwEventIOCTLtoATA = 50,
-    AhciEtwEventAdapterBuildIoAdapterRemoved = 51,
-    AhciEtwEventUnitFinishedIoError = 52,
-    AhciEtwEventUnitSrbConvertToATACommandError = 53,
-    AhciEtwEventUnitStuckSetFastFailFlag = 54,
-    AhciEtwEventIdMax
-} AHCI_ETW_EVENT_ID, *PAHCI_ETW_EVENT_ID;
-
-//
-// Array of ETW Event IDs specific to ChannelExtension that require throttling.
-//
-extern AHCI_ETW_EVENT_ID g_AhciThrottledUnitEtwEventIds[];
-extern ULONG g_AhciThrottledUnitEtwEventIdsCount;
-
-//
-// Array of ETW Event IDs specific to AdapterExtension that require throttling.
-//
-extern AHCI_ETW_EVENT_ID g_AhciThrottledAdapterEtwEventIds[];
-extern ULONG g_AhciThrottledAdapterEtwEventIdsCount;
+    AhciEtwEventHandleInterrupt = 26,
+    AhciEtwEventPortReset = 27,
+    AhciEtwEventIOCompletion = 28
+} AHCI_ETW_EVENT_IDS, *PAHCI_ETW_EVENT_IDS;
 
 //
 // task file register contents
@@ -375,15 +336,6 @@ IsUnknownDevice(
     )
 {
     return (DeviceParameters->AtaDeviceType == DeviceUnknown);
-}
-
-__inline
-BOOLEAN
-IsDeviceNotExist(
-    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
-    )
-{
-    return (DeviceParameters->AtaDeviceType == DeviceNotExist);
 }
 
 __inline
@@ -1095,7 +1047,7 @@ SmartVersion(
     );
 
 BOOLEAN
-FillClippedSGL(
+  FillClippedSGL(
     _In_    PSTOR_SCATTER_GATHER_LIST SourceSgl,
     _Inout_ PSTOR_SCATTER_GATHER_LIST LocalSgl,
     _In_    ULONG BytesLeft,
@@ -1172,17 +1124,6 @@ typedef enum _AHCI_TELEMETRY_EVENT_ID {
 } AHCI_TELEMETRY_EVENT_ID, *PAHCI_TELEMETRY_EVENT_ID;
 
 //
-// AHCI ETW event throttling related.
-//
-BOOLEAN
-AhciIsEventAllowedWithinThrottleLimit(
-    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
-    _In_opt_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ AHCI_ETW_EVENT_ID EventId,
-    _Out_opt_ PULONG ThrottledInstanceCount
-);
-
-//
 // AHCI mark device failure related.
 //
 #define AHCI_BUS_CHANGE_WARNING_THROTTLE_MASK           (0x1 << 0)
@@ -1203,8 +1144,6 @@ typedef enum _AHCI_DEVICE_FAILURE_REASON {
     AhciDeviceFailureTooManyNonQueuedError = 3,
     AhciDeviceFailureDeviceStuck = 4
 } AHCI_DEVICE_FAILURE_REASON, *PAHCI_DEVICE_FAILURE_REASON;
-
-#define AHCI_LOG_IO_FAILURE_STATISTICS_MIN_INTERVAL_IN_MS (50 * 60 * 1000UL) // 50min by default
 
 #if _MSC_VER >= 1200
 #pragma warning(pop)

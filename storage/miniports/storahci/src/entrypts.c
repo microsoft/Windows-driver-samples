@@ -323,16 +323,6 @@ AllocateResourcesForAdapter(
            // Continue if cannot get memory for ExecutionHistory.
            NT_ASSERT(FALSE);
         }
-
-        //
-        // Initialize throttling variables for the adapterExtension.
-        //
-        status = AhciEnableThrottlingAdapter(AdapterExtension);
-
-        if (status != STOR_STATUS_SUCCESS) {
-            NT_ASSERT(FALSE);
-        }
-        
     } else {
         // get channelExtension from UnCachedExtension
         portsChannelExtension = (PCHAR)AdapterExtension->NonCachedExtension + (nonCachedExtensionSize * PortCount);
@@ -340,7 +330,7 @@ AllocateResourcesForAdapter(
 
     AhciZeroMemory((PCHAR)portsChannelExtension, channelExtensionSize * PortCount);
 
-    // assign allocated uncachedExtension into ChannelExtensions
+    // assign allocated uncachedExension into ChannelExtensions
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
         if ( (AdapterExtension->PortImplemented & (1 << i)) != 0 ) {
             PCHAR portsUncachedExtension = (PCHAR)AdapterExtension->NonCachedExtension + nonCachedExtensionSize * j;
@@ -351,20 +341,9 @@ AllocateResourcesForAdapter(
             AdapterExtension->PortExtension[i]->PortNumber = i;
             // set ChannelExtension fields that use NonCachedExtension
             if (!dumpMode) {
-                ULONG status;
-
                 AdapterExtension->PortExtension[i]->CommandList = (PAHCI_COMMAND_HEADER)(portsUncachedExtension);
                 if (portsExecutionHistory != NULL) {
                     AdapterExtension->PortExtension[i]->ExecutionHistory = (PEXECUTION_HISTORY)((PCHAR)portsExecutionHistory + executionHistorySize * j);
-                }
-
-                //
-                // Initialize throttling variables for ChannelExtension
-                //
-                status = AhciEnableThrottlingChannel(AdapterExtension, AdapterExtension->PortExtension[i]);
-
-                if (status != STOR_STATUS_SUCCESS) {
-                    NT_ASSERT(FALSE);
                 }
             } else {
                 //get the starting pointer; align the starting location to 1K.
@@ -383,7 +362,6 @@ AllocateResourcesForAdapter(
             AdapterExtension->PortExtension[i]->DeviceExtension[0].IdentifyDeviceData = (PIDENTIFY_DEVICE_DATA)((PCHAR)AdapterExtension->PortExtension[i]->Sense.SrbExtension + paddedSrbExtensionSize);
             AdapterExtension->PortExtension[i]->DeviceExtension[0].ReadLogExtPageData = (PUSHORT)((PCHAR)AdapterExtension->PortExtension[i]->DeviceExtension[0].IdentifyDeviceData + sizeof(IDENTIFY_DEVICE_DATA));
             AdapterExtension->PortExtension[i]->DeviceExtension[0].InquiryData = (PUCHAR)((PCHAR)AdapterExtension->PortExtension[i]->DeviceExtension[0].ReadLogExtPageData + ATA_BLOCK_SIZE);
-
             //
             j++;
         }
@@ -463,7 +441,6 @@ Note:
     ULONG storStatus = STOR_STATUS_UNSUCCESSFUL;
     PAHCI_ADAPTER_EXTENSION adapterExtension = NULL;
     PAHCI_MEMORY_REGISTERS  abar = NULL;
-    BOOLEAN featureList[StorportFeatureMax] = {0};
     //Used to find the number of channels implemented
     UCHAR                   i = 0;
     ULONG                   piMask = 0;
@@ -495,13 +472,6 @@ Note:
     //adapterExtension->AdapterNumber = ConfigInfo->SlotNumber;
     adapterExtension->SystemIoBusNumber = ConfigInfo->SystemIoBusNumber;
     adapterExtension->SlotNumber = ConfigInfo->SlotNumber;
-
-    // 1.0 Set the feature list
-    featureList[StorportFeatureBusTypeUnitControl] = FALSE;
-    featureList[StorportFeatureFruIdUnitControl] = TRUE;
-    featureList[StorportFeatureFruIdAdapterControl] = FALSE;
-
-    (void)StorPortSetFeatureList(AdapterExtension, StorportFeatureMax, featureList);
 
     //1.1 Get dump mode
     adapterExtension->DumpMode = ConfigInfo->DumpMode;
@@ -783,7 +753,7 @@ Note:
                         return SP_RETURN_ERROR;
                     }
                 }
-                
+
             }
         }
     }
@@ -925,7 +895,7 @@ AhciHwPassiveInitialize (
     BOOLEAN enableD3Cold = FALSE;
     BOOLEAN d3ColdSupported = FALSE;
     BOOLEAN reportF1State = FALSE;
-    ULONG bufferSize = sizeof(STOR_POFX_DEVICE_V3);
+    ULONG bufferSize = sizeof(STOR_POFX_DEVICE_V2);
 
     PAHCI_ADAPTER_EXTENSION adapterExtension = (PAHCI_ADAPTER_EXTENSION)AdapterExtension;
 
@@ -964,10 +934,10 @@ AhciHwPassiveInitialize (
         goto Exit;
     }
 
-    AhciZeroMemory((PCHAR)adapterExtension->PoFxDevice, sizeof(STOR_POFX_DEVICE_V3));
+    AhciZeroMemory((PCHAR)adapterExtension->PoFxDevice, sizeof(STOR_POFX_DEVICE_V2));
 
-    adapterExtension->PoFxDevice->Version = STOR_POFX_DEVICE_VERSION_V3;
-    adapterExtension->PoFxDevice->Size = STOR_POFX_DEVICE_V3_SIZE;
+    adapterExtension->PoFxDevice->Version = STOR_POFX_DEVICE_VERSION_V2;
+    adapterExtension->PoFxDevice->Size = STOR_POFX_DEVICE_V2_SIZE;
     adapterExtension->PoFxDevice->ComponentCount = 1;
 
     if (IsD3ColdAllowed(adapterExtension)) {
@@ -976,7 +946,7 @@ AhciHwPassiveInitialize (
 
     // Indicate miniport opt-in adapter D3 wake support.
     adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_ADAPTER_D3_WAKE;
-
+    
     // Indicate dump miniport can't bring adapter to active
     adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_DUMP_ACTIVE;
 
@@ -999,15 +969,6 @@ AhciHwPassiveInitialize (
         adapterExtension->PoFxDevice->Components[0].FStates[1].TransitionLatency = 1;
         adapterExtension->PoFxDevice->Components[0].FStates[1].ResidencyRequirement = 0;
         adapterExtension->PoFxDevice->Components[0].FStates[1].NominalPower = STOR_POFX_UNKNOWN_POWER;
-    }
-
-    //
-    // Set STOR_POFX_DEVICE_FLAG_NO_D3 flag when adapter does not support D3Cold and
-    // registry flag for storage device D3 is set to false.
-    // We will not register the adapter in this case for DFx power down in storport.
-    //
-    if (adapterExtension->StateFlags.UseAdapterF1InsteadOfD3) {
-        adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_D3;
     }
 
     // registry runtime power management for Adapter
@@ -1170,12 +1131,6 @@ AhciAdapterRemoval (
         AdapterExtension->MessageGroupAffinity = NULL;
     }
 
-    if (AdapterExtension->ThrottleContextArray != NULL) {
-        StorPortFreePool(AdapterExtension, AdapterExtension->ThrottleContextArray);
-        AdapterExtension->ThrottleContextArray = NULL;
-        AdapterExtension->ThrottleContextCount = 0;
-    }
-
     // release portsChannelExtension. the whole buffer is sliced for Ports, only need to free the first ChannelExtension.
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
         if (AdapterExtension->PortExtension[i] != NULL) {
@@ -1214,12 +1169,6 @@ AhciAdapterRemoval (
 
             if (AdapterExtension->PortExtension[i]->ExecutionHistory != NULL) {
                 AdapterExtension->PortExtension[i]->ExecutionHistory = NULL;
-            }
-
-            if (AdapterExtension->PortExtension[i]->ThrottleContextArray != NULL) {
-                StorPortFreePool(AdapterExtension, AdapterExtension->PortExtension[i]->ThrottleContextArray);
-                AdapterExtension->PortExtension[i]->ThrottleContextArray = NULL;
-                AdapterExtension->PortExtension[i]->ThrottleContextCount = 0;
             }
 
             AdapterExtension->PortExtension[i] = NULL;
@@ -1455,7 +1404,6 @@ AhciHwResetBus (
 
     if ( IsPortValid(adapterExtension, PathId) ) {
         AhciInterruptSpinlockAcquire(adapterExtension, MAXULONG, &lockhandle);
-        InterlockedBitTestAndSet((LONG*)&(adapterExtension->PortExtension[PathId]->StateFlags), 23); //DeviceResetTriggeredByUpperLayer is at bit 23.
         status = AhciPortReset(adapterExtension->PortExtension[PathId], TRUE);
         AhciInterruptSpinlockRelease(adapterExtension, MAXULONG, &lockhandle);
         adapterExtension->PortExtension[PathId]->DeviceExtension[0].IoRecord.PortDriverResetCount++;
@@ -1517,31 +1465,20 @@ AhciHwBuildIo (
         ((function == SRB_FUNCTION_IO_CONTROL) && ((srbFlags & SRB_IOCTL_FLAGS_ADAPTER_REQUEST) == 0))) {
 
         if ( !IsPortValid(adapterExtension, pathId) ) {
-            ULONG throttleCount = 0;
             Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
-            if (AhciIsEventAllowedWithinThrottleLimit(adapterExtension, 
-                                                      NULL, 
-                                                      AhciEtwEventAdapterBuildIoPortNoDevice, 
-                                                      &throttleCount)) {
-                StorPortEtwChannelEvent4(adapterExtension,
-                                         NULL,
-                                         StorportEtwEventOperational,
-                                         AhciEtwEventAdapterBuildIoPortNoDevice,
-                                         L"No device",
-                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                         StorportEtwLevelError,
-                                         StorportEtwEventOpcodeInfo,
-                                         Srb,
-                                         L"function",
-                                         function,
-                                         L"srbFlags",
-                                         srbFlags,
-                                         L"SrbStatus",
-                                         Srb->SrbStatus,
-                                         L"ThrottleCount",
-                                         throttleCount);
-            }
-
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     NULL,
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventBuildIO,
+                                     L"No device",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"function",
+                                     function,
+                                     L"srbFlags",
+                                     srbFlags);
             goto exit;
         }
 
@@ -1553,31 +1490,19 @@ AhciHwBuildIo (
         if (IsAdapterRemovable(adapterExtension) &&
             IsAdapterRemoved(adapterExtension)) {
             Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
-            
-            ULONG throttleCount = 0;
-            if (AhciIsEventAllowedWithinThrottleLimit(adapterExtension, 
-                                                      NULL, 
-                                                      AhciEtwEventAdapterBuildIoAdapterRemoved, 
-                                                      &throttleCount)) {
-                StorPortEtwChannelEvent4(adapterExtension,
-                                         NULL,
-                                         StorportEtwEventOperational,
-                                         AhciEtwEventAdapterBuildIoAdapterRemoved,
-                                         L"Adapter removed during BuildIo",
-                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                         StorportEtwLevelError,
-                                         StorportEtwEventOpcodeInfo,
-                                         Srb,
-                                         L"function",
-                                         function,
-                                         L"srbFlags",
-                                         srbFlags,
-                                         L"SrbStatus",
-                                         Srb->SrbStatus,
-                                         L"ThrottleCount",
-                                         throttleCount);
-            }
-
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     (channelExtension != NULL) ? ((PSTOR_ADDRESS) &(channelExtension->DeviceExtension->DeviceAddress)) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventBuildIO,
+                                     L"Adapter removed during BuildIo",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"function",
+                                     function,
+                                     L"srbFlags",
+                                     srbFlags);
             goto exit;
         }
     }
@@ -1679,7 +1604,6 @@ AhciHwStartIo (
     UCHAR pathId = SrbGetPathId(Srb);
     BOOLEAN adapterRequest = FALSE;
     BOOLEAN processIO = FALSE;
-    ULONG throttleCount = 0;
 
     //1 Work on Adapter requests
     switch (function) {
@@ -1703,29 +1627,19 @@ AhciHwStartIo (
                     Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
                 }
 
-                if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) || 
-                    (AhciIsEventAllowedWithinThrottleLimit(adapterExtension, 
-                                                           NULL, 
-                                                           AhciEtwEventAdapterStartIoPnp, 
-                                                           &throttleCount))) {
-                    StorPortEtwChannelEvent4(adapterExtension,
-                                             NULL,
-                                             (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                             AhciEtwEventAdapterStartIoPnp,
-                                             L"Processing PNP",
-                                             STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                             (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
-                                             StorportEtwEventOpcodeInfo,
-                                             Srb,
-                                             L"PnPAction",
-                                             pnpData->PnPAction,
-                                             L"SrbStatus",
-                                             Srb->SrbStatus,
-                                             (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? NULL : L"ThrottleCount",
-                                             (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? 0 : throttleCount,
-                                             NULL,
-                                             0);
-                }
+                StorPortEtwChannelEvent2(adapterExtension,
+                                         NULL,
+                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                         AhciEtwEventStartIO,
+                                         L"Processing PNP",
+                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                         StorportEtwEventOpcodeInfo,
+                                         Srb,
+                                         L"PnPAction",
+                                         pnpData->PnPAction,
+                                         L"SrbStatus",
+                                         Srb->SrbStatus);
 
                 //complete all Adapter PnP request
                 StorPortNotification(RequestComplete, AdapterExtension, Srb);
@@ -1890,7 +1804,7 @@ AhciHwStartIo (
             StorPortEtwChannelEvent2(adapterExtension,
                                      NULL,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventAdapterGetDumpInfo,
+                                     AhciEtwEventStartIO,
                                      L"Completed GET_DUMP_INFO",
                                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
@@ -1923,7 +1837,7 @@ AhciHwStartIo (
             StorPortEtwChannelEvent2(adapterExtension,
                                      NULL,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventAdapterFreeDumpInfo,
+                                     AhciEtwEventStartIO,
                                      L"Completed FREE_DUMP_INFO",
                                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
@@ -1948,36 +1862,31 @@ AhciHwStartIo (
     if ( !IsPortValid(adapterExtension, pathId) ) {
         Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
 
-        if (AhciIsEventAllowedWithinThrottleLimit(adapterExtension, 
-                                                  NULL,
-                                                  AhciEtwEventAdapterStartIoPortNoDevice, 
-                                                  &throttleCount)) {
-            StorPortEtwChannelEvent8(adapterExtension,
-                                     NULL,
-                                     StorportEtwEventOperational,
-                                     AhciEtwEventAdapterStartIoPortNoDevice,
-                                     L"Port has no device",
-                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                     StorportEtwLevelError,
-                                     StorportEtwEventOpcodeInfo,
-                                     Srb,
-                                     L"AdapterNumber",
-                                     adapterExtension->AdapterNumber,
-                                     L"SystemIoBusNumber",
-                                     adapterExtension->SystemIoBusNumber,
-                                     L"SlotNumber",
-                                     adapterExtension->SlotNumber,
-                                     L"AhciBaseAddress",
-                                     adapterExtension->AhciBaseAddress,
-                                     L"PathId",
-                                     pathId,
-                                     L"Function",
-                                     Srb->Function,
-                                     L"SrbStatus",
-                                     Srb->SrbStatus,
-                                     L"ThrottleCount",
-                                     throttleCount);
-        }
+        StorPortEtwChannelEvent8(adapterExtension,
+                                 NULL,
+                                 StorportEtwEventOperational,
+                                 AhciEtwEventStartIO,
+                                 L"Port has no device",
+                                 STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                 StorportEtwLevelError,
+                                 StorportEtwEventOpcodeInfo,
+                                 Srb,
+                                 L"AdapterNumber",
+                                 adapterExtension->AdapterNumber,
+                                 L"SystemIoBusNumber",
+                                 adapterExtension->SystemIoBusNumber,
+                                 L"SlotNumber",
+                                 adapterExtension->SlotNumber,
+                                 L"AhciBaseAddress",
+                                 adapterExtension->AhciBaseAddress,
+                                 L"PathId",
+                                 pathId,
+                                 L"Function",
+                                 Srb->Function,
+                                 L"SrbStatus",
+                                 Srb->SrbStatus,
+                                 NULL,
+                                 0);
 
         StorPortNotification(RequestComplete, AdapterExtension, Srb);
         return TRUE;
@@ -1988,23 +1897,13 @@ AhciHwStartIo (
     PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[pathId];
     PSTOR_ADDRESS storAddress = (PSTOR_ADDRESS)&(channelExtension->DeviceExtension->DeviceAddress);
 
-    //
-    // If TestEventThrottling is enabled, simulate a throttled event that is tracked
-    // at the adapter level and a throttled event that is tracked at the channel level.
-    //
-    if (adapterExtension->RegistryFlags.TestFlags.TestEventThrottling != 0) {
-        AhciSimulateThrottledEtwEvent(adapterExtension, NULL, AhciEtwEventAdapterStartIoPortNoDevice);
-        AhciSimulateThrottledEtwEvent(adapterExtension, channelExtension, AhciEtwEventUnitPortErrorRecovery);
-    }
-
     switch (function) {
         case SRB_FUNCTION_RESET_BUS:    // this one may come from class driver, not port driver. same as AhciHwResetBus
         case SRB_FUNCTION_RESET_DEVICE:
         case SRB_FUNCTION_RESET_LOGICAL_UNIT: {
-
+            
             // these reset requests target to Port
             AhciInterruptSpinlockAcquire(adapterExtension, pathId, &lockhandle);
-            InterlockedBitTestAndSet((LONG*)&(adapterExtension->PortExtension[pathId]->StateFlags), 23); //DeviceResetTriggeredByUpperLayer is at bit 23.
             Srb->SrbStatus = AhciPortReset(adapterExtension->PortExtension[pathId], TRUE) ? SRB_STATUS_SUCCESS : SRB_STATUS_ERROR;
             StorPortNotification(RequestComplete, AdapterExtension, Srb);
             AhciInterruptSpinlockRelease(adapterExtension, pathId, &lockhandle);
@@ -2053,29 +1952,20 @@ AhciHwStartIo (
                 StorPortNotification(RequestComplete, AdapterExtension, Srb);
             }
 
-            if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) ||
-                AhciIsEventAllowedWithinThrottleLimit(adapterExtension, 
-                                                      channelExtension, 
-                                                      AhciEtwEventUnitCompletedPnp, 
-                                                      &throttleCount)) {
-                StorPortEtwChannelEvent4(adapterExtension,
-                                         storAddress,
-                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                         AhciEtwEventUnitCompletedPnp,
-                                         L"Completed PnP request",
-                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
-                                         StorportEtwEventOpcodeInfo,
-                                         Srb,
-                                         L"SrbPnPFlags",
-                                         pnpData->SrbPnPFlags,
-                                         L"PnPAction",
-                                         pnpData->PnPAction,
-                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? NULL : L"ThrottleCount",
-                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? 0 : throttleCount,
-                                         NULL,
-                                         0);
-            }
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     storAddress,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                     AhciEtwEventStartIO,
+                                     L"Completed PnP request",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"SrbPnPFlags",
+                                     pnpData->SrbPnPFlags,
+                                     L"PnPAction",
+                                     pnpData->PnPAction);
+
             break;
         }
 
@@ -2108,7 +1998,7 @@ AhciHwStartIo (
 
             StorPortEtwEvent2(adapterExtension,
                               storAddress,
-                              AhciEtwEventShutdown,
+                              AhciEtwEventStartIO,
                               eventDescription,
                               STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                               StorportEtwLevelInformational,
@@ -2207,7 +2097,7 @@ AhciHwStartIo (
             StorPortEtwChannelEvent2(adapterExtension,
                                      storAddress,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventUnitDumpPointers,
+                                     AhciEtwEventStartIO,
                                      eventDescription,
                                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
@@ -2237,7 +2127,7 @@ AhciHwStartIo (
             StorPortEtwChannelEvent2(adapterExtension,
                                      storAddress,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventUnitFreeDumpPointers,
+                                     AhciEtwEventStartIO,
                                      L"Completed free dump pointers",
                                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                                      (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
@@ -2258,7 +2148,7 @@ AhciHwStartIo (
             
             StorPortEtwEvent2(adapterExtension,
                               storAddress,
-                              AhciEtwEventStartIoInvalidRequest,
+                              AhciEtwEventStartIO,
                               L"Invalid request",
                               STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                               StorportEtwLevelInformational,
@@ -2367,18 +2257,18 @@ Return Values:
 
 --*/
 {
-    AHCI_INTERRUPT_STATUS pxis;
-    AHCI_INTERRUPT_STATUS pxisMask;
-    AHCI_SERIAL_ATA_STATUS ssts;
-    AHCI_SERIAL_ATA_ERROR serr;
-    AHCI_SERIAL_ATA_ERROR serrMask;
-    AHCI_COMMAND cmd;
-    ULONG is;
-    ULONG ci;
-    ULONG sact;
-    ULONG outstanding;
-    ULONG storStatus;
-    ULONGLONG asyncNotifyFlags;
+    AHCI_INTERRUPT_STATUS   pxis;
+    AHCI_INTERRUPT_STATUS   pxisMask;
+    AHCI_SERIAL_ATA_STATUS  ssts;
+    AHCI_SERIAL_ATA_ERROR   serr;
+    AHCI_SERIAL_ATA_ERROR   serrMask;
+    AHCI_COMMAND            cmd;
+    ULONG                   is;
+    ULONG                   ci;
+    ULONG                   sact;
+    ULONG                   outstanding;
+    ULONG                   storStatus;
+    ULONGLONG               asyncNotifyFlags;
 
     if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
         RecordExecutionHistory(ChannelExtension, 0x00000005);     //AhciInterruptHandler Enter
@@ -2392,7 +2282,7 @@ Return Values:
     serr.AsUlong = 0;
 
     pxis.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->IS.AsUlong);
-
+    
     if (pxis.IFS || pxis.HBDS || pxis.HBFS || pxis.TFES || pxis.PCS || pxis.PRCS) {
         serr.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SERR.AsUlong);
     }
@@ -2407,68 +2297,33 @@ Return Values:
         //call the correct error handling based on current hw queue workload type
         sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
 
-        //@@ BEGIN_DDKSPLIT
-        //
-        // Hardware issue work around. Marvell controller may generates unsolicited interrupt on empty port.
-        // It reports value 0xFFFFFFFF for PxIS, PxSSTS, PxSERR, PxSACT and PxCI.
-        // We use (channelExtension->SlotManager.CommandsIssued == 0) && (PxSACT == 0xFFFFFFFF) as error condition.
-        // PxSACT will not be 0xFFFFFFFF in a normal port as slot 0 is reserved for miniport to use; miniport doesn't
-        // issue internal NCQ command.
-        // This could also occur if the controller has been surprise removed.
-        //
-        if ((pxis.AsUlong == MAXULONG) && (serr.AsUlong == MAXULONG) && (sact == MAXULONG)) {
-
-            if ((ChannelExtension->SlotManager.CommandsIssued == 0) &&
-                (ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType == DeviceNotExist)) {
-
-                ssts.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SSTS.AsUlong);
-                ci = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CI);
-
-                ++(ChannelExtension->TotalCountUnsolicitedInterrupt);
-
-                RecordInterruptHistory(ChannelExtension, pxis.AsUlong, ssts.AsUlong, serr.AsUlong, ci, sact, 0x20020005);   //AhciHwInterrupt unsolicited interrupt
-            }
-
-            //
-            // just dismiss the interrupt without doing any error recovery process.
-            //
-            return;
-        }
-        //@@ END_DDKSPLIT
-
         if ((sact == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
             // controller has been surprise removed
-            ULONG throttleCount = 0;
-            if (AhciIsEventAllowedWithinThrottleLimit(ChannelExtension->AdapterExtension, 
-                                                      ChannelExtension, 
-                                                      AhciEtwEventUnitHandleInterruptAdapterRemoved, 
-                                                      &throttleCount)) {
-                StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
-                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                                         StorportEtwEventOperational,
-                                         AhciEtwEventUnitHandleInterruptAdapterRemoved,
-                                         L"Adapter surprise removed",
-                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                         StorportEtwLevelWarning,
-                                         StorportEtwEventOpcodeInfo,
-                                         NULL,
-                                         L"pxis",
-                                         pxis.AsUlong,
-                                         L"ssts",
-                                         ssts.AsUlong,
-                                         L"serr",
-                                         serr.AsUlong,
-                                         L"cmd",
-                                         cmd.AsUlong,
-                                         L"sact",
-                                         sact,
-                                         L"ThrottleCount",
-                                         throttleCount,
-                                         NULL,
-                                         0,
-                                         NULL,
-                                         0);
-            }
+            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelWarning,
+                                     StorportEtwEventOpcodeInfo,
+                                     NULL,
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         } else if (sact != 0) {
             //5.1 NCQ, Handle error processing
@@ -2498,37 +2353,31 @@ Return Values:
         cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
 
         if ((cmd.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
-            ULONG throttleCount = 0;
-            if (AhciIsEventAllowedWithinThrottleLimit(ChannelExtension->AdapterExtension, 
-                                                      ChannelExtension, 
-                                                      AhciEtwEventUnitHandleInterruptAdapterRemoved, 
-                                                      &throttleCount)) {
-                StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
-                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                                         StorportEtwEventOperational,
-                                         AhciEtwEventUnitHandleInterruptAdapterRemoved,
-                                         L"Adapter surprise removed",
-                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                         StorportEtwLevelWarning,
-                                         StorportEtwEventOpcodeInfo,
-                                         NULL,
-                                         L"pxis",
-                                         pxis.AsUlong,
-                                         L"ssts",
-                                         ssts.AsUlong,
-                                         L"serr",
-                                         serr.AsUlong,
-                                         L"cmd",
-                                         cmd.AsUlong,
-                                         L"sact",
-                                         sact,
-                                         L"ThrottleCount",
-                                         throttleCount,
-                                         NULL,
-                                         0,
-                                         NULL,
-                                         0);
-            }
+            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelWarning,
+                                     StorportEtwEventOpcodeInfo,
+                                     NULL,
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         }
 
@@ -2688,41 +2537,36 @@ Return Values:
 
     //3. error process
     if (ErrorRecoveryIsPending(ChannelExtension)) {
-
         // preserve taskfile for using in command completion process
         ChannelExtension->TaskFileData.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->TFD.AsUlong);
 
-        if (IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters) &&
-            AhciIsEventAllowedWithinThrottleLimit(ChannelExtension->AdapterExtension, ChannelExtension, AhciEtwEventUnitHandleInterrupt, NULL)) {
+        if ((ChannelExtension->TaskFileData.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
+            // controller has been surprise removed
             StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
-                                     (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                                     StorportEtwEventHealth,
-                                     AhciEtwEventUnitHandleInterrupt,
-                                     L"Error recovery",
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
                                      STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
                                      StorportEtwLevelWarning,
                                      StorportEtwEventOpcodeInfo,
                                      NULL,
-                                     L"StateFlag",
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     L"StateFlags",
                                      *(ULONGLONG *)&(ChannelExtension->StateFlags),
-                                     L"IS|SSTS",
-                                     (((ULONGLONG)pxis.AsUlong << 32) | (ssts.AsUlong)),
-                                     L"SERR|CMD",
-                                     (((ULONGLONG)serr.AsUlong << 32) | (cmd.AsUlong)),
-                                     L"SACT|TFD",
-                                     (((ULONGLONG)sact << 32) | ChannelExtension->TaskFileData.AsUlong),
-                                     L"NCQSlice|NormalSlice",
-                                     (((ULONGLONG)ChannelExtension->SlotManager.NCQueueSlice << 32) | ChannelExtension->SlotManager.NormalQueueSlice),
-                                     L"SingleIOSlice|CI",
-                                     (((ULONGLONG)ChannelExtension->SlotManager.SingleIoSlice << 32) | ChannelExtension->SlotManager.CommandsIssued),
-                                     L"CTC|NCQIssued",
-                                     (((ULONGLONG)ChannelExtension->SlotManager.CommandsToComplete << 32) | ChannelExtension->SlotManager.NCQueueSliceIssued),
-                                     L"NormalIssued|SingleIssued",
-                                     (((ULONGLONG)ChannelExtension->SlotManager.NormalQueueSliceIssued << 32) | ChannelExtension->SlotManager.SingleIoSliceIssued));
-        }
-
-        if ((ChannelExtension->TaskFileData.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
-            // controller has been surprise removed
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         }
 
@@ -2743,37 +2587,31 @@ Return Values:
 
     if (((ci == MAXULONG) || (sact == MAXULONG)) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
         // controller has been surprise removed
-        ULONG throttleCount = 0;
-        if (AhciIsEventAllowedWithinThrottleLimit(ChannelExtension->AdapterExtension, 
-                                                  ChannelExtension, 
-                                                  AhciEtwEventUnitHandleInterruptAdapterRemoved, 
-                                                  &throttleCount)) {
-            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
-                                     (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                                     StorportEtwEventOperational,
-                                     AhciEtwEventUnitHandleInterruptAdapterRemoved,
-                                     L"Adapter removed: complete cmd",
-                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                     StorportEtwLevelWarning,
-                                     StorportEtwEventOpcodeInfo,
-                                     NULL,
-                                     L"pxis",
-                                     pxis.AsUlong,
-                                     L"ssts",
-                                     ssts.AsUlong,
-                                     L"serr",
-                                     serr.AsUlong,
-                                     L"cmd",
-                                     cmd.AsUlong,
-                                     L"is",
-                                     is,
-                                     L"ci",
-                                     ci,
-                                     L"sact",
-                                     sact,
-                                     L"ThrottleCount",
-                                     throttleCount);
-        }
+        StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                 (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                 StorportEtwEventOperational,
+                                 AhciEtwEventHandleInterrupt,
+                                 L"Adapter removed: complete cmd",
+                                 STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                 StorportEtwLevelWarning,
+                                 StorportEtwEventOpcodeInfo,
+                                 NULL,
+                                 L"pxis",
+                                 pxis.AsUlong,
+                                 L"ssts",
+                                 ssts.AsUlong,
+                                 L"serr",
+                                 serr.AsUlong,
+                                 L"cmd",
+                                 cmd.AsUlong,
+                                 L"is",
+                                 is,
+                                 L"ci",
+                                 ci,
+                                 L"sact",
+                                 sact,
+                                 NULL,
+                                 0);
         return;
     }
 
@@ -2793,9 +2631,6 @@ Return Values:
 
         AhciCompleteIssuedSRBs(ChannelExtension, SRB_STATUS_SUCCESS, TRUE);
     } else {
-
-        ++(ChannelExtension->TotalCountUnsolicitedInterrupt);
-
         // recording execution history for no SRB to be completed
         RecordInterruptHistory(ChannelExtension, pxis.AsUlong, ssts.AsUlong, serr.AsUlong, ci, sact, 0x20010005);   //AhciHwInterrupt No IO completed
     }
@@ -3006,9 +2841,6 @@ Return Value:
             if (ScsiUnitSurpriseRemoval < controlTypeList->MaxControlType) {
                 controlTypeList->SupportedTypeList[ScsiUnitSurpriseRemoval] = TRUE;
             }
-            if (ScsiUnitQueryFruId < controlTypeList->MaxControlType) {
-                controlTypeList->SupportedTypeList[ScsiUnitQueryFruId] = TRUE;
-            }
             status = ScsiUnitControlSuccess;
             break;
         }
@@ -3135,17 +2967,12 @@ Return Value:
 
                         //
                         // If this is a drive with rotational media then enable adaptive D3 idle timeout, else if
-                        // this is a SSD on an AOAC system, and storage D3 opt-in, then set the idle timeout flag
-                        // and provide a minimum unit idle timeout.
+                        // this is a SSD on an AOAC system, set the idle timeout flag and provide a minimum unit idle timeout.
                         //
                         if (DeviceIncursSeekPenalty(channelExtension)) {
                             channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_ADAPTIVE_D3_IDLE_TIMEOUT;
-                        } else if (IsReceivingSystemPowerHints(adapterExtension) &&
-                                   DeviceIncursNoSeekPenalty(channelExtension) &&
-                                   adapterExtension->RegistryFlags.D3ColdInLowestSystemPower) {
-
+                        } else if (IsReceivingSystemPowerHints(adapterExtension) && DeviceIncursNoSeekPenalty(channelExtension)) {
                             channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_IDLE_TIMEOUT;
-                            channelExtension->PoFxDevice->UnitMinIdleTimeoutInMS = channelExtension->RegistryFlags.DeviceIoCoalescingIdleTimeoutInMS;
                         }
 
                         component->Version = STOR_POFX_COMPONENT_VERSION_V2;
@@ -3353,37 +3180,6 @@ Return Value:
                                                   NULL,
                                                   0
                                                   );
-            }
-
-            break;
-        }
-
-        //
-        // ScsiUnitQueryFruId is called by Storport in response to IOCTL_STORAGE_QUERY_PROPERTY - StorageFruIdProperty
-        //
-        case ScsiUnitQueryFruId: {
-            PSTOR_FRU_ID_DESCRIPTION fruIdDescription = (PSTOR_FRU_ID_DESCRIPTION)Parameters;
-            PSTOR_ADDR_BTL8 storAddrBtl8 = (PSTOR_ADDR_BTL8)fruIdDescription->Address;
-            PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
-            PATA_DEVICE_PARAMETERS deviceParameters = &channelExtension->DeviceExtension->DeviceParameters;
-
-            if (IsPortValid(adapterExtension, storAddrBtl8->Path)) {
-
-                status = ScsiUnitControlUnsuccessful;
-
-                if ((fruIdDescription != NULL) &&
-                    (fruIdDescription->Size >= sizeof(STOR_FRU_ID_DESCRIPTION)) &&
-                    (sizeof(deviceParameters->SerialNumber) <= STOR_FRU_ID_MAX_LENGTH)) {
-
-                    AhciZeroMemory((PCHAR)fruIdDescription, sizeof(STOR_FRU_ID_DESCRIPTION));
-
-                    fruIdDescription->Version = STOR_FRU_ID_DESCRIPTION_STRUCTURE_VERSION_1;
-                    fruIdDescription->Size = sizeof(STOR_FRU_ID_DESCRIPTION);
-
-                    StorPortCopyMemory(fruIdDescription->FruId, deviceParameters->SerialNumber, sizeof(deviceParameters->SerialNumber));
-
-                    status = ScsiUnitControlSuccess;
-                }
             }
 
             break;
