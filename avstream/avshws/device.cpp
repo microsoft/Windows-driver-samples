@@ -57,7 +57,7 @@ operator new[](
     ULONG           tag
 )
 {
-    return ExAllocatePoolWZero(poolType, iSize, tag);
+    return ExAllocatePoolZero(poolType, iSize, tag);
 }
 
 /*++
