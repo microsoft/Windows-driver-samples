@@ -44,7 +44,7 @@ Return Value:
 
 --*/
 {
-    return ExAllocatePool2(POOL_FLAG_NON_PAGED, ByteSize, '+brs');
+    return ExAllocatePoolZero(NonPagedPoolNx, ByteSize, '+brs');
 }
 
 

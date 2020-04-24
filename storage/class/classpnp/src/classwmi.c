@@ -1175,7 +1175,7 @@ ClassWmiFireEvent(
 
     sizeNeeded = sizeof(WNODE_SINGLE_INSTANCE) + EventDataSize;
 
-    event = ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeNeeded, CLASS_TAG_WMI);
+    event = ExAllocatePoolZero(NonPagedPoolNx, sizeNeeded, CLASS_TAG_WMI);
     if (event != NULL)
     {
         event->WnodeHeader.Guid = *Guid;

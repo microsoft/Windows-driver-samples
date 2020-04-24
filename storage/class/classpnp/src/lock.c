@@ -472,9 +472,9 @@ RemoveTrackingAllocateRoutine(
 {
     UNREFERENCED_PARAMETER(Table);
 
-    return ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                           ByteSize, 
-                           CLASS_TAG_LOCK_TRACKING);
+    return ExAllocatePoolZero(NonPagedPoolNx, 
+                              ByteSize, 
+                              CLASS_TAG_LOCK_TRACKING);
 }
 
 VOID
@@ -499,9 +499,9 @@ ClasspInitializeRemoveTracking(
         KeInitializeSpinLock(&commonExtension->RemoveTrackingSpinlock);
 
         commonExtension->RemoveTrackingList = 
-            ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                            sizeof(RTL_GENERIC_TABLE), 
-                            CLASS_TAG_LOCK_TRACKING);
+            ExAllocatePoolZero(NonPagedPoolNx, 
+                               sizeof(RTL_GENERIC_TABLE), 
+                               CLASS_TAG_LOCK_TRACKING);
 
         if (commonExtension->RemoveTrackingList != NULL)
         {

@@ -1296,9 +1296,9 @@ NTSTATUS ClasspWriteCacheProperty(
         status = STATUS_SUCCESS;
     }
 
-    modeData = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                               MODE_PAGE_DATA_SIZE,
-                               CLASS_TAG_MODE_DATA);
+    modeData = ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                  MODE_PAGE_DATA_SIZE,
+                                  CLASS_TAG_MODE_DATA);
 
     if (modeData == NULL) {
         TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_IOCTL, "ClasspWriteCacheProperty: Unable to allocate mode data buffer\n"));
@@ -1598,14 +1598,14 @@ ClassReadCapacity16 (
     //
     allocationBufferLength = ALIGN_UP_BY(allocationBufferLength, KeGetRecommendedSharedDataAlignment());
     dataBuffer = (PREAD_CAPACITY16_DATA)
-                 ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                                 allocationBufferLength, 
-                                 '4CcS');
+                 ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                    allocationBufferLength, 
+                                    '4CcS');
 #else
     dataBuffer = (PREAD_CAPACITY16_DATA)
-                 ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                 bufferLength, 
-                                 '4CcS');
+                 ExAllocatePoolZero(NonPagedPoolNx, 
+                                    bufferLength, 
+                                    '4CcS');
 #endif
 
     if (dataBuffer == NULL) {
@@ -2101,15 +2101,15 @@ Return Value:
     //
     allocationBufferLength = ALIGN_UP_BY(allocationBufferLength, KeGetRecommendedSharedDataAlignment());
     dataBuffer = (PVPD_BLOCK_DEVICE_CHARACTERISTICS_PAGE)
-                 ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                                 allocationBufferLength,
-                                 '5CcS');
+                 ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                    allocationBufferLength,
+                                    '5CcS');
 #else
 
     dataBuffer = (PVPD_BLOCK_DEVICE_CHARACTERISTICS_PAGE)
-                 ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                 bufferLength,
-                                 '5CcS');
+                 ExAllocatePoolZero(NonPagedPoolNx,
+                                    bufferLength,
+                                    '5CcS');
 #endif
     if (dataBuffer == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2385,13 +2385,13 @@ NTSTATUS ClasspDeviceGetLBProvisioningVPDPage(
         //
         //
         allocationBufferLength = ALIGN_UP_BY(allocationBufferLength, KeGetRecommendedSharedDataAlignment());
-        dataBuffer = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                                     allocationBufferLength,
-                                     '0CcS');
+        dataBuffer = ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                        allocationBufferLength,
+                                        '0CcS');
 #else
-        dataBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                     bufferLength,
-                                     '0CcS');
+        dataBuffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                        bufferLength,
+                                        '0CcS');
 #endif
         if (dataBuffer == NULL) {
             // return without updating FdoExtension->FunctionSupportInfo->LBProvisioningData.CommandStatus
@@ -2561,13 +2561,13 @@ NTSTATUS ClasspDeviceGetBlockLimitsVPDPage(
         // based platforms. We are taking the conservative approach here.
         //
         allocationBufferLength = ALIGN_UP_BY(allocationBufferLength, KeGetRecommendedSharedDataAlignment());
-        dataBuffer = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                                     allocationBufferLength, 
-                                     '0CcS');
+        dataBuffer = ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                        allocationBufferLength, 
+                                        '0CcS');
 #else
-        dataBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                     bufferLength, 
-                                     '0CcS');
+        dataBuffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                        bufferLength, 
+                                        '0CcS');
 #endif
         if (dataBuffer == NULL)
         {
@@ -3310,14 +3310,14 @@ Return Value:
     //
     bufferLength = ALIGN_UP_BY(bufferLength,KeGetRecommendedSharedDataAlignment());
     buffer = (PUNMAP_LIST_HEADER)
-             ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                             bufferLength, 
-                             CLASS_TAG_LB_PROVISIONING);
+             ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                bufferLength, 
+                                CLASS_TAG_LB_PROVISIONING);
 #else
     buffer = (PUNMAP_LIST_HEADER)
-             ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                             bufferLength, 
-                             CLASS_TAG_LB_PROVISIONING);
+             ExAllocatePoolZero(NonPagedPoolNx, 
+                                bufferLength, 
+                                CLASS_TAG_LB_PROVISIONING);
 #endif
 
     if (buffer == NULL) {
@@ -4382,14 +4382,14 @@ Return Value:
     //
     lbaStatusSize = ALIGN_UP_BY(lbaStatusSize,KeGetRecommendedSharedDataAlignment());
     lbaStatusListHeader = (PLBA_STATUS_LIST_HEADER)
-                          ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                                          lbaStatusSize, 
-                                          CLASS_TAG_LB_PROVISIONING);
+                          ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                             lbaStatusSize, 
+                                             CLASS_TAG_LB_PROVISIONING);
 #else
     lbaStatusListHeader = (PLBA_STATUS_LIST_HEADER)
-                          ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                          lbaStatusSize, 
-                                          CLASS_TAG_LB_PROVISIONING);
+                          ExAllocatePoolZero(NonPagedPoolNx, 
+                                             lbaStatusSize, 
+                                             CLASS_TAG_LB_PROVISIONING);
 #endif
 
     if (lbaStatusListHeader == NULL)
@@ -5047,14 +5047,14 @@ Return Value:
     //
     logPageSize = ALIGN_UP_BY(logPageSize, KeGetRecommendedSharedDataAlignment());
     logPage = (PLOG_PAGE_LOGICAL_BLOCK_PROVISIONING)
-              ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED), 
-                              logPageSize,  
-                              CLASS_TAG_LB_PROVISIONING);
+              ExAllocatePoolZero(NonPagedPoolNxCacheAligned, 
+                                 logPageSize,  
+                                 CLASS_TAG_LB_PROVISIONING);
 #else
     logPage = (PLOG_PAGE_LOGICAL_BLOCK_PROVISIONING)
-              ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                              logPageSize,  
-                              CLASS_TAG_LB_PROVISIONING);
+              ExAllocatePoolZero(NonPagedPoolNx, 
+                                 logPageSize,  
+                                 CLASS_TAG_LB_PROVISIONING);
 #endif
     if (logPage != NULL)
     {
@@ -5186,9 +5186,9 @@ Arguments:
         srbSize = sizeof(SCSI_REQUEST_BLOCK);
     }
 
-    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                          srbSize,
-                          'ACcS');
+    srb = ExAllocatePoolZero(NonPagedPoolNx,
+                             srbSize,
+                             'ACcS');
     if (srb != NULL) {
 
         //
@@ -6066,9 +6066,9 @@ Arguments:
     }
 
     if (SenseBufferSize) {
-        senseData = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                    SenseBufferSize, 
-                                    CLASSPNP_POOL_TAG_LOG_MESSAGE);
+        senseData = ExAllocatePoolZero(NonPagedPoolNx, 
+                                       SenseBufferSize, 
+                                       CLASSPNP_POOL_TAG_LOG_MESSAGE);
         if (senseData) {
             senseBufferSize = SenseBufferSize;
         }
@@ -6093,9 +6093,9 @@ Arguments:
             PIO_RETRIED_LOG_MESSAGE_CONTEXT ioLogMessageContext = NULL;
 
             ioLogMessageContext = 
-                ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                sizeof(IO_RETRIED_LOG_MESSAGE_CONTEXT),
-                                CLASSPNP_POOL_TAG_LOG_MESSAGE);
+                ExAllocatePoolZero(NonPagedPoolNx,
+                                   sizeof(IO_RETRIED_LOG_MESSAGE_CONTEXT),
+                                   CLASSPNP_POOL_TAG_LOG_MESSAGE);
 
             if (!ioLogMessageContext) {
                 goto __ClasspQueueLogIOEventWithContextWorker_ExitWithMessage;
@@ -7782,9 +7782,9 @@ Return Value:
     //
     // Allocate the buffer.
     //
-    buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                             actualLength, 
-                             CLASSPNP_POOL_TAG_TOKEN_OPERATION);
+    buffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                actualLength, 
+                                CLASSPNP_POOL_TAG_TOKEN_OPERATION);
     if (!buffer) {
 
         TracePrint((TRACE_LEVEL_ERROR,
@@ -7967,9 +7967,9 @@ Return Value:
     PMODE_CONTROL_PAGE pageData = NULL;
     ULONG size = 0;
 
-    modeData = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                               MODE_PAGE_DATA_SIZE,
-                               CLASS_TAG_MODE_DATA);
+    modeData = ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                  MODE_PAGE_DATA_SIZE,
+                                  CLASS_TAG_MODE_DATA);
 
     if (modeData == NULL) {
         TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_SCSI, "ClasspZeroQERR: Unable to allocate mode data buffer\n"));
@@ -8216,9 +8216,9 @@ ClasspGetHwFirmwareInfo(
     //
 retry:
 
-    firmwareInfo = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                   dataLength, 
-                                   CLASSPNP_POOL_TAG_FIRMWARE);
+    firmwareInfo = ExAllocatePoolZero(NonPagedPoolNx, 
+                                      dataLength, 
+                                      CLASSPNP_POOL_TAG_FIRMWARE);
 
     if (firmwareInfo == NULL) {
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_INIT, "ClasspGetHwFirmwareInfo: cannot allocate memory to hold data. \n"));
@@ -8729,9 +8729,9 @@ ClassDeviceHwFirmwareDownloadProcess(
         lockHeld = FALSE;
 
 #pragma prefast(suppress:6014, "The allocated memory that firmwareImageBuffer points to will be freed in ClassHwFirmwareDownloadComplete().")
-        firmwareImageBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                              bufferSize, 
-                                              CLASSPNP_POOL_TAG_FIRMWARE);
+        firmwareImageBuffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                                 bufferSize, 
+                                                 CLASSPNP_POOL_TAG_FIRMWARE);
 
         if (firmwareImageBuffer == NULL) {
             status = STATUS_INSUFFICIENT_RESOURCES;

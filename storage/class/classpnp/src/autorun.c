@@ -210,9 +210,9 @@ ClassSendNotification(
         return;
     }
 
-    notification = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                   requiredSize,
-                                   'oNcS');
+    notification = ExAllocatePoolZero(NonPagedPoolNx,
+                                      requiredSize,
+                                      'oNcS');
 
     //
     // if none allocated, exit
@@ -1837,9 +1837,9 @@ ClasspInitializePolling(
         return STATUS_SUCCESS;
     }
 
-    info = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                           sizeof(MEDIA_CHANGE_DETECTION_INFO),
-                           CLASS_TAG_MEDIA_CHANGE_DETECTION);
+    info = ExAllocatePoolZero(NonPagedPoolNx,
+                              sizeof(MEDIA_CHANGE_DETECTION_INFO),
+                              CLASS_TAG_MEDIA_CHANGE_DETECTION);
 
     if (info != NULL) {
         FdoExtension->KernelModeMcnContext.FileObject      = (PVOID)-1;
@@ -1859,8 +1859,8 @@ ClasspInitializePolling(
             PVOID buffer;
             BOOLEAN GesnSupported = FALSE;
 
-            buffer = ExAllocatePool2(
-                         (POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
+            buffer = ExAllocatePoolZero(
+                         NonPagedPoolNxCacheAligned,
                          SENSE_BUFFER_SIZE_EX,
                          CLASS_TAG_MEDIA_CHANGE_DETECTION);
 
@@ -2029,8 +2029,8 @@ ClasspInitializeGesn(
     //
 
     if (Info->Gesn.Buffer == NULL) {
-        Info->Gesn.Buffer = ExAllocatePool2(
-                                (POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
+        Info->Gesn.Buffer = ExAllocatePoolZero(
+                                NonPagedPoolNxCacheAligned,
                                 GESN_BUFFER_SIZE,
                                 '??cS');
     }
@@ -2814,9 +2814,9 @@ ClasspIsMediaChangeDisabledDueToHardwareLimitation(
 
         deviceString.Length = (USHORT)( length );
         deviceString.MaximumLength = deviceString.Length + 1;
-        deviceString.Buffer = (PCHAR)ExAllocatePool2( POOL_FLAG_NON_PAGED,
-                                                      deviceString.MaximumLength,
-                                                      CLASS_TAG_AUTORUN_DISABLE );
+        deviceString.Buffer = (PCHAR)ExAllocatePoolZero( NonPagedPoolNx,
+                                                         deviceString.MaximumLength,
+                                                         CLASS_TAG_AUTORUN_DISABLE );
         if (deviceString.Buffer == NULL) {
             TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_MCN,
                         "ClassMediaChangeDisabledForHardware: Unable to alloc "
@@ -4274,9 +4274,9 @@ ClassSetFailurePredictionPoll(
 
         if (FailurePredictionMethod != FailurePredictionNone) {
 
-            info = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                   sizeof(FAILURE_PREDICTION_INFO),
-                                   CLASS_TAG_FAILURE_PREDICT);
+            info = ExAllocatePoolZero(NonPagedPoolNx,
+                                      sizeof(FAILURE_PREDICTION_INFO),
+                                      CLASS_TAG_FAILURE_PREDICT);
 
             if (info == NULL) {
 

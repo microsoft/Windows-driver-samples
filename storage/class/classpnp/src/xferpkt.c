@@ -77,9 +77,9 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
     //
     arraySize = KeQueryHighestNodeNumber() + 1;
     fdoData->FreeTransferPacketsLists =
-        ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                        sizeof(PNL_SLIST_HEADER) * arraySize,
-                        CLASS_TAG_PRIVATE_DATA);
+        ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                           sizeof(PNL_SLIST_HEADER) * arraySize,
+                           CLASS_TAG_PRIVATE_DATA);
 
     if (fdoData->FreeTransferPacketsLists == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -264,9 +264,9 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
                 NT_ASSERT(FALSE);
             }
         } else {
-            fdoData->SrbTemplate = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                                   sizeof(SCSI_REQUEST_BLOCK),
-                                                   '-brs');
+            fdoData->SrbTemplate = ExAllocatePoolZero(NonPagedPoolNx,
+                                                      sizeof(SCSI_REQUEST_BLOCK),
+                                                      '-brs');
             if (fdoData->SrbTemplate == NULL) {
                 status = STATUS_INSUFFICIENT_RESOURCES;
             } else {
@@ -343,9 +343,9 @@ PTRANSFER_PACKET NewTransferPacket(PDEVICE_OBJECT Fdo)
      *  Allocate the actual packet.
      */
     if (NT_SUCCESS(status)) {
-        newPkt = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                 sizeof(TRANSFER_PACKET), 
-                                 'pnPC');
+        newPkt = ExAllocatePoolZero(NonPagedPoolNx, 
+                                    sizeof(TRANSFER_PACKET), 
+                                    'pnPC');
         if (newPkt == NULL) {
             TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_RW, "Failed to allocate transfer packet."));
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -385,9 +385,9 @@ PTRANSFER_PACKET NewTransferPacket(PDEVICE_OBJECT Fdo)
 #endif
             } else {
 #pragma prefast(suppress:6014, "The allocated memory that Pkt->Srb points to will be freed in DestroyTransferPacket().")
-                newPkt->Srb = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                              sizeof(SCSI_REQUEST_BLOCK), 
-                                              '-brs');
+                newPkt->Srb = ExAllocatePoolZero(NonPagedPoolNx, 
+                                                 sizeof(SCSI_REQUEST_BLOCK), 
+                                                 '-brs');
                 if (newPkt->Srb == NULL) {
                     status = STATUS_INSUFFICIENT_RESOURCES;
                 }
@@ -452,9 +452,9 @@ PTRANSFER_PACKET NewTransferPacket(PDEVICE_OBJECT Fdo)
         historyByteCount = sizeof(SRB_HISTORY_ITEM) * fdoData->InterpretSenseInfo->HistoryCount;
         historyByteCount += sizeof(SRB_HISTORY) - sizeof(SRB_HISTORY_ITEM);
 
-        newPkt->RetryHistory = (PSRB_HISTORY)ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                                             historyByteCount, 
-                                                             'hrPC');
+        newPkt->RetryHistory = (PSRB_HISTORY)ExAllocatePoolZero(NonPagedPoolNx, 
+                                                                historyByteCount, 
+                                                                'hrPC');
 
         if (newPkt->RetryHistory == NULL) {
             TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_RW, "Failed to allocate MDL for transfer packet."));

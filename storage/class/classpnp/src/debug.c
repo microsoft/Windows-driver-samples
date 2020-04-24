@@ -165,9 +165,9 @@ Revision History:
                                    "ClassDebugPrint: Allocating %x bytes for "
                                    "classdebugprint buffer\n", (ULONG)bufferSize);
                         ClasspnpGlobals.Index = (ULONG)-1;
-                        ClasspnpGlobals.Buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                                                 bufferSize, 
-                                                                 'bDcS');
+                        ClasspnpGlobals.Buffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                                                    bufferSize, 
+                                                                    'bDcS');
                         DbgPrintEx(DPFLTR_CLASSPNP_ID, DPFLTR_ERROR_LEVEL,
                                    "ClassDebugPrint: Allocated buffer at %p\n",
                                    ClasspnpGlobals.Buffer);

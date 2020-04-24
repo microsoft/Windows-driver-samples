@@ -78,9 +78,9 @@ AllocateDictionaryEntry(
 
     *Entry = NULL;
 
-    header = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                             Size + sizeof(DICTIONARY_HEADER),
-                             Tag);
+    header = ExAllocatePoolZero(NonPagedPoolNx,
+                                Size + sizeof(DICTIONARY_HEADER),
+                                Tag);
 
     if(header == NULL) {
         return STATUS_INSUFFICIENT_RESOURCES;

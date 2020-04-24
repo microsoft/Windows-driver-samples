@@ -222,6 +222,11 @@ ClassInitialize(
     PAGED_CODE();
 
     //
+    // Must be called before calling pool allocation functions.
+    //
+    ExInitializeDriverRuntime(0);
+
+    //
     // Initialize the security cookie if needed.
     //
     if (InitSecurityCookie == FALSE) {
@@ -348,9 +353,9 @@ ClassInitialize(
         driverExtension->RegistryPath.MaximumLength = RegistryPath->MaximumLength;
 
         driverExtension->RegistryPath.Buffer =
-            ExAllocatePool2(POOL_FLAG_PAGED,
-                            RegistryPath->MaximumLength,
-                            '1CcS');
+            ExAllocatePoolZero(PagedPool,
+                               RegistryPath->MaximumLength,
+                               '1CcS');
 
         if(driverExtension->RegistryPath.Buffer == NULL) {
 
@@ -557,9 +562,9 @@ ClassInitializeEx(
         }
         else
         {
-            info = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                   sizeof(CLASS_WORKING_SET),
-                                   CLASS_TAG_WORKING_SET);
+            info = ExAllocatePoolZero(NonPagedPoolNx,
+                                      sizeof(CLASS_WORKING_SET),
+                                      CLASS_TAG_WORKING_SET);
             if (info == NULL)
             {
                 status = STATUS_INSUFFICIENT_RESOURCES;
@@ -625,10 +630,9 @@ ClassInitializeEx(
         }
         else
         {
-            info = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                         sizeof(CLASS_INTERPRET_SENSE_INFO2),
-                                         CLASS_TAG_SENSE2
-                                         );
+            info = ExAllocatePoolZero(NonPagedPoolNx,
+                                      sizeof(CLASS_INTERPRET_SENSE_INFO2),
+                                      CLASS_TAG_SENSE2);
             if (info == NULL)
             {
                 status = STATUS_INSUFFICIENT_RESOURCES;
@@ -959,9 +963,9 @@ ClassDispatchPnp(
 
                         status = STATUS_INSUFFICIENT_RESOURCES;
 
-                        deviceRelations = ExAllocatePool2(POOL_FLAG_PAGED,
-                                                          sizeof(DEVICE_RELATIONS),
-                                                          '2CcS');
+                        deviceRelations = ExAllocatePoolZero(PagedPool,
+                                                             sizeof(DEVICE_RELATIONS),
+                                                             '2CcS');
 
                         if(deviceRelations != NULL) {
 
@@ -1832,9 +1836,10 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
             //
 
             if (fdoExtension->PrivateFdoData == NULL) {
-                fdoExtension->PrivateFdoData = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                                               sizeof(CLASS_PRIVATE_FDO_DATA),
-                                                               CLASS_TAG_PRIVATE_DATA);
+                fdoExtension->PrivateFdoData = ExAllocatePoolZero(
+                                                   NonPagedPoolNx,
+                                                   sizeof(CLASS_PRIVATE_FDO_DATA),
+                                                   CLASS_TAG_PRIVATE_DATA);
             }
 
             if (fdoExtension->PrivateFdoData == NULL) {
@@ -1851,9 +1856,10 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
             // This structure's memory is managed by classpnp, so it is more extensible.
             //
             if (fdoExtension->AdditionalFdoData == NULL) {
-                fdoExtension->AdditionalFdoData = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                                                  sizeof(ADDITIONAL_FDO_DATA),
-                                                                  CLASSPNP_POOL_TAG_ADDITIONAL_DATA);
+                fdoExtension->AdditionalFdoData = ExAllocatePoolZero(
+                                                      NonPagedPoolNx,
+                                                      sizeof(ADDITIONAL_FDO_DATA),
+                                                      CLASSPNP_POOL_TAG_ADDITIONAL_DATA);
             }
 
             if (fdoExtension->AdditionalFdoData == NULL) {
@@ -1880,9 +1886,10 @@ NTSTATUS ClassPnpStartDevice(IN PDEVICE_OBJECT DeviceObject)
 
             if (fdoExtension->FunctionSupportInfo == NULL) {
                 fdoExtension->FunctionSupportInfo = 
-                    (PCLASS_FUNCTION_SUPPORT_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                                                  sizeof(CLASS_FUNCTION_SUPPORT_INFO),
-                                                                  '3BcS');
+                    (PCLASS_FUNCTION_SUPPORT_INFO)ExAllocatePoolZero(
+                                                      NonPagedPoolNx,
+                                                      sizeof(CLASS_FUNCTION_SUPPORT_INFO),
+                                                      '3BcS');
             }
 
             if (fdoExtension->FunctionSupportInfo == NULL) {
@@ -3045,9 +3052,9 @@ ClassSendStartUnit(
     // Allocate Srb from nonpaged pool.
     //
 
-    context = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                              sizeof(COMPLETION_CONTEXT),
-                              '6CcS');
+    context = ExAllocatePoolZero(NonPagedPoolNx,
+                                 sizeof(COMPLETION_CONTEXT),
+                                 '6CcS');
 
     if (context == NULL) {
 
@@ -4062,9 +4069,9 @@ ClassSendSrbSynchronous(
 
 #endif
 
-    senseInfoBuffer = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                                      senseInfoBufferLength,
-                                      '7CcS');
+    senseInfoBuffer = ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                         senseInfoBufferLength,
+                                         '7CcS');
 
     if (senseInfoBuffer == NULL) {
 
@@ -7437,8 +7444,8 @@ ClassDeviceControl(
                 break;
             }
 
-            valueName = ExAllocatePool2(
-                            POOL_FLAG_PAGED,
+            valueName = ExAllocatePoolZero(
+                            PagedPool,
                             commonExtension->DeviceName.Length + sizeof(WCHAR),
                             '8CcS');
 
@@ -7555,9 +7562,9 @@ ClassDeviceControl(
             sizeNeeded = sizeof(SCSI_REQUEST_BLOCK);
         }
 
-        srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                              sizeNeeded + (sizeof(ULONG_PTR) * 2),
-                              '9CcS');
+        srb = ExAllocatePoolZero(NonPagedPoolNx,
+                                 sizeNeeded + (sizeof(ULONG_PTR) * 2),
+                                 '9CcS');
 
         if (srb == NULL) {
 
@@ -9423,16 +9430,16 @@ ClassQueryTimeOutRegistryValue(
         return 0;
     }
 
-    parameters = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                 sizeof(RTL_QUERY_REGISTRY_TABLE) * 2,
-                                 '1BcS');
+    parameters = ExAllocatePoolZero(NonPagedPoolNx,
+                                    sizeof(RTL_QUERY_REGISTRY_TABLE) * 2,
+                                    '1BcS');
 
     if (!parameters) {
         return 0;
     }
 
     size = registryPath->MaximumLength + sizeof(WCHAR);
-    path = ExAllocatePool2(POOL_FLAG_NON_PAGED, size, '2BcS');
+    path = ExAllocatePoolZero(NonPagedPoolNx, size, '2BcS');
 
     if (!path) {
         FREE_POOL(parameters);
@@ -9640,7 +9647,7 @@ ClassGetDescriptor(
     NT_ASSERT(length >= sizeof(STORAGE_PROPERTY_QUERY));
     length = max(length, sizeof(STORAGE_PROPERTY_QUERY));
 
-    descriptor = ExAllocatePool2(POOL_FLAG_NON_PAGED, length, '4BcS');
+    descriptor = ExAllocatePoolZero(NonPagedPoolNx, length, '4BcS');
 
     if(descriptor == NULL) {
 
@@ -9976,7 +9983,7 @@ ClassRetrieveDeviceRelations(
     relationsSize = (sizeof(DEVICE_RELATIONS) +
                      (count * sizeof(PDEVICE_OBJECT)));
 
-    deviceRelations = ExAllocatePool2(POOL_FLAG_PAGED, relationsSize, '5BcS');
+    deviceRelations = ExAllocatePoolZero(PagedPool, relationsSize, '5BcS');
 
     if (deviceRelations == NULL) {
 
@@ -11042,9 +11049,9 @@ ClassSendDeviceIoControlSynchronous(
             if ((InputBufferLength != 0) || (OutputBufferLength != 0))
             {
                 irp->AssociatedIrp.SystemBuffer = 
-                    ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                                    max(InputBufferLength, OutputBufferLength),
-                                    CLASS_TAG_DEVICE_CONTROL);
+                    ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                       max(InputBufferLength, OutputBufferLength),
+                                       CLASS_TAG_DEVICE_CONTROL);
 
                 if (irp->AssociatedIrp.SystemBuffer == NULL)
                 {
@@ -11530,9 +11537,9 @@ ClasspAllocateReleaseQueueIrp(
     NT_ASSERT(!(FdoExtension->ReleaseQueueInProgress));
 
     FdoExtension->PrivateFdoData->ReleaseQueueIrp =
-        ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                        IoSizeOfIrp(lowerStackSize),
-                        CLASS_TAG_RELEASE_QUEUE);
+        ExAllocatePoolZero(NonPagedPoolNx,
+                           IoSizeOfIrp(lowerStackSize),
+                           CLASS_TAG_RELEASE_QUEUE);
 
     if (FdoExtension->PrivateFdoData->ReleaseQueueIrp == NULL) {
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_PNP,  "ClassPnpStartDevice: Cannot allocate for "
@@ -11577,9 +11584,9 @@ ClasspAllocatePowerProcessIrp(
     stackSize = FdoExtension->CommonExtension.LowerDeviceObject->StackSize + 1;
 
     FdoExtension->PrivateFdoData->PowerProcessIrp = 
-        ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                        IoSizeOfIrp(stackSize),
-                        CLASS_TAG_POWER);
+        ExAllocatePoolZero(NonPagedPoolNx,
+                           IoSizeOfIrp(stackSize),
+                           CLASS_TAG_POWER);
 
     if (FdoExtension->PrivateFdoData->PowerProcessIrp == NULL) {
 
@@ -12811,14 +12818,14 @@ ClasspGetInquiryVpdSupportInfo(
     // based platforms. We are taking the conservative approach here.
     //
     allocationBufferLength = ALIGN_UP_BY(allocationBufferLength , KeGetRecommendedSharedDataAlignment());
-    supportedPages = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                                     allocationBufferLength,
-                                     '3CcS');
+    supportedPages = ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                        allocationBufferLength,
+                                        '3CcS');
 
 #else
-    supportedPages = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                     bufferLength,
-                                     '3CcS');
+    supportedPages = ExAllocatePoolZero(NonPagedPoolNx,
+                                        bufferLength,
+                                        '3CcS');
 #endif
 
     if (supportedPages == NULL) {
@@ -12988,7 +12995,7 @@ ClasspGetLBProvisioningInfo(
             srbSize = sizeof(SCSI_REQUEST_BLOCK);
         }
 
-        srb = ExAllocatePool2(POOL_FLAG_NON_PAGED, srbSize, '0DcS');
+        srb = ExAllocatePoolZero(NonPagedPoolNx, srbSize, '0DcS');
 
         if (srb == NULL) {
             return STATUS_INSUFFICIENT_RESOURCES;
@@ -13144,7 +13151,7 @@ Return Value:
         srbSize = sizeof(SCSI_REQUEST_BLOCK);
     }
 
-    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED, srbSize, CLASSPNP_POOL_TAG_SRB);
+    srb = ExAllocatePoolZero(NonPagedPoolNx, srbSize, CLASSPNP_POOL_TAG_SRB);
 
     if (!srb) {
 
@@ -13163,13 +13170,13 @@ Return Value:
     // based platforms. We are taking the conservative approach here.
     //
     allocationBufferLength = ALIGN_UP_BY(allocationBufferLength, KeGetRecommendedSharedDataAlignment());
-    dataBuffer = ExAllocatePool2((POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED),
-                                 allocationBufferLength, 
-                                 CLASSPNP_POOL_TAG_VPD);
+    dataBuffer = ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                                    allocationBufferLength, 
+                                    CLASSPNP_POOL_TAG_VPD);
 #else
-    dataBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                 bufferLength, 
-                                 CLASSPNP_POOL_TAG_VPD);
+    dataBuffer = ExAllocatePoolZero(NonPagedPoolNx, 
+                                    bufferLength, 
+                                    CLASSPNP_POOL_TAG_VPD);
 #endif
 
     if (!dataBuffer) {
@@ -13799,9 +13806,9 @@ Return Value:
 
     allocationSize = sizeof(OFFLOAD_READ_CONTEXT) + bufferLength;
 
-    offloadReadContext = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                         allocationSize,
-                                         CLASSPNP_POOL_TAG_TOKEN_OPERATION);
+    offloadReadContext = ExAllocatePoolZero(NonPagedPoolNx,
+                                            allocationSize,
+                                            CLASSPNP_POOL_TAG_TOKEN_OPERATION);
 
     if (!offloadReadContext) {
 
@@ -14865,9 +14872,9 @@ Return Value:
 
     allocationSize = sizeof(OFFLOAD_WRITE_CONTEXT) + bufferLength;
 
-    offloadWriteContext = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                          allocationSize,
-                                          CLASSPNP_POOL_TAG_TOKEN_OPERATION);
+    offloadWriteContext = ExAllocatePoolZero(NonPagedPoolNx,
+                                             allocationSize,
+                                             CLASSPNP_POOL_TAG_TOKEN_OPERATION);
 
     if (!offloadWriteContext) {
 
@@ -16316,7 +16323,7 @@ Return Value:
         srbSize = sizeof(SCSI_REQUEST_BLOCK);
     }
 
-    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED, srbSize, '1DcS');
+    srb = ExAllocatePoolZero(NonPagedPoolNx, srbSize, '1DcS');
     if (srb == NULL) {
         return STATUS_INSUFFICIENT_RESOURCES;
     }

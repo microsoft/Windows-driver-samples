@@ -2615,9 +2615,9 @@ Return Value:
         //
         // Put this FDO on the list of devices that are idle power managed.
         //
-        fdoEntry = ExAllocatePool2(POOL_FLAG_NON_PAGED, 
-                                   sizeof(IDLE_POWER_FDO_LIST_ENTRY), 
-                                   CLASS_TAG_POWER);
+        fdoEntry = ExAllocatePoolZero(NonPagedPoolNx, 
+                                      sizeof(IDLE_POWER_FDO_LIST_ENTRY), 
+                                      CLASS_TAG_POWER);
         if (fdoEntry) {
 
             fdoExtension->FunctionSupportInfo->IdlePower.IdlePowerEnabled = TRUE;
