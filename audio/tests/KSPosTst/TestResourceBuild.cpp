@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -314,6 +314,8 @@ HRESULT AddTestResourceForConnector
     UINT32                                      u32MaxPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFramesExtended;
     bool                                        isAVStream = false;
+    bool                                        isBluetooth = false;
+    bool                                        isSideband = false;
 
     // Get connector id
     if (!VERIFY_SUCCEEDED(hr = GetConnectorId(pDevice, eConnectorType, &bHasConnector, &uConnectorId))) {
@@ -353,6 +355,16 @@ HRESULT AddTestResourceForConnector
             return hr;
         }
 
+        // Check if audio endpoint is Bluetooth
+        if (!VERIFY_SUCCEEDED(hr = IsBluetooth(pDevice, &isBluetooth))) {
+            return hr;
+        }
+
+        // Check if audio endpoint is side band
+        if (!VERIFY_SUCCEEDED(hr = IsSideband(pDevice, &isSideband))) {
+            return hr;
+        }
+
         DeviceDescriptor descriptor = { 0 };
         descriptor.pDevice = pDevice;
         descriptor.pwstrAudioEndpointId = deviceId;
@@ -371,10 +383,14 @@ HRESULT AddTestResourceForConnector
         descriptor.u32MinPeriodicityInFrames = u32MinPeriodicityInFrames;
         descriptor.u32MaxPeriodicityInFrames = u32MaxPeriodicityInFrames;
         descriptor.bIsAVStream = isAVStream;
+        descriptor.bIsBluetooth = isBluetooth;
+        descriptor.bIsSideband = isSideband;
 
         if (!VERIFY_SUCCEEDED(hr = CreateTestResource(resourceList, descriptor))) {
             return hr;
         }
+
+        spFormatRecords.Free();
     }
 
     return hr;
