@@ -270,7 +270,7 @@ NTSTATUS MonitorNfNotifyMessage(
    if(streamLength == 0)
       return status;
 
-   stream =  ExAllocatePoolWithTag(NonPagedPool,
+   stream =  ExAllocatePoolZero(NonPagedPool,
                                    streamLength,
                                    TAG_NAME_NOTIFY);
    if (!stream)
