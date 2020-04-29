@@ -191,17 +191,17 @@ extern "C"
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
 */
-#define HLPR_NEW(pPtr, object, tag)                      \
-   for(;                                                 \
-       pPtr == 0;                                        \
-      )                                                  \
-   {                                                     \
-      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx, \
-                                         sizeof(object), \
-                                         tag);           \
-      if(pPtr)                                           \
-         RtlSecureZeroMemory(pPtr,                       \
-                             sizeof(object));            \
+#define HLPR_NEW(pPtr, object, tag)                         \
+   for(;                                                    \
+       pPtr == 0;                                           \
+      )                                                     \
+   {                                                        \
+      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                         sizeof(object),    \
+                                         tag);              \
+      if(pPtr)                                              \
+         RtlSecureZeroMemory(pPtr,                          \
+                             sizeof(object));               \
    }
 
 /**
@@ -214,30 +214,30 @@ extern "C"
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
 */
-#define HLPR_NEW_ARRAY(pPtr, object, count, tag)            \
-   for(;                                                    \
-       pPtr == 0;                                           \
-      )                                                     \
-   {                                                        \
-      size_t SAFE_SIZE = 0;                                 \
-      if(count &&                                           \
-         RtlSizeTMult(sizeof(object),                       \
-                      (size_t)count,                        \
-                      &SAFE_SIZE) == STATUS_SUCCESS &&      \
-         SAFE_SIZE >= (sizeof(object) * count))             \
-      {                                                     \
-         pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx, \
-                                            SAFE_SIZE,      \
-                                            tag);           \
-         if(pPtr)                                           \
-            RtlZeroMemory(pPtr,                             \
-                          SAFE_SIZE);                       \
-      }                                                     \
-      else                                                  \
-      {                                                     \
-         pPtr = 0;                                          \
-         break;                                             \
-      }                                                     \
+#define HLPR_NEW_ARRAY(pPtr, object, count, tag)               \
+   for(;                                                       \
+       pPtr == 0;                                              \
+      )                                                        \
+   {                                                           \
+      size_t SAFE_SIZE = 0;                                    \
+      if(count &&                                              \
+         RtlSizeTMult(sizeof(object),                          \
+                      (size_t)count,                           \
+                      &SAFE_SIZE) == STATUS_SUCCESS &&         \
+         SAFE_SIZE >= (sizeof(object) * count))                \
+      {                                                        \
+         pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                            SAFE_SIZE,         \
+                                            tag);              \
+         if(pPtr)                                              \
+            RtlZeroMemory(pPtr,                                \
+                          SAFE_SIZE);                          \
+      }                                                        \
+      else                                                     \
+      {                                                        \
+         pPtr = 0;                                             \
+         break;                                                \
+      }                                                        \
    }
 
 /**
@@ -262,9 +262,9 @@ extern "C"
                       &SAFE_SIZE) == STATUS_SUCCESS &&             \
          SAFE_SIZE >= (sizeof(object) * count))                    \
       {                                                            \
-         pPtr = (CAST_TYPE*)ExAllocatePoolZero(   NonPagedPoolNx,  \
-                                                  SAFE_SIZE,       \
-                                                  tag);            \
+         pPtr = (CAST_TYPE*)ExAllocatePoolZero(NonPagedPoolNx,     \
+                                               SAFE_SIZE,          \
+                                               tag);               \
          if(pPtr)                                                  \
             RtlZeroMemory(pPtr,                                    \
                           SAFE_SIZE);                              \
@@ -286,14 +286,14 @@ extern "C"
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
 */
-#define HLPR_NEW_POPULATED(pPtr, object, tag)            \
-   for(;                                                 \
-       pPtr == 0;                                        \
-      )                                                  \
-   {                                                     \
-      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx, \
-                                         sizeof(object), \
-                                         tag);           \
+#define HLPR_NEW_POPULATED(pPtr, object, tag)               \
+   for(;                                                    \
+       pPtr == 0;                                           \
+      )                                                     \
+   {                                                        \
+      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                         sizeof(object),    \
+                                         tag);              \
    }
 
 /**
