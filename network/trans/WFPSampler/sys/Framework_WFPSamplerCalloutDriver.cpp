@@ -24,8 +24,6 @@
 #include "Framework_Include.h"                   /// .
 #include "Framework_WFPSamplerCalloutDriver.tmh" /// $(OBJ_PATH)\$(O)\
 
-#define POOL_ZERO_DOWN_LEVEL_SUPPORT
-
 extern "C"
 {
    _IRQL_requires_(PASSIVE_LEVEL)
