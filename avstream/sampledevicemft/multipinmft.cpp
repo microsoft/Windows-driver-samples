@@ -1322,6 +1322,54 @@ done:
 }
 #endif
 
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+//
+// IMFSampleAllocatorControl Inferface function declarations
+//
+
+STDMETHODIMP CMultipinMft::SetDefaultAllocator(
+    _In_ DWORD dwOutputStreamID,
+    _In_ IUnknown *pAllocator
+)
+{
+    CAutoLock Lock(m_critSec);
+    
+    // SetAllocator will be called on the streamId that returns MFSampleAllocatorMode_Default
+    wil::com_ptr_nothrow<COutPin> outPin = GetOutPin(dwOutputStreamID);
+    RETURN_HR_IF_NULL(E_INVALIDARG, outPin);
+    RETURN_HR_IF_NULL(E_INVALIDARG, pAllocator);
+
+    wil::com_ptr_nothrow<IMFVideoSampleAllocator> defaultAllocator;
+    RETURN_IF_FAILED(pAllocator->QueryInterface(&defaultAllocator));
+    outPin->SetAllocator(defaultAllocator.get());
+
+    return S_OK;
+}
+
+STDMETHODIMP CMultipinMft::GetAllocatorUsage(
+    _In_ DWORD dwOutputStreamID,
+    _Out_  DWORD* pdwInputStreamID,
+    _Out_ MFSampleAllocatorUsage* peUsage
+)
+{
+    CAutoLock Lock(m_critSec);
+
+    RETURN_HR_IF_NULL(E_INVALIDARG, peUsage);
+
+    wil::com_ptr_nothrow<COutPin> outPin = GetOutPin(dwOutputStreamID);
+    RETURN_HR_IF_NULL(MF_E_INVALIDSTREAMNUMBER, outPin);
+    *peUsage = outPin->GetSampleAllocatorUsage();
+
+    if (*peUsage == MFSampleAllocatorUsage_DoesNotAllocate)
+    {
+        RETURN_HR_IF_NULL(E_INVALIDARG, pdwInputStreamID);
+        RETURN_IF_FAILED(GetConnectedInpin((ULONG)dwOutputStreamID, *(ULONG*)pdwInputStreamID));
+    }
+
+    return S_OK;
+}
+#endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+
 //
 // HELPER FUNCTIONS
 //
@@ -1513,7 +1561,7 @@ HRESULT CMultipinMft::BridgeInputPinOutputPin(
     HRESULT hr                      = S_OK;
     ULONG   ulIndex                 = 0;
     ULONG   ulAddedMediaTypeCount   = 0;
-    ComPtr<IMFMediaType> pMediaType = nullptr;
+    ComPtr<IMFMediaType> spMediaType;
 
     DMFTCHECKNULL_GOTO( piPin, done, E_INVALIDARG );
     DMFTCHECKNULL_GOTO( poPin, done, E_INVALIDARG );
@@ -1523,19 +1571,17 @@ HRESULT CMultipinMft::BridgeInputPinOutputPin(
     // sure any pin advertised supports at least one media type. The pipeline doesn't
     // like pins with no media types
     //
-    while ( SUCCEEDED( hr = piPin->GetMediaTypeAt( ulIndex++, &pMediaType )))
+    while ( SUCCEEDED( hr = piPin->GetMediaTypeAt( ulIndex++, spMediaType.ReleaseAndGetAddressOf() )))
     {
         GUID subType = GUID_NULL;
-        DMFTCHECKHR_GOTO( pMediaType->GetGUID(MF_MT_SUBTYPE,&subType), done );
+        DMFTCHECKHR_GOTO( spMediaType->GetGUID(MF_MT_SUBTYPE,&subType), done );
         {
-            DMFTCHECKHR_GOTO(hr = poPin->AddMediaType(NULL, pMediaType.Get() ), done );
+            DMFTCHECKHR_GOTO(hr = poPin->AddMediaType(NULL, spMediaType.Get() ), done );
             if (hr == S_OK)
             {
                 ulAddedMediaTypeCount++;
             }
         }
-
-        pMediaType = nullptr;
     }
     if (ulAddedMediaTypeCount == 0)
     {
@@ -1679,7 +1725,7 @@ STDMETHODIMP CMultipinMft::Shutdown(
         CInPin *pInPin = static_cast<CInPin *>(m_InPins[ulIndex]);
 
         // Deref on the connected outpins to break reference loop
-        pInPin->ReleaseConnectedPins();
+        (VOID)pInPin->ShutdownPin();
     }
 #if defined (MF_DEVICEMFT_ALLOW_MFT0_LOAD) && defined (MFT_UNIQUE_METHOD_NAMES)
     for (ULONG ulIndex = 0, ulSize = (ULONG)m_OutPins.size(); ulIndex < ulSize; ulIndex++)

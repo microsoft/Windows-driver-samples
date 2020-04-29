@@ -68,6 +68,9 @@ DriverAddDevice(
     UNREFERENCED_PARAMETER(PhysicalDeviceObject);
     
     PAGED_CODE();
+    
+    // Injected CA defect for C28171
+    PAGED_CODE();
 
     status = IoCreateDevice(DriverObject,                 
                             sizeof(DRIVER_DEVICE_EXTENSION), 

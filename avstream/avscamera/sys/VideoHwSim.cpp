@@ -27,6 +27,7 @@ CVideoHardwareSimulation::CVideoHardwareSimulation(
     _In_    LONG    PinID
 )
     : CHardwareSimulation( Sensor, PinID )
+    , m_Illuminated(FALSE)
 {}
 
 
@@ -50,6 +51,54 @@ EmitMetadata(
 
     if (0 != (pStreamHeader->OptionsFlags & KSSTREAM_HEADER_OPTIONSF_METADATA))
     {
+        PKS_FRAME_INFO          pFrameInfo = (PKS_FRAME_INFO)(pStreamHeader + 1);
+        PKSSTREAM_METADATA_INFO pMetadata = (PKSSTREAM_METADATA_INFO)(pFrameInfo + 1);
+        ULONG                   BytesLeft = pMetadata->BufferSize - pMetadata->UsedSize;
+
+        //  TODO: This metadata should only be exposed on a sensor category preview pin.
+        //        It's possible I should derive a new preview sim to handle this; but for now
+        //        we just populate the IR illumination state on every preview pin.  Hopefully 
+        //        the app is smart enough to realize that this is meaningless if they have not 
+        //        selected an IR mediatype.
+        if (BytesLeft >= sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION))
+        {
+            PKSCAMERA_METADATA_FRAMEILLUMINATION pPreviewIllumination =
+                (PKSCAMERA_METADATA_FRAMEILLUMINATION)(((PBYTE)pMetadata->SystemVa) + pMetadata->UsedSize);
+            RtlZeroMemory(pPreviewIllumination, sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION));
+
+            pPreviewIllumination->Header.MetadataId = (ULONG)MetadataId_FrameIllumination;
+            pPreviewIllumination->Header.Size = sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
+
+            //  Toggle the Illumination state for an IR frame.
+            CExtendedVidProcSetting State;
+            (void)m_Sensor->GetIRTorch(&State);
+
+            if (State.Flags & KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON)
+            {
+                m_Illuminated = TRUE;
+                pPreviewIllumination->Flags = KSCAMERA_METADATA_FRAMEILLUMINATION_FLAG_ON;
+            }
+            else if ((State.Flags & KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALTERNATING_FRAME_ILLUMINATION))
+            {
+                m_Illuminated = !m_Illuminated;
+                if (m_Illuminated)
+                {
+                    pPreviewIllumination->Flags = KSCAMERA_METADATA_FRAMEILLUMINATION_FLAG_ON;
+                }
+            }
+            else
+            {
+                m_Illuminated = FALSE;
+            }
+
+            DBG_TRACE("Frame Illumination: Flags=0x%016llX, State=%s",
+                State.Flags,
+                (pPreviewIllumination->Flags == KSCAMERA_METADATA_FRAMEILLUMINATION_FLAG_ON ? "ON" : "OFF"));
+
+            pMetadata->UsedSize += sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
+            BytesLeft -= sizeof(KSCAMERA_METADATA_FRAMEILLUMINATION);
+        }
+
         CExtendedVidProcSetting FaceDetect;
         m_Sensor->GetFaceDetection(&FaceDetect);
 

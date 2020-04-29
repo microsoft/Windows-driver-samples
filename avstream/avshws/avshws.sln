@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 12.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avshws", "avshws.vcxproj", "{77FA53EC-3637-411C-B708-C8EED64543A4}"
 EndProject
@@ -45,4 +45,3 @@ Global
 		SolutionGuid = {5EBC439F-EC31-448F-B129-434D42485011}
 	EndGlobalSection
 EndGlobal
-

@@ -196,13 +196,35 @@ STDMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *)
         DisableThreadLibraryCalls(hInstance);
 #ifdef MF_WPP
         WPP_INIT_TRACING(L"MultiPinMft");
+
+        //  Hook up WIL tracing to our trace provider.
+        wil::SetResultLoggingCallback(
+            [](const wil::FailureInfo &failure)
+        {
+            wchar_t debugString[2048];
+            if (SUCCEEDED(wil::GetFailureLogString(debugString, ARRAYSIZE(debugString), failure)))
+            {
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_ERROR, L"%S", debugString);
+            }
+            else
+            {
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_ERROR, 
+                    L"File: %s, Line: %u, Error: 0x%08X - %S\n",
+                    failure.pszFile,
+                    failure.uLineNumber,
+                    failure.hr,
+                    failure.pszMessage);
+            }
+        }
+        );
 #endif
     }
     else
     if (dwReason == DLL_PROCESS_DETACH)
     {
 #ifdef MF_WPP
-            WPP_CLEANUP();
+        wil::SetResultLoggingCallback(nullptr);
+        WPP_CLEANUP();
 #endif
     }
     return TRUE;
