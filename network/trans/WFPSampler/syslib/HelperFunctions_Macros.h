@@ -155,7 +155,7 @@ extern "C"
 /**
  @macro="HLPR_DELETE"
  
-   Purpose:  Free memory allocated with ExAllocatePoolWithTag and set the pointer to 0.         <br>
+   Purpose:  Free memory allocated with ExAllocatePoolZero and set the pointer to 0.         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
                                                                                                 <br>
