@@ -258,8 +258,8 @@ MonitorCoAllocFlowContext(
    *flowContextOut = NULL;
 
    flowContext = ExAllocatePoolZero(NonPagedPool,
-                                       sizeof(FLOW_DATA),
-                                       TAG_NAME_CALLOUT);
+                                    sizeof(FLOW_DATA),
+                                    TAG_NAME_CALLOUT);
 
    if (!flowContext)
    {
@@ -272,8 +272,8 @@ MonitorCoAllocFlowContext(
 
 
    flowContext->processPath = ExAllocatePoolZero(NonPagedPool,
-                                                    processPathSize,
-                                                    TAG_NAME_CALLOUT);
+                                                 processPathSize,
+                                                 TAG_NAME_CALLOUT);
    if (!flowContext->processPath)
    {
       status = STATUS_NO_MEMORY;
