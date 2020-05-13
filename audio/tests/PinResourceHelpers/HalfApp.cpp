@@ -12,15 +12,16 @@
 //
 // -------------------------------------------------------------------------------
 
-#include "PreComp.h"
-#include "WaveTestTaef.h"
-#include "HalfApp.h"
-#include "TestResourceHelper.h"
-#include "PropertyHelper.h"
-#include <dithering.h>
-#include <signal-source.h>
-#include <sine-signal-source.h>
-#include <dvmodule.h>
+
+
+
+
+
+
+
+
+
+
 
 HRESULT
 CHalfApp::InitializeEndpoint
@@ -114,6 +115,9 @@ CHalfApp::InitializeEndpoint
     if (!VERIFY_SUCCEEDED(hr = m_pAudioDeviceEndpoint.query_to(&m_pAudioEndpointRT))) {
         return hr;
     }
+    if (!VERIFY_SUCCEEDED(hr = m_pAudioDeviceEndpoint.query_to(&m_pAudioClock))) {
+        return hr;
+    }
 
     return hr;
 }
@@ -134,6 +138,7 @@ CHalfApp::ReleaseEndpoint
     m_pAudioEndpointControl.reset();
     m_pAudioEndpoint.reset();
     m_pAudioEndpointRT.reset();
+    m_pAudioClock.reset();
 
     return hr;
 }
@@ -380,6 +385,7 @@ CHalfApp::GetSecondHalfApp
     UINT32                                      u32MinPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFramesExtended;
+    DeviceDescriptor                            descriptor = { 0 };
 
     if (!VERIFY_SUCCEEDED(hr = GetSupportedFormatRecordsForConnector(m_pDevice.get(), m_uConnectorId, m_ConnectorType, secondMode, m_DataFlow, &cFormatRecords, &spFormatRecords))) {
         return hr;
@@ -393,7 +399,26 @@ CHalfApp::GetSecondHalfApp
         return hr;
     }
 
-    *ppSecondHalfApp = new CHalfApp(m_pDevice.get(), m_pwstrDeviceId.get(), m_pwstrDeviceFriendlyName.get(), m_DataFlow, m_ConnectorType, m_uConnectorId, secondMode, m_cModes, m_pModes, cFormatRecords, spFormatRecords, pPreferredFormat.get(), u32DefaultPeriodicityInFrames, u32FundamentalPeriodicityInFrames, u32MinPeriodicityInFrames, u32MaxPeriodicityInFrames);
+    descriptor.pDevice = m_pDevice.get();
+    descriptor.pwstrAudioEndpointId = m_pwstrDeviceId.get();
+    descriptor.pwstrAudioEndpointFriendlyName = m_pwstrDeviceFriendlyName.get();
+    descriptor.dataFlow = m_DataFlow;
+    descriptor.eConnectorType = m_ConnectorType;
+    descriptor.uConnectorId = m_uConnectorId;
+    descriptor.mode = secondMode;
+    descriptor.cModes = m_cModes;
+    descriptor.pModes = m_pModes;
+    descriptor.cFormatRecords = cFormatRecords;
+    descriptor.pFormatRecords = spFormatRecords;
+    descriptor.pPreferredFormat = pPreferredFormat.get();
+    descriptor.u32DefaultPeriodicityInFrames = u32DefaultPeriodicityInFrames;
+    descriptor.u32FundamentalPeriodicityInFrames = u32FundamentalPeriodicityInFrames;
+    descriptor.u32MinPeriodicityInFrames = u32MinPeriodicityInFrames;
+    descriptor.u32MaxPeriodicityInFrames = u32MaxPeriodicityInFrames;
+    descriptor.bIsAVStream = m_bIsAVStream;
+    descriptor.bIsBluetooth = m_bIsBluetooth;
+    descriptor.bIsSideband = m_bIsSideband;
+    *ppSecondHalfApp = new CHalfApp(descriptor);
     if (*ppSecondHalfApp == NULL) {
         hr = E_OUTOFMEMORY;
         return hr;
@@ -432,6 +457,7 @@ CHalfApp::GetHostHalfApp
     UINT32                                      u32MinPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFramesExtended;
+    DeviceDescriptor                            descriptor = { 0 };
 
     // It is only used when testing on loopback pin. When preparing loopback pin, we also need prepare the host pin.
     VERIFY_IS_TRUE(m_ConnectorType == eLoopbackConnector);
@@ -474,7 +500,26 @@ CHalfApp::GetHostHalfApp
         return hr;
     }
 
-    *ppHostHalfApp = new CHalfApp(m_pDevice.get(), m_pwstrDeviceId.get(), m_pwstrDeviceFriendlyName.get(), render, eHostProcessConnector, uConnectorId, mode, cModes, spModes, cFormatRecords, spFormatRecords, pPreferredFormat.get(), u32DefaultPeriodicityInFrames, u32FundamentalPeriodicityInFrames, u32MinPeriodicityInFrames, u32MaxPeriodicityInFrames);
+    descriptor.pDevice = m_pDevice.get();
+    descriptor.pwstrAudioEndpointId = m_pwstrDeviceId.get();
+    descriptor.pwstrAudioEndpointFriendlyName = m_pwstrDeviceFriendlyName.get();
+    descriptor.dataFlow = render; 
+    descriptor.eConnectorType = eHostProcessConnector;
+    descriptor.uConnectorId = uConnectorId;
+    descriptor.mode = mode;
+    descriptor.cModes = cModes;
+    descriptor.pModes = spModes;
+    descriptor.cFormatRecords = cFormatRecords;
+    descriptor.pFormatRecords = spFormatRecords;
+    descriptor.pPreferredFormat = pPreferredFormat.get();
+    descriptor.u32DefaultPeriodicityInFrames = u32DefaultPeriodicityInFrames;
+    descriptor.u32FundamentalPeriodicityInFrames = u32FundamentalPeriodicityInFrames;
+    descriptor.u32MinPeriodicityInFrames = u32MinPeriodicityInFrames;
+    descriptor.u32MaxPeriodicityInFrames = u32MaxPeriodicityInFrames;
+    descriptor.bIsAVStream = m_bIsAVStream;
+    descriptor.bIsBluetooth = m_bIsBluetooth;
+    descriptor.bIsSideband = m_bIsSideband;
+    *ppHostHalfApp = new CHalfApp(descriptor);
     if (*ppHostHalfApp == NULL) {
         hr = E_OUTOFMEMORY;
         return hr;
@@ -987,13 +1032,9 @@ inline void CHalfApp::CancelTimer(HANDLE timer)
 HRESULT CHalfApp::GetPosition(UINT64* pu64Position, UINT64* pu64hnsQPCPosition)
 {
     HRESULT hr = S_OK;
-    wil::com_ptr_nothrow<IAudioClock> spAudioClock;
     auto lock = m_CritSec.lock();
 
-    if (!VERIFY_SUCCEEDED(m_pAudioDeviceEndpoint.query_to(&spAudioClock))) {
-        return hr;
-    }
-    if (!VERIFY_SUCCEEDED(spAudioClock->GetPosition(pu64Position, pu64hnsQPCPosition))) {
+    if (!VERIFY_SUCCEEDED(m_pAudioClock->GetPosition(pu64Position, pu64hnsQPCPosition))) {
         return hr;
     }
 

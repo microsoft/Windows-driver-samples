@@ -24,4 +24,4 @@ void Test_LoopbackStreamDifferentFormat(void);
 void Test_StreamMultipleModes(void);
 
 // Compliance test
-void Test_VerifyPinSupportsPullMode(void);
+void Test_VerifyPinWaveRTConformance(void);

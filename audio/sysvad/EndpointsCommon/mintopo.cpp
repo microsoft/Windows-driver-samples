@@ -570,7 +570,7 @@ Return Value:
                         // 0x00000002 - JACKDESC2_DYNAMIC_FORMAT_CHANGE_CAPABILITY 
                         //
                         pDesc->JackCapabilities = JackCapabilities;
-                        
+
                         ntStatus = STATUS_SUCCESS;
                     }
                 }

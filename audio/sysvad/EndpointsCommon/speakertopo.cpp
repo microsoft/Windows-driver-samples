@@ -22,7 +22,6 @@ Abstract:
 
 
 #pragma code_seg("PAGE")
-
 //=============================================================================
 NTSTATUS
 PropertyHandler_SpeakerTopoFilter

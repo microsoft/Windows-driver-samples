@@ -13,8 +13,8 @@
 // -------------------------------------------------------------------------------
 
 #include "PreComp.h"
-#include "HalfApp.h"
-#include "TestResource.h"
+#include <HalfApp.h>
+#include <TestResource.h>
 
 using namespace WEX::Logging;
 using namespace WEX::TestExecution;
