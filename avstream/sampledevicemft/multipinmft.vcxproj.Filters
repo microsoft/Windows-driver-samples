@@ -42,6 +42,8 @@
     <None Include="Source.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="packages.config" />
+    <ClCompile Include="wil/*.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

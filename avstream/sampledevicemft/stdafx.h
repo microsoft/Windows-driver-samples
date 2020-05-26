@@ -41,10 +41,10 @@ using namespace std;
 using namespace ABI::Windows::Foundation;
 using namespace Microsoft::WRL;
 
-#include <wil\result.h>
-#include <wil\resource.h>
-#include <wil\com.h>
-#include <wil\result_macros.h>
+#include "wil\result.h"
+#include "wil\resource.h"
+#include "wil\com.h"
+#include "wil\result_macros.h"
 
 // @@@@ README Please check / uncheck various hash defines to enable/ disable features
 // MF_DEVICEMFT_ASYNCPIN_NEEDED will show how to use Asynchronous queues
