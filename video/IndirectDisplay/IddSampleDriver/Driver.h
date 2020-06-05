@@ -36,6 +36,24 @@ namespace Microsoft
         /// <summary>
         /// Manages the creation and lifetime of a Direct3D render device.
         /// </summary>
+        struct IndirectSampleMonitor
+        {
+            static constexpr size_t szEdidBlock = 128;
+            static constexpr size_t szModeList = 3;
+
+            const BYTE pEdidBlock[szEdidBlock];
+            const struct SampleMonitorMode {
+                DWORD Width;
+                DWORD Height;
+                DWORD VSync;
+                IDDCX_MONITOR_MODE_ORIGIN Origin;
+            } pModeList[szModeList];
+            const DWORD ulPreferredModeIdx;
+        };
+
+        /// <summary>
+        /// Manages the creation and lifetime of a Direct3D render device.
+        /// </summary>
         struct Direct3DDevice
         {
             Direct3DDevice(LUID AdapterLuid);
@@ -82,22 +100,24 @@ namespace Microsoft
             virtual ~IndirectDeviceContext();
 
             void InitAdapter();
-            void FinishInit();
+            void FinishInit(UINT ConnectorIndex);
+
+        protected:
+            WDFDEVICE m_WdfDevice;
+            IDDCX_ADAPTER m_Adapter;
+        };
+
+        class IndirectMonitorContext
+        {
+        public:
+            IndirectMonitorContext(_In_ IDDCX_MONITOR Monitor);
+            virtual ~IndirectMonitorContext();
 
             void AssignSwapChain(IDDCX_SWAPCHAIN SwapChain, LUID RenderAdapter, HANDLE NewFrameEvent);
             void UnassignSwapChain();
 
-        protected:
-
-            WDFDEVICE m_WdfDevice;
-            IDDCX_ADAPTER m_Adapter;
             IDDCX_MONITOR m_Monitor;
-
             std::unique_ptr<SwapChainProcessor> m_ProcessingThread;
-
-        public:
-            static const DISPLAYCONFIG_VIDEO_SIGNAL_INFO s_KnownMonitorModes[];
-            static const BYTE s_KnownMonitorEdid[];
-        };
+        } ;
     }
 }
