@@ -1177,6 +1177,7 @@ Return Value:
     switch (stack->MinorFunction)
     {
 
+#ifdef SYSVAD_USB_SIDEBAND
     case IRP_MN_QUERY_DEVICE_RELATIONS:
 
         switch (stack->Parameters.QueryDeviceRelations.Type)
@@ -1203,6 +1204,7 @@ Return Value:
             break;
         }
         break;
+#endif // SYSVAD_USB_SIDEBAND
 
     case IRP_MN_REMOVE_DEVICE:
     case IRP_MN_SURPRISE_REMOVAL:
