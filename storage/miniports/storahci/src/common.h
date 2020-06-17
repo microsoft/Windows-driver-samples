@@ -190,9 +190,6 @@ typedef enum  {
     DeviceUnknown = 0,
     DeviceIsAta,
     DeviceIsAtapi,
-    DeviceIsHostManagedZoned,
-    DeviceIsHostAwareZoned,
-    DeviceIsDeviceManagedZoned,
     DeviceNotExist
 } ATA_DEVICE_TYPE;
 
@@ -353,46 +350,7 @@ IsAtaDevice(
     _In_ PATA_DEVICE_PARAMETERS DeviceParameters
     )
 {
-    return ((DeviceParameters->AtaDeviceType == DeviceIsAta) ||
-            (DeviceParameters->AtaDeviceType == DeviceIsHostManagedZoned) ||
-            (DeviceParameters->AtaDeviceType == DeviceIsHostAwareZoned) ||
-            (DeviceParameters->AtaDeviceType == DeviceIsDeviceManagedZoned));
-}
-
-__inline
-BOOLEAN
-IsHostManagedZonedDevice(
-    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
-    )
-{
-    return (DeviceParameters->AtaDeviceType == DeviceIsHostManagedZoned);
-}
-
-__inline
-BOOLEAN
-IsHostAwareZonedDevice(
-    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
-    )
-{
-    return (DeviceParameters->AtaDeviceType == DeviceIsHostAwareZoned);
-}
-
-__inline
-BOOLEAN
-IsDeviceManagedZonedDevice(
-    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
-    )
-{
-    return (DeviceParameters->AtaDeviceType == DeviceIsDeviceManagedZoned);
-}
-
-__inline
-BOOLEAN
-IsSupportedZonedDevice(
-    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
-    )
-{
-    return (IsHostManagedZonedDevice(DeviceParameters) || IsHostAwareZonedDevice(DeviceParameters));
+    return (DeviceParameters->AtaDeviceType == DeviceIsAta);
 }
 
 __inline
@@ -921,41 +879,6 @@ AtaSecurityProtocolRequest (
 
 ULONG
 AtaWriteBufferRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    );
-
-ULONG
-AtaReportZonesRequest(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    );
-
-ULONG
-AtaCloseZoneRequest(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    );
-
-ULONG
-AtaFinishZoneRequest(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    );
-
-ULONG
-AtaOpenZoneRequest(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    );
-
-ULONG
-AtaResetWritePointerRequest(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
     _In_ PSTORAGE_REQUEST_BLOCK  Srb,
     _In_ PCDB                    Cdb

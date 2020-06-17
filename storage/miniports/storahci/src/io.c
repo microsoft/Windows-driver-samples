@@ -407,7 +407,7 @@ Return Values:
                         ULONG sig = 0;
                         sig = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SIG.AsUlong);
 
-                        if ((sig == ATA_DEVICE_SIGNATURE_ATA) || (sig == ATA_DEVICE_SIGNATURE_HOST_ZONED)) { //ATA
+                        if (sig == ATA_DEVICE_SIGNATURE_ATA) { //ATA
                             srbExtension->TaskFile.Current.bCommandReg = IDE_COMMAND_IDENTIFY;
                             cmdTable->CFIS.Command = IDE_COMMAND_IDENTIFY;
                         } else { //ATAPI
@@ -969,50 +969,32 @@ Return Values:
     for (i = 0; i < sgl->NumberOfElements; i++) {
         // 1.2 Verify that the DataBuffer is properly aligned
         if ((sgl->List[i].PhysicalAddress.LowPart & 0x1) == 0) {
-            // If user does not configure the registry MaxIoTransferSize, continue using 128KB as default max IO size.
-            if (ChannelExtension->AdapterExtension->RegistryFlags.MaxIoTransferSize == 0) {
-
-                // 2.1 Map SGL entries into PRDT entries
-                if (sgl->List[i].Length != 0x20000) {
-                    cmdTable->PRDT[i].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart;
-                    if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
-                        cmdTable->PRDT[i].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                    }
-                // 2.2 Break up a 128K single entry IO into 2 64K IO entries (128K is max transfer so there can be only 1 in any SGL)
-                //     although one entry can represent at max 4M length IO, some adapters cannot handle a DBC >= 128K.
-                } else {
-                    // Entry 0
-                    cmdTable->PRDT[0].DBA.AsUlong = sgl->List[0].PhysicalAddress.LowPart;
-                    if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
-                        cmdTable->PRDT[0].DBAU = sgl->List[0].PhysicalAddress.HighPart;
-                    }
-                    cmdTable->PRDT[0].DI.DBC = (0x10000 - 1);
-                    // Entry 1
-                    cmdTable->PRDT[1].DBA.AsUlong = (sgl->List[0].PhysicalAddress.LowPart + 0x10000);
-                    if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
-                        if ((sgl->List[0].PhysicalAddress.LowPart + 0x10000) < sgl->List[0].PhysicalAddress.LowPart) {
-                            cmdTable->PRDT[1].DBAU = (sgl->List[0].PhysicalAddress.HighPart + 1); //add 1 to the highpart if adding 0x10000 caused a rollover
-                        } else {
-                            cmdTable->PRDT[1].DBAU = sgl->List[0].PhysicalAddress.HighPart;
-                        }
-                    }
-                    cmdTable->PRDT[1].DI.DBC = (0x10000 - 1);
-                    return 2;
+            // 2.1 Map SGL entries into PRDT entries
+            if (sgl->List[i].Length != 0x20000) {
+                cmdTable->PRDT[i].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart;
+                if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
+                    cmdTable->PRDT[i].DBAU = sgl->List[i].PhysicalAddress.HighPart;
                 }
-            } else if (ChannelExtension->AdapterExtension->RegistryFlags.MaxIoTransferSize > 0) {
-
-                // Note: if MaxIoTransferSize is set larger than 4M (maybe in future), it is needed to split it to fit into several PRDT entries.
-                // Currently the storahci can support maximum 1M IO transfer size by configuring the registry MaxIoTransferSize.
-                
-                if (sgl->List[i].Length <= (ChannelExtension->AdapterExtension->RegistryFlags.MaxIoTransferSize * KB)) {
-                    cmdTable->PRDT[i].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart;
-                    if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
-                        cmdTable->PRDT[i].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                    }
-                } else {
-                    NT_ASSERT(FALSE); //Shall Not Pass
-                    return (ULONG)-1;
+            // 2.2 Break up a 128K single entry IO into 2 64K IO entries (128K is max transfer so there can be only 1 in any SGL)
+            //     although one entry can represent at max 4M length IO, some adapters cannot handle a DBC >= 128K.
+            } else {
+                // Entry 0
+                cmdTable->PRDT[0].DBA.AsUlong = sgl->List[0].PhysicalAddress.LowPart;
+                if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
+                    cmdTable->PRDT[0].DBAU = sgl->List[0].PhysicalAddress.HighPart;
                 }
+                cmdTable->PRDT[0].DI.DBC = (0x10000 - 1);
+                // Entry 1
+                cmdTable->PRDT[1].DBA.AsUlong = (sgl->List[0].PhysicalAddress.LowPart + 0x10000);
+                if (ChannelExtension->AdapterExtension->CAP.S64A) {//If the controller supports 64 bits, write the high part too
+                    if ((sgl->List[0].PhysicalAddress.LowPart + 0x10000) < sgl->List[0].PhysicalAddress.LowPart) {
+                        cmdTable->PRDT[1].DBAU = (sgl->List[0].PhysicalAddress.HighPart + 1); //add 1 to the highpart if adding 0x10000 caused a rollover
+                    } else {
+                        cmdTable->PRDT[1].DBAU = sgl->List[0].PhysicalAddress.HighPart;
+                    }
+                }
+                cmdTable->PRDT[1].DI.DBC = (0x10000 - 1);
+                return 2;
             }
         } else {
             NT_ASSERT(FALSE); //Shall Not Pass
@@ -1025,81 +1007,11 @@ Return Values:
         //     sgl->Elements.Length is not (i.e. 0 is 0, 1 is 1, etc.
         if ((sgl->List[i].Length & 1) == 0) {                    //therefore length must be even here
             // 2.3 Set Datalength in the PRDT entries
-            if ((ChannelExtension->AdapterExtension->RegistryFlags.PRDTSplit) &&
-                (ChannelExtension->AdapterExtension->RegistryFlags.MaxIoTransferSize <= ((AHCI_MAX_TRANSFER_LENGTH / KB) - 4))) {
-                if ((i == (sgl->NumberOfElements - 1)) && (sgl->NumberOfElements > 4) && ((sgl->NumberOfElements % 4) == 1)) {
-
-                    ULONG LastDataLength = sgl->List[i].Length;
-
-                    if (((LastDataLength >> 1) & 1) == 0) {
-
-                        cmdTable->PRDT[i].DI.DBC = (LastDataLength >> 1) - 1; //but it must be odd here
-
-                        // Last one PRDT
-                        cmdTable->PRDT[i+1].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart + (LastDataLength >> 1);
-                        // If the controller supports 64 bits, write the high part too
-                        if (ChannelExtension->AdapterExtension->CAP.S64A) {
-                            cmdTable->PRDT[i+1].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                        }
-                        cmdTable->PRDT[i+1].DI.DBC = (LastDataLength >> 1) - 1; //but it must be odd here
-
-                    } else {
-
-                        cmdTable->PRDT[i].DI.DBC = (LastDataLength >> 1); //but it must be odd here
-
-                        // Last one PRDT
-                        cmdTable->PRDT[i+1].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart + (LastDataLength >> 1) + 1;
-                        // If the controller supports 64 bits, write the high part too
-                        if (ChannelExtension->AdapterExtension->CAP.S64A) {
-                            cmdTable->PRDT[i+1].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                        }
-                        cmdTable->PRDT[i+1].DI.DBC = (LastDataLength >> 1) - 2; //but it must be odd here
-                    }
-                    return (sgl->NumberOfElements + 1);
-                }
-            }
-
             cmdTable->PRDT[i].DI.DBC = sgl->List[i].Length - 1;         //but it must be odd here
-
         } else if (sgl->List[i].Length <= RequestGetDataTransferLength(SlotContent->Srb)) {
             // Storport may send down SCSI commands with odd number of data transfer length, and it builds SGL using that transfer length value.
             // we use the length -1 to get as much data as we can. If the data length is over (length - 1), buffer overrun will be reported when the command is completed.
             RequestSetDataTransferLength(SlotContent->Srb, RequestGetDataTransferLength(SlotContent->Srb) - 1);
-
-            if ((ChannelExtension->AdapterExtension->RegistryFlags.PRDTSplit) &&
-                (ChannelExtension->AdapterExtension->RegistryFlags.MaxIoTransferSize <= ((AHCI_MAX_TRANSFER_LENGTH / KB) - 4))) {
-                if ((i == (sgl->NumberOfElements - 1)) && (sgl->NumberOfElements > 4) && ((sgl->NumberOfElements % 4) == 1)) {
-
-                    ULONG LastDataLength = sgl->List[i].Length - 1;
-
-                    if (((LastDataLength >> 1) & 1) == 0) {
-
-                        cmdTable->PRDT[i].DI.DBC = (LastDataLength >> 1) - 1; //but it must be odd here
-
-                        // Last one PRDT
-                        cmdTable->PRDT[i+1].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart + (LastDataLength >> 1);
-                        // If the controller supports 64 bits, write the high part too
-                        if (ChannelExtension->AdapterExtension->CAP.S64A) {
-                            cmdTable->PRDT[i+1].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                        }
-                        cmdTable->PRDT[i+1].DI.DBC = (LastDataLength >> 1) - 1; //but it must be odd here
-
-                    } else {
-
-                        cmdTable->PRDT[i].DI.DBC = (LastDataLength >> 1); //but it must be odd here
-
-                        // Last one PRDT
-                        cmdTable->PRDT[i+1].DBA.AsUlong = sgl->List[i].PhysicalAddress.LowPart + (LastDataLength >> 1) + 1;
-                        // If the controller supports 64 bits, write the high part too
-                        if (ChannelExtension->AdapterExtension->CAP.S64A) {
-                            cmdTable->PRDT[i+1].DBAU = sgl->List[i].PhysicalAddress.HighPart;
-                        }
-                        cmdTable->PRDT[i+1].DI.DBC = (LastDataLength >> 1) - 2; //but it must be odd here
-                    }
-                    return (sgl->NumberOfElements + 1);
-                }
-            }
-
             cmdTable->PRDT[i].DI.DBC = sgl->List[i].Length - 2;
         } else {
             NT_ASSERT(FALSE); //Shall Not Pass
@@ -1233,9 +1145,6 @@ Note: This routine can be called even the Port is stopped.
         if (sig == ATA_DEVICE_SIGNATURE_ATA) {
             srbExtension->TaskFile.Current.bCommandReg = IDE_COMMAND_IDENTIFY;
             ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAta;
-        } else if (sig == ATA_DEVICE_SIGNATURE_HOST_ZONED) {
-            srbExtension->TaskFile.Current.bCommandReg = IDE_COMMAND_IDENTIFY;
-            ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsHostManagedZoned;
         } else if (sig == ATA_DEVICE_SIGNATURE_ATAPI) {
             srbExtension->TaskFile.Current.bCommandReg = IDE_COMMAND_ATAPI_IDENTIFY;
             ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAtapi;
@@ -1256,9 +1165,6 @@ Note: This routine can be called even the Port is stopped.
                 // If above situations happen, just set the identify command according to the currently known device type.
                 switch (ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType) {
                     case DeviceIsAta:
-                    case DeviceIsHostManagedZoned:
-                    case DeviceIsHostAwareZoned:
-                    case DeviceIsDeviceManagedZoned:
                         srbExtension->TaskFile.Current.bCommandReg = IDE_COMMAND_IDENTIFY;
                         break;
 
@@ -1732,14 +1638,7 @@ AhciPortSrbCompletionDpcRoutine(
 
                 if (!IsMiniportInternalSrb(channelExtension, srb)) {
                     if (SRB_STATUS(srb->SrbStatus) != SRB_STATUS_SUCCESS) {
-                        ATA_COMMAND_ERROR dataBuffer;
-                        FillAtaCommandErrorStruct(&dataBuffer, srb, channelExtension);
-                        StorPortEtwLogError(channelExtension->AdapterExtension,
-                                            (PSTOR_ADDRESS) &(channelExtension->DeviceExtension->DeviceAddress),
-                                            AhciEtwEventBuildIO,
-                                            L"Finished I/O with error",
-                                            dataBuffer.Size,
-                                            &dataBuffer);
+
                     }
 
                     NT_ASSERT(srb->SrbStatus != SRB_STATUS_PENDING);

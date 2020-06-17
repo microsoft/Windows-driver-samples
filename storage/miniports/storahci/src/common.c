@@ -819,30 +819,6 @@ SrbConvertToATACommand(
         status = AtaWriteBufferRequest(ChannelExtension, Srb, Cdb);
         break;
 
-    case SCSIOP_ZBC_IN:
-        if (Cdb->REPORT_ZONES.ServiceAction == SERVICE_ACTION_REPORT_ZONES) {
-            status = AtaReportZonesRequest(ChannelExtension, Srb, Cdb);
-        } else {
-            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-        }
-
-        break;
-
-    case SCSIOP_ZBC_OUT:
-        if (Cdb->CLOSE_ZONE.ServiceAction == SERVICE_ACTION_CLOSE_ZONE) {
-            status = AtaCloseZoneRequest(ChannelExtension, Srb, Cdb);
-        } else if (Cdb->FINISH_ZONE.ServiceAction == SERVICE_ACTION_FINISH_ZONE) {
-            status = AtaFinishZoneRequest(ChannelExtension, Srb, Cdb);
-        } else if (Cdb->OPEN_ZONE.ServiceAction == SERVICE_ACTION_OPEN_ZONE) {
-            status = AtaOpenZoneRequest(ChannelExtension, Srb, Cdb);
-        } else if (Cdb->RESET_WRITE_POINTER.ServiceAction == SERVICE_ACTION_RESET_WRITE_POINTER) {
-            status = AtaResetWritePointerRequest(ChannelExtension, Srb, Cdb);
-        } else {
-            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-        }
-
-        break;
-
     case SCSIOP_READ_DATA_BUFF16:
 
         if (Cdb->READ_BUFFER_16.Mode == READ_BUFFER_MODE_ERROR_HISTORY) {
@@ -867,14 +843,7 @@ SrbConvertToATACommand(
     }
 
     if (status != STOR_STATUS_SUCCESS) {
-        ATA_COMMAND_ERROR dataBuffer;
-        FillAtaCommandErrorStruct(&dataBuffer, Srb, ChannelExtension);
-        StorPortEtwLogError(ChannelExtension->AdapterExtension,
-                            (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
-                            AhciEtwEventBuildIO,
-                            L"SrbConvertToATACommand error",
-                            dataBuffer.Size,
-                            &dataBuffer);
+
     } else {
         PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
         AHCI_H2D_REGISTER_FIS cfis = srbExtension->Cfis; // Size is 20 bytes (shares first 16 with TaskFile)
@@ -2346,10 +2315,6 @@ AtaInquiryRequest(
             UCHAR supportedPageCount = 8;
             ULONG i = 0;
 
-            if (IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-                supportedPageCount += 1;
-            }
-
             requiredBufferSize = sizeof(VPD_SUPPORTED_PAGES_PAGE) + supportedPageCount;
 
             if (srbDataBufferLength < requiredBufferSize) {
@@ -2376,10 +2341,6 @@ AtaInquiryRequest(
                 outputBuffer->SupportedPageList[i++] = VPD_BLOCK_LIMITS;
                 outputBuffer->SupportedPageList[i++] = VPD_BLOCK_DEVICE_CHARACTERISTICS;
                 outputBuffer->SupportedPageList[i++] = VPD_LOGICAL_BLOCK_PROVISIONING;
-
-                if (IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-                    outputBuffer->SupportedPageList[i++] = VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS;
-                }
 
                 NT_ASSERT(supportedPageCount == i);
 
@@ -2459,11 +2420,6 @@ AtaInquiryRequest(
                 outputBuffer->MediumRotationRateMsb = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate >> 8) & 0x00FF);
                 outputBuffer->MediumRotationRateLsb = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalMediaRotationRate & 0x00FF);
                 outputBuffer->NominalFormFactor = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->NominalFormFactor);
-
-                // unfortunately, cannot use RTL_SIZEOF_THROUGH_FIELD as "ZONED" is a bit field.
-                if (srbDataBufferLength >= 0x09) {
-                    outputBuffer->ZONED = (UCHAR)ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities;
-                }
 
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
                 status = STOR_STATUS_SUCCESS;
@@ -2588,144 +2544,6 @@ AtaInquiryRequest(
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
                 status = STOR_STATUS_SUCCESS;
             }
-            break;
-        }
-        case VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS: {
-            if (srbDataBufferLength < RTL_SIZEOF_THROUGH_FIELD(VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE, MaxNumberOfOpenSequentialWriteRequiredZone)) {
-                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-                status = STOR_STATUS_INVALID_PARAMETER;
-            } else {
-                PVPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE outputBuffer = (PVPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS_PAGE)srbDataBuffer;
-
-                AhciZeroMemory((PCHAR)outputBuffer, srbDataBufferLength);
-
-                outputBuffer->DeviceType = ChannelExtension->DeviceExtension->DeviceParameters.ScsiDeviceType;
-                outputBuffer->DeviceTypeQualifier = 0;
-                outputBuffer->PageCode = VPD_ZONED_BLOCK_DEVICE_CHARACTERISTICS;
-                outputBuffer->PageLength[0] = 0;
-                outputBuffer->PageLength[1] = 0x3C;      // must be 0x3C per spec.
-
-                outputBuffer->URSWRZ = ChannelExtension->DeviceExtension->ZonedDeviceInfo.URSWRZ ? 1 : 0;
-
-                REVERSE_BYTES(outputBuffer->OptimalNumberOfOpenSequentialWritePreferredZone,
-                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfOpenSequentialWritePreferredZones);
-
-                REVERSE_BYTES(outputBuffer->OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZone,
-                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones);
-
-                REVERSE_BYTES(outputBuffer->MaxNumberOfOpenSequentialWriteRequiredZone,
-                              &ChannelExtension->DeviceExtension->ZonedDeviceInfo.MaxNumberOfOpenSequentialWriteRequiredZones);
-
-                Srb->SrbStatus = SRB_STATUS_SUCCESS;
-                status = STOR_STATUS_SUCCESS;
-            }
-            break;
-        }
-
-        case VPD_DEVICE_IDENTIFIERS: {
-
-            BOOLEAN supportWorldWideName = (ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetActive.WWN64Bit == 1) ? (TRUE) : (FALSE);
-            ULONG requiredOutputBufferSize = (ULONG)FIELD_OFFSET(VPD_IDENTIFICATION_PAGE, Descriptors) + 
-                                             (ULONG)FIELD_OFFSET(VPD_IDENTIFICATION_DESCRIPTOR_EX, Designator) + 
-                                             ((supportWorldWideName) ? (sizeof(NAA_IEEE_REGISTERED_DESIGNATOR)) : (T10_VENDOR_ID_BASED_DESIGNATOR_LENGTH));
-
-            if (srbDataBufferLength < requiredOutputBufferSize) {
-
-                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-                status = STOR_STATUS_INVALID_PARAMETER;
-            } else {
-
-                PVPD_IDENTIFICATION_PAGE outputBuffer = (PVPD_IDENTIFICATION_PAGE)srbDataBuffer;
-                PVPD_IDENTIFICATION_DESCRIPTOR_EX identificationDescriptor = (PVPD_IDENTIFICATION_DESCRIPTOR_EX)outputBuffer->Descriptors;
-
-                AhciZeroMemory((PCHAR)outputBuffer, srbDataBufferLength);
-
-                outputBuffer->DeviceType = 0;
-                outputBuffer->DeviceTypeQualifier = DEVICE_QUALIFIER_ACTIVE;
-                outputBuffer->PageCode = VPD_DEVICE_IDENTIFIERS;
-
-                if (supportWorldWideName) {
-                    //
-                    // ATA device supports WORLD WIDE NAME.
-                    //
-                    PNAA_IEEE_REGISTERED_DESIGNATOR naaDesignator = (PNAA_IEEE_REGISTERED_DESIGNATOR)identificationDescriptor->Designator;
-
-                    identificationDescriptor->ProtocolIdentifier = 0;
-                    identificationDescriptor->CodeSet = VpdCodeSetBinary;
-                    identificationDescriptor->PIV = 0;
-                    identificationDescriptor->Association = VpdAssocDevice;
-                    identificationDescriptor->DesignatorType = VpdIdentifierTypeFCPHName;
-                    NT_ASSERT(sizeof(NAA_IEEE_REGISTERED_DESIGNATOR) == 0x8);
-                    identificationDescriptor->DesignatorLength = (UCHAR)sizeof(NAA_IEEE_REGISTERED_DESIGNATOR);
-
-                    // NAA Byte 4 bits 7:4 IDENTIFY DEVICE word 108 bits 15:12
-                    // This 4-bit field is required to be set to 5h (i.e., IEEE Registered) by ACS-4.
-                    naaDesignator->Naa = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] >> 12) & (0xf);
-                    NT_ASSERT(naaDesignator->Naa == 0x5);
-                    // IEEE COMPANY_ID Byte 4 bits 3:0 IDENTIFY DEVICE word 108 bits 11:8
-                    naaDesignator->IeeeCompanyId0 = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] >> 8) & (0xf);
-                    // IEEE COMPANY_ID Byte 5 IDENTIFY DEVICE word 108 bits 7:0
-                    naaDesignator->IeeeCompanyId1[0] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[0] & 0xff);
-                    // IEEE COMPANY_ID Byte 6 IDENTIFY DEVICE word 109 bits 15:8
-                    naaDesignator->IeeeCompanyId1[1] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] >> 8) & 0xff);
-                    // IEEE COMPANY_ID Byte 7 bits 7:4 IDENTIFY DEVICE word 109 bits 7:4
-                    naaDesignator->IeeeCompanyId2 = (ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] >> 4) & (0xf);
-                    // Vendor Specific Identifier Byte 7 bits 3:0 IDENTIFY DEVICE word 109 bits 3:0
-                    naaDesignator->VendorSpecificData0 = ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[1] & 0xf;
-                    // Vendor Specific Identifier Byte 8 IDENTIFY DEVICE word 110 bits 15:8
-                    naaDesignator->VendorSpecificData1[0] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[2] >> 8) & 0xff);
-                    // Vendor Specific Identifier Byte 9 IDENTIFY DEVICE word 110 bits 7:0
-                    naaDesignator->VendorSpecificData1[1] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[2] & 0xff);
-                    // Vendor Specific Identifier Byte 10 IDENTIFY DEVICE word 111 bits 15:8
-                    naaDesignator->VendorSpecificData1[2] = (UCHAR)((ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[3] >> 8) & 0xff);
-                    // Vendor Specific Identifier Byte 11 IDENTIFY DEVICE word 111 bits 7:0
-                    naaDesignator->VendorSpecificData1[3] = (UCHAR)(ChannelExtension->DeviceExtension->IdentifyDeviceData->WorldWideName[3] & 0xff);
-
-                } else {
-                    //
-                    // ATA device does not support WORLD WIDE NAME.
-                    //
-                    PT10_VENDOR_ID_BASED_DESIGNATOR t10VendorIdBasedDesignator = (PT10_VENDOR_ID_BASED_DESIGNATOR)identificationDescriptor->Designator;
-                    ULONG length = 0;
-
-                    identificationDescriptor->ProtocolIdentifier = 0;
-                    identificationDescriptor->CodeSet = VpdCodeSetAscii;
-                    identificationDescriptor->PIV = 0;
-                    identificationDescriptor->Association = VpdAssocDevice;
-                    identificationDescriptor->DesignatorType = VpdIdentifierTypeVendorId;
-                    identificationDescriptor->DesignatorLength = T10_VENDOR_ID_BASED_DESIGNATOR_LENGTH;
-
-                    // T10 VENDOR IDENTIFICATION Shall be set to the string ‘ATA¬¬¬¬¬’.
-                    t10VendorIdBasedDesignator->T10VendorIdentification[0] = ' ';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[1] = ' ';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[2] = ' ';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[3] = ' ';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[4] = ' ';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[5] = 'A';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[6] = 'T';
-                    t10VendorIdBasedDesignator->T10VendorIdentification[7] = 'A';
-
-                    // Vendor Specific Identifier Bytes: 0 - 39  Model Numer(Identify device data word: 27 - 46).
-                    length = sizeof(ChannelExtension->DeviceExtension->DeviceParameters.VendorId) - 1;
-                    NT_ASSERT(length == 40);
-                    StorPortCopyMemory(t10VendorIdBasedDesignator->VendorSpecificIdentifier, 
-                                       ChannelExtension->DeviceExtension->DeviceParameters.VendorId, 
-                                       length);
-
-                    // Vendor Specific Identifier Bytes: 40 - 59  Serial Numer(Identify device data word: 10 - 19).
-                    NT_ASSERT((sizeof(ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber) - 1) == 20);
-                    StorPortCopyMemory(t10VendorIdBasedDesignator->VendorSpecificIdentifier + length, 
-                                       ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber, 
-                                       sizeof(ChannelExtension->DeviceExtension->DeviceParameters.SerialNumber) - 1);
-
-                }
-
-                outputBuffer->PageLength = (UCHAR)FIELD_OFFSET(VPD_IDENTIFICATION_DESCRIPTOR_EX, Designator) + (UCHAR)identificationDescriptor->DesignatorLength;
-
-                Srb->SrbStatus = SRB_STATUS_SUCCESS;
-                status = STOR_STATUS_SUCCESS;
-            }
-
             break;
         }
 
@@ -3862,388 +3680,6 @@ AtaWriteBufferRequest (
 
     return STOR_STATUS_SUCCESS;
 }
-VOID
-AtaReportZonesRequestCompletion (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb
-    )
-/*++
-    This routine translates the data format returned from ATA REPORT ZONES EXT command
-    into data format of SCSI REPORT ZONES command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-
-Return Value:
-    None
-
---*/
-{
-    ULONG                   srbDataBufferLength = SrbGetDataTransferLength(Srb);
-    ULONG                   tempLength = 0;
-    ULONGLONG               tempUlonglong = 0;
-
-    PREPORT_ZONES_EXT_DATA  ataDataBuffer = (PREPORT_ZONES_EXT_DATA)SrbGetDataBuffer(Srb);
-    PATA_ZONE_DESCRIPTOR    ataZoneDescriptor = (PATA_ZONE_DESCRIPTOR)(ataDataBuffer + 1);
-
-    PREPORT_ZONES_DATA      scsiDataBuffer = (PREPORT_ZONES_DATA)ataDataBuffer;
-    PZONE_DESCRIPTIOR       scsiZoneDescriptor = scsiDataBuffer->ZoneDescriptors;
-
-    UNREFERENCED_PARAMETER(ChannelExtension);
-
-    //
-    // ATA command return data structure is REPORT_ZONES_EXT_DATA, following by ATA_ZONE_DESCRIPTOR(s).
-    // SCSI command return data structure is REPORT_ZONES_DATA, following by ZONE_DESCRIPTIOR(s).
-    // The data fields for SCSI and ATA are almost identical, except the endianness difference for Length and LBA fields.
-    //
-    if (Srb->SrbStatus != SRB_STATUS_SUCCESS) {
-        goto exit;
-    }
-
-    //
-    // We are changing the data fields endianness in place.
-    // The use of ata... and scsi... variables is to make the code more readable.
-    //
-    REVERSE_LONG(&ataDataBuffer->ZoneListLength);
-
-    tempUlonglong = ataDataBuffer->MaxLBA;
-    REVERSE_BYTES_QUAD(scsiDataBuffer->MaxLBA, &tempUlonglong);
-
-    tempLength = sizeof(REPORT_ZONES_EXT_DATA) + sizeof(ATA_ZONE_DESCRIPTOR);
-
-    do {
-        tempUlonglong = ataZoneDescriptor->ZoneLength;
-        REVERSE_BYTES_QUAD(scsiZoneDescriptor->ZoneLength, &tempUlonglong);
-
-        tempUlonglong = ataZoneDescriptor->ZoneStartLBA;
-        REVERSE_BYTES_QUAD(scsiZoneDescriptor->ZoneStartLBA, &tempUlonglong);
-
-        tempUlonglong = ataZoneDescriptor->WritePointerLBA;
-        REVERSE_BYTES_QUAD(scsiZoneDescriptor->WritePointerLBA, &tempUlonglong);
-
-        ataZoneDescriptor += 1;
-        scsiZoneDescriptor += 1;
-        tempLength += sizeof(ATA_ZONE_DESCRIPTOR);
-
-    } while (tempLength <= srbDataBufferLength);
-
-    SrbSetDataTransferLength(Srb, ALIGN_DOWN_BY(srbDataBufferLength, ATA_BLOCK_SIZE));
-
-exit:
-
-    MarkSrbToBeCompleted(Srb);
-
-    return;
-}
-
-ULONG
-AtaReportZonesRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    )
-/*++
-    This routine translates a SCSI - REPORT ZONES command into ATA - REPORT ZONES EXT command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-    Cdb
-
-Return Value:
-    ULONG - status
-
---*/
-{
-    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONG               srbDataBufferLength = SrbGetDataTransferLength(Srb);
-    ULONG               blockCount = ALIGN_DOWN_BY(srbDataBufferLength, ATA_BLOCK_SIZE) / ATA_BLOCK_SIZE;
-    ULONGLONG           startingLBA = 0;
-
-    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
-
-    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    if (blockCount == 0) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_BUFFER_TOO_SMALL;
-    }
-
-    if (blockCount > MAXUINT16) {
-        //
-        // Transfer length should not over ATA physical transfer limitation (two 8-bits registers).
-        //
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
-    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
-    srbExtension->Flags |= ATA_FLAGS_DATA_IN;
-
-    srbExtension->CompletionRoutine = AtaReportZonesRequestCompletion;
-
-    //
-    // Set up ATA command.
-    //
-    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_IN;
-    cfis->Device |= IDE_LBA_MODE;
-
-    cfis->Feature7_0 = ZM_ACTION_REPORT_ZONES;
-    cfis->Feature15_8 = Cdb->REPORT_ZONES.ReportingOptions;
-
-    if (Cdb->REPORT_ZONES.Partial == 1) {
-        cfis->Feature15_8 |= (1 << 7);      // Feature Bit 15 is PARTIAL bit.
-    }
-
-    cfis->Count7_0 = (blockCount & 0x00ff);
-    cfis->Count15_8 = (blockCount & 0xff00) >> 8;
-
-    REVERSE_BYTES_QUAD(&startingLBA, Cdb->REPORT_ZONES.ZoneStartLBA);
-
-    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
-    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
-    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
-    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
-    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
-    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
-
-    return STOR_STATUS_SUCCESS;
-}
-
-ULONG
-AtaResetWritePointerRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    )
-/*++
-    This routine translates a SCSI - RESET WRITE POINTER command into ATA - RESET WRITE POINTER EXT command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-    Cdb
-
-Return Value:
-    ULONG - status
-
---*/
-{
-    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONGLONG           startingLBA = 0;
-
-    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
-
-    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
-    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
-
-    //
-    // Set up ATA command.
-    //
-    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
-    cfis->Device |= IDE_LBA_MODE;
-
-    cfis->Feature7_0 = ZM_ACTION_RESET_WRITE_POINTER;
-
-    if (Cdb->RESET_WRITE_POINTER.All == 1) {
-        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is RESET ALL bit.
-    }
-
-    REVERSE_BYTES_QUAD(&startingLBA, Cdb->RESET_WRITE_POINTER.ZoneId);
-
-    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
-    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
-    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
-    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
-    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
-    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
-
-    return STOR_STATUS_SUCCESS;
-}
-
-ULONG
-AtaOpenZoneRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    )
-/*++
-    This routine translates a SCSI - OPEN ZONE command into ATA - OPEN ZONE EXT command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-    Cdb
-
-Return Value:
-    ULONG - status
-
---*/
-{
-    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONGLONG           startingLBA = 0;
-
-    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
-
-    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
-    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
-
-    //
-    // Set up ATA command.
-    //
-    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
-    cfis->Device |= IDE_LBA_MODE;
-
-    cfis->Feature7_0 = ZM_ACTION_OPEN_ZONE;
-
-    if (Cdb->OPEN_ZONE.All == 1) {
-        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is OPEN ALL bit.
-    }
-
-    REVERSE_BYTES_QUAD(&startingLBA, Cdb->OPEN_ZONE.ZoneId);
-
-    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
-    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
-    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
-    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
-    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
-    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
-
-    return STOR_STATUS_SUCCESS;
-}
-
-ULONG
-AtaFinishZoneRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    )
-/*++
-    This routine translates a SCSI - FINISH ZONE command into ATA - FINISH ZONE EXT command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-    Cdb
-
-Return Value:
-    ULONG - status
-
---*/
-{
-    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONGLONG           startingLBA = 0;
-
-    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
-
-    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
-    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
-
-    //
-    // Set up ATA command.
-    //
-    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
-    cfis->Device |= IDE_LBA_MODE;
-
-    cfis->Feature7_0 = ZM_ACTION_FINISH_ZONE;
-
-    if (Cdb->FINISH_ZONE.All == 1) {
-        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is FINISH ALL bit.
-    }
-
-    REVERSE_BYTES_QUAD(&startingLBA, Cdb->FINISH_ZONE.ZoneId);
-
-    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
-    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
-    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
-    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
-    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
-    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
-
-    return STOR_STATUS_SUCCESS;
-}
-
-ULONG
-AtaCloseZoneRequest (
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
-    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
-    _In_ PCDB                    Cdb
-    )
-/*++
-    This routine translates a SCSI - CLOSE ZONE command into ATA - CLOSE ZONE EXT command.
-
-Arguments:
-
-    ChannelExtension
-    Srb
-    Cdb
-
-Return Value:
-    ULONG - status
-
---*/
-{
-    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONGLONG           startingLBA = 0;
-
-    PAHCI_H2D_REGISTER_FIS  cfis = &srbExtension->Cfis;
-
-    if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
-        AhciSetSenseData(Srb, SRB_STATUS_INVALID_REQUEST, SCSI_SENSE_ILLEGAL_REQUEST, SCSI_ADSENSE_INVALID_CDB, 0);
-        return STOR_STATUS_INVALID_DEVICE_REQUEST;
-    }
-
-    srbExtension->AtaFunction = ATA_FUNCTION_ATA_CFIS_PAYLOAD;
-    srbExtension->Flags |= ATA_FLAGS_48BIT_COMMAND;
-
-    //
-    // Set up ATA command.
-    //
-    cfis->Command = IDE_COMMAND_ZAC_MANAGEMENT_OUT;
-    cfis->Device |= IDE_LBA_MODE;
-
-    cfis->Feature7_0 = ZM_ACTION_CLOSE_ZONE;
-
-    if (Cdb->CLOSE_ZONE.All == 1) {
-        cfis->Feature15_8 |= (1 << 0);      // Feature Bit 8 is CLOSE ALL bit.
-    }
-
-    REVERSE_BYTES_QUAD(&startingLBA, Cdb->CLOSE_ZONE.ZoneId);
-
-    cfis->LBA7_0 =   (UCHAR)((startingLBA & 0x0000000000ff) >> 0);
-    cfis->LBA15_8 =  (UCHAR)((startingLBA & 0x00000000ff00) >> 8);
-    cfis->LBA23_16 = (UCHAR)((startingLBA & 0x000000ff0000) >> 16);
-    cfis->LBA31_24 = (UCHAR)((startingLBA & 0x0000ff000000) >> 24);
-    cfis->LBA39_32 = (UCHAR)((startingLBA & 0x00ff00000000) >> 32);
-    cfis->LBA47_40 = (UCHAR)((startingLBA & 0xff0000000000) >> 40);
-
-    return STOR_STATUS_SUCCESS;
-}
 
 VOID
 AtaGetPhysicalElementStatusCompletion (
@@ -4729,7 +4165,7 @@ Return Value:
 --*/
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONG currentLogPageOffset = (ULONG)srbExtension->CompletionContext;
+    ULONG_PTR currentLogPageOffset = (ULONG_PTR)srbExtension->CompletionContext;
     BOOLEAN requestFailed = FALSE;
 
     if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
@@ -5546,11 +4982,7 @@ Return Value:
         BOOLEAN isBigLba = FALSE;
 
         deviceParameters->MaximumLun = 0;
-        if (IsHostManagedZonedDevice(deviceParameters)) {
-            deviceParameters->ScsiDeviceType = HOST_MANAGED_ZONED_BLOCK_DEVICE;
-        } else {
-            deviceParameters->ScsiDeviceType = DIRECT_ACCESS_DEVICE;
-        }
+        deviceParameters->ScsiDeviceType = DIRECT_ACCESS_DEVICE;
 
         deviceParameters->StateFlags.RemovableMedia = identifyDeviceData->GeneralConfiguration.RemovableMedia;
 

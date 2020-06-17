@@ -76,11 +76,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <ClCompile Include="..\entrypts.c; ..\pnppower.c; ..\hbastat.c; ..\util.c; ..\io.c; ..\common.c">
-      <WppEnabled>true</WppEnabled>
-      <WppKernelMode>true</WppKernelMode>
-      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
-    </ClCompile>
     <OtherWpp Include="..\storahci.rc">
       <WppEnabled>true</WppEnabled>
       <WppKernelMode>true</WppKernelMode>
@@ -185,6 +180,38 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
+    <ClCompile Include="..\entrypts.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
+    <ClCompile Include="..\hbastat.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
+    <ClCompile Include="..\io.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
+    <ClCompile Include="..\pnppower.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
+    <ClCompile Include="..\util.c">
+      <WppEnabled>true</WppEnabled>
+      <WppKernelMode>true</WppKernelMode>
+      <WppTraceFunction>TracePrint((LEVEL,FLAGS,MSG,...))</WppTraceFunction>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

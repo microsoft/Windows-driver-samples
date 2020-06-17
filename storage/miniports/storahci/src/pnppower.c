@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
 Copyright (C) Microsoft Corporation, 2009
 
@@ -871,14 +871,6 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // Read Identify Device Data log - Zoned Device Information page
-    ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
-    ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS;
-    ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE;
-    ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].BlockCount = 1;
-    ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
-    *index = *index + 1;
-
     // Read Saved Device Internal log
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_SAVED_DEVICE_INTERNAL_STATUS;
@@ -1298,7 +1290,6 @@ LogPageDiscoveryCompletion (
                 UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_SUPPORTED_PAGES, FALSE);
                 UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE, FALSE);
                 UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE, FALSE);
-                UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE, FALSE);
             }
 
             ChannelExtension->DeviceExtension->SupportedGPLPages.SinglePage.NcqCommandError = (ChannelExtension->DeviceExtension->ReadLogExtPageData[IDE_GP_LOG_NCQ_COMMAND_ERROR_ADDRESS] > 0) ? 1 : 0;
@@ -1325,7 +1316,6 @@ LogPageDiscoveryCompletion (
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_SUPPORTED_PAGES, FALSE);
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE, FALSE);
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE, FALSE);
-            UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE, FALSE);
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_NCQ_NON_DATA_ADDRESS, 0, FALSE);
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_NCQ_SEND_RECEIVE_ADDRESS, 0, FALSE);
         }
@@ -1406,8 +1396,6 @@ LogPageDiscoveryCompletion (
                         ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.SupportedCapabilities = 1;
                     } else if (*(pageSupported + sizeof(IDENTIFY_DEVICE_DATA_LOG_PAGE_HEADER) + i) == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE) {
                         ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.SATA = 1;
-                    } else if (*(pageSupported + sizeof(IDENTIFY_DEVICE_DATA_LOG_PAGE_HEADER) + i) == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE) {
-                        ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.ZonedDeviceInformation = 1;
                     }
                 }
             }
@@ -1420,7 +1408,6 @@ LogPageDiscoveryCompletion (
             ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.LogAddressSupported = 0;
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE, FALSE);
             UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE, FALSE);
-            UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE, FALSE);
         }
 
     } else if ( (completedLogAddress == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS) && (completedPageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE) ) {
@@ -1435,45 +1422,10 @@ LogPageDiscoveryCompletion (
 
                 UpdateDownloadMicrocodeSupport(ChannelExtension, supportedCapabilities);
                 
-                if (supportedCapabilities->ZonedCapabilities.Valid == 1) {
-                    
-                    NT_ASSERT(ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities ==
-                              supportedCapabilities->ZonedCapabilities.Zoned);
-
-                    if (ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType == DeviceIsHostManagedZoned) {
-                        NT_ASSERT(supportedCapabilities->ZonedCapabilities.Zoned == ATA_ZONED_CAPABILITIES_NOT_REPORTED);
-                    }
-
-                    // xiaoxing: this is duplicate as in AhciPortIdentifyDevice().
-                    // Keep the code for now in case some SMR disks not reporting ZONED values in Identify Device Data.
-                    if (ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities == 0) {
-                        ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities = (USHORT)supportedCapabilities->ZonedCapabilities.Zoned;
-                    }
-
-                    if (supportedCapabilities->ZonedCapabilities.Zoned == ATA_ZONED_CAPABILITIES_HOST_AWARE) {
-                        ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsHostAwareZoned;
-                    } else if (supportedCapabilities->ZonedCapabilities.Zoned == ATA_ZONED_CAPABILITIES_DEVICE_MANAGED) {
-                        ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsDeviceManagedZoned;
-                    }
-                }
-
-                if (supportedCapabilities->SupportedZacCapabilities.Valid == 1) {
-                    ChannelExtension->DeviceExtension->SupportedCommands.ReportZonesExt = (ULONG)supportedCapabilities->SupportedZacCapabilities.ReportZonesExtSupported;
-                    ChannelExtension->DeviceExtension->SupportedCommands.OpenZoneExt = (ULONG)supportedCapabilities->SupportedZacCapabilities.NonDataOpenZoneExtSupported;
-                    ChannelExtension->DeviceExtension->SupportedCommands.FinishZoneExt = (ULONG)supportedCapabilities->SupportedZacCapabilities.NonDataFinishZoneExtSupported;
-                    ChannelExtension->DeviceExtension->SupportedCommands.CloseZoneExt = (ULONG)supportedCapabilities->SupportedZacCapabilities.NonDataCloseZoneExtSupported;
-                    ChannelExtension->DeviceExtension->SupportedCommands.ResetWritePointersExt = (ULONG)supportedCapabilities->SupportedZacCapabilities.NonDataResetWritePointersExtSupported;
-
-                }
-
             }
 
         } else {
             ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.SupportedCapabilities = 0;
-        }
-
-        if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension[0].DeviceParameters)) {
-            UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE, FALSE);
         }
 
     } else if ( (completedLogAddress == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS) && (completedPageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE) ) {
@@ -1483,45 +1435,6 @@ LogPageDiscoveryCompletion (
 
         } else {
             ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.SATA = 0;
-        }
-
-    } else if ( (completedLogAddress == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS) && (completedPageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE) ) {
-        // the issued command was for getting zoned device information page of identify device data log
-
-        if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
-            PIDENTIFY_DEVICE_DATA_LOG_PAGE_ZONED_DEVICE_INFO zonedDeviceInfo = (PIDENTIFY_DEVICE_DATA_LOG_PAGE_ZONED_DEVICE_INFO)ChannelExtension->DeviceExtension->ReadLogExtPageData;
-
-            // The value of revision number word shall be 0001h.
-            if ((zonedDeviceInfo->Header.RevisionNumber == IDE_GP_LOG_VERSION) &&
-                (zonedDeviceInfo->Header.PageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE)) {
-                
-                if (zonedDeviceInfo->ZonedDeviceCapabilities.Valid == 1) {
-                    ChannelExtension->DeviceExtension->ZonedDeviceInfo.URSWRZ = (BOOLEAN)zonedDeviceInfo->ZonedDeviceCapabilities.URSWRZ;
-                }
-
-                if (zonedDeviceInfo->OptimalNumberOfOpenSequentialWritePreferredZones.Valid == 1) {
-                    ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfOpenSequentialWritePreferredZones = (ULONG)zonedDeviceInfo->OptimalNumberOfOpenSequentialWritePreferredZones.Number;
-                }
-
-                if (zonedDeviceInfo->OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones.Valid == 1) {
-                    ChannelExtension->DeviceExtension->ZonedDeviceInfo.OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones = (ULONG)zonedDeviceInfo->OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones.Number;
-                }
-
-                if (zonedDeviceInfo->MaxNumberOfOpenSequentialWriteRequiredZones.Valid == 1) {
-                    ChannelExtension->DeviceExtension->ZonedDeviceInfo.MaxNumberOfOpenSequentialWriteRequiredZones = (ULONG)zonedDeviceInfo->MaxNumberOfOpenSequentialWriteRequiredZones.Number;
-                }
-
-                if (zonedDeviceInfo->Version.Valid == 1) {
-                    ChannelExtension->DeviceExtension->ZonedDeviceInfo.ZacMinorVersion = (USHORT)zonedDeviceInfo->Version.ZacMinorVersion;
-                }
-            }
-
-        } else {
-            ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.ZonedDeviceInformation = 0;
-        }
-
-        if (!IsSupportedZonedDevice(&ChannelExtension->DeviceExtension[0].DeviceParameters)) {
-            UpdateQueryLogPageSupportive(ChannelExtension, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS, IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ZONED_DEVICE_INFORMATION_PAGE, FALSE);
         }
 
     } else if ( (completedLogAddress == IDE_GP_LOG_SAVED_DEVICE_INTERNAL_STATUS) && (completedPageNumber == 0) ) {
@@ -1613,8 +1526,6 @@ Return Value:
 
         if (sig == ATA_DEVICE_SIGNATURE_ATA) {
             ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAta;
-        } else if (sig == ATA_DEVICE_SIGNATURE_HOST_ZONED) {
-            ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsHostManagedZoned;
         } else if (sig == ATA_DEVICE_SIGNATURE_ATAPI) {
             ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAtapi;
         } else {
@@ -1649,17 +1560,6 @@ AhciPortIdentifyDevice(
         // Update device ata type if it isn't initialized correctly.
         UpdateDeviceType(ChannelExtension);
 
-        // Get SMR disks types
-        if (ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsHostManagedZoned) {
-            NT_ASSERT(ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities == ATA_ZONED_CAPABILITIES_NOT_REPORTED);
-        }
-
-        if (ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities == ATA_ZONED_CAPABILITIES_HOST_AWARE) {
-            ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType = DeviceIsHostAwareZoned;
-        } else if (ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.ZonedCapabilities == ATA_ZONED_CAPABILITIES_DEVICE_MANAGED) {
-            ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType = DeviceIsDeviceManagedZoned;
-        }
-
         //Re-initialize device specific information to avoid the values being reused after device switched.
         ChannelExtension->StateFlags.NCQ_Activated = 0;
         ChannelExtension->StateFlags.NCQ_Succeeded = 0;
@@ -1670,7 +1570,6 @@ AhciPortIdentifyDevice(
         AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
         AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
         AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->FirmwareUpdate, sizeof(DOWNLOAD_MICROCODE_CAPABILITIES));
-        AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->ZonedDeviceInfo, sizeof(ZONED_DEVICE_INFO));
 
         // identify completes, digest identify data / inquiry data
         UpdateDeviceParameters(ChannelExtension);

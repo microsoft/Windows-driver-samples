@@ -1685,172 +1685,6 @@ AhciHwStartIo (
 
             break;
         }
-
-        case SRB_FUNCTION_GET_DUMP_INFO: {
-            ULONG status = STOR_STATUS_SUCCESS;
-            ULONG size = 0;
-            ULONG srbBufferSize = SrbGetDataTransferLength(Srb);
-            PSTOR_ADDR_BTL8 diskAddress = NULL;
-            PAHCI_DUMP_CONTEXT dumpContext = NULL;
-            ULONG diskCount = 0;
-            PGET_MINIPORT_DUMP_INFO getDumpInfo = (PGET_MINIPORT_DUMP_INFO)SrbGetDataBuffer(Srb);
-            PMINIPORT_DUMP_INFO dumpInfo = NULL;
-
-            adapterRequest = TRUE;
-
-            if ( (getDumpInfo == NULL) ||
-                 (srbBufferSize < max(sizeof(GET_MINIPORT_DUMP_INFO), sizeof(MINIPORT_DUMP_INFO))) ||
-                 (getDumpInfo->Signature != GET_DUMP_INFO_SIGNATURE) ||
-                 (getDumpInfo->DiskCount == 0) ||
-                 (getDumpInfo->DiskCount > AHCI_MAX_PORT_COUNT) ) {
-                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-            } else {
-
-                diskCount = getDumpInfo->DiskCount;
-
-                size = FIELD_OFFSET(AHCI_DUMP_CONTEXT, Ports) +
-                       (diskCount * sizeof(AHCI_DUMP_PORT_CONTEXT));
-
-                //
-                // Allocate and populate private context
-                //
-
-                status = StorPortAllocatePool(AdapterExtension,
-                                              size,
-                                              AHCI_POOL_TAG,
-                                              (PVOID*)&dumpContext);
-
-                if ((status != STOR_STATUS_SUCCESS) || (dumpContext == NULL)) {
-                    Srb->SrbStatus = SRB_STATUS_ERROR;
-                } else {
-
-                    AhciZeroMemory((PCHAR)dumpContext, size);
-
-                    dumpContext->VendorID = adapterExtension->VendorID;
-                    dumpContext->DeviceID = adapterExtension->DeviceID;
-                    dumpContext->RevisionID = adapterExtension->RevisionID;
-                    dumpContext->AhciBaseAddress = adapterExtension->AhciBaseAddress;
-                    dumpContext->LogFlags = adapterExtension->LogFlags;
-                    dumpContext->AdapterRegistryFlags = adapterExtension->RegistryFlags;
-
-                    //
-                    // Fill telemetry information
-                    //
-                    //dumpContext->MaxDumpLevelEnabled = 1;
-                    //dumpContext->MaxDeviceDumpSize = 100;
-
-                    AhciZeroMemory((PCHAR)dumpContext->PublicGPLogTableAddresses,
-                                   sizeof(dumpContext->PublicGPLogTableAddresses));
-
-                    dumpContext->PrivateGPLogPageAddress = 0;
-
-                    //
-                    // Override from the registry settings if passed by the storport miniport
-                    // If private address is not set we will use T13 defined one.
-                    // Consider always trying default one and resort to registry if it is not supported
-                    //
-                    if (dumpContext->PrivateGPLogPageAddress == 0) {
-                        dumpContext->PrivateGPLogPageAddress = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
-                    }
-
-                    //
-                    // Copy port information for the dump disks
-                    //
-                    dumpContext->PortCount = diskCount;
-
-                    Srb->SrbStatus = SRB_STATUS_SUCCESS;
-
-                    for (ULONG i = 0; i < diskCount; i++) {
-
-                        if ((getDumpInfo->Address[i].Type == STOR_ADDRESS_TYPE_BTL8) &&
-                            (getDumpInfo->Address[i].AddressLength >= STOR_ADDR_BTL8_ADDRESS_LENGTH)) {
-
-                            diskAddress = (PSTOR_ADDR_BTL8)&getDumpInfo->Address[i];
-                            pathId = diskAddress->Path;
-
-                            dumpContext->Ports[i].PortNumber = adapterExtension->PortExtension[pathId]->PortNumber;
-                            dumpContext->Ports[i].PortRegistryFlags = adapterExtension->PortExtension[pathId]->RegistryFlags;
-
-                            //
-                            // Preserve Hybrid Disk Information.
-                            //
-                            if (IsDeviceHybridInfoSupported(adapterExtension->PortExtension[pathId])) {
-                                StorPortMoveMemory((PVOID)&dumpContext->Ports[i].HybridInfo,
-                                                   (PVOID)&adapterExtension->PortExtension[pathId]->DeviceExtension->HybridInfo,
-                                                   sizeof(GP_LOG_HYBRID_INFORMATION_HEADER));
-                            }
-                        } else {
-                            Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-                            break;
-                        }
-                    }
-
-                    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
-
-                        //
-                        // Populate the output of the request
-                        //
-                        dumpInfo = (PMINIPORT_DUMP_INFO)SrbGetDataBuffer(Srb);
-                        AhciZeroMemory((PCHAR)dumpInfo, srbBufferSize);
-
-                        dumpInfo->Version = sizeof(MINIPORT_DUMP_INFO);
-                        dumpInfo->Size = sizeof(MINIPORT_DUMP_INFO);
-                        dumpInfo->Signature = MINIPORT_DUMP_INFO_SIGNATURE;
-                        dumpInfo->Context = (PVOID)dumpContext;
-                    }
-                }
-            }
-
-            StorPortEtwChannelEvent2(adapterExtension,
-                                     NULL,
-                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventStartIO,
-                                     L"Completed GET_DUMP_INFO",
-                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
-                                     StorportEtwEventOpcodeInfo,
-                                     Srb,
-                                     L"SrbStatus",
-                                     Srb->SrbStatus,
-                                     NULL,
-                                     0);
-
-            StorPortNotification(RequestComplete, AdapterExtension, Srb);
-            break;
-        }
-
-        case SRB_FUNCTION_FREE_DUMP_INFO: {
-            ULONG status = STOR_STATUS_SUCCESS;
-            PFREE_MINIPORT_DUMP_INFO freeDumpInfo = (PFREE_MINIPORT_DUMP_INFO)SrbGetDataBuffer(Srb);
-
-            adapterRequest = TRUE;
-
-            if ( (freeDumpInfo == NULL) ||
-                 (SrbGetDataTransferLength(Srb) < sizeof(FREE_MINIPORT_DUMP_INFO)) ||
-                 (freeDumpInfo->Signature != FREE_DUMP_INFO_SIGNATURE) ) {
-                Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
-            } else {
-                status = StorPortFreePool(AdapterExtension, freeDumpInfo->Context);
-                Srb->SrbStatus = (status == STOR_STATUS_SUCCESS) ? SRB_STATUS_SUCCESS : SRB_STATUS_ERROR;
-            }
-
-            StorPortEtwChannelEvent2(adapterExtension,
-                                     NULL,
-                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
-                                     AhciEtwEventStartIO,
-                                     L"Completed FREE_DUMP_INFO",
-                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
-                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
-                                     StorportEtwEventOpcodeInfo,
-                                     Srb,
-                                     L"SrbStatus",
-                                     Srb->SrbStatus,
-                                     NULL,
-                                     0);
-
-            StorPortNotification(RequestComplete, AdapterExtension, Srb);
-            break;
-        }
     }
 
     // 1.1 if the request is for adapter, it has been processed. Return from here.
@@ -3094,7 +2928,7 @@ Return Value:
                     //
                     if (PartialToSlumberTransitionIsAllowed(channelExtension, NULL)) {
 
-                        ULONG status = StorPortRequestTimer(channelExtension->AdapterExtension,
+                        status = StorPortRequestTimer(channelExtension->AdapterExtension,
                                                             channelExtension->WorkerTimer,
                                                             AhciAutoPartialToSlumber,
                                                             channelExtension,
@@ -3105,7 +2939,7 @@ Return Value:
                                 adapterExtension->SystemIoBusNumber, channelExtension->PortNumber);
                         }
                     }
-
+                    
                 }
             } else {
                 status = ScsiUnitControlUnsuccessful;

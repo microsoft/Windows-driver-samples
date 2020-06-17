@@ -155,8 +155,7 @@ typedef struct _ATA_SUPPORTED_GPL_PAGES {
         ULONG  LogAddressSupported : 1;     // Log Address 0x30
         ULONG  SATA : 1;                        // Log Page 0x08
         ULONG  SupportedCapabilities : 1;       // Log Page 0x03
-        ULONG  ZonedDeviceInformation : 1;      // Log Page 0x09
-        ULONG  Reserved : 28;
+        ULONG  Reserved : 29;
     } IdentifyDeviceData;
 
     struct {
@@ -181,14 +180,7 @@ typedef struct _ATA_COMMAND_SUPPORTED {
 
     ULONG  SetDateAndTime           : 1;
 
-    ULONG  ReportZonesExt           : 1;
-    ULONG  OpenZoneExt              : 1;
-    ULONG  FinishZoneExt            : 1;
-
-    ULONG  CloseZoneExt             : 1;
-    ULONG  ResetWritePointersExt    : 1;
-
-    ULONG  Reserved                 : 22;
+    ULONG  Reserved                 : 27;
 
 } ATA_COMMAND_SUPPORTED, *PATA_COMMAND_SUPPORTED;
 
@@ -202,20 +194,6 @@ typedef struct _DOWNLOAD_MICROCODE_CAPABILITIES {
     UCHAR   Reserved[3];
 
 } DOWNLOAD_MICROCODE_CAPABILITIES, *PDOWNLOAD_MICROCODE_CAPABILITIES;
-
-typedef struct _ZONED_DEVICE_INFO {
-
-    BOOLEAN URSWRZ;
-    BOOLEAN Reserved;
-    USHORT  ZacMinorVersion;
-
-    ULONG   MaxNumberOfOpenSequentialWriteRequiredZones;
-
-    ULONG   OptimalNumberOfOpenSequentialWritePreferredZones;
-
-    ULONG   OptimalNumberOfNonSequentiallyWrittenSequentialWritePreferredZones;
-
-} ZONED_DEVICE_INFO, *PZONED_DEVICE_INFO;
 
 
 typedef struct _AHCI_DEVICE_EXTENSION {
@@ -241,7 +219,6 @@ typedef struct _AHCI_DEVICE_EXTENSION {
     LONG                                HybridCachingMediumEnableRefs;
 
     DOWNLOAD_MICROCODE_CAPABILITIES FirmwareUpdate;
-    ZONED_DEVICE_INFO       ZonedDeviceInfo;
 
     PUSHORT                 ReadLogExtPageData;
     STOR_PHYSICAL_ADDRESS   ReadLogExtPageDataPhysicalAddress;
