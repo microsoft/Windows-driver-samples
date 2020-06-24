@@ -175,3 +175,11 @@ On the target computer, in a Command Prompt window, enter **devmgmt.msc** to ope
 On the target computer, open Control Panel and navigate to **Hardware and Sound** \> **Manage audio devices**. In the Sound dialog box, select the speaker icon labeled as *SYSVAD (with APO Extensions)*, then click **Set Default**, but do not click **OK**. This will keep the Sound dialog box open.
 
 Locate an MP3 or other audio file on the target computer and double-click to play it. Then in the Sound dialog box, verify that there is activity in the volume level indicator associated with the *SYSVAD (with APO Extensions)* driver.
+
+## HLK testing
+
+The sample uploaded here is tested using the latest HLK version available to make sure it passes all audio tests in the current playlist. However, since it is a virtual audio driver it does not implement audio mixing and simulates capture and loopback by generating a tone. Given these limitations, there are some HLK tests that are expected to fail because they rely on the described functionality.
+
+In the case of audio tests, one of these exceptions is the Hardware Offload of Audio Processing Test. This test is aimed at devices that support offload capabilities and performs checks to make sure that the device complies with the appropiate requirements. In the particular case of SysVAD, this test will fail for endpoints with offload and loopback.
+
+For endpoints with offload, the test will fail because the driver includes offload pins but it does not implement a mixer with volume, mute and peak meter nodes, etc. For the case of endpoints with loopback, the test will fail because the driver simulates loopback by returning a sine tone instead of performing real mixing of streams in host and/or offload pins.
