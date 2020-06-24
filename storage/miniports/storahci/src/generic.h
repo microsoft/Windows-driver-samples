@@ -28,7 +28,6 @@ Revision History:
 #include "srbhelper.h"
 
 
-
 // storahci header files
 #include "common.h"
 #include "ahci.h"
@@ -168,4 +167,3 @@ typedef struct _SENDCMDOUTPARAMS {
 #define DISABLE_SMART           0xD9
 #define RETURN_SMART_STATUS     0xDA
 #define ENABLE_DISABLE_AUTO_OFFLINE 0xDB
-

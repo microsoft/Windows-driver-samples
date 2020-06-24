@@ -55,6 +55,21 @@ AhciFillMemory(
 }
 
 __inline
+VOID
+AhciCopyMemory(
+    _Out_writes_(Length) PCHAR Destination,
+    _In_reads_(Length) PCHAR Source,
+    _In_ ULONG Length
+    )
+{
+    ULONG i;
+
+    for (i = 0; i < Length; i++) {
+        Destination[i] = Source[i];
+    }
+}
+
+__inline
 BOOLEAN
 IsPortValid(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
@@ -191,7 +206,7 @@ IsMsnEnabled(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->MsnSupport == 1) );
 }
 
@@ -201,7 +216,7 @@ IsRmfEnabled(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.RemovableMediaFeature == 1) &&
              (DeviceExtension->IdentifyDeviceData->GeneralConfiguration.RemovableMedia == 1) );
 }
@@ -212,7 +227,7 @@ NoFlushDevice(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.WriteCache == 0) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.FlushCache == 0) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.FlushCacheExt == 0) );
@@ -234,7 +249,7 @@ IsSmartFeatureSupported(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.SmartCommands == 1) );
 }
 
@@ -264,7 +279,7 @@ IsExtendedPowerConditionsFeatureSupported(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupportExt.ExtendedPowerConditions == 1) );
 }
 
@@ -274,7 +289,7 @@ IsStreamingFeatureSupported(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->CommandSetSupport.StreamingFeature == 1) );
 }
 
@@ -284,7 +299,7 @@ IsNcqFeatureSupported(
     _In_ PAHCI_DEVICE_EXTENSION DeviceExtension
     )
 {
-    return ( (DeviceExtension->DeviceParameters.AtaDeviceType == DeviceIsAta) &&
+    return ( IsAtaDevice(&DeviceExtension->DeviceParameters) &&
              (DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NCQ == 1) );
 }
 
@@ -533,6 +548,7 @@ IsExternalPort(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     if ( (ChannelExtension->Px->CMD.HPCP) ||
          ((ChannelExtension->AdapterExtension->CAP.SXS) && (ChannelExtension->Px->CMD.ESP)) ||
          ((ChannelExtension->AdapterExtension->CAP.SMPS) && (ChannelExtension->Px->CMD.MPSP)) ) {
@@ -551,6 +567,7 @@ IsLPMCapablePort(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     // if a port is marked eSATA port but not having mechanical switch nor supporting Cold Presence Detection, don't turn on LPM on it.
     if ( (ChannelExtension->Px->CMD.HPCP) ||
          ((ChannelExtension->AdapterExtension->CAP.SXS) && (ChannelExtension->Px->CMD.ESP)) ) {
@@ -570,7 +587,8 @@ IsDeviceHybridInfoSupported(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
-    if ( (ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType ==  DeviceIsAta) &&
+
+    if ( IsAtaDevice(&ChannelExtension->DeviceExtension[0].DeviceParameters) &&
          (ChannelExtension->DeviceExtension[0].IdentifyDeviceData->SerialAtaFeaturesSupported.HybridInformation == 1) ) {
 
         return TRUE;
@@ -627,6 +645,7 @@ _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
             //
             return TRUE;
         }
+
     }
     return FALSE;
 }
@@ -647,6 +666,7 @@ _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
             //
             return TRUE;
         }
+
     }
     return FALSE;
 }
@@ -661,7 +681,6 @@ IsD3ColdAllowed(
 
     UNREFERENCED_PARAMETER(AdapterExtension);
 
-
     return allowed;
 }
 
@@ -671,6 +690,7 @@ IsPortD3ColdEnabled(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     // if device is D3Cold capable, return TRUE.
     if (ChannelExtension->StateFlags.D3ColdEnabled == 1) {
         return TRUE;
@@ -687,13 +707,6 @@ IsReceivingSystemPowerHints(
 {
     return (AdapterExtension->SystemPowerHintState != RaidSystemPowerUnknown);
 }
-
-
-
-
-
-
-
 
 __inline
 BOOLEAN
@@ -827,15 +840,23 @@ PortReleaseActiveReference (
 
 __inline
 BOOLEAN
-DeviceIdentificationComplete(
+DeviceIdentificationCompletedSuccess(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
     ULONG i;
 
+    //
+    // Note: There is possibility that 1st inquiry/identify will fail, then identify device
+    //       data is invalid, but AtaDeviceType is initialized correctly during IO process.
+    //       So it is also needed to check IdentifyDeviceSuccess flag to see whether identify
+    //       command success.
+    //
+
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
-        if ( (AdapterExtension->PortExtension[i] != NULL) &&
-             (AdapterExtension->PortExtension[i]->DeviceExtension->DeviceParameters.AtaDeviceType == DeviceUnknown) ) {
+        if ((AdapterExtension->PortExtension[i] != NULL) &&
+             ((AdapterExtension->PortExtension[i]->DeviceExtension->DeviceParameters.AtaDeviceType == DeviceUnknown) ||
+              (AdapterExtension->PortExtension[i]->StateFlags.IdentifyDeviceSuccess == 0))) {
             return FALSE;
         }
     }
@@ -1018,6 +1039,7 @@ IsFuaSupported(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     return (ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.FuaSupported == 1);
 }
 
@@ -1045,6 +1067,7 @@ NoLpmSupport(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     if (ChannelExtension->AdapterExtension->StateFlags.StoppedState == 1) {
         // adapter is stopped, Px registers are not accessible.
         return TRUE;
@@ -1067,6 +1090,7 @@ NeedToSetTransferMode(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     UNREFERENCED_PARAMETER(ChannelExtension); // make WDK sample build clean
     return FALSE;
 }
@@ -1077,6 +1101,7 @@ IsSingleIoDevice(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
+
     UNREFERENCED_PARAMETER(AdapterExtension); // make WDK sample build clean
     return FALSE;
 }
@@ -1087,6 +1112,7 @@ AdapterResetInInit(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
+
     UNREFERENCED_PARAMETER(AdapterExtension); // make WDK sample build clean
     return FALSE;
 }
@@ -1097,6 +1123,7 @@ IgnoreHotPlug(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     return (ChannelExtension->StateFlags.IgnoreHotplugInterrupt == 1);
 }
 
@@ -1106,6 +1133,7 @@ AdapterNoNonQueuedErrorRecovery(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
+
     UNREFERENCED_PARAMETER(AdapterExtension); // make WDK sample build clean
     return FALSE;
 }
@@ -1116,6 +1144,7 @@ CloResetEnabled(
     _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
+
     UNREFERENCED_PARAMETER(AdapterExtension); // make WDK sample build clean
     return (AdapterExtension->CAP.SCLO == 1);
 }
@@ -1126,6 +1155,7 @@ IsNCQSupported(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     if ( IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters) &&
          (ChannelExtension->AdapterExtension->CAP.SNCQ == 1) &&
          (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NCQ == 1) &&
@@ -1143,6 +1173,7 @@ IsFirmwareUpdateSupported(
     )
 {
     BOOLEAN support;
+
 
 
     if (ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported) {
@@ -1252,7 +1283,6 @@ PartialToSlumberTransitionIsAllowed (
         return FALSE;
     }
 
-
     if ( ((ChannelExtension->LastUserLpmPowerSetting  & 0x2) != 0) &&
          (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.DeviceAutoPS == 1) &&
          (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaFeaturesEnabled.DeviceAutoPS == 1) )   {
@@ -1296,6 +1326,7 @@ GetHybridMaxLbaRangeCountForChangeLba (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     //
     // If CacheBehavior is supported, disk doesn't move data from primary medium to caching medium when
     // executes HybridChangeByLba command. Use 64 as default MaxLbaRangeCountForChangeLba value.
@@ -1314,17 +1345,52 @@ SupportsEnhancedNcqErrorRecovery (
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 {
+
     if ((ChannelExtension->DeviceExtension->SupportedGPLPages.SinglePage.NcqCommandError == 1) &&
         (ChannelExtension->DeviceExtension->IoRecord.NcqReadLogErrorCount <= 5)) {
         return TRUE;
+
     } else {
         return FALSE;
     }
 }
 
 __inline
+BOOLEAN
+IsAtaPioDataInCmd(
+    _In_ PSTORAGE_REQUEST_BLOCK Srb
+    )
+{
+    PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
+    UCHAR command = IDE_COMMAND_NOT_VALID;
+
+    if (IsAtaCfisPayload(srbExtension->AtaFunction)) {
+        command = srbExtension->Cfis.Command;
+    } else if (IsAtaCommand(srbExtension->AtaFunction)) {
+        command = srbExtension->TaskFile.Current.bCommandReg;
+    }
+
+    //
+    // Only put together some major PIO Data-In commands here, which should be good enough 
+    // for the PIO Data-In command return status mismatch issue.
+    //
+    switch (command) {
+        case IDE_COMMAND_READ:
+        case IDE_COMMAND_READ_EXT:
+        case IDE_COMMAND_READ_MULTIPLE_EXT:
+        case IDE_COMMAND_READ_LOG_EXT:
+        case IDE_COMMAND_ATAPI_IDENTIFY:
+        case IDE_COMMAND_READ_MULTIPLE:
+        case IDE_COMMAND_IDENTIFY:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+__inline
 VOID
-SetReturnRegisterValues (
+SetReturnRegisterValues(
     _In_ PAHCI_CHANNEL_EXTENSION        ChannelExtension,
     _In_ PSTORAGE_REQUEST_BLOCK         Srb,
     _In_opt_ PGP_LOG_NCQ_COMMAND_ERROR  NcqErrorLog
@@ -1332,6 +1398,7 @@ SetReturnRegisterValues (
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
     PCDB                cdb = SrbGetCdb(Srb);
+    BOOLEAN             pioDataInCmd = IsAtaPioDataInCmd(Srb);
 
     if ((IsReturnResults(srbExtension->Flags) == FALSE) || (srbExtension->ResultBuffer == NULL)) {
         return;
@@ -1353,6 +1420,20 @@ SetReturnRegisterValues (
             ataStatus->Header.DescriptorType = SCSI_SENSE_DESCRIPTOR_TYPE_ATA_STATUS_RETURN;
             ataStatus->Header.AdditionalLength = 0x0C;
             ataStatus->Extend = Is48BitCommand(srbExtension->Flags) ? 1 : 0;
+
+            // For PIO Data In command, if it is successful, then the device will not send RD2H FIS.
+            // Only update the ATA status/error without getting the stale copy of information in D2H FIS.
+            if (pioDataInCmd && (SRB_STATUS(Srb->SrbStatus) == SRB_STATUS_SUCCESS)) {
+                // According to SATA 3.0 specification 11.7:
+                // - Device will not send a RD2H FIS when PIO data in command success.
+                // According to AHCI 1.3.1 specification 5.3.9:
+                // - Device will report the ATA Status/Error register contents in the E_Status/Error field of the PIO Setup FIS.
+                // For ATA status return descriptor, refer to ATA Pass-Through specification 13.2.4.
+                ataStatus->Status = ChannelExtension->ReceivedFIS->PioSetupFis.E_Status;
+                ataStatus->Error = ChannelExtension->ReceivedFIS->PioSetupFis.Error;
+
+                goto Exit;
+            }
 
             if (NcqErrorLog == NULL) {
                 ataStatus->Error = ChannelExtension->ReceivedFIS->D2hRegisterFis.Error;
@@ -1432,6 +1513,7 @@ SetReturnRegisterValues (
         }
     }
 
+Exit:
     // set flag SRB_STATUS_AUTOSENSE_VALID so that Storport will copy it back to original Sense Buffer
     Srb->SrbStatus |= SRB_STATUS_AUTOSENSE_VALID;
 
@@ -1511,18 +1593,27 @@ AtaFormFactorToStorageFormFactor(
 
 __inline
 BOOLEAN
+IsAdapterRemovable(
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
+    )
+{
+    return (BOOLEAN)AdapterExtension->StateFlags.Removable;
+}
+
+__inline
+BOOLEAN
 IsAdapterRemoved(
-    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
     )
 {
     //
-    // When the adapter is removed, its registers are read as
-    // all 0xF's by the PCI bus. We use the PxSSTS register because
-    // it has several reserved bits which will unlikely be defined
-    // in the lifetime of the spec.
+    // When the adapter is removed, its registers are read as all 0xFs by the
+    // PCI bus. We use the Version register because all 0xFs is not a valid
+    // value and it is unlikely to ever be a valid value for the lifetime of
+    // the AHCI spec.
     //
-    ULONG ssts = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SSTS.AsUlong);
-    return (ssts == MAXULONG);
+    ULONG version = StorPortReadRegisterUlong(AdapterExtension, &AdapterExtension->ABAR_Address->VS.AsUlong);
+    return (version == MAXULONG);
 }
 
 
@@ -1586,6 +1677,19 @@ AhciPortIssueInitCommands(
     PAHCI_CHANNEL_EXTENSION ChannelExtension
   );
 
+VOID
+AhciPortStartTelemetry(
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
+    );
+
+VOID
+AhciPortMarkDeviceFailed(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ AHCI_DEVICE_FAILURE_REASON FailureReason,
+    _In_ ULONG Flags,
+    _In_ BOOLEAN SuppressFailure
+    );
+
 _Success_(return != FALSE)
 BOOLEAN
 CompareId (
@@ -1612,5 +1716,268 @@ AhciUlongIncrement(
         *Value != MAXULONG) {
         (*Value)++;
     }
+}
+
+VOID
+FillAtaCommandErrorStruct(
+    _Out_ PATA_COMMAND_ERROR DataBuffer,
+    _In_ PSTORAGE_REQUEST_BLOCK Srb,
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+    );
+
+
+VOID
+FORCEINLINE
+AhciTelemetryLog(
+    _In_ PVOID HwDeviceExtension,
+    _In_opt_ PSTOR_ADDRESS Address,
+    _In_ ULONG DriverVersion,
+    _In_ ULONG EventId,
+    _In_reads_or_z_(EVENT_NAME_MAX_LENGTH) PSTR EventName,
+    _In_ ULONG EventVersion,
+    _In_ ULONG Flags,
+    _In_ ULONG EventBufferLength,
+    _In_reads_bytes_opt_(EventBufferLength) PUCHAR EventBuffer,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter0Name,
+    _In_ ULONGLONG Parameter0Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter1Name,
+    _In_ ULONGLONG Parameter1Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter2Name,
+    _In_ ULONGLONG Parameter2Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter3Name,
+    _In_ ULONGLONG Parameter3Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter4Name,
+    _In_ ULONGLONG Parameter4Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter5Name,
+    _In_ ULONGLONG Parameter5Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter6Name,
+    _In_ ULONGLONG Parameter6Value,
+    _In_reads_or_z_opt_(EVENT_MAX_PARAM_NAME_LEN) PSTR Parameter7Name,
+    _In_ ULONGLONG Parameter7Value
+    )
+{
+    STORPORT_TELEMETRY_EVENT event = {0};
+
+    event.DriverVersion = DriverVersion;
+    event.EventId = EventId;
+    StorPortCopyMemory(event.EventName, EventName, GetStringLength(EventName, EVENT_NAME_MAX_LENGTH));
+    event.EventVersion = EventVersion;
+    event.Flags = Flags;
+
+    if ((EventBufferLength > 0) && (EventBuffer != NULL)) {
+        event.EventBuffer = EventBuffer;
+        event.EventBufferLength = min(EventBufferLength, EVENT_BUFFER_MAX_LENGTH);
+    }
+
+    if (Parameter0Name != NULL) {
+        StorPortCopyMemory(event.ParameterName0, Parameter0Name, GetStringLength(Parameter0Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue0 = Parameter0Value;
+    }
+
+    if (Parameter1Name != NULL) {
+        StorPortCopyMemory(event.ParameterName1, Parameter1Name, GetStringLength(Parameter1Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue1 = Parameter1Value;
+    }
+
+    if (Parameter2Name != NULL) {
+        StorPortCopyMemory(event.ParameterName2, Parameter2Name, GetStringLength(Parameter2Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue2 = Parameter2Value;
+    }
+
+    if (Parameter3Name != NULL) {
+        StorPortCopyMemory(event.ParameterName3, Parameter3Name, GetStringLength(Parameter3Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue3 = Parameter3Value;
+    }
+
+    if (Parameter4Name != NULL) {
+        StorPortCopyMemory(event.ParameterName4, Parameter4Name, GetStringLength(Parameter4Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue4 = Parameter4Value;
+    }
+
+    if (Parameter5Name != NULL) {
+        StorPortCopyMemory(event.ParameterName5, Parameter5Name, GetStringLength(Parameter5Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue5 = Parameter5Value;
+    }
+
+    if (Parameter6Name != NULL) {
+        StorPortCopyMemory(event.ParameterName6, Parameter6Name, GetStringLength(Parameter6Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue6 = Parameter6Value;
+    }
+
+    if (Parameter7Name != NULL) {
+        StorPortCopyMemory(event.ParameterName7, Parameter7Name, GetStringLength(Parameter7Name, EVENT_MAX_PARAM_NAME_LEN));
+        event.ParameterValue7 = Parameter7Value;
+    }
+
+    StorPortLogTelemetry(HwDeviceExtension, Address, &event);
+
+    return;
+}
+
+VOID
+FORCEINLINE
+AhciTelemetryLogResetErrorRecovery(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_opt_ PSTOR_ADDRESS Address,
+    _In_ ULONG EventId,
+    _In_reads_or_z_(EVENT_NAME_MAX_LENGTH) PSTR EventName,
+    _In_ ULONG Flags,
+    _In_reads_or_z_(EVENT_MAX_PARAM_NAME_LEN) PSTR AdditionalParameterName,
+    _In_ ULONGLONG AdditionalParameterValue
+    )
+{
+    LARGE_INTEGER time;
+    ULONGLONG elapsedTime;
+
+    if (ChannelExtension != NULL) {
+
+        StorPortQuerySystemTime(&time);
+        elapsedTime = time.QuadPart - ChannelExtension->LastLogResetErrorRecoveryTime;
+
+        //
+        // If AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING is set, always log event;
+        // otherwise, if this is the first time logging or if it has been 1 hour
+        // since the last log, log the current counts of reset and error recovery.
+        //
+        if (((Flags & AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING) != 0) ||
+            (ChannelExtension->LastLogResetErrorRecoveryTime == 0) ||
+            (elapsedTime >= MS_TO_100NS(60*60*1000))) {
+
+            ChannelExtension->LastLogResetErrorRecoveryTime = time.QuadPart;
+
+            AhciTelemetryLog(ChannelExtension->AdapterExtension,
+                             Address,
+                             AHCI_TELEMETRY_DRIVER_VERSION,
+                             EventId,
+                             EventName,
+                             AHCI_TELEMETRY_EVENT_VERSION,
+                             Flags,
+                             0,
+                             NULL,
+                             "PortReset|PortErrorRecovery",
+                             (((ULONGLONG)ChannelExtension->TotalCountPortReset << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountPortErrorRecovery)),
+                             "StartFail|NonQErrorRecovery",
+                             (((ULONGLONG)ChannelExtension->TotalCountRunningStartFailed << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountNonQueuedErrorRecovery)),
+                             "NCQError|NCQErrorComplete",
+                             (((ULONGLONG)ChannelExtension->TotalCountNCQError << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountNCQErrorRecoveryComplete)),
+                             "PortDriverResetCount",
+                             ChannelExtension->DeviceExtension[0].IoRecord.PortDriverResetCount,
+                             "StateFlags",
+                             *(ULONGLONG *)&(ChannelExtension->StateFlags),
+                             "StartState",
+                             *(ULONGLONG *)&(ChannelExtension->StartState),
+                             "TotalCountSurpriseRemove",
+                             ChannelExtension->TotalCountSurpriseRemove,
+                             AdditionalParameterName,
+                             AdditionalParameterValue
+                             );
+        }
+    }
+
+    return;
+}
+
+VOID
+FORCEINLINE
+AhciTelemetryLogPowerSettingChange(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_opt_ PSTOR_ADDRESS Address,
+    _In_ ULONG EventId,
+    _In_reads_or_z_(EVENT_NAME_MAX_LENGTH) PSTR EventName,
+    _In_ ULONG Flags,
+    _In_ ULONG Ipm,
+    _In_ ULONG LpmMode
+    )
+{   
+    if (ChannelExtension != NULL) {
+
+        AhciTelemetryLog(ChannelExtension->AdapterExtension,
+                         Address,
+                         AHCI_TELEMETRY_DRIVER_VERSION,
+                         EventId,
+                         EventName,
+                         AHCI_TELEMETRY_EVENT_VERSION,
+                         Flags,
+                         0,
+                         NULL,
+                         "PowerSettingChangeCount",
+                         ChannelExtension->TotalCountPowerSettingNotification,
+                         "StateFlags",
+                         *(ULONGLONG *)&(ChannelExtension->StateFlags),
+                         "LastUserLpmPowerSetting",
+                         ChannelExtension->LastUserLpmPowerSetting,
+                         "CAP",
+                         ChannelExtension->AdapterExtension->CAP.AsUlong,
+                         "CAP2",
+                         ChannelExtension->AdapterExtension->CAP2.AsUlong,
+                         "PxCMD",
+                         StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong),
+                         "IPM",
+                         Ipm,
+                         "LpmMode|SlumberInterval",
+                         LpmMode
+                         );
+    }
+
+    return;
+}
+
+VOID
+FORCEINLINE
+AhciTelemetryLogPortStart(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_opt_ PSTOR_ADDRESS Address,
+    _In_ ULONG EventId,
+    _In_reads_or_z_(EVENT_NAME_MAX_LENGTH) PSTR EventName,
+    _In_ ULONG Flags,
+    _In_reads_or_z_(EVENT_MAX_PARAM_NAME_LEN) PSTR AdditionalParameterName,
+    _In_ ULONGLONG AdditionalParameterValue
+    )
+{   
+    if (ChannelExtension != NULL) {
+        //
+        // Log the telemetry event only when at least one of below conditions is true:
+        //   1. AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING flag is set;
+        //   2. Current port start time is no less than 1s.
+        //
+        if (((Flags && AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING) != 0) ||
+            (ChannelExtension->TotalPortStartTime >= 1000)) {
+
+            AhciTelemetryLog(ChannelExtension->AdapterExtension,
+                             Address,
+                             AHCI_TELEMETRY_DRIVER_VERSION,
+                             EventId,
+                             EventName,
+                             AHCI_TELEMETRY_EVENT_VERSION,
+                             Flags,
+                             0,
+                             NULL,
+                             "PortReset|PortErrorRecovery",
+                             (((ULONGLONG)ChannelExtension->TotalCountPortReset << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountPortErrorRecovery)),
+                             "StartFail|NonQErrorRecovery",
+                             (((ULONGLONG)ChannelExtension->TotalCountRunningStartFailed << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountNonQueuedErrorRecovery)),
+                             "NCQError|NCQErrorComplete",
+                             (((ULONGLONG)ChannelExtension->TotalCountNCQError << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountNCQErrorRecoveryComplete)),
+                             "PortDriverResetCount",
+                             ChannelExtension->DeviceExtension[0].IoRecord.PortDriverResetCount,
+                             "StateFlags",
+                             *(ULONGLONG *)&(ChannelExtension->StateFlags),
+                             "StartState",
+                             *(ULONGLONG *)&(ChannelExtension->StartState),
+                             "PortStartTime(ms)",
+                             ChannelExtension->TotalPortStartTime,
+                             AdditionalParameterName,
+                             AdditionalParameterValue
+                             );
+        }
+    }
+
+    return;
 }
 

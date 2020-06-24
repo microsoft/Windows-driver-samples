@@ -21,10 +21,9 @@ Revision History:
 #pragma warning(push)
 #endif
 
-#pragma warning(disable:4152)   // nonstandard extension, function/data pointer conversion in expression
+#pragma warning(disable:4152) // nonstandard extension, function/data pointer conversion in expression
 #pragma warning(disable:4214) // bit field types other than int
 #pragma warning(disable:4201) // nameless struct/union
-
 
 #include "generic.h"
 
@@ -102,12 +101,12 @@ Return Value:
     hwInitializationData.NumberOfAccessRanges = NUM_ACCESS_RANGES;
     
     //
-    // TODO : It's not a given that SATA on ARM64 will only ever be ACPI enumerated
-    // This is just for the on-board controller. We will have to come up with a 
-    // solution for PCI bus enuerated on ARM64
+    // Support both PCI/ACPI enumerations on ARM64 platform for SATA device.
+    // Miniport uses flag to indicate storport to query/override the interface type reported here.
     //
-#if defined (_ARM64_) 
-    hwInitializationData.AdapterInterfaceType = ACPIBus;
+#if defined(_ARM_) || defined(_ARM64_)
+    hwInitializationData.FeatureSupport |= STOR_FEATURE_SET_ADAPTER_INTERFACE_TYPE;
+    hwInitializationData.AdapterInterfaceType = InterfaceTypeUndefined;
 #else
     hwInitializationData.AdapterInterfaceType = PCIBus;
 #endif
@@ -122,6 +121,7 @@ Return Value:
     hwInitializationData.FeatureSupport |= STOR_FEATURE_DEVICE_DESCRIPTOR_FROM_ATA_INFO_VPD;    // indicating that port driver forms STORAGE_DEVICE_DESCRIPTOR from ATA Information VPD page rather than INQUIRY data
     hwInitializationData.FeatureSupport |= STOR_FEATURE_EXTRA_IO_INFORMATION;                   // Indicating that miniport driver wants SRBEX_DATA_IO_INFO in a SRBEX if available
     hwInitializationData.FeatureSupport |= STOR_FEATURE_ADAPTER_NOT_REQUIRE_IO_PORT;            // Indicating that miniport driver doesn't require IO Port resource for its adapter.
+    hwInitializationData.FeatureSupport |= STOR_FEATURE_DUMP_INFO;                              // Indicating that the miniport driver supports the dump info SRBs.
 
     // Set required extension sizes.
     hwInitializationData.DeviceExtensionSize = sizeof(AHCI_ADAPTER_EXTENSION);
@@ -206,7 +206,6 @@ Return Values:
         AdapterExtension->StateFlags.InterruptMessagePerPort = 0;
     }
 
-
     StorPortDebugPrint(3, "StorAHCI - Interrupt Mode: Adapter 0x%04X-0x%04X --- %s\n",
                            AdapterExtension->VendorID,
                            AdapterExtension->DeviceID,
@@ -242,11 +241,16 @@ AllocateResourcesForAdapter(
         Therefore the number of Command Headers must be 256/32 = 8. Round cap.NCS to the next multiple of 8
 */
 {
+    ULONG alignment = 0x400; // 1K
+    BOOLEAN dumpMode = IsDumpMode(AdapterExtension);
     ULONG paddedNCS = 0;
     ULONG paddedSrbExtensionSize = 0;
     ULONG nonCachedExtensionSize = 0;
+    ULONG channelExtensionSize = sizeof(AHCI_CHANNEL_EXTENSION);
     PVOID portsChannelExtension = NULL;
-    PCHAR portsUncachedExtension = NULL;
+    ULONG executionHistorySize = sizeof(EXECUTION_HISTORY) * MAX_EXECUTION_HISTORY_ENTRY_COUNT;
+    PVOID portsExecutionHistory = NULL;
+    ULONG_PTR left = 0;
     ULONG i = 0;
     ULONG j = 0;
 
@@ -268,33 +272,40 @@ AllocateResourcesForAdapter(
                              sizeof(IDENTIFY_DEVICE_DATA) +                 // 512 bytes
                              ATA_BLOCK_SIZE +                               // ReadLogExtPageData --- 512 bytes
                              INQUIRYDATABUFFERSIZE;                         // Inquiry Data
+
     // round up to KiloBytes if it's not dump mode. this makes sure that NonCachedExtension for next port can align to 1K.
-    if (!IsDumpMode(AdapterExtension)) {
-        nonCachedExtensionSize = ((nonCachedExtensionSize - 1) / 0x400 + 1) * 0x400;
-        // total size for all ports
-        nonCachedExtensionSize *= PortCount;
+    if (!dumpMode) {
+        nonCachedExtensionSize = ((nonCachedExtensionSize - 1) / alignment + 1) * alignment;
+
+        AdapterExtension->NonCachedExtension = StorPortGetUncachedExtension(AdapterExtension,
+                                                                            ConfigInfo,
+                                                                            nonCachedExtensionSize * PortCount);
     } else {
         // dump mode, address returned from StorPortGetUncachedExtension() is not guaranteed align with 1K.
         // adding 1K into length so that we can start from 1K alignment safely.
         //       NOTE: StorPortAllocatePool is not supported in dump stack, so we allocate ChannelExtension from UnCachedExtension as work around.
-        nonCachedExtensionSize += 0x400 + sizeof(AHCI_CHANNEL_EXTENSION);
+        nonCachedExtensionSize += alignment;
+
+        AdapterExtension->NonCachedExtension = StorPortGetUncachedExtension(AdapterExtension,
+                                                                            ConfigInfo,
+                                                                            (nonCachedExtensionSize + channelExtensionSize) * PortCount);
     }
 
-    AdapterExtension->NonCachedExtension = StorPortGetUncachedExtension(AdapterExtension, ConfigInfo, nonCachedExtensionSize);
-
     if (AdapterExtension->NonCachedExtension == NULL) {
-       // we cannot continue if cannot get nonCachedMemory for Channels.
+
+        // we cannot continue if cannot get nonCachedMemory for Channels.
+        NT_ASSERT(FALSE);
         return FALSE;
     }
 
-    AhciZeroMemory((PCHAR)AdapterExtension->NonCachedExtension, nonCachedExtensionSize);
+    AhciZeroMemory((PCHAR)AdapterExtension->NonCachedExtension, nonCachedExtensionSize * PortCount);
 
     // 2.2 allocate resources for Ports which need AHCI_CHANNEL_EXTENSION for each of them.
-    if (!IsDumpMode(AdapterExtension)) {
+    if (!dumpMode) {
         ULONG status = STOR_STATUS_SUCCESS;
         // allocate pool and zero the content
         status = StorPortAllocatePool(AdapterExtension,
-                                      PortCount * sizeof(AHCI_CHANNEL_EXTENSION),
+                                      channelExtensionSize * PortCount,
                                       AHCI_POOL_TAG,
                                       (PVOID*)&portsChannelExtension);
 
@@ -302,36 +313,49 @@ AllocateResourcesForAdapter(
            // we cannot continue if cannot get memory for ChannelExtension.
             return FALSE;
         }
-        AhciZeroMemory((PCHAR)portsChannelExtension, PortCount * sizeof(AHCI_CHANNEL_EXTENSION));
-        //get the starting pointer
-        portsUncachedExtension = (PCHAR)AdapterExtension->NonCachedExtension;
-    } else {
-        ULONG_PTR left = 0;
-        // get channelExtension
-        portsChannelExtension = (PCHAR)AdapterExtension->NonCachedExtension + nonCachedExtensionSize - sizeof(AHCI_CHANNEL_EXTENSION);
 
-        //get the starting pointer; align the starting location to 1K.
-        left = ((ULONG_PTR)AdapterExtension->NonCachedExtension) % 1024;
+        status = StorPortAllocatePool(AdapterExtension,
+                                      (ULONG)(executionHistorySize * PortCount),
+                                      AHCI_POOL_TAG,
+                                      (PVOID*)&portsExecutionHistory);
 
-        if (left > 0) {
-            portsUncachedExtension = (PCHAR)AdapterExtension->NonCachedExtension + 1024 - left;
-        } else {
-            portsUncachedExtension = (PCHAR)AdapterExtension->NonCachedExtension;
+        if ((status != STOR_STATUS_SUCCESS) || (portsExecutionHistory == NULL)) {
+           // Continue if cannot get memory for ExecutionHistory.
+           NT_ASSERT(FALSE);
         }
+    } else {
+        // get channelExtension from UnCachedExtension
+        portsChannelExtension = (PCHAR)AdapterExtension->NonCachedExtension + (nonCachedExtensionSize * PortCount);
     }
 
-    // reset nonCachedExtensionSize to be the size for one Port, it works for dump case also as PortCount is '1'.
-    nonCachedExtensionSize /= PortCount;
+    AhciZeroMemory((PCHAR)portsChannelExtension, channelExtensionSize * PortCount);
 
-    // assign allocated memory and uncachedExension into ChannelExtensions
+    // assign allocated uncachedExension into ChannelExtensions
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
         if ( (AdapterExtension->PortImplemented & (1 << i)) != 0 ) {
+            PCHAR portsUncachedExtension = (PCHAR)AdapterExtension->NonCachedExtension + nonCachedExtensionSize * j;
+
             // this port is implemented, allocate and initialize extension for the port
-            AdapterExtension->PortExtension[i] = (PAHCI_CHANNEL_EXTENSION)((PCHAR)portsChannelExtension + sizeof(AHCI_CHANNEL_EXTENSION) * j);
+            AdapterExtension->PortExtension[i] = (PAHCI_CHANNEL_EXTENSION)((PCHAR)portsChannelExtension + channelExtensionSize * j);
             AdapterExtension->PortExtension[i]->AdapterExtension = AdapterExtension;
             AdapterExtension->PortExtension[i]->PortNumber = i;
             // set ChannelExtension fields that use NonCachedExtension
-            AdapterExtension->PortExtension[i]->CommandList = (PAHCI_COMMAND_HEADER)(portsUncachedExtension + nonCachedExtensionSize * j);
+            if (!dumpMode) {
+                AdapterExtension->PortExtension[i]->CommandList = (PAHCI_COMMAND_HEADER)(portsUncachedExtension);
+                if (portsExecutionHistory != NULL) {
+                    AdapterExtension->PortExtension[i]->ExecutionHistory = (PEXECUTION_HISTORY)((PCHAR)portsExecutionHistory + executionHistorySize * j);
+                }
+            } else {
+                //get the starting pointer; align the starting location to 1K.
+                left = ((ULONG_PTR)portsUncachedExtension) % alignment;
+
+                if (left > 0) {
+                    AdapterExtension->PortExtension[i]->CommandList = (PAHCI_COMMAND_HEADER)(portsUncachedExtension + alignment - left);
+                } else {
+                    AdapterExtension->PortExtension[i]->CommandList = (PAHCI_COMMAND_HEADER)(portsUncachedExtension);
+                }
+            }
+
             AdapterExtension->PortExtension[i]->ReceivedFIS = (PAHCI_RECEIVED_FIS)((PCHAR)AdapterExtension->PortExtension[i]->CommandList + sizeof(AHCI_COMMAND_HEADER) * paddedNCS);
             AdapterExtension->PortExtension[i]->Local.SrbExtension = (PAHCI_SRB_EXTENSION)((PCHAR)AdapterExtension->PortExtension[i]->ReceivedFIS + sizeof(AHCI_RECEIVED_FIS));
             AdapterExtension->PortExtension[i]->Sense.SrbExtension = (PAHCI_SRB_EXTENSION)((PCHAR)AdapterExtension->PortExtension[i]->Local.SrbExtension + paddedSrbExtensionSize);
@@ -377,7 +401,7 @@ It performs:
     2.2 Initialize adapterExtension with version & cap values
     3.1 Turn on AE, reset the controller if AE is already set
         AHCI 1.1 Section 10.1.2 - 1.
-        "Indicate that system software is AHCI aware by setting GHC.AE to ‘1’."
+        "Indicate that system software is AHCI aware by setting GHC.AE to '1'."
     3.2 Determine which ports are implemented by the HBA
         AHCI 1.1 Section 10.1.2 - 2.
         "Determine which ports are implemented by the HBA, by reading the PI register. This bitmap value will aid software in determining how many ports are available and which port registers need to be initialized."
@@ -387,10 +411,11 @@ It performs:
     4.1 Turn on IE, pending interrupts will be cleared when port starts
         This has to be done after 3.2 because we need to know the number of channels before we check each PxIS.
         Verify that none of the PxIS registers are loaded, but take no action
-        Note: Due to the multi-tiered nature of the AHCI HBA’s interrupt architecture, system software must always ensure that the PxIS (clear this first) and IS.IPS (clear this second) registers are cleared to ‘0’ before programming the PxIE and GHC.IE registers. This will prevent any residual bits set in these registers from causing an interrupt to be asserted.
+        Note: Due to the multi-tiered nature of the AHCI HBA's interrupt architecture, system software must always ensure that the PxIS (clear this first) and IS.IPS (clear this second) registers are cleared to '0' before programming the PxIE and GHC.IE registers. This will prevent any residual bits set in these registers from causing an interrupt to be asserted.
         However, the interrupt handler hasn't been hooked up by StorPort yet, so no interrupts will be handled by software until that happens.
-    4.2 Allocate resources for both DMA use and all Channel/Port extensions.
-    4.3 Initialize ports and start them. Dump stack will do this when receiving the INQUIRY command
+    4.2 Initialize the remaining port configuration settings after getting registry settings.
+    4.3 Allocate resources for both DMA use and all Channel/Port extensions.
+    4.4 Initialize ports and start them. Dump stack will do this when receiving the INQUIRY command
 
 Affected Variables/Registers:
     AdapterExtension->ABAR_Address
@@ -399,7 +424,7 @@ Affected Variables/Registers:
     AdapterExtension->Version
 
     GHC.AE, GHC.IE, GHC.HR
-    IS and all fields in the HBA’s register memory space except PxFB/PxFBU/PxCLB/PxCLBU that are not HwInit
+    IS and all fields in the HBA's register memory space except PxFB/PxFBU/PxCLB/PxCLBU that are not HwInit
 
 Return Values:
     The miniport driver returns TRUE if it successfully execute the whole function.
@@ -421,11 +446,12 @@ Note:
     ULONG                   piMask = 0;
     UCHAR                   numberOfHighestPort = 0;
     ULONG                   portCount = 0;
+    ULONG                   portNumber;
     //Used to enable the AHCI interface
     AHCI_Global_HBA_CONTROL ghc = {0};
     //guids
     GUID                    powerSettingChangeGuids[2] = {0};
-
+    BOOLEAN                 dumpMode = FALSE;
     PAHCI_DUMP_CONTEXT      dumpContext = (PAHCI_DUMP_CONTEXT)ConfigInfo->MiniportDumpData;
 
     UNREFERENCED_PARAMETER(HwContext);
@@ -447,48 +473,54 @@ Note:
     adapterExtension->SystemIoBusNumber = ConfigInfo->SystemIoBusNumber;
     adapterExtension->SlotNumber = ConfigInfo->SlotNumber;
 
-  //1.1 Get dump mode
+    //1.1 Get dump mode
     adapterExtension->DumpMode = ConfigInfo->DumpMode;
+    dumpMode = IsDumpMode(adapterExtension);
 
-    if (IsDumpMode(adapterExtension)) {
+    if (dumpMode) {
         if (dumpContext != NULL) {
-            // In dump/hibernation mode, need to mark ConfigInfo->MiniportDumpData and any embedded memory buffer(s) in MiniportDumpData
-            StorPortMarkDumpMemory(AdapterExtension, dumpContext, sizeof(AHCI_DUMP_CONTEXT), 0);
+            // In dump/hibernation mode, need to mark ConfigInfo->MiniportDumpData
+            // and any embedded memory buffer(s) in MiniportDumpData
+            StorPortMarkDumpMemory(AdapterExtension,
+                                   dumpContext,
+                                   FIELD_OFFSET(AHCI_DUMP_CONTEXT, Ports) +
+                                   (dumpContext->PortCount * sizeof(AHCI_DUMP_PORT_CONTEXT)),
+                                   0);
         } else {
             NT_ASSERT(FALSE);
             return SP_RETURN_ERROR;
         }
     }
 
-  //1.2 Gather Vendor,Device,Revision IDs from PCI
-    if (!IsDumpMode(adapterExtension)) {
+    //1.2 Gather Vendor,Device,Revision IDs from PCI
+    if (!dumpMode) {
 
-    //
-    // TODO : Ensure that we can enumerate using PCI as well as ACPI
-    // right now this code is for ACPI only.
-    //
-#if !defined(_ARM64_)
-        ULONG pcicfgLen = 0;
-        UCHAR pcicfgBuffer[0x30] = {0};
+        //
+        // Enumeration may be via either PCI or ACPI. Bus type is set by storport/miniport.
+        // Check if we are enumerating via PCI, and retrieve the address appropriately.
+        //
+        if (ConfigInfo->AdapterInterfaceType == PCIBus) {
+            ULONG pcicfgLen = 0;
+            UCHAR pcicfgBuffer[0x30] = {0};
 
-        pcicfgLen = StorPortGetBusData(adapterExtension,
-                                       PCIConfiguration,
-                                       ConfigInfo->SystemIoBusNumber,
-                                       (ULONG)ConfigInfo->SlotNumber,
-                                       (PVOID)pcicfgBuffer,
-                                       (ULONG)0x30);
-        if (pcicfgLen == 0x30) {
-            PPCI_COMMON_CONFIG pciConfigData = (PPCI_COMMON_CONFIG)pcicfgBuffer;
-            adapterExtension->VendorID = pciConfigData->VendorID;
-            adapterExtension->DeviceID = pciConfigData->DeviceID;
-            adapterExtension->RevisionID = pciConfigData->RevisionID;
-            // on PCI bus, AHCI Base Address is BAR5. Bits 0-3 defined for other usages, not part of address value.
-            adapterExtension->AhciBaseAddress = pciConfigData->u.type0.BaseAddresses[5] & (0xFFFFFFF0);
-        } else {
-            NT_ASSERT(FALSE);
-            return SP_RETURN_ERROR;
+            pcicfgLen = StorPortGetBusData(adapterExtension,
+                                           PCIConfiguration,
+                                           ConfigInfo->SystemIoBusNumber,
+                                           (ULONG)ConfigInfo->SlotNumber,
+                                           (PVOID)pcicfgBuffer,
+                                           (ULONG)0x30);
+            if (pcicfgLen == 0x30) {
+                PPCI_COMMON_CONFIG pciConfigData = (PPCI_COMMON_CONFIG)pcicfgBuffer;
+                adapterExtension->VendorID = pciConfigData->VendorID;
+                adapterExtension->DeviceID = pciConfigData->DeviceID;
+                adapterExtension->RevisionID = pciConfigData->RevisionID;
+                // on PCI bus, AHCI Base Address is BAR5. Bits 0-3 defined for other usages, not part of address value.
+                adapterExtension->AhciBaseAddress = pciConfigData->u.type0.BaseAddresses[5] & (0xFFFFFFF0);
+            } else {
+                NT_ASSERT(FALSE);
+                return SP_RETURN_ERROR;
+            }
         }
-#endif
     } else {
         adapterExtension->VendorID = dumpContext->VendorID;
         adapterExtension->DeviceID = dumpContext->DeviceID;
@@ -499,22 +531,22 @@ Note:
         adapterExtension->LogFlags = dumpContext->LogFlags;
     }
 
-  //2.1 Initialize adapterExtension with AHCI abar
+    //2.1 Initialize adapterExtension with AHCI abar
     abar = GetABARAddress(adapterExtension, ConfigInfo);
 
-  //2.1.1 If abar is still NULL after all of that, malformed resources.  We aren't going to get very far.
+    //2.1.1 If abar is still NULL after all of that, malformed resources.  We aren't going to get very far.
     if (abar == NULL) {
         return SP_RETURN_ERROR;
     } else {
         adapterExtension->ABAR_Address = abar;
     }
 
-  //2.2 Initialize adapterExtension with version & cap values
+    //2.2 Initialize adapterExtension with version & cap values
     adapterExtension->Version.AsUlong = StorPortReadRegisterUlong(adapterExtension, &abar->VS.AsUlong);
     adapterExtension->CAP.AsUlong = StorPortReadRegisterUlong(adapterExtension, &abar->CAP.AsUlong);
     adapterExtension->CAP2.AsUlong = StorPortReadRegisterUlong(adapterExtension, &abar->CAP2.AsUlong);
 
-  //3.1 Turn on AE (AHCI 1.1 Section 10.1.2 - 1)
+    //3.1 Turn on AE (AHCI 1.1 Section 10.1.2 - 1)
     ghc.AsUlong = StorPortReadRegisterUlong(adapterExtension, &abar->GHC.AsUlong);
     if (ghc.AE == 1) {
         if (!AhciAdapterReset(adapterExtension)) {
@@ -527,39 +559,53 @@ Note:
 
     adapterExtension->IS = &abar->IS;
 
-  //3.2 Determine which ports are implemented by the HBA (AHCI 1.1 Section 10.1.2 - 2)
-    adapterExtension->PortImplemented = StorPortReadRegisterUlong(adapterExtension, &abar->PI);
+    //3.2 Determine which ports are implemented by the HBA
+    if (!dumpMode) {
+        // Get implemented ports from PI register (AHCI 1.1 Section 10.1.2 - 2)
+        adapterExtension->PortImplemented = StorPortReadRegisterUlong(adapterExtension, &abar->PI);
+    } else {
+        // Get implemented ports from the dump context
+        adapterExtension->PortImplemented = 0;
 
-    //
-    // AHCI specification requires that at least one bit is set in PI register.
-    // In other words, at least one port must be implemented.
-    //
+        for (i = 0; i < dumpContext->PortCount; i++) {
+            adapterExtension->PortImplemented |= 1 << dumpContext->Ports[i].PortNumber;
+        }
+    }
+
+    // At least one port must be implemented
     if (adapterExtension->PortImplemented == 0) {
         return SP_RETURN_ERROR;
     }
 
-  //3.3 Get biggest port number value and implemented port count.
-    //3.3.1 get biggest port number value
-    numberOfHighestPort = AHCI_MAX_PORT_COUNT;
-    //Check from highest bit to lowest bit for the first highest bit set
-    for (piMask = (ULONG)(1 << (AHCI_MAX_PORT_COUNT - 1)); piMask != 0; piMask = (ULONG)(piMask >> 1)){
-        numberOfHighestPort--;
-        if ( (adapterExtension->PortImplemented & piMask) != 0) {
-            break;
+    //3.3 Get biggest port number value and implemented port count
+    if (!dumpMode) {
+        numberOfHighestPort = AHCI_MAX_PORT_COUNT;
+        //Check from highest bit to lowest bit for the first highest bit set
+        for (piMask = (ULONG)(1 << (AHCI_MAX_PORT_COUNT - 1)); piMask != 0; piMask = (ULONG)(piMask >> 1)){
+            numberOfHighestPort--;
+            if ((adapterExtension->PortImplemented & piMask) != 0) {
+                break;
+            }
         }
-    } //numberOfHighestPort now holds the correct value
 
-    //3.3.2 get implemented port count
-    if (!IsDumpMode(adapterExtension)) {
         for (i = 0; i <= numberOfHighestPort; i++) {
-            if ( (adapterExtension->PortImplemented & (1 << i)) != 0 ) {
+            if ((adapterExtension->PortImplemented & (1 << i)) != 0) {
                 portCount++;
             }
         }
     } else {
-        // in dump environment, only use the desired port.
-        portCount = 1;
+        numberOfHighestPort = 0;
+        for (i = 0; i < dumpContext->PortCount; i++) {
+            if (dumpContext->Ports[i].PortNumber > numberOfHighestPort) {
+                numberOfHighestPort = (UCHAR)dumpContext->Ports[i].PortNumber;
+            }
+        }
+
+        portCount = dumpContext->PortCount;
     }
+
+    NT_ASSERT(numberOfHighestPort < AHCI_MAX_PORT_COUNT);
+    adapterExtension->HighestPort = numberOfHighestPort;
 
     //
     // AHCI specification requires that implemented port count (number of bit set in PI register)
@@ -570,8 +616,8 @@ Note:
     //
     NT_ASSERT(portCount > 0 && portCount <= (adapterExtension->CAP.NP + 1));
 
-  //3.4 Initializing the rest of PORT_CONFIGURATION_INFORMATION
-    ConfigInfo->MaximumTransferLength = AHCI_MAX_TRANSFER_LENGTH;
+    //3.4 Initializing the rest of PORT_CONFIGURATION_INFORMATION
+    ConfigInfo->MaximumTransferLength = AHCI_MAX_TRANSFER_LENGTH_DEFAULT;
     ConfigInfo->NumberOfPhysicalBreaks = 0x21;  // Since "NumberOfPhysicalBreaks" has been used in storage stack as the count of entries, use value of physical breaks plus one.
     ConfigInfo->AlignmentMask = 1;              // ATA devices need WORD alignment
     ConfigInfo->ScatterGather = TRUE;
@@ -584,33 +630,10 @@ Note:
     ConfigInfo->BusResetHoldTime = 0;       // StorAHCI wait RESET to be completed by itself, no need for port driver to wait.
     ConfigInfo->MaxNumberOfIO = portCount * adapterExtension->CAP.NCS;
 
-    if (adapterExtension->CAP.S64A) {
-#if defined (_ARM64_) 
-        ConfigInfo->Dma64BitAddresses = SCSI_DMA64_MINIPORT_FULL64BIT_NO_BOUNDARY_REQ_SUPPORTED;
-#else
-        ConfigInfo->Dma64BitAddresses = SCSI_DMA64_MINIPORT_SUPPORTED;
-#endif
-        // increase size of SrbExtension to accommodate 64-bit move commands
-        // and 1 extra Scripts instruction (turn off 64-bit mode)
-        ConfigInfo->SrbExtensionSize += (ULONG)((ConfigInfo->NumberOfPhysicalBreaks + 2) * 4);
-    }
-
     ConfigInfo->FeatureSupport |= STOR_ADAPTER_FEATURE_STOP_UNIT_DURING_POWER_DOWN;
     ConfigInfo->FeatureSupport |= STOR_ADAPTER_FEATURE_RICH_TEMPERATURE_THRESHOLD;
-
-  // 3.4.2 update PortImplemented, HighestPort and portCount if necessary
-    if (!IsDumpMode(adapterExtension)) {
-        adapterExtension->HighestPort = numberOfHighestPort;
-    } else {
-
-        if (dumpContext->DumpPortNumber < AHCI_MAX_PORT_COUNT) {
-            adapterExtension->PortImplemented = 1 << dumpContext->DumpPortNumber;
-            adapterExtension->HighestPort = dumpContext->DumpPortNumber;
-        } else {
-            NT_ASSERT(FALSE);
-            return SP_RETURN_ERROR;
-        }
-    }
+    ConfigInfo->FeatureSupport |= STOR_ADAPTER_FEATURE_DEVICE_TELEMETRY;
+    ConfigInfo->FeatureSupport |= STOR_ADAPTER_DMA_V3_PREFERRED;
 
     //
     // Set interrupt related entry points.
@@ -625,7 +648,7 @@ Note:
         //
         // Allocate MessageGroupAffinity buffer for later use.
         //
-        if (!IsDumpMode(adapterExtension)) {
+        if (!dumpMode) {
             StorPortAllocatePool(AdapterExtension,
                                 sizeof(GROUP_AFFINITY) * (adapterExtension->HighestPort + 1),
                                 AHCI_POOL_TAG,
@@ -636,8 +659,8 @@ Note:
         ConfigInfo->InterruptSynchronizationMode = InterruptSynchronizeAll;
     }
 
-  //3.5 Register Power Setting Change Notification Guids
-    if (!IsDumpMode(adapterExtension)) {
+    //3.5 Register Power Setting Change Notification Guids
+    if (!dumpMode) {
         /* 0b2d69d7-a2a1-449c-9680-f91c70521c60 -DIPM/HIPM */
         powerSettingChangeGuids[0].Data1 = 0x0b2d69d7;
         powerSettingChangeGuids[0].Data2 = 0xa2a1;
@@ -667,13 +690,25 @@ Note:
         StorPortSetPowerSettingNotificationGuids(AdapterExtension, 2, powerSettingChangeGuids);
     }
 
-  //4.1 Turn on IE, pending interrupts will be cleared when port starts
+    //4.1 Turn on IE, pending interrupts will be cleared when port starts
     adapterExtension->LastInterruptedPort = (ULONG)(-1);
     ghc.IE = 1;
     StorPortWriteRegisterUlong(adapterExtension, &abar->GHC.AsUlong, ghc.AsUlong);
 
+    //4.2.2 Configure DMA 64 bit support settings.
+    if (adapterExtension->CAP.S64A) {
+#if defined (_ARM64_) 
+        ConfigInfo->Dma64BitAddresses = SCSI_DMA64_MINIPORT_FULL64BIT_NO_BOUNDARY_REQ_SUPPORTED;
+#else
+        ConfigInfo->Dma64BitAddresses = SCSI_DMA64_MINIPORT_SUPPORTED;
+#endif
 
-  //4.2 allocate resources, implemented port information needs to be ready before calling the following routine.
+        // increase size of SrbExtension to accommodate 64-bit move commands
+        // and 1 extra Scripts instruction (turn off 64-bit mode)
+        ConfigInfo->SrbExtensionSize += (ULONG)((ConfigInfo->NumberOfPhysicalBreaks + 2) * 4);
+    }
+
+    //4.3 allocate resources, implemented port information needs to be ready before calling the following routine.
     if (adapterExtension->StateFlags.StoppedState == 0) {
         if (!AllocateResourcesForAdapter(adapterExtension, ConfigInfo, portCount)) {
             return SP_RETURN_ERROR;
@@ -693,8 +728,8 @@ Note:
     //
     // 3. Currently WorkerTimer is used only for PartialToSlumber during interrupt servicing (not applicable in dump mode)
     //
-    if (!IsDumpMode(adapterExtension))
-    {
+    if (!dumpMode) {
+
         for (i = 0; i <= adapterExtension->HighestPort; i++) {
 
             if (adapterExtension->PortExtension[i] != NULL) {
@@ -726,8 +761,8 @@ Note:
     // reset "StoppedState". NOTE: This field should not be referenced anymore in this function after following line.
     adapterExtension->StateFlags.StoppedState = 0;
 
-  // 4.3 initialize ports and start them.
-    //4.3.1 initialize all AHCI ports
+    //4.4 initialize ports and start them.
+    //4.4.1 initialize all AHCI ports
     for (i = 0; i <= adapterExtension->HighestPort; i++) {
         if (adapterExtension->PortExtension[i] != NULL) {
             // in case of PortInitialize fails, ChannelExtension->StateFlags.Initialized will remain as 'FALSE'. there will be not attempt to start the Port.
@@ -735,35 +770,37 @@ Note:
         }
     }
 
-    if (IsDumpMode(adapterExtension)) {
+    if (dumpMode) {
 
         //
         // In dump mode copy registry flags and telemetry configuration from the dump context. If telemetry extends to more than one
         // device the logic should cover migration of per device settings, initially we are limited to a single boot device
         //
-        ULONG   Index;
 
-#pragma warning (suppress: 6385) // dumpContext->DumpPortNumber is guaranteed to be in-bound earlier
-        if (adapterExtension->PortExtension[dumpContext->DumpPortNumber] != NULL) {
+        for (i = 0; i < dumpContext->PortCount; i++) {
+            portNumber = dumpContext->Ports[i].PortNumber;
 
-            adapterExtension->PortExtension[dumpContext->DumpPortNumber]->RegistryFlags = dumpContext->PortRegistryFlags;
+            if (adapterExtension->PortExtension[portNumber] != NULL) {
 
-            //
-            // If the table in dump context is empty (not filled) - keep static data intact
-            //
-            if (dumpContext->PublicGPLogTableAddresses[0]) {
-                for(Index=0;
-                    Index < sizeof(AhciPublicGPLogTableAddresses) / sizeof(AhciPublicGPLogTableAddresses[0] );
-                    Index++) {
-                    AhciPublicGPLogTableAddresses[Index] = dumpContext->PublicGPLogTableAddresses[Index];
-                }
+                adapterExtension->PortExtension[portNumber]->RegistryFlags = dumpContext->Ports[i].PortRegistryFlags;
 
-                AhciGPLogPageIntoPrivate = dumpContext->PrivateGPLogPageAddress;
+                //
+                // If the table in dump context is empty (not filled) - keep static data intact
+                //
+                /*if (dumpContext->PublicGPLogTableAddresses[0]) {
+                    for(Index=0;
+                        Index < sizeof(AhciPublicGPLogTableAddresses) / sizeof(AhciPublicGPLogTableAddresses[0] );
+                        Index++) {
+                        AhciPublicGPLogTableAddresses[Index] = dumpContext->PublicGPLogTableAddresses[Index];
+                    }
+
+                    AhciGPLogPageIntoPrivate = dumpContext->PrivateGPLogPageAddress;
+                }*/
+
+                StorPortMoveMemory((PVOID)&adapterExtension->PortExtension[portNumber]->DeviceExtension->HybridInfo,
+                                   (PVOID)&dumpContext->Ports[i].HybridInfo,
+                                   sizeof(GP_LOG_HYBRID_INFORMATION_HEADER));
             }
-
-            StorPortMoveMemory((PVOID)&adapterExtension->PortExtension[dumpContext->DumpPortNumber]->DeviceExtension->HybridInfo,
-                               (PVOID)&dumpContext->HybridInfo,
-                               sizeof(GP_LOG_HYBRID_INFORMATION_HEADER));
         }
     }
 
@@ -797,8 +834,6 @@ AhciHwInitialize (
     //
     // Turn on DPC Redirection if it's supported.
     //
-    // TODO : Revisit this : Disable these perf optimizations for now during bringup.
-#if !defined (_ARM64_) 
     if ((status == STOR_STATUS_SUCCESS) &&
         ((perfConfigData.Flags & STOR_PERF_DPC_REDIRECTION) != 0)) {
 
@@ -841,7 +876,6 @@ AhciHwInitialize (
 
         NT_ASSERT(status == STOR_STATUS_SUCCESS);
     }
-#endif
 
     //
     // async process to get all ports into running state
@@ -876,7 +910,6 @@ AhciHwPassiveInitialize (
     // 2. check if ACPI supports turning off power on link
     AhciAdapterEvaluateDSMMethod(adapterExtension);
 
-
     //
     // Get and cache D3Cold support.  
     //
@@ -886,8 +919,7 @@ AhciHwPassiveInitialize (
     if (status == STOR_STATUS_SUCCESS) {
         adapterExtension->StateFlags.D3ColdSupported = d3ColdSupported;
     }
-
-
+    
     if (reportF1State) {
         bufferSize += STOR_POFX_COMPONENT_IDLE_STATE_SIZE;
     }
@@ -911,8 +943,11 @@ AhciHwPassiveInitialize (
     if (IsD3ColdAllowed(adapterExtension)) {
         adapterExtension->PoFxDevice->Flags = STOR_POFX_DEVICE_FLAG_ENABLE_D3_COLD;
     }
+
+    // Indicate miniport opt-in adapter D3 wake support.
+    adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_ADAPTER_D3_WAKE;
     
-    // indicate dump miniport can't bring adapter to active
+    // Indicate dump miniport can't bring adapter to active
     adapterExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_DUMP_ACTIVE;
 
     adapterExtension->PoFxDevice->Components[0].Version = STOR_POFX_COMPONENT_VERSION_V1;
@@ -948,7 +983,6 @@ AhciHwPassiveInitialize (
         goto Exit;
     }
 
-
     // register success
     adapterExtension->StateFlags.PoFxEnabled = TRUE;
     adapterExtension->StateFlags.PoFxActive = TRUE;
@@ -982,7 +1016,6 @@ Return Value:
         // ACPI method is implemented, invoke ACPI method to power on all ports and devices
         AhciPortAcpiDSMControl(AdapterExtension, (ULONG)-1, FALSE);
     }
-
 
     return;
 }
@@ -1078,8 +1111,9 @@ AhciAdapterRemoval (
     Release resources allocated for the adapter and its managed ports/devices
 */
 {
-    ULONG   i;
-    PVOID   bufferToFree = NULL;
+    ULONG i;
+    PVOID bufferToFree = NULL;
+    PVOID executionHistoryToFree = NULL;
 
     if (IsDumpMode(AdapterExtension)) {
         return;
@@ -1129,6 +1163,13 @@ AhciAdapterRemoval (
                 AdapterExtension->PortExtension[i]->StateFlags.PoFxActive = FALSE;
             }
 
+            if ((executionHistoryToFree == NULL) && (AdapterExtension->PortExtension[i]->ExecutionHistory != NULL)) {
+                executionHistoryToFree = AdapterExtension->PortExtension[i]->ExecutionHistory;
+            }
+
+            if (AdapterExtension->PortExtension[i]->ExecutionHistory != NULL) {
+                AdapterExtension->PortExtension[i]->ExecutionHistory = NULL;
+            }
 
             AdapterExtension->PortExtension[i] = NULL;
         }
@@ -1136,6 +1177,10 @@ AhciAdapterRemoval (
 
     if (bufferToFree != NULL) {
         StorPortFreePool(AdapterExtension, bufferToFree);
+    }
+
+    if (executionHistoryToFree != NULL) {
+        StorPortFreePool(AdapterExtension, executionHistoryToFree);
     }
 
     return;
@@ -1274,7 +1319,8 @@ Return Value:
 
             NT_ASSERT(adapterPower != NULL);
 
-            StorPortDebugPrint(3, "StorAHCI - LPM: Adapter - %s\n", adapterPower->PowerState == StorPowerDeviceD0 ? "D0" : "D3");
+            StorPortDebugPrint(3, "StorAHCI - LPM: Adapter SystemIoBusNumber:%d - %s\n", 
+                adapterExtension->SystemIoBusNumber, adapterPower->PowerState == StorPowerDeviceD0 ? "D0" : "D3");
 
             if (adapterPower->PowerState == StorPowerDeviceD0) {
                 AhciAdapterPowerUp(adapterExtension);                  //power up
@@ -1296,11 +1342,11 @@ Return Value:
 
             if (powerHints->Size >= sizeof(STOR_SYSTEM_POWER_HINTS)) {
 
-                StorPortDebugPrint(3, "StorAHCI - LPM: Adapter - System Power Hint - State: %u - Latency: %u ms \n", powerHints->SystemPower, powerHints->ResumeLatencyMSec);
+                StorPortDebugPrint(3, "StorAHCI - LPM: Adapter SystemIoBusNumber:%d - System Power Hint - State: %u - Latency: %u ms\n", 
+                    adapterExtension->SystemIoBusNumber, powerHints->SystemPower, powerHints->ResumeLatencyMSec);
 
                 adapterExtension->SystemPowerHintState = powerHints->SystemPower;
                 adapterExtension->SystemPowerResumeLatencyMSec = powerHints->ResumeLatencyMSec;
-
 
                 if (adapterExtension->TracingEnabled) {
                     StorPortEtwEvent2(AdapterExtension,
@@ -1361,6 +1407,15 @@ AhciHwResetBus (
         status = AhciPortReset(adapterExtension->PortExtension[PathId], TRUE);
         AhciInterruptSpinlockRelease(adapterExtension, MAXULONG, &lockhandle);
         adapterExtension->PortExtension[PathId]->DeviceExtension[0].IoRecord.PortDriverResetCount++;
+
+        AhciTelemetryLogResetErrorRecovery(adapterExtension->PortExtension[PathId],
+                                          (PSTOR_ADDRESS)&(adapterExtension->PortExtension[PathId]->DeviceExtension->DeviceAddress),
+                                          AhciTelemetryEventIdResetBus,
+                                          "AhciHwResetBus",
+                                          0,
+                                          "PortResetStatus",
+                                          status
+                                          );
     }
 
     return status;
@@ -1390,7 +1445,9 @@ AhciHwBuildIo (
     NT_ASSERT(Srb->SrbStatus == SRB_STATUS_PENDING);
 
     // SrbExtension is not Null-ed by Storport, so do it here.
-    AhciZeroMemory((PCHAR)srbExtension, sizeof(AHCI_SRB_EXTENSION));
+    // Zero PRDT later when elements number in the SGL is available.
+    AhciZeroMemory((PCHAR)(&(srbExtension->AtaFunction)), (sizeof(AHCI_SRB_EXTENSION) - FIELD_OFFSET(AHCI_SRB_EXTENSION, AtaFunction)));
+    AhciZeroMemory((PCHAR)srbExtension, FIELD_OFFSET(AHCI_COMMAND_TABLE, PRDT));
 
     channelExtension = adapterExtension->PortExtension[pathId];
 
@@ -1409,11 +1466,63 @@ AhciHwBuildIo (
 
         if ( !IsPortValid(adapterExtension, pathId) ) {
             Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     NULL,
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventBuildIO,
+                                     L"No device",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"function",
+                                     function,
+                                     L"srbFlags",
+                                     srbFlags);
+            goto exit;
+        }
+
+        //
+        // If the adapter was removed, fail this request.
+        // We first check to see if the adapter is removable so that we can
+        // avoid incurring a register access if it is not removable.
+        //
+        if (IsAdapterRemovable(adapterExtension) &&
+            IsAdapterRemoved(adapterExtension)) {
+            Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     (channelExtension != NULL) ? ((PSTOR_ADDRESS) &(channelExtension->DeviceExtension->DeviceAddress)) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventBuildIO,
+                                     L"Adapter removed during BuildIo",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"function",
+                                     function,
+                                     L"srbFlags",
+                                     srbFlags);
             goto exit;
         }
     }
 
     switch (function) {
+        //
+        // Get the flag from Storport that tells us if the adapter is removable or not.
+        //
+        case SRB_FUNCTION_PNP: {
+            PSRBEX_DATA_PNP pnpData = (PSRBEX_DATA_PNP)SrbGetSrbExDataByType((PSTORAGE_REQUEST_BLOCK)Srb, SrbExDataTypePnP);
+            if (((pnpData->SrbPnPFlags & SRB_PNP_FLAGS_ADAPTER_REQUEST)) &&
+                (pnpData->PnPAction == StorQueryCapabilities) &&
+                (SrbGetDataTransferLength(Srb) >= sizeof(STOR_DEVICE_CAPABILITIES_EX))) {
+                PSTOR_DEVICE_CAPABILITIES_EX storCapabilities = (PSTOR_DEVICE_CAPABILITIES_EX)SrbGetDataBuffer(Srb);
+                adapterExtension->StateFlags.Removable = storCapabilities->Removable;
+                Srb->SrbStatus = SRB_STATUS_SUCCESS;
+            }
+            break;
+        }
+
         case SRB_FUNCTION_IO_CONTROL: {
 
             if ((srbFlags & SRB_IOCTL_FLAGS_ADAPTER_REQUEST) == 0) {
@@ -1423,6 +1532,10 @@ AhciHwBuildIo (
                 if (srbExtension->AtaFunction != 0) {
                     if ( ( srbExtension->Sgl == NULL ) && ( IsDataTransferNeeded((PSTORAGE_REQUEST_BLOCK)Srb) )  ) {
                         srbExtension->Sgl = (PLOCAL_SCATTER_GATHER_LIST)StorPortGetScatterGatherList(adapterExtension, Srb);
+                    }
+                    if (srbExtension->Sgl != NULL) {
+                        // Zero PRDT according to SGL elements number to avoid unnecessary CPU usage.
+                        AhciZeroMemory((PCHAR)(srbExtension->CommandTable.PRDT), (srbExtension->Sgl->NumberOfElements * sizeof(AHCI_PRDT)));
                     }
                 }
             }
@@ -1437,6 +1550,10 @@ AhciHwBuildIo (
             if (srbExtension->AtaFunction != 0) {
                 if ( ( srbExtension->Sgl == NULL ) && ( IsDataTransferNeeded((PSTORAGE_REQUEST_BLOCK)Srb) )  ) {
                     srbExtension->Sgl = (PLOCAL_SCATTER_GATHER_LIST)StorPortGetScatterGatherList(adapterExtension, Srb);
+                }
+                if (srbExtension->Sgl != NULL) {
+                    // Zero PRDT according to SGL elements number to avoid unnecessary CPU usage.
+                    AhciZeroMemory((PCHAR)(srbExtension->CommandTable.PRDT), (srbExtension->Sgl->NumberOfElements * sizeof(AHCI_PRDT)));
                 }
             }
 
@@ -1475,7 +1592,7 @@ AhciHwStartIo (
     )
 /*
     1. Process Adapter request
-    2. Bail out if it’s adapter request
+    2. Bail out if it's adapter request
     3. Validate Port Number, if not valid, bail out.
     4. Process Device/Port request
 
@@ -1488,7 +1605,7 @@ AhciHwStartIo (
     BOOLEAN adapterRequest = FALSE;
     BOOLEAN processIO = FALSE;
 
-  //1 Work on Adapter requests
+    //1 Work on Adapter requests
     switch (function) {
         case SRB_FUNCTION_PNP: {
             PSRBEX_DATA_PNP pnpData = (PSRBEX_DATA_PNP)SrbGetSrbExDataByType((PSTORAGE_REQUEST_BLOCK)Srb, SrbExDataTypePnP);
@@ -1509,6 +1626,21 @@ AhciHwStartIo (
                 } else {
                     Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
                 }
+
+                StorPortEtwChannelEvent2(adapterExtension,
+                                         NULL,
+                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                         AhciEtwEventStartIO,
+                                         L"Processing PNP",
+                                         STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                         (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                         StorportEtwEventOpcodeInfo,
+                                         Srb,
+                                         L"PnPAction",
+                                         pnpData->PnPAction,
+                                         L"SrbStatus",
+                                         Srb->SrbStatus);
+
                 //complete all Adapter PnP request
                 StorPortNotification(RequestComplete, AdapterExtension, Srb);
             }
@@ -1563,21 +1695,62 @@ AhciHwStartIo (
     // 2.1 All requests reach here should be for devices
     if ( !IsPortValid(adapterExtension, pathId) ) {
         Srb->SrbStatus = SRB_STATUS_NO_DEVICE;
+
+        StorPortEtwChannelEvent8(adapterExtension,
+                                 NULL,
+                                 StorportEtwEventOperational,
+                                 AhciEtwEventStartIO,
+                                 L"Port has no device",
+                                 STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                 StorportEtwLevelError,
+                                 StorportEtwEventOpcodeInfo,
+                                 Srb,
+                                 L"AdapterNumber",
+                                 adapterExtension->AdapterNumber,
+                                 L"SystemIoBusNumber",
+                                 adapterExtension->SystemIoBusNumber,
+                                 L"SlotNumber",
+                                 adapterExtension->SlotNumber,
+                                 L"AhciBaseAddress",
+                                 adapterExtension->AhciBaseAddress,
+                                 L"PathId",
+                                 pathId,
+                                 L"Function",
+                                 Srb->Function,
+                                 L"SrbStatus",
+                                 Srb->SrbStatus,
+                                 NULL,
+                                 0);
+
         StorPortNotification(RequestComplete, AdapterExtension, Srb);
         return TRUE;
     }
 
-     // 2.2 work on device requests
+    // 2.2 work on device requests
+    // Get channelExtension and storAddress to use for ETW Event logging
+    PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[pathId];
+    PSTOR_ADDRESS storAddress = (PSTOR_ADDRESS)&(channelExtension->DeviceExtension->DeviceAddress);
+
     switch (function) {
         case SRB_FUNCTION_RESET_BUS:    // this one may come from class driver, not port driver. same as AhciHwResetBus
         case SRB_FUNCTION_RESET_DEVICE:
         case SRB_FUNCTION_RESET_LOGICAL_UNIT: {
+            
             // these reset requests target to Port
             AhciInterruptSpinlockAcquire(adapterExtension, pathId, &lockhandle);
             Srb->SrbStatus = AhciPortReset(adapterExtension->PortExtension[pathId], TRUE) ? SRB_STATUS_SUCCESS : SRB_STATUS_ERROR;
             StorPortNotification(RequestComplete, AdapterExtension, Srb);
             AhciInterruptSpinlockRelease(adapterExtension, pathId, &lockhandle);
             adapterExtension->PortExtension[pathId]->DeviceExtension[0].IoRecord.PortDriverResetCount++;
+
+            AhciTelemetryLogResetErrorRecovery(adapterExtension->PortExtension[pathId],
+                                              (PSTOR_ADDRESS)&(adapterExtension->PortExtension[pathId]->DeviceExtension->DeviceAddress),
+                                              AhciTelemetryEventIdResetDeviceRequest,
+                                              "AhciHwStartIo RESET Request",
+                                              0,
+                                              "PortResetStatus",
+                                              Srb->SrbStatus
+                                              );
             break;
         }
 
@@ -1612,6 +1785,21 @@ AhciHwStartIo (
                 Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
                 StorPortNotification(RequestComplete, AdapterExtension, Srb);
             }
+
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     storAddress,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                     AhciEtwEventStartIO,
+                                     L"Completed PnP request",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"SrbPnPFlags",
+                                     pnpData->SrbPnPFlags,
+                                     L"PnPAction",
+                                     pnpData->PnPAction);
+
             break;
         }
 
@@ -1623,19 +1811,37 @@ AhciHwStartIo (
             BOOLEAN                 sendStandby = (IsDumpHiberMode(adapterExtension) || IsDumpCrashMode(adapterExtension));
 
             deviceParameters->StateFlags.SystemPoweringDown = TRUE;
+
+            USHORT *eventDescription;
             if (adapterExtension->PortExtension[pathId]->DeviceExtension->SupportedCommands.SetDateAndTime == 0x1) {
                 IssueSetDateAndTimeCommand(adapterExtension->PortExtension[pathId], Srb, sendStandby);
                 processIO = TRUE;
+                eventDescription = L"Shutdown set date and time";
             } else if (sendStandby) {
                 //in dump mode, this is the last Srb sent after SYNC CACHE, spin down the disk
                 PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension((PSTORAGE_REQUEST_BLOCK)Srb);
                 srbExtension->AtaFunction = ATA_FUNCTION_ATA_COMMAND;
                 SetCommandReg((&srbExtension->TaskFile.Current), IDE_COMMAND_STANDBY_IMMEDIATE);
                 processIO = TRUE;
+                eventDescription = L"Shutdown standby immediate";
             } else {
                 Srb->SrbStatus = SRB_STATUS_SUCCESS;
+                eventDescription = L"Shutdown";
                 StorPortNotification(RequestComplete, AdapterExtension, Srb);
             }
+
+            StorPortEtwEvent2(adapterExtension,
+                              storAddress,
+                              AhciEtwEventStartIO,
+                              eventDescription,
+                              STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                              StorportEtwLevelInformational,
+                              StorportEtwEventOpcodeInfo,
+                              Srb,
+                              NULL,
+                              0,
+                              NULL,
+                              0);
 
             break;
         }
@@ -1648,38 +1854,56 @@ AhciHwStartIo (
 
         case SRB_FUNCTION_DUMP_POINTERS: {
             ULONG status = STOR_STATUS_SUCCESS;
+            ULONG size = 0;
             PAHCI_DUMP_CONTEXT dumpContext = NULL;
             PMINIPORT_DUMP_POINTERS dumpPointers = (PMINIPORT_DUMP_POINTERS)SrbGetDataBuffer(Srb);
+
+            USHORT *eventDescription = L"Completed dump pointers";
 
             if ( (dumpPointers == NULL) ||
                  (SrbGetDataTransferLength(Srb) < RTL_SIZEOF_THROUGH_FIELD(MINIPORT_DUMP_POINTERS, MiniportPrivateDumpData)) ) {
                 Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+                eventDescription = L"Invalid dump pointers request";
             } else {
+
+                size = sizeof(AHCI_DUMP_CONTEXT);
 
                 // allocate pool and zero the content
                 status = StorPortAllocatePool(AdapterExtension,
-                                              sizeof(AHCI_DUMP_CONTEXT),
+                                              size,
                                               AHCI_POOL_TAG,
                                               (PVOID*)&dumpContext);
 
                 if ((status != STOR_STATUS_SUCCESS) || (dumpContext == NULL)) {
                    // we cannot continue if cannot get memory for ChannelExtension.
                     Srb->SrbStatus = SRB_STATUS_ERROR;
+                    eventDescription = L"Allocate dump context failed";
                 } else {
                     dumpPointers->Version = DUMP_MINIPORT_VERSION_1;
                     dumpPointers->Size = sizeof(MINIPORT_DUMP_POINTERS);
 
-                    dumpPointers->MiniportPrivateDumpData = (PVOID)dumpContext;
+                    AhciZeroMemory((PCHAR)dumpContext, size);
 
-                    AhciZeroMemory((PCHAR)dumpContext, sizeof(AHCI_DUMP_CONTEXT));
                     dumpContext->VendorID = adapterExtension->VendorID;
                     dumpContext->DeviceID = adapterExtension->DeviceID;
                     dumpContext->RevisionID = adapterExtension->RevisionID;
                     dumpContext->AhciBaseAddress = adapterExtension->AhciBaseAddress;
                     dumpContext->LogFlags = adapterExtension->LogFlags;
                     dumpContext->AdapterRegistryFlags = adapterExtension->RegistryFlags;
-                    dumpContext->DumpPortNumber = adapterExtension->PortExtension[pathId]->PortNumber;
-                    dumpContext->PortRegistryFlags = adapterExtension->PortExtension[pathId]->RegistryFlags;
+
+                    dumpContext->PortCount = 1;
+
+                    dumpContext->Ports[0].PortNumber = adapterExtension->PortExtension[pathId]->PortNumber;
+                    dumpContext->Ports[0].PortRegistryFlags = adapterExtension->PortExtension[pathId]->RegistryFlags;
+
+                    //
+                    // Preserve Hybrid Disk Information.
+                    //
+                    if (IsDeviceHybridInfoSupported(adapterExtension->PortExtension[pathId])) {
+                        StorPortMoveMemory((PVOID)&dumpContext->Ports[0].HybridInfo,
+                                           (PVOID)&adapterExtension->PortExtension[pathId]->DeviceExtension->HybridInfo,
+                                           sizeof(GP_LOG_HYBRID_INFORMATION_HEADER));
+                    }
 
                     //
                     // Fill telemetry collection context - shared with diskdump.sys stack
@@ -1698,18 +1922,26 @@ AhciHwStartIo (
                         dumpContext->PrivateGPLogPageAddress = IDE_GP_LOG_CURRENT_DEVICE_INTERNAL_STATUS;
                     }
 
-                    //
-                    // Preserve Hybrid Disk Information.
-                    //
-                    if (IsDeviceHybridInfoSupported(adapterExtension->PortExtension[pathId])) {
-                        StorPortMoveMemory((PVOID)&dumpContext->HybridInfo,
-                                           (PVOID)&adapterExtension->PortExtension[pathId]->DeviceExtension->HybridInfo,
-                                           sizeof(GP_LOG_HYBRID_INFORMATION_HEADER));
-                    }
+                    dumpPointers->MiniportPrivateDumpData = (PVOID)dumpContext;
 
                     Srb->SrbStatus = SRB_STATUS_SUCCESS;
                 }
             }
+
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     storAddress,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                     AhciEtwEventStartIO,
+                                     eventDescription,
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"SrbStatus",
+                                     Srb->SrbStatus,
+                                     L"TransferLen",
+                                     SrbGetDataTransferLength(Srb));
+
             StorPortNotification(RequestComplete, AdapterExtension, Srb);
             break;
         }
@@ -1725,6 +1957,21 @@ AhciHwStartIo (
                 status = StorPortFreePool(AdapterExtension, dumpPointers->MiniportPrivateDumpData);
                 Srb->SrbStatus = (status == STOR_STATUS_SUCCESS) ? SRB_STATUS_SUCCESS : SRB_STATUS_ERROR;
             }
+
+            StorPortEtwChannelEvent2(adapterExtension,
+                                     storAddress,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwEventDiagnostic : StorportEtwEventOperational,
+                                     AhciEtwEventStartIO,
+                                     L"Completed free dump pointers",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     (Srb->SrbStatus == SRB_STATUS_SUCCESS) ? StorportEtwLevelInformational : StorportEtwLevelError,
+                                     StorportEtwEventOpcodeInfo,
+                                     Srb,
+                                     L"SrbStatus",
+                                     Srb->SrbStatus,
+                                     L"TransferLen",
+                                     SrbGetDataTransferLength(Srb));
+
             StorPortNotification(RequestComplete, AdapterExtension, Srb);
             break;
         }
@@ -1732,6 +1979,20 @@ AhciHwStartIo (
         default: {
             // for unsupported SRB: complete with status: SRB_STATUS_INVALID_REQUEST
             Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+            
+            StorPortEtwEvent2(adapterExtension,
+                              storAddress,
+                              AhciEtwEventStartIO,
+                              L"Invalid request",
+                              STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                              StorportEtwLevelInformational,
+                              StorportEtwEventOpcodeInfo,
+                              Srb,
+                              L"Function",
+                              function,
+                              NULL,
+                              0);
+
             StorPortNotification(RequestComplete, AdapterExtension, Srb);
             break;
         }
@@ -1749,7 +2010,6 @@ AhciHwStartIo (
 
         AhciProcessIo(adapterExtension->PortExtension[pathId], (PSTORAGE_REQUEST_BLOCK)Srb, FALSE);
         ActivateQueue(adapterExtension->PortExtension[pathId], FALSE);
-
     }
 
     return TRUE;
@@ -1769,7 +2029,7 @@ Routine Description:
     This routine must attempt one clear the interrupt on the HBA before it returns TRUE.
 
 NOTE:
-    The following StorPort routines shall not be called from the AhciHwInterrupt routine – StorPortCompleteAllRequests and StorPortDeviceBusy.
+    The following StorPort routines shall not be called from the AhciHwInterrupt routine - StorPortCompleteAllRequests and StorPortDeviceBusy.
     The miniport could however request for a worker routine and make the calls in the worker routine.
 
 Called by:
@@ -1823,7 +2083,6 @@ It performs:
     "If there were errors, noted in the PxIS register, software performs error recovery actions (see section 6.2.2)."
     AHCI 1.1 Section 6.2.2.1 Non-Queued Error Recovery (this may take a while, better queue a DPC)
     Complete further processing in the worker routine and enable interrupts on the channel
-    6.1 Partial to Slumber auto transit
 
 Affected Variables/Registers:
 
@@ -1872,12 +2131,36 @@ Return Values:
         //call the correct error handling based on current hw queue workload type
         sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
 
-
-        if ((sact == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        if ((sact == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
             // controller has been surprise removed
+            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelWarning,
+                                     StorportEtwEventOpcodeInfo,
+                                     NULL,
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         } else if (sact != 0) {
-          //5.1 NCQ, Handle error processing
+            //5.1 NCQ, Handle error processing
             ChannelExtension->StateFlags.CallAhciNcqErrorRecovery = 1;
 
             //Give NCQ one chance
@@ -1903,7 +2186,32 @@ Return Values:
     if (pxis.DMPS || pxis.PCS) {
         cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
 
-        if ((cmd.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        if ((cmd.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
+            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelWarning,
+                                     StorportEtwEventOpcodeInfo,
+                                     NULL,
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         }
 
@@ -1937,13 +2245,13 @@ Return Values:
     // PhyRdy Change Status
     if (pxis.PRCS) {
         //Hot plug removals are detected via the PxIS.PRCS bit that directly reflects the PxSERR.DIAG.N bit.
-        //Note that PxSERR.DIAG.N is also set to ‘1’ on insertions and during interface power management entry/exit.
+        //Note that PxSERR.DIAG.N is also set to '1' on insertions and during interface power management entry/exit.
         serrMask.DIAG.N = 1;
         StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SERR.AsUlong, serrMask.AsUlong);
 
         ssts.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SSTS.AsUlong);
 
-        if ((ssts.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        if ((ssts.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
             // controller has been surprise removed
             return;
         }
@@ -2053,7 +2361,7 @@ Return Values:
     if (pxis.SDBS) {
         pxisMask.SDBS = 1;
     }
-    // Descriptor Processed (A PRD with the ‘I’ bit set has transferred all of its data)
+    // Descriptor Processed (A PRD with the 'I' bit set has transferred all of its data)
     if (pxis.DPS) {
         pxisMask.DPS = 1;
     }
@@ -2066,8 +2374,33 @@ Return Values:
         // preserve taskfile for using in command completion process
         ChannelExtension->TaskFileData.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->TFD.AsUlong);
 
-        if ((ChannelExtension->TaskFileData.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension)) {
+        if ((ChannelExtension->TaskFileData.AsUlong == MAXULONG) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
             // controller has been surprise removed
+            StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                     (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                     StorportEtwEventOperational,
+                                     AhciEtwEventHandleInterrupt,
+                                     L"Adapter surprise removed",
+                                     STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                     StorportEtwLevelWarning,
+                                     StorportEtwEventOpcodeInfo,
+                                     NULL,
+                                     L"pxis",
+                                     pxis.AsUlong,
+                                     L"ssts",
+                                     ssts.AsUlong,
+                                     L"serr",
+                                     serr.AsUlong,
+                                     L"cmd",
+                                     cmd.AsUlong,
+                                     L"sact",
+                                     sact,
+                                     L"StateFlags",
+                                     *(ULONGLONG *)&(ChannelExtension->StateFlags),
+                                     NULL,
+                                     0,
+                                     NULL,
+                                     0);
             return;
         }
 
@@ -2086,8 +2419,33 @@ Return Values:
     ci = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CI);
     sact = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SACT);
 
-    if (((ci == MAXULONG) || (sact == MAXULONG)) && IsAdapterRemoved(ChannelExtension)) {
+    if (((ci == MAXULONG) || (sact == MAXULONG)) && IsAdapterRemoved(ChannelExtension->AdapterExtension)) {
         // controller has been surprise removed
+        StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                                 (ChannelExtension != NULL) ? (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress) : (NULL),
+                                 StorportEtwEventOperational,
+                                 AhciEtwEventHandleInterrupt,
+                                 L"Adapter removed: complete cmd",
+                                 STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                                 StorportEtwLevelWarning,
+                                 StorportEtwEventOpcodeInfo,
+                                 NULL,
+                                 L"pxis",
+                                 pxis.AsUlong,
+                                 L"ssts",
+                                 ssts.AsUlong,
+                                 L"serr",
+                                 serr.AsUlong,
+                                 L"cmd",
+                                 cmd.AsUlong,
+                                 L"is",
+                                 is,
+                                 L"ci",
+                                 ci,
+                                 L"sact",
+                                 sact,
+                                 NULL,
+                                 0);
         return;
     }
 
@@ -2109,20 +2467,6 @@ Return Values:
     } else {
         // recording execution history for no SRB to be completed
         RecordInterruptHistory(ChannelExtension, pxis.AsUlong, ssts.AsUlong, serr.AsUlong, ci, sact, 0x20010005);   //AhciHwInterrupt No IO completed
-    }
-
-    //6.1 Partial to Slumber auto transit
-    if ((outstanding == 0) && 
-        PartialToSlumberTransitionIsAllowed(ChannelExtension, &cmd)) {
-
-        ULONG status;
-
-        // convert interval value from ms to us. allow 20ms of coalescing with other timers
-        status = StorPortRequestTimer(ChannelExtension->AdapterExtension, ChannelExtension->WorkerTimer, AhciAutoPartialToSlumber, ChannelExtension, ChannelExtension->AutoPartialToSlumberInterval * 1000, 20000);
-            
-        if (status == STOR_STATUS_SUCCESS) {
-            StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - Transit into Slumber from Partial - Scheduled \n", ChannelExtension->PortNumber);
-        }
     }
 
     if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
@@ -2356,7 +2700,8 @@ Return Value:
             if (IsPortValid(adapterExtension, storAddrBtl8->Path)) {
                 PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
 
-                StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - %s\n", storAddrBtl8->Path, unitControlPower->PowerState == StorPowerDeviceD0 ? "D0" : "D3");
+                StorPortDebugPrint(3, "StorAHCI - LPM: SystemIoBusNumber:%d Port:%02d - %s\n", 
+                    adapterExtension->SystemIoBusNumber, storAddrBtl8->Path, unitControlPower->PowerState == StorPowerDeviceD0 ? "D0" : "D3");
                 
                 if (unitControlPower->PowerState == StorPowerDeviceD0) {
                     AhciPortPowerUp(channelExtension);
@@ -2379,16 +2724,15 @@ Return Value:
         }
 
         case ScsiUnitPoFxPowerInfo: {
-            PSTOR_POFX_UNIT_POWER_INFO  unitPowerInfo = (PSTOR_POFX_UNIT_POWER_INFO)Parameters;
-            PSTOR_ADDR_BTL8             storAddrBtl8 = (PSTOR_ADDR_BTL8)unitPowerInfo->Header.Address;
-            BOOLEAN                     d3ColdEnabled = FALSE;
+            PSTOR_POFX_UNIT_POWER_INFO unitPowerInfo = (PSTOR_POFX_UNIT_POWER_INFO)Parameters;
+            PSTOR_ADDR_BTL8 storAddrBtl8 = (PSTOR_ADDR_BTL8)unitPowerInfo->Header.Address;
+            BOOLEAN d3ColdEnabled = FALSE;
 
             if (IsPortValid(adapterExtension, storAddrBtl8->Path)) {
-                ULONG                   storStatus = STOR_STATUS_SUCCESS;
-                ULONG                   bufferLength = STOR_POFX_DEVICE_V3_SIZE + STOR_POFX_COMPONENT_V2_SIZE + STOR_POFX_COMPONENT_IDLE_STATE_SIZE;
+                ULONG storStatus = STOR_STATUS_SUCCESS;
+                ULONG bufferLength = STOR_POFX_DEVICE_V3_SIZE + STOR_POFX_COMPONENT_V2_SIZE + STOR_POFX_COMPONENT_IDLE_STATE_SIZE;
                 PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
-                BOOLEAN                 reportF1State = FALSE;
-
+                BOOLEAN reportF1State = FALSE;
 
                 //
                 // IdlePowerEnabled == TRUE indicates this unit is being
@@ -2417,7 +2761,6 @@ Return Value:
                                                           bufferLength,
                                                           AHCI_POOL_TAG,
                                                           (PVOID*)&channelExtension->PoFxDevice);
-
                     }
 
                     if (storStatus == STOR_STATUS_SUCCESS) {
@@ -2436,10 +2779,34 @@ Return Value:
                         channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_DUMP_ACTIVE;
 
                         //
-                        // If this is a drive with rotational media then enable adaptive D3 idle timeout.
+                        // Disable idle debouncing if it's possible for us to
+                        // initiate a Slumber transition.
+                        // We set the Slumber timer when we get the Idle
+                        // condition callback and cancel it when we get the
+                        // Active condition callback.  The slumber timer is
+                        // typically set to 100ms and idle debouncing can add
+                        // a bias of up to 1s.  Significantly delaying Slumber
+                        // entry can have a negative impact on power so we
+                        // disable idle debouncing.
+                        // CAP.SSC indicates if the HBA supports Slumber.
+                        // CAP.SALP indicates if the HBA can automatically
+                        // transition to Partial when idle, which is needed for
+                        // us to subsequently initiate a Slumber transition.
+                        //
+                        if ((channelExtension->AdapterExtension->CAP.SSC) &&
+                            (channelExtension->AdapterExtension->CAP.SALP) &&
+                            IsDeviceSupportsHIPM(channelExtension->DeviceExtension[0].IdentifyDeviceData)) {
+                            channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_NO_IDLE_DEBOUNCE;
+                        }
+
+                        //
+                        // If this is a drive with rotational media then enable adaptive D3 idle timeout, else if
+                        // this is a SSD on an AOAC system, set the idle timeout flag and provide a minimum unit idle timeout.
                         //
                         if (DeviceIncursSeekPenalty(channelExtension)) {
                             channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_ADAPTIVE_D3_IDLE_TIMEOUT;
+                        } else if (IsReceivingSystemPowerHints(adapterExtension) && DeviceIncursNoSeekPenalty(channelExtension)) {
+                            channelExtension->PoFxDevice->Flags |= STOR_POFX_DEVICE_FLAG_IDLE_TIMEOUT;
                         }
 
                         component->Version = STOR_POFX_COMPONENT_VERSION_V2;
@@ -2456,7 +2823,6 @@ Return Value:
                         component->FStates[0].TransitionLatency = 0;
                         component->FStates[0].ResidencyRequirement = 0;
                         component->FStates[0].NominalPower = STOR_POFX_UNKNOWN_POWER;
-
 
                         // registry runtime power management for Unit
                         storStatus = StorPortInitializePoFxPower(AdapterExtension,
@@ -2504,19 +2870,30 @@ Return Value:
 
         case ScsiUnitPoFxPowerActive: {
             PSTOR_POFX_ACTIVE_CONTEXT activeContext = (PSTOR_POFX_ACTIVE_CONTEXT)Parameters;
-            PSTOR_ADDR_BTL8           storAddrBtl8 = (PSTOR_ADDR_BTL8)activeContext->Header.Address;
+            PSTOR_ADDR_BTL8 storAddrBtl8 = (PSTOR_ADDR_BTL8)activeContext->Header.Address;
 
-            if ( IsPortValid(adapterExtension, storAddrBtl8->Path) && PortPoFxEnabled(adapterExtension->PortExtension[storAddrBtl8->Path]) ) {
+            if (IsPortValid(adapterExtension, storAddrBtl8->Path) && PortPoFxEnabled(adapterExtension->PortExtension[storAddrBtl8->Path])) {
                 PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
 
                 channelExtension->StateFlags.PoFxActive = activeContext->Active ? 1 : 0;
 
-                StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - %s\n", channelExtension->PortNumber, activeContext->Active ? "ACTIVE" : "IDLE");
+                StorPortDebugPrint(3, "StorAHCI - LPM: SystemIoBusNumber:%d Port:%02d - %s\n", 
+                    adapterExtension->SystemIoBusNumber, channelExtension->PortNumber, activeContext->Active ? "ACTIVE" : "IDLE");
 
                 if (activeContext->Active) {
-                    ULONG   busChangePending;
-                    ULONG   restorePreservedSettingsPending;
+                    ULONG busChangePending;
+                    ULONG restorePreservedSettingsPending;
 
+                    //
+                    // Cancel the Slumber timer.
+                    //
+                    StorPortRequestTimer(channelExtension->AdapterExtension,
+                                         channelExtension->WorkerTimer,
+                                         AhciAutoPartialToSlumber,
+                                         channelExtension,
+                                         0, 0);
+                    StorPortDebugPrint(3, "StorAHCI - LPM: SystemIoBusNumber:%d Port:%02d - Transit into Slumber from Partial - Canceled\n", 
+                        adapterExtension->SystemIoBusNumber, channelExtension->PortNumber);
 
                     busChangePending = InterlockedBitTestAndReset((LONG*)&channelExtension->PoFxPendingWork, 1);  //BusChange is at bit 1
                     restorePreservedSettingsPending = InterlockedBitTestAndReset((LONG*)&channelExtension->PoFxPendingWork, 0);  //RestorePreservedSettings is at bit 0
@@ -2529,6 +2906,7 @@ Return Value:
                     if (restorePreservedSettingsPending == 1) {
                         // continue on processing RestorePreservedSettings
 
+                        RecordExecutionHistory(channelExtension, 0x10050041); // RestorePreservedSettings continue in Unit Active
 
                         // Start the first command
                         IssuePreservedSettingCommands(channelExtension, NULL);
@@ -2538,10 +2916,30 @@ Return Value:
                             PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension((PSTORAGE_REQUEST_BLOCK)&channelExtension->Local.Srb);
                             if (srbExtension->AtaFunction != 0) {
                                 AhciProcessIo(channelExtension, (PSTORAGE_REQUEST_BLOCK)&channelExtension->Local.Srb, FALSE);
+                                ActivateQueue(channelExtension, FALSE);
                             }
                         }
                     }
                 } else {
+                    //
+                    // Attempt to start the Slumber timer now that we're idle.
+                    // Use a tolerable delay of 20ms to allow coalescing with
+                    // other timers.
+                    //
+                    if (PartialToSlumberTransitionIsAllowed(channelExtension, NULL)) {
+
+                        status = StorPortRequestTimer(channelExtension->AdapterExtension,
+                                                            channelExtension->WorkerTimer,
+                                                            AhciAutoPartialToSlumber,
+                                                            channelExtension,
+                                                            channelExtension->AutoPartialToSlumberInterval * 1000, 20000);
+
+                        if (status == STOR_STATUS_SUCCESS) {
+                            StorPortDebugPrint(3, "StorAHCI - LPM: SystemIoBusNumber:%d Port:%02d - Transit into Slumber from Partial - Scheduled\n", 
+                                adapterExtension->SystemIoBusNumber, channelExtension->PortNumber);
+                        }
+                    }
+                    
                 }
             } else {
                 status = ScsiUnitControlUnsuccessful;
@@ -2552,14 +2950,13 @@ Return Value:
 
         case ScsiUnitPoFxPowerSetFState: {
             PSTOR_POFX_FSTATE_CONTEXT fStateContext = (PSTOR_POFX_FSTATE_CONTEXT)Parameters;
-            PSTOR_ADDR_BTL8           storAddrBtl8 = (PSTOR_ADDR_BTL8)fStateContext->Header.Address;
-            PAHCI_CHANNEL_EXTENSION   channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
+            PSTOR_ADDR_BTL8 storAddrBtl8 = (PSTOR_ADDR_BTL8)fStateContext->Header.Address;
+            PAHCI_CHANNEL_EXTENSION channelExtension = adapterExtension->PortExtension[storAddrBtl8->Path];
 
-            if ( IsPortValid(adapterExtension, storAddrBtl8->Path) && PortPoFxEnabled(channelExtension) ) {
+            if (IsPortValid(adapterExtension, storAddrBtl8->Path) && PortPoFxEnabled(channelExtension)) {
 
-                StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - Transition from F%u to F%u\n", channelExtension->PortNumber,
-                                                                                                  channelExtension->PoFxFState,
-                                                                                                  fStateContext->FState);
+                StorPortDebugPrint(3, "StorAHCI - LPM: SystemIoBusNumber:%d Port:%02d - Transition from F%u to F%u\n", 
+                    adapterExtension->SystemIoBusNumber, channelExtension->PortNumber, channelExtension->PoFxFState, fStateContext->FState);
 
                 channelExtension->PoFxFState = (UCHAR)fStateContext->FState;                
 
@@ -2607,6 +3004,16 @@ Return Value:
                 AhciPortFailAllIos(channelExtension, SRB_STATUS_NO_DEVICE, TRUE);
 
                 AhciInterruptSpinlockRelease(adapterExtension, channelExtension->PortNumber, &lockhandle);
+
+                ++(channelExtension->TotalCountSurpriseRemove);
+                AhciTelemetryLogResetErrorRecovery(channelExtension,
+                                                  (PSTOR_ADDRESS)&(channelExtension->DeviceExtension->DeviceAddress),
+                                                  AhciTelemetryEventIdSurpriseRemove,
+                                                  "ScsiUnitSurpriseRemoval",
+                                                  AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING,
+                                                  NULL,
+                                                  0
+                                                  );
             }
 
             break;
@@ -2628,5 +3035,4 @@ Return Value:
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-
 
