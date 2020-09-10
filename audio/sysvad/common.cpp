@@ -302,7 +302,9 @@ class CAdapterCommon :
 
         STDMETHODIMP_(VOID) Cleanup();
 
+#ifdef SYSVAD_USB_SIDEBAND
         STDMETHODIMP_(NTSTATUS) UpdatePowerRelations(_In_ PIRP Irp);
+#endif // SYSVAD_USB_SIDEBAND
         
         //=====================================================================
         // friends
@@ -608,7 +610,9 @@ Return Value:
 
     InterlockedDecrement(&CAdapterCommon::m_AdapterInstances);
     ASSERT(CAdapterCommon::m_AdapterInstances == 0);
+#ifdef SYSVAD_USB_SIDEBAND
     ASSERT(IsListEmpty(&m_PowerRelations));
+#endif // SYSVAD_USB_SIDEBAND
 } // ~CAdapterCommon  
 
 //=============================================================================
@@ -2300,6 +2304,7 @@ CAdapterCommon::Cleanup()
     EmptySubdeviceCache();
 }
 
+#ifdef SYSVAD_USB_SIDEBAND
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS 
@@ -2426,6 +2431,7 @@ Exit:
 
     return status;
 }
+#endif // SYSVAD_USB_SIDEBAND
 
 //=============================================================================
 #pragma code_seg("PAGE")

@@ -581,6 +581,7 @@ Return Value:
     return ntStatus;
 }
 
+
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 //=============================================================================
 #pragma code_seg()
