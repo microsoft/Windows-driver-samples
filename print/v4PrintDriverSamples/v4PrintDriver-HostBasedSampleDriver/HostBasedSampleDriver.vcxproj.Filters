@@ -28,7 +28,7 @@
     <FilesToPackage Include="usb_host_based_sample_extension.xml">
       <Filter>Resource Files</Filter>
     </FilesToPackage>
-	<None Include="usb_host_based_sample-pipelineconfig.xml">
+    <None Include="usb_host_based_sample-pipelineconfig.xml">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="usb_host_based_sample_events.xml">
