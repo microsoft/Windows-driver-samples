@@ -28,10 +28,14 @@
     <FilesToPackage Include="usb_host_based_sample_extension.xml">
       <Filter>Resource Files</Filter>
     </FilesToPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include="*.inf">
-      <Filter>Driver Files</Filter>
-    </Inf>
+	<None Include="usb_host_based_sample-pipelineconfig.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="usb_host_based_sample_events.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="usb_host_based_sample_extension.xml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
