@@ -14,15 +14,16 @@ The AVStream filter-centric simulated capture sample driver (Avssamp) provides a
 
 ## Installation instructions
 
-1. Copy AVssamp.inf to a directory, for example, C:\\Avstream\\.
+1. Install [**WDK**](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) 
 
-1. In this directory, create a new subdirectory named objfre\_x86 if the target operating system is x86-based, or objfre\_amd64 for an x64-based target operating system, for example, C:\\AVstream\\objfre\_x86\\.
+2. Copy `C:\Program Files (x86)\Windows Kits\10\Tools\x64\devcon.exe` to `C:\Tools\devcon.exe`
 
-1. Copy the processor-appropriate Avssamp.sys file to the objfre\_\* directory.
+1. Copy `AVssamp.inf`, `AVssamp.cat` and `AVssamp.sys` to a directory in C root, for example, C:\\Avstream\\.
+
 
 1. Start a command prompt with administrator privilege and run the processor-specific WDK tool Devcon.exe to launch the installation. For example:
 
-    `C:\WinDDK\7600.16384.0\tools\devcon\i386\devcon.exe install C:\AVstream\avssamp.inf SW\{20698827-7099-4c4e-861A-4879D639A35F}`
+    `C:\Tools\devcon.exe install C:\AVstream\avssamp.inf SW\{20698827-7099-4c4e-861A-4879D639A35F}`
 
 ## Programming tour
 
