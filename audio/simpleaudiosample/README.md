@@ -24,7 +24,6 @@ The following table shows the contents of the various subdirectories of this sam
 
 | Directory | Description |
 | --- | --- |
-| Inf | Contains the SimpleAudioSample.inf file. |
 | Source | Contains all of the source code for the Simple Audio Sample driver. |
 | Filters | Contains the definitions of the wave and topology filters of the endpoints that are present in the Simple Audio Sample driver (speaker and microphone array). |
 | Main | Contains the core functionality of the driver. |
