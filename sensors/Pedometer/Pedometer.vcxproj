@@ -121,6 +121,9 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Pedometer.def</ModuleDefinitionFile>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -143,6 +146,9 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Pedometer.def</ModuleDefinitionFile>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -165,6 +171,9 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Pedometer.def</ModuleDefinitionFile>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -187,6 +196,9 @@
       <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Pedometer.def</ModuleDefinitionFile>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />

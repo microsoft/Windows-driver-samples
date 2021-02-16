@@ -104,6 +104,7 @@ PKSJACK_DESCRIPTION SpeakerJackDescriptions[] =
     &SpeakerJackDescBridge
 };
 
+
 //=============================================================================
 static
 PCCONNECTION_DESCRIPTOR SpeakerTopoMiniportConnections[] =
@@ -132,7 +133,6 @@ PCPROPERTY_ITEM PropertiesSpeakerTopoFilter[] =
         PropertyHandler_SpeakerTopoFilter
     }
 };
-
 
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerTopoFilter, PropertiesSpeakerTopoFilter);
 

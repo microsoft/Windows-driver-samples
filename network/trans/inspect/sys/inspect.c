@@ -1278,7 +1278,7 @@ TLInspectWorker(
                                 listEntry
                                 );
 
-            NT_ASSERT((packet->direction == FWP_DIRECTION_INBOUND) ||
+            NT_ASSERT((packet->direction != FWP_DIRECTION_INBOUND) ||
                       (packet->authConnectDecision == 0));
         
             if (packet->authConnectDecision == 0)

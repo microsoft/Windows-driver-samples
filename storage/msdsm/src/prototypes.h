@@ -1336,8 +1336,8 @@ Description:
 
 Arguments:
     Srb - A pointer to either a STORAGE_REQUEST_BLOCK or a SCSI_REQUEST_BLOCK.
-    PoolType - The pool type to use. See documentation for ExAllocatePoolWithTag().
-    Tag - The allocation tag to use. See documentation for ExAllocatePoolWithTag().
+    PoolType - The pool type to use. See documentation for ExAllocatePoolZero().
+    Tag - The allocation tag to use. See documentation for ExAllocatePoolZero().
 
 Returns:
     NULL, if the copy could not be allocated; or

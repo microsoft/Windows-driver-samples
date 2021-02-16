@@ -101,6 +101,11 @@ Return Value:
 
 
     //
+    // Must call this function before using pool allocation functions.
+    //
+    ExInitializeDriverRuntime(0);
+
+    //
     // Initialize the tracing subsystem.
     // Any failure is handled by ETW itself.
     //

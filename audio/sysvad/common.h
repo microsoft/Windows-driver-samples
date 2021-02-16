@@ -206,6 +206,7 @@ typedef struct _PIN_DEVICE_FORMATS_AND_MODES
 
 } PIN_DEVICE_FORMATS_AND_MODES, *PPIN_DEVICE_FORMATS_AND_MODES;
 
+
 //
 // Parameter module handler function prototypes.
 //
