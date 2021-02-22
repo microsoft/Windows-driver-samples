@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.Windows.WDK.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.WDK.props" Condition="Exists('..\..\packages\Microsoft.Windows.WDK.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.WDK.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.x86.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x86.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.x86.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x86.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.x64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x64.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.x64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x64.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.arm64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm64.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.arm64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm64.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.arm.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.arm.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -58,6 +64,7 @@
     <DriverType>KMDF</DriverType>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -165,9 +172,23 @@
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
     <None Exclude="@(None)" Include="*.ico;*.cur;*.bmp;*.dlg;*.rct;*.gif;*.jpg;*.jpeg;*.wav;*.jpe;*.tiff;*.tif;*.png;*.rc2" />
     <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.arm.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.arm.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.arm64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.arm64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.arm64.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.x64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.x64.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x64.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.CPP.x86.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.CPP.x86.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.x86.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.WDK.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.WDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.WDK.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.WDK.props'))" />
+  </Target>
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.targets" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.CPP.10.0.21304.1000-preview.rs-onecore-sigma-dplat-kits\build\native\Microsoft.Windows.SDK.cpp.targets')" />
 </Project>
