@@ -23,6 +23,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main", "Source\Main\Main.vcxproj", "{E4DF0EEE-D35B-47F2-A9B1-41EA97C465FF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{33E61864-6F2C-4F9F-BE70-8F8985A4F283} = {33E61864-6F2C-4F9F-BE70-8F8985A4F283}
+		{771312CF-E5A2-4676-8142-86CEBDF99E2B} = {771312CF-E5A2-4676-8142-86CEBDF99E2B}
 	EndProjectSection
 EndProject
 Global
@@ -110,4 +111,3 @@ Global
 		SolutionGuid = {6DB4FE19-4FE0-4DC4-B898-C46E01E6BDF4}
 	EndGlobalSection
 EndGlobal
-
