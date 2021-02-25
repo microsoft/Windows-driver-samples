@@ -37,7 +37,6 @@ EVT_WDF_TIMER                       EvtTimerFunc;
 typedef struct _DEVICE_CONTEXT
 {
     WDFDEVICE               Device;
-    WDFQUEUE                DefaultQueue;
     WDFQUEUE                ManualQueue;
     HID_DEVICE_ATTRIBUTES   HidDeviceAttributes;
     BYTE                    DeviceData;

@@ -185,12 +185,6 @@ Return Value:
     hidAttributes->ProductID    = HIDMINI_PID;
     hidAttributes->VersionNumber = HIDMINI_VERSION;
 
-    status = QueueCreate(device,
-                         &deviceContext->DefaultQueue);
-    if( !NT_SUCCESS(status) ) {
-        return status;
-    }
-
     status = ManualQueueCreate(device,
                                &deviceContext->ManualQueue);
     if( !NT_SUCCESS(status) ) {
