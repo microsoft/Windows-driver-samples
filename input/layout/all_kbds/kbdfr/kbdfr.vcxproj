@@ -160,10 +160,13 @@
       <AdditionalOptions>%(AdditionalOptions) -merge:.edata=.data -merge:.rdata=.data -merge:.text=.data -merge:.bss=.data -section:.data,re</AdditionalOptions>
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbdfr.def</ModuleDefinitionFile>
+      <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -171,10 +174,13 @@
       <AdditionalOptions>%(AdditionalOptions) -merge:.edata=.data -merge:.rdata=.data -merge:.text=.data -merge:.bss=.data -section:.data,re</AdditionalOptions>
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbdfr.def</ModuleDefinitionFile>
+      <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -182,10 +188,13 @@
       <AdditionalOptions>%(AdditionalOptions) -merge:.edata=.data -merge:.rdata=.data -merge:.text=.data -merge:.bss=.data -section:.data,re</AdditionalOptions>
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbdfr.def</ModuleDefinitionFile>
+      <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -193,10 +202,13 @@
       <AdditionalOptions>%(AdditionalOptions) -merge:.edata=.data -merge:.rdata=.data -merge:.text=.data -merge:.bss=.data -section:.data,re</AdditionalOptions>
       <AdditionalOptions>%(AdditionalOptions)  /ignore:4254</AdditionalOptions>
       <ModuleDefinitionFile>kbdfr.def</ModuleDefinitionFile>
+      <NoEntryPoint>true</NoEntryPoint>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
