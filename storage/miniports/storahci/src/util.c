@@ -1,4 +1,4 @@
-/*++
+ï»¿/*++
 
 Copyright (C) Microsoft Corporation, 2009
 
@@ -55,14 +55,23 @@ ReturnValue:
 
     abar = NULL;
 
-  // loop over resource entries
+    // loop over resource entries
     if (ConfigInfo->NumberOfAccessRanges > 0) {
         for (i = 0; i < ConfigInfo->NumberOfAccessRanges; i++) {
-#if defined (_ARM_) || defined (_ARM64_)
-            if ((*(ConfigInfo->AccessRanges))[i].RangeStart.QuadPart != 0) {
-#else
-            if ((*(ConfigInfo->AccessRanges))[i].RangeStart.QuadPart == AdapterExtension->AhciBaseAddress) {
-#endif
+            BOOLEAN bAccessRangeFound = FALSE;
+
+            // Test to see if this is the needed resource entry, depending on the interface type
+            if (ConfigInfo->AdapterInterfaceType == PCIBus) {
+                if ((*(ConfigInfo->AccessRanges))[i].RangeStart.QuadPart == AdapterExtension->AhciBaseAddress) {
+                    bAccessRangeFound = TRUE;
+                }
+            } else {
+                if ((*(ConfigInfo->AccessRanges))[i].RangeStart.QuadPart != 0) {
+                    bAccessRangeFound = TRUE;
+                }
+            }
+
+            if (bAccessRangeFound) {
                 abar = (PAHCI_MEMORY_REGISTERS)StorPortGetDeviceBase(AdapterExtension,
                                                                      ConfigInfo->AdapterInterfaceType,
                                                                      ConfigInfo->SystemIoBusNumber,
@@ -104,9 +113,11 @@ Return Value:
     none
 --*/
 {
-    int i;
+    if (ChannelExtension->ExecutionHistory == NULL) {
+        return;
+    }
 
-  //1.1 Select the next available index
+    //1.1 Select the next available index
     // Actually, ExecutionHistoryNextAvailableIndex is used for current index.
     if (ChannelExtension->ExecutionHistoryNextAvailableIndex >= (MAX_EXECUTION_HISTORY_ENTRY_COUNT - 1)) {
         ChannelExtension->ExecutionHistoryNextAvailableIndex = 0;
@@ -114,10 +125,12 @@ Return Value:
         ChannelExtension->ExecutionHistoryNextAvailableIndex++;
     }
 
-  //2.1 Copy over the Channel Extension header
+    StorPortQuerySystemTime(&(ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].TimeStamp));
+
+    //2.1 Copy over the Channel Extension header
     ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Function = Function;
 
-    if(ChannelExtension->AdapterExtension->IS) {
+    if (ChannelExtension->AdapterExtension->IS) {
         // Keep using the old field "IS" to save StateFlags information.
         StorPortCopyMemory(&ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].IS, &ChannelExtension->StateFlags, sizeof(ULONG));
     } else {
@@ -126,8 +139,8 @@ Return Value:
 
     StorPortCopyMemory(&ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].SlotManager, &ChannelExtension->SlotManager, sizeof(SLOT_MANAGER));
 
-  //2.2 Copy over the AHCI registers
-    if(ChannelExtension->Px) {
+    //2.2 Copy over the AHCI registers
+    if (ChannelExtension->Px) {
         ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Px[0] = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CLB.AsUlong);
         ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Px[1] = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CLBU);
         ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Px[2] = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->FB.AsUlong);
@@ -149,7 +162,7 @@ Return Value:
         ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Px[15] = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SNTF.AsUlong);
 
     } else {
-        for(i=0; i<0x10; i++) {
+        for(int i = 0; i < 0x10; i++) {
             ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Px[i] = (ULONG)~0;
         }
     }
@@ -178,7 +191,11 @@ Return Value:
     none
 --*/
 {
-  //1. Select the next available index
+    if (ChannelExtension->ExecutionHistory == NULL) {
+        return;
+    }
+
+    //1. Select the next available index
     // Actually, ExecutionHistoryNextAvailableIndex is used for current index.
     if (ChannelExtension->ExecutionHistoryNextAvailableIndex >= (MAX_EXECUTION_HISTORY_ENTRY_COUNT - 1)) {
         ChannelExtension->ExecutionHistoryNextAvailableIndex = 0;
@@ -186,7 +203,9 @@ Return Value:
         ChannelExtension->ExecutionHistoryNextAvailableIndex++;
     }
 
-  //2. Copy data
+    StorPortQuerySystemTime(&(ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].TimeStamp));
+
+    //2. Copy data
     ChannelExtension->ExecutionHistory[ChannelExtension->ExecutionHistoryNextAvailableIndex].Function = Function;
 
     if (ChannelExtension->AdapterExtension->IS) {
@@ -223,22 +242,22 @@ Called by:
     PAHCI_ADAPTER_EXTENSION adapterExtension = ChannelExtension->AdapterExtension;
 
     ie.AsUlong = StorPortReadRegisterUlong(adapterExtension, &IE->AsUlong);
-    ie.DHRE = 1; //Device to Host Register FIS Interrupt (DHRS):  A D2H Register FIS has been received with the ‘I’ bit set, and has been copied into system memory.
-    ie.PSE  = 1; //PIO Setup FIS Interrupt (PSS):  A PIO Setup FIS has been received with the ‘I’ bit set, it has been copied into system memory, and the data related to that FIS has been transferred.  This bit shall be set even if the data transfer resulted in an error.
-    ie.DSE  = 1; //DMA Setup FIS Interrupt (DSS):  A DMA Setup FIS has been received with the ‘I’ bit set and has been copied into system memory.
-    ie.SDBE = 1; //Set Device Bits Interrupt (SDBS):  A Set Device Bits FIS has been received with the ‘I’ bit set and has been copied into system memory.
+    ie.DHRE = 1; //Device to Host Register FIS Interrupt (DHRS):  A D2H Register FIS has been received with the ï¿½Iï¿½ bit set, and has been copied into system memory.
+    ie.PSE  = 1; //PIO Setup FIS Interrupt (PSS):  A PIO Setup FIS has been received with the ï¿½Iï¿½ bit set, it has been copied into system memory, and the data related to that FIS has been transferred.  This bit shall be set even if the data transfer resulted in an error.
+    ie.DSE  = 1; //DMA Setup FIS Interrupt (DSS):  A DMA Setup FIS has been received with the ï¿½Iï¿½ bit set and has been copied into system memory.
+    ie.SDBE = 1; //Set Device Bits Interrupt (SDBS):  A Set Device Bits FIS has been received with the ï¿½Iï¿½ bit set and has been copied into system memory.
 
-    ie.UFE  = 0; //Unknown FIS Interrupt (UFS): When set to ‘1’, indicates that an unknown FIS was received and has been copied into system memory.  This bit is cleared to ‘0’ by software clearing the PxSERR.DIAG.F bit to ‘0’.  Note that this bit does not directly reflect the PxSERR.DIAG.F bit.  PxSERR.DIAG.F is set immediately when an unknown FIS is detected, whereas this bit is set when that FIS is posted to memory.  Software should wait to act on an unknown FIS until this bit is set to ‘1’ or the two bits may become out of sync.
-    ie.DPE  = 0; //Descriptor Processed (DPS):  A PRD with the ‘I’ bit set has transferred all of its data.  Refer to section 5.4.2.
+    ie.UFE  = 0; //Unknown FIS Interrupt (UFS): When set to ï¿½1ï¿½, indicates that an unknown FIS was received and has been copied into system memory.  This bit is cleared to ï¿½0ï¿½ by software clearing the PxSERR.DIAG.F bit to ï¿½0ï¿½.  Note that this bit does not directly reflect the PxSERR.DIAG.F bit.  PxSERR.DIAG.F is set immediately when an unknown FIS is detected, whereas this bit is set when that FIS is posted to memory.  Software should wait to act on an unknown FIS until this bit is set to ï¿½1ï¿½ or the two bits may become out of sync.
+    ie.DPE  = 0; //Descriptor Processed (DPS):  A PRD with the ï¿½Iï¿½ bit set has transferred all of its data.  Refer to section 5.4.2.
     ie.PCE  = 1; //Port Connect Change Status (PCS): 1=Change in Current Connect Status. 0=No change in Current Connect Status.  This bit reflects the state of PxSERR.DIAG.X.  This bit is only cleared when PxSERR.DIAG.X is cleared.
     if(adapterExtension->CAP.SMPS) {
-        ie.DMPE  = 1; //Device Mechanical Presence Status (DMPS): When set, indicates that a mechanical presence switch attached to this port has been opened or closed, which may lead to a change in the connection state of the device.  This bit is only valid if both CAP.SMPS and P0CMD.MPSP are set to ‘1’.
+        ie.DMPE  = 1; //Device Mechanical Presence Status (DMPS): When set, indicates that a mechanical presence switch attached to this port has been opened or closed, which may lead to a change in the connection state of the device.  This bit is only valid if both CAP.SMPS and P0CMD.MPSP are set to ï¿½1ï¿½.
     } else {
         ie.DMPE  = 0;
     }
 
     //Reserved :14;
-    ie.PRCE = 1; //PhyRdy Change Status (PRCS): When set to ‘1’ indicates the internal PhyRdy signal changed state.  This bit reflects the state of P0SERR.DIAG.N.  To clear this bit, software must clear P0SERR.DIAG.N to ‘0’.
+    ie.PRCE = 1; //PhyRdy Change Status (PRCS): When set to ï¿½1ï¿½ indicates the internal PhyRdy signal changed state.  This bit reflects the state of P0SERR.DIAG.N.  To clear this bit, software must clear P0SERR.DIAG.N to ï¿½0ï¿½.
     ie.IPME = 0; //Incorrect Port Multiplier Status (IPMS):  Indicates that the HBA received a FIS from a device whose Port Multiplier field did not match what was expected.  The IPMS bit may be set during enumeration of devices on a Port Multiplier due to the normal Port Multiplier enumeration process.  It is recommended that IPMS only be used after enumeration is complete on the Port Multiplier.
 
     ie.OFE  = 1; //Overflow Status (OFS):  Indicates that the HBA received more bytes from a device than was specified in the PRD table for the command.
@@ -250,8 +269,8 @@ Called by:
     ie.HBFE = 1; //Host Bus Fatal Error Status (HBFS):  Indicates that the HBA encountered a host bus error that it cannot recover from, such as a bad software pointer.  In PCI, such an indication would be a target or master abort.
     ie.TFEE = 1; //Task File Error Status (TFES):  This bit is set whenever the status register is updated by the device and the error bit (bit 0) is set.
     cmd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->CMD.AsUlong);
-    if(cmd.CPD) {    //check for PxCMD.CPD set to ‘1’ before setting CPDE
-        ie.CPDE = 1; //Cold Port Detect Status (CPDS): When set, a device status has changed as detected by the cold presence detect logic.  This bit can either be set due to a non-connected port receiving a device, or a connected port having its device removed.  This bit is only valid if the port supports cold presence detect as indicated by PxCMD.CPD set to ‘1’.
+    if(cmd.CPD) {    //check for PxCMD.CPD set to ï¿½1ï¿½ before setting CPDE
+        ie.CPDE = 1; //Cold Port Detect Status (CPDS): When set, a device status has changed as detected by the cold presence detect logic.  This bit can either be set due to a non-connected port receiving a device, or a connected port having its device removed.  This bit is only valid if the port supports cold presence detect as indicated by PxCMD.CPD set to ï¿½1ï¿½.
     } else {
         ie.CPDE = 0;
     }
@@ -451,7 +470,6 @@ Return Value:
     return matches;
 }
 
-
 VOID
 AhciBusChangeCallback(
     _In_ PVOID AdapterExtension,
@@ -494,38 +512,41 @@ PortBusChangeProcess (
     )
 {
     AHCI_SERIAL_ATA_CONTROL sctl;
-    STOR_LOCK_HANDLE        lockhandle = {InterruptLock, 0};
-    ULONG                   status     = STOR_STATUS_UNSUCCESSFUL;
+    STOR_LOCK_HANDLE lockhandle = { InterruptLock, 0 };
+    ULONG status = STOR_STATUS_UNSUCCESSFUL;
 
-  //1 if link speed was limited, restore the supported value.
+    // 1 if link speed was limited, restore the supported value.
     sctl.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SCTL.AsUlong);
-    if ( (sctl.SPD != 0) &&
-         (sctl.SPD != ChannelExtension->AdapterExtension->CAP.ISS) ) {
+    if ((sctl.SPD != 0) &&
+        (sctl.SPD != ChannelExtension->AdapterExtension->CAP.ISS)) {
 
         sctl.SPD = 0;   //AHCI 3.3.11 --- 0h  No speed negotiation restrictions
         StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SCTL.AsUlong, sctl.AsUlong);
     }
 
-  //2 Kicks off the Start Channel state machine
+    // 2 Kicks off the Start Channel state machine
     AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
     AhciPortReset(ChannelExtension, TRUE);    // all requests should be completed
     AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
 
-  //3 Requests rescan on this port. Using STATE_CHANGE_TARGET to make sure a REPORT LUNS command coming from Storport.
-    status = StorPortStateChangeDetected(ChannelExtension->AdapterExtension,
-                                        STATE_CHANGE_TARGET,
-                                        (PSTOR_ADDRESS)&ChannelExtension->DeviceExtension[0].DeviceAddress,
-                                        0,
-                                        AhciBusChangeCallback,
-                                        NULL);
+    // Mark that cached Log Page information need to be updated.
+    ChannelExtension->DeviceExtension[0].UpdateCachedLogPageInfo = TRUE;
 
-    // if the state change notification fails, set a timer to retry the notification after a delay
+    // 3 Requests rescan on this port. Using STATE_CHANGE_TARGET to make sure a REPORT LUNS command coming from Storport.
+    status = StorPortStateChangeDetected(ChannelExtension->AdapterExtension,
+                                         STATE_CHANGE_TARGET,
+                                         (PSTOR_ADDRESS)&ChannelExtension->DeviceExtension[0].DeviceAddress,
+                                         0,
+                                         AhciBusChangeCallback,
+                                         NULL);
+
+    // If the state change notification fails, set a timer to retry the notification after a delay
     if (status == STOR_STATUS_UNSUCCESSFUL) {
 
         if (ChannelExtension->BusChangeTimer == NULL) {
-
             StorPortInitializeTimer(ChannelExtension->AdapterExtension, &ChannelExtension->BusChangeTimer);
         }
+
         status = StorPortRequestTimer(ChannelExtension->AdapterExtension, 
                                      ChannelExtension->BusChangeTimer, 
                                      AhciBusChangeTimerCallback,
@@ -533,22 +554,19 @@ PortBusChangeProcess (
                                      100000, // 100 milliseconds
                                      0);
 
-        if ( status != STOR_STATUS_SUCCESS ) {
+        if (status != STOR_STATUS_SUCCESS) {
             PortReleaseActiveReference(ChannelExtension, NULL);
         }
- 
     } else {
 
         if (ChannelExtension->BusChangeTimer != NULL) {
 
             StorPortFreeTimer(ChannelExtension->AdapterExtension, ChannelExtension->BusChangeTimer);
             ChannelExtension->BusChangeTimer = NULL;
-        }    
-       
-        PortReleaseActiveReference(ChannelExtension, NULL);
-   
-    }
+        }
 
+        PortReleaseActiveReference(ChannelExtension, NULL);
+    }
 }
 
 VOID
@@ -676,6 +694,7 @@ Affected Variables/Registers:
     PSTORAGE_REQUEST_BLOCK  srbToRelease;
     BOOLEAN                 isSenseSrb;
     BOOLEAN                 retrySrb = FALSE;
+    BOOLEAN                 isReadLogExtSrbIssuedInNCQErrorRecovery = FALSE;
 
     slotContent = &ChannelExtension->Slot[SlotNumber];
     if (slotContent->Srb == NULL) {
@@ -684,6 +703,12 @@ Affected Variables/Registers:
 
     srbExtension = GetSrbExtension(slotContent->Srb);
     isSenseSrb = IsRequestSenseSrb(srbExtension->AtaFunction);
+
+    if ((slotContent->Srb == (PSTORAGE_REQUEST_BLOCK)&ChannelExtension->Sense.Srb) && 
+        (ChannelExtension->StateFlags.NcqErrorRecoveryInProcess == 1)) {
+
+        isReadLogExtSrbIssuedInNCQErrorRecovery = TRUE;
+    }
 
     if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
         RecordExecutionHistory(ChannelExtension, 0x10000053);//ReleaseSlottedCommand
@@ -766,7 +791,6 @@ Affected Variables/Registers:
         }
     }
 
-
   //3.1 Make the slot available again
     slotContent->CmdHeader = NULL;
     slotContent->CommandHistoryIndex = 0;
@@ -794,6 +818,21 @@ Affected Variables/Registers:
             // if a command encounters CRC error, retry once
             retrySrb = TRUE;
         }
+    }
+
+    //
+    // There is a bad timing will break the error recovery and cause IO hang eventually, typically happen in SSD but not limited to.
+    // 1. NCQ error happen first, which will issue the ReadLogExtCommand;
+    // 2. Then Nonqueued error happen before the ReadLogExtCommand complete.
+    //    In ReleaseSlottedCommand, ReadLogExtCommand may got chance to be retried, which will result in SingleIoSlice set to 1, 
+    //    and SingleIoSlice will skip the PreservedSettingCommand(the ReservedSlotInUse is already set).
+    // 3. Then ReservedSlotInUse never got chance to be cleared because it relies on PreservedSettingCommand execution.
+    //    ReservedSlotInUse will block the queue activation, finally the IO will hang and AhciPortReset will be repeatedly issued by upper layer.
+    //   
+    // Do not retry ReadLogExtCommand when NCQ error recovery in process, which makes sense since ReadLogExtCommand is sense-like command as well.
+    //
+    if (retrySrb && isReadLogExtSrbIssuedInNCQErrorRecovery) {
+        retrySrb = FALSE;
     }
 
     if (retrySrb) {
@@ -1128,30 +1167,32 @@ Affected Variables/Registers:
 {
     BOOLEAN reservedSlotInUse = 0;
 
-    if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
-        RecordExecutionHistory(ChannelExtension, 0x00000041); //RestorePreservedSettings
-    }
+    RecordExecutionHistory(ChannelExtension, 0x00000041); // RestorePreservedSettings
 
-  //1 Reinitialize all the commands to send
+    //1 Reinitialize all the commands to send
     ChannelExtension->PersistentSettings.SlotsToSend = ChannelExtension->PersistentSettings.Slots;
     reservedSlotInUse = InterlockedBitTestAndSet((LONG*)&ChannelExtension->StateFlags, 3);    //ReservedSlotInUse field is at bit 3
 
     if (reservedSlotInUse == 1) {
+
         // the process has been started.
+        RecordExecutionHistory(ChannelExtension, 0x10010041); // RestorePreservedSettings process already started
         return;
     }
 
-  // acquire active reference for process of restore preserved settings
+    // acquire active reference for process of restore preserved settings
     if (!AtDIRQL) {
-      // this is only needed if function is called at lower level than DIRQL.
-      // the places calling this function at DIRQL already made sure the unit is active.
+        // this is only needed if function is called at lower level than DIRQL.
+        // the places calling this function at DIRQL already made sure the unit is active.
         ULONG   restorePreservedSettingsInProcess;
         BOOLEAN portIdle = FALSE;
 
         restorePreservedSettingsInProcess = InterlockedBitTestAndSet((LONG*)&ChannelExtension->PoFxPendingWork, 0);  //RestorePreservedSettings is at bit 0
 
         if (restorePreservedSettingsInProcess == 1) {
+
             // it's already in process, return from here
+            RecordExecutionHistory(ChannelExtension, 0x10020041); // RestorePreservedSettings already in process
             return;
         }
 
@@ -1160,20 +1201,23 @@ Affected Variables/Registers:
         }
 
         if (portIdle) {
+
             // Unit Active process will continue on RestorePreservedSettings process
+            RecordExecutionHistory(ChannelExtension, 0x10030041); // RestorePreservedSettings will continue in Unit Active
             return;
         } else {
             ULONG   restorePreservedSettingsPending;
             restorePreservedSettingsPending = InterlockedBitTestAndReset((LONG*)&ChannelExtension->PoFxPendingWork, 0);  //RestorePreservedSettings is at bit 0
 
             if (restorePreservedSettingsPending == 0) {
+
                 // Unit Active process already started on RestorePreservedSettings process
+                RecordExecutionHistory(ChannelExtension, 0x10040041); // RestorePreservedSettings already started in Unit Active
                 return;
             }
 
         }
     }
-
 
     //2 Start the first command
     IssuePreservedSettingCommands(ChannelExtension, NULL);    
@@ -1209,29 +1253,29 @@ Affected Variables/Registers:
 {
     BOOLEAN reservedSlotInUse = 0;
 
-    if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
-        RecordExecutionHistory(ChannelExtension, 0x00000042); //AhciPortIssueInitCommands
-    }
+    RecordExecutionHistory(ChannelExtension, 0x00000042); // AhciPortIssueInitCommands
 
-  //1 Reinitialize all the commands to send
+    //1 Reinitialize all the commands to send
     ChannelExtension->DeviceInitCommands.CommandToSend = 0;
     reservedSlotInUse = InterlockedBitTestAndSet((LONG*)&ChannelExtension->StateFlags, 3);    //ReservedSlotInUse field is at bit 3
 
     if (reservedSlotInUse == 1) {
+
         // the process has been started.
+        RecordExecutionHistory(ChannelExtension, 0x10010042); // AhciPortIssueInitCommands process already started
         return;
     }
 
-  // acquire active reference for process of issuing init commands
-  // note: Port should be in Active state during device start.
+    // acquire active reference for process of issuing init commands
+    // note: Port should be in Active state during device start.
     if (PortAcquireActiveReference(ChannelExtension, NULL, NULL)) {
         ChannelExtension->StateFlags.RestorePreservedSettingsActiveReferenced = 1;
     }
 
-  //2 Start the first command
+    //2 Start the first command
     IssueInitCommands(ChannelExtension, NULL);
 
-  //3 Starts processing the command. Only need to do the first command if it exists. all others will be done by processing completion routine.
+    //3 Starts processing the command. Only need to do the first command if it exists. all others will be done by processing completion routine.
     if (ChannelExtension->Local.Srb.SrbExtension != NULL) {
         PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension((PSTORAGE_REQUEST_BLOCK)&ChannelExtension->Local.Srb);
         if (srbExtension->AtaFunction != 0) {
@@ -1242,6 +1286,164 @@ Affected Variables/Registers:
     return;
 }
 
+VOID
+AhciPortStartTelemetry(
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension
+    )
+/*++
+
+Routine Description:
+
+    This function logs telemetry for AHCI port start status.
+
+Arguments:
+
+    AdapterExtension - Pointer to the device extension for adapter.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    NT_ASSERT(AdapterExtension->InRunningPortsProcess == FALSE);
+
+    for (ULONG i = 0; i <= AdapterExtension->HighestPort; ++i) {
+        PAHCI_CHANNEL_EXTENSION channelExtension = AdapterExtension->PortExtension[i];
+        if (channelExtension != NULL) {
+            BOOLEAN portStartSuccess = (channelExtension->StartState.ChannelNextStartState == StartComplete) ? (TRUE) : (FALSE);
+            AhciTelemetryLogPortStart(channelExtension,
+                                      (PSTOR_ADDRESS)&(channelExtension->DeviceExtension->DeviceAddress),
+                                      ((portStartSuccess) ? (AhciTelemetryEventIdPortStartSuccess) : (AhciTelemetryEventIdPortRunningStartFail)),
+                                      ((portStartSuccess) ? ("Port Start Success") : ("Port Start Failed")),
+                                      ((portStartSuccess) ? (0) : (AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING)),
+                                      NULL,
+                                      0
+                                      );
+        }
+    }
+
+    return;
+}
+
+VOID
+AhciPortMarkDeviceFailed(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ AHCI_DEVICE_FAILURE_REASON FailureReason,
+    _In_ ULONG Flags,
+    _In_ BOOLEAN SuppressFailure
+    )
+/*++
+
+Routine Description:
+
+    This function will call storport API to mark failed device.
+
+    When caller passes TRUE for SuppressFailure, this function will
+    only call storport API to mark failed device once; otherwise,
+    this function will always call storport API to mark failed device.
+
+Arguments:
+
+    ChannelExtension - Pointer to the device extension for channel.
+
+    FailureReason - Indicates device failure reason.
+
+    Flags - Indicates whether remove failed device.
+
+    SuppressFailure - Indicates whether suppress failures.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    NT_ASSERT(ChannelExtension != NULL);
+
+    //
+    // Ignore Non-ATA device failures.
+    //
+    if (!IsAtaDevice(&ChannelExtension->DeviceExtension->DeviceParameters)) {
+        return;
+    }
+
+    switch (FailureReason) {
+
+        case AhciDeviceFailureTooManyBusChange: {
+            if ((!SuppressFailure) ||
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_BUS_CHANGE_WARNING_THROTTLE_MASK) == 0)) {
+                StorPortMarkDeviceFailed(ChannelExtension->AdapterExtension,
+                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                         Flags,
+                                         L"Too many bus change");
+            }
+
+            if (SuppressFailure &&
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_BUS_CHANGE_WARNING_THROTTLE_MASK) == 0)) {
+                ChannelExtension->DeviceFailureThrottleFlag |= AHCI_BUS_CHANGE_WARNING_THROTTLE_MASK;
+            }
+
+            break;
+        }
+
+        case AhciDeviceFailureTooManyNCQError: {
+            if ((!SuppressFailure) ||
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_NCQ_ERROR_WARNING_THROTTLE_MASK) == 0)) {
+                StorPortMarkDeviceFailed(ChannelExtension->AdapterExtension,
+                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                         Flags,
+                                         L"Too many NCQ error");
+            }
+
+            if (SuppressFailure &&
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_NCQ_ERROR_WARNING_THROTTLE_MASK) == 0)) {
+                ChannelExtension->DeviceFailureThrottleFlag |= AHCI_NCQ_ERROR_WARNING_THROTTLE_MASK;
+            }
+
+            break;
+        }
+
+        case AhciDeviceFailureTooManyNonQueuedError: {
+            if ((!SuppressFailure) ||
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_NON_QUEUED_ERROR_WARNING_THROTTLE_MASK) == 0)) {
+                StorPortMarkDeviceFailed(ChannelExtension->AdapterExtension,
+                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                         Flags,
+                                         L"Too many NonQueue error");
+            }
+
+            if (SuppressFailure &&
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_NON_QUEUED_ERROR_WARNING_THROTTLE_MASK) == 0)) {
+                ChannelExtension->DeviceFailureThrottleFlag |= AHCI_NON_QUEUED_ERROR_WARNING_THROTTLE_MASK;
+            }
+
+            break;
+        }
+
+        case AhciDeviceFailureDeviceStuck: {
+            if ((!SuppressFailure) ||
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_DEVICE_STUCK_WARNING_THROTTLE_MASK) == 0)) {
+                StorPortMarkDeviceFailed(ChannelExtension->AdapterExtension,
+                                         (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                         0,
+                                         L"Device may stuck");
+            }
+
+            if (SuppressFailure &&
+                ((ChannelExtension->DeviceFailureThrottleFlag & AHCI_DEVICE_STUCK_WARNING_THROTTLE_MASK) == 0)) {
+                ChannelExtension->DeviceFailureThrottleFlag |= AHCI_DEVICE_STUCK_WARNING_THROTTLE_MASK;
+            }
+
+            break;
+        }
+
+        default: {
+            NT_ASSERT(FALSE);
+            break;
+        }
+    }
+}
 
 #if _MSC_VER >= 1200
 #pragma warning(pop)
@@ -1251,4 +1453,3 @@ Affected Variables/Registers:
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-

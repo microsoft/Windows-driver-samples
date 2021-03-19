@@ -968,12 +968,12 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
     // Return next packet number to be read
     *PacketNumber = availablePacketNumber;
 
-    // Compute and return timestamp corresponding to start of the available packet. In a real hardware
+    // Compute and return timestamp corresponding to the end of the available packet. In a real hardware
     // driver, the timestamp would be computed in a driver and hardware specific manner. In this sample
     // driver, it is extrapolated from the sample driver's internal simulated position correlation
     // [m_ullLinearPosition @ m_ullDmaTimeStamp] and the sample's internal 64-bit packet counter, subtracting
     // 1 from the packet counter to compute the time at the start of that last completed packet.
-    ULONGLONG linearPositionOfAvailablePacket = (packetCounter - 1) * (m_ulDmaBufferSize / m_ulNotificationsPerBuffer);
+    ULONGLONG linearPositionOfAvailablePacket = packetCounter * (m_ulDmaBufferSize / m_ulNotificationsPerBuffer);
     // Need to divide by (1000 * 10000 because m_ulDmaMovementRate is average bytes per sec
     ULONGLONG carryForwardBytes = (hnsElapsedTimeCarryForward * m_ulDmaMovementRate) / 10000000;
     ULONGLONG deltaLinearPosition = ullLinearPosition + carryForwardBytes - linearPositionOfAvailablePacket;

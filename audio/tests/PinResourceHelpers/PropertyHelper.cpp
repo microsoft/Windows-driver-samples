@@ -4,7 +4,7 @@
 //
 // Module Name:
 //
-//  EndpointPropertyHelpers.cpp
+//  PropertyHelper.cpp
 //
 // Abstract:
 //
@@ -14,7 +14,8 @@
 #include "PreComp.h"
 #include <AVEndpointKeys.h>
 #include <Functiondiscoverykeys_devpkey.h>
-#include "PropertyHelper.h"
+#include <devpkey.h>
+#include <PropertyHelper.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -722,6 +723,8 @@ HRESULT IsFormatSupported
         return hr;
     }
 
+    CoTaskMemFree(pKsRequestedFormat);
+
     return hr;
 }
 
@@ -1090,6 +1093,171 @@ HRESULT GetAvailiablePinInstanceCount
     }
 
     *pAvailablePinInstanceCount = pinInstances.PossibleCount - pinInstances.CurrentCount;
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IsAVStream
+//
+// Check if audio device is AVStream
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT IsAVStream
+(
+    IMMDevice*          pDevice,
+    bool*               pIsAVStream
+)
+{
+    HRESULT                                 hr = S_OK;
+    wil::com_ptr_nothrow<IMMDevice>         spDevnodeDevice;
+    wil::com_ptr_nothrow<IPropertyStore>    spPnpProperties;
+    wil::unique_prop_variant                varDeviceService;
+
+    *pIsAVStream = false;
+
+    // Find the associated PnP device 
+    if (!VERIFY_SUCCEEDED(hr = GetPnpDevnodeFromMMDevice(pDevice, &spDevnodeDevice))) {
+        return hr;
+    }
+
+    // Open pnp device property store
+    if (!VERIFY_SUCCEEDED(hr = spDevnodeDevice->OpenPropertyStore(STGM_READ, &spPnpProperties))) {
+        return hr;
+    }
+
+    // Read the DEVPKEY_Device_Service
+    if (!VERIFY_SUCCEEDED(hr = spPnpProperties->GetValue((REFPROPERTYKEY)DEVPKEY_Device_Service, &varDeviceService))) {
+        return hr;
+    }
+
+    if (!VERIFY_IS_TRUE(varDeviceService.vt == VT_LPWSTR && varDeviceService.pwszVal != nullptr)) {
+        hr = E_FAIL;
+        return hr;
+    }
+
+    if (0 == _wcsicmp(varDeviceService.pwszVal, L"usbaudio") || 0 == _wcsicmp(varDeviceService.pwszVal, L"BthHFAud") || 0 == _wcsicmp(varDeviceService.pwszVal, L"BthA2dp")) {
+        *pIsAVStream = true;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IsBluetooth
+//
+// Check if audio device is Bluetooth
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT IsBluetooth
+(
+    IMMDevice* pDevice,
+    bool* pIsBluetooth
+)
+{
+    HRESULT                                 hr = S_OK;
+    wil::com_ptr_nothrow<IPropertyStore>    spPropertyStore;
+    wil::unique_prop_variant                varIsBluetooth;
+
+    *pIsBluetooth = false;
+
+    // Open pnp device property store
+    if (!VERIFY_SUCCEEDED(hr = pDevice->OpenPropertyStore(STGM_READ, &spPropertyStore))) {
+        return hr;
+    }
+
+    // Read the PKEY_Endpoint_IsBluetooth
+    hr = spPropertyStore->GetValue((REFPROPERTYKEY)PKEY_Endpoint_IsBluetooth, &varIsBluetooth);
+    if (hr != S_OK) {
+        return hr;
+    }
+
+    if (varIsBluetooth.vt == VT_BOOL)
+    {
+        *pIsBluetooth = varIsBluetooth.boolVal == VARIANT_TRUE ? true : false;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IsSideband
+//
+// Check if audio device is side band
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT IsSideband
+(
+    IMMDevice* pDevice,
+    bool* pIsSideband
+)
+{
+    HRESULT                                 hr = S_OK;
+    wil::com_ptr_nothrow<IPropertyStore>    spPropertyStore;
+    wil::unique_prop_variant                varIsSideband;
+
+    *pIsSideband = false;
+
+    // Open pnp device property store
+    if (!VERIFY_SUCCEEDED(hr = pDevice->OpenPropertyStore(STGM_READ, &spPropertyStore))) {
+        return hr;
+    }
+
+    // Read the PKEY_Endpoint_IsBluetooth
+    hr = spPropertyStore->GetValue((REFPROPERTYKEY)PKEY_Endpoint_IsSideband, &varIsSideband);
+    if (hr != S_OK) {
+        return hr;
+    }
+
+    if (varIsSideband.vt == VT_BOOL)
+    {
+        *pIsSideband = varIsSideband.boolVal == VARIANT_TRUE ? true : false;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// GetPnpDevnodeFromMMDeivce
+//
+// Get pnp devnode from mm device
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT GetPnpDevnodeFromMMDevice
+(
+    IMMDevice* pDevice,
+    IMMDevice** pDevnodeDevice
+)
+{
+    HRESULT                                     hr = S_OK;
+    wil::com_ptr_nothrow<IMMDeviceEnumerator>   spEnumerator;
+    wil::com_ptr_nothrow<IPropertyStore>        spProps;
+    wil::com_ptr_nothrow<IMMDevice>             spDevnodeAsDevice;
+    wil::com_ptr_nothrow<IPropertyStore>        spDevnodeProps;
+    wil::unique_prop_variant                    varDevnode;
+
+    // Create an enumerator
+    if (!VERIFY_SUCCEEDED(hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void **)&spEnumerator))) {
+        return hr;
+    }
+
+    // Read the PKEY_Endpoint_Devnode
+    if (!VERIFY_SUCCEEDED(hr = pDevice->OpenPropertyStore(STGM_READ, &spProps))) {
+        return hr;
+    }
+    if (!VERIFY_SUCCEEDED(hr = spProps->GetValue(PKEY_Endpoint_Devnode, &varDevnode))) {
+        return hr;
+    }
+
+    // Get the devnode as an IMMDevice
+    if (!VERIFY_SUCCEEDED(hr = spEnumerator->GetDevice(varDevnode.pwszVal, &spDevnodeAsDevice))) {
+        return hr;
+    }
+    *pDevnodeDevice = spDevnodeAsDevice.detach();
 
     return hr;
 }

@@ -1175,10 +1175,9 @@ ClassWmiFireEvent(
 
     sizeNeeded = sizeof(WNODE_SINGLE_INSTANCE) + EventDataSize;
 
-    event = ExAllocatePoolWithTag(NonPagedPoolNx, sizeNeeded, CLASS_TAG_WMI);
+    event = ExAllocatePoolZero(NonPagedPoolNx, sizeNeeded, CLASS_TAG_WMI);
     if (event != NULL)
     {
-        RtlZeroMemory(event, sizeNeeded);
         event->WnodeHeader.Guid = *Guid;
         event->WnodeHeader.ProviderId = IoWMIDeviceObjectToProviderId(DeviceObject);
         event->WnodeHeader.BufferSize = sizeNeeded;
