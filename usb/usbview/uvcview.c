@@ -251,6 +251,7 @@ BOOL            gbConsoleFile  = FALSE;
 BOOL            gbConsoleInitialized = FALSE;
 BOOL            gbButtonDown     = FALSE;
 BOOL            gDoAutoRefresh   = TRUE;
+BOOL            gQuietMode       = FALSE;
 
 int             gBarLocation     = 0;
 int             giGoodDevice     = 0;
@@ -353,7 +354,6 @@ BOOL ProcessCommandLine()
     LPWSTR *szArgList = NULL;
     LPTSTR szArg = NULL;
     LPTSTR szAnsiArg= NULL;
-    BOOL quietMode = FALSE;
 
     HRESULT hr = S_OK;
     DWORD dwCreationDisposition = CREATE_NEW;
@@ -374,7 +374,20 @@ BOOL ProcessCommandLine()
         if (nArgs > 1)
         {
             // If there are arguments, initialize console for ouput
-            InitializeConsole();
+            // but only if no quiet mode
+            for (i = 1; (i < nArgs) && (bStopArgProcessing == FALSE); i++)
+            {
+                szAnsiArg = WStringToAnsiString(szArgList[i]);
+                if (0 == _stricmp(szAnsiArg, "/q"))
+                {
+                    gQuietMode = TRUE;
+                }
+            }
+
+            if(!gQuietMode)
+            {
+                InitializeConsole();
+            }
         }
 
         for (i = 1; (i < nArgs) && (bStopArgProcessing == FALSE); i++)
@@ -406,10 +419,6 @@ BOOL ProcessCommandLine()
             else if (0 == _stricmp(szAnsiArg, "/f"))
             {
                 dwCreationDisposition = CREATE_ALWAYS;
-            }
-            else if (0 == _stricmp(szAnsiArg, "/q"))
-            {
-                quietMode = TRUE;
             }
             else
             {
@@ -450,7 +459,7 @@ BOOL ProcessCommandLine()
             }
         }
 
-        if(!quietMode)
+        if(!gQuietMode)
         {
             WaitForKeyPress();
         }
@@ -632,6 +641,11 @@ Displays a message to standard output
 *****************************************************************************/
 VOID DisplayMessage(DWORD dwResId, ...)
 {
+    if(gQuietMode)
+    {
+        return;
+    }
+
     CHAR szFormat[4096];
     HRESULT hr = S_OK;
     LPTSTR lpszMessage = NULL;
