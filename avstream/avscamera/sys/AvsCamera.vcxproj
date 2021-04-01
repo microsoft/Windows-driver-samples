@@ -167,6 +167,9 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -178,6 +181,9 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -189,6 +195,9 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -200,6 +209,9 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AvsCamera.cpp" />
