@@ -4,9 +4,9 @@
 
 [Version]
 Signature="$Windows NT$"
-Class=Sample ;
-ClassGuid={70DF6E9F-68AA-4E29-AF0C-5AE9DB219214} ;
-Provider=Standard,NT$ARCH$
+Class=BarcodeScanner
+ClassGuid={C243FFBD-3AFC-45E9-B3D3-2BA18BC7EBC5}
+Provider=%ManufacturerName%
 CatalogFile=SampleBarcodeScannerDrv.cat
 DriverVer=06/25/2015,14.29.18.671
 
