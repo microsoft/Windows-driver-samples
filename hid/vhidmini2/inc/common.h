@@ -37,7 +37,6 @@ Environment:
 #define TEST_COLLECTION_REPORT_ID                         0x02
 
 #define MAXIMUM_STRING_LENGTH           (126 * sizeof(WCHAR))
-#define VHIDMINI_DEVICE_STRING          L"UMDF Virtual hidmini device"  
 #define VHIDMINI_MANUFACTURER_STRING    L"UMDF Virtual hidmini device Manufacturer string"  
 #define VHIDMINI_PRODUCT_STRING         L"UMDF Virtual hidmini device Product string"  
 #define VHIDMINI_SERIAL_NUMBER_STRING   L"UMDF Virtual hidmini device Serial Number string"  
