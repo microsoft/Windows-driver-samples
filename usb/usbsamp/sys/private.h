@@ -53,9 +53,8 @@ Environment:
 #define DISPATCH_LATENCY_IN_MS 10
 
 
-#undef ExAllocatePool
-#define ExAllocatePool(type, size) \
-    ExAllocatePoolWithTag(type, size, POOL_TAG);
+#define MyExAllocatePool2(flags, size) \
+    ExAllocatePool2(flags, size, POOL_TAG);
 
 #if DBG
 
