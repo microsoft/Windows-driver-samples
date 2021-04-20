@@ -423,7 +423,7 @@ Return Value:
         queueContext->Length = 0L;
     }
 
-    queueContext->Buffer = ExAllocatePoolWithTag(NonPagedPoolNx, Length, 'sam1');
+    queueContext->Buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, Length, 'sam1');
     if( queueContext->Buffer == NULL ) {
         KdPrint(("EchoEvtIoWrite: Could not allocate %Iu byte buffer\n", Length));
         WdfRequestComplete(Request, STATUS_INSUFFICIENT_RESOURCES);

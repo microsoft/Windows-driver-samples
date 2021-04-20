@@ -82,8 +82,8 @@ Return Value:
         return status;
     }
 
-    dst->HardwareIds = (PWCHAR) ExAllocatePoolWithTag(
-        NonPagedPoolNx,
+    dst->HardwareIds = (PWCHAR) ExAllocatePool2(
+        POOL_FLAG_NON_PAGED,
         safeMultResult,
         BUS_TAG);
 
