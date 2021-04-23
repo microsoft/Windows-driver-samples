@@ -176,6 +176,9 @@
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)\UcmTcpci\1.0\UcmTcpciCxStub.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(TargetPath)" />
