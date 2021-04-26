@@ -4,12 +4,10 @@
 //
 
 #pragma once
-
 // Windows Header Files:
 #include <unknwn.h>
 #include <windows.h>
 #include <propvarutil.h>
-//#include <mfstd.h> // Must be included before <initguid.h>, or else DirectDraw GUIDs will be defined twice. See the comment in <uuids.h>.
 #include <ole2.h>
 #include <initguid.h>
 #include <ks.h>
@@ -20,9 +18,7 @@
 #include <mfreadwrite.h>
 #include <nserror.h>
 #include <winmeta.h>
-//#include <wrl.h>
 #include <d3d9types.h>
-
 
 #define RESULT_DIAGNOSTICS_LEVEL 4 // include function name
 
@@ -31,11 +27,6 @@
 #include "wil\com.h"
 
 #include <winrt\base.h>
-
-
-
-//using namespace Microsoft::WRL;
-//using namespace Microsoft::WRL::Wrappers;
 
 #if !defined(_IKsControl_)
 #define _IKsControl_
@@ -75,8 +66,6 @@ DECLARE_INTERFACE_(IKsControl, IUnknown)
 #include "SimpleMediaStream.h"
 #include "SimpleMediaSource.h"
 #include "SimpleMediaSourceActivate.h"
-
-#pragma comment(lib, "windowsapp")
 
 inline void DebugPrint(LPCWSTR szFormat, ...)
 {

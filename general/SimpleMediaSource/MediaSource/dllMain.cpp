@@ -1,6 +1,7 @@
-/// <copyright file="dllmain.cpp" company="Microsoft">
-///    Copyright (c) Microsoft Corporation. All rights reserved.
-/// </copyright>
+//
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//
+
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 
@@ -14,7 +15,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, _COM_Outptr_ void** ppv)
 
         if (rclsid == __uuidof(winrt::WindowsSample::implementation::SimpleMediaSourceActivate))
         {
-            return winrt::make<SimpleMediaSourceActivateFactory>()->QueryInterface(riid, ppv);
+            return winrt::make_self<SimpleMediaSourceActivateFactory>()->QueryInterface(riid, ppv);
         }
 
 #ifdef _WRL_MODULE_H_

@@ -1,14 +1,11 @@
-/// <copyright file="stdafx.cpp" company="Microsoft">
-///    Copyright (c) Microsoft Corporation. All rights reserved.
-/// </copyright>
-// stdafx.cpp : source file that includes just the standard includes
-// KinectMFMediaSource.pch will be the pre-compiled header
-// stdafx.obj will contain the pre-compiled type information
+//
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//
 
+// pch.cpp: source file corresponding to the pre-compiled header
 #include "pch.h"
 
-// TODO: reference any additional headers you need in pch.h
-// and not in this file
+// When you are using pre-compiled headers, this source file is necessary for compilation to succeed.
 
 namespace winrt
 {

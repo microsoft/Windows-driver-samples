@@ -2,7 +2,6 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //
 #include "pch.h"
-#include "SimpleFrameGenerator.h"
 
 HRESULT SimpleFrameGenerator::Initialize(_In_ IMFMediaType* pMediaType)
 {
@@ -38,7 +37,6 @@ HRESULT SimpleFrameGenerator::CreateFrame(
         DEBUG_MSG(L"RGB32 frames %s\n", winrt::to_hstring(MFVideoFormat_RGB32).data());
 
         RETURN_IF_FAILED(_CreateRGB32Frame(pBuf, len, pitch, m_width, m_height, rgbMask));
-        //NUM_ROWS = len / abs(pitch);
     }
     else if(m_subType == MFVideoFormat_NV12)
     {
@@ -49,7 +47,7 @@ HRESULT SimpleFrameGenerator::CreateFrame(
         RETURN_IF_NULL_ALLOC(spBuff.get());
 
         RETURN_IF_FAILED(_CreateRGB32Frame(spBuff.get(), frameBuffLen, m_width * 4, m_width, m_height, rgbMask));
-        RETURN_IF_FAILED(RGB32ToNV12(spBuff.get(), frameBuffLen, m_width * 4, m_width, m_height, pBuf, len, pitch));
+        RETURN_IF_FAILED(RGB32ToNV12Frame(spBuff.get(), frameBuffLen, m_width * 4, m_width, m_height, pBuf, len, pitch));
     }
     else
     {
@@ -112,7 +110,10 @@ void SimpleFrameGenerator::RGB32ToNV12(BYTE RGB1[8], BYTE RGB2[8], BYTE* pY1, BY
     RGB24ToY(RGB2[6], RGB2[5], RGB2[4], pY2 + 1);
 };
 
-HRESULT SimpleFrameGenerator::RGB32ToNV12(_Inout_updates_bytes_(len) BYTE* pbBuff, ULONG cbBuff, long stride, UINT width, UINT height, BYTE* pbBuffOut, ULONG cbBuffOut, long strideOut)
+//////////////////////////////////////////////////
+// FrameFormatConverter
+
+HRESULT SimpleFrameGenerator::RGB32ToNV12Frame(_Inout_updates_bytes_(len) BYTE* pbBuff, ULONG cbBuff, long stride, UINT width, UINT height, BYTE* pbBuffOut, ULONG cbBuffOut, long strideOut)
 {
     do
     {

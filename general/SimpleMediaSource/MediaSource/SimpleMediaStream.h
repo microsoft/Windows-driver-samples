@@ -6,7 +6,6 @@
 #define SIMPLEMEDIASTREAM_H
 
 #include "SimpleMediaSource.h"
-//#include "VirtualCameraWin32.h"
 
 namespace winrt::WindowsSample::implementation
 {
@@ -16,19 +15,19 @@ namespace winrt::WindowsSample::implementation
 
     public:
         // IMFMediaEventGenerator
-        IFACEMETHOD(BeginGetEvent)(IMFAsyncCallback* pCallback, IUnknown* punkState);
-        IFACEMETHOD(EndGetEvent)(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-        IFACEMETHOD(GetEvent)(DWORD dwFlags, IMFMediaEvent** ppEvent);
-        IFACEMETHOD(QueueEvent)(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT* pvValue);
+        IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState) override;
+        IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent) override;
+        IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent) override;
+        IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT* pvValue) override;
 
         // IMFMediaStream
-        IFACEMETHOD(GetMediaSource)(IMFMediaSource** ppMediaSource);
-        IFACEMETHOD(GetStreamDescriptor)(IMFStreamDescriptor** ppStreamDescriptor);
-        IFACEMETHOD(RequestSample)(IUnknown* pToken);
+        IFACEMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource) override;
+        IFACEMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor) override;
+        IFACEMETHODIMP RequestSample(IUnknown* pToken) override;
 
         // IMFMediaStream2
-        IFACEMETHOD(SetStreamState)(_In_ MF_STREAM_STATE state);
-        IFACEMETHOD(GetStreamState)(_Out_ MF_STREAM_STATE* pState);
+        IFACEMETHODIMP SetStreamState(_In_ MF_STREAM_STATE state) override;
+        IFACEMETHODIMP GetStreamState(_Out_ MF_STREAM_STATE* pState) override;
 
         // Non-interface methods.
         HRESULT Initialize(_In_ SimpleMediaSource* pSource, _In_ DWORD streamId, _In_ MFSampleAllocatorUsage allocatorUsage);
@@ -56,7 +55,7 @@ namespace winrt::WindowsSample::implementation
         wil::com_ptr_nothrow<IMFAttributes> m_spAttributes;
         wil::com_ptr_nothrow<IMFStreamDescriptor> m_spStreamDesc;
         wil::com_ptr_nothrow<IMFVideoSampleAllocator> m_spSampleAllocator;
-       wistd::unique_ptr<SimpleFrameGenerator> m_spFrameGenerator;
+        wistd::unique_ptr<SimpleFrameGenerator> m_spFrameGenerator;
 
         bool m_bIsShutdown = false;
         MF_STREAM_STATE m_streamState = MF_STREAM_STATE_STOPPED;
