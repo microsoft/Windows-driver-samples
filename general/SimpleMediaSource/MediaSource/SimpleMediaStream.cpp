@@ -28,7 +28,7 @@ namespace winrt::WindowsSample::implementation
         m_allocatorUsage = allocatorUsage;
 
         const uint32_t NUM_MEDIATYPES = 2;
-        wil::unique_cotaskmem_array_ptr<wil::com_ptr_nothrow<IMFMediaType>> m_mediaTypeList = wilEx::make_unique_cotaskmem_array<wil::com_ptr_nothrow<IMFMediaType>>(NUM_MEDIATYPES);
+        wil::unique_cotaskmem_array_ptr<wil::com_ptr_nothrow<IMFMediaType>> mediaTypeList = wilEx::make_unique_cotaskmem_array<wil::com_ptr_nothrow<IMFMediaType>>(NUM_MEDIATYPES);
 
         // Initialize media type and set the video output media type.
         wil::com_ptr_nothrow<IMFMediaType> spMediaType;
@@ -43,7 +43,7 @@ namespace winrt::WindowsSample::implementation
         uint32_t bitrate = (uint32_t)(NUM_IMAGE_COLS * 1.5 * NUM_IMAGE_ROWS * 8* 30);
         spMediaType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
         MFSetAttributeRatio(spMediaType.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-        m_mediaTypeList[0] = spMediaType.detach();
+        mediaTypeList[0] = spMediaType.detach();
 
         RETURN_IF_FAILED(MFCreateMediaType(&spMediaType));
         spMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
@@ -56,7 +56,7 @@ namespace winrt::WindowsSample::implementation
          bitrate = NUM_IMAGE_COLS * NUM_IMAGE_ROWS * 24* 30;
          spMediaType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
          MFSetAttributeRatio(spMediaType.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-         m_mediaTypeList[1] = spMediaType.detach();
+         mediaTypeList[1] = spMediaType.detach();
 
         RETURN_IF_FAILED(MFCreateAttributes(&m_spAttributes, 10));
         RETURN_IF_FAILED(_SetStreamAttributes(m_spAttributes.get()));
@@ -64,10 +64,10 @@ namespace winrt::WindowsSample::implementation
         RETURN_IF_FAILED(MFCreateEventQueue(&m_spEventQueue));
 
         // Initialize stream descriptors
-        RETURN_IF_FAILED(MFCreateStreamDescriptor(m_dwStreamId /*StreamId*/, NUM_MEDIATYPES /*MT count*/, m_mediaTypeList.get(), &m_spStreamDesc));
+        RETURN_IF_FAILED(MFCreateStreamDescriptor(m_dwStreamId /*StreamId*/, NUM_MEDIATYPES /*MT count*/, mediaTypeList.get(), &m_spStreamDesc));
 
         RETURN_IF_FAILED(m_spStreamDesc->GetMediaTypeHandler(&spTypeHandler));
-        RETURN_IF_FAILED(spTypeHandler->SetCurrentMediaType(m_mediaTypeList[0]));
+        RETURN_IF_FAILED(spTypeHandler->SetCurrentMediaType(mediaTypeList[0]));
         RETURN_IF_FAILED(_SetStreamDescriptorAttributes(m_spStreamDesc.get()));
 
         return S_OK;
