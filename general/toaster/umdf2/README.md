@@ -5,16 +5,8 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: Toaster Sample (UMDF version 2)
-    platform: UMDF2
-    language: cpp
-    category: General WDF
-    description: An iterative series of samples that demonstrate driver development using UMDF version 2.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620310
---->
 
 # Toaster Sample (UMDF Version 2)
 
@@ -24,7 +16,7 @@ The Toaster sample collection is comprised of driver projects (.vcxproj files) t
 
 ## Related technologies
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[Windows Driver Frameworks](https://docs.microsoft.com/windows-hardware/drivers/wdf/)
 
 ## Run the sample
 
@@ -34,22 +26,27 @@ The process of moving the driver package to the target computer and installing t
 
 ### Automatic deployment (root enumerated)
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Provision a computer for driver deployment and testing](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1).
 
 1. On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
+
 1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter **root\\toaster** for the hardware ID. Click **OK**.
+
 1. Because this solution contains many projects, you may find it easier to remove some of them before you build and deploy a driver package. To do so, right click **package** (lower case), and choose **Properties**. Navigate to **Common Properties-\>References** and click **Remove Reference** to remove projects you don't want. (You can add them back later by using **Add New Reference**.) Click **OK**.
+
 1. On the **Build** menu, choose **Build Solution** or **Rebuild Solution** (if you removed references).
+
 1. If you removed references and deployment does not succeed, try deleting the contents of the c:\\DriverTest\\Drivers folder on the target machine, and then retry deployment.
 
 ### Manual deployment (root enumerated)
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
 1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\Umdf2toaster).
+
 1. On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter a command such as:
 
-    **devcon install wdfsimpleum.inf root\\toaster**
+    `devcon install wdfsimpleum.inf root\\toaster`
 
 ### View the root enumerated driver in Device Manager
 
@@ -61,6 +58,6 @@ In Device Manager, on the **View** menu, choose **Devices by connection**. Locat
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, Umdf2toaster.sln. Use the MSBuild command to build the solution. Here is an example:
 
-**msbuild /p:configuration="Release" /p:platform="Win32" Umdf2toaster.sln**
+`msbuild /p:configuration="Release" /p:platform="Win32" Umdf2toaster.sln`
 
-For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
+For more information about using MSBuild to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).

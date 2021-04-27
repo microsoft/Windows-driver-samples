@@ -33,7 +33,7 @@
    WFPSamplerCalloutDriver.sys = 1,,
 
 [ClassInstall32.nt$ARCH$]
-   AddReg = WFPCalloutClassReg
+   AddReg = WFPCalloutsClassReg
 
 [DestinationDirs]
    DefaultDestDir                      = 12                                                        ;/// %WinDir%\System32\Drivers
@@ -53,8 +53,8 @@
 [DefaultUninstall.nt$ARCH$.Services]
    DelService = %WFPSamplerCalloutDriverServiceName%,0x200                                         ;/// SPSVCINST_STOPSERVICE
 
-[WFPCalloutClassReg]
-   HKR,,,0,%WFPCalloutClassName%
+[WFPCalloutsClassReg]
+   HKR,,,0,%WFPCalloutsClassName%
    HKR,,Icon,,-5
    HKR,,SilentInstall,,1
    HKR,,DeviceCharacteristics,0x10001,0x100                                                        ;/// FLG_ADDREG_BINVALUETYPE | FLG_ADDREG_TYPE_MULTI_SZ, FILE_DEVICE_SECURE_OPEN
@@ -85,7 +85,7 @@
 
 [Strings]
    ProviderString                            = "TODO-Set-Provider"
-   WFPCalloutClassName                       = "WFP Callout"
+   WFPCalloutsClassName                      = "WFP Callout Drivers"
    WFPSamplerCalloutDriverDeviceDescription  = "WFP Sampler Callout Device"
    WFPSamplerCalloutDriverDescription        = "WFP Sampler Callout Driver"
    WFPSamplerCalloutDriverServiceName        = "WFPSamplerCallouts"

@@ -44,7 +44,7 @@ Return Value:
 
 --*/
 {
-    return ExAllocatePoolWithTag(NonPagedPoolNx, ByteSize, '+brs');
+    return ExAllocatePoolZero(NonPagedPoolNx, ByteSize, '+brs');
 }
 
 

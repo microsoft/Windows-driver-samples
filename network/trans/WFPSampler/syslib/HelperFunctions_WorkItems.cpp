@@ -843,9 +843,16 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
 
    HLPR_BAIL_LABEL:
 
-   if(status != STATUS_SUCCESS &&
-      pWorkItemData)
-      KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+   if(status != STATUS_SUCCESS)
+   {
+      if(pWorkItemData)
+         KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+      else
+      {
+         if(pIOWorkItem)
+            IoFreeWorkItem(pIOWorkItem);
+      }
+   }
 
 #if DBG
    
@@ -929,9 +936,16 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
 
    HLPR_BAIL_LABEL:
 
-   if(status != STATUS_SUCCESS &&
-      pWorkItemData)
-      KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+   if(status != STATUS_SUCCESS)
+   {
+      if(pWorkItemData)
+         KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+      else
+      {
+         if(pIOWorkItem)
+            IoFreeWorkItem(pIOWorkItem);
+      }
+   }
 
 #if DBG
    
@@ -1015,9 +1029,16 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
 
    HLPR_BAIL_LABEL:
 
-   if(status != STATUS_SUCCESS &&
-      pWorkItemData)
-      KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+   if(status != STATUS_SUCCESS)
+   {
+      if(pWorkItemData)
+         KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+      else
+      {
+         if(pIOWorkItem)
+            IoFreeWorkItem(pIOWorkItem);
+      }
+   }
 
 #if DBG
    
@@ -1098,9 +1119,16 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
 
    HLPR_BAIL_LABEL:
 
-   if(status != STATUS_SUCCESS &&
-      pWorkItemData)
-      KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+   if(status != STATUS_SUCCESS)
+   {
+      if(pWorkItemData)
+         KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+      else
+      {
+         if(pIOWorkItem)
+            IoFreeWorkItem(pIOWorkItem);
+      }
+   }
 
 #if DBG
    
@@ -1181,9 +1209,16 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
 
    HLPR_BAIL_LABEL:
 
-   if(status != STATUS_SUCCESS &&
-      pWorkItemData)
-      KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+   if(status != STATUS_SUCCESS)
+   {
+      if(pWorkItemData)
+         KrnlHlprWorkItemDataDestroy(&pWorkItemData);
+      else
+      {
+         if(pIOWorkItem)
+            IoFreeWorkItem(pIOWorkItem);
+      }
+   }
 
 #if DBG
    

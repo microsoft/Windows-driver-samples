@@ -1006,17 +1006,15 @@ PlatformSdioGetProperty(
      	PSDBUS_REQUEST_PACKET psdrp = NULL;
 	NTSTATUS	status;
 	
-	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePoolWithTag(NonPagedPool, sizeof(SDBUS_REQUEST_PACKET), '3278');
+	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
 
 	if(!psdrp)
 		return STATUS_INSUFFICIENT_RESOURCES;
 	
-    	RtlZeroMemory(psdrp, sizeof(SDBUS_REQUEST_PACKET));
-
-    	psdrp->RequestFunction = SDRF_GET_PROPERTY;
-    	psdrp->Parameters.GetSetProperty.Property = Property;
-    	psdrp->Parameters.GetSetProperty.Buffer = Buffer;
-    	psdrp->Parameters.GetSetProperty.Length = Length;
+	psdrp->RequestFunction = SDRF_GET_PROPERTY;
+	psdrp->Parameters.GetSetProperty.Property = Property;
+	psdrp->Parameters.GetSetProperty.Buffer = Buffer;
+	psdrp->Parameters.GetSetProperty.Length = Length;
 
 	NdisAcquireSpinLock( &(pDevice->IrpSpinLock) );
 	RT_SDIO_INC_CMD_REF(pDevice);
@@ -1062,17 +1060,15 @@ PlatformSdioSetProperty(
 	PSDBUS_REQUEST_PACKET psdrp = NULL;
 	NTSTATUS	status;
 	
-	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePoolWithTag(NonPagedPool, sizeof(SDBUS_REQUEST_PACKET), '3278');
+	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
 
 	if(!psdrp)
 		return STATUS_INSUFFICIENT_RESOURCES;
 
-	RtlZeroMemory(psdrp, sizeof(SDBUS_REQUEST_PACKET));
-
-    	psdrp->RequestFunction = SDRF_SET_PROPERTY;
-    	psdrp->Parameters.GetSetProperty.Property = Property;
-    	psdrp->Parameters.GetSetProperty.Buffer = Buffer;
-    	psdrp->Parameters.GetSetProperty.Length = Length;    	
+	psdrp->RequestFunction = SDRF_SET_PROPERTY;
+	psdrp->Parameters.GetSetProperty.Property = Property;
+	psdrp->Parameters.GetSetProperty.Buffer = Buffer;
+	psdrp->Parameters.GetSetProperty.Length = Length;
 
 	NdisAcquireSpinLock( &(pDevice->IrpSpinLock) );
 	RT_SDIO_INC_CMD_REF(pDevice);
@@ -1409,14 +1405,12 @@ PlatformSdioCmd53ReadWriteMDL(
 	//
 	// Now allocate a request packet for the arguments of the command.
 	//	
-	psdrp = ExAllocatePoolWithTag(NonPagedPool, sizeof(SDBUS_REQUEST_PACKET), '3278');
+	psdrp = ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
 	if(!psdrp) 
 	{
 		RT_TRACE(COMP_IO, DBG_SERIOUS, ("PlatformSdioCmd53ReadWriteMDL(): Allocate sdrp fail!!\n"));
 		return rtstatus;
 	}
-		
-	RtlZeroMemory(psdrp, sizeof(SDBUS_REQUEST_PACKET));
 
 	psdrp->RequestFunction = SDRF_DEVICE_COMMAND;
 	psdrp->Parameters.DeviceCommand.Mdl = pmdl;
@@ -2985,7 +2979,7 @@ PrepareSdioAWBs(
 	//
 	// Allocate SD Request Packet
 	//
-	device->pAsynIoWriteSdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePoolWithTag(NonPagedPool, sizeof(SDBUS_REQUEST_PACKET), '3278');
+	device->pAsynIoWriteSdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
   	if(device->pAsynIoWriteSdrp == NULL)	
   		goto Error;
 	

@@ -5,16 +5,8 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: USBView sample application
-    platform: WDM
-    language: cpp
-    category: USB
-    description: Provides an application that allows you to browse all USB controllers and connected USB devices on your system.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=618004
---->
 
 # USBView sample application
 
@@ -24,21 +16,28 @@ This functional application sample demonstrates how a user-mode application can 
 
 The IOCTL calls (see the system include file USBIOCTL.H) demonstrated by this sample include:
 
-- [**IOCTL\_GET\_HCD\_DRIVERKEY\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537236)
-- [**IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537310)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_DRIVERKEY\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537317)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537319)
-- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537323)
-- [**IOCTL\_USB\_GET\_NODE\_INFORMATION**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537324)
-- [**IOCTL\_USB\_GET\_ROOT\_HUB\_NAME**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff537326)
+- [**IOCTL\_GET\_HCD\_DRIVERKEY\_NAME**](https://docs.microsoft.com/windows/win32/api/usbuser/ni-usbuser-ioctl_get_hcd_driverkey_name)
 
-For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff538930).
+- [**IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_descriptor_from_node_connection)
+
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_DRIVERKEY\_NAME**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_driverkey_name)
+
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_information)
+
+- [**IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_name)
+
+- [**IOCTL\_USB\_GET\_NODE\_INFORMATION**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/usbioctl/ni-usbioctl-ioctl_usb_get_node_information)
+
+- [**IOCTL\_USB\_GET\_ROOT\_HUB\_NAME**](https://docs.microsoft.com/windows/win32/api/usbuser/ni-usbuser-ioctl_usb_get_root_hub_name)
+
+For information about USB, see [Universal Serial Bus (USB) Drivers](https://docs.microsoft.com/windows-hardware/drivers/usbcon/).
 
 ## Run the sample
 
 ### Local debugging
 
 1. Change **Debugger** to launch to **Local Windows Debugger**.
+
 1. On the **Debug** menu, select **Start debugging** or hit **F5**.
 
 ### Manual deployment to a remote target computer
@@ -46,14 +45,19 @@ For information about USB, see [Universal Serial Bus (USB) Drivers](http://msdn.
 If you want to debug the sample app on a remote computer,
 
 1. Copy the executable to a folder on the remote computer.
-1. Specify project properties as per the instructions given in [Set Up Remote Debugging for a Visual Studio Project](http://msdn.microsoft.com/en-us/library/8x6by8d2.aspx).
+
+1. Specify project properties as per the instructions given in [Remote Debugging](https://docs.microsoft.com/visualstudio/debugger/remote-debugging?view=vs-2015).
+
 1. Change **Debugger** to launch to **Remote Windows Debugger**.
+
 1. On the **Debug** menu, select **Start debugging** or hit **F5**.
 
 ### View a USB device in Usbview
 
 1. Attach a USB device to one of USB ports on the computer that has Usbview running.
+
 1. In the device tree, locate the device. For example the device might be under the Intel(R) ICH10 Family USB Universal Host Controller - 3A34 \> Root Hub node.
+
 1. View host controller and port properties on the right pane.
 
 ## Code tour
@@ -73,7 +77,9 @@ If you want to debug the sample app on a remote computer,
 The major topics covered in this tour are:
 
 - GUI handling routines
+
 - Device enumeration routines
+
 - Device information display routines
 
 The file Usbview.c contains the sample application entry point and GUI handling routines. On entry, the main application window is created, which is actually a dialog box as defined in Usbview.rc. The dialog box consists of a split window with a tree view control on the left side and an edit control on the right side.
@@ -83,7 +89,9 @@ The routine RefreshTree() is called to enumerate USB host controller, hubs, and 
 The file Enum.c contains the routines that enumerate the USB bus and populate the tree view control. The USB device enumeration and information collection process is the main point of this sample application. The enumeration process starts at EnumerateHostControllers() and goes like this:
 
 1. Enumerate Host Controllers and Root Hubs. Host controllers have symbolic link names of the form HCDx, where x starts at 0. Use CreateFile() to open each host controller symbolic link. Create a node in the tree view to represent each host controller. After a host controller has been opened, send the host controller an IOCTL\_USB\_GET\_ROOT\_HUB\_NAME request to get the symbolic link name of the root hub that is part of the host controller.
+
 1. Enumerate Hubs (Root Hubs and External Hubs). Given the name of a hub, use CreateFile() to open the hub. Send the hub an IOCTL\_USB\_GET\_NODE\_INFORMATION request to get info about the hub, such as the number of downstream ports. Create a node in the tree view to represent each hub.
+
 1. Enumerate Downstream Ports. Given a handle to an open hub and the number of downstream ports on the hub, send the hub an IOCTL\_USB\_GET\_NODE\_CONNECTION\_INFORMATION request for each downstream port of the hub to get info about the device (if any) attached to each port. If there is a device attached to a port, send the hub an IOCTL\_USB\_GET\_NODE\_CONNECTION\_NAME request to get the symbolic link name of the hub attached to the downstream port. If there is a hub attached to the downstream port, recurse to step (2). Create a node in the tree view to represent each hub port and attached device. USB configuration and string descriptors are retrieved from attached devices in GetConfigDescriptor() and GetStringDescriptor() by sending an IOCTL\_USB\_GET\_DESCRIPTOR\_FROM\_NODE\_CONNECTION() to the hub to which the device is attached.
 
 The file Display.c contains routines that display information about selected devices in the application edit control. Information about the device was collected during the enumeration of the device tree. This information includes USB device, configuration, and string descriptors and connection and configuration information that is maintained by the USB stack. The routines in this file simply parse and print the data structures for the device that were collected when it was enumerated. The file Dispaud.c parses and prints data structures that are specific to USB audio class devices.

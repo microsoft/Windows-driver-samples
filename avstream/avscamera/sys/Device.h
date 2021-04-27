@@ -34,6 +34,17 @@ struct CSensorContext
     AcpiPldRotation             AcpiRotation;   //  How the device is oriented with respect to the panel.
 };
 
+static constexpr ULONG PnpAcpiPanelSideMap[]
+{
+    1, // AcpiPldPanelTop
+    2, // AcpiPldPanelBottom
+    3, // AcpiPldPanelLeft
+    4, // AcpiPldPanelRight
+    5, // AcpiPldPanelFront
+    6, // AcpiPldPanelBack
+    0, // AcpiPldPanelUnknown
+};
+
 class CCaptureDevice
 {
 protected:
@@ -393,7 +404,7 @@ public:
     PDEVICE_OBJECT
     GetDeviceObject();
 
-    static IO_COMPLETION_ROUTINE CCaptureDevice::IrpSynchronousCompletion;
+    static IO_COMPLETION_ROUTINE IrpSynchronousCompletion;
 
     virtual
     NTSTATUS

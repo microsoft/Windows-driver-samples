@@ -570,7 +570,7 @@ Return Value:
                         // 0x00000002 - JACKDESC2_DYNAMIC_FORMAT_CHANGE_CAPABILITY 
                         //
                         pDesc->JackCapabilities = JackCapabilities;
-                        
+
                         ntStatus = STATUS_SUCCESS;
                     }
                 }
@@ -580,6 +580,7 @@ Return Value:
 
     return ntStatus;
 }
+
 
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 //=============================================================================

@@ -12,8 +12,8 @@
 //
 // ------------------------------------------------------------------------------
 #include "PreComp.h"
-#include "TestResource.h"
-#include "PropertyHelper.h"
+#include <TestResource.h>
+#include <PropertyHelper.h>
 
 using namespace WEX::Common;
 using namespace WEX::Logging;
@@ -30,32 +30,18 @@ using namespace WEX::TestExecution;
 HRESULT CreateTestResource
 (
     ResourceList&           resourceList,
-    LPWSTR                  deviceId,
-    LPWSTR                  deviceName,
-    IMMDevice*              pDevice,
-    STACKWISE_DATAFLOW      dataFlow,
-    EndpointConnectorType   eConnectorType,
-    UINT                    uConnectorId,
-    AUDIO_SIGNALPROCESSINGMODE  mode,
-    ULONG                   cModes,
-    AUDIO_SIGNALPROCESSINGMODE* pModes,
-    ULONG                   cFormatRecords,
-    PFORMAT_RECORD          pFormatRecords,
-    PWAVEFORMATEX           pPreferredFormat,
-    UINT32                  defaultPeriodicityInFrames,
-    UINT32                  fundamentalPeriodicityInFrames,
-    UINT32                  minPeriodicityInFrames,
-    UINT32                  maxPeriodicityInFrames
+    DeviceDescriptor        descriptor
 )
 {
     HRESULT                         hr = S_OK;
+    
     CComHeapPtr<CHalfApp>                        spHalfApp;
     wil::com_ptr_nothrow<ITestResource>          spTestResource;
     GUID                            ResourceGUID;
     CComBSTR                        szResourceName;
 
     // Create HalfApp
-    spHalfApp.Attach(new CHalfApp(pDevice, deviceId, deviceName, dataFlow, eConnectorType, uConnectorId, mode, cModes, pModes, cFormatRecords, pFormatRecords, pPreferredFormat, defaultPeriodicityInFrames, fundamentalPeriodicityInFrames, minPeriodicityInFrames, maxPeriodicityInFrames));
+    spHalfApp.Attach(new CHalfApp(descriptor));
     if (!VERIFY_IS_NOT_NULL(spHalfApp)) {
         hr = E_OUTOFMEMORY;
         return hr;
@@ -327,6 +313,7 @@ HRESULT AddTestResourceForConnector
     UINT32                                      u32MinPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFramesExtended;
+    bool                                        isAVStream = false;
 
     // Get connector id
     if (!VERIFY_SUCCEEDED(hr = GetConnectorId(pDevice, eConnectorType, &bHasConnector, &uConnectorId))) {
@@ -338,6 +325,7 @@ HRESULT AddTestResourceForConnector
 
     Log::Comment(String().Format(L"Adding Test Resource for pin [%u]:", (uConnectorId & PARTID_MASK)));
 
+
     // Get all signal processing modes for connector
     if (!VERIFY_SUCCEEDED(hr = GetProcessingModesForConnector(pDevice, uConnectorId, eConnectorType, &cModes, &spModes))) {
         return hr;
@@ -345,6 +333,7 @@ HRESULT AddTestResourceForConnector
 
     // Loop through each mode, get preferred format and list of formats and create test resource for each mode
     for (ULONG i = 0; i < cModes; i++) {
+
         mode = spModes[i];
         
         if (!VERIFY_SUCCEEDED(hr = GetSupportedFormatRecordsForConnector(pDevice, uConnectorId, eConnectorType, mode, dataFlow, &cFormatRecords, &spFormatRecords))) {
@@ -358,8 +347,32 @@ HRESULT AddTestResourceForConnector
         if (!VERIFY_SUCCEEDED(hr = GetPreferredFormatPeriodicityCharacteristicsForConnector(pDevice, eConnectorType, mode, dataFlow, pPreferredFormat.get(), cFormatRecords, spFormatRecords, &u32DefaultPeriodicityInFrames, &u32FundamentalPeriodicityInFrames, &u32MinPeriodicityInFrames, &u32MaxPeriodicityInFrames, &u32MaxPeriodicityInFramesExtended))) {
             return hr;
         }
-        
-        if (!VERIFY_SUCCEEDED(hr = CreateTestResource(resourceList, deviceId, deviceName, pDevice, dataFlow, eConnectorType, uConnectorId, mode, cModes, spModes, cFormatRecords, spFormatRecords, pPreferredFormat.get(), u32DefaultPeriodicityInFrames, u32FundamentalPeriodicityInFrames, u32MinPeriodicityInFrames, u32MaxPeriodicityInFrames))) {
+
+        // Check if audio endpoint is AVStream
+        if (!VERIFY_SUCCEEDED(hr = IsAVStream(pDevice, &isAVStream))) {
+            return hr;
+        }
+
+        DeviceDescriptor descriptor = { 0 };
+        descriptor.pDevice = pDevice;
+        descriptor.pwstrAudioEndpointId = deviceId;
+        descriptor.pwstrAudioEndpointFriendlyName = deviceName;
+        descriptor.dataFlow = dataFlow;
+        descriptor.eConnectorType = eConnectorType;
+        descriptor.uConnectorId = uConnectorId;
+        descriptor.mode = mode;
+        descriptor.cModes = cModes;
+        descriptor.pModes = spModes;
+        descriptor.cFormatRecords = cFormatRecords;
+        descriptor.pFormatRecords = spFormatRecords;
+        descriptor.pPreferredFormat = pPreferredFormat.get();
+        descriptor.u32DefaultPeriodicityInFrames = u32DefaultPeriodicityInFrames;
+        descriptor.u32FundamentalPeriodicityInFrames = u32FundamentalPeriodicityInFrames;
+        descriptor.u32MinPeriodicityInFrames = u32MinPeriodicityInFrames;
+        descriptor.u32MaxPeriodicityInFrames = u32MaxPeriodicityInFrames;
+        descriptor.bIsAVStream = isAVStream;
+
+        if (!VERIFY_SUCCEEDED(hr = CreateTestResource(resourceList, descriptor))) {
             return hr;
         }
     }

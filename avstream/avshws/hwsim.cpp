@@ -219,7 +219,7 @@ Return Value:
     // Allocate a scratch buffer for the synthesizer.
     //
     m_SynthesisBuffer = reinterpret_cast <PUCHAR> (
-        ExAllocatePoolWithTag (
+        ExAllocatePoolZero (
             NonPagedPoolNx,
             m_ImageSize,
             AVSHWS_POOLTAG

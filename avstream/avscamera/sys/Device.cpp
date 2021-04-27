@@ -33,6 +33,10 @@
 #pragma code_seg("PAGE")
 #endif // ALLOC_PRAGMA
 
+#ifndef DEVPKEY_Device_PanelId
+DEFINE_DEVPROPKEY(DEVPKEY_Device_PanelId, 0x8dbc9c86, 0x97a9, 0x4bff, 0x9b, 0xc6, 0xbf, 0xe9, 0x5d, 0x3e, 0x6d, 0xad, 2);     // DEVPROP_TYPE_STRING
+#endif
+
 CCaptureDevice::
 CCaptureDevice (
     _In_ PKSDEVICE Device
@@ -616,9 +620,12 @@ Return Value:
                 pld.Revision = 2;
                 pld.Panel = m_Context[i].AcpiPosition;
                 pld.Rotation = m_Context[i].AcpiRotation;
-                static
-                const
-                GUID FFC_Filter = {STATIC_FrontCamera_Filter};
+                pld.CabinetNumber = 0;
+                WCHAR PanelId[MAX_PATH] = { 0 };
+                size_t cchDest = MAX_PATH;
+
+                IFFAILED_EXIT(
+                    RtlStringCchPrintfW(PanelId, cchDest, L"{00000000-0000-0000-ffff-ffffffffffff}\\%04X\\%u", pld.CabinetNumber, PnpAcpiPanelSideMap[pld.Panel]));
 
                 IFFAILED_EXIT(
                     IoSetDeviceInterfacePropertyData(SymbolicLinkName,
@@ -629,6 +636,15 @@ Return Value:
                                                      sizeof(pld),
                                                      (PVOID)&pld)
                 );
+
+                // Also set Panel ID manually, because PnP does not do this for the interface currently
+                IoSetDeviceInterfacePropertyData(SymbolicLinkName,
+                    &DEVPKEY_Device_PanelId,
+                    LOCALE_NEUTRAL,
+                    PLUGPLAY_PROPERTY_PERSISTENT,
+                    DEVPROP_TYPE_STRING,
+                    (ULONG)(wcslen(PanelId)+1)*sizeof(WCHAR),
+                    (PVOID)PanelId);
             }
 
             //  On a real device this object would be constructed whenever the sensor hardware is ready...

@@ -34,11 +34,17 @@
 #include <d3d11_4.h>
 #include <vector>
 #include <map>
+#include <stdexcept>
 using namespace std;
 #include <Windows.Foundation.h>
 #include <wrl\client.h>
 using namespace ABI::Windows::Foundation;
 using namespace Microsoft::WRL;
+
+#include <wil\result.h>
+#include <wil\resource.h>
+#include <wil\com.h>
+#include <wil\result_macros.h>
 
 // @@@@ README Please check / uncheck various hash defines to enable/ disable features
 // MF_DEVICEMFT_ASYNCPIN_NEEDED will show how to use Asynchronous queues
@@ -48,7 +54,7 @@ using namespace Microsoft::WRL;
 // 
 //#define MF_DEVICEMFT_ADD_GRAYSCALER_ 1  
 #define MF_DEVICEMFT_ASYNCPIN_NEEDED           1
-#define MF_DEVICEMFT_DECODING_MEDIATYPE_NEEDED 1
+//#define MF_DEVICEMFT_DECODING_MEDIATYPE_NEEDED 0
 #define MF_DEVICEMFT_SET_SPHERICAL_ATTRIBUTES  1
 //#define MF_DEVICEMFT_ENUM_HW_DECODERS        1
 

@@ -28,6 +28,7 @@ Environment:
 
 #define INITGUID
 #include <guiddef.h>
+#include <wdmguid.h>
 #include <ntddser.h>    // Constants and types for access Serial device
 
 #include <BthXDDI.h>    // BT Extensible Transport DDI
@@ -79,6 +80,40 @@ typedef enum _IDLE_CAP_STATE {
     IdleCapCanWake      = 2,   // Can enter D2 (idle) and remote wake to save power while in idle state.
     IdleCapCanTurnOff   = 3    // Can enter D3 (off) and not remote wake to save max power while device is off.
 } IDLE_CAP_STATE;
+
+//
+// Reset recovery support capability. Multiple implementations are provided to choose from and
+// customize as appropriate.
+//
+typedef enum _RESET_RECOVERY_SUPPORT_TYPE {
+    ResetRecoveryTypeNone                       = 0,    // Reset-recovery is not implemented in the driver. This may be
+                                                        // used if the stack does not support reset-recovery at all, or
+                                                        // if ACPI firmware already implements reset-recovery in the context
+                                                        // of the child device stack (i.e., the stack that loads on the
+                                                        // PDO created by this driver). In that case, the bus driver does
+                                                        // not need any additional code to support reset-recovery. However,
+                                                        // it does need to support GUID_REENUMERATE_SELF_INTERFACE_STANDARD,
+                                                        // which is most easily achieved by using WDF dynamic-enumeration
+                                                        // for creating PDOs.
+
+    ResetRecoveryTypeParentResetInterface       = 1,    // Delegate to GUID_DEVICE_RESET_INTERFACE_STANDARD
+                                                        // support in the parent stack. The parent stack, i.e., the
+                                                        // stack on which this driver loads as the FDO, must have
+                                                        // support for GUID_DEVICE_RESET_INTERFACE_STANDARD. This is
+                                                        // typically provided by the ACPI bus driver, if the ACPI device
+                                                        // supports D3Cold (_PR3) or a power resource for reset (_PRR +
+                                                        // _RST). See the documentation of
+                                                        // GUID_DEVICE_RESET_INTERFACE_STANDARD for more information.
+
+    ResetRecoveryTypeDriverImplemented          = 2,    // Reset recovery is implemented in the driver.
+                                                        // Hardware-specific techniques are used to power-cycle the controller.
+
+} RESET_RECOVERY_TYPE;
+
+//
+// Driver author may choose whichever reset-recovery strategy works best for their platform.
+//
+#define SUPPORTED_RESET_RECOVERY_TYPE ResetRecoveryTypeDriverImplemented
 
 #ifdef DYNAMIC_ENUM
 //
@@ -304,6 +339,11 @@ typedef struct _PDO_EXTENSION
     //
     ULONG SerialNo;
 
+    //
+    // Type of reset-recovery support implemented.
+    //
+    RESET_RECOVERY_TYPE ResetRecoveryType;
+
 } PDO_EXTENSION, *PPDO_EXTENSION;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(PDO_EXTENSION, PdoGetExtension)
@@ -383,8 +423,17 @@ EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL FdoIoQuDeviceControl;
 // PDO creation
 
 #ifdef DYNAMIC_ENUM
+
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSTATUS
+PdoResetHandlerDynamic(_In_ PVOID              _InterfaceContext,
+                       _In_ DEVICE_RESET_TYPE  _ResetType,
+                       _In_ ULONG              _Flags,
+                       _In_opt_ PVOID          _ResetParameters);
+
 EVT_WDF_CHILD_LIST_CREATE_DEVICE FdoEvtDeviceListCreatePdo;
 
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS
 PdoCreateDynamic(_In_ WDFDEVICE       Device,
                  _In_ PWDFDEVICE_INIT DeviceInit,
@@ -429,6 +478,13 @@ EVT_WDF_DEVICE_D0_ENTRY         PdoDevD0Entry;
 EVT_WDF_DEVICE_D0_EXIT          PdoDevD0Exit;
 
 EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL PdoIoQuDeviceControl;
+
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSTATUS
+PdoResetHandler(_In_ PVOID              _InterfaceContext,
+                _In_ DEVICE_RESET_TYPE  _ResetType,
+                _In_ ULONG              _Flags,
+                _In_opt_ PVOID          _ResetParameters);
 
 NTSTATUS
 PdoCreate(_In_ WDFDEVICE  _Device,
@@ -508,6 +564,7 @@ DevicePowerOn(_In_ WDFDEVICE _Device);
 NTSTATUS
 DevicePowerOff(_In_ WDFDEVICE _Device);
 
+VOID
+DeviceDoPLDR(_In_ WDFDEVICE _Fdo);
+
 #endif
-
-

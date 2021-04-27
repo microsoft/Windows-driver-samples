@@ -206,6 +206,7 @@ typedef struct _PIN_DEVICE_FORMATS_AND_MODES
 
 } PIN_DEVICE_FORMATS_AND_MODES, *PPIN_DEVICE_FORMATS_AND_MODES;
 
+
 //
 // Parameter module handler function prototypes.
 //
@@ -670,7 +671,9 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
 
     STDMETHOD_(VOID, Cleanup)();
 
+#ifdef SYSVAD_USB_SIDEBAND
     STDMETHOD_(NTSTATUS, UpdatePowerRelations)(_In_ PIRP Irp);
+#endif // SYSVAD_USB_SIDEBAND
 
     STDMETHOD_(NTSTATUS, NotifyEndpointPair) 
     ( 

@@ -833,7 +833,7 @@ DDProxyCloneModifyReinjectInbound(
                                     // is contiguous and 2-byte aligned.
       _Analysis_assume_(udpHeader != NULL);
       
-      udpHeader->destPort = 
+      udpHeader->srcPort = 
          packet->belongingFlow->toRemotePort; 
                                     // This is our new source port -- or
                                     // the destination port of the original

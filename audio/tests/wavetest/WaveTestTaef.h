@@ -13,7 +13,7 @@
 // -------------------------------------------------------------------------------
 #pragma once
 
-#include "HalfApp.h"
+#include <HalfApp.h>
 
 extern IBasicLog*   g_pBasicLog;
 
@@ -41,6 +41,7 @@ namespace WDMAudio
             TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Server x64")
             TEST_CLASS_PROPERTY(L"Kits.MinRelease", L"19H1")
             TEST_CLASS_PROPERTY(L"Kits.CorePackageComposition", L"Full")
+            TEST_CLASS_PROPERTY(L"Kits.CorePackageComposition", L"OnecoreUAP")
             TEST_CLASS_PROPERTY(L"Kits.IsInProc", L"True")
             TEST_CLASS_PROPERTY(L"Kits.Parameter", L"DeviceID")
             TEST_CLASS_PROPERTY(L"Kits.Parameter.DeviceID.Description", L"Device id of device under test")
@@ -109,7 +110,7 @@ namespace WDMAudio
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*RAW' OR @Id = '*DEFAULT'")
             END_TEST_METHOD()
            
-            BEGIN_TEST_METHOD(TAEF_VerifyPinSupportsPullMode)
+            BEGIN_TEST_METHOD(TAEF_VerifyPinWaveRTConformance)
                 TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
                 TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
