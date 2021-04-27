@@ -27,8 +27,6 @@
 #include <wil\result.h>
 #include <wil\com.h>
 
-//#include <winrt\base.h>
-
 #include "SimpleFrameGenerator.h"
 #include "SimpleMediaStream.h"
 #include "SimpleMediaSource.h"
