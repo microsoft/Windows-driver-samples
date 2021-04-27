@@ -79,7 +79,7 @@ Return Value:
 
     RtlInitUnicodeString(&UnicodeName, Name);
 
-    return KcsAddGeometricWave(Buffer, &UnicodeName, 0, &Values);
+    return AddGeometricWave(Buffer, &UnicodeName, 0, &Values);
 }
 
 NTSTATUS NTAPI
@@ -125,7 +125,7 @@ Return Value:
         //
 
         RtlInitUnicodeString(&UnicodeName, L"Small Wave");
-        Status = KcsAddGeometricWave(Info->EnumerateInstances.Buffer,
+        Status = AddGeometricWave(Info->EnumerateInstances.Buffer,
                                      &UnicodeName,
                                      0,
                                      NULL);
@@ -134,7 +134,7 @@ Return Value:
         }
 
         RtlInitUnicodeString(&UnicodeName, L"Medium Wave");
-        Status = KcsAddGeometricWave(Info->EnumerateInstances.Buffer,
+        Status = AddGeometricWave(Info->EnumerateInstances.Buffer,
                                      &UnicodeName,
                                      0,
                                      NULL);
@@ -143,7 +143,7 @@ Return Value:
         }
 
         RtlInitUnicodeString(&UnicodeName, L"Large Wave");
-        Status = KcsAddGeometricWave(Info->EnumerateInstances.Buffer,
+        Status = AddGeometricWave(Info->EnumerateInstances.Buffer,
                                      &UnicodeName,
                                      0,
                                      NULL);
@@ -250,7 +250,7 @@ Return Value:
 
     RtlInitUnicodeString(&UnicodeName, Name);
 
-    return KcsAddTrignometricWave(Buffer, &UnicodeName, 0, &Values);
+    return AddTrignometricWave(Buffer, &UnicodeName, 0, &Values);
 }
 
 NTSTATUS NTAPI
@@ -291,7 +291,7 @@ Return Value:
     switch (Type) {
     case PcwCallbackEnumerateInstances:
         RtlInitUnicodeString(&UnicodeName, L"default");
-        Status = KcsAddTrignometricWave(Info->EnumerateInstances.Buffer,
+        Status = AddTrignometricWave(Info->EnumerateInstances.Buffer,
                                         &UnicodeName,
                                         0,
                                         NULL);
@@ -346,8 +346,8 @@ Return Value:
     // Unregister Countersets.
     //
 
-    KcsUnregisterGeometricWave();
-    KcsUnregisterTrignometricWave();
+    UnregisterGeometricWave();
+    UnregisterTrignometricWave();
 }
 
 NTSTATUS
@@ -385,14 +385,14 @@ Return Value:
     // Register Countersets.
     //
 
-    Status = KcsRegisterGeometricWave(KcsGeometricWaveCallback, NULL);
+    Status = RegisterGeometricWave(KcsGeometricWaveCallback, NULL);
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
 
-    Status = KcsRegisterTrignometricWave(KcsTrignometricWaveCallback, NULL);
+    Status = RegisterTrignometricWave(KcsTrignometricWaveCallback, NULL);
     if (!NT_SUCCESS(Status)) {
-        KcsUnregisterTrignometricWave();
+        UnregisterTrignometricWave();
         return Status;
     }
 
