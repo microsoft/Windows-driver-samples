@@ -19,28 +19,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\adapter.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\ctrlpath.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\datapath.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\miniport.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mphal.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\qos.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\tcbrcb.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\vmq.c">
+    <ClCompile Include="..\miniport.c; ..\adapter.c; ..\ctrlpath.c; ..\datapath.c; ..\tcbrcb.c; ..\mphal.c; ..\vmq.c; ..\qos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,5 +48,10 @@
     <ResourceCompile Include="netvmini630.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="*.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>
