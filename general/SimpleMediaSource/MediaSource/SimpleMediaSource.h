@@ -85,7 +85,7 @@ namespace winrt::WindowsSample::implementation
             _In_ ULONG ulDataLength,
             _Out_opt_ ULONG* pBytesReturned) override;
 
-        // IMFSampleAlloactorControl
+        // IMFSampleAllocatorControl
         IFACEMETHODIMP SetDefaultAllocator(
             _In_  DWORD dwOutputStreamID,
             _In_  IUnknown* pAllocator) override;

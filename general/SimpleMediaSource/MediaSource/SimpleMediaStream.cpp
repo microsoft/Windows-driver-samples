@@ -53,10 +53,10 @@ namespace winrt::WindowsSample::implementation
         MFSetAttributeSize(spMediaType.get(), MF_MT_FRAME_SIZE, NUM_IMAGE_COLS, NUM_IMAGE_ROWS);
         MFSetAttributeRatio(spMediaType.get(), MF_MT_FRAME_RATE, 30, 1);
         // frame size * pixle bit size * framerate
-         bitrate = NUM_IMAGE_COLS * NUM_IMAGE_ROWS * 24* 30;
-         spMediaType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
-         MFSetAttributeRatio(spMediaType.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-         mediaTypeList[1] = spMediaType.detach();
+        bitrate = NUM_IMAGE_COLS * NUM_IMAGE_ROWS * 4 * 8* 30;
+        spMediaType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
+        MFSetAttributeRatio(spMediaType.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
+        mediaTypeList[1] = spMediaType.detach();
 
         RETURN_IF_FAILED(MFCreateAttributes(&m_spAttributes, 10));
         RETURN_IF_FAILED(_SetStreamAttributes(m_spAttributes.get()));
