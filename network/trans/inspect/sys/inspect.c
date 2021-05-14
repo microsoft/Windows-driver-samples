@@ -90,6 +90,7 @@ TLInspectALEConnectClassify(
    ADDRESS_FAMILY addressFamily;
    FWPS_PACKET_INJECTION_STATE packetState;
    BOOLEAN signalWorkerThread;
+   BOOL writesAccess = TRUE;
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
    UNREFERENCED_PARAMETER(classifyContext);
@@ -102,7 +103,39 @@ TLInspectALEConnectClassify(
    //
    if ((classifyOut->rights & FWPS_RIGHT_ACTION_WRITE) == 0)
    {
-      goto Exit;
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"No writes access", "Message")
+         );
+
+      writesAccess = FALSE;
+
+      //
+      // If we do not have FWPS_RIGHT_ACTION_WRITE rights, we may
+      // still need to inject the packet. If this is a re-auth with NULL layerData for an outbound
+      // packet, then this re-auth is due to a call to FwpsCompleteOperation. Here, even without 
+      // FWPS_RIGHT_ACTION_WRITE rights, we may still need to re-inject the packet.
+      //
+      if (IsAleReauthorize(inFixedValues) &&
+         (layerData == NULL) &&
+         (inMetaValues->packetDirection == FWP_DIRECTION_OUTBOUND))
+      {
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"No writes access, but NOT exiting as we may need to reinject the packet", "Message")
+            );
+      }
+      else
+      {
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"Exiting with no write access", "Message")
+            );
+         goto Exit;
+      }
    }
 
    if (layerData != NULL)
@@ -119,6 +152,14 @@ TLInspectALEConnectClassify(
       if ((packetState == FWPS_PACKET_INJECTED_BY_SELF) ||
           (packetState == FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF))
       {
+
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"Permitting due to injected by self", "Message"),
+            TraceLoggingUInt32(packetState, "PacketState")
+            );
+
          classifyOut->actionType = FWP_ACTION_PERMIT;
          if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
          {
@@ -133,6 +174,13 @@ TLInspectALEConnectClassify(
 
    if (!IsAleReauthorize(inFixedValues))
    {
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"Non-reauth connection", "Message")
+         );
+
       //
       // If the classify is the initial authorization for a connection, we 
       // queue it to the pended connection list and notify the worker thread
@@ -164,6 +212,13 @@ TLInspectALEConnectClassify(
                   inMetaValues->completionHandle,
                   &pendedConnect->completionContext
                   );
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"FwpsPendOperation() invoked", "Message"),
+         TraceLoggingUInt32(status, "FwpsPendOperation::ntStatus")
+         );
 
       if (!NT_SUCCESS(status))
       {
@@ -205,6 +260,12 @@ TLInspectALEConnectClassify(
    }
    else // re-auth @ ALE_AUTH_CONNECT
    {
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"[Reauth] Is re-auth", "Message")
+         );
+
       FWP_DIRECTION packetDirection;
       //
       // The classify is the re-authorization for an existing connection, it 
@@ -256,17 +317,39 @@ TLInspectALEConnectClassify(
                      connEntry
                   ) && (connEntry->authConnectDecision != 0))
             {
+
+               TraceLoggingWrite(
+                  gTlgHandle,
+                  "ClassifyFn",
+                  TraceLoggingWideString(L"[Reauth] Queueing matching packet for re-injection", "Message")
+                  );
+
                // We found a match.
                pendedConnect = connEntry;
 
                NT_ASSERT((pendedConnect->authConnectDecision == FWP_ACTION_PERMIT) ||
-                      (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
-               
-               classifyOut->actionType = pendedConnect->authConnectDecision;
-               if (classifyOut->actionType == FWP_ACTION_BLOCK || 
-                     filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
+                  (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
+
+               // If we reach this case, this means that we need to re-inject the packet
+               // during re-auth, but another callout has revoked FWPS_RIGHT_ACTION_WRITE rights.
+               // In this case, we don't set any classifyOut action, but we still queue the packet
+               // for re-injection.
+               if (writesAccess)
                {
-                  classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
+                  classifyOut->actionType = pendedConnect->authConnectDecision;
+                  if (classifyOut->actionType == FWP_ACTION_BLOCK ||
+                     filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
+                  {
+                     classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
+                  }
+               }
+               else
+               {
+                  TraceLoggingWrite(
+                     gTlgHandle,
+                     "ClassifyFn",
+                     TraceLoggingWideString(L"[Reauth] Cannot set action based on previous packet as classifyOut can't be modified due to no writes access", "Message")
+                     );
                }
 
                RemoveEntryList(&pendedConnect->listEntry);
@@ -320,13 +403,42 @@ TLInspectALEConnectClassify(
       }
 
       //
-      // If we reach here it means this is a policy change triggered re-auth
-      // for an pre-existing connection. For such a packet (inbound or 
-      // outbound) we queue it to the packet queue and inspect it just like
-      // other regular data packets from TRANSPORT layers.
+      // If we reach here it means either:
+      //    1 - This is a policy change triggered re-auth for an pre-existing connection.
+      //        For such a packet (inbound or outbound) we queue it to the packet queue and
+      //        inspect it just like other regular data packets from TRANSPORT layers.
+      //    2 - This is a re-auth triggered by FwpsCompleteOperation() for which we
+      //        did not find a previous packet. In this case, we exit, as we do not
+      //        have layerData.
       //
 
-      NT_ASSERT(layerData != NULL);
+      if (writesAccess == FALSE)
+      {
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"[Reauth] Exiting due to no writes access", "Message")
+            );
+         goto Exit;
+      }
+
+      if (layerData == NULL)
+      {
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"[Reauth] LayerData is NULL. Setting action to BLOCK and exiting", "Action")
+            );
+         classifyOut->actionType = FWP_ACTION_BLOCK;
+         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
+         goto Exit;
+      }
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"[Reauth] Queuing packet for re-inject", "Message")
+         );
 
       pendedPacket = AllocateAndInitializePendedPacket(
                         inFixedValues,
@@ -956,6 +1068,14 @@ TLInspectCloneReinjectOutbound(
                0,
                &clonedNetBufferList
                );
+
+   TraceLoggingWrite(
+      gTlgHandle,
+      "WorkerThread",
+      TraceLoggingWideString(L"[WorkerThread] Invoked FwpsAllocateCloneNetBufferList()", "Message"),
+      TraceLoggingUInt32(status, "FwpsAllocateCloneNetBufferList::ntStatus")
+      );
+
    if (!NT_SUCCESS(status))
    {
       goto Exit;
@@ -982,6 +1102,13 @@ TLInspectCloneReinjectOutbound(
                TLInspectInjectComplete,
                packet
                );
+
+   TraceLoggingWrite(
+      gTlgHandle,
+      "WorkerThread",
+      TraceLoggingWideString(L"[WorkerThread] Invoked FwpsInjectTransportSendAsync()", "Message"),
+      TraceLoggingUInt32(status, "FwpsInjectTransportSendAsync::ntStatus")
+      );
 
    if (!NT_SUCCESS(status))
    {
@@ -1183,6 +1310,12 @@ TlInspectCompletePendedConnection(
       // re-auth can find it along with the recorded inspection result.
       //
       pendedConnectLocal->completionContext = NULL;
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "WorkerThread",
+         TraceLoggingWideString(L"[WorkerThread] Invoking FwpsCompleteOperation()", "Message")
+         );
 
       FwpsCompleteOperation(
          completionContext,

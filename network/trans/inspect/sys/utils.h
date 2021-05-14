@@ -14,9 +14,12 @@ Environment:
 --*/
 
 #include <limits.h>
+#include <traceloggingprovider.h>
 
 #ifndef _TL_INSPECT_UTILS_H_
 #define _TL_INSPECT_UTILS_H_
+
+TRACELOGGING_DECLARE_PROVIDER(gTlgHandle);
 
 __inline
 ADDRESS_FAMILY GetAddressFamilyForLayer(
