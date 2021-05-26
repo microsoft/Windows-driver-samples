@@ -8,11 +8,11 @@ Abstract:
 
    This sample callout driver intercepts all transport layer traffic (e.g. 
    TCP, UDP, and non-error ICMP) sent to or receive from a (configurable) 
-   remote peer and queue them to a worker thread for out-of-band processing. 
+   remote peer and queue them to a threaded DPC for out-of-band processing. 
    The sample performs inspection of inbound and outbound connections as 
    well as all packets belong to those connections.  In addition the sample 
    demonstrates special considerations required to be compatible with Windows 
-   Vista and Windows Server 2008’s IpSec implementation.
+   Vista and Windows Server 2008ï¿½s IpSec implementation.
 
    Inspection parameters are configurable via the following registry 
    values --
@@ -21,7 +21,7 @@ Abstract:
       
     o  BlockTraffic (REG_DWORD) : 0 (permit, default); 1 (block)
     o  RemoteAddressToInspect (REG_SZ) : literal IPv4/IPv6 string 
-                                                (e.g. “10.0.0.1”)
+                                                (e.g. ï¿½10.0.0.1ï¿½)
    The sample is IP version agnostic. It performs inspection for 
    both IPv4 and IPv6 traffic.
 
@@ -63,8 +63,7 @@ TRACELOGGING_DEFINE_PROVIDER(
 // Configurable parameters (addresses and ports are in host order)
 //
 
-BOOLEAN configPermitTraffic = TRUE;
-
+BOOLEAN gIsTrafficPermitted;
 UINT8*   configInspectRemoteAddrV4 = NULL;
 UINT8*   configInspectRemoteAddrV6 = NULL;
 
@@ -164,18 +163,9 @@ UINT32 gAleConnectCalloutIdV4, gOutboundTlCalloutIdV4;
 UINT32 gAleRecvAcceptCalloutIdV4, gInboundTlCalloutIdV4;
 UINT32 gAleConnectCalloutIdV6, gOutboundTlCalloutIdV6;
 UINT32 gAleRecvAcceptCalloutIdV6, gInboundTlCalloutIdV6;
-
 HANDLE gInjectionHandle;
-
-LIST_ENTRY gConnList;
-KSPIN_LOCK gConnListLock;
-LIST_ENTRY gPacketQueue;
-KSPIN_LOCK gPacketQueueLock;
-
-KEVENT gWorkerEvent;
-
 BOOLEAN gDriverUnloading = FALSE;
-void* gThreadObj;
+TL_INSPECT_PROCESSOR_QUEUE* gProcessorQueue = NULL;
 
 // 
 // Callout driver implementation
@@ -192,7 +182,9 @@ TLInspectLoadConfig(
    NTSTATUS status;
    DECLARE_CONST_UNICODE_STRING(valueName, L"RemoteAddressToInspect");
    DECLARE_UNICODE_STRING_SIZE(value, INET6_ADDRSTRLEN);
-   
+   DECLARE_CONST_UNICODE_STRING(blockTrafficValueName, L"BlockTraffic");
+   ULONG result;
+
    status = WdfRegistryQueryUnicodeString(key, &valueName, NULL, &value);
 
    if (NT_SUCCESS(status))
@@ -228,6 +220,18 @@ TLInspectLoadConfig(
             configInspectRemoteAddrV6 = (UINT8*)(&remoteAddrStorageV6.u.Byte[0]);
          }
       }
+   }
+
+   status = WdfRegistryQueryULong(
+               gParametersKey,
+               &blockTrafficValueName,
+               &result
+               );
+
+   if (NT_SUCCESS(status))
+   {
+      // blockTraffic == 1 means block, 0 means permit
+      gIsTrafficPermitted = !result;
    }
 
    return status;
@@ -693,6 +697,65 @@ TLInspectUnregisterCallouts(void)
    FwpsCalloutUnregisterById(gAleRecvAcceptCalloutIdV4);
 }
 
+void
+InitializeWorkerQueues()
+{
+   ULONG numProcessors = KeQueryMaximumProcessorCount();
+
+   gProcessorQueue = ExAllocatePool2(
+                        POOL_FLAG_NON_PAGED,
+                        sizeof(TL_INSPECT_PROCESSOR_QUEUE) * numProcessors,
+                        TL_INSPECT_SETUP_POOL_TAG
+                        );
+
+   //
+   // Create a per-processor work queue.
+   //
+   for (ULONG i = 0; i < numProcessors; ++i)
+   {
+      InitializeListHead(&gProcessorQueue[i].connList);
+      KeInitializeSpinLock(&gProcessorQueue[i].connListLock);
+      InitializeListHead(&gProcessorQueue[i].classifiedConnList);
+      KeInitializeSpinLock(&gProcessorQueue[i].classifiedConnListLock);
+      gProcessorQueue[i].isDpcQueued = FALSE;
+
+      KeInitializeThreadedDpc(
+         &gProcessorQueue[i].kdpc,
+         TLInspectWorker,
+         NULL
+         );
+   }
+}
+
+void
+UninitializeWorkerQueues()
+{
+   KLOCK_QUEUE_HANDLE connListLockHandle;
+   BOOLEAN isDpcRunning = TRUE;
+   ULONG numProcessors = KeQueryMaximumProcessorCount();
+
+   if (gProcessorQueue != NULL)
+   {
+     // Wait for all DPCs to complete before exiting
+     while (isDpcRunning)
+     {
+       isDpcRunning = FALSE;
+       for (ULONG i = 0; i < numProcessors; ++i)
+       {
+          KeAcquireInStackQueuedSpinLock(
+             &gProcessorQueue[i].connListLock,
+             &connListLockHandle
+             );
+          isDpcRunning |= gProcessorQueue[i].isDpcQueued;
+          KeReleaseInStackQueuedSpinLock(&connListLockHandle);
+        }
+     }
+
+   ExFreePoolWithTag(gProcessorQueue, TL_INSPECT_SETUP_POOL_TAG);
+
+   }
+}
+
 _Function_class_(EVT_WDF_DRIVER_UNLOAD)
 _IRQL_requires_same_
 _IRQL_requires_max_(PASSIVE_LEVEL)
@@ -701,50 +764,17 @@ TLInspectEvtDriverUnload(
    _In_ WDFDRIVER driverObject
    )
 {
-
-   KLOCK_QUEUE_HANDLE connListLockHandle;
-   KLOCK_QUEUE_HANDLE packetQueueLockHandle;
-
    UNREFERENCED_PARAMETER(driverObject);
-
-   KeAcquireInStackQueuedSpinLock(
-      &gConnListLock,
-      &connListLockHandle
-      );
-   KeAcquireInStackQueuedSpinLock(
-      &gPacketQueueLock,
-      &packetQueueLockHandle
-      );
 
    gDriverUnloading = TRUE;
 
-   KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
-   KeReleaseInStackQueuedSpinLock(&connListLockHandle);
-
-   if (IsListEmpty(&gConnList) && IsListEmpty(&gPacketQueue))
-   {
-      KeSetEvent(
-         &gWorkerEvent,
-         IO_NO_INCREMENT, 
-         FALSE
-         );
-   }
-
-   NT_ASSERT(gThreadObj != NULL);
-
-   KeWaitForSingleObject(
-      gThreadObj,
-      Executive,
-      KernelMode,
-      FALSE,
-      NULL
-      );
-
-   ObDereferenceObject(gThreadObj);
-
    TLInspectUnregisterCallouts();
 
+   UninitializeWorkerQueues();
+
    FwpsInjectionHandleDestroy(gInjectionHandle);
+
+   TraceLoggingUnregister(gTlgHandle);
 }
 
 NTSTATUS
@@ -796,6 +826,8 @@ TLInspectInitDriverObjects(
       goto Exit;
    }
 
+   TraceLoggingRegister(gTlgHandle);
+
    WdfControlFinishInitializing(*pDevice);
 
 Exit:
@@ -811,7 +843,6 @@ DriverEntry(
    NTSTATUS status;
    WDFDRIVER driver;
    WDFDEVICE device;
-   HANDLE threadHandle;
 
    // Request NX Non-Paged Pool when available
    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
@@ -866,17 +897,7 @@ DriverEntry(
       goto Exit;
    }
 
-   InitializeListHead(&gConnList);
-   KeInitializeSpinLock(&gConnListLock);   
-
-   InitializeListHead(&gPacketQueue);
-   KeInitializeSpinLock(&gPacketQueueLock);  
-
-   KeInitializeEvent(
-      &gWorkerEvent,
-      NotificationEvent,
-      FALSE
-      );
+   InitializeWorkerQueues();
 
    gWdmDevice = WdfDeviceWdmGetDeviceObject(device);
 
@@ -886,33 +907,6 @@ DriverEntry(
    {
       goto Exit;
    }
-
-   status = PsCreateSystemThread(
-               &threadHandle,
-               THREAD_ALL_ACCESS,
-               NULL,
-               NULL,
-               NULL,
-               TLInspectWorker,
-               NULL
-               );
-
-   if (!NT_SUCCESS(status))
-   {
-      goto Exit;
-   }
-
-   status = ObReferenceObjectByHandle(
-               threadHandle,
-               0,
-               NULL,
-               KernelMode,
-               &gThreadObj,
-               NULL
-               );
-   NT_ASSERT(NT_SUCCESS(status));
-
-   ZwClose(threadHandle);
 
 Exit:
    
@@ -926,6 +920,7 @@ Exit:
       {
          FwpsInjectionHandleDestroy(gInjectionHandle);
       }
+      UninitializeWorkerQueues();
    }
 
    return status;

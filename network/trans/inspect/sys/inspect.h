@@ -18,6 +18,7 @@ Environment:
 
 typedef enum TL_INSPECT_PACKET_TYPE_
 {
+   // Connect packets indicate that the connection has been pended via FwpsPendOperation()
    TL_INSPECT_CONNECT_PACKET,
    TL_INSPECT_DATA_PACKET,
    TL_INSPECT_REAUTH_PACKET
@@ -89,11 +90,21 @@ typedef struct TL_INSPECT_PENDED_PACKET_
    IF_INDEX subInterfaceIndex;
 } TL_INSPECT_PENDED_PACKET;
 
+typedef struct
+{
+   BOOLEAN isDpcQueued;
+   LIST_ENTRY connList;
+   KSPIN_LOCK connListLock;
+   LIST_ENTRY classifiedConnList;
+   KSPIN_LOCK classifiedConnListLock;
+   KDPC kdpc;
+} TL_INSPECT_PROCESSOR_QUEUE;
 #pragma warning(pop)
 
 //
 // Pooltags used by this callout driver.
 //
+#define TL_INSPECT_SETUP_POOL_TAG 'silT'
 #define TL_INSPECT_CONNECTION_POOL_TAG 'olfD'
 #define TL_INSPECT_PENDED_PACKET_POOL_TAG 'kppD'
 #define TL_INSPECT_CONTROL_DATA_POOL_TAG 'dcdD'
@@ -101,18 +112,9 @@ typedef struct TL_INSPECT_PENDED_PACKET_
 //
 // Shared global data.
 //
-extern BOOLEAN configPermitTraffic;
-
+extern BOOLEAN gIsTrafficPermitted;
 extern HANDLE gInjectionHandle;
-
-extern LIST_ENTRY gConnList;
-extern KSPIN_LOCK gConnListLock;
-
-extern LIST_ENTRY gPacketQueue;
-extern KSPIN_LOCK gPacketQueueLock;
-
-extern KEVENT gWorkerEvent;
-
+extern TL_INSPECT_PROCESSOR_QUEUE* gProcessorQueue;
 extern BOOLEAN gDriverUnloading;
 
 //
@@ -209,6 +211,6 @@ TLInspectTransportNotify(
    _Inout_ const FWPS_FILTER* filter
    );
 
-KSTART_ROUTINE TLInspectWorker;
+KDEFERRED_ROUTINE  TLInspectWorker;
 
 #endif // _TL_INSPECT_H_

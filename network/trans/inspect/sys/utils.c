@@ -50,6 +50,26 @@ BOOLEAN IsAleReauthorize(
    return FALSE;
 }
 
+BOOLEAN IsAleReauthorizeDueToClassifyCompletion(
+   _In_ const FWPS_INCOMING_VALUES* inFixedValues
+   )
+{
+   UINT flagsIndex;
+
+   GetReauthReasonIndexForLayer(
+      inFixedValues->layerId,
+      &flagsIndex
+      );
+
+   if((flagsIndex != UINT_MAX) && ((inFixedValues->incomingValue\
+      [flagsIndex].value.uint32 & FWP_CONDITION_REAUTHORIZE_REASON_CLASSIFY_COMPLETION) != 0))
+   {
+      return TRUE;
+   }
+
+   return FALSE;
+}
+
 BOOLEAN IsSecureConnection(
    _In_ const FWPS_INCOMING_VALUES* inFixedValues
    )
@@ -291,8 +311,8 @@ AllocateAndInitializePendedPacket(
 {
    TL_INSPECT_PENDED_PACKET* pendedPacket;
 
-   pendedPacket = ExAllocatePoolWithTag(
-                        NonPagedPool,
+   pendedPacket = ExAllocatePool2(
+                        POOL_FLAG_NON_PAGED,
                         sizeof(TL_INSPECT_PENDED_PACKET),
                         TL_INSPECT_PENDED_PACKET_POOL_TAG
                         );
@@ -301,8 +321,6 @@ AllocateAndInitializePendedPacket(
    {
       return NULL;
    }
-
-   RtlZeroMemory(pendedPacket, sizeof(TL_INSPECT_PENDED_PACKET));
 
    pendedPacket->type = packetType;
    pendedPacket->direction = packetDirection;
@@ -317,10 +335,16 @@ AllocateAndInitializePendedPacket(
 
    if (layerData != NULL)
    {
+      TraceLoggingWrite(
+         gTlgHandle,
+         "Utils",
+         TraceLoggingWideString(L"[AllocateAndInitializePendedPacket] Setting netBufferList", "Message")
+         );
+
       pendedPacket->netBufferList = layerData;
 
       //
-      // Reference the net buffer list to make it accessible outside of
+      // Reference the net buffer list to make it accessible outside of 
       // classifyFn.
       //
       FwpsReferenceNetBufferList(pendedPacket->netBufferList, TRUE);
@@ -346,8 +370,8 @@ AllocateAndInitializePendedPacket(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         pendedPacket->controlData = ExAllocatePoolWithTag(
-                                       NonPagedPool,
+         pendedPacket->controlData = ExAllocatePool2(
+                                       POOL_FLAG_NON_PAGED,
                                        inMetaValues->controlDataLength,
                                        TL_INSPECT_CONTROL_DATA_POOL_TAG
                                        );
@@ -376,16 +400,16 @@ AllocateAndInitializePendedPacket(
          &subInterfaceIndexIndex
          );
 
-      pendedPacket->interfaceIndex =
+      pendedPacket->interfaceIndex = 
          inFixedValues->incomingValue[interfaceIndexIndex].value.uint32;
-      pendedPacket->subInterfaceIndex =
+      pendedPacket->subInterfaceIndex = 
          inFixedValues->incomingValue[subInterfaceIndexIndex].value.uint32;
-
+      
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues,
+               inMetaValues, 
                FWPS_METADATA_FIELD_IP_HEADER_SIZE));
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues,
+               inMetaValues, 
                FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE));
       pendedPacket->ipHeaderSize = inMetaValues->ipHeaderSize;
       pendedPacket->transportHeaderSize = inMetaValues->transportHeaderSize;
@@ -400,10 +424,10 @@ AllocateAndInitializePendedPacket(
             &packetInfo
             );
 
-         pendedPacket->ipSecProtected =
+         pendedPacket->ipSecProtected = 
             (BOOLEAN)packetInfo.ipsecInformation.inbound.isSecure;
 
-         pendedPacket->nblOffset =
+         pendedPacket->nblOffset = 
             NET_BUFFER_DATA_OFFSET(\
                NET_BUFFER_LIST_FIRST_NB(pendedPacket->netBufferList));
       }
@@ -423,26 +447,5 @@ Exit:
 
 extern WDFKEY gParametersKey;
 
-BOOLEAN
-IsTrafficPermitted(void)
-{
-   NTSTATUS status;
-   BOOLEAN permitTraffic = TRUE;
-   DECLARE_CONST_UNICODE_STRING(valueName, L"BlockTraffic");
-   ULONG result;
-
-   status = WdfRegistryQueryULong(
-               gParametersKey,
-               &valueName,
-               &result
-               );
-
-   if (NT_SUCCESS(status) && result != 0)
-   {
-      permitTraffic = FALSE;
-   }
-
-   return permitTraffic;
-}
 
 
