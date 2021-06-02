@@ -4,11 +4,9 @@ Copyright (c) Microsoft Corporation. All rights reserved
 
 Abstract:
 
-   This file implements the classifyFn callout functions for the ALE connect,
-   recv-accept, and transport callouts. In addition the system worker thread 
-   that performs the actual packet inspection is also implemented here along 
-   with the eventing mechanisms shared between the classify function and the
-   worker thread.
+   This file implements the classifyFn callout functions for the ALE connect
+   callout. In addition a threaded DPC that performs the actual packet inspection
+   is also implemented here. This DPC is on a per-processor basis.
 
    connect/Packet inspection is done out-of-band by a threaded DPC
    using the reference-drop-clone-reinject as well as ALE pend/complete 
@@ -71,9 +69,9 @@ TLInspectALEConnectClassify(
    is not set), it is queued to the per-processor connection list for inspection
    by the threaded DPC. For re-auth, we first check if it is triggered by an ealier
    FwpsCompleteOperation call by looking for an pended connect that has been
-   inspected. If found, we return the inspection result; otherwise we can
-   conclude that the re-auth is triggered by policy change so we queue
-   it to the packet queue to be process by the worker thread like any other regular packets.
+   inspected. If found, we return the inspection result; otherwise we either
+   queue a packet to the packet queue (to handle cases of policy-triggered re-auth),
+   or we block the connection (if layerData is not present, and thus we have nothing to re-inject).
 
 -- */
 {
@@ -88,7 +86,6 @@ TLInspectALEConnectClassify(
 
    ADDRESS_FAMILY addressFamily;
    FWPS_PACKET_INJECTION_STATE packetState;
-   BOOL writesAccess = TRUE;
    ULONG processorIndex = KeGetCurrentProcessorNumber();
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
@@ -105,33 +102,9 @@ TLInspectALEConnectClassify(
       TraceLoggingWrite(
          gTlgHandle,
          "ConnectClassifyFn",
-         TraceLoggingWideString(L"No writes access", "Message")
+         TraceLoggingWideString(L"Exiting with no write access", "Message")
          );
-
-      writesAccess = FALSE;
-
-      //
-      // Even if we do not have FWPS_RIGHT_ACTION_WRITE rights, we may still need to
-      // re-inject the packet. This is necessary when this is a FwpsCompleteOperation() triggered re-auth,
-      // which was invoked by this callout driver.
-      //
-      if (IsAleReauthorizeDueToClassifyCompletion(inFixedValues))
-      {
-         TraceLoggingWrite(
-            gTlgHandle,
-            "ConnectClassifyFn",
-            TraceLoggingWideString(L"No writes access, but NOT exiting as we may need to reinject the packet", "Message")
-            );
-      }
-      else
-      {
-         TraceLoggingWrite(
-            gTlgHandle,
-            "ConnectClassifyFn",
-            TraceLoggingWideString(L"Exiting with no write access", "Message")
-            );
-         goto Exit;
-      }
+      goto Exit;
    }
 
    if (layerData != NULL)
@@ -178,7 +151,7 @@ TLInspectALEConnectClassify(
          );
 
       //
-      // If the classify is the initial authorization for a connection, we 
+      // If the classify is the initial authorization for a connection, we
       // queue it to the pended connection list and queue the threaded DPC
       // (if not already queued) for out-of-band processing.
       //
@@ -322,28 +295,19 @@ TLInspectALEConnectClassify(
                NT_ASSERT((pendedConnect->authConnectDecision == FWP_ACTION_PERMIT) ||
                          (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
 
-               if (writesAccess)
+               classifyOut->actionType = pendedConnect->authConnectDecision;
+               if (classifyOut->actionType == FWP_ACTION_BLOCK ||
+                  filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
                {
-                  classifyOut->actionType = pendedConnect->authConnectDecision;
-                  if (classifyOut->actionType == FWP_ACTION_BLOCK ||
-                     filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-                  {
-                     classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-                  }
-                  TraceLoggingWrite(
-                     gTlgHandle,
-                     "ConnectClassifyFn",
-                     TraceLoggingWideString(L"[Reauth] Setting action based on found packet", "Message")
-                     );
+                  classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
                }
-               else
-               {
-                  TraceLoggingWrite(
-                     gTlgHandle,
-                     "ConnectClassifyFn",
-                     TraceLoggingWideString(L"[Reauth] Cannot set action based on found packet as classifyOut can't be modified due to no writes access", "Message")
-                     );
-               }
+
+               TraceLoggingWrite(
+                  gTlgHandle,
+                  "ConnectClassifyFn",
+                  TraceLoggingWideString(L"[Reauth] Setting action based on found packet", "Message")
+                  );
+
                pendedConnect = NULL;
                authComplete = TRUE;
                break;
@@ -362,21 +326,12 @@ TLInspectALEConnectClassify(
       // If we reach here it means either:
       //    1 - This is a policy change triggered re-auth for an pre-existing connection.
       //        For such a packet (inbound or outbound) we queue it to the packet queue and
-      //        inspect it just like other regular data packets from TRANSPORT layers.
+      //        inspect it (to be cloned and re-injected, if permitted).
       //    2 - This is a re-auth triggered by FwpsCompleteOperation() for which we
-      //        did not find a previous packet. In this case layerData is NULL, so we
-      //        block the packet.
+      //        did not find a previous packet (i.e another callout invoked FwpsCompleteOperation()).
+      //        This indicates that the FwpsCompleteOperation() was invoked by another callout.
+      //        In this case, block the packet.
       //
-
-      if (writesAccess == FALSE)
-      {
-         TraceLoggingWrite(
-            gTlgHandle,
-            "ConnectClassifyFn",
-            TraceLoggingWideString(L"[Reauth] Exiting due to no writes access", "Message")
-            );
-         goto Exit;
-      }
 
       if (layerData == NULL)
       {
@@ -390,10 +345,6 @@ TLInspectALEConnectClassify(
          classifyOut->flags |= FWPS_CLASSIFY_OUT_FLAG_ABSORB;
          goto Exit;
       }
-
-      //
-      // This is a policy change triggered re-auth. Here, we should re-inject the packet
-      //
 
       TraceLoggingWrite(
          gTlgHandle,
@@ -476,532 +427,9 @@ Exit:
    return;
 }
 
-#if(NTDDI_VERSION >= NTDDI_WIN7)
-
-void
-TLInspectALERecvAcceptClassify(
-   _In_ const FWPS_INCOMING_VALUES* inFixedValues,
-   _In_ const FWPS_INCOMING_METADATA_VALUES* inMetaValues,
-   _Inout_opt_ void* layerData,
-   _In_opt_ const void* classifyContext,
-   _In_ const FWPS_FILTER* filter,
-   _In_ UINT64 flowContext,
-   _Inout_ FWPS_CLASSIFY_OUT* classifyOut
-   )
-
-#else
-
-void
-TLInspectALERecvAcceptClassify(
-   _In_ const FWPS_INCOMING_VALUES* inFixedValues,
-   _In_ const FWPS_INCOMING_METADATA_VALUES* inMetaValues,
-   _Inout_opt_ void* layerData,
-   _In_ const FWPS_FILTER* filter,
-   _In_ UINT64 flowContext,
-   _Inout_ FWPS_CLASSIFY_OUT* classifyOut
-   )
-
-#endif /// (NTDDI_VERSION >= NTDDI_WIN7)
-/* ++
-
-   This is the classifyFn function for the ALE Recv-Accept (v4 and v6) callout.
-   For an initial classify (where the FWP_CONDITION_FLAG_IS_REAUTHORIZE flag
-   is not set), it is queued to the connection list for inspection by the
-   worker thread. For re-auth, it is queued to the packet queue to be process 
-   by the worker thread like any other regular packets.
-
--- */
-{
-   NTSTATUS status;
-
-   KLOCK_QUEUE_HANDLE connListLockHandle;
-
-   TL_INSPECT_PENDED_PACKET* pendedRecvAccept = NULL;
-   TL_INSPECT_PENDED_PACKET* pendedPacket = NULL;
-
-   ADDRESS_FAMILY addressFamily;
-   FWPS_PACKET_INJECTION_STATE packetState;
-   ULONG processorIndex = KeGetCurrentProcessorNumber();
-
-#if(NTDDI_VERSION >= NTDDI_WIN7)
-   UNREFERENCED_PARAMETER(classifyContext);
-#endif /// (NTDDI_VERSION >= NTDDI_WIN7)
-   UNREFERENCED_PARAMETER(filter);
-   UNREFERENCED_PARAMETER(flowContext);
-
-   //
-   // We don't have the necessary right to alter the classify, exit.
-   //
-   if ((classifyOut->rights & FWPS_RIGHT_ACTION_WRITE) == 0)
-   {
-      TraceLoggingWrite(
-         gTlgHandle,
-         "RecvAcceptClassifyFn",
-         TraceLoggingWideString(L"Exiting due to no writes access", "Message")
-         );
-      goto Exit;
-   }
-
-  NT_ASSERT(layerData != NULL);
-  _Analysis_assume_(layerData != NULL);
-
-   //
-   // We don't re-inspect packets that we've inspected earlier.
-   //
-   packetState = FwpsQueryPacketInjectionState(
-                     gInjectionHandle,
-                     layerData,
-                     NULL
-                     );
-
-   if ((packetState == FWPS_PACKET_INJECTED_BY_SELF) ||
-       (packetState == FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF))
-   {
-      classifyOut->actionType = FWP_ACTION_PERMIT;
-      if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-      {
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      }
-
-      TraceLoggingWrite(
-         gTlgHandle,
-         "RecvAcceptClassifyFn",
-         TraceLoggingWideString(L"Permitting due to injected by self", "Message"),
-         TraceLoggingUInt32(packetState, "PacketState")
-         );
-
-      goto Exit;
-   }
-
-   addressFamily = GetAddressFamilyForLayer(inFixedValues->layerId);
-
-   if (!IsAleReauthorize(inFixedValues))
-   {
-      TraceLoggingWrite(
-         gTlgHandle,
-         "RecvAcceptClassifyFn",
-         TraceLoggingWideString(L"Non re-auth", "Message")
-         );
-      //
-      // If the classify is the initial authorization for a connection, we 
-      // queue it to the pended connection list and notify the worker thread
-      // for out-of-band processing.
-      //
-      pendedRecvAccept = AllocateAndInitializePendedPacket(
-                              inFixedValues,
-                              inMetaValues,
-                              addressFamily,
-                              layerData,
-                              TL_INSPECT_CONNECT_PACKET,
-                              FWP_DIRECTION_INBOUND
-                              );
-
-      if (pendedRecvAccept == NULL)
-      {
-         classifyOut->actionType = FWP_ACTION_BLOCK;
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         goto Exit;
-      }
-
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
-                                            FWPS_METADATA_FIELD_COMPLETION_HANDLE));
-
-      //
-      // Pend the ALE_AUTH_RECV_ACCEPT classify.
-      //
-      status = FwpsPendOperation(
-                  inMetaValues->completionHandle,
-                  &pendedRecvAccept->completionContext
-                  );
-
-      TraceLoggingWrite(
-         gTlgHandle,
-         "RecvAcceptClassifyFn",
-         TraceLoggingWideString(L"Invoked FwpsPendOperation()", "Message"),
-         TraceLoggingUInt32((UINT32) status, "FwpsPendOperation::ntStatus")
-         );
-
-      if (!NT_SUCCESS(status))
-      {
-         classifyOut->actionType = FWP_ACTION_BLOCK;
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         goto Exit;
-      }
-
-      KeAcquireInStackQueuedSpinLock(
-         &gProcessorQueue[processorIndex].connListLock,
-         &connListLockHandle
-         );
-
-      InsertTailList(&gProcessorQueue[processorIndex].connList, &pendedRecvAccept->listEntry);
-      pendedRecvAccept = NULL; // ownership transferred
-
-      if (gProcessorQueue[processorIndex].isDpcQueued == FALSE)
-      {
-         gProcessorQueue[processorIndex].isDpcQueued = TRUE;
-         KeInsertQueueDpc(
-            &gProcessorQueue[processorIndex].kdpc,
-            NULL,
-            NULL
-            );
-      }
-
-      KeReleaseInStackQueuedSpinLock(&connListLockHandle);
-
-      classifyOut->actionType = FWP_ACTION_BLOCK;
-      classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      classifyOut->flags |= FWPS_CLASSIFY_OUT_FLAG_ABSORB;
-
-   }
-   else // re-auth @ ALE_AUTH_RECV_ACCEPT
-   {
-      TraceLoggingWrite(
-         gTlgHandle,
-         "RecvAcceptClassifyFn",
-         TraceLoggingWideString(L"[Reauth]", "Message")
-         );
-
-      FWP_DIRECTION packetDirection;
-
-      //
-      // The classify is the re-authorization for a existing connection, it 
-      // could have been triggered for one of the two cases --
-      //
-      //    1) The re-auth is triggered by an outbound packet sent immediately
-      //       after a policy change at ALE_AUTH_RECV_ACCEPT layer.
-      //    2) The re-auth is triggered by an inbound packet received 
-      //       immediately after a policy change at ALE_AUTH_RECV_ACCEPT layer.
-      //
-
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
-                                            FWPS_METADATA_FIELD_PACKET_DIRECTION));
-      packetDirection = inMetaValues->packetDirection;
-
-      pendedPacket = AllocateAndInitializePendedPacket(
-                        inFixedValues,
-                        inMetaValues,
-                        addressFamily,
-                        layerData,
-                        TL_INSPECT_REAUTH_PACKET,
-                        packetDirection
-                        );
-
-      if (pendedPacket == NULL)
-      {
-         classifyOut->actionType = FWP_ACTION_BLOCK;
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         goto Exit;
-      }
-
-      if (packetDirection == FWP_DIRECTION_INBOUND)
-      {
-         pendedPacket->ipSecProtected = IsSecureConnection(inFixedValues);
-      }
-
-      KeAcquireInStackQueuedSpinLock(
-         &gProcessorQueue[processorIndex].connListLock,
-         &connListLockHandle
-         );
-
-      if (!gDriverUnloading)
-      {
-         InsertTailList(&gProcessorQueue[processorIndex].connList, &pendedPacket->listEntry);
-         pendedPacket = NULL; // ownership transferred
-
-         if (gProcessorQueue[processorIndex].isDpcQueued == FALSE)
-         {
-            gProcessorQueue[processorIndex].isDpcQueued = TRUE;
-            KeInsertQueueDpc(
-               &gProcessorQueue[processorIndex].kdpc,
-               NULL,
-               NULL
-               );
-         }
-
-         classifyOut->actionType = FWP_ACTION_BLOCK;
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         classifyOut->flags |= FWPS_CLASSIFY_OUT_FLAG_ABSORB;
-      }
-      else
-      {
-         //
-         // Driver is being unloaded, permit any connect classify.
-         //
-
-         classifyOut->actionType = FWP_ACTION_PERMIT;
-         if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-         {
-            classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         }
-      }
-
-      KeReleaseInStackQueuedSpinLock(&connListLockHandle);
-   }
-
-Exit:
-
-   if (pendedPacket != NULL)
-   {
-      FreePendedPacket(pendedPacket);
-   }
-   if (pendedRecvAccept != NULL)
-   {
-      FreePendedPacket(pendedRecvAccept);
-   }
-
-   return;
-}
-
-#if(NTDDI_VERSION >= NTDDI_WIN7)
-
-void
-TLInspectTransportClassify(
-   _In_ const FWPS_INCOMING_VALUES* inFixedValues,
-   _In_ const FWPS_INCOMING_METADATA_VALUES* inMetaValues,
-   _Inout_opt_ void* layerData,
-   _In_opt_ const void* classifyContext,
-   _In_ const FWPS_FILTER* filter,
-   _In_ UINT64 flowContext,
-   _Inout_ FWPS_CLASSIFY_OUT* classifyOut
-   )
-
-#else
-
-void
-TLInspectTransportClassify(
-   _In_ const FWPS_INCOMING_VALUES* inFixedValues,
-   _In_ const FWPS_INCOMING_METADATA_VALUES* inMetaValues,
-   _Inout_opt_ void* layerData,
-   _In_ const FWPS_FILTER* filter,
-   _In_ UINT64 flowContext,
-   _Inout_ FWPS_CLASSIFY_OUT* classifyOut
-   )
-
-#endif
-/* ++
-
-   This is the classifyFn function for the Transport (v4 and v6) callout.
-   packets (inbound or outbound) are ueued to the packet queue to be processed 
-   by the worker thread.
-
--- */
-{
-
-   KLOCK_QUEUE_HANDLE connListLockHandle;
-
-   TL_INSPECT_PENDED_PACKET* pendedPacket = NULL;
-   FWP_DIRECTION packetDirection;
-
-   ADDRESS_FAMILY addressFamily;
-   FWPS_PACKET_INJECTION_STATE packetState;
-   ULONG processorIndex = KeGetCurrentProcessorNumber();
-
-#if(NTDDI_VERSION >= NTDDI_WIN7)
-   UNREFERENCED_PARAMETER(classifyContext);
-#endif /// (NTDDI_VERSION >= NTDDI_WIN7)
-   UNREFERENCED_PARAMETER(filter);
-   UNREFERENCED_PARAMETER(flowContext);
-
-   //
-   // We don't have the necessary right to alter the classify, exit.
-   //
-   if ((classifyOut->rights & FWPS_RIGHT_ACTION_WRITE) == 0)
-   {
-      TraceLoggingWrite(
-         gTlgHandle,
-         "TransportClassifyFn",
-         TraceLoggingWideString(L"Exiting due to no writes access", "Message")
-         );
-      goto Exit;
-   }
-
-  NT_ASSERT(layerData != NULL);
-  _Analysis_assume_(layerData != NULL);
-
-   //
-   // We don't re-inspect packets that we've inspected earlier.
-   //
-   packetState = FwpsQueryPacketInjectionState(
-                     gInjectionHandle,
-                     layerData,
-                     NULL
-                     );
-
-   if ((packetState == FWPS_PACKET_INJECTED_BY_SELF) ||
-       (packetState == FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF))
-   {
-      classifyOut->actionType = FWP_ACTION_PERMIT;
-      if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-      {
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      }
-
-      TraceLoggingWrite(
-         gTlgHandle,
-         "TransportClassifyFn",
-         TraceLoggingWideString(L"Permitting due to injected by self", "Message"),
-         TraceLoggingUInt32(packetState, "PacketState")
-         );
-
-      goto Exit;
-   }
-
-   addressFamily = GetAddressFamilyForLayer(inFixedValues->layerId);
-
-   packetDirection = 
-      GetPacketDirectionForLayer(inFixedValues->layerId);
-
-   if (packetDirection == FWP_DIRECTION_INBOUND)
-   {
-      if (IsAleClassifyRequired(inFixedValues, inMetaValues))
-      {
-         //
-         // Inbound transport packets that are destined to ALE Recv-Accept 
-         // layers, for initial authorization or reauth, should be inspected 
-         // at the ALE layer. We permit it from Tranport here.
-         //
-         classifyOut->actionType = FWP_ACTION_PERMIT;
-         if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-         {
-            classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-         }
-
-         TraceLoggingWrite(
-            gTlgHandle,
-            "TransportClassifyFn",
-            TraceLoggingWideString(L"Permitting as packet will be inspected at ALE_AUTH_RECV_ACCEPT layer", "Message")
-            );
-
-         goto Exit;
-      }
-      else
-      {
-         //
-         // To be compatible with Vista's IpSec implementation, we must not
-         // intercept not-yet-detunneled IpSec traffic.
-         //
-         FWPS_PACKET_LIST_INFORMATION packetInfo = {0};
-         FwpsGetPacketListSecurityInformation(
-            layerData,
-            FWPS_PACKET_LIST_INFORMATION_QUERY_IPSEC |
-            FWPS_PACKET_LIST_INFORMATION_QUERY_INBOUND,
-            &packetInfo
-            );
-
-         if (packetInfo.ipsecInformation.inbound.isTunnelMode &&
-             !packetInfo.ipsecInformation.inbound.isDeTunneled)
-         {
-            classifyOut->actionType = FWP_ACTION_PERMIT;
-            if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-            {
-               classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-            }
-            goto Exit;
-         }
-      }
-   }
-
-   pendedPacket = AllocateAndInitializePendedPacket(
-                     inFixedValues,
-                     inMetaValues,
-                     addressFamily,
-                     layerData,
-                     TL_INSPECT_DATA_PACKET,
-                     packetDirection
-                     );
-
-   if (pendedPacket == NULL)
-   {
-      classifyOut->actionType = FWP_ACTION_BLOCK;
-      classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      goto Exit;
-   }
-
-   KeAcquireInStackQueuedSpinLock(
-      &gProcessorQueue[processorIndex].connListLock,
-      &connListLockHandle
-      );
-
-   if (!gDriverUnloading)
-   {
-      InsertTailList(&gProcessorQueue[processorIndex].connList, &pendedPacket->listEntry);
-      pendedPacket = NULL; // ownership transferred
-
-      if (gProcessorQueue[processorIndex].isDpcQueued == FALSE)
-      {
-         gProcessorQueue[processorIndex].isDpcQueued = TRUE;
-         KeInsertQueueDpc(
-            &gProcessorQueue[processorIndex].kdpc,
-            NULL,
-            NULL
-            );
-      }
-
-      classifyOut->actionType = FWP_ACTION_BLOCK;
-      classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      classifyOut->flags |= FWPS_CLASSIFY_OUT_FLAG_ABSORB;
-
-      TraceLoggingWrite(
-         gTlgHandle,
-         "TransportClassifyFn",
-         TraceLoggingWideString(L"Blocking packet, but will be re-injected in work item", "Message")
-         );
-   }
-   else
-   {
-      //
-      // Driver is being unloaded, permit any connect classify.
-      //
-      classifyOut->actionType = FWP_ACTION_PERMIT;
-      if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
-      {
-         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
-      }
-   }
-
-   KeReleaseInStackQueuedSpinLock(&connListLockHandle);
-
-Exit:
-
-   if (pendedPacket != NULL)
-   {
-      FreePendedPacket(pendedPacket);
-   }
-
-   return;
-}
-
 NTSTATUS
 TLInspectALEConnectNotify(
    _In_  FWPS_CALLOUT_NOTIFY_TYPE notifyType,
-   _In_ const GUID* filterKey,
-   _Inout_ const FWPS_FILTER* filter
-   )
-{
-   UNREFERENCED_PARAMETER(notifyType);
-   UNREFERENCED_PARAMETER(filterKey);
-   UNREFERENCED_PARAMETER(filter);
-
-   return STATUS_SUCCESS;
-}
-
-NTSTATUS
-TLInspectALERecvAcceptNotify(
-   _In_ FWPS_CALLOUT_NOTIFY_TYPE notifyType,
-   _In_ const GUID* filterKey,
-   _Inout_ const FWPS_FILTER* filter
-   )
-{
-   UNREFERENCED_PARAMETER(notifyType);
-   UNREFERENCED_PARAMETER(filterKey);
-   UNREFERENCED_PARAMETER(filter);
-
-   return STATUS_SUCCESS;
-}
-
-NTSTATUS
-TLInspectTransportNotify(
-   _In_ FWPS_CALLOUT_NOTIFY_TYPE notifyType,
    _In_ const GUID* filterKey,
    _Inout_ const FWPS_FILTER* filter
    )
@@ -1021,7 +449,7 @@ void TLInspectInjectComplete(
 {
    TL_INSPECT_PENDED_PACKET* packet = context;
 
-   UNREFERENCED_PARAMETER(dispatchLevel);   
+   UNREFERENCED_PARAMETER(dispatchLevel);
 
    FwpsFreeCloneNetBufferList(netBufferList, 0);
 
@@ -1289,9 +717,9 @@ TlInspectCompletePendedConnection(
    )
 /* ++
 
-   This function completes the pended connection (inbound or outbound)
-   with the inspection result. After invoking FwpsCompleteOperation(),
-   if this callout is permitting the connection, it will also clone re-inject the packet.
+   This function completes the pended connection with the inspection result.
+   After invoking FwpsCompleteOperation(), if this callout is permitting the
+   connection, it will also clone re-inject the packet.
 
 -- */
 {
@@ -1362,38 +790,8 @@ TlInspectCompletePendedConnection(
    }
    else
    {
-      if (pendedConnect->authConnectDecision == FWP_ACTION_PERMIT)
-      {
-         //
-         // TLInspectCloneReinjectInbound will invoke FwpsCompleteOperation() and clone re-inject the packet
-         //
-         status = TLInspectCloneReinjectInbound(pendedConnect);
-         if (!NT_SUCCESS(status))
-         {
-            FreePendedPacket(pendedConnect);
-         }
-      }
-      else
-      {
-         TraceLoggingWrite(
-            gTlgHandle,
-            "WorkerThread",
-            TraceLoggingWideString(L"[TlInspectCompletePendedConnection:Inbound] Invoking FwpsCompleteOperation()", "Message")
-            );
-
-         //
-         // We are dropping the packet, but still must issue a call to FwpsCompleteOperation(),
-         // as we have previously pended this connection
-         //
-         pendedConnect->completionContext = NULL; // handing ownership to FwpsCompleteOperation
-
-         FwpsCompleteOperation(
-            completionContext,
-            NULL
-            );
-
-         FreePendedPacket(pendedConnect);
-      }
+      // This sample is only for CONNECT layer
+      NT_ASSERT(FALSE);
    }
 }
 
@@ -1434,7 +832,7 @@ TLInspectWorker(
       TraceLoggingWrite(
          gTlgHandle,
          "WorkerThread",
-         TraceLoggingWideString(L"[TLInspectWorker] Executing...", "Message"),
+         TraceLoggingWideString(L"[TLInspectWorker] Executing", "Message"),
          TraceLoggingUInt32((UINT32) processorIndex, "ProcessorIndex")
          );
 
@@ -1486,7 +884,7 @@ TLInspectWorker(
       else
       {
          //
-         // This packet was not pended, meaning that it is either a transport packet or a reauth packet.
+         // This packet was not pended, meaning that it is a reauth packet.
          // Here, we do not need to invoke FwpsCompleteOperation, but we still need to clone re-inject (if permitted)
          //
          if ((gIsTrafficPermitted == TRUE) && (gDriverUnloading == FALSE))

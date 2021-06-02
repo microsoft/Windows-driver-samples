@@ -74,38 +74,6 @@ IN6_ADDR remoteAddrStorageV6;
 // Callout and sublayer GUIDs
 //
 
-// bb6e405b-19f4-4ff3-b501-1a3dc01aae01
-DEFINE_GUID(
-    TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V4,
-    0xbb6e405b,
-    0x19f4,
-    0x4ff3,
-    0xb5, 0x01, 0x1a, 0x3d, 0xc0, 0x1a, 0xae, 0x01
-);
-// cabf7559-7c60-46c8-9d3b-2155ad5cf83f
-DEFINE_GUID(
-    TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V6,
-    0xcabf7559,
-    0x7c60,
-    0x46c8,
-    0x9d, 0x3b, 0x21, 0x55, 0xad, 0x5c, 0xf8, 0x3f
-);
-// 07248379-248b-4e49-bf07-24d99d52f8d0
-DEFINE_GUID(
-    TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V4,
-    0x07248379,
-    0x248b,
-    0x4e49,
-    0xbf, 0x07, 0x24, 0xd9, 0x9d, 0x52, 0xf8, 0xd0
-);
-// 6d126434-ed67-4285-925c-cb29282e0e06
-DEFINE_GUID(
-    TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V6,
-    0x6d126434,
-    0xed67,
-    0x4285,
-    0x92, 0x5c, 0xcb, 0x29, 0x28, 0x2e, 0x0e, 0x06
-);
 // 76b743d4-1249-4614-a632-6f9c4d08d25a
 DEFINE_GUID(
     TL_INSPECT_ALE_CONNECT_CALLOUT_V4,
@@ -122,24 +90,6 @@ DEFINE_GUID(
     0x5b84,
     0x43c3,
     0x8a, 0xe9, 0xed, 0xdb, 0x5c, 0x0d, 0x23, 0xc2
-);
-
-// 7ec7f7f5-0c55-4121-adc5-5d07d2ac0cef
-DEFINE_GUID(
-    TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V4,
-    0x7ec7f7f5,
-    0x0c55,
-    0x4121,
-    0xad, 0xc5, 0x5d, 0x07, 0xd2, 0xac, 0x0c, 0xef
-);
-
-// b74ac2ed-4e71-4564-9975-787d5168a151
-DEFINE_GUID(
-    TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V6,
-    0xb74ac2ed,
-    0x4e71,
-    0x4564,
-    0x99, 0x75, 0x78, 0x7d, 0x51, 0x68, 0xa1, 0x51
 );
 
 // 2e207682-d95f-4525-b966-969f26587f03
@@ -159,10 +109,8 @@ DEVICE_OBJECT* gWdmDevice;
 WDFKEY gParametersKey;
 
 HANDLE gEngineHandle;
-UINT32 gAleConnectCalloutIdV4, gOutboundTlCalloutIdV4;
-UINT32 gAleRecvAcceptCalloutIdV4, gInboundTlCalloutIdV4;
-UINT32 gAleConnectCalloutIdV6, gOutboundTlCalloutIdV6;
-UINT32 gAleRecvAcceptCalloutIdV6, gInboundTlCalloutIdV6;
+UINT32 gAleConnectCalloutIdV4;
+UINT32 gAleConnectCalloutIdV6;
 HANDLE gInjectionHandle;
 BOOLEAN gDriverUnloading = FALSE;
 TL_INSPECT_PROCESSOR_QUEUE* gProcessorQueue = NULL;
@@ -313,12 +261,10 @@ TLInspectRegisterALEClassifyCallouts(
 /* ++
 
    This function registers callouts and filters at the following layers 
-   to intercept inbound or outbound connect attempts.
+   to intercept outbound connect attempts.
    
       FWPM_LAYER_ALE_AUTH_CONNECT_V4
       FWPM_LAYER_ALE_AUTH_CONNECT_V6
-      FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4
-      FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6
 
 -- */
 {
@@ -341,8 +287,8 @@ TLInspectRegisterALEClassifyCallouts(
    }
    else
    {
-      sCallout.classifyFn = TLInspectALERecvAcceptClassify;
-      sCallout.notifyFn = TLInspectALERecvAcceptNotify;
+      // This sample only uses CONNECT layer callouts
+      NT_ASSERT(FALSE);
    }
 
    status = FwpsCalloutRegister(
@@ -358,7 +304,7 @@ TLInspectRegisterALEClassifyCallouts(
 
    displayData.name = L"Transport Inspect ALE Classify Callout";
    displayData.description = 
-      L"Intercepts inbound or outbound connect attempts";
+      L"Intercepts outbound connect attempts";
 
    mCallout.calloutKey = *calloutKey;
    mCallout.displayData = displayData;
@@ -378,101 +324,8 @@ TLInspectRegisterALEClassifyCallouts(
 
    status = TLInspectAddFilter(
                L"Transport Inspect ALE Classify",
-               L"Intercepts inbound or outbound connect attempts",
-               (IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_CONNECT_V4) ||
-                IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4)) ? 
-                  configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
-               0,
-               layerKey,
-               calloutKey
-               );
-
-   if (!NT_SUCCESS(status))
-   {
-      goto Exit;
-   }
-
-Exit:
-
-   if (!NT_SUCCESS(status))
-   {
-      if (calloutRegistered)
-      {
-         FwpsCalloutUnregisterById(*calloutId);
-         *calloutId = 0;
-      }
-   }
-
-   return status;
-}
-
-NTSTATUS
-TLInspectRegisterTransportCallouts(
-   _In_ const GUID* layerKey,
-   _In_ const GUID* calloutKey,
-   _Inout_ void* deviceObject,
-   _Out_ UINT32* calloutId
-   )
-/* ++
-
-   This function registers callouts and filters that intercept transport 
-   traffic at the following layers --
-
-      FWPM_LAYER_OUTBOUND_TRANSPORT_V4
-      FWPM_LAYER_OUTBOUND_TRANSPORT_V6
-      FWPM_LAYER_INBOUND_TRANSPORT_V4
-      FWPM_LAYER_INBOUND_TRANSPORT_V6
-
--- */
-{
-   NTSTATUS status = STATUS_SUCCESS;
-
-   FWPS_CALLOUT sCallout = {0};
-   FWPM_CALLOUT mCallout = {0};
-
-   FWPM_DISPLAY_DATA displayData = {0};
-
-   BOOLEAN calloutRegistered = FALSE;
-
-   sCallout.calloutKey = *calloutKey;
-   sCallout.classifyFn = TLInspectTransportClassify;
-   sCallout.notifyFn = TLInspectTransportNotify;
-
-   status = FwpsCalloutRegister(
-               deviceObject,
-               &sCallout,
-               calloutId
-               );
-   if (!NT_SUCCESS(status))
-   {
-      goto Exit;
-   }
-   calloutRegistered = TRUE;
-
-   displayData.name = L"Transport Inspect Callout";
-   displayData.description = L"Inspect inbound/outbound transport traffic";
-
-   mCallout.calloutKey = *calloutKey;
-   mCallout.displayData = displayData;
-   mCallout.applicableLayer = *layerKey;
-
-   status = FwpmCalloutAdd(
-               gEngineHandle,
-               &mCallout,
-               NULL,
-               NULL
-               );
-
-   if (!NT_SUCCESS(status))
-   {
-      goto Exit;
-   }
-
-   status = TLInspectAddFilter(
-               L"Transport Inspect Filter (Outbound)",
-               L"Inspect inbound/outbound transport traffic",
-               (IsEqualGUID(layerKey, &FWPM_LAYER_OUTBOUND_TRANSPORT_V4) ||
-                IsEqualGUID(layerKey, &FWPM_LAYER_INBOUND_TRANSPORT_V4))? 
+               L"Intercepts outbound connect attempts",
+               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_CONNECT_V4) ? 
                   configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
                0,
                layerKey,
@@ -572,39 +425,6 @@ TLInspectRegisterCallouts(
       {
          goto Exit;
       }
-
-      status = TLInspectRegisterALEClassifyCallouts(
-                  &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4,
-                  &TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V4,
-                  deviceObject,
-                  &gAleRecvAcceptCalloutIdV4
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
-
-      status = TLInspectRegisterTransportCallouts(
-                  &FWPM_LAYER_OUTBOUND_TRANSPORT_V4,
-                  &TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V4,
-                  deviceObject,
-                  &gOutboundTlCalloutIdV4
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
-
-      status = TLInspectRegisterTransportCallouts(
-                  &FWPM_LAYER_INBOUND_TRANSPORT_V4,
-                  &TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V4,
-                  deviceObject,
-                  &gInboundTlCalloutIdV4
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
    }
 
    if (configInspectRemoteAddrV6 != NULL)
@@ -614,39 +434,6 @@ TLInspectRegisterCallouts(
                   &TL_INSPECT_ALE_CONNECT_CALLOUT_V6,
                   deviceObject,
                   &gAleConnectCalloutIdV6
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
-
-      status = TLInspectRegisterALEClassifyCallouts(
-                  &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6,
-                  &TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V6,
-                  deviceObject,
-                  &gAleRecvAcceptCalloutIdV6
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
-
-      status = TLInspectRegisterTransportCallouts(
-                  &FWPM_LAYER_OUTBOUND_TRANSPORT_V6,
-                  &TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V6,
-                  deviceObject,
-                  &gOutboundTlCalloutIdV6
-                  );
-      if (!NT_SUCCESS(status))
-      {
-         goto Exit;
-      }
-
-      status = TLInspectRegisterTransportCallouts(
-                  &FWPM_LAYER_INBOUND_TRANSPORT_V6,
-                  &TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V6,
-                  deviceObject,
-                  &gInboundTlCalloutIdV6
                   );
       if (!NT_SUCCESS(status))
       {
@@ -686,15 +473,8 @@ TLInspectUnregisterCallouts(void)
    FwpmEngineClose(gEngineHandle);
    gEngineHandle = NULL;
 
-   FwpsCalloutUnregisterById(gOutboundTlCalloutIdV6);
-   FwpsCalloutUnregisterById(gOutboundTlCalloutIdV4);
-   FwpsCalloutUnregisterById(gInboundTlCalloutIdV6);
-   FwpsCalloutUnregisterById(gInboundTlCalloutIdV4);
-
    FwpsCalloutUnregisterById(gAleConnectCalloutIdV6);
    FwpsCalloutUnregisterById(gAleConnectCalloutIdV4);
-   FwpsCalloutUnregisterById(gAleRecvAcceptCalloutIdV6);
-   FwpsCalloutUnregisterById(gAleRecvAcceptCalloutIdV4);
 }
 
 void
