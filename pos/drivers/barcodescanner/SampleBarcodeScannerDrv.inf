@@ -4,31 +4,24 @@
 
 [Version]
 Signature="$Windows NT$"
-Class=Sample ;
-ClassGuid={70DF6E9F-68AA-4E29-AF0C-5AE9DB219214} ;
-Provider=Standard,NT$ARCH$
+Class=BarcodeScanner
+ClassGuid={C243FFBD-3AFC-45E9-B3D3-2BA18BC7EBC5}
+Provider=%ManufacturerName%
 CatalogFile=SampleBarcodeScannerDrv.cat
 DriverVer=06/25/2015,14.29.18.671
-
-[Manufacturer]
-%ManufacturerName%=Standard,NT$ARCH$
-
-[Standard.NT$ARCH$]
-%DeviceName%=MyDevice_Install, Root\SampleBarcodeScannerDrv ;
-
-
-[ClassInstall32]
-AddReg=SampleClass_RegistryAdd
-
-[SampleClass_RegistryAdd]
-HKR,,,,%ClassName%
-HKR,,Icon,,"-10"
+PnpLockdown=1
 
 [SourceDisksFiles]
 SampleBarcodeScannerDrv.dll=1
 
 [SourceDisksNames]
 1 = %DiskName%
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%DeviceName%=MyDevice_Install, Root\SampleBarcodeScannerDrv ;
 
 ; =================== UMDF Device ==================================
 
@@ -71,8 +64,7 @@ SampleBarcodeScannerDrv.dll
 ; =================== Generic ==================================
 
 [Strings]
-ManufacturerName="" ;
-ClassName="Samples" ;
+ManufacturerName="TEST" ; TODO - Update name
 DiskName = "SampleBarcodeScannerDrv Installation Disk"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
 DeviceName="SampleBarcodeScannerDrv Device"

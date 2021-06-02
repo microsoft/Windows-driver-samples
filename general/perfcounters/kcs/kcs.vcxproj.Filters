@@ -28,4 +28,14 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Ctrpp Include="kcs.man">
+      <Filter>Resource Files</Filter>
+    </Ctrpp>
+  </ItemGroup>
 </Project>

@@ -210,9 +210,9 @@ ClassSendNotification(
         return;
     }
 
-    notification = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         requiredSize,
-                                         'oNcS');
+    notification = ExAllocatePoolZero(NonPagedPoolNx,
+                                      requiredSize,
+                                      'oNcS');
 
     //
     // if none allocated, exit
@@ -226,7 +226,6 @@ ClassSendNotification(
     // Prepare and send the request!
     //
 
-    RtlZeroMemory(notification, requiredSize);
     notification->Version = 1;
     notification->Size = (USHORT)(requiredSize);
     notification->FileObject = NULL;
@@ -1838,13 +1837,11 @@ ClasspInitializePolling(
         return STATUS_SUCCESS;
     }
 
-    info = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                 sizeof(MEDIA_CHANGE_DETECTION_INFO),
-                                 CLASS_TAG_MEDIA_CHANGE_DETECTION);
+    info = ExAllocatePoolZero(NonPagedPoolNx,
+                              sizeof(MEDIA_CHANGE_DETECTION_INFO),
+                              CLASS_TAG_MEDIA_CHANGE_DETECTION);
 
     if (info != NULL) {
-        RtlZeroMemory(info, sizeof(MEDIA_CHANGE_DETECTION_INFO));
-
         FdoExtension->KernelModeMcnContext.FileObject      = (PVOID)-1;
         FdoExtension->KernelModeMcnContext.DeviceObject    = (PVOID)-1;
         FdoExtension->KernelModeMcnContext.LockCount       = 0;
@@ -1862,10 +1859,10 @@ ClasspInitializePolling(
             PVOID buffer;
             BOOLEAN GesnSupported = FALSE;
 
-            buffer = ExAllocatePoolWithTag(
-                        NonPagedPoolNxCacheAligned,
-                        SENSE_BUFFER_SIZE_EX,
-                        CLASS_TAG_MEDIA_CHANGE_DETECTION);
+            buffer = ExAllocatePoolZero(
+                         NonPagedPoolNxCacheAligned,
+                         SENSE_BUFFER_SIZE_EX,
+                         CLASS_TAG_MEDIA_CHANGE_DETECTION);
 
             if (buffer != NULL) {
 
@@ -2032,9 +2029,10 @@ ClasspInitializeGesn(
     //
 
     if (Info->Gesn.Buffer == NULL) {
-        Info->Gesn.Buffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                                  GESN_BUFFER_SIZE,
-                                                  '??cS');
+        Info->Gesn.Buffer = ExAllocatePoolZero(
+                                NonPagedPoolNxCacheAligned,
+                                GESN_BUFFER_SIZE,
+                                '??cS');
     }
     if (Info->Gesn.Buffer == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2816,10 +2814,9 @@ ClasspIsMediaChangeDisabledDueToHardwareLimitation(
 
         deviceString.Length = (USHORT)( length );
         deviceString.MaximumLength = deviceString.Length + 1;
-        deviceString.Buffer = (PCHAR)ExAllocatePoolWithTag( NonPagedPoolNx,
-                                                            deviceString.MaximumLength,
-                                                            CLASS_TAG_AUTORUN_DISABLE
-                                                            );
+        deviceString.Buffer = (PCHAR)ExAllocatePoolZero( NonPagedPoolNx,
+                                                         deviceString.MaximumLength,
+                                                         CLASS_TAG_AUTORUN_DISABLE );
         if (deviceString.Buffer == NULL) {
             TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_MCN,
                         "ClassMediaChangeDisabledForHardware: Unable to alloc "
@@ -4277,9 +4274,9 @@ ClassSetFailurePredictionPoll(
 
         if (FailurePredictionMethod != FailurePredictionNone) {
 
-            info = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         sizeof(FAILURE_PREDICTION_INFO),
-                                         CLASS_TAG_FAILURE_PREDICT);
+            info = ExAllocatePoolZero(NonPagedPoolNx,
+                                      sizeof(FAILURE_PREDICTION_INFO),
+                                      CLASS_TAG_FAILURE_PREDICT);
 
             if (info == NULL) {
 

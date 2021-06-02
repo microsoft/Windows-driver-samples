@@ -266,7 +266,7 @@ Return Value:
                (m_Pin->ConnectionFormat))->ImageInfoHeader);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag (
+            ExAllocatePoolZero (
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->biSize + KS_SIZE_PREHEADER),
                 AVSHWS_POOLTAG
@@ -308,7 +308,7 @@ Return Value:
                 VideoInfoHeader);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag (
+            ExAllocatePoolZero (
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), KS_SIZE_VIDEOHEADER (ConnectionHeader)),
                 AVSHWS_POOLTAG
@@ -339,7 +339,7 @@ Return Value:
                 VideoInfoHeader2);
 
         m_VideoInfoHeader = reinterpret_cast <PKS_VIDEOINFOHEADER> (
-            ExAllocatePoolWithTag(
+            ExAllocatePoolZero(
                 NonPagedPoolNx,
                 max(sizeof(KS_VIDEOINFOHEADER), ConnectionHeader->bmiHeader.biSize + KS_SIZE_PREHEADER),
                 AVSHWS_POOLTAG
@@ -2100,7 +2100,18 @@ Return Value:
 {
     PAGED_CODE( );
 
+    //  If the host process did not stop the pin, we need to do that before
+    //  the CCapturePin object gets freed.
+    if (m_Pin->DeviceState != KSSTATE_STOP)
+    {
+        //  Skip straight to the STOP state because our simulation doesn't
+        //  really need the PAUSE and ACQUIRE transitions when stopping.
+        SetState(KSSTATE_STOP, m_Pin->DeviceState);
+    }
+
     //  Some reasonable default behavior.
+    GetFilter()->setPin(nullptr, m_Pin->Id);
+
     return STATUS_SUCCESS;
 }
 

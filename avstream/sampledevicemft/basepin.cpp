@@ -3,6 +3,7 @@
 #include "multipinmft.h"
 #include "multipinmfthelpers.h"
 #include "basepin.h"
+#include "contosodevice.h"
 
 #ifdef MF_WPP
 #include "basepin.tmh"    //--REF_ANALYZER_DONT_REMOVE--
@@ -323,7 +324,7 @@ STDMETHODIMP CInPin::WaitForSetInputPinMediaChange()
     
     if ( dwWait != WAIT_OBJECT_0 )
     {
-        hr = E_FAIL;
+        hr = HRESULT_FROM_WIN32(GetLastError());
         goto done;
     }
 done:
@@ -384,23 +385,79 @@ HRESULT CInPin::SetInputStreamState(
     return hr;
 }
 
-void CInPin::ReleaseConnectedPins()
+STDMETHODIMP_(VOID) CInPin::ShutdownPin()
 {
     m_spSourceTransform = nullptr;
     m_outpin = nullptr;
 }
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+//
+//  ForwardSecureBuffer()
+//
+//  Parameters:
+//      sample - The sample to send out for secure processing
+//
+//  Returns:
+//      HRESULT
+//
+//  Notes:
+//      This helper function calls back to the AVstream driver for post-processing of a 
+//      secure buffer.  This is done here as an example for simplicity.  A more realistic
+//      scenario might have you calling into an ISP driver that is not an AVstream driver.
+//      To do that you would need to acquire a handle to that device and post an IOCTL.
+//      That device would in turn need to have a secure companion driver (trustlet)
+//      installed as part of the package to process the buffer.
+//      
+HRESULT CInPin::ForwardSecureBuffer(
+    _In_    IMFSample *sample
+)
+{
+    DWORD   bytesReturned = 0;
+    CONTOSODEVICE_PROCESSBUFFER_PAYLOAD payload = { 0 };
+    KSPROPERTY  property = { 0 };
 
+    wil::com_ptr_nothrow<IMFMediaBuffer> mediaBuffer;
+    wil::com_ptr_nothrow<IMFSecureBuffer> secureBuffer;
+
+    //  Set up our private KSPROPERTY to some sample avstream driver.
+    property.Set = PROPSETID_CONTOSODEVICE;
+    property.Id = KSPROPERTY_CONTOSODEVICE_PROCESSBUFFER;
+    property.Flags = KSPROPERTY_TYPE_SET;
+
+    //  Set up the payload for that property.  Includes the secure buffer ID and buffer length.
+    RETURN_IF_FAILED(sample->GetBufferByIndex(0, &mediaBuffer));
+    //  Forward the buffer if it is secure.
+    if (mediaBuffer.try_query_to(&secureBuffer))
+    {
+        RETURN_IF_FAILED(secureBuffer->GetIdentifier(&payload.identifier));
+        RETURN_IF_FAILED(mediaBuffer->GetMaxLength(&payload.size));
+
+        //  Log the buffer's secure ID and size for debugging.
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! identifier=%!GUID!, length=%d", &payload.identifier, payload.size);
+
+        //  Send the KSPROPERTY synchronously to the driver.
+        RETURN_IF_FAILED(KsProperty(&property, sizeof(property), &payload, sizeof(payload), &bytesReturned));
+    }
+    return S_OK;
+}
+#endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
 //
 //Output Pin Implementation
 //
 COutPin::COutPin( 
     _In_     ULONG         ulPinId,
     _In_opt_ CMultipinMft *pparent,
-    _In_     IKsControl*   pIksControl  
+    _In_     IKsControl*   pIksControl
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    , _In_     MFSampleAllocatorUsage allocatorUsage
+#endif
     )
-    : CBasePin( ulPinId, pparent ),
-    m_firstSample( false ),
-    m_queue(nullptr)
+    : CBasePin(ulPinId, pparent)
+    , m_firstSample(false)
+    , m_queue(nullptr)
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    , m_allocatorUsage(allocatorUsage)
+#endif
 {
     HRESULT                 hr              = S_OK;
     ComPtr<IMFAttributes>   spAttributes;
@@ -507,6 +564,14 @@ STDMETHODIMP_(VOID) COutPin::SetFirstSample(
     m_firstSample = fisrtSample;
 }
 
+STDMETHODIMP_(VOID) COutPin::SetAllocator(
+    _In_    IMFVideoSampleAllocator* pAllocator
+)
+{
+    CAutoLock Lock(lock());
+    m_spDefaultAllocator = pAllocator;
+}
+
 /*++
 COutPin::FlushQueues
 Description:
@@ -524,7 +589,7 @@ HRESULT COutPin::FlushQueues()
 /*++
 COutPin::ChangeMediaTypeFromInpin
 Description:
-called from the Device Transfrom When the input media type is changed. This will result in 
+called from the Device Transform when the input media type is changed. This will result in 
 the xvp being possibly installed in the queue if the media types set on the input
 and the output dont match
 --*/
@@ -542,7 +607,11 @@ HRESULT COutPin::ChangeMediaTypeFromInpin(
     SetState(DeviceStreamState_Disabled); 
     DMFTCHECKHR_GOTO(FlushQueues(),done);  
     DMFTCHECKNULL_GOTO(m_queue,done, E_UNEXPECTED); // The queue should alwaye be set
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    hr = m_queue->RecreateTeeByAllocatorMode(pInMediatype, pOutMediaType, m_spDxgiManager.Get(), m_allocatorUsage, m_spDefaultAllocator.get());
+#else
     hr = m_queue->RecreateTee(pInMediatype, pOutMediaType, m_spDxgiManager.Get());
+#endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
     if ( SUCCEEDED( hr ) )
     {
         (VOID)setMediaType( pOutMediaType );
@@ -583,10 +652,10 @@ STDMETHODIMP COutPin::GetOutputStreamInfo(
 /*++
 COutPin::ProcessOutput
 Description:
- called from the Device Transfrom when the transform manager demands output samples..
+ called from the Device Transform when the transform manager demands output samples..
  If we have samples we forward it.
- If we are a photo pin then we forward only if trigger is sent. We ask the devicetransform if we have recieved the transform or not.
- If we have recieved the sample and we are passing out a sample we should reset the trigger set on the Device Transform
+ If we are a photo pin then we forward only if trigger is sent. We ask the devicetransform if we have received the transform or not.
+ If we have received the sample and we are passing out a sample we should reset the trigger set on the Device Transform
 --*/
 
 STDMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
@@ -663,18 +732,9 @@ STDMETHODIMP CAsyncInPin::SendSample(_In_ IMFSample *pSample)
 {
     HRESULT hr = S_OK;
     CAutoLock Lock(lock());
-    if (!m_bFlushing)
+    if (SUCCEEDED(Active()))
     {
         DMFTCHECKHR_GOTO(MFPutWorkItem(m_dwWorkQueueId, static_cast<IMFAsyncCallback*>(m_asyncCallback.Get()), pSample), done);
-        if (1 == InterlockedIncrement(&m_dwSamplesInFlight))
-        {
-            ResetEvent(m_hHandle);
-        }
-    }
-    else
-    {
-        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! 0x%p Pin Flushing %d",this, streamId());
-        // Let the sample fall through
     }
 done:
     return hr;
@@ -682,18 +742,20 @@ done:
 
 STDMETHODIMP CAsyncInPin::Init()
 {
-    m_asyncCallback = new (std::nothrow) CDMFTAsyncCallback<CAsyncInPin, &CAsyncInPin::Invoke>(this);
+    m_asyncCallback = new (std::nothrow) CDMFTAsyncCallback<CAsyncInPin, &CAsyncInPin::Invoke>(this, m_dwWorkQueueId);
     if (!m_asyncCallback)
         throw bad_alloc();
     return S_OK;
 }
 
+//  Pass a secure frame buffer to our AVstream driver.
 HRESULT CAsyncInPin::Invoke( _In_ IMFAsyncResult* pResult )
 {
     HRESULT hr = S_OK;
     ComPtr<IUnknown> spUnknown;
     ComPtr<IMFSample> spSample;
 
+    DMFTCHECKHR_GOTO(Active(), done);
     DMFTCHECKNULL_GOTO(pResult, done, E_UNEXPECTED);
     DMFTCHECKHR_GOTO(pResult->GetState(&spUnknown), done);
 
@@ -701,46 +763,26 @@ HRESULT CAsyncInPin::Invoke( _In_ IMFAsyncResult* pResult )
 
     DMFTCHECKNULL_GOTO(spSample.Get(), done, E_INVALIDARG);
 
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    //
+    //  Do secure buffer post-processing.
+    //
+    RETURN_IF_FAILED(ForwardSecureBuffer(spSample.Get()));
+#endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
     COutPin *poPin = static_cast<COutPin*>(m_outpin.Get());
     DMFTCHECKHR_GOTO(poPin->AddSample(spSample.Get(), this), done);
-
-    if (0 == InterlockedDecrement(&m_dwSamplesInFlight))
-    {
-        // No samples in flight.. Set the Event
-        SetEvent(m_hHandle);
-    }
-
 done:
     return hr;
 }
 
-
-
-STDMETHODIMP CAsyncInPin::FlushQueues()
+STDMETHODIMP_(VOID) CAsyncInPin::ShutdownPin()
 {
-    HRESULT hr = S_OK;
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Entering ");
-    // Flush in async mode else it is a NOOP
+    CAutoLock Lock(lock());
+    if (m_asyncCallback.Get())
     {
-        CAutoLock Lock(lock());
-        if (m_bFlushing)
-        {
-            DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Pin %d Already Flushing ", streamId());
-            goto done;
-        }
-        m_bFlushing = TRUE;
+        (VOID)m_asyncCallback->Shutdown(); //Break reference with the parent
     }
-    //
-    // Wait for the IOs to drain
-    //
-    WaitForSingleObject(m_hHandle, INFINITE);
-    {
-        CAutoLock Lock(lock());
-        m_bFlushing = FALSE;
-    }
-done:
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-    return hr;
+    CInPin::ShutdownPin();
 }
 
 //
@@ -808,6 +850,7 @@ STDMETHODIMP CTranslateOutPin::AddMediaType(
 done:
     return hr;
 }
+
 STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
     _In_ IMFMediaType *pMediaType,
     _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
@@ -824,9 +867,10 @@ STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
 
     if (found != m_TranslatedMediaTypes.end())
     {
+        ComPtr<IMFMediaType> spMediaType = (*found).second;
         if (ppIMFMediaTypeFull)
         {
-            *ppIMFMediaTypeFull = (*found).second;
+            *ppIMFMediaTypeFull = spMediaType.Detach();
         }
         return true;
     }
@@ -835,4 +879,25 @@ STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
         // Check if we can find it in the Base list.. maybe the mediatype is originally an uncompressed media type
         return CBasePin::IsMediaTypeSupported(pMediaType,ppIMFMediaTypeFull);
     }
+}
+
+HRESULT CTranslateOutPin::ChangeMediaTypeFromInpin(
+    _In_ IMFMediaType *pInMediatype,
+    _In_ IMFMediaType* pOutMediaType,
+    _In_ DeviceStreamState state)
+{
+    CAutoLock Lock(lock());
+    //
+    // Set the state to disabled and while going out we will reset the state back to the requested state
+    // Flush so that we drop any samples we have in store!!
+    //
+    SetState(DeviceStreamState_Disabled);
+    RETURN_IF_FAILED(FlushQueues());
+    RETURN_HR_IF_NULL(E_UNEXPECTED, m_queue); // The queue should always be set
+    RETURN_IF_FAILED(m_queue->RecreateTee(pInMediatype, pOutMediaType, m_spDxgiManager.Get()));
+
+    (VOID)setMediaType(pOutMediaType);
+    (VOID)SetState(state);
+
+    return S_OK;
 }

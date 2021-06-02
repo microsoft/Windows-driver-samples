@@ -5,16 +5,8 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: UMDF SocketEcho Sample (UMDF Version 1)
-    platform: UMDF1
-    language: cpp
-    category: General WDF
-    description: Demonstrates how to use UMDF version 1 to write a driver and demonstrates best practices. 
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617709
---->
 
 # UMDF SocketEcho Sample (UMDF Version 1)
 
@@ -22,24 +14,23 @@ The UMDF SocketEcho sample demonstrates how to use the User-Mode Driver Framewor
 
 This sample also demonstrates how to use a default parallel dispatch I/O queue, use a Microsoft Win32 dispatcher, and handle a socket handle by using a Win32 file I/O target.
 
-Related technologies
---------------------
+## Related technologies
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[User-Mode Driver Framework](https://docs.microsoft.com/windows-hardware/drivers/wdf/getting-started-with-umdf-version-2)
 
-Code Tour
----------
+## Code Tour
 
 This sample driver is a minimal driver that is intended to demonstrate how to use UMDF. It is not intended for use in a production environment.
 
-- **CMyDriver::OnInitialize** in **driver.cpp** is called by the framework when the driver loads. This method initiates use of the Winsock Library. 
+- **CMyDriver::OnInitialize** in **driver.cpp** is called by the framework when the driver loads. This method initiates use of the Winsock Library.
+
 - **CMyDriver::OnDeviceAdd** in **driver.cpp** is called by the framework to install the driver on a device stack. OnDeviceAdd creates a device callback object, and then calls IWDFDriver::CreateDevice to create an framework device object and to associate the device callback object with the framework device object.
+
 - **CMyQueue::OnCreateFile** in **queue.cpp** is called by the framework to create a socket connection, create a file i/o target that is associated with the socket handle for this connection, and store the socket handle in the file object context.
 
-Installation
-------------
+## Installation
 
-In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](http://msdn.microsoft.com/en-us/library/windows/hardware/hh454834). Alternatively, you can install the sample from the command line.
+In Visual Studio, you can press F5 to build the sample and then deploy it to a target machine. For more information, see [Deploying a Driver to a Test Computer](https://docs.microsoft.com/windows-hardware/drivers/develop/deploying-a-driver-to-a-test-computer). Alternatively, you can install the sample from the command line.
 
 To test this sample, you must have a test computer. This test computer can be a second computer or, if necessary, your development computer.
 
@@ -49,11 +40,12 @@ To install the UMDF Echo sample driver from the command line, do the following:
 
 1. Copy the UMDF coinstaller, WUDFUpdate\_*MMmmmm*.dll, from the \\redist\\wdf\\\<architecture\> directory to the same directory (for example, C:\\socketechoSample).
 
-    **Note** You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](http://go.microsoft.com/fwlink/p/?LinkID=226396). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
+  > [!NOTE]
+  > You can obtain redistributable framework updates by downloading the *wdfcoinstaller.msi* package from [WDK 8 Redistributable Components](https://go.microsoft.com/fwlink/p/?LinkID=253170). This package performs a silent install into the directory of your Windows Driver Kit (WDK) installation. You will see no confirmation that the installation has completed. You can verify that the redistributables have been installed on top of the WDK by ensuring there is a redist\\wdf directory under the root directory of the WDK, %ProgramFiles(x86)%\\Windows Kits\\8.0.
 
 1. Navigate to the directory that contains the INF file and binaries (for example, cd /d c:\\socketechoSample), and run DevCon.exe as follows:
 
-    `devcon.exe install socketecho.inf WUDF\\socketecho`
+  `devcon.exe install socketecho.inf WUDF\\socketecho`
 
   You can find DevCon.exe in the \\tools directory of the WDK (for example, \\tools\\devcon\\i386\\devcon.exe).
 
@@ -75,8 +67,7 @@ To test this sample drivers on a checked operating system that you have installe
 
 1. If WdfCoinstaller*MMmmmm*.dll or WinUsbCoinstaller.dll is included in your driver package, repeat step 1 and step 2 for them.
 
-Testing
--------
+## Testing
 
 To test the SocketEcho driver, you can run socketechoserver.exe, which is built from the \\echo\\umdfSocketEcho\\Exe directory, and echoapp.exe, which is built from the Kernel-Mode Driver Framework (KMDF) samples in the \\echo\\kmdf directory.
 
@@ -84,94 +75,72 @@ First, you must install the device as described earlier. Then, run socketechoser
 
 `D:\\\>socketechoserver -h`
 
-Usage
-------
+## Usage
+
+socketechoserver usage
 
 ```cmd
-socketechoserver Display Usage
-
-socketechoserver -h Display Usage
+D:\>socketechoserver -h
 
 socketechoserver -p Start the app as server listening on default port
-
 socketechoserver -p [port\#] Start the app as server listening on this port
 
-D:\\\>socketechoserver -p
+D:\>socketechoserver -p
 
 Listening on socket...
+```
 
 In another Command Prompt window, run echoapp.exe.
 
-D:\\\>echoapp
+```cmd
+D:\>echoapp
 
 DevicePath: \\\\?\\root\#sample\#0000\#{ e5e65b0c-82c8-4689-96d4-f77837971990}
 
 Opened device successfully
 
 512 Pattern Bytes Written successfully
-
 512 Pattern Bytes Read successfully
 
 Pattern Verified successfully
 
-D:\\\>echoapp -Async
+D:\>echoapp -Async
 
-DevicePath: \\\\?\\root\#sample\#0000\#{cdc35b6e-0be4-4936-bf5f-5537380a7c1a}
+DevicePath: \\?\root\#sample\#0000\#{cdc35b6e-0be4-4936-bf5f-5537380a7c1a}
 
 Opened device successfully
 
 Starting AsyncIo
 
 Number of bytes written by request number 0 is 1024
-
 Number of bytes read by request number 0 is 1024
-
+Number of bytes written by request number 1 is 1024
 Number of bytes read by request number 1 is 1024
-
 Number of bytes written by request number 2 is 1024
-
 Number of bytes read by request number 2 is 1024
-
 Number of bytes written by request number 3 is 1024
-
 Number of bytes read by request number 3 is 1024
-
 Number of bytes written by request number 4 is 1024
-
 Number of bytes read by request number 4 is 1024
-
 Number of bytes written by request number 5 is 1024
-
 Number of bytes read by request number 5 is 1024
-
 Number of bytes written by request number 6 is 1024
-
 Number of bytes read by request number 6 is 1024
-
 Number of bytes written by request number 7 is 1024
-
 Number of bytes read by request number 7 is 1024
-
 Number of bytes written by request number 8 is 1024
-
 Number of bytes read by request number 8 is 1024
-
 Number of bytes written by request number 9 is 1024
-
 Number of bytes read by request number 9 is 1024
-
 Number of bytes written by request number 10 is 1024
-
 Number of bytes read by request number 10 is 1024
-
 Number of bytes written by request number 11 is 1024
-
 ...
 ```
 
-Note that independent threads perform the reads and writes in the echo test application. As a result, the order of the output might not exactly match what you see in the preceding output.
+> [!NOTE]
+> Independent threads perform the reads and writes in the echo test application. As a result, the order of the output might not exactly match what you see in the preceding output example.
 
-File Manifest
--------------
+## File Manifest
 
 **Dllsup.cpp**: The DLL support code that provides the DLL's entry point and the single required export (DllGetClassObject).

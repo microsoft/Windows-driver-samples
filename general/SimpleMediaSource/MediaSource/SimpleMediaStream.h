@@ -1,54 +1,69 @@
-#pragma once
+//
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//
 
-#include "stdafx.h"
+#ifndef SIMPLEMEDIASTREAM_H
+#define SIMPLEMEDIASTREAM_H
 
-class SimpleMediaSource;
+#include "SimpleMediaSource.h"
 
-class SimpleMediaStream : public RuntimeClass<
-    RuntimeClassFlags<ClassicCom>,
-    IMFMediaEventGenerator,
-    IMFMediaStream,
-    IMFMediaStream2>
+namespace winrt::WindowsSample::implementation
 {
-    friend class SimpleMediaSource;
+    struct SimpleMediaStream : winrt::implements<SimpleMediaStream, IMFMediaStream2>
+    {
+        friend struct SimpleMediaSource;
 
-public:
-    // IMFMediaEventGenerator
-    IFACEMETHOD(BeginGetEvent)(IMFAsyncCallback *pCallback, IUnknown *punkState);
-    IFACEMETHOD(EndGetEvent)(IMFAsyncResult *pResult, IMFMediaEvent **ppEvent);
-    IFACEMETHOD(GetEvent)(DWORD dwFlags, IMFMediaEvent **ppEvent);
-    IFACEMETHOD(QueueEvent)(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT *pvValue);
+    public:
+        // IMFMediaEventGenerator
+        IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState) override;
+        IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent) override;
+        IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent) override;
+        IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT* pvValue) override;
 
-    // IMFMediaStream
-    IFACEMETHOD(GetMediaSource)(IMFMediaSource **ppMediaSource);
-    IFACEMETHOD(GetStreamDescriptor)(IMFStreamDescriptor **ppStreamDescriptor);
-    IFACEMETHOD(RequestSample)(IUnknown *pToken);
+        // IMFMediaStream
+        IFACEMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource) override;
+        IFACEMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor) override;
+        IFACEMETHODIMP RequestSample(IUnknown* pToken) override;
 
-    // IMFMediaStream2
-    IFACEMETHOD(SetStreamState)(MF_STREAM_STATE state);
-    IFACEMETHOD(GetStreamState)(_Out_ MF_STREAM_STATE *pState);
+        // IMFMediaStream2
+        IFACEMETHODIMP SetStreamState(_In_ MF_STREAM_STATE state) override;
+        IFACEMETHODIMP GetStreamState(_Out_ MF_STREAM_STATE* pState) override;
 
-    // Non-interface methods.
-    HRESULT RuntimeClassInitialize(_In_ SimpleMediaSource* pSource);
-    HRESULT Shutdown();
+        // Non-interface methods.
+        HRESULT Initialize(_In_ SimpleMediaSource* pSource, _In_ DWORD streamId, _In_ MFSampleAllocatorUsage allocatorUsage);
+        HRESULT Start();
+        HRESULT Stop();
+        HRESULT Shutdown();
+        HRESULT SetSampleAllocator(_In_ IMFVideoSampleAllocator* pAllocator);
 
+        DWORD Id() const { return m_dwStreamId; }
+        MFSampleAllocatorUsage SampleAlloactorUsage() const { return m_allocatorUsage; }
 
-protected:
-    HRESULT _CheckShutdownRequiresLock();
-    HRESULT _SetStreamAttributes(IMFAttributes* pAttributeStore);
-    HRESULT _SetStreamDescriptorAttributes(IMFAttributes* pAttributeStore);
+        void SetRGBMask(ULONG rgbMask) { winrt::slim_lock_guard lock(m_Lock);  m_rgbMask = rgbMask; }
+        ULONG GetRGBMask() { winrt::slim_lock_guard lock(m_Lock);  return m_rgbMask; }
 
+    protected:
+        HRESULT _CheckShutdownRequiresLock();
+        HRESULT _SetStreamAttributes(IMFAttributes* pAttributeStore);
+        HRESULT _SetStreamDescriptorAttributes(IMFAttributes* pAttributeStore);
 
-    CriticalSection _critSec;
+    private:
+        winrt::slim_mutex  m_Lock;
 
-    ComPtr<IMFMediaSource> _parent;
-    ComPtr<IMFMediaEventQueue> _spEventQueue;
-    ComPtr<IMFAttributes> _spAttributes;
-    ComPtr<IMFMediaType> _spMediaType;
-    ComPtr<IMFStreamDescriptor> _spStreamDesc;
-    bool _isShutdown = false;
-    bool _isSelected = false;
+        wil::com_ptr_nothrow<IMFMediaSource> m_parent;
+        wil::com_ptr_nothrow<IMFMediaEventQueue> m_spEventQueue;
+        wil::com_ptr_nothrow<IMFAttributes> m_spAttributes;
+        wil::com_ptr_nothrow<IMFStreamDescriptor> m_spStreamDesc;
+        wil::com_ptr_nothrow<IMFVideoSampleAllocator> m_spSampleAllocator;
+        wistd::unique_ptr<SimpleFrameGenerator> m_spFrameGenerator;
 
-    const DWORD STREAMINDEX = 0; // since there is only one stream
-};
+        bool m_bIsShutdown = false;
+        MF_STREAM_STATE m_streamState = MF_STREAM_STATE_STOPPED;
+        ULONG m_rgbMask = KSPROPERTY_SIMPLEMEDIASOURCE_CUSTOMCONTROL_COLORMODE_BLUE;
 
+        DWORD m_dwStreamId;
+        MFSampleAllocatorUsage m_allocatorUsage;
+    };
+}
+
+#endif

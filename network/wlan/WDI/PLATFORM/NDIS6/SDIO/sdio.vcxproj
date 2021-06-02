@@ -336,13 +336,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
     <Link>
       <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\NdisComm.lib;$(SolutionDir)\LIB\x86\hal.lib;$(SolutionDir)\LIB\x86\rtklibcom.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ndis.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x86)km\x86\sdbus.lib;$(WindowsSDK_LibraryPath_x86)km\x86\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
-      <Driver>
-      </Driver>
-      <TreatLinkerWarningAsErrors>
-      </TreatLinkerWarningAsErrors>
+      <!-- warning LNK4099: PDB 'rtklibcom.pdb' was not found with 'rtklibcom.lib(multichannels.obj)' -->
+      <AdditionalOptions>$(AdditionalOptions) /IGNORE:4099</AdditionalOptions>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <LinkStatus>
-      </LinkStatus>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>_X86_;DBG;NDIS60_MINIPORT;USE_KLOCKS=1;BINARY_COMPATIBLE=0;NDIS650_MINIPORT=1;NDIS640_MINIPORT=1;NDIS630_MINIPORT=1;NDIS620_MINIPORT=1;NDIS61_MINIPORT=1;NDIS_MINIPORT_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -425,6 +421,8 @@
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
+      <!-- warning LNK4099: PDB 'rtklibcom.pdb' was not found with 'rtklibcom.lib(multichannels.obj)' -->
+      <AdditionalOptions>$(AdditionalOptions) /IGNORE:4099</AdditionalOptions>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\NdisComm.lib;$(SolutionDir)\LIB\x86\hal.lib;$(SolutionDir)\LIB\x86\rtklibcom.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ndis.lib;$(WindowsSDK_LibraryPath_x86)km\x86\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x86)km\x86\sdbus.lib;$(WindowsSDK_LibraryPath_x86)km\x86\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
       <GenerateDebugInformation>
@@ -626,6 +624,8 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <!-- warning LNK4099: PDB 'rtklibcom.pdb' was not found with 'rtklibcom.lib(multichannels.obj)' -->
+      <AdditionalOptions>$(AdditionalOptions) /IGNORE:4099</AdditionalOptions>
       <AdditionalDependencies>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\common.lib;$(SolutionDir)PLATFORM\NdisComm\$(Configuration)\$(Platform)\NdisComm.lib;$(SolutionDir)\LIB\x64\hal.lib;$(SolutionDir)\LIB\x64\rtklibcom.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ndis.lib;$(WindowsSDK_LibraryPath_x64)km\x64\ntoskrnl.lib;$(WindowsSDK_LibraryPath_x64)km\x64\sdbus.lib;$(WindowsSDK_LibraryPath_x64)km\x64\wlan\1.0\TlvGeneratorParser.lib;</AdditionalDependencies>
     </Link>
     <ProjectReference>

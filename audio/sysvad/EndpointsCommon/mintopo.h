@@ -33,6 +33,8 @@ class CMiniportTopology :
 {
   private:
     eDeviceType             m_DeviceType;
+
+
     union {
         PVOID               m_DeviceContext;
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
@@ -55,6 +57,7 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
+
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
@@ -73,18 +76,19 @@ public:
 
     NTSTATUS PropertyHandlerJackDescription
     (
-        _In_        PPCPROPERTY_REQUEST                      PropertyRequest,
-        _In_        ULONG                                    cJackDescriptions,
-        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION *  JackDescriptions
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions
     );
 
     NTSTATUS PropertyHandlerJackDescription2
     ( 
-        _In_        PPCPROPERTY_REQUEST                      PropertyRequest,
-        _In_        ULONG                                    cJackDescriptions,
-        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION *  JackDescriptions,
-        _In_        DWORD                                    JackCapabilities
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions,
+        _In_        DWORD                                       JackCapabilities
     );
+
     
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     BOOL IsSidebandDevice()

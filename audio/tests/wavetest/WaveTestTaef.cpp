@@ -164,7 +164,7 @@ void WDMAudio::WaveTest::TAEF_StreamMultipleModes()
     RUN_TEST_CASE(Test_StreamMultipleModes)
 }
 
-void WDMAudio::WaveTest::TAEF_VerifyPinSupportsPullMode()
+void WDMAudio::WaveTest::TAEF_VerifyPinWaveRTConformance()
 {
-    RUN_TEST_CASE(Test_VerifyPinSupportsPullMode)
+    RUN_TEST_CASE(Test_VerifyPinWaveRTConformance)
 }

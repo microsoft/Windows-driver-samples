@@ -114,6 +114,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);KMDF_VERSION_MAJOR=1;KMDF_VERSION_MINOR=11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(WDKContentRoot)\Include\wdf\kmdf\1.11</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -136,6 +139,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);KMDF_VERSION_MAJOR=1;KMDF_VERSION_MINOR=11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(WDKContentRoot)\Include\wdf\kmdf\1.11</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
@@ -158,6 +164,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);KMDF_VERSION_MAJOR=1;KMDF_VERSION_MINOR=11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(WDKContentRoot)\Include\wdf\kmdf\1.11</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
@@ -180,6 +189,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);KMDF_VERSION_MAJOR=1;KMDF_VERSION_MINOR=11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(WDKContentRoot)\Include\wdf\kmdf\1.11</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inf" />

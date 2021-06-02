@@ -5,16 +5,8 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: SwapBuffer File System Minifilter Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: Demonstrates how to switch buffers between reads and writes of data. This technique is particularly useful for encryption filters.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617657
---->
 
 # SwapBuffer File System Minifilter Driver
 
@@ -28,4 +20,4 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The *SwapBuffers* minifilter introduces a new buffer before a read/write or directory control operations. The corresponding operation is then performed on the new buffer instead of the buffer that was originally provided. After the operation completes, the contents of the new buffer are copied back in to the original buffer.
 
-For more information on file system minifilter design, start with the [File System Minifilter Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff540402) section in the Installable File Systems Design Guide.
+For more information on file system minifilter design, start with the [File System Minifilter Drivers](https://docs.microsoft.com/windows-hardware/drivers/ifs/file-system-minifilter-drivers) section in the Installable File Systems Design Guide.

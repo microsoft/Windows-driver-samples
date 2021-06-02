@@ -1489,10 +1489,9 @@ N6SdioInitTxQueue(
 	pDevice->RtNumTxQueue = SDIO_MAX_TX_QUEUE; // TX_HIQ, TX_MIQ and TX_LOQ	  
 
 	// Initialize the contexts in Tx Queue.
-	pDevice->RtTxQueue = 
-		(PRT_SDIO_TX_QUEUE)ExAllocatePoolWithTag(NonPagedPool, SDIO_MAX_TX_QUEUE*sizeof(RT_SDIO_TX_QUEUE), '3278' );
-	PlatformZeroMemory(pDevice->RtTxQueue, SDIO_MAX_TX_QUEUE*sizeof(RT_SDIO_TX_QUEUE));	
-  
+	pDevice->RtTxQueue =
+		(PRT_SDIO_TX_QUEUE)ExAllocatePool2(POOL_FLAG_NON_PAGED, SDIO_MAX_TX_QUEUE*sizeof(RT_SDIO_TX_QUEUE), '3278' );
+
 	if (pDevice->RtTxQueue != NULL) 
 	{
 

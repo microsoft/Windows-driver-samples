@@ -23,7 +23,7 @@
     <RootNamespace>osrfx2_DCHU_usersvc</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>osrfx2_DCHU_usersvc</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -93,14 +93,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -108,11 +107,11 @@
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>onecoreuap.lib;%(AdditionalDependencies);</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -121,6 +120,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -138,8 +138,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -182,18 +181,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CppWindowsService.cpp" />
-    <ClCompile Include="SampleService.cpp" />
-    <ClCompile Include="ServiceBase.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="DeviceControl.cpp" />
+    <ClCompile Include="DeviceContext.cpp" />
+    <ClCompile Include="ServiceWin32API.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SampleService.h" />
-    <ClInclude Include="ServiceBase.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="ThreadPool.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="DeviceControl.h" />
+    <ClInclude Include="DeviceContext.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ServiceWin32API.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Documentation\ReadMe.htm">

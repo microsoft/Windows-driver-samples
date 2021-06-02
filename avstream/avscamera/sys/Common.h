@@ -23,11 +23,15 @@
 
 #define _NO_SYS_GUID_OPERATOR_EQ_
 
+#ifdef NTDDI_VERSION
+#undef NTDDI_VERSION
+#endif //NTDDI_VERSION
+#define NTDDI_VERSION NTDDI_WIN10_VB
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <wdm.h>
-#include <wdmguid.h>
 #include <windef.h>
 #include <unknown.h>
 #include <ks.h>

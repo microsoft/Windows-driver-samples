@@ -48,6 +48,9 @@ class CMultipinMft :
     , public IMFGetService
 #endif
     , public CDMFTModuleLifeTimeManager
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    , public IMFSampleAllocatorControl
+#endif
 {
     friend class CPinCreationFactory;
 public:
@@ -275,7 +278,22 @@ public:
     }
 
 #endif
-    
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    //
+    // IMFSampleAllocatorControl Inferface function declarations
+    //
+
+    STDMETHOD(SetDefaultAllocator)(
+        _In_ DWORD dwOutputStreamID,
+        _In_ IUnknown *pAllocator
+    );
+
+    STDMETHOD(GetAllocatorUsage)(
+        _In_ DWORD dwOutputStreamID,
+        _Out_  DWORD* pdwInputStreamID,
+        _Out_ MFSampleAllocatorUsage* peUsage
+    );
+#endif
     static STDMETHODIMP CreateInstance(
         REFIID iid, void **ppMFT);
  

@@ -5,16 +5,8 @@ languages:
 - cpp
 products:
 - windows
+- windows-wdk
 ---
-
-<!---
-    name: CDFS File System Driver
-    platform: WDM
-    language: cpp
-    category: FileSystem
-    description: The CD-ROM file system driver (cdfs) sample is a file system driver for removable media.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617642
---->
 
 # CDFS File System Driver
 

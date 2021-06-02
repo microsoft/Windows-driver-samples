@@ -18,6 +18,7 @@ ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider="Sample Provider"
 DriverVer=12/12/2017,10.0.0.1
 CatalogFile=Defect_Toastmon.cat
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12

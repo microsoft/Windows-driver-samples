@@ -85,7 +85,7 @@ PCPIN_DESCRIPTOR SpeakerTopoMiniportPins[] =
 
 //=============================================================================
 static
-KSJACK_DESCRIPTION SpeakerJackDescSpeakers =
+KSJACK_DESCRIPTION SpeakerJackDescBridge =
 {
     KSAUDIO_SPEAKER_STEREO,
     0xB3C98C,               // Color spec for green
@@ -101,8 +101,9 @@ static
 PKSJACK_DESCRIPTION SpeakerJackDescriptions[] =
 {
     NULL,
-    &SpeakerJackDescSpeakers
+    &SpeakerJackDescBridge
 };
+
 
 //=============================================================================
 static
@@ -120,13 +121,15 @@ PCPROPERTY_ITEM PropertiesSpeakerTopoFilter[] =
     {
         &KSPROPSETID_Jack,
         KSPROPERTY_JACK_DESCRIPTION,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        KSPROPERTY_TYPE_GET |
+        KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_SpeakerTopoFilter
     },
     {
         &KSPROPSETID_Jack,
         KSPROPERTY_JACK_DESCRIPTION2,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        KSPROPERTY_TYPE_GET |
+        KSPROPERTY_TYPE_BASICSUPPORT,
         PropertyHandler_SpeakerTopoFilter
     }
 };
@@ -152,4 +155,4 @@ PCFILTER_DESCRIPTOR SpeakerTopoMiniportFilterDescriptor =
 };
 
 #endif // _SYSVAD_SPEAKERTOPTABLE_H_
-    
+

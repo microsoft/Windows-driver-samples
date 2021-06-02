@@ -26,21 +26,81 @@ Environment:
 #pragma alloc_text(PAGE, PdoDevD0Entry)
 #pragma alloc_text(PAGE, PdoDevPrepareHardware)
 #pragma alloc_text(PAGE, PdoDevReleaseHardware)
-#endif
+#pragma alloc_text(PAGE, PdoResetHandler)
+#ifdef DYNAMIC_ENUM
+#pragma alloc_text(PAGE, PdoCreateDynamic)
+#pragma alloc_text(PAGE, PdoResetHandlerDynamic)
+#endif // DYNAMIC_ENUM
+#endif // ALLOC_PRAGMA
 
 #define MAX_ID_LEN 80
 
-
-
 #ifdef DYNAMIC_ENUM
 
+_Use_decl_annotations_
+NTSTATUS
+PdoResetHandlerDynamic(
+    PVOID               _InterfaceContext,
+    DEVICE_RESET_TYPE   _ResetType,
+    ULONG               _Flags,
+    PVOID               _ResetParameters
+    )
+/*++
 
+Routine Description:
+
+    This is the reset handler invoked by a driver that queries our GUID_DEVICE_RESET_INTERFACE_STANDARD interface.
+    This is the version used if PDOs are created using WDF dynamic enumeration.
+
+Arguments:
+
+    _InterfaceContext - This is expected to be a PPDO_EXTENSION.
+
+    _ResetType - This is expected to be PlatformLevelDeviceReset because that is all we support.
+
+    _Flags - Unused, because no flags are defined currently.
+
+    _ResetParameters - Unused, because it is only used for FunctionLevelDeviceReset.
+
+Return Value:
+
+    NTSTATUS code.
+
+--*/
+{
+    PPDO_EXTENSION PdoExtension = (PPDO_EXTENSION) _InterfaceContext;
+
+    PAGED_CODE();
+
+    UNREFERENCED_PARAMETER(_Flags);
+    UNREFERENCED_PARAMETER(_ResetParameters);
+
+    if (_ResetType != PlatformLevelDeviceReset) {
+        return STATUS_NOT_SUPPORTED;
+    }
+
+    DeviceDoPLDR(PdoExtension->FdoExtension->WdfDevice);
+
+    //
+    // The bus driver is expected to cause the device to be surprise removed as part of PLDR. For
+    // many hardware buses, this happens naturally, but for a software bus like us, we need to do it
+    // ourselves. WDF dynamic enumeration makes this convenient because it already supports
+    // GUID_REENUMERATE_SELF_INTERFACE_STANDARD, so we can simply call WdfDeviceSetFailed to
+    // re-enumerate the device.
+    //
+
+    WdfDeviceSetFailed((WDFDEVICE) WdfObjectContextGetObject(PdoExtension), WdfDeviceFailedAttemptRestart);
+
+    return STATUS_SUCCESS;
+}
+
+_Use_decl_annotations_
 NTSTATUS
 PdoCreateDynamic(
-    _In_ WDFDEVICE       _Device,
-    _In_ PWDFDEVICE_INIT _DeviceInit,
-    _In_ PWCHAR          _HardwareIds,
-    _In_ ULONG           _SerialNo
+    WDFDEVICE       _Device,
+    PWDFDEVICE_INIT _DeviceInit,
+    PWCHAR          _HardwareIds,
+    ULONG           _SerialNo
     )
 /*++
 
@@ -56,20 +116,20 @@ Return Value:
 
 --*/
 {
-    NTSTATUS                    Status;
-    PPDO_EXTENSION              PdoExtension = NULL;
-    WDFDEVICE                   ChildDevice = NULL;
-    WDF_OBJECT_ATTRIBUTES       pdoAttributes;
-    WDF_DEVICE_PNP_CAPABILITIES pnpCaps;
-    WDF_DEVICE_POWER_CAPABILITIES powerCaps;
-    DECLARE_CONST_UNICODE_STRING(compatId, BT_PDO_COMPATIBLE_IDS);
-    DECLARE_CONST_UNICODE_STRING(deviceLocation, L"Serial HCI Bus - Bluetooth Function");
-    DECLARE_UNICODE_STRING_SIZE(buffer, MAX_ID_LEN);
-    DECLARE_UNICODE_STRING_SIZE(deviceId, MAX_ID_LEN);
-
-    WDF_IO_QUEUE_CONFIG         QueueConfig;
-    WDFQUEUE                    Queue;      
-    
+    NTSTATUS                        Status;
+    PPDO_EXTENSION                  PdoExtension = NULL;
+    WDFDEVICE                       ChildDevice = NULL;
+    WDF_OBJECT_ATTRIBUTES           PdoAttributes;
+    WDF_DEVICE_PNP_CAPABILITIES     PnpCaps;
+    WDF_DEVICE_POWER_CAPABILITIES   PowerCaps;
+    DECLARE_CONST_UNICODE_STRING(   CompatId, BT_PDO_COMPATIBLE_IDS);
+    DECLARE_CONST_UNICODE_STRING(   DeviceLocation, L"Serial HCI Bus - Bluetooth Function");
+    DECLARE_UNICODE_STRING_SIZE(    Buffer, MAX_ID_LEN);
+    DECLARE_UNICODE_STRING_SIZE(    DeviceId, MAX_ID_LEN);
+    WDF_IO_QUEUE_CONFIG             QueueConfig;
+    WDFQUEUE                        Queue;
+    WDF_QUERY_INTERFACE_CONFIG      DeviceResetInterfaceConfig;
+    DEVICE_RESET_INTERFACE_STANDARD ResetInterface;
 
     PAGED_CODE();
 
@@ -85,9 +145,9 @@ Return Value:
     //
     // Provide DeviceID, HardwareIDs, CompatibleIDs and InstanceId
     //
-    RtlInitUnicodeString(&deviceId, _HardwareIds);
+    RtlInitUnicodeString(&DeviceId, _HardwareIds);
 
-    Status = WdfPdoInitAssignDeviceID(_DeviceInit, &deviceId);
+    Status = WdfPdoInitAssignDeviceID(_DeviceInit, &DeviceId);
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
@@ -95,22 +155,22 @@ Return Value:
     //
     // NOTE: same string  is used to initialize hardware id too
     //
-    Status = WdfPdoInitAddHardwareID(_DeviceInit, &deviceId);
+    Status = WdfPdoInitAddHardwareID(_DeviceInit, &DeviceId);
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
 
-    Status = WdfPdoInitAddCompatibleID(_DeviceInit, &compatId );
+    Status = WdfPdoInitAddCompatibleID(_DeviceInit, &CompatId );
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
 
-    Status =  RtlUnicodeStringPrintf(&buffer, L"%02d", _SerialNo);
+    Status =  RtlUnicodeStringPrintf(&Buffer, L"%02d", _SerialNo);
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
 
-    Status = WdfPdoInitAssignInstanceID(_DeviceInit, &buffer);
+    Status = WdfPdoInitAssignInstanceID(_DeviceInit, &Buffer);
     if (!NT_SUCCESS(Status)) {
         return Status;
     }
@@ -124,7 +184,7 @@ Return Value:
     // coinstallers to display in the device manager. FriendlyName takes
     // precedence over the DeviceDesc from the INF file.
     //
-    Status = RtlUnicodeStringPrintf( &buffer,
+    Status = RtlUnicodeStringPrintf( &Buffer,
                                      L"SerialHciBus_%02d",
                                      _SerialNo );
     if (!NT_SUCCESS(Status)) {
@@ -140,8 +200,8 @@ Return Value:
     // WdfPdoInitSetDefaultLocale.
     //
     Status = WdfPdoInitAddDeviceText(_DeviceInit,
-                                    &buffer,
-                                    &deviceLocation,
+                                    &Buffer,
+                                    &DeviceLocation,
                                      0x409 );
     if (!NT_SUCCESS(Status)) {
         return Status;
@@ -153,7 +213,7 @@ Return Value:
     // Initialize the attributes to specify the size of PDO device extension.
     // All the state information private to the PDO will be tracked here.
     //
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&pdoAttributes, PDO_EXTENSION);
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&PdoAttributes, PDO_EXTENSION);
 
     //
     // Allow to forward requests to its FDO of this bus driver by using 
@@ -166,7 +226,7 @@ Return Value:
     // to this call, framework creates a WDM deviceobject.
     //
     Status = WdfDeviceCreate(&_DeviceInit, 
-                             &pdoAttributes, 
+                             &PdoAttributes, 
                              &ChildDevice);
     
     if (!NT_SUCCESS(Status)) {
@@ -191,7 +251,7 @@ Return Value:
 
     PdoExtension->SerialNo = _SerialNo;
 
-    
+    PdoExtension->ResetRecoveryType = SUPPORTED_RESET_RECOVERY_TYPE;
 
     //
     // Set some properties for the child device.
@@ -211,31 +271,31 @@ Return Value:
     //
     PnpCaps.SurpriseRemovalOK = WdfTrue;  
     
-    pnpCaps.Address  = _SerialNo;
-    pnpCaps.UINumber = _SerialNo;
+    PnpCaps.Address  = _SerialNo;
+    PnpCaps.UINumber = _SerialNo;
 
-    WdfDeviceSetPnpCapabilities(ChildDevice, &pnpCaps);
+    WdfDeviceSetPnpCapabilities(ChildDevice, &PnpCaps);
 
-    WDF_DEVICE_POWER_CAPABILITIES_INIT(&powerCaps);
+    WDF_DEVICE_POWER_CAPABILITIES_INIT(&PowerCaps);
 
-    powerCaps.DeviceD1 = WdfFalse;
-    powerCaps.DeviceD2 = WdfTrue;
+    PowerCaps.DeviceD1 = WdfFalse;
+    PowerCaps.DeviceD2 = WdfTrue;
 
-    powerCaps.WakeFromD0 = WdfFalse;    
-    powerCaps.WakeFromD1 = WdfFalse;
-    powerCaps.WakeFromD2 = WdfTrue;    
-    powerCaps.WakeFromD3 = WdfTrue;    
+    PowerCaps.WakeFromD0 = WdfFalse;    
+    PowerCaps.WakeFromD1 = WdfFalse;
+    PowerCaps.WakeFromD2 = WdfTrue;    
+    PowerCaps.WakeFromD3 = WdfTrue;    
     
-    powerCaps.DeviceWake = PowerDeviceD2;
+    PowerCaps.DeviceWake = PowerDeviceD2;
 
-    powerCaps.DeviceState[PowerSystemWorking]   = PowerDeviceD0;
-    powerCaps.DeviceState[PowerSystemSleeping1] = PowerDeviceD2;
-    powerCaps.DeviceState[PowerSystemSleeping2] = PowerDeviceD2;
-    powerCaps.DeviceState[PowerSystemSleeping3] = PowerDeviceD2;
-    powerCaps.DeviceState[PowerSystemHibernate] = PowerDeviceD3;
-    powerCaps.DeviceState[PowerSystemShutdown]  = PowerDeviceD3;
+    PowerCaps.DeviceState[PowerSystemWorking]   = PowerDeviceD0;
+    PowerCaps.DeviceState[PowerSystemSleeping1] = PowerDeviceD2;
+    PowerCaps.DeviceState[PowerSystemSleeping2] = PowerDeviceD2;
+    PowerCaps.DeviceState[PowerSystemSleeping3] = PowerDeviceD2;
+    PowerCaps.DeviceState[PowerSystemHibernate] = PowerDeviceD3;
+    PowerCaps.DeviceState[PowerSystemShutdown]  = PowerDeviceD3;
 
-    WdfDeviceSetPowerCapabilities(ChildDevice, &powerCaps);
+    WdfDeviceSetPowerCapabilities(ChildDevice, &PowerCaps);
 
 
     //
@@ -263,7 +323,52 @@ Return Value:
     if (!NT_SUCCESS(Status)) {
         goto Cleanup;
     }       
-   
+
+    if (PdoExtension->ResetRecoveryType == ResetRecoveryTypeParentResetInterface) {
+
+        //
+        // Instruct WDF to simply forward a request for the reset interface to the parent stack, so
+        // that it reaches the ACPI bus/filter driver. That way when the reset interface is invoked,
+        // it is the parent stack that gets reset and re-enumerated.
+        //
+
+        WDF_QUERY_INTERFACE_CONFIG_INIT(&DeviceResetInterfaceConfig, NULL, &GUID_DEVICE_RESET_INTERFACE_STANDARD, NULL);
+        DeviceResetInterfaceConfig.SendQueryToParentStack = TRUE;
+
+        Status = WdfDeviceAddQueryInterface(ChildDevice, &DeviceResetInterfaceConfig);
+        if (!NT_SUCCESS(Status)) {
+            DoTrace(LEVEL_ERROR, TFLAG_PNP, ("WdfDeviceAddQueryInterface failed, %!STATUS!", Status));
+            goto Cleanup;
+        }
+
+    } else if (PdoExtension->ResetRecoveryType == ResetRecoveryTypeDriverImplemented) {
+
+        RtlZeroMemory(&ResetInterface, sizeof(ResetInterface));
+        ResetInterface.Size = sizeof(ResetInterface);
+        ResetInterface.Version = DEVICE_RESET_INTERFACE_VERSION;
+        ResetInterface.Context = PdoExtension;
+
+        //
+        // Since this interface is expected to be used only by drivers in the same stack, reference
+        // counting is not required. If there is an expectation that drivers may query for the
+        // interface using a remote I/O target to this stack (unusual for this interface), reference
+        // counting must be implemented.
+        //
+        ResetInterface.InterfaceReference = WdfDeviceInterfaceReferenceNoOp;
+        ResetInterface.InterfaceDereference = WdfDeviceInterfaceDereferenceNoOp;
+
+        ResetInterface.SupportedResetTypes = (1 << PlatformLevelDeviceReset);
+        ResetInterface.DeviceReset = PdoResetHandlerDynamic;
+
+        WDF_QUERY_INTERFACE_CONFIG_INIT(&DeviceResetInterfaceConfig, (PINTERFACE) &ResetInterface, &GUID_DEVICE_RESET_INTERFACE_STANDARD, NULL);
+        Status = WdfDeviceAddQueryInterface(ChildDevice, &DeviceResetInterfaceConfig);
+        if (!NT_SUCCESS(Status))
+        {
+            DoTrace(LEVEL_ERROR, TFLAG_PNP, ("WdfDeviceAddQueryInterface failed, %!STATUS!", Status));
+            goto Cleanup;
+        }
+    }
+
 Cleanup:
 
 
@@ -291,7 +396,62 @@ Cleanup:
 
 #endif
 
+_Use_decl_annotations_
+NTSTATUS
+PdoResetHandler(
+    PVOID               _InterfaceContext,
+    DEVICE_RESET_TYPE   _ResetType,
+    ULONG               _Flags,
+    PVOID               _ResetParameters
+)
+/*++
 
+Routine Description:
+
+    This is the reset handler invoked by a driver that queries our GUID_DEVICE_RESET_INTERFACE_STANDARD interface.
+    This is the version used if PDOs are created using WDF static enumeration.
+
+Arguments:
+
+    _InterfaceContext - This is expected to be a PPDO_EXTENSION.
+
+    _ResetType - This is expected to be PlatformLevelDeviceReset because that is all we support.
+
+    _Flags - Unused, because no flags are defined currently.
+
+    _ResetParameters - Unused, because it is only used for FunctionLevelDeviceReset.
+
+Return Value:
+
+    NTSTATUS code.
+
+--*/
+{
+    PPDO_EXTENSION  PdoExtension = (PPDO_EXTENSION) _InterfaceContext;
+    WDFDEVICE       Fdo = PdoExtension->FdoExtension->WdfDevice;
+
+    PAGED_CODE();
+
+    UNREFERENCED_PARAMETER(_Flags);
+    UNREFERENCED_PARAMETER(_ResetParameters);
+
+    if (_ResetType != PlatformLevelDeviceReset) {
+        return STATUS_NOT_SUPPORTED;
+    }
+
+    DeviceDoPLDR(Fdo);
+
+    //
+    // The bus driver is expected to cause the device to be surprise removed as part of PLDR. For
+    // many hardware buses, this happens naturally, but for a software bus like us, we need to do it
+    // ourselves.
+    //
+
+    FdoRemoveOneChildDevice(Fdo, BLUETOOTH_FUNC_IDS);
+    FdoCreateOneChildDevice(Fdo, BT_PDO_HARDWARE_IDS, BLUETOOTH_FUNC_IDS);
+
+    return STATUS_SUCCESS;
+}
 
 NTSTATUS
 PdoCreate(
@@ -319,21 +479,23 @@ Return Value:
 
 --*/
 {
-    NTSTATUS                    Status;
-    PWDFDEVICE_INIT             DeviceInit = NULL;
-    WDF_PNPPOWER_EVENT_CALLBACKS PnpPowerCallbacks;   
-    PPDO_EXTENSION              PdoExtension = NULL;
-    WDFDEVICE                   ChildDevice = NULL;
-    WDF_OBJECT_ATTRIBUTES       Attributes;
-    WDF_DEVICE_PNP_CAPABILITIES PnpCaps;
-    WDF_DEVICE_POWER_CAPABILITIES PowerCaps;
-    UNICODE_STRING              StaticString = {0};
-    UNICODE_STRING DeviceId;
-    DECLARE_UNICODE_STRING_SIZE(Buffer, MAX_ID_LEN);
-    UNICODE_STRING ContainerID = {0};
-    WDF_PDO_EVENT_CALLBACKS     Callbacks;
-    WDF_IO_QUEUE_CONFIG         QueueConfig;
-    WDFQUEUE                    Queue;      
+    NTSTATUS                            Status;
+    PWDFDEVICE_INIT                     DeviceInit = NULL;
+    WDF_PNPPOWER_EVENT_CALLBACKS        PnpPowerCallbacks;
+    PPDO_EXTENSION                      PdoExtension = NULL;
+    WDFDEVICE                           ChildDevice = NULL;
+    WDF_OBJECT_ATTRIBUTES               Attributes;
+    WDF_DEVICE_PNP_CAPABILITIES         PnpCaps;
+    WDF_DEVICE_POWER_CAPABILITIES       PowerCaps;
+    UNICODE_STRING                      StaticString = {0};
+    UNICODE_STRING                      DeviceId;
+    DECLARE_UNICODE_STRING_SIZE(        Buffer, MAX_ID_LEN);
+    UNICODE_STRING ContainerID =        {0};
+    WDF_PDO_EVENT_CALLBACKS             Callbacks;
+    WDF_IO_QUEUE_CONFIG                 QueueConfig;
+    WDFQUEUE                            Queue;
+    WDF_QUERY_INTERFACE_CONFIG          DeviceResetInterfaceConfig;
+    DEVICE_RESET_INTERFACE_STANDARD     ResetInterface;
 
     DoTrace(LEVEL_INFO, TFLAG_PNP, (" +PdoCreate: HWID(%S), compatID(%S)", _HardwareIds, BT_PDO_COMPATIBLE_IDS));
 
@@ -524,6 +686,7 @@ Return Value:
 
     PdoExtension->SerialNo = _SerialNo;
 
+    PdoExtension->ResetRecoveryType = SUPPORTED_RESET_RECOVERY_TYPE;
 
     //
     // Set PnP and Power capabilities for this child device.
@@ -593,7 +756,52 @@ Return Value:
     DoTrace(LEVEL_INFO, TFLAG_PNP, (" WdfIoQueueCreate (%!STATUS!)", Status));    
     if (!NT_SUCCESS(Status)) {
         goto Cleanup;
-    }       
+    }
+
+    if (PdoExtension->ResetRecoveryType == ResetRecoveryTypeParentResetInterface) {
+
+        //
+        // Instruct WDF to simply forward a request for the reset interface to the parent stack, so
+        // that it reaches the ACPI bus/filter driver. That way when the reset interface is invoked,
+        // it is the parent stack that gets reset and re-enumerated.
+        //
+
+        WDF_QUERY_INTERFACE_CONFIG_INIT(&DeviceResetInterfaceConfig, NULL, &GUID_DEVICE_RESET_INTERFACE_STANDARD, NULL);
+        DeviceResetInterfaceConfig.SendQueryToParentStack = TRUE;
+
+        Status = WdfDeviceAddQueryInterface(ChildDevice, &DeviceResetInterfaceConfig);
+        if (!NT_SUCCESS(Status)) {
+            DoTrace(LEVEL_ERROR, TFLAG_PNP, ("WdfDeviceAddQueryInterface failed, %!STATUS!", Status));
+            goto Cleanup;
+        }
+
+    } else if (PdoExtension->ResetRecoveryType == ResetRecoveryTypeDriverImplemented) {
+
+        RtlZeroMemory(&ResetInterface, sizeof(ResetInterface));
+        ResetInterface.Size = sizeof(ResetInterface);
+        ResetInterface.Version = DEVICE_RESET_INTERFACE_VERSION;
+        ResetInterface.Context = PdoExtension;
+
+        //
+        // Since this interface is expected to be used only by drivers in the same stack, reference
+        // counting is not required. If there is an expectation that drivers may query for the
+        // interface using a remote I/O target to this stack (unusual for this interface), reference
+        // counting must be implemented.
+        //
+        ResetInterface.InterfaceReference = WdfDeviceInterfaceReferenceNoOp;
+        ResetInterface.InterfaceDereference = WdfDeviceInterfaceDereferenceNoOp;
+
+        ResetInterface.SupportedResetTypes = (1 << PlatformLevelDeviceReset);
+        ResetInterface.DeviceReset = PdoResetHandler;
+
+        WDF_QUERY_INTERFACE_CONFIG_INIT(&DeviceResetInterfaceConfig, (PINTERFACE) &ResetInterface, &GUID_DEVICE_RESET_INTERFACE_STANDARD, NULL);
+        Status = WdfDeviceAddQueryInterface(ChildDevice, &DeviceResetInterfaceConfig);
+        if (!NT_SUCCESS(Status))
+        {
+            DoTrace(LEVEL_ERROR, TFLAG_PNP, ("WdfDeviceAddQueryInterface failed, %!STATUS!", Status));
+            goto Cleanup;
+        }
+    }
 
     //
     // Add this device to the FDO's collection of children.

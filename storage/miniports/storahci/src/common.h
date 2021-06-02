@@ -44,6 +44,7 @@ Revision History:
 
 #define IDE_FEATURE_INVALID                     0xFF
 
+#define SCSI_VENDOR_ID_LENGTH                   (8)
 
 //
 // ATA function code
@@ -84,7 +85,6 @@ Revision History:
 #define ATA_FLAGS_ACTIVE_REFERENCE      (1 << 10)   // indicates Active Reference needs to be acquired before processing the Srb and released after processing the Srb
 #define ATA_FLAGS_SENSEDATA_SET         (1 << 11)   // indicates sense data has been set to the Srb
 
-
 //
 // helper macros
 //
@@ -114,8 +114,22 @@ typedef enum _AHCI_ETW_EVENT_IDS {
     AhciEtwEventUnitHybridEvict = 11,
     AhciEtwEventUnitHybridSetDirtyThreshold = 12,
     AhciEtwEventUnitHybridWriteThrough = 13,
+    AhciEtwEventUnitFirmwareIoctl = 14,
+    AhciEtwEventUnitFirmwareInfo = 15,
+    AhciEtwEventUnitFirmwareDownload = 16,
+    AhciEtwEventUnitFirmwareDownloadComplete = 17,
+    AhciEtwEventUnitFirmwareActivate = 18,
+    AhciEtwEventUnitFirmwareActivateComplete = 19,
+    AhciEtwEventUnitGetPhysicalElementStatusComplete = 20,
+    AhciEtwEventUnitRemoveElementAndTruncateComplete = 21,
+    AhciEtwEventUnitGetInternalStatusDataHeaderComplete = 22,
+    AhciEtwEventUnitGetInternalStatusDataComplete = 23,
+    AhciEtwEventBuildIO = 24,
+    AhciEtwEventStartIO = 25,
+    AhciEtwEventHandleInterrupt = 26,
+    AhciEtwEventPortReset = 27,
+    AhciEtwEventIOCompletion = 28
 } AHCI_ETW_EVENT_IDS, *PAHCI_ETW_EVENT_IDS;
-
 
 //
 // task file register contents
@@ -312,6 +326,14 @@ typedef struct _HYBRID_EVICT_CONTEXT {
 
 } HYBRID_EVICT_CONTEXT, *PHYBRID_EVICT_CONTEXT;
 
+__inline
+BOOLEAN
+IsUnknownDevice(
+    _In_ PATA_DEVICE_PARAMETERS DeviceParameters
+    )
+{
+    return (DeviceParameters->AtaDeviceType == DeviceUnknown);
+}
 
 __inline
 BOOLEAN
@@ -601,7 +623,8 @@ __inline
 AhciAllocateDmaBuffer (
     _In_ PVOID   AdapterExtension,
     _In_ ULONG   BufferLength,
-    _Post_writable_byte_size_(BufferLength) PVOID* Buffer
+    _Post_writable_byte_size_(BufferLength) PVOID* Buffer,
+    _Out_ PSTOR_PHYSICAL_ADDRESS PhysicalAddress
     )
 {
     ULONG            status;
@@ -613,15 +636,16 @@ AhciAllocateDmaBuffer (
     maxPhysicalAddress.QuadPart = 0x7FFFFFFF;   // (2GB - 1)
     boundaryPhysicalAddress.QuadPart = 0;
 
+    status = StorPortAllocateDmaMemory(AdapterExtension,
+                                       BufferLength,
+                                       minPhysicalAddress,
+                                       maxPhysicalAddress,
+                                       boundaryPhysicalAddress,
+                                       MmCached,
+                                       MM_ANY_NODE_OK,
+                                       Buffer,
+                                       PhysicalAddress);
 
-    status = StorPortAllocateContiguousMemorySpecifyCacheNode(AdapterExtension,
-                                                              BufferLength,
-                                                              minPhysicalAddress,
-                                                              maxPhysicalAddress,
-                                                              boundaryPhysicalAddress,
-                                                              MmCached,
-                                                              MM_ANY_NODE_OK,
-                                                              Buffer);
     return status;
 }
 
@@ -631,14 +655,18 @@ __inline
 AhciFreeDmaBuffer (
     _In_ PVOID      AdapterExtension,
     _In_ ULONG_PTR  BufferLength,
-    _In_reads_bytes_(BufferLength) _Post_invalid_ PVOID Buffer
+    _In_reads_bytes_(BufferLength) _Post_invalid_ PVOID Buffer,
+    _In_opt_ STOR_PHYSICAL_ADDRESS PhysicalAddress
     )
 {
-    ULONG   status;
-    status = StorPortFreeContiguousMemorySpecifyCache(AdapterExtension,
-                                                      Buffer,
-                                                      BufferLength,
-                                                      MmCached);
+    ULONG status;
+
+    status = StorPortFreeDmaMemory(AdapterExtension,
+                                   Buffer,
+                                   BufferLength,
+                                   MmCached,
+                                   PhysicalAddress);
+
     return status;
 }
 
@@ -862,6 +890,33 @@ AtaReportLunsCommand(
     _In_ PVOID Context
     );
 
+ULONG
+AtaGetPhysicalElementStatusRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    );
+
+ULONG
+AtaRemoveElementAndTruncateRequest (
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    );
+
+ULONG
+AtaGetDeviceCurrentInternalStatusData(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    );
+
+ULONG
+AtaGetDeviceCurrentInternalStatusDataHeader(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb,
+    _In_ PCDB                    Cdb
+    );
 
 UCHAR
 AtaMapError(
@@ -965,6 +1020,53 @@ FirmwareIoctlProcess(
     );
 
 
+//
+// AHCI Telemetry event related.
+//
+#define AHCI_TELEMETRY_EVENT_VERSION    0x1
+#define AHCI_TELEMETRY_DRIVER_VERSION   0x1
+
+#define AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING 0x1
+
+typedef enum _AHCI_TELEMETRY_EVENT_ID {
+    AhciTelemetryEventIdGeneral = 0,
+    AhciTelemetryEventIdPortReset = 1,
+    AhciTelemetryEventIdPortRunningStartFail = 2,
+    AhciTelemetryEventIdPortErrorRecovery = 3,
+    AhciTelemetryEventIdNonqueuedErrorRecovery = 4,
+    AhciTelemetryEventIdNCQErrorRecovery = 5,
+    AhciTelemetryEventIdNCQErrorRecoveryComplete = 6,
+    AhciTelemetryEventIdResetBus = 7,
+    AhciTelemetryEventIdResetDeviceRequest = 8,
+    AhciTelemetryEventIdSurpriseRemove = 9,
+    AhciTelemetryEventIdLpmAdaptiveSetting = 10,
+    AhciTelemetryEventIdLpmSettingsModes = 11,
+    AhciTelemetryEventIdPortStartSuccess = 12,
+    AhciTelemetryEventIdReservedSlotStuck = 13,
+    AhciTelemetryEventIdMax = 256
+} AHCI_TELEMETRY_EVENT_ID, *PAHCI_TELEMETRY_EVENT_ID;
+
+//
+// AHCI mark device failure related.
+//
+#define AHCI_BUS_CHANGE_WARNING_THROTTLE_MASK           (0x1 << 0)
+#define AHCI_BUS_CHANGE_COUNT_WARNING_THRESHOLD         (20)
+
+#define AHCI_NCQ_ERROR_WARNING_THROTTLE_MASK            (0x1 << 1)
+#define AHCI_NCQ_ERROR_COUNT_WARNING_THRESHOLD          (100)
+
+#define AHCI_NON_QUEUED_ERROR_WARNING_THROTTLE_MASK     (0x1 << 2)
+#define AHCI_NON_QUEUED_ERROR_COUNT_WARNING_THRESHOLD   (100)
+
+#define AHCI_DEVICE_STUCK_WARNING_THROTTLE_MASK         (0x1 << 3)
+
+typedef enum _AHCI_DEVICE_FAILURE_REASON {
+    AhciDeviceFailureUnspecific = 0,
+    AhciDeviceFailureTooManyBusChange = 1,
+    AhciDeviceFailureTooManyNCQError = 2,
+    AhciDeviceFailureTooManyNonQueuedError = 3,
+    AhciDeviceFailureDeviceStuck = 4
+} AHCI_DEVICE_FAILURE_REASON, *PAHCI_DEVICE_FAILURE_REASON;
 
 #if _MSC_VER >= 1200
 #pragma warning(pop)
@@ -972,4 +1074,3 @@ FirmwareIoctlProcess(
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-
