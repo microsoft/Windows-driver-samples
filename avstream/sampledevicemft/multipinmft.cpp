@@ -136,6 +136,12 @@ STDMETHODIMP CMultipinMft::QueryInterface(
         *ppv = static_cast< IMFGetService* >(this);
     }
 #endif
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    else if (iid == __uuidof(IMFSampleAllocatorControl))
+    {
+        *ppv = static_cast<IMFSampleAllocatorControl*>(this);
+    }
+#endif
     else
     {
         hr = E_NOINTERFACE;
