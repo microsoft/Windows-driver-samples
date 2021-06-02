@@ -78,7 +78,9 @@ Use the PowerFxApp.exe application to send I/O requests to the driver. Running t
 
 The driver controls a device that has more than one component. It needs to access one of those components for processing each I/O request that it receives. The specific component that it needs to access depends on the I/O request that it receives.
 
-In order to support this, the driver creates one top-level, power-managed queue to receive all its requests. It also creates one secondary, power-managed queue for each of its components. These secondary queues are called component queues.
+In order to support this, the driver creates one top-level, power-managed queue to receive all its requests. It also creates one secondary, power-managed queue for each of its components. These secondary queues are called component queues. This is shown in the diagram below.
+
+![Overview](WdfMultiComp_overview.svg)
 
 When the driver's dispatch routine for the top-level queue is invoked, it examines the request to determine which component it needs to access in order to process the request. Then, it forwards the request to the component queue for the component that it needs to access for that request. When the driver's dispatch routine for the component queue is invoked, it accesses the component hardware to process the request.
 

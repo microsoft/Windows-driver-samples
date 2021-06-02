@@ -74,7 +74,11 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
-  <ItemGroup Label="WrappedTaskItems" />
+  <ItemGroup Label="WrappedTaskItems">
+    <Ctrpp Include="kcs.man">
+      <FileType>Manifest</FileType>
+    </Ctrpp>
+  </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>kcs</TargetName>
   </PropertyGroup>
@@ -128,31 +132,65 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <Ctrpp>
+      <AddPrefix>Kcs</AddPrefix>
+      <HeaderFileNameForProvider>$(IntDir)%(Filename)Counters.h</HeaderFileNameForProvider>
+      <GenerateResourceSourceFile>true</GenerateResourceSourceFile>
+      <HeaderFileNameForCounter>$(IntDir)%(Filename)_counterIds.h</HeaderFileNameForCounter>
+      <ResourceFileName>$(IntDir)%(Filename)Counters.rc</ResourceFileName>
+    </Ctrpp>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <Ctrpp>
+      <AddPrefix>Kcs</AddPrefix>
+      <HeaderFileNameForProvider>$(IntDir)%(Filename)Counters.h</HeaderFileNameForProvider>
+      <GenerateResourceSourceFile>true</GenerateResourceSourceFile>
+      <HeaderFileNameForCounter>$(IntDir)%(Filename)_counterIds.h</HeaderFileNameForCounter>
+      <ResourceFileName>$(IntDir)%(Filename)Counters.rc</ResourceFileName>
+    </Ctrpp>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <Ctrpp>
+      <AddPrefix>Kcs</AddPrefix>
+      <HeaderFileNameForProvider>$(IntDir)%(Filename)Counters.h</HeaderFileNameForProvider>
+      <GenerateResourceSourceFile>true</GenerateResourceSourceFile>
+      <HeaderFileNameForCounter>$(IntDir)%(Filename)_counterIds.h</HeaderFileNameForCounter>
+      <ResourceFileName>$(IntDir)%(Filename)Counters.rc</ResourceFileName>
+    </Ctrpp>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <Ctrpp>
+      <AddPrefix>Kcs</AddPrefix>
+      <HeaderFileNameForProvider>$(IntDir)%(Filename)Counters.h</HeaderFileNameForProvider>
+      <GenerateResourceSourceFile>true</GenerateResourceSourceFile>
+      <HeaderFileNameForCounter>$(IntDir)%(Filename)_counterIds.h</HeaderFileNameForCounter>
+      <ResourceFileName>$(IntDir)%(Filename)Counters.rc</ResourceFileName>
+    </Ctrpp>
   </ItemDefinitionGroup>
-  <Target Name="Run Ctrpp" BeforeTargets="ClCompile">
-    <PropertyGroup>
-      <CTRPP_ODIR>$([System.IO.Path]::GetDirectoryName($(ProjectDir)\$(IntDir)))</CTRPP_ODIR>
-    </PropertyGroup>
-    <Exec Command="&quot;ctrpp.exe&quot; kcs.man  -prefix Kcs -o &quot;$(CTRPP_ODIR)\KcsCounters.h&quot; -ch &quot;$(CTRPP_ODIR)\KcsCounters_counters.h&quot; -rc &quot;$(CTRPP_ODIR)\KcsCounters.rc&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
-  </Target>
   <ItemGroup>
     <ClCompile Include="Kcs.c" />
     <ResourceCompile Include="Kcs.rc" />

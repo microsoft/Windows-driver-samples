@@ -4,31 +4,24 @@
 
 [Version]
 Signature="$Windows NT$"
-Class=Sample ;
-ClassGuid={60B92AD1-5773-4FF7-82E3-9F83198325D6} ;
-Provider=Standard,NT$ARCH$
+Class=HidMsr
+ClassGuid={2A9FE532-0CDC-44F9-9827-76192F2CA2FB}
+Provider=%ManufacturerName%
 CatalogFile=SampleMagneticStripeReaderDrv.cat
 DriverVer=06/25/2015,14.29.18.671
-
-[Manufacturer]
-%ManufacturerName%=Standard,NT$ARCH$
-
-[Standard.NT$ARCH$]
-%DeviceName%=MyDevice_Install, Root\SampleMagneticStripeReaderDrv ;
-
-
-[ClassInstall32]
-AddReg=SampleClass_RegistryAdd
-
-[SampleClass_RegistryAdd]
-HKR,,,,%ClassName%
-HKR,,Icon,,"-10"
+PnpLockdown=1
 
 [SourceDisksFiles]
 SampleMagneticStripeReaderDrv.dll=1
 
 [SourceDisksNames]
 1 = %DiskName%
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%DeviceName%=MyDevice_Install, Root\SampleMagneticStripeReaderDrv ;
 
 ; =================== UMDF Device ==================================
 
@@ -71,8 +64,7 @@ SampleMagneticStripeReaderDrv.dll
 ; =================== Generic ==================================
 
 [Strings]
-ManufacturerName="" ;
-ClassName="Samples" ;
+ManufacturerName="TEST" ; TODO - Update name
 DiskName = "SampleMagneticStripeReaderDrv Installation Disk"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
 DeviceName="SampleMagneticStripeReaderDrv Device"
