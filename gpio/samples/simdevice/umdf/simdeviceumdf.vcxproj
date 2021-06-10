@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{213515FD-98F8-4889-96B5-FA898B4B4936}</ProjectGuid>
+    <ProjectGuid>{22BE34F1-0E41-4A26-B709-6CAB493F6CC7}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
@@ -164,6 +164,9 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <Link>
@@ -200,6 +203,9 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <Link>
@@ -236,6 +242,9 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
@@ -254,6 +263,9 @@
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\inc</AdditionalIncludeDirectories>
     </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\simdevice.c" />
