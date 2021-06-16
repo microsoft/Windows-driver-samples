@@ -327,4 +327,7 @@ FreePendedPacket(
    _Inout_ __drv_freesMem(Mem) TL_INSPECT_PENDED_PACKET* packet
    );
 
+BOOLEAN
+IsTrafficPermitted(void);
+
 #endif // _TL_INSPECT_UTILS_H_

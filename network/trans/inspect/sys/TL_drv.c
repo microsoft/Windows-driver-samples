@@ -8,11 +8,11 @@ Abstract:
 
    This sample callout driver intercepts all transport layer traffic (e.g. 
    TCP, UDP, and non-error ICMP) sent to or receive from a (configurable) 
-   remote peer and queue them to a threaded DPC for out-of-band processing. 
+   remote peer and queue them to a worker thread for out-of-band processing. 
    The sample performs inspection of inbound and outbound connections as 
    well as all packets belong to those connections.  In addition the sample 
    demonstrates special considerations required to be compatible with Windows 
-   Vista and Windows Server 2008ï¿½s IpSec implementation.
+   Vista and Windows Server 2008’s IpSec implementation.
 
    Inspection parameters are configurable via the following registry 
    values --
@@ -21,7 +21,7 @@ Abstract:
       
     o  BlockTraffic (REG_DWORD) : 0 (permit, default); 1 (block)
     o  RemoteAddressToInspect (REG_SZ) : literal IPv4/IPv6 string 
-                                                (e.g. ï¿½10.0.0.1ï¿½)
+                                                (e.g. “10.0.0.1”)
    The sample is IP version agnostic. It performs inspection for 
    both IPv4 and IPv6 traffic.
 
@@ -63,7 +63,8 @@ TRACELOGGING_DEFINE_PROVIDER(
 // Configurable parameters (addresses and ports are in host order)
 //
 
-BOOLEAN gIsTrafficPermitted;
+BOOLEAN configPermitTraffic = TRUE;
+
 UINT8*   configInspectRemoteAddrV4 = NULL;
 UINT8*   configInspectRemoteAddrV6 = NULL;
 
@@ -74,6 +75,38 @@ IN6_ADDR remoteAddrStorageV6;
 // Callout and sublayer GUIDs
 //
 
+// bb6e405b-19f4-4ff3-b501-1a3dc01aae01
+DEFINE_GUID(
+    TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V4,
+    0xbb6e405b,
+    0x19f4,
+    0x4ff3,
+    0xb5, 0x01, 0x1a, 0x3d, 0xc0, 0x1a, 0xae, 0x01
+);
+// cabf7559-7c60-46c8-9d3b-2155ad5cf83f
+DEFINE_GUID(
+    TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V6,
+    0xcabf7559,
+    0x7c60,
+    0x46c8,
+    0x9d, 0x3b, 0x21, 0x55, 0xad, 0x5c, 0xf8, 0x3f
+);
+// 07248379-248b-4e49-bf07-24d99d52f8d0
+DEFINE_GUID(
+    TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V4,
+    0x07248379,
+    0x248b,
+    0x4e49,
+    0xbf, 0x07, 0x24, 0xd9, 0x9d, 0x52, 0xf8, 0xd0
+);
+// 6d126434-ed67-4285-925c-cb29282e0e06
+DEFINE_GUID(
+    TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V6,
+    0x6d126434,
+    0xed67,
+    0x4285,
+    0x92, 0x5c, 0xcb, 0x29, 0x28, 0x2e, 0x0e, 0x06
+);
 // 76b743d4-1249-4614-a632-6f9c4d08d25a
 DEFINE_GUID(
     TL_INSPECT_ALE_CONNECT_CALLOUT_V4,
@@ -90,6 +123,24 @@ DEFINE_GUID(
     0x5b84,
     0x43c3,
     0x8a, 0xe9, 0xed, 0xdb, 0x5c, 0x0d, 0x23, 0xc2
+);
+
+// 7ec7f7f5-0c55-4121-adc5-5d07d2ac0cef
+DEFINE_GUID(
+    TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V4,
+    0x7ec7f7f5,
+    0x0c55,
+    0x4121,
+    0xad, 0xc5, 0x5d, 0x07, 0xd2, 0xac, 0x0c, 0xef
+);
+
+// b74ac2ed-4e71-4564-9975-787d5168a151
+DEFINE_GUID(
+    TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V6,
+    0xb74ac2ed,
+    0x4e71,
+    0x4564,
+    0x99, 0x75, 0x78, 0x7d, 0x51, 0x68, 0xa1, 0x51
 );
 
 // 2e207682-d95f-4525-b966-969f26587f03
@@ -109,11 +160,22 @@ DEVICE_OBJECT* gWdmDevice;
 WDFKEY gParametersKey;
 
 HANDLE gEngineHandle;
-UINT32 gAleConnectCalloutIdV4;
-UINT32 gAleConnectCalloutIdV6;
+UINT32 gAleConnectCalloutIdV4, gOutboundTlCalloutIdV4;
+UINT32 gAleRecvAcceptCalloutIdV4, gInboundTlCalloutIdV4;
+UINT32 gAleConnectCalloutIdV6, gOutboundTlCalloutIdV6;
+UINT32 gAleRecvAcceptCalloutIdV6, gInboundTlCalloutIdV6;
+
 HANDLE gInjectionHandle;
+
+LIST_ENTRY gConnList;
+KSPIN_LOCK gConnListLock;
+LIST_ENTRY gPacketQueue;
+KSPIN_LOCK gPacketQueueLock;
+
+KEVENT gWorkerEvent;
+
 BOOLEAN gDriverUnloading = FALSE;
-TL_INSPECT_PROCESSOR_QUEUE* gProcessorQueue = NULL;
+void* gThreadObj;
 
 // 
 // Callout driver implementation
@@ -130,9 +192,7 @@ TLInspectLoadConfig(
    NTSTATUS status;
    DECLARE_CONST_UNICODE_STRING(valueName, L"RemoteAddressToInspect");
    DECLARE_UNICODE_STRING_SIZE(value, INET6_ADDRSTRLEN);
-   DECLARE_CONST_UNICODE_STRING(blockTrafficValueName, L"BlockTraffic");
-   ULONG result;
-
+   
    status = WdfRegistryQueryUnicodeString(key, &valueName, NULL, &value);
 
    if (NT_SUCCESS(status))
@@ -168,18 +228,6 @@ TLInspectLoadConfig(
             configInspectRemoteAddrV6 = (UINT8*)(&remoteAddrStorageV6.u.Byte[0]);
          }
       }
-   }
-
-   status = WdfRegistryQueryULong(
-               gParametersKey,
-               &blockTrafficValueName,
-               &result
-               );
-
-   if (NT_SUCCESS(status))
-   {
-      // blockTraffic == 1 means block, 0 means permit
-      gIsTrafficPermitted = !result;
    }
 
    return status;
@@ -261,10 +309,12 @@ TLInspectRegisterALEClassifyCallouts(
 /* ++
 
    This function registers callouts and filters at the following layers 
-   to intercept outbound connect attempts.
+   to intercept inbound or outbound connect attempts.
    
       FWPM_LAYER_ALE_AUTH_CONNECT_V4
       FWPM_LAYER_ALE_AUTH_CONNECT_V6
+      FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4
+      FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6
 
 -- */
 {
@@ -287,8 +337,8 @@ TLInspectRegisterALEClassifyCallouts(
    }
    else
    {
-      // This sample only uses CONNECT layer callouts
-      NT_ASSERT(FALSE);
+      sCallout.classifyFn = TLInspectALERecvAcceptClassify;
+      sCallout.notifyFn = TLInspectALERecvAcceptNotify;
    }
 
    status = FwpsCalloutRegister(
@@ -304,7 +354,7 @@ TLInspectRegisterALEClassifyCallouts(
 
    displayData.name = L"Transport Inspect ALE Classify Callout";
    displayData.description = 
-      L"Intercepts outbound connect attempts";
+      L"Intercepts inbound or outbound connect attempts";
 
    mCallout.calloutKey = *calloutKey;
    mCallout.displayData = displayData;
@@ -324,8 +374,101 @@ TLInspectRegisterALEClassifyCallouts(
 
    status = TLInspectAddFilter(
                L"Transport Inspect ALE Classify",
-               L"Intercepts outbound connect attempts",
-               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_CONNECT_V4) ? 
+               L"Intercepts inbound or outbound connect attempts",
+               (IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_CONNECT_V4) ||
+                IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4)) ? 
+                  configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
+               0,
+               layerKey,
+               calloutKey
+               );
+
+   if (!NT_SUCCESS(status))
+   {
+      goto Exit;
+   }
+
+Exit:
+
+   if (!NT_SUCCESS(status))
+   {
+      if (calloutRegistered)
+      {
+         FwpsCalloutUnregisterById(*calloutId);
+         *calloutId = 0;
+      }
+   }
+
+   return status;
+}
+
+NTSTATUS
+TLInspectRegisterTransportCallouts(
+   _In_ const GUID* layerKey,
+   _In_ const GUID* calloutKey,
+   _Inout_ void* deviceObject,
+   _Out_ UINT32* calloutId
+   )
+/* ++
+
+   This function registers callouts and filters that intercept transport 
+   traffic at the following layers --
+
+      FWPM_LAYER_OUTBOUND_TRANSPORT_V4
+      FWPM_LAYER_OUTBOUND_TRANSPORT_V6
+      FWPM_LAYER_INBOUND_TRANSPORT_V4
+      FWPM_LAYER_INBOUND_TRANSPORT_V6
+
+-- */
+{
+   NTSTATUS status = STATUS_SUCCESS;
+
+   FWPS_CALLOUT sCallout = {0};
+   FWPM_CALLOUT mCallout = {0};
+
+   FWPM_DISPLAY_DATA displayData = {0};
+
+   BOOLEAN calloutRegistered = FALSE;
+
+   sCallout.calloutKey = *calloutKey;
+   sCallout.classifyFn = TLInspectTransportClassify;
+   sCallout.notifyFn = TLInspectTransportNotify;
+
+   status = FwpsCalloutRegister(
+               deviceObject,
+               &sCallout,
+               calloutId
+               );
+   if (!NT_SUCCESS(status))
+   {
+      goto Exit;
+   }
+   calloutRegistered = TRUE;
+
+   displayData.name = L"Transport Inspect Callout";
+   displayData.description = L"Inspect inbound/outbound transport traffic";
+
+   mCallout.calloutKey = *calloutKey;
+   mCallout.displayData = displayData;
+   mCallout.applicableLayer = *layerKey;
+
+   status = FwpmCalloutAdd(
+               gEngineHandle,
+               &mCallout,
+               NULL,
+               NULL
+               );
+
+   if (!NT_SUCCESS(status))
+   {
+      goto Exit;
+   }
+
+   status = TLInspectAddFilter(
+               L"Transport Inspect Filter (Outbound)",
+               L"Inspect inbound/outbound transport traffic",
+               (IsEqualGUID(layerKey, &FWPM_LAYER_OUTBOUND_TRANSPORT_V4) ||
+                IsEqualGUID(layerKey, &FWPM_LAYER_INBOUND_TRANSPORT_V4))? 
                   configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
                0,
                layerKey,
@@ -425,6 +568,39 @@ TLInspectRegisterCallouts(
       {
          goto Exit;
       }
+
+      status = TLInspectRegisterALEClassifyCallouts(
+                  &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4,
+                  &TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V4,
+                  deviceObject,
+                  &gAleRecvAcceptCalloutIdV4
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
+
+      status = TLInspectRegisterTransportCallouts(
+                  &FWPM_LAYER_OUTBOUND_TRANSPORT_V4,
+                  &TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V4,
+                  deviceObject,
+                  &gOutboundTlCalloutIdV4
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
+
+      status = TLInspectRegisterTransportCallouts(
+                  &FWPM_LAYER_INBOUND_TRANSPORT_V4,
+                  &TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V4,
+                  deviceObject,
+                  &gInboundTlCalloutIdV4
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
    }
 
    if (configInspectRemoteAddrV6 != NULL)
@@ -434,6 +610,39 @@ TLInspectRegisterCallouts(
                   &TL_INSPECT_ALE_CONNECT_CALLOUT_V6,
                   deviceObject,
                   &gAleConnectCalloutIdV6
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
+
+      status = TLInspectRegisterALEClassifyCallouts(
+                  &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6,
+                  &TL_INSPECT_ALE_RECV_ACCEPT_CALLOUT_V6,
+                  deviceObject,
+                  &gAleRecvAcceptCalloutIdV6
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
+
+      status = TLInspectRegisterTransportCallouts(
+                  &FWPM_LAYER_OUTBOUND_TRANSPORT_V6,
+                  &TL_INSPECT_OUTBOUND_TRANSPORT_CALLOUT_V6,
+                  deviceObject,
+                  &gOutboundTlCalloutIdV6
+                  );
+      if (!NT_SUCCESS(status))
+      {
+         goto Exit;
+      }
+
+      status = TLInspectRegisterTransportCallouts(
+                  &FWPM_LAYER_INBOUND_TRANSPORT_V6,
+                  &TL_INSPECT_INBOUND_TRANSPORT_CALLOUT_V6,
+                  deviceObject,
+                  &gInboundTlCalloutIdV6
                   );
       if (!NT_SUCCESS(status))
       {
@@ -473,67 +682,15 @@ TLInspectUnregisterCallouts(void)
    FwpmEngineClose(gEngineHandle);
    gEngineHandle = NULL;
 
+   FwpsCalloutUnregisterById(gOutboundTlCalloutIdV6);
+   FwpsCalloutUnregisterById(gOutboundTlCalloutIdV4);
+   FwpsCalloutUnregisterById(gInboundTlCalloutIdV6);
+   FwpsCalloutUnregisterById(gInboundTlCalloutIdV4);
+
    FwpsCalloutUnregisterById(gAleConnectCalloutIdV6);
    FwpsCalloutUnregisterById(gAleConnectCalloutIdV4);
-}
-
-void
-InitializeWorkerQueues()
-{
-   ULONG numProcessors = KeQueryMaximumProcessorCount();
-
-   gProcessorQueue = ExAllocatePool2(
-                        POOL_FLAG_NON_PAGED,
-                        sizeof(TL_INSPECT_PROCESSOR_QUEUE) * numProcessors,
-                        TL_INSPECT_SETUP_POOL_TAG
-                        );
-
-   //
-   // Create a per-processor work queue.
-   //
-   for (ULONG i = 0; i < numProcessors; ++i)
-   {
-      InitializeListHead(&gProcessorQueue[i].connList);
-      KeInitializeSpinLock(&gProcessorQueue[i].connListLock);
-      InitializeListHead(&gProcessorQueue[i].classifiedConnList);
-      KeInitializeSpinLock(&gProcessorQueue[i].classifiedConnListLock);
-      gProcessorQueue[i].isDpcQueued = FALSE;
-
-      KeInitializeThreadedDpc(
-         &gProcessorQueue[i].kdpc,
-         TLInspectWorker,
-         NULL
-         );
-   }
-}
-
-void
-UninitializeWorkerQueues()
-{
-   KLOCK_QUEUE_HANDLE connListLockHandle;
-   BOOLEAN isDpcRunning = TRUE;
-   ULONG numProcessors = KeQueryMaximumProcessorCount();
-
-   if (gProcessorQueue != NULL)
-   {
-     // Wait for all DPCs to complete before exiting
-     while (isDpcRunning)
-     {
-       isDpcRunning = FALSE;
-       for (ULONG i = 0; i < numProcessors; ++i)
-       {
-          KeAcquireInStackQueuedSpinLock(
-             &gProcessorQueue[i].connListLock,
-             &connListLockHandle
-             );
-          isDpcRunning |= gProcessorQueue[i].isDpcQueued;
-          KeReleaseInStackQueuedSpinLock(&connListLockHandle);
-        }
-     }
-
-   ExFreePoolWithTag(gProcessorQueue, TL_INSPECT_SETUP_POOL_TAG);
-
-   }
+   FwpsCalloutUnregisterById(gAleRecvAcceptCalloutIdV6);
+   FwpsCalloutUnregisterById(gAleRecvAcceptCalloutIdV4);
 }
 
 _Function_class_(EVT_WDF_DRIVER_UNLOAD)
@@ -544,13 +701,48 @@ TLInspectEvtDriverUnload(
    _In_ WDFDRIVER driverObject
    )
 {
+
+   KLOCK_QUEUE_HANDLE connListLockHandle;
+   KLOCK_QUEUE_HANDLE packetQueueLockHandle;
+
    UNREFERENCED_PARAMETER(driverObject);
+
+   KeAcquireInStackQueuedSpinLock(
+      &gConnListLock,
+      &connListLockHandle
+      );
+   KeAcquireInStackQueuedSpinLock(
+      &gPacketQueueLock,
+      &packetQueueLockHandle
+      );
 
    gDriverUnloading = TRUE;
 
-   TLInspectUnregisterCallouts();
+   KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
+   KeReleaseInStackQueuedSpinLock(&connListLockHandle);
 
-   UninitializeWorkerQueues();
+   if (IsListEmpty(&gConnList) && IsListEmpty(&gPacketQueue))
+   {
+      KeSetEvent(
+         &gWorkerEvent,
+         IO_NO_INCREMENT, 
+         FALSE
+         );
+   }
+
+   NT_ASSERT(gThreadObj != NULL);
+
+   KeWaitForSingleObject(
+      gThreadObj,
+      Executive,
+      KernelMode,
+      FALSE,
+      NULL
+      );
+
+   ObDereferenceObject(gThreadObj);
+
+   TLInspectUnregisterCallouts();
 
    FwpsInjectionHandleDestroy(gInjectionHandle);
 
@@ -623,6 +815,7 @@ DriverEntry(
    NTSTATUS status;
    WDFDRIVER driver;
    WDFDEVICE device;
+   HANDLE threadHandle;
 
    // Request NX Non-Paged Pool when available
    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
@@ -677,7 +870,17 @@ DriverEntry(
       goto Exit;
    }
 
-   InitializeWorkerQueues();
+   InitializeListHead(&gConnList);
+   KeInitializeSpinLock(&gConnListLock);   
+
+   InitializeListHead(&gPacketQueue);
+   KeInitializeSpinLock(&gPacketQueueLock);  
+
+   KeInitializeEvent(
+      &gWorkerEvent,
+      NotificationEvent,
+      FALSE
+      );
 
    gWdmDevice = WdfDeviceWdmGetDeviceObject(device);
 
@@ -687,6 +890,33 @@ DriverEntry(
    {
       goto Exit;
    }
+
+   status = PsCreateSystemThread(
+               &threadHandle,
+               THREAD_ALL_ACCESS,
+               NULL,
+               NULL,
+               NULL,
+               TLInspectWorker,
+               NULL
+               );
+
+   if (!NT_SUCCESS(status))
+   {
+      goto Exit;
+   }
+
+   status = ObReferenceObjectByHandle(
+               threadHandle,
+               0,
+               NULL,
+               KernelMode,
+               &gThreadObj,
+               NULL
+               );
+   NT_ASSERT(NT_SUCCESS(status));
+
+   ZwClose(threadHandle);
 
 Exit:
    
@@ -700,7 +930,6 @@ Exit:
       {
          FwpsInjectionHandleDestroy(gInjectionHandle);
       }
-      UninitializeWorkerQueues();
    }
 
    return status;

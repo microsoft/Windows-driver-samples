@@ -335,16 +335,10 @@ AllocateAndInitializePendedPacket(
 
    if (layerData != NULL)
    {
-      TraceLoggingWrite(
-         gTlgHandle,
-         "Utils",
-         TraceLoggingWideString(L"[AllocateAndInitializePendedPacket] Setting netBufferList", "Message")
-         );
-
       pendedPacket->netBufferList = layerData;
 
       //
-      // Reference the net buffer list to make it accessible outside of 
+      // Reference the net buffer list to make it accessible outside of
       // classifyFn.
       //
       FwpsReferenceNetBufferList(pendedPacket->netBufferList, TRUE);
@@ -400,16 +394,16 @@ AllocateAndInitializePendedPacket(
          &subInterfaceIndexIndex
          );
 
-      pendedPacket->interfaceIndex = 
+      pendedPacket->interfaceIndex =
          inFixedValues->incomingValue[interfaceIndexIndex].value.uint32;
-      pendedPacket->subInterfaceIndex = 
+      pendedPacket->subInterfaceIndex =
          inFixedValues->incomingValue[subInterfaceIndexIndex].value.uint32;
-      
+
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_IP_HEADER_SIZE));
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE));
       pendedPacket->ipHeaderSize = inMetaValues->ipHeaderSize;
       pendedPacket->transportHeaderSize = inMetaValues->transportHeaderSize;
@@ -424,10 +418,10 @@ AllocateAndInitializePendedPacket(
             &packetInfo
             );
 
-         pendedPacket->ipSecProtected = 
+         pendedPacket->ipSecProtected =
             (BOOLEAN)packetInfo.ipsecInformation.inbound.isSecure;
 
-         pendedPacket->nblOffset = 
+         pendedPacket->nblOffset =
             NET_BUFFER_DATA_OFFSET(\
                NET_BUFFER_LIST_FIRST_NB(pendedPacket->netBufferList));
       }
@@ -447,5 +441,26 @@ Exit:
 
 extern WDFKEY gParametersKey;
 
+BOOLEAN
+IsTrafficPermitted(void)
+{
+   NTSTATUS status;
+   BOOLEAN permitTraffic = TRUE;
+   DECLARE_CONST_UNICODE_STRING(valueName, L"BlockTraffic");
+   ULONG result;
+
+   status = WdfRegistryQueryULong(
+               gParametersKey,
+               &valueName,
+               &result
+               );
+
+   if (NT_SUCCESS(status) && result != 0)
+   {
+      permitTraffic = FALSE;
+   }
+
+   return permitTraffic;
+}
 
 
