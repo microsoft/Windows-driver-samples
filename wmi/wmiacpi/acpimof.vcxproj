@@ -132,6 +132,9 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
@@ -141,6 +144,9 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
@@ -150,6 +156,9 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
@@ -159,6 +168,9 @@
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
