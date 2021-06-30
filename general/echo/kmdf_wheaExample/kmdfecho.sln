@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{4C3245DE-386F-4315-AE20-B7F8938239A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AutoSync", "AutoSync", "{F6CBEC4C-BA8E-46F5-9A69-B164E393E074}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{4A3350D6-C44E-40F3-9274-DCC201D5613E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DriverSync", "DriverSync", "{329569F4-D659-4E23-9B29-791CA85BF28F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "echoapp", "exe\echoapp.vcxproj", "{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "echo", "driver\AutoSync\echo.vcxproj", "{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "echo_2", "driver\DriverSync\echo_2.vcxproj", "{8E09C05F-B634-49BE-96C9-64682605DFB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Debug|Win32.Build.0 = Debug|Win32
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Release|Win32.ActiveCfg = Release|Win32
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Release|Win32.Build.0 = Release|Win32
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Debug|x64.ActiveCfg = Debug|x64
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Debug|x64.Build.0 = Debug|x64
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Release|x64.ActiveCfg = Release|x64
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69}.Release|x64.Build.0 = Release|x64
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Debug|Win32.Build.0 = Debug|Win32
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Release|Win32.ActiveCfg = Release|Win32
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Release|Win32.Build.0 = Release|Win32
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Debug|x64.ActiveCfg = Debug|x64
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Debug|x64.Build.0 = Debug|x64
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Release|x64.ActiveCfg = Release|x64
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66}.Release|x64.Build.0 = Release|x64
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Debug|Win32.Build.0 = Debug|Win32
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Release|Win32.ActiveCfg = Release|Win32
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Release|Win32.Build.0 = Release|Win32
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Debug|x64.ActiveCfg = Debug|x64
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Debug|x64.Build.0 = Debug|x64
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Release|x64.ActiveCfg = Release|x64
+		{8E09C05F-B634-49BE-96C9-64682605DFB0}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9F70D0C8-AA7D-49A2-BF1C-C09619329F69} = {4C3245DE-386F-4315-AE20-B7F8938239A7}
+		{44FE3C21-35D7-4253-B15A-3E0F6AAB8B66} = {F6CBEC4C-BA8E-46F5-9A69-B164E393E074}
+		{8E09C05F-B634-49BE-96C9-64682605DFB0} = {329569F4-D659-4E23-9B29-791CA85BF28F}
+		{F6CBEC4C-BA8E-46F5-9A69-B164E393E074} = {4A3350D6-C44E-40F3-9274-DCC201D5613E}
+		{329569F4-D659-4E23-9B29-791CA85BF28F} = {4A3350D6-C44E-40F3-9274-DCC201D5613E}
+	EndGlobalSection
+EndGlobal
