@@ -32,3 +32,4 @@ NTSTATUS
 EchoPrintDriverVersion(
     );
 
+ULONG GotErrorSourceId;

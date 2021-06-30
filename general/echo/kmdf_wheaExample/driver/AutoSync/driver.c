@@ -44,6 +44,87 @@ Abstract:
 #pragma alloc_text (PAGE, EchoEvtDeviceAdd)
 #endif
 
+NTSTATUS InitWheaErrorSourceCallback
+(
+    PVOID Context,
+    ULONG ErrorSourceId
+)
+{
+    Context;
+    GotErrorSourceId = ErrorSourceId;
+    return STATUS_SUCCESS;
+}
+
+VOID UnInitWheaErrorSourceCallback
+(
+    PVOID Context
+)
+{
+    Context;
+    return;
+}
+
+WHEA_ERROR_SOURCE_CONFIGURATION_DEVICE_DRIVER ConfigureWheaErrorSource
+(
+)
+{
+    // I didn't make this creatorId specific to any GUID. I used the GUID creator to make a new one to satisfy
+    // the WHEA_ERROR_SOURCE_CONFIGURATION_DEVICE_DRIVER object.
+    GUID creatorId = { /* 12863047-1c7e-461c-a09e-a0a12f602eba */
+    0x12863047,
+    0x1c7e,
+    0x461c,
+    {0xa0, 0x9e, 0xa0, 0xa1, 0x2f, 0x60, 0x2e, 0xba}
+    };
+
+    WHEA_ERROR_SOURCE_CONFIGURATION_DEVICE_DRIVER  wheaErrorSourceConfigDeviceDriver
+        = {
+        // Version
+        .Version = WHEA_DEVICE_DRIVER_CONFIG_V2,
+        // GUID
+        .SourceGuid = GUID_DEVINTERFACE_ECHO,
+        // LogTag
+        .LogTag = 1234u,
+        // Reserved
+        // Initialize
+        .Initialize = &InitWheaErrorSourceCallback,
+        // Uninitialize
+        .Uninitialize = &UnInitWheaErrorSourceCallback,
+        // MaxSectionDataLength
+        .MaxSectionDataLength = 456700u,
+        // MaxSectionsPerReport
+        .MaxSectionsPerReport = 1u,
+        // CreatorId
+        .CreatorId = creatorId,
+        // PartitionId
+        .PartitionId = 0
+    };
+
+    return wheaErrorSourceConfigDeviceDriver;
+}
+
+NTSTATUS AddDummyWheaError
+(
+    PDRIVER_OBJECT  DriverObject
+)
+{
+    NTSTATUS reportHwDeviceDriver;
+    // call WHEA driver error
+
+    GUID sectionTypeGuid = { /* 30f57004-7a78-4649-885e-7bc8c1155851 */
+    0x30f57004,
+    0x7a78,
+    0x4649,
+    {0x88, 0x5e, 0x7b, 0xc8, 0xc1, 0x15, 0x58, 0x51}
+    };
+
+
+    LPGUID pSectionTypeGuid = &sectionTypeGuid;
+
+    reportHwDeviceDriver = WheaReportHwErrorDeviceDriver(GotErrorSourceId, DriverObject->DeviceObject, ((unsigned char*)"I had an accident!"), 19u, pSectionTypeGuid, WheaErrSevRecoverable, "Dummy WHEA Error");
+
+    return reportHwDeviceDriver;
+}
 
 NTSTATUS
 DriverEntry(
@@ -78,6 +159,14 @@ Return Value:
 {
     WDF_DRIVER_CONFIG config;
     NTSTATUS status;
+    NTSTATUS reportHwDeviceDriver;
+
+    // Reset the global error tracker so we can confirm that this value hasn't changed.
+    GotErrorSourceId = 0u;
+    NTSTATUS genericStatusContainer;
+
+    WHEA_ERROR_SOURCE_CONFIGURATION_DEVICE_DRIVER  wheaErrorSourceConfigDeviceDriver = ConfigureWheaErrorSource();
+    genericStatusContainer = WheaAddErrorSourceDeviceDriver(NULL, &wheaErrorSourceConfigDeviceDriver, 10u);
 
     WDF_DRIVER_CONFIG_INIT(&config,
                         EchoEvtDeviceAdd
@@ -97,7 +186,16 @@ Return Value:
     EchoPrintDriverVersion();
 #endif
 
-    return status;
+    if (GotErrorSourceId == 0u)
+    {
+        return STATUS_DRIVER_INTERNAL_ERROR;
+    }
+    else
+    {
+
+        reportHwDeviceDriver = AddDummyWheaError(DriverObject);
+        return status;
+    }
 }
 
 NTSTATUS
