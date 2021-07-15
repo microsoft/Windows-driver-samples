@@ -1,0 +1,52 @@
+<Page
+    x:Class="PrintSupportApp.PrintTicketManipulationExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:printTicket="using:Windows.Graphics.Printing.PrintTicket"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <!--  Data template used to display PrintTicketOption options.  -->
+        <DataTemplate x:Key="PrintTicketOptionTemplate" x:DataType="printTicket:PrintTicketOption">
+            <TextBlock Text="{x:Bind DisplayName}" />
+        </DataTemplate>
+
+        <!--  Custom properties for our PrintTicketFeature ComboBoxes.  -->
+        <Style x:Key="PrintTicketFeatureComboBoxStlye" TargetType="ComboBox">
+            <Setter Property="Width" Value="240" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="ItemTemplate" Value="{StaticResource PrintTicketOptionTemplate}" />
+        </Style>
+
+        <!--  Custom properties for our PrintTicketParameter NumberBoxes.  -->
+        <Style x:Key="PrintTicketParameterNumberBoxStyle" TargetType="muxc:NumberBox">
+            <Setter Property="SpinButtonPlacementMode" Value="Inline" />
+        </Style>
+
+        <!--  Data template used to display ComboBoxes containing print ticket features.  -->
+        <DataTemplate x:Key="PrintTicketFeatureComboBoxTemplate" x:DataType="Control">
+            <ContentPresenter Content="{x:Bind}">
+                <ContentPresenter.Resources>
+                    <Style BasedOn="{StaticResource PrintTicketFeatureComboBoxStlye}" TargetType="ComboBox" />
+                    <Style BasedOn="{StaticResource PrintTicketParameterNumberBoxStyle}" TargetType="muxc:NumberBox" />
+                </ContentPresenter.Resources>
+            </ContentPresenter>
+        </DataTemplate>
+
+        <!--  The layout specifications used in the ScrollViewer  -->
+        <muxc:UniformGridLayout
+            x:Key="UniformGridLayout"
+            MinColumnSpacing="20"
+            MinRowSpacing="20" />
+    </Page.Resources>
+
+    <ScrollViewer Margin="20,20,20,20" VerticalScrollBarVisibility="Auto">
+        <muxc:ItemsRepeater
+            x:Name="PrintTicketFeatureComboBoxRepeater"
+            ItemTemplate="{StaticResource PrintTicketFeatureComboBoxTemplate}"
+            Layout="{StaticResource UniformGridLayout}" />
+    </ScrollViewer>
+</Page>
