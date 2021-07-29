@@ -37,20 +37,12 @@ extern "C" {
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
+    size_t      iSize,
+    POOL_FLAGS  poolFlags,
+    ULONG       tag
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, tag);
-
-    if (result)
-    {
-        RtlZeroMemory(result, iSize);
-    }
+    PVOID result = ExAllocatePool2(poolFlags, iSize, tag);
 
     return result;
 }
@@ -63,19 +55,11 @@ PVOID operator new
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType
+    size_t      iSize,
+    POOL_FLAGS  poolFlags
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, SYSVAD_POOLTAG);
-
-    if (result)
-    {
-        RtlZeroMemory(result, iSize);
-    }
+    PVOID result = ExAllocatePool2(poolFlags, iSize, SYSVAD_POOLTAG);
 
     return result;
 }

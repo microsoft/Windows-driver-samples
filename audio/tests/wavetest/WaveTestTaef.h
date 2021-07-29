@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -30,6 +30,28 @@ namespace WEX {
 
 namespace WDMAudio
 {
+    class WaveTestPreTest
+    {
+        BEGIN_TEST_CLASS(WaveTestPreTest)
+            TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Client x86")
+            TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Client x64")
+            TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Client ARM")
+            TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Client ARM64")
+            TEST_CLASS_PROPERTY(L"Kits.SupportedOS", L"Windows v10.0 Server x64")
+            TEST_CLASS_PROPERTY(L"Kits.MinRelease", L"19H1")
+            TEST_CLASS_PROPERTY(L"Kits.CorePackageComposition", L"Full")
+            TEST_CLASS_PROPERTY(L"Kits.CorePackageComposition", L"OnecoreUAP")
+            TEST_CLASS_PROPERTY(L"Kits.IsInProc", L"True")
+            TEST_CLASS_PROPERTY(L"Kits.PublishingOrganization", L"Microsoft Corporation")
+            TEST_CLASS_PROPERTY(L"Kits.TestType", L"Development")
+            TEST_CLASS_PROPERTY(L"Kits.DevelopmentPhase", L"Development and Integration")
+            TEST_CLASS_PROPERTY(L"ThreadingModel", L"MTA")
+        END_TEST_CLASS()
+
+            BEGIN_TEST_METHOD(TAEF_VerifyAllEndpointsPluggedIn)
+                TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
+            END_TEST_METHOD()
+    };
 
     class WaveTest
     {
@@ -50,9 +72,13 @@ namespace WDMAudio
             TEST_CLASS_PROPERTY(L"Kits.DevelopmentPhase", L"Development and Integration")
             TEST_CLASS_PROPERTY(L"Subfeature", L"Wave Driver Tests")
             TEST_CLASS_PROPERTY(L"ThreadingModel", L"MTA")
-            TEST_CLASS_PROPERTY(L"ArtifactUnderTest", L"onecore\\external\\ddk\\inc\\drmk.h")
-            TEST_CLASS_PROPERTY(L"ArtifactUnderTest", L"onecoreuap\\external\\ddk\\lib\\$(build.arch)\\drmk.lib")
-            TEST_CLASS_PROPERTY(L"ArtifactUnderTest", L"onecoreuap\\internal\\drivers\\inc\\private\\wdm\\audio\\inf\\wdmaudio.inf")
+
+
+
+
+
+
+
         END_TEST_CLASS()
 
             TEST_CLASS_SETUP(WaveTestSetup)
@@ -62,57 +88,41 @@ namespace WDMAudio
             TEST_METHOD_CLEANUP(TestCaseCleanUp)
             
             BEGIN_TEST_METHOD(TAEF_StreamStateControl)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*HOST*' OR @Id = '*OFFLOAD*'")
             END_TEST_METHOD()
 
             BEGIN_TEST_METHOD(TAEF_LoopbackStreamStateControl)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*LOOPBACK*'")
             END_TEST_METHOD()
             
             BEGIN_TEST_METHOD(TAEF_StreamMinBufferSize)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*HOST*' OR @Id = '*OFFLOAD*'")
             END_TEST_METHOD()
             
             BEGIN_TEST_METHOD(TAEF_StreamMaxBufferSize)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*HOST*' OR @Id = '*OFFLOAD*'")
             END_TEST_METHOD()
 
             BEGIN_TEST_METHOD(TAEF_StreamDifferentFormat)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*HOST*' OR @Id = '*OFFLOAD*'")
             END_TEST_METHOD()
 
             BEGIN_TEST_METHOD(TAEF_LoopbackStreamDifferentFormat)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*LOOPBACK*'")
             END_TEST_METHOD()
 
             BEGIN_TEST_METHOD(TAEF_StreamMultipleModes)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Id = '*RAW' OR @Id = '*DEFAULT'")
             END_TEST_METHOD()
            
             BEGIN_TEST_METHOD(TAEF_VerifyPinWaveRTConformance)
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Functional")
-                TEST_METHOD_PROPERTY(L"HCKCategory", L"Certification")
                 TEST_METHOD_PROPERTY(L"TestClassification:Scope", L"Feature")
                 TEST_METHOD_PROPERTY(L"ResourceSelection", L"@Type = 'Render' OR @Type = 'Capture'")
             END_TEST_METHOD()

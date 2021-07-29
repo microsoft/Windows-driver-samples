@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 12.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{FA56D96B-290B-4C73-A5E1-02C1861D3224}"
 EndProject
@@ -11,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EndpointsCommon", "Endpoint
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TabletAudioSample", "TabletAudioSample", "{C06F6070-75EE-4F57-8D35-4AC2AB08D029}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "package", "package\package.VcxProj", "{830B14D5-0E32-4F9E-AEFA-4C9F6FC13C2A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "package", "Package\package.VcxProj", "{830B14D5-0E32-4F9E-AEFA-4C9F6FC13C2A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeywordDetectorContosoAdapter", "KeywordDetectorAdapter\KeywordDetectorContosoAdapter.vcxproj", "{E0F02048-78A4-4FE8-B863-66E6CB6A2C37}"
 EndProject
@@ -29,6 +28,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SwapAPO", "APO\SwapAPO\SwapAPO.vcxproj", "{691F1D0F-CA50-46CD-8BBA-A59E9E8EB601}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KwsAPO", "APO\KWSApo\KwsAPO.vcxproj", "{47358AD6-A48A-465B-965F-0A66F8BDFE23}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AecAPO", "APO\AecApo\AecAPO.vcxproj", "{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +125,18 @@ Global
 		{47358AD6-A48A-465B-965F-0A66F8BDFE23}.Release|Win32.Build.0 = Release|Win32
 		{47358AD6-A48A-465B-965F-0A66F8BDFE23}.Release|x64.ActiveCfg = Release|x64
 		{47358AD6-A48A-465B-965F-0A66F8BDFE23}.Release|x64.Build.0 = Release|x64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|ARM64.Build.0 = Debug|ARM64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|Win32.Build.0 = Debug|Win32
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|x64.ActiveCfg = Debug|x64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Debug|x64.Build.0 = Debug|x64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|ARM64.ActiveCfg = Release|ARM64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|ARM64.Build.0 = Release|ARM64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|Win32.ActiveCfg = Release|Win32
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|Win32.Build.0 = Release|Win32
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|x64.ActiveCfg = Release|x64
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +149,7 @@ Global
 		{8851AB85-70B3-4798-A149-BA366DF9EC25} = {D86F9A10-C48D-4048-A03C-DD7BCA6E165F}
 		{691F1D0F-CA50-46CD-8BBA-A59E9E8EB601} = {D86F9A10-C48D-4048-A03C-DD7BCA6E165F}
 		{47358AD6-A48A-465B-965F-0A66F8BDFE23} = {D86F9A10-C48D-4048-A03C-DD7BCA6E165F}
+		{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76} = {D86F9A10-C48D-4048-A03C-DD7BCA6E165F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6DB4FE19-4FE0-4DC4-B898-C46E01E6BDF4}

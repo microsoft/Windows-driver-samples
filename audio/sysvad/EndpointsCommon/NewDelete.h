@@ -28,12 +28,9 @@ Declaration of placement new and delete operators.
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
+    size_t      iSize,
+    POOL_FLAGS  poolFlags,
+    ULONG       tag
 );
 
 
@@ -44,11 +41,8 @@ PVOID operator new
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType
+    size_t      iSize,
+    POOL_FLAGS  poolFlags
 );
 
 

@@ -40,10 +40,7 @@ CreateMiniportWaveRTSYSVAD
     _Out_           PUNKNOWN                              * Unknown,
     _In_            REFCLSID,
     _In_opt_        PUNKNOWN                                UnknownOuter,
-    _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-       __drv_reportError("Must succeed pool allocations are forbidden. "
-        "Allocation failures cause a system crash"))
-    _In_            POOL_TYPE                               PoolType,
+    _In_            POOL_FLAGS                              PoolFlags,
     _In_            PUNKNOWN                                UnknownAdapter,
     _In_opt_        PVOID                                   DeviceContext,
     _In_            PENDPOINT_MINIPAIR                      MiniportPair
@@ -83,7 +80,7 @@ Return Value:
     ASSERT(Unknown);
     ASSERT(MiniportPair);
 
-    CMiniportWaveRT *obj = new (PoolType, MINWAVERT_POOLTAG) CMiniportWaveRT
+    CMiniportWaveRT *obj = new (PoolFlags, MINWAVERT_POOLTAG) CMiniportWaveRT
                                                              (
                                                                 UnknownAdapter,
                                                                 MiniportPair,
@@ -426,12 +423,11 @@ Return Value:
         // Module list size.
         //
         size = cModules * sizeof(AUDIOMODULE);
-        m_pAudioModules = (AUDIOMODULE *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+        m_pAudioModules = (AUDIOMODULE *)ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
         if (m_pAudioModules == NULL)
         {
             return STATUS_INSUFFICIENT_RESOURCES;
         }
-        RtlZeroMemory(m_pAudioModules, size);
 
         for (ULONG i=0; i<cModules; ++i)
         {
@@ -451,13 +447,12 @@ Return Value:
             if (size)
             {
                 m_pAudioModules[i].Context = 
-                    ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+                    ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
                 
                 if (m_pAudioModules[i].Context == NULL)
                 {
                     return STATUS_INSUFFICIENT_RESOURCES;
                 }
-                RtlZeroMemory(m_pAudioModules[i].Context, size);
             }
 
             
@@ -494,12 +489,11 @@ Return Value:
             
         // System streams.
         size = sizeof(PCMiniportWaveRTStream) * m_ulMaxSystemStreams;
-        m_SystemStreams = (PCMiniportWaveRTStream *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+        m_SystemStreams = (PCMiniportWaveRTStream *)ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
         if (m_SystemStreams == NULL)
         {
             return STATUS_INSUFFICIENT_RESOURCES;
         }
-        RtlZeroMemory(m_SystemStreams, size);
 
         if (IsLoopbackSupported())
         {
@@ -510,12 +504,11 @@ Return Value:
 
             // Loopback streams.
             size = sizeof(PCMiniportWaveRTStream) * m_ulMaxLoopbackStreams;
-            m_LoopbackStreams = (PCMiniportWaveRTStream *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+            m_LoopbackStreams = (PCMiniportWaveRTStream *)ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
             if (m_LoopbackStreams == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
             }
-            RtlZeroMemory(m_LoopbackStreams, size);
         }
 
         if (IsOffloadSupported())
@@ -530,15 +523,14 @@ Return Value:
             
             // Offload streams.
             size = sizeof(PCMiniportWaveRTStream) * m_ulMaxOffloadStreams;
-            m_OffloadStreams = (PCMiniportWaveRTStream *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+            m_OffloadStreams = (PCMiniportWaveRTStream *)ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
             if (m_OffloadStreams == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
             }
-            RtlZeroMemory(m_OffloadStreams, size);
 
             // Formats. 
-            m_pDeviceFormat = (PKSDATAFORMAT_WAVEFORMATEXTENSIBLE)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE), MINWAVERT_POOLTAG);
+            m_pDeviceFormat = (PKSDATAFORMAT_WAVEFORMATEXTENSIBLE)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE), MINWAVERT_POOLTAG);
             if (m_pDeviceFormat == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
@@ -552,7 +544,7 @@ Return Value:
             }
             RtlCopyMemory((PVOID)(m_pDeviceFormat), (PVOID)(pDeviceFormats), sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE));
 
-            m_pMixFormat = (PKSDATAFORMAT_WAVEFORMATEXTENSIBLE)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE), MINWAVERT_POOLTAG);
+            m_pMixFormat = (PKSDATAFORMAT_WAVEFORMATEXTENSIBLE)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE), MINWAVERT_POOLTAG);
             if (m_pMixFormat == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
@@ -577,26 +569,23 @@ Return Value:
 
             m_bGfxEnabled = FALSE;
 
-            m_pbMuted = (PBOOL)ExAllocatePoolWithTag(NonPagedPoolNx, m_DeviceMaxChannels * sizeof(BOOL), MINWAVERT_POOLTAG);
+            m_pbMuted = (PBOOL)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_DeviceMaxChannels * sizeof(BOOL), MINWAVERT_POOLTAG);
             if (m_pbMuted == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
             }
-            RtlZeroMemory(m_pbMuted, m_DeviceMaxChannels * sizeof(BOOL));
 
-            m_plVolumeLevel = (PLONG)ExAllocatePoolWithTag(NonPagedPoolNx, m_DeviceMaxChannels * sizeof(LONG), MINWAVERT_POOLTAG);
+            m_plVolumeLevel = (PLONG)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_DeviceMaxChannels * sizeof(LONG), MINWAVERT_POOLTAG);
             if (m_plVolumeLevel == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
             }
-            RtlZeroMemory(m_plVolumeLevel, m_DeviceMaxChannels * sizeof(LONG));
 
-            m_plPeakMeter = (PLONG)ExAllocatePoolWithTag(NonPagedPoolNx, m_DeviceMaxChannels * sizeof(LONG), MINWAVERT_POOLTAG);
+            m_plPeakMeter = (PLONG)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_DeviceMaxChannels * sizeof(LONG), MINWAVERT_POOLTAG);
             if (m_plPeakMeter == NULL)
             {
                 return STATUS_INSUFFICIENT_RESOURCES;
             }
-            RtlZeroMemory(m_plPeakMeter, m_DeviceMaxChannels * sizeof(LONG));
         }
         
         // 
@@ -717,7 +706,7 @@ Return Value:
     //
     if (NT_SUCCESS(ntStatus))
     {
-        stream = new (NonPagedPoolNx, MINWAVERT_POOLTAG) 
+        stream = new (POOL_FLAG_NON_PAGED, MINWAVERT_POOLTAG) 
             CMiniportWaveRTStream(NULL);
 
         if (stream)
@@ -1845,8 +1834,6 @@ CMiniportWaveRT::SendPNPNotification(
     NTSTATUS                status = STATUS_SUCCESS;
     PPCNOTIFICATION_BUFFER  buffer = NULL;
 
-    PAGED_CODE();
-
     DPF_ENTER(("[SendPNPNotification]"));
 
     // Allocate a notification buffer.
@@ -2383,7 +2370,7 @@ Return Value:
         return STATUS_UNSUCCESSFUL;
     }
 
-    ulContentIds = new (NonPagedPoolNx, MINWAVERT_POOLTAG) ULONG[m_ulMaxSystemStreams + m_ulMaxOffloadStreams];
+    ulContentIds = new (POOL_FLAG_NON_PAGED, MINWAVERT_POOLTAG) ULONG[m_ulMaxSystemStreams + m_ulMaxOffloadStreams];
     if (!ulContentIds)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
@@ -2541,13 +2528,12 @@ CMiniportWaveRT::AllocStreamAudioModules
     //
     size = cModules * sizeof(AUDIOMODULE);
 #pragma prefast(suppress:__WARNING_MEMORY_LEAK,"No leaking, stream obj dtor calls FreeStreamAudioModules")
-    pAudioModules = (AUDIOMODULE *)ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+    pAudioModules = (AUDIOMODULE *)ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
     if (pAudioModules == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
         goto exit;
     }
-    RtlZeroMemory(pAudioModules, size);
     
     for (i=0, j=0; i<GetAudioModuleListCount() && j<cModules; ++i)
     {
@@ -2588,14 +2574,13 @@ CMiniportWaveRT::AllocStreamAudioModules
             {
 #pragma prefast(suppress:__WARNING_MEMORY_LEAK,"No leaking, stream obj dtor calls FreeStreamAudioModules")
                 pAudioModules[j].Context = 
-                    ExAllocatePoolWithTag(NonPagedPoolNx, size, MINWAVERT_POOLTAG);
+                    ExAllocatePool2(POOL_FLAG_NON_PAGED, size, MINWAVERT_POOLTAG);
                 
                 if (pAudioModules[j].Context == NULL)
                 {
                     ntStatus = STATUS_INSUFFICIENT_RESOURCES;
                     goto exit;
                 }
-                RtlZeroMemory(pAudioModules[j].Context, size);
             }
         
             //
@@ -3482,13 +3467,11 @@ NTSTATUS CKeywordDetector::ReadKeywordTimestampRegistry()
     parametersPath.MaximumLength =
         g_RegistryPath.Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
 
-    parametersPath.Buffer = (PWCH)ExAllocatePoolWithTag(PagedPool, parametersPath.MaximumLength, MINWAVERT_POOLTAG);
+    parametersPath.Buffer = (PWCH)ExAllocatePool2(POOL_FLAG_PAGED, parametersPath.MaximumLength, MINWAVERT_POOLTAG);
     if (parametersPath.Buffer == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(parametersPath.Buffer, parametersPath.MaximumLength);
 
     RtlAppendUnicodeToString(&parametersPath, g_RegistryPath.Buffer);
     RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
@@ -3861,6 +3844,7 @@ VOID CKeywordDetector::DpcRoutine(_In_ LONGLONG PerformanceCounter, _In_ LONGLON
 
         RtlZeroMemory(&packetEntry->Samples[0], sizeof(packetEntry->Samples));
 
+        InitializeListHead(packetListEntry);
         ExInterlockedInsertTailList(&PacketFifoHead, packetListEntry, &PacketFifoSpinLock);
 
         packetsToQueue -= 1;

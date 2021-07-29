@@ -56,12 +56,6 @@ Return Value:
     //
     NTSTATUS            ntStatus = STATUS_INVALID_DEVICE_REQUEST;
 
-    //
-    // This line shows how to get a pointer to the miniport topology object.
-    //
-    PCMiniportTopology  pMiniport = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    UNREFERENCED_VAR(pMiniport);
-
     if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Jack))
     {
         switch(PropertyRequest->PropertyItem->Id)
@@ -220,12 +214,6 @@ Return Value:
     // MajorTarget is a pointer to miniport object for miniports.
     //
     NTSTATUS    ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-    
-    //
-    // This line shows how to get a pointer to the miniport topology object.
-    //
-    PCMiniportTopology  pMiniport = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    UNREFERENCED_VAR(pMiniport);
 
     if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Audio))
     {

@@ -135,6 +135,14 @@ Abstract:
 #define USBSIDEBANDTEST_POOLTAG013  'dAyS'
 #define USBSIDEBANDTEST_POOLTAG014  'eAyS'
 #define USBSIDEBANDTEST_POOLTAG015  'fAyS'
+#define USBSIDEBANDTEST_POOLTAG016  'gAyS'
+#define A2DPSIDEBANDTEST_POOLTAG01  'hAyS'
+#define A2DPSIDEBANDTEST_POOLTAG02  'iAyS'
+#define A2DPSIDEBANDTEST_POOLTAG03  'jAyS'
+#define A2DPSIDEBANDTEST_POOLTAG04  'kAyS'
+#define A2DPSIDEBANDTEST_POOLTAG05  'lAyS'
+#define A2DPSIDEBANDTEST_POOLTAG06  'mAyS'
+#define A2DPSIDEBANDTEST_POOLTAG07  'nAyS'
 
 typedef enum
 {
@@ -206,6 +214,10 @@ typedef struct _PIN_DEVICE_FORMATS_AND_MODES
 
 } PIN_DEVICE_FORMATS_AND_MODES, *PPIN_DEVICE_FORMATS_AND_MODES;
 
+typedef struct _SYSVAD_AUDIOPOSTURE_INFO
+{
+    BOOL OrientationSupported;
+} SYSVAD_AUDIOPOSTURE_INFO, *PSYSVAD_AUDIOPOSTURE_INFO;
 
 //
 // Parameter module handler function prototypes.
@@ -336,10 +348,7 @@ typedef HRESULT (*PFNCREATEMINIPORT)(
     _Out_           PUNKNOWN                              * Unknown,
     _In_            REFCLSID,
     _In_opt_        PUNKNOWN                                UnknownOuter,
-    _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-       __drv_reportError("Must succeed pool allocations are forbidden. "
-             "Allocation failures cause a system crash"))
-    _In_            POOL_TYPE                               PoolType, 
+    _In_            POOL_FLAGS                              PoolFlags, 
     _In_            PUNKNOWN                                UnknownAdapter,
     _In_opt_        PVOID                                   DeviceContext,
     _In_            PENDPOINT_MINIPAIR                      MiniportPair
@@ -668,6 +677,10 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
 
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+    STDMETHOD_(NTSTATUS,        InitA2dpSideband)();
+
+#endif // SYSVAD_A2DP_SIDEBAND
 
     STDMETHOD_(VOID, Cleanup)();
 
@@ -699,10 +712,7 @@ NewAdapterCommon
     _Out_       PUNKNOWN *              Unknown,
     _In_        REFCLSID,
     _In_opt_    PUNKNOWN                UnknownOuter,
-    _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-                "Allocation failures cause a system crash"))
-    _In_        POOL_TYPE               PoolType 
+    _In_        POOL_FLAGS              PoolFlags
 );
 
 
@@ -879,6 +889,7 @@ DECLARE_INTERFACE_(ISidebandDeviceCommon, IUnknown)
         _In_        eDeviceType             deviceType
     ) PURE;
 
+    _IRQL_requires_max_(DISPATCH_LEVEL)
     STDMETHOD_(BOOL,                IsNRECSupported)
     (
         THIS_
