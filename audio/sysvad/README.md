@@ -63,19 +63,21 @@ From the Visual Studio Installer, the following individual packages must be inst
 
 Where "\<arch\>" refers to your target architecture.
 
+#### Configure the repository for Windows Implementation Library (WIL)
+
+In order to build the project, it is necessary to include WIL. The Windows Driver Samples repository includes WIL as a Git submodule.
+
+If it has not been done before (such as in a fresh clone), the following command should be run at the root of the repository:
+
+`git submodule update --init`
+
+This will populate a folder named *wil* at the root of the repository.
+
 ### Open the driver solution in Visual Studio
 
 In Microsoft Visual Studio, click *File* \> *Open* \> *Project/Solution...* and navigate to the folder that contains the sample files (for example, *C:\Windows-driver-samples\audio\sysvad*). Double-click the *sysvad* solution file.
 
 In Visual Studio locate the Solution Explorer. (If this is not already open, choose *Solution Explorer* from the *View* menu.) In Solution Explorer, you can see one solution that has eight projects.
-
-### Configure the project for Windows Implementation Library (WIL)
-
-In order to build the project, it is necessary to include WIL. This can be done within Visual Studio using NuGet.
-
-In Solution Explorer, right-click *Solution 'sysvad' (8 of 8 projects)* and select *Manage NuGet Packages for Solution...*. Then, under the *Browse* tab, search for "Microsoft.Windows.ImplementationLibrary" and select it from the package list. Select it for projects *APO\AecAPO*, *APO\KwsAPO* and *APO\SwapAPO*, then click on *Install*.
-
-For more information on NuGet, please refer to the [NuGet documentation](https://docs.microsoft.com/nuget/).
 
 ### Set the sample's configuration and platform
 
