@@ -14,6 +14,7 @@
 #include "PreComp.h"
 #include "KsPosTestTaef.h"
 #include "tests.h"
+#include <TestResourceHelper.h>
 
 using namespace WEX::Common;
 using namespace WEX::Logging;
@@ -113,10 +114,18 @@ bool WDMAudio::KsPosTest::KsPosTestSetup()
     g_pKsPosTst = this;
     m_pTimer = &g_Timer;
     // The histograms can be displayed by using the command line parameter checked below
-    // If the parameter is not specified, the default is to not log anything
+    // If the parameter is not specified, the default is to log everything.
     bool param = true;
     WEX::TestExecution::RuntimeParameters::TryGetValue(L"logHistograms", param);
     m_fLogHistograms = param;
+
+    // Get the QPC frequency for timing on the tests.
+    // This can be done here as the frequency does not change.
+    LARGE_INTEGER liFrequency;
+    QueryPerformanceFrequency(&liFrequency);
+    m_qpcFrequency = liFrequency.QuadPart;
+    LOG(g_pBasicLog, "Frequency: %llu", m_qpcFrequency);
+
     return true;
 }
 
@@ -168,6 +177,14 @@ bool WDMAudio::KsPosTest::TestCaseSetup()
         LogWaveFormat(m_pHalf->m_pCurrentFormat.get());
     }
 
+    // Get a HNS reference from the begining of the test so the HNS from system and driver times won't be so large
+    LARGE_INTEGER liNow;
+    QueryPerformanceCounter(&liNow);
+
+    // Convert QPC to microseconds and then HNS. This is to prevent overflows from converting directly to HNS.
+    m_testBaseHns = (liNow.QuadPart * MICROSECONDS_PER_SECOND) / m_qpcFrequency;
+    m_testBaseHns *= HNSTIME_UNITS_PER_MICROSECOND;
+
     return true;
 }
 
@@ -175,6 +192,9 @@ bool WDMAudio::KsPosTest::TestCaseCleanUp()
 {
     // Stop the timer here, in case any latency test fails
     NtSetTimerResolution(0, FALSE, &actualTimerResolution);
+
+    // Attempt to unregister the thread with MMCSS just in case the test failed before doing so.
+    m_threadPriority.UnRegisterWithMMCSS();
 
     if (!CompareWaveFormat(m_pHalf->m_pCurrentFormat.get(), m_pHalf->m_pPreferredFormat.get())) {
         CloneWaveFormat(m_pHalf->m_pPreferredFormat.get(), wil::out_param(m_pHalf->m_pCurrentFormat));
@@ -201,6 +221,12 @@ bool WDMAudio::KsPosTest::TestCaseCleanUp()
     }
 
     return true;
+}
+
+// -------------------------------------------------------------------------------
+void WDMAudio::KsPosTestPreTest::TAEF_VerifyAllEndpointsPluggedIn()
+{
+    VerifyAllEndpointsPluggedIn();
 }
 
 // -------------------------------------------------------------------------------

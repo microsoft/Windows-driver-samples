@@ -49,10 +49,13 @@ HRESULT CollectSampleData
     UINT64        u64Position;
     UINT64        positionHNS;
     UINT64        u64Frequency;
-    double        testStartHns;
     LARGE_INTEGER liNow;
-    LARGE_INTEGER liFrequency;
-    QueryPerformanceFrequency(&liFrequency);
+    PLONGLONG     frequency = &g_pKsPosTst->m_qpcFrequency;
+    PLONGLONG     pBaseHns = &g_pKsPosTst->m_testBaseHns;
+    CRtThreadRegistration* threadPriority = &g_pKsPosTst->m_threadPriority;
+
+    // Register with MMCSS
+    threadPriority->RegisterWithMMCSS();
 
     VERIFY_SUCCEEDED(pHalfApp->InitializeEndpoint());
     VERIFY_SUCCEEDED(pHalfApp->CreateSineToneDataBuffer(pHalfApp->m_pCurrentFormat.get()));
@@ -60,10 +63,6 @@ HRESULT CollectSampleData
 
     // run the adapter sink pin
     VERIFY_SUCCEEDED(pHalfApp->StartStream());
-
-    // Get a HNS reference from the begining of the test so the HNS from system and driver times won't be so large
-    QueryPerformanceCounter(&liNow);
-    testStartHns = (double)liNow.QuadPart * HNSTIME_UNITS_PER_SECOND / (double)liFrequency.QuadPart;
 
     tStart = xGetTime();
     Sleep(DELAY_FOR_STABILIZE);
@@ -85,10 +84,12 @@ HRESULT CollectSampleData
             // only count this result if the GetPosition and GetTime happened relatively atomically
             if ((tPost - tPre) < 1.)
             {
-                double testHNS = (double)liNow.QuadPart * HNSTIME_UNITS_PER_SECOND / (double)liFrequency.QuadPart;
+                // Convert QPC to microseconds and then HNS. This is to prevent overflows from converting directly to HNS.
+                UINT64 testHNS = liNow.QuadPart * MICROSECONDS_PER_SECOND / *frequency;
+                testHNS *= HNSTIME_UNITS_PER_MICROSECOND;
                 // In both sampling rate and jitter calculation, the time used is in milliseconds, so we can convert it right here
-                pPosSet[i].testTime = HNSTIME_TO_MILLISECONDS_DOUBLE(testHNS - testStartHns);
-                pPosSet[i].positionTime = HNSTIME_TO_MILLISECONDS_DOUBLE(positionHNS - testStartHns);
+                pPosSet[i].testTime = HNSTIME_TO_MILLISECONDS_DOUBLE(testHNS - *pBaseHns);
+                pPosSet[i].positionTime = HNSTIME_TO_MILLISECONDS_DOUBLE(positionHNS - *pBaseHns);
                 // We store the values as seconds because it is easier to convert to bytes per second, on sampling rate calculation, and milliseconds, on jitter calculation.
                 pPosSet[i].position = (double)u64Position / (double)u64Frequency;
 
@@ -116,6 +117,9 @@ HRESULT CollectSampleData
     }
 
     VERIFY_SUCCEEDED(pHalfApp->StopStream());
+
+    // Unregister with MMCSS
+    threadPriority->UnRegisterWithMMCSS();
 
     //  Did we get enough data?
     VERIFY_IS_TRUE(pResults->cPosSets >= 30);
@@ -310,7 +314,7 @@ void Test_DriftAndJitter_Main
     results.perfResults.argPosSets = pPositionSet.get();
 
     // collect the data ~~~~~~~~~~~~~~~~~
-    VERIFY_SUCCEEDED(CollectSampleData(pHalfApp, &results, requestedPeriodicity));
+    IF_FAILED_JUMP(CollectSampleData(pHalfApp, &results, requestedPeriodicity), Log);
 
     // Stop and cleanup the host stream since we are done collecting samples
     if (isLoopbackPin)
@@ -322,10 +326,31 @@ void Test_DriftAndJitter_Main
     }
 
     // calculate drift ~~~~~~~~~~~~~~~~~~
-    VERIFY_SUCCEEDED(CalculateSampleRate(&results));
+    IF_FAILED_JUMP(CalculateSampleRate(&results), Log);
 
     // calculate Jitter ~~~~~~~~~~~~~~~~~
     VERIFY_SUCCEEDED(CalculateJitter(&results));
+
+    return;
+
+Log:
+    // If the drift test or the collection of samples fail,
+    // there will be no logging of data (from inside the jitter test).
+    // So, log whatever available values here.
+    if (g_pKsPosTst->m_fLogHistograms)
+    {
+        PERF_RESULTS* data = &results.perfResults;
+        LOG(g_pBasicLog, "Report      Reported    Position");
+        LOG(g_pBasicLog, "time        position    timestamp");
+        LOG(g_pBasicLog, "(ms)        (s)         (ms)");
+        LOG(g_pBasicLog, "==========  ==========  ==========");
+        for (UINT i = 0; i < data->cPosSets; i++)
+        {
+            LOG(g_pBasicLog, "%10.2f, %10.2f, %10.2f", data->argPosSets[i].testTime, data->argPosSets[i].position, data->argPosSets[i].positionTime);
+        }
+    }
+
+    ERR(g_pBasicLog, "Drift and jitter test failed");
 }
 
 // ------------------------------------------------------------------------------
@@ -367,6 +392,8 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
     CHalfApp* pHostHalfApp = g_pKsPosTst->m_pHostHalf;
     NTSTATUS  lTimerResStatus;
     BOOL      isLoopbackPin = pHalfApp->m_ConnectorType == eLoopbackConnector;
+    PLONGLONG qpcFrequency = &g_pKsPosTst->m_qpcFrequency;
+    CRtThreadRegistration* threadPriority = &g_pKsPosTst->m_threadPriority;
 
     // Test will ignore Bluetooth devices until proper thresholds are in place.
     if (pHalfApp->m_bIsBluetooth)
@@ -382,6 +409,9 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
         SKIP(g_pBasicLog, "Fail to set timer precision. Skip the test.");
         return;
     }
+
+    // Register with MMCSS
+    threadPriority->RegisterWithMMCSS();
 
     // If it is a loopback pin, get the host pin and start the stream
     if (isLoopbackPin)
@@ -414,9 +444,7 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
     double tPosPre = 0.0;
     double tPosPost = 0.0;
 
-    LARGE_INTEGER liFrequency = { 0 };
     LARGE_INTEGER timeStamp = { 0 };
-    QueryPerformanceFrequency(&liFrequency);
 
     // mark the time
     double tRunPre = xGetTime();
@@ -439,16 +467,26 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
         tPosPost = xGetTime();
         if (g_pKsPosTst->m_fLogHistograms)
         {
-            LOG(g_pBasicLog, "Testing first non-zero position reported: %u samples, %u HNS at %.03f ms", u64Position, driverHns, tPosPost - tRunPre);
+            LOG(g_pBasicLog, "Testing first non-zero position reported: %llu samples, %llu HNS at %.03f ms", u64Position, driverHns, tPosPost - tRunPre);
         }
 
-        // Fail if the cursor does not move within 500 ms
-        VERIFY_IS_TRUE((tPosPost - tRunPost) < 500.0);
+        // Warn if the cursor does not move within 500 ms. Do not fail the test as this might be because the test overslept.
+        if ((tPosPost - tRunPost) >= 500.0)
+        {
+            WARN(g_pBasicLog, "Pin did not report a position in 500 ms");
+            break;
+        }
     }
 
     // Before stopping, get the frequency of the stream
     UINT64 u64Frequency;
     VERIFY_SUCCEEDED(pHalfApp->m_pAudioClock->GetFrequency(&u64Frequency));
+
+    // Stop the endpoint
+    VERIFY_SUCCEEDED(pHalfApp->StopStream());
+
+    // Unregister with MMCSS
+    threadPriority->UnRegisterWithMMCSS();
 
     // the uncertainty in time is the max possible value minus the min possible value divided by 2 (for +/- purposes)
     double tMax = tPosPost - tRunPre;
@@ -460,19 +498,28 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
     double tOffset = MILLISECONDS_PER_SECOND * (double)u64Position / (double)u64Frequency;
 
     // Calculate the difference in time of the position time versus the test time
-    UINT64 testHns = 10000000 * timeStamp.QuadPart / liFrequency.QuadPart;
-    INT64 timeDiff = testHns - driverHns;
+    // Convert QPC to microseconds and then HNS. This is to prevent overflows from converting directly to HNS.
+    UINT64 testHns = MICROSECONDS_PER_SECOND * timeStamp.QuadPart / *qpcFrequency;
+    testHns *= HNSTIME_UNITS_PER_MICROSECOND;
+
+    // Make the HNS times smaller to avoid overflows (or underflows)
+    PLONGLONG pBaseHns = &g_pKsPosTst->m_testBaseHns;
+    INT64 adjustedTestHns = (INT64)(testHns - *pBaseHns);
+    INT64 adjustedDriverHns = (INT64)(driverHns - *pBaseHns);
+
+    INT64 timeDiff = adjustedTestHns - adjustedDriverHns;
 
     // Compensate the positon to take this difference into account
     tOffset += (double)timeDiff / HNSTIME_UNITS_PER_MILLISECOND;
 
     if (g_pKsPosTst->m_fLogHistograms)
     {
-        LOG(g_pBasicLog, "Times (HNS): %u, %u", testHns, driverHns);
-        LOG(g_pBasicLog, "Time difference: %d HNS (%f ms)", timeDiff, (double)timeDiff / HNSTIME_UNITS_PER_MILLISECOND);
-        LOG(g_pBasicLog, "First non-zero position = %u at %g ms", u64Position, tAve);
+        LOG(g_pBasicLog, "Base test time: %lld HNS", *pBaseHns);
+        LOG(g_pBasicLog, "Times (HNS): %llu, %llu", testHns, driverHns);
+        LOG(g_pBasicLog, "Time difference: %lld HNS (%f ms)", timeDiff, (double)timeDiff / HNSTIME_UNITS_PER_MILLISECOND);
+        LOG(g_pBasicLog, "First non-zero position = %llu at %g ms", u64Position, tAve);
         LOG(g_pBasicLog, "Time offset / max time: %f ms / %f ms", tOffset, tMax);
-        LOG(g_pBasicLog, "Frequency: %lu", u64Frequency);
+        LOG(g_pBasicLog, "Frequency: %llu", u64Frequency);
     }
 
     double           tLatency;
@@ -485,16 +532,21 @@ void Test_Latency_Main (HNSTIME requestedPeriodicity)
     }
     LOG(g_pBasicLog, "Adjusted latency                 = %.03f ms (+/- %.3f ms)", tLatency, tUncertainty);
 
-    // if the reported position is outside the max time for this call (see tUncertainty calculation above), then fail
-    // temp fix until we know how far can be the data in front of the
-    // real time because of buffering
-    VERIFY_IS_FALSE(tOffset > tMax);
+    // In case the position reported by the pin (tOffset) is ahead of the run time of the pin (tMax),
+    // assume that position might have jitter and apply the propper limits instead of failing the test.
+    if (tOffset > tMax + JITTER_STD_THRESHOLD)
+    {
+        WARN(g_pBasicLog, "Pin's time offset is greater than the time it has been in the RUN state. This will become an error in the future.");
+        return;
+    }
 
     // Verify that the latency is within the threshold
-    VERIFY_IS_TRUE(tLatency <= LATENCY_THRESHOLD);         // ms
+    if (tLatency > LATENCY_THRESHOLD)
+    {
+        WARN(g_pBasicLog, "The latency exceeds the acceptable threshold. This will become an error in the future.");
+        return;
+    }
 
-    // Stop the endpoint
-    VERIFY_SUCCEEDED(pHalfApp->StopStream());
     // If this was a loopback pin, stop the host stream also
     if (isLoopbackPin)
     {

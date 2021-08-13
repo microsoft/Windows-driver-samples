@@ -32,6 +32,9 @@ Abstract:
 #ifdef SYSVAD_USB_SIDEBAND
 #include "usbhsminipairs.h"
 #endif // SYSVAD_USB_SIDEBAND
+#ifdef SYSVAD_A2DP_SIDEBAND
+#include "a2dphpminipairs.h"
+#endif // SYSVAD_A2DP_SIDEBAND
 
 
 
@@ -269,6 +272,15 @@ DWORD g_DisableBthScoBypass = 0;   // default is SCO bypass enabled.
 DWORD g_DisableUsbSideband = 0;   // default is USB bypass enabled.
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+//
+// This driver listens for arrival/removal of the Bluetooth A2DP Sideband interfaces by 
+// default. Use the registry value DisableA2dpSideband (DWORD) > 0 to override 
+// this default.
+//
+DWORD g_DisableA2dpSideband = 0; // default is A2DP bypass enabled.
+#endif
+
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
@@ -276,6 +288,8 @@ DWORD g_DisableUsbSideband = 0;   // default is USB bypass enabled.
 #pragma code_seg("PAGE")
 void ReleaseRegistryStringBuffer()
 {
+    PAGED_CODE();
+
     if (g_RegistryPath.Buffer != NULL)
     {
         ExFreePool(g_RegistryPath.Buffer);
@@ -371,14 +385,12 @@ NTSTATUS - SUCCESS if able to configure the framework
 
     g_RegistryPath.MaximumLength = RegistryPath->Length + sizeof(WCHAR);
 
-    g_RegistryPath.Buffer = (PWCH)ExAllocatePoolWithTag(PagedPool, g_RegistryPath.MaximumLength, MINADAPTER_POOLTAG);
+    g_RegistryPath.Buffer = (PWCH)ExAllocatePool2(POOL_FLAG_PAGED, g_RegistryPath.MaximumLength, MINADAPTER_POOLTAG);
 
     if (g_RegistryPath.Buffer == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(g_RegistryPath.Buffer, g_RegistryPath.MaximumLength);
 
     RtlAppendUnicodeToString(&g_RegistryPath, RegistryPath->Buffer);
 
@@ -436,13 +448,11 @@ Returns:
     parametersPath.MaximumLength =
         RegistryPath->Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
 
-    parametersPath.Buffer = (PWCH) ExAllocatePoolWithTag(PagedPool, parametersPath.MaximumLength, MINADAPTER_POOLTAG);
+    parametersPath.Buffer = (PWCH) ExAllocatePool2(POOL_FLAG_PAGED, parametersPath.MaximumLength, MINADAPTER_POOLTAG);
     if (parametersPath.Buffer == NULL) 
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(parametersPath.Buffer, parametersPath.MaximumLength);
 
     RtlAppendUnicodeToString(&parametersPath, RegistryPath->Buffer);
     RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
@@ -1053,7 +1063,7 @@ Return Value:
                                 &pUnknownCommon,
                                 IID_IAdapterCommon,
                                 NULL,
-                                NonPagedPoolNx 
+                                POOL_FLAG_NON_PAGED 
                                 );
     IF_FAILED_JUMP(ntStatus, Exit);
 
@@ -1100,6 +1110,15 @@ Return Value:
         IF_FAILED_JUMP(ntStatus, Exit);
     }
 #endif // SYSVAD_USB_SIDEBAND
+
+#ifdef SYSVAD_A2DP_SIDEBAND
+    if (!g_DisableA2dpSideband)
+    {
+        // Init infrastructure for Bluetooth A2DP sideband devices.
+        ntStatus = pAdapterCommon->InitA2dpSideband();
+        IF_FAILED_JUMP(ntStatus, Exit);
+    }
+#endif
 
 #ifdef _USE_SingleComponentMultiFxStates
     //

@@ -146,18 +146,29 @@ class UsbHsDevice :
         PUNKNOWN                                m_UnknownMicWave;        
 
         PSIDEBANDAUDIO_DEVICE_DESCRIPTOR        m_Descriptor;
-        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      m_pSpeakerDescriptor;
-        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      m_pMicDescriptor;
+
+        //
+        // Using new Endpoint descriptor structure
+        // Old: SIDEBANDAUDIO_ENDPOINT_DESCRIPTOR - IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR
+        // Use SIDEBANDAUDIO_ENDPOINT_DESCRIPTOR for 20H2 and older OS.
+        //
+        // New: SIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2 - IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR2
+        //
+        // The new struct includes interface properties
+        // that need to be added to the KS Filter interface
+        //
+        // USB Audio class driver supports both old and new IOCTLs
+        //
+        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     m_pSpeakerDescriptor;
+        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     m_pMicDescriptor;
         PKSPROPERTY_DESCRIPTION                 m_SpeakerVolumePropValues;
         LONG                                    m_SpeakerVolumeLevel;
         PKSPROPERTY_DESCRIPTION                 m_MicVolumePropValues;
         LONG                                    m_MicVolumeLevel;
 
         PKSPROPERTY_DESCRIPTION                 m_SpeakerMutePropValues;
-        ULONG                                   m_ulSpeakerMutePropValuesSize;
         LONG                                    m_SpeakerMute;
         PKSPROPERTY_DESCRIPTION                 m_MicMutePropValues;
-        ULONG                                   m_ulMicMutePropValuesSize;
         LONG                                    m_MicMute;
 
 
@@ -363,6 +374,7 @@ class UsbHsDevice :
             _In_        eDeviceType             deviceType
         );
 
+        _IRQL_requires_max_(DISPATCH_LEVEL)
         STDMETHODIMP_(BOOL)                 IsNRECSupported();
         
         STDMETHODIMP_(BOOL)                 GetNRECDisableStatus();
@@ -415,7 +427,7 @@ class UsbHsDevice :
         NTSTATUS    GetUsbHsEndpointDescriptor
         (
             _In_    ULONG                                   EpIndex,
-            _Out_   PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR   *EpDescriptor
+            _Out_   PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     *EpDescriptor
         );
 
         NTSTATUS    GetUsbHsVolumePropertyValues
@@ -456,7 +468,7 @@ class UsbHsDevice :
         NTSTATUS    GetUsbHsMutePropertyValues
         (
             _In_  ULONG                     EpIndex,
-            _Out_ PULONG                    pLength,
+            _In_ ULONG                      Length,
             _Out_ PKSPROPERTY_DESCRIPTION   *PropValues
         );
         
@@ -510,39 +522,40 @@ class UsbHsDevice :
         NTSTATUS    GetTransportResources
         (
             _In_    ULONG                                   EpIndex,
-            _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      pEndpointDescriptor,
+            _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     pEndpointDescriptor,
             _Out_   PUSBHSDEVICE_EP_TRANSPORT_RESOURCES     pTransportResources
         );
 
         NTSTATUS    SetTransportResources
         (
-            _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      pEndpointDescriptor,
+            _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     pEndpointDescriptor,
             _In_    ULONG                                   EpIndex
         );
 
         NTSTATUS    GetSiop
         (
-            _In_    ULONG                                   EpIndex,
-            _In_    ULONG                                   SiopTypeId,
-            _In_    ULONG                                   PoolTag,
-            _Out_   PBYTE                                   *ppOutputBuffer
+            _In_        const GUID  *ParamSet,
+            _In_        ULONG       SiopTypeId,
+            _In_        ULONG       EpIndex,
+            _In_        ULONG       PoolTag,
+            _Outptr_    PBYTE       *ppOutputBuffer
         );
         
         static
         NTSTATUS    CreateCustomEndpointMinipair
         (
-            _In_        PENDPOINT_MINIPAIR pBaseMinipair,
-            _In_        PUNICODE_STRING FriendlyName,
-            _In_        PGUID pCategory,
-            _Outptr_    PENDPOINT_MINIPAIR *ppCustomMinipair
+            _In_        PENDPOINT_MINIPAIR  pBaseMinipair,
+            _In_        PUNICODE_STRING     FriendlyName,
+            _In_        PGUID               pCategory,
+            _Outptr_    PENDPOINT_MINIPAIR  *ppCustomMinipair
         );
 
         static
         NTSTATUS    UpdateCustomEndpointCategory
         (
-            _In_        PPCFILTER_DESCRIPTOR pCustomMinipairTopoFilter,
-            _In_        PPCPIN_DESCRIPTOR pCustomMinipairTopoPins,
-            _In_        PGUID pCategory
+            _In_        PPCFILTER_DESCRIPTOR    pCustomMinipairTopoFilter,
+            _In_        PPCPIN_DESCRIPTOR       pCustomMinipairTopoPins,
+            _In_        PGUID                   pCategory
         );
 
         static
@@ -569,7 +582,7 @@ class UsbHsDevice :
 
         NTSTATUS    MicStreamClose();
 
-        NTSTATUS    SetUsbHsStreamOpen(ULONG EpIndex, PKSDATAFORMAT_WAVEFORMATEXTENSIBLE pStreamFormat, PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR pEndpointDescriptor);
+        NTSTATUS    SetUsbHsStreamOpen(ULONG EpIndex, PKSDATAFORMAT_WAVEFORMATEXTENSIBLE pStreamFormat, PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2 pEndpointDescriptor);
 
         NTSTATUS    SetUsbHsStreamStart(ULONG EpIndex);
 

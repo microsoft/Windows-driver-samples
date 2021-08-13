@@ -14,6 +14,7 @@
 
 #include <initguid.h>
 #include <audioenginebaseapo.h>
+#include <audioengineextensionapo.h>
 #include <baseaudioprocessingobject.h>
 #include <resource.h>
 
@@ -21,6 +22,7 @@
 #include "SwapAPO.h"
 #include "SysVadShared.h"
 #include <CustomPropKeys.h>
+#include <propvarutil.h>
 
 
 
@@ -100,6 +102,95 @@ LONG GetCurrentEffectsSetting(IPropertyStore* properties, PROPERTYKEY pkeyEnable
 
     return (LONG)enabled;
 }
+
+HRESULT SwapMFXApoAsyncCallback::Create(
+    _Outptr_ SwapMFXApoAsyncCallback** workItemOut, 
+    DWORD queueId)
+{
+    HRESULT hr = S_OK;
+    SwapMFXApoAsyncCallback* workItem = new SwapMFXApoAsyncCallback(queueId);
+
+    if (workItem != nullptr)
+    {
+        *workItemOut = workItem;
+    }
+    else
+    {
+        hr = E_OUTOFMEMORY;
+    }
+    return hr;
+}
+
+STDMETHODIMP SwapMFXApoAsyncCallback::Invoke(_In_ IRtwqAsyncResult* asyncResult)
+{
+    // We are now executing on the real-time thread. Invoke the APO and let it execute the work.
+    HRESULT hr = S_OK;
+    wil::com_ptr_nothrow<IUnknown> objectUnknown;
+    hr = asyncResult->GetObject(objectUnknown.put_unknown());
+
+    if (hr == S_OK)
+    {
+        wil::com_ptr_nothrow<CSwapAPOMFX> swapMFXAPO = static_cast<CSwapAPOMFX*>(static_cast<IAudioProcessingObject*>(objectUnknown.get()));
+        hr = swapMFXAPO->DoWorkOnRealTimeThread();
+        asyncResult->SetStatus(hr);
+
+        swapMFXAPO->HandleWorkItemCompleted(asyncResult);
+    }
+
+    return hr;
+}
+
+
+//--------------------------------------------------------------------------------
+// IUnknown::QueryInterface
+//--------------------------------------------------------------------------------
+STDMETHODIMP SwapMFXApoAsyncCallback::QueryInterface(
+    REFIID riid, 
+    void** interfaceOut
+    )
+{
+    ATLASSERT(interfaceOut != nullptr);
+
+    if (riid == __uuidof(IRtwqAsyncCallback)) 
+    {
+        *interfaceOut = static_cast<IRtwqAsyncCallback*>(this);
+        AddRef();
+    }
+    else if (riid == __uuidof(IUnknown)) 
+    {
+        *interfaceOut = static_cast<IUnknown*>(this);
+        AddRef();
+    }
+    else 
+    {
+        *interfaceOut = nullptr;
+        return E_NOINTERFACE;
+    }
+
+    return S_OK;
+}
+
+//--------------------------------------------------------------------------------
+// IUnknown::AddRef
+//--------------------------------------------------------------------------------
+STDMETHODIMP_(ULONG) SwapMFXApoAsyncCallback::AddRef()
+{
+    return InterlockedIncrement(&_refCount);
+} 
+
+//--------------------------------------------------------------------------------
+// IUnknown::Release
+//--------------------------------------------------------------------------------
+STDMETHODIMP_(ULONG) SwapMFXApoAsyncCallback::Release()
+{
+    LONG refCount = InterlockedDecrement(&_refCount);
+    if (refCount == 0)
+    {
+        delete this;
+    }
+    return refCount;
+}
+
 
 #pragma AVRT_CODE_BEGIN
 //-------------------------------------------------------------------------
@@ -259,7 +350,20 @@ STDMETHODIMP CSwapAPOMFX::LockForProcess(UINT32 u32NumInputConnections,
 {
     ASSERT_NONREALTIME();
     HRESULT hr = S_OK;
-    
+
+    if (m_queueId != 0)
+    {
+        hr = SwapMFXApoAsyncCallback::Create(&m_asyncCallback, m_queueId);
+        IF_FAILED_JUMP(hr, Exit);
+
+        wil::com_ptr_nothrow<IRtwqAsyncResult> asyncResult;
+        hr = RtwqCreateAsyncResult(static_cast<IAudioProcessingObject*>(this), m_asyncCallback.get(), nullptr, &asyncResult);
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = RtwqPutWorkItem(m_queueId, 0, asyncResult.get());
+        IF_FAILED_JUMP(hr, Exit);
+    }
+
     hr = CBaseAudioProcessingObject::LockForProcess(u32NumInputConnections,
         ppInputConnections, u32NumOutputConnections, ppOutputConnections);
     IF_FAILED_JUMP(hr, Exit);
@@ -338,7 +442,33 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
     IF_TRUE_ACTION_JUMP( ((NULL == pbyData) && (0 != cbDataSize)), hr = E_INVALIDARG, Exit);
     IF_TRUE_ACTION_JUMP( ((NULL != pbyData) && (0 == cbDataSize)), hr = E_INVALIDARG, Exit);
 
-    if (cbDataSize == sizeof(APOInitSystemEffects2))
+    if (cbDataSize == sizeof(APOInitSystemEffects3))
+    {
+        APOInitSystemEffects3* papoSysFxInit3 = (APOInitSystemEffects3*)pbyData;
+
+        // Try to get the logging service, but ignore errors as failure to do logging it is not fatal.
+        hr = papoSysFxInit3->pServiceProvider->QueryService(SID_AudioProcessingObjectLoggingService, IID_PPV_ARGS(&m_apoLoggingService));
+        IF_FAILED_JUMP(hr, Exit);
+
+        wil::com_ptr_nothrow<IAudioProcessingObjectRTQueueService> apoRtQueueService;
+        hr = papoSysFxInit3->pServiceProvider->QueryService(SID_AudioProcessingObjectRTQueue, IID_PPV_ARGS(&apoRtQueueService));
+        IF_FAILED_JUMP(hr, Exit);
+
+        // Call the GetRealTimeWorkQueue to get the ID of a work queue that can be used for scheduling tasks
+        // that need to run at a real-time priority. The work queue ID is used with the Rtwq APIs.
+        hr = apoRtQueueService->GetRealTimeWorkQueue(&m_queueId);
+        IF_FAILED_JUMP(hr, Exit);
+       
+        // Windows should pass a valid collection.
+        ATLASSERT(papoSysFxInit3->pDeviceCollection != nullptr);
+        IF_TRUE_ACTION_JUMP(papoSysFxInit3->pDeviceCollection == nullptr, hr = E_INVALIDARG, Exit);
+
+        // Save the processing mode being initialized.
+        processingMode = papoSysFxInit3->AudioProcessingMode;
+
+        ProprietaryCommunicationWithDriver(papoSysFxInit3->pDeviceCollection, papoSysFxInit3->nSoftwareIoDeviceInCollection, papoSysFxInit3->nSoftwareIoConnectorIndex);
+    }
+    else if (cbDataSize == sizeof(APOInitSystemEffects2))
     {
         //
         // Initialize for mode-specific signal processing
@@ -362,7 +492,7 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
         // an driver (either host CPU based or offload DSP based), the example below uses a combination of 
         // IDeviceTopology, IConnector, and IKsControl interfaces to communicate with the underlying audio driver. 
         // the following following routine demonstrates how to implement how to communicate to an audio driver from a APO.
-        ProprietaryCommunicationWithDriver(papoSysFxInit2);
+        ProprietaryCommunicationWithDriver(papoSysFxInit2->pDeviceCollection, papoSysFxInit2->nSoftwareIoDeviceInCollection, papoSysFxInit2->nSoftwareIoConnectorIndex);
     }
     else if (cbDataSize == sizeof(APOInitSystemEffects))
     {
@@ -408,19 +538,32 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
     //
     //  Get current effects settings
     //
+    if (m_userStore != nullptr)
+    {
+        m_fEnableSwapMFX = GetCurrentEffectsSetting(m_userStore.get(), PKEY_Endpoint_Enable_Channel_Swap_MFX, m_AudioProcessingMode);
+    }
+
     if (m_spAPOSystemEffectsProperties != NULL)
     {
         m_fEnableSwapMFX = GetCurrentEffectsSetting(m_spAPOSystemEffectsProperties, PKEY_Endpoint_Enable_Channel_Swap_MFX, m_AudioProcessingMode);
     }
 
-    //
-    //  Register for notification of registry updates
-    //
-    hr = m_spEnumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-    IF_FAILED_JUMP(hr, Exit);
+    RtlZeroMemory(m_effectInfos, sizeof(m_effectInfos));
+    m_effectInfos[0] = { SwapEffectId, FALSE, m_fEnableSwapMFX ? AUDIO_SYSTEMEFFECT_STATE_ON : AUDIO_SYSTEMEFFECT_STATE_OFF };
 
-    hr = m_spEnumerator->RegisterEndpointNotificationCallback(this);
-    IF_FAILED_JUMP(hr, Exit);
+    if (cbDataSize != sizeof(APOInitSystemEffects3))
+    {
+        //
+        //  Register for notification of registry updates
+        //
+        hr = m_spEnumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = m_spEnumerator->RegisterEndpointNotificationCallback(this);
+        IF_FAILED_JUMP(hr, Exit);
+
+        m_bRegisteredEndpointNotificationCallback = TRUE;
+    }
 
     m_bIsInitialized = true;
 Exit:
@@ -552,10 +695,140 @@ Exit:
     return hr;
 }
 
-HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(APOInitSystemEffects2 *_pAPOSysFxInit2)
+HRESULT CSwapAPOMFX::GetControllableSystemEffectsList(_Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event)
+{
+    RETURN_HR_IF_NULL(E_POINTER, effects);
+    RETURN_HR_IF_NULL(E_POINTER, numEffects);
+
+    *effects = nullptr;
+    *numEffects = 0;
+
+    // Always close existing effects change event handle
+    if (m_hEffectsChangedEvent != NULL)
+    {
+        CloseHandle(m_hEffectsChangedEvent);
+        m_hEffectsChangedEvent = NULL;
+    }
+
+    // If an event handle was specified, save it here (duplicated to control lifetime)
+    if (event != NULL)
+    {
+        if (!DuplicateHandle(GetCurrentProcess(), event, GetCurrentProcess(), &m_hEffectsChangedEvent, EVENT_MODIFY_STATE, FALSE, 0))
+        {
+            RETURN_IF_FAILED(HRESULT_FROM_WIN32(GetLastError()));
+        }
+    }
+
+    if (!IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW))
+    {
+        wil::unique_cotaskmem_array_ptr<AUDIO_SYSTEMEFFECT> audioEffects(
+            static_cast<AUDIO_SYSTEMEFFECT*>(CoTaskMemAlloc(NUM_OF_EFFECTS * sizeof(AUDIO_SYSTEMEFFECT))), NUM_OF_EFFECTS);
+        RETURN_IF_NULL_ALLOC(audioEffects.get());
+
+        for (UINT i = 0; i < NUM_OF_EFFECTS; i++)
+        {
+            audioEffects[i].id = m_effectInfos[i].id;
+            audioEffects[i].state = m_effectInfos[i].state;
+            audioEffects[i].canSetState = m_effectInfos[i].canSetState;
+        }
+
+        *numEffects = (UINT)audioEffects.size();
+        *effects = audioEffects.release();
+    }
+
+    return S_OK;
+}
+
+HRESULT CSwapAPOMFX::SetAudioSystemEffectState(GUID effectId, AUDIO_SYSTEMEFFECT_STATE state)
+{
+        for (auto effectInfo : m_effectInfos)
+    {
+        if (effectId == effectInfo.id)
+        {
+            AUDIO_SYSTEMEFFECT_STATE oldState = effectInfo.state;
+            effectInfo.state = state;
+
+            // Synchronize access to the effects list and effects changed event
+            m_EffectsLock.Enter();
+
+            // If anything changed and a change event handle exists
+            if (oldState != effectInfo.state)
+            {
+                SetEvent(m_hEffectsChangedEvent);
+                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
+            }
+
+            m_EffectsLock.Leave();
+            
+            return S_OK;
+        }
+    }
+
+    return E_NOTFOUND;
+}
+
+HRESULT CSwapAPOMFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO_NOTIFICATION_DESCRIPTOR **apoNotifications, _Out_ DWORD *count)
+{
+    *apoNotifications = nullptr;
+    *count = 0;
+
+    RETURN_HR_IF_NULL(E_FAIL, m_device);
+
+    // Let the OS know what notifications we are interested in by returning an array of
+    // APO_NOTIFICATION_DESCRIPTORs.
+    constexpr DWORD numDescriptors = 1;
+    wil::unique_cotaskmem_ptr<APO_NOTIFICATION_DESCRIPTOR[]> apoNotificationDescriptors;
+
+    apoNotificationDescriptors.reset(static_cast<APO_NOTIFICATION_DESCRIPTOR*>(
+        CoTaskMemAlloc(sizeof(APO_NOTIFICATION_DESCRIPTOR) * numDescriptors)));
+    RETURN_IF_NULL_ALLOC(apoNotificationDescriptors);
+
+    // Our APO wants to get notified when a endpoint property changes on the audio endpoint.
+    apoNotificationDescriptors[0].type = APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE;
+    (void)m_device.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
+
+    *apoNotifications = apoNotificationDescriptors.release();
+    *count = numDescriptors;
+
+    return S_OK;
+}
+
+void CSwapAPOMFX::HandleNotification(APO_NOTIFICATION *apoNotification)
+{
+    if (apoNotification->type == APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE)
+    {
+        // If either the master disable or our APO's enable properties changed...
+        if (PK_EQUAL(apoNotification->audioEndpointPropertyChange.propertyKey, PKEY_Endpoint_Enable_Channel_Swap_MFX) ||
+            PK_EQUAL(apoNotification->audioEndpointPropertyChange.propertyKey, PKEY_AudioEndpoint_Disable_SysFx))
+        {
+            struct KeyControl
+            {
+                PROPERTYKEY key;
+                LONG* value;
+            };
+
+            KeyControl controls[] = {
+                {PKEY_Endpoint_Enable_Channel_Swap_MFX, &m_fEnableSwapMFX},
+            };
+
+            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
+
+            for (int i = 0; i < ARRAYSIZE(controls); i++)
+            {
+                LONG fNewValue = true;
+
+                // Get the state of whether channel swap MFX is enabled or not
+                fNewValue = GetCurrentEffectsSetting(m_userStore.get(), controls[i].key, m_AudioProcessingMode);
+
+                SetAudioSystemEffectState(m_effectInfos[i].id, fNewValue ? AUDIO_SYSTEMEFFECT_STATE_ON : AUDIO_SYSTEMEFFECT_STATE_OFF);
+            }
+        }
+    }
+}
+
+HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(IMMDeviceCollection *pDeviceCollection, UINT nSoftwareIoDeviceInCollection, UINT nSoftwareIoConnectorIndex)
 {
     HRESULT hr = S_OK;    
-    CComPtr<IMMDevice>	        spMyDevice;
     CComPtr<IDeviceTopology>    spMyDeviceTopology;
     CComPtr<IConnector>         spMyConnector;
     CComPtr<IPart>              spMyConnectorPart;
@@ -567,18 +840,18 @@ HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(APOInitSystemEffects2 *_
     CComHeapPtr<KSMULTIPLE_ITEM> spKsMultipleItem;
     KSP_PIN ksPin = {0};
 
-    UINT   nSoftwareIoDeviceInCollection = 0 ;
-    UINT   nSoftwareIoConnectorIndex = 0 ;
-
-    nSoftwareIoDeviceInCollection = _pAPOSysFxInit2->nSoftwareIoDeviceInCollection;
-    nSoftwareIoConnectorIndex = _pAPOSysFxInit2->nSoftwareIoConnectorIndex;
+    if (pDeviceCollection == nullptr)
+    {
+        hr = E_POINTER;
+        IF_FAILED_JUMP(hr, Exit);
+    }
 
     // Get the target IMMDevice
-    hr = _pAPOSysFxInit2->pDeviceCollection->Item(nSoftwareIoDeviceInCollection, &spMyDevice);
+    hr = pDeviceCollection->Item(nSoftwareIoDeviceInCollection, &m_device);
     IF_FAILED_JUMP(hr, Exit);
 
     // Instantiate a device topology instance
-    hr = spMyDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+    hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
     IF_FAILED_JUMP(hr, Exit);
 
     // retrieve connect instance
@@ -586,7 +859,7 @@ HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(APOInitSystemEffects2 *_
     IF_FAILED_JUMP(hr, Exit);
 
     // activate IKsControl on the IMMDevice
-    hr = spMyDevice->Activate(__uuidof(IKsControl), CLSCTX_INPROC_SERVER, NULL, (void**)&spKsControl);
+    hr = m_device->Activate(__uuidof(IKsControl), CLSCTX_INPROC_SERVER, NULL, (void**)&spKsControl);
     IF_FAILED_JUMP(hr, Exit);
 
     // get KS pin id
@@ -730,15 +1003,9 @@ HRESULT CSwapAPOMFX::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERT
 //
 CSwapAPOMFX::~CSwapAPOMFX(void)
 {
-    if (m_bIsInitialized)
+    if (m_bRegisteredEndpointNotificationCallback)
     {
-        //
-        // unregister for callbacks
-        //
-        if (m_spEnumerator != NULL)
-        {
-            m_spEnumerator->UnregisterEndpointNotificationCallback(this);
-        }
+        m_spEnumerator->UnregisterEndpointNotificationCallback(this);
     }
 
     if (m_hEffectsChangedEvent != NULL)
@@ -826,11 +1093,11 @@ HRESULT CSwapAPOMFX::ValidateAndCacheConnectionInfo(UINT32 u32NumInputConnection
     // Set scalars to decrease volume from 1.0 to 1.0/N where N is the number of channels
     // starting with the first channel.
     f32InverseChannelCount = 1.0f/m_u32SamplesPerFrame;
-    for (UINT16 u16Index=0; u16Index<m_u32SamplesPerFrame; u16Index++)
+    for (UINT32 u32Index=0; u32Index<m_u32SamplesPerFrame; u32Index++)
     {
         // m_u32SamplesPerFrame will not be modified by any other entity or context
 #pragma warning(suppress:6386)
-        m_pf32Coefficients[u16Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u16Index;
+        m_pf32Coefficients[u32Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u32Index;
     }
 
     
@@ -1130,4 +1397,22 @@ HRESULT CSwapAPOMFX::CheckCustomFormats(IAudioMediaType *pRequestedFormat)
     }
 
     return hResult;
+}
+
+HRESULT CSwapAPOMFX::DoWorkOnRealTimeThread()
+{
+    // Here is where any parallel processing that needs to be done on a real time thread can be performed.
+    return S_OK;
+}
+
+void CSwapAPOMFX::HandleWorkItemCompleted(_In_ IRtwqAsyncResult* asyncResult)
+{
+    // check the status of the result
+    if (FAILED(asyncResult->GetStatus()))
+    {
+        // Handle failure
+    }
+
+    // Here the app could call RtwqPutWorkItem again with m_queueId if it has more work that needs to
+    // execute on a real-time thread.
 }

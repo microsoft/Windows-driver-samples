@@ -863,9 +863,9 @@ HRESULT CDelayAPOMFX::ValidateAndCacheConnectionInfo(UINT32 u32NumInputConnectio
     // Set scalars to decrease volume from 1.0 to 1.0/N where N is the number of channels
     // starting with the first channel.
     f32InverseChannelCount = 1.0f/m_u32SamplesPerFrame;
-    for (UINT16 u16Index=0; u16Index<m_u32SamplesPerFrame; u16Index++)
+    for (UINT32 u32Index=0; u32Index<m_u32SamplesPerFrame; u32Index++)
     {
-        m_pf32Coefficients[u16Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u16Index;
+        m_pf32Coefficients[u32Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u32Index;
     }
 
     

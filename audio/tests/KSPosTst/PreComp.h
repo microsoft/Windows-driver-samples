@@ -42,25 +42,23 @@
 
 
 
-
-
-
-
-
-
-
-
 // Number of milliseconds that the test will be delayed to wait for the stream to stabilize
 #define DELAY_FOR_STABILIZE 100
 
 // Number of milliseconds in a second
 #define MILLISECONDS_PER_SECOND 1000
 
+// Number of microseconds in a second
+#define MICROSECONDS_PER_SECOND 1000000
+
 // Number of HNS units in one second
 #define HNSTIME_UNITS_PER_SECOND 10000000
 
 // Number of HNS units in one millisecond
 #define HNSTIME_UNITS_PER_MILLISECOND 10000
+
+// Number of HNS units per microsecond
+#define HNSTIME_UNITS_PER_MICROSECOND 10
 
 typedef double (*TIMEPROC) (void);
 double  tpQPC(void);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -95,7 +95,7 @@ CPinTestResource::Initialize
     }
 
     szMode = ModeName(m_spHalfApp->m_Mode);
-    szPin = PinName(m_spHalfApp->m_ConnectorType);
+    szPin = PinName(m_spHalfApp->m_ConnectorType, m_spHalfApp->m_bIsMVA);
 
     // Id: Combine device Id, pin type and mode
     m_szId.Attach(W2BSTR(m_spHalfApp->m_pwstrDeviceId.get()));
@@ -300,6 +300,7 @@ static const struct
     { AUDIO_SIGNALPROCESSINGMODE_MEDIA, L"MEDIA" },
     { AUDIO_SIGNALPROCESSINGMODE_MOVIE, L"MOVIE" },
     { AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION, L"NOTIFICATION" },
+    { AUDIO_SIGNALPROCESSINGMODE_FAR_FIELD_SPEECH, L"FAR_FIELD_SPEECH" },
 };
 
 
@@ -313,7 +314,7 @@ LPWSTR CPinTestResource::ModeName(REFGUID guidMode)
     return L"UNKNOWN";
 }
 
-LPWSTR CPinTestResource::PinName(EndpointConnectorType eConnectorType)
+LPWSTR CPinTestResource::PinName(EndpointConnectorType eConnectorType, bool IsMVA)
 {
     switch (eConnectorType)
     {
@@ -324,7 +325,7 @@ LPWSTR CPinTestResource::PinName(EndpointConnectorType eConnectorType)
     case eLoopbackConnector:
         return L"LOOPBACK";
     case eKeywordDetectorConnector:
-        return L"KEYWORD";
+        return IsMVA?L"MVAKEYWORD":L"SVAKEYWORD";
     default:
         return L"UNKNOWN";
     }
