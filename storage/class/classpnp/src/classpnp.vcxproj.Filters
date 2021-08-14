@@ -19,60 +19,57 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="autorun.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="class.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="classwmi.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="clntirp.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="create.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="data.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dictlib.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dispatch.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="history.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lock.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="obsolete.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="power.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="retry.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="srblib.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="xferpkt.c">
+    <ClCompile Include="autorun.c; class.c; classwmi.c; create.c; data.c; dictlib.c; dispatch.c; history.c; lock.c; power.c; xferpkt.c; clntirp.c; retry.c; utils.c; obsolete.c; debug.c; srblib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="class.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <MofComp Include="classlog.mof">
@@ -83,5 +80,18 @@
     <ResourceCompile Include="class.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
