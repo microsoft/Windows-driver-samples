@@ -14,16 +14,13 @@
 //
 // New and delete operators
 //
-_When_((PoolType & NonPagedPoolMustSucceed) != 0,
-    __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-void* __cdecl operator new(size_t Size, POOL_TYPE PoolType)
+void* __cdecl operator new(size_t Size, BDD_POOL_FLAGS PoolFlags)
 {
     PAGED_CODE();
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    void* pObject = ExAllocatePool2(static_cast<POOL_FLAGS>(PoolFlags), Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)
@@ -35,16 +32,13 @@ void* __cdecl operator new(size_t Size, POOL_TYPE PoolType)
     return pObject;
 }
 
-_When_((PoolType & NonPagedPoolMustSucceed) != 0,
-    __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-void* __cdecl operator new[](size_t Size, POOL_TYPE PoolType)
+void* __cdecl operator new[](size_t Size, BDD_POOL_FLAGS PoolFlags)
 {
     PAGED_CODE();
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    void* pObject = ExAllocatePool2(static_cast<POOL_FLAGS>(PoolFlags), Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)

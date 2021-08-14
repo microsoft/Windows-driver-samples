@@ -626,18 +626,21 @@ IsEdidChecksumValid(_In_reads_bytes_(EDID_V1_BLOCK_SIZE) const BYTE* pEdid);
 // Memory handling
 //
 
-// Defaulting the value of PoolType means that any call to new Foo()
+// Defaulting the value of PoolFlags means that any call to new Foo()
 // will raise a compiler error for being ambiguous. This is to help keep
 // any calls to allocate memory from accidentally NOT going through
 // these functions.
-_When_((PoolType & NonPagedPoolMustSucceed) != 0,
-    __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-void* __cdecl operator new(size_t Size, POOL_TYPE PoolType = PagedPool);
-_When_((PoolType & NonPagedPoolMustSucceed) != 0,
-    __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-void* __cdecl operator new[](size_t Size, POOL_TYPE PoolType = PagedPool);
+
+// MSVC confuses the POOL_FLAGS to be an address
+// resulting in a placed allocation unexpectedly.
+// This causes compiler errors.
+// 
+// Create a wrapper class so a type mismatch occurs when
+// compared to placed allocator.
+enum class BDD_POOL_FLAGS : POOL_FLAGS {}; 
+
+void* __cdecl operator new(size_t Size, BDD_POOL_FLAGS PoolFlags = BDD_POOL_FLAGS(POOL_FLAG_PAGED));
+void* __cdecl operator new[](size_t Size, BDD_POOL_FLAGS PoolFlags = BDD_POOL_FLAGS(POOL_FLAG_PAGED));
 void  __cdecl operator delete(void* pObject);
 void  __cdecl operator delete(void* pObject, size_t s);
 void  __cdecl operator delete[](void* pObject);
