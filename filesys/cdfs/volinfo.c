@@ -156,6 +156,8 @@ Return Value:
         //  and false if it couldn't wait for any I/O to complete.
         //
 
+        RtlZeroMemory(Irp->AssociatedIrp.SystemBuffer, Length);
+
         switch (IrpSp->Parameters.QueryVolume.FsInformationClass) {
 
         case FileFsSizeInformation:
