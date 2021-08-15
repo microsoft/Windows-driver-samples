@@ -1045,7 +1045,7 @@ Return Value:
             break;
         }
 
-        pMem = ExAllocatePoolWithTag(NonPagedPool,
+        pMem = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                             FdoData->MpTcbMemSize, PCIDRV_POOL_TAG);
         if (NULL == pMem )
         {
@@ -1054,7 +1054,6 @@ Return Value:
             break;
         }
 
-        RtlZeroMemory(pMem, FdoData->MpTcbMemSize);
         FdoData->MpTcbMem = pMem;
 
         // HW_START
