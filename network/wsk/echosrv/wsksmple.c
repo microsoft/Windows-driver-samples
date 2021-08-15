@@ -486,7 +486,7 @@ WskSampleAllocateSocketContext(
     // use multiple work queues (say a work queue per processor), a given
     // socket will/must always use the same work queue.
 
-    socketContext = ExAllocatePoolWithTag(
+    socketContext = ExAllocatePoolZero(
         NonPagedPool, sizeof(*socketContext), WSKSAMPLE_SOCKET_POOL_TAG);
 
     if(socketContext != NULL) {
@@ -507,7 +507,7 @@ WskSampleAllocateSocketContext(
             }
 
             if(BufferLength > 0) {
-                socketContext->OpContext[i].DataBuffer = ExAllocatePoolWithTag(
+                socketContext->OpContext[i].DataBuffer = ExAllocatePoolZero(
                     NonPagedPool, BufferLength, WSKSAMPLE_BUFFER_POOL_TAG);
                 if(socketContext->OpContext[i].DataBuffer == NULL) {
                     goto failure;
