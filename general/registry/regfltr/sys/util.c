@@ -91,18 +91,16 @@ Return Value:
     PCALLBACK_CONTEXT CallbackCtx = NULL;
     NTSTATUS Status;
     BOOLEAN Success = FALSE;
-    
-    CallbackCtx = (PCALLBACK_CONTEXT) ExAllocatePoolWithTag (
-                        PagedPool, 
-                        sizeof(CALLBACK_CONTEXT), 
+
+    CallbackCtx = (PCALLBACK_CONTEXT) ExAllocatePoolZero (
+                        PagedPool,
+                        sizeof(CALLBACK_CONTEXT),
                         REGFLTR_CONTEXT_POOL_TAG);
 
-    if  (CallbackCtx == NULL) {
+    if (CallbackCtx == NULL) {
         ErrorPrint("CreateCallbackContext failed due to insufficient resources.");
         goto Exit;
     }
-    
-    RtlZeroMemory(CallbackCtx, sizeof(CALLBACK_CONTEXT));
 
     CallbackCtx->CallbackMode = CallbackMode;
     CallbackCtx->ProcessId = PsGetCurrentProcessId();

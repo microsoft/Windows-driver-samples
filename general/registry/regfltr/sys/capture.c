@@ -443,9 +443,9 @@ Return Value:
         return Status;
     }
 
-    TempBuffer = (PCALLBACK_CONTEXT) ExAllocatePoolWithTag(
-                        PagedPool, 
-                        Length, 
+    TempBuffer = (PCALLBACK_CONTEXT) ExAllocatePoolZero(
+                        PagedPool,
+                        Length,
                         PoolTag);
 
     //
@@ -550,15 +550,13 @@ Return Value:
 
     DestString->Length = SourceString->Length;
     DestString->MaximumLength = SourceString->Length + sizeof(WCHAR);
-    
-    DestString->Buffer = (PWSTR) ExAllocatePoolWithTag(
-                            PagedPool, 
-                            DestString->MaximumLength, 
+
+    DestString->Buffer = (PWSTR) ExAllocatePoolZero(
+                            PagedPool,
+                            DestString->MaximumLength,
                             PoolTag);
     
     if (DestString->Buffer != NULL) {
-
-        RtlZeroMemory(DestString->Buffer, DestString->MaximumLength);
 
         //
         // It's a good practice to keep the contents of a try-except block to 
