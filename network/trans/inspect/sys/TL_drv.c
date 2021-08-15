@@ -51,7 +51,13 @@ Environment:
 
 #define INITGUID
 #include <guiddef.h>
+#include <traceloggingprovider.h>
 
+// {93b77253-d19c-41df-8c18-05960dab6bc3}
+TRACELOGGING_DEFINE_PROVIDER(
+   gTlgHandle,
+   "Microsoft.Windows.Networking.Inspect",
+   (0x93b77253, 0xd19c, 0x41df, 0x8c, 0x18, 0x05, 0x96, 0x0d, 0xab, 0x6b, 0xc3));
 
 // 
 // Configurable parameters (addresses and ports are in host order)
@@ -739,6 +745,8 @@ TLInspectEvtDriverUnload(
    TLInspectUnregisterCallouts();
 
    FwpsInjectionHandleDestroy(gInjectionHandle);
+
+   TraceLoggingUnregister(gTlgHandle);
 }
 
 NTSTATUS
@@ -789,6 +797,8 @@ TLInspectInitDriverObjects(
       WdfDeviceInitFree(pInit);
       goto Exit;
    }
+
+   TraceLoggingRegister(gTlgHandle);
 
    WdfControlFinishInitializing(*pDevice);
 

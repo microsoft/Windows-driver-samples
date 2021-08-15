@@ -50,6 +50,26 @@ BOOLEAN IsAleReauthorize(
    return FALSE;
 }
 
+BOOLEAN IsAleReauthorizeDueToClassifyCompletion(
+   _In_ const FWPS_INCOMING_VALUES* inFixedValues
+   )
+{
+   UINT flagsIndex;
+
+   GetReauthReasonIndexForLayer(
+      inFixedValues->layerId,
+      &flagsIndex
+      );
+
+   if((flagsIndex != UINT_MAX) && ((inFixedValues->incomingValue\
+      [flagsIndex].value.uint32 & FWP_CONDITION_REAUTHORIZE_REASON_CLASSIFY_COMPLETION) != 0))
+   {
+      return TRUE;
+   }
+
+   return FALSE;
+}
+
 BOOLEAN IsSecureConnection(
    _In_ const FWPS_INCOMING_VALUES* inFixedValues
    )
@@ -291,8 +311,8 @@ AllocateAndInitializePendedPacket(
 {
    TL_INSPECT_PENDED_PACKET* pendedPacket;
 
-   pendedPacket = ExAllocatePoolWithTag(
-                        NonPagedPool,
+   pendedPacket = ExAllocatePool2(
+                        POOL_FLAG_NON_PAGED,
                         sizeof(TL_INSPECT_PENDED_PACKET),
                         TL_INSPECT_PENDED_PACKET_POOL_TAG
                         );
@@ -301,8 +321,6 @@ AllocateAndInitializePendedPacket(
    {
       return NULL;
    }
-
-   RtlZeroMemory(pendedPacket, sizeof(TL_INSPECT_PENDED_PACKET));
 
    pendedPacket->type = packetType;
    pendedPacket->direction = packetDirection;
@@ -346,8 +364,8 @@ AllocateAndInitializePendedPacket(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         pendedPacket->controlData = ExAllocatePoolWithTag(
-                                       NonPagedPool,
+         pendedPacket->controlData = ExAllocatePool2(
+                                       POOL_FLAG_NON_PAGED,
                                        inMetaValues->controlDataLength,
                                        TL_INSPECT_CONTROL_DATA_POOL_TAG
                                        );
