@@ -168,7 +168,7 @@
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
     <DriverSign>
-      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -182,7 +182,7 @@
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
     <DriverSign>
-      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -196,7 +196,7 @@
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
     <DriverSign>
-      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -210,7 +210,7 @@
       <AdditionalOptions>%(AdditionalOptions)                -merge:PAGECONST=PAGE</AdditionalOptions>
     </Link>
     <DriverSign>
-      <FileDigestAlgorithm>sha265</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
