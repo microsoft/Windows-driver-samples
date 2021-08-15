@@ -2448,9 +2448,9 @@ Return Value:
             return;
         }
 
-    } else if (((senseBuffer->SenseKey & 0xf) == SCSI_SENSE_NOT_READY) &&
-             senseBuffer->AdditionalSenseCodeQualifier == SCSI_SENSEQ_INIT_COMMAND_REQUIRED ||
-             (senseBuffer->SenseKey & 0xf) == SCSI_SENSE_UNIT_ATTENTION) {
+    } else if (((senseBuffer->SenseKey & 0xf) == SCSI_SENSE_NOT_READY &&
+                senseBuffer->AdditionalSenseCodeQualifier == SCSI_SENSEQ_INIT_COMMAND_REQUIRED) ||
+               (senseBuffer->SenseKey & 0xf) == SCSI_SENSE_UNIT_ATTENTION) {
 
         ULONG sizeNeeded;
         ULONG tmpSize;
