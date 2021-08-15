@@ -439,8 +439,7 @@ StartDriver(
     )
 {
     SC_HANDLE   schService;
-    DWORD       err;
-    BOOL        ok;
+    BOOL        status;
 
     //
     // Open the handle to the existing service.
@@ -461,17 +460,17 @@ StartDriver(
     //
     // Start the execution of the service (i.e. start the driver).
     //
-    ok = StartService( schService, 0, NULL );
+    status = StartService( schService, 0, NULL );
 
-    if (!ok) {
+    if (!status) {
 
-        err = GetLastError();
+        DWORD err = GetLastError();
 
         if (err == ERROR_SERVICE_ALREADY_RUNNING) {
             //
             // Ignore this error.
             //
-            return TRUE;
+            status = TRUE;
 
         } else {
             //
@@ -479,7 +478,8 @@ StartDriver(
             // Fall through to properly close the service handle.
             //
             printf("StartService failure! Error = %d\n", err );
-            return FALSE;
+            
+            status = FALSE;
         }
     }
 
@@ -488,7 +488,7 @@ StartDriver(
     //
     CloseServiceHandle(schService);
 
-    return TRUE;
+    return status;
 
 }   // StartDriver
 
