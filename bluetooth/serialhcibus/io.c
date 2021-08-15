@@ -1178,7 +1178,7 @@ HLP_CreatePacketEntry(
 {
     PHCI_PACKET_ENTRY  PacketEntry = NULL;
 
-    PacketEntry = (PHCI_PACKET_ENTRY)ExAllocatePool(NonPagedPoolNx, sizeof(HCI_PACKET_ENTRY) + _PacketLength);
+    PacketEntry = (PHCI_PACKET_ENTRY)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(HCI_PACKET_ENTRY) + _PacketLength, POOLTAG_BTHSERIALHCIBUSSAMPLE);
     if (PacketEntry != NULL) {
         InitializeListHead(&PacketEntry->DataEntry);
         RtlCopyMemory(PacketEntry->Packet, _Packet, _PacketLength);
