@@ -442,7 +442,7 @@ Note:
     PAHCI_ADAPTER_EXTENSION adapterExtension = NULL;
     PAHCI_MEMORY_REGISTERS  abar = NULL;
     //Used to find the number of channels implemented
-    UCHAR                   i = 0;
+    ULONG                   i = 0;
     ULONG                   piMask = 0;
     UCHAR                   numberOfHighestPort = 0;
     ULONG                   portCount = 0;
