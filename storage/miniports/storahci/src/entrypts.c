@@ -444,7 +444,7 @@ Note:
     //Used to find the number of channels implemented
     ULONG                   i = 0;
     ULONG                   piMask = 0;
-    UCHAR                   numberOfHighestPort = 0;
+    ULONG                   numberOfHighestPort = 0;
     ULONG                   portCount = 0;
     ULONG                   portNumber;
     //Used to enable the AHCI interface
