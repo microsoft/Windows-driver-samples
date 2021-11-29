@@ -44,7 +44,7 @@ operator new (
     size_t size
     )
 {
-    return ExAllocatePoolWithTag(NonPagedPoolNx, size, TAG_UCSI);
+    return ExAllocatePool2(POOL_FLAG_NON_PAGED, size, TAG_UCSI);
 }
 
 void*
@@ -53,8 +53,7 @@ operator new[] (
     size_t size
     )
 {
-    return ExAllocatePoolWithTag(NonPagedPoolNx, size, TAG_UCSI);
-
+    return ExAllocatePool2(POOL_FLAG_NON_PAGED, size, TAG_UCSI);
 }
 
 #endif
