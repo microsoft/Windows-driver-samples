@@ -19,19 +19,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="data.c">
+    <ClCompile Include="data.c; disk.c; diskwmi.c; geometry.c; pnp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="disk.c">
+    <ClCompile Include="data.c; disk.c; diskwmi.c; geometry.c; pnp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="diskwmi.c">
+    <ClCompile Include="data.c; disk.c; diskwmi.c; geometry.c; pnp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="geometry.c">
+    <ClCompile Include="data.c; disk.c; diskwmi.c; geometry.c; pnp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pnp.c">
+    <ClCompile Include="data.c; disk.c; diskwmi.c; geometry.c; pnp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,5 +39,15 @@
     <ResourceCompile Include="disk.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="*.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>
