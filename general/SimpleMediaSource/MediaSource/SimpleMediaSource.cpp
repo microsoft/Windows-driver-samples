@@ -510,6 +510,8 @@ namespace winrt::WindowsSample::implementation
         _In_  DWORD dwOutputStreamID,
         _In_  IUnknown* pAllocator)
     {
+        RETURN_HR_IF_NULL(E_INVALIDARG, pAllocator);
+
         winrt::slim_lock_guard lock(m_Lock);
         RETURN_IF_FAILED(_CheckShutdownRequiresLock());
 
