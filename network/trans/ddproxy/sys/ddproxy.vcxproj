@@ -44,9 +44,10 @@
     <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetVersion>Windows10</TargetVersion>
+    <TargetVersion>
+    </TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType>KMDF</DriverType>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>

@@ -464,7 +464,7 @@ StreamEditFlowEstablishedClassify(
 
     do
     {
-        StreamFlowContext = ExAllocatePoolWithTag(NonPagedPoolNx,
+        StreamFlowContext = ExAllocatePoolZero(NonPagedPoolNx,
                                 sizeof(STREAM_FLOW_CONTEXT),
                                 STMEDIT_TAG_FLOWCTX);
 
@@ -1557,7 +1557,7 @@ _In_ SIZE_T BytesToCopy
     {
         size_t NewBufferSize = BytesToCopy + ExistingDataLength;
 
-        PVOID  NewBuffer = ExAllocatePoolWithTag(
+        PVOID  NewBuffer = ExAllocatePoolZero(
                                     NonPagedPool,
                                     (NewBufferSize + (NewBufferSize >> 1) ), // 1.5 times the needed size.
                                     STMEDIT_TAG_FLAT_BUFFER);
@@ -1567,7 +1567,7 @@ _In_ SIZE_T BytesToCopy
 
             // We are not able to allocate a much bigger buffer ... lets try an exact fit.
             //
-            NewBuffer = ExAllocatePoolWithTag(NonPagedPool, NewBufferSize, STMEDIT_TAG_FLAT_BUFFER);
+            NewBuffer = ExAllocatePoolZero(NonPagedPool, NewBufferSize, STMEDIT_TAG_FLAT_BUFFER);
         }
 
         if (NewBuffer != NULL) 

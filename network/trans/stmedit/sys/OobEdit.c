@@ -378,7 +378,7 @@ StreamOobReinjectData(
 
     do
     {
-        DataCopy = ExAllocatePoolWithTag(
+        DataCopy = ExAllocatePoolZero(
                         NonPagedPool,
                         Length,
                         STMEDIT_TAG_MDL_DATA

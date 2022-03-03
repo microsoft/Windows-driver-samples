@@ -12,6 +12,7 @@
     Provider    = %Contoso%
     CatalogFile = StmEdit.cat
     DriverVer   = 01/01/2015,1.0.09.15
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %StmEditDisk%,,,""
