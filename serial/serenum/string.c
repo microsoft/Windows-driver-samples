@@ -384,7 +384,7 @@ Return Value:
    multiLength += sizeof(WCHAR);
 
    MultiString->MaximumLength = (USHORT)multiLength;
-   MultiString->Buffer = ExAllocatePool2(POOL_FLAG_PAGED, multiLength,SERENUM_POOL_TAG);
+   MultiString->Buffer = ExAllocatePoolZero(PagedPool, multiLength,SERENUM_POOL_TAG);
    MultiString->Length = 0;
 
    if (MultiString->Buffer == NULL) {
