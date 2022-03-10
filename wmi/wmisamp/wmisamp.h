@@ -45,6 +45,7 @@ Environment:
 #define DebugPrint
 #endif
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 
 typedef struct _WMI_SAMPLE_INSTANCE_CONFIG {
 
