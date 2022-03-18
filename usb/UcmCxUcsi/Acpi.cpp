@@ -561,7 +561,7 @@ Acpi_EvaluateUcsiDsm (
     if (outputBuffer == nullptr)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
-        TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] ExAllocatePoolWithTag failed for %Iu bytes", device, outputBufferSize);
+        TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] ExAllocatePool2 failed for %Iu bytes", device, outputBufferSize);
         goto Exit;
     }
 
