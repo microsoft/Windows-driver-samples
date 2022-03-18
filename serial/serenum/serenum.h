@@ -136,6 +136,8 @@ Revision History:
 #define MIN(_A_,_B_) (((_A_) < (_B_)) ? (_A_) : (_B_))
 #endif
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
+
 //
 // A common header for the device extensions of the PDOs and FDO
 //

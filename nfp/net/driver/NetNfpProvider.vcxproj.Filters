@@ -19,30 +19,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="connection.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="device.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllsup.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="driver.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileContext.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="queue.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SocketListener.cpp">
+    <ClCompile Include="dllsup.cpp; driver.cpp; device.cpp; queue.cpp; connection.cpp; FileContext.cpp; SocketListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <None Include="exports.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="NetNfpProvider.inx">
@@ -53,5 +50,39 @@
     <ResourceCompile Include="NetNfpProvider.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="*.def;*.bat;*.hpj;*.asmx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
