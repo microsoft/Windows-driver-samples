@@ -24,17 +24,20 @@
     DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
     StmEdit.DriverFiles = 12                              ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NTamd64]
     OptionDesc = %StmEditServiceDesc%
     CopyFiles  = StmEdit.DriverFiles
 
-[DefaultInstall.Services]
+
+[DefaultInstall.NTamd64.Services]
     AddService = %StmEditServiceName%,,StmEdit.Service
 
-[DefaultUninstall]
+[DefaultUninstall.NTamd64]
+    LegacyUninstall=1
     DelFiles = StmEdit.DriverFiles
 
-[DefaultUninstall.Services]
+[DefaultUninstall.NTamd64.Services]
+    LegacyUninstall=1
     DelService = %StmEditServiceName%,0x200               ; SPSVCINST_STOPSERVICE
     DelReg     = StmEdit.DelRegistry
 
