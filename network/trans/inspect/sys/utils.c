@@ -302,8 +302,6 @@ AllocateAndInitializePendedPacket(
       return NULL;
    }
 
-   RtlZeroMemory(pendedPacket, sizeof(TL_INSPECT_PENDED_PACKET));
-
    pendedPacket->type = packetType;
    pendedPacket->direction = packetDirection;
 

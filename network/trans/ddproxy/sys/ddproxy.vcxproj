@@ -44,8 +44,7 @@
     <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetVersion>
-    </TargetVersion>
+    <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType>KMDF</DriverType>

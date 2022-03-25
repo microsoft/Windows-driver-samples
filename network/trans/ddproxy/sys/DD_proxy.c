@@ -114,8 +114,6 @@ DDProxyFlowEstablishedClassify(
       goto Exit;
    }
 
-   RtlZeroMemory(flowContextLocal, sizeof(DD_PROXY_FLOW_CONTEXT));
-
    flowContextLocal->refCount = 1;
    flowContextLocal->flowType = (DD_PROXY_FLOW_TYPE)(filter->context);
    flowContextLocal->addressFamily = 
@@ -346,8 +344,6 @@ DDProxyClassify(
       classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
       goto Exit;
    }
-
-   RtlZeroMemory(packet, sizeof(DD_PROXY_PENDED_PACKET));
 
    NT_ASSERT(flowContextLocal != NULL);
 
