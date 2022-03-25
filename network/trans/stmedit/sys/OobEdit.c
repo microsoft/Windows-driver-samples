@@ -13,6 +13,7 @@ Environment:
 
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include "Trace.h"
 #include "StreamEdit.h"
 #include "OobEdit.tmh"
