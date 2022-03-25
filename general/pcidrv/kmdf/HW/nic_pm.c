@@ -1361,7 +1361,7 @@ Return Value:
             break;
         }
 
-        pWakeUpPattern = ExAllocatePoolWithTag(NonPagedPool, AllocationLength, PCIDRV_POOL_TAG);
+        pWakeUpPattern = ExAllocatePool2(POOL_FLAG_NON_PAGED, AllocationLength, PCIDRV_POOL_TAG);
 
         if (!pWakeUpPattern)
         {
@@ -1371,8 +1371,6 @@ Return Value:
         //
         // Initialize pWakeUpPattern
         //
-        RtlZeroMemory (pWakeUpPattern, AllocationLength);
-
         pWakeUpPattern->AllocationSize = AllocationLength;
 
         pWakeUpPattern->Signature = Signature;
