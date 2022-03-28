@@ -400,7 +400,6 @@ FmCreateDosDevicesSymbolicLink(
         status = STATUS_INSUFFICIENT_RESOURCES;
         goto Error;
     }
-    RtlZeroMemory(symbolicLink.Buffer, symbolicLink.MaximumLength);
     RtlAppendUnicodeToString(&symbolicLink, OBJECT_DIRECTORY);
     RtlAppendUnicodeStringToString(&symbolicLink, &comPort);
     //
