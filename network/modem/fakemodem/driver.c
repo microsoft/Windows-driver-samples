@@ -392,7 +392,7 @@ FmCreateDosDevicesSymbolicLink(
     symbolicLink.Length=0;
     symbolicLink.MaximumLength = sizeof(OBJECT_DIRECTORY) + comPort.MaximumLength;
 
-    symbolicLink.Buffer = ExAllocatePoolWithTag(PagedPool,
+    symbolicLink.Buffer = ExAllocatePool2(POOL_FLAG_PAGED,
                                                 symbolicLink.MaximumLength + sizeof(WCHAR),
                                                 'wkaF');
 
