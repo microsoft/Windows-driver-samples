@@ -12,6 +12,7 @@
     Provider    = %ProviderString%
     CatalogFile = DDProxy.cat
     DriverVer   = 11/24/2014,14.24.55.836
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %DDProxyDisk%,,,""
