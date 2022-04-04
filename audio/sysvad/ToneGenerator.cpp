@@ -271,8 +271,8 @@ NTSTATUS ToneGenerator::Init
     // 
     // Allocate a buffer to hold a partial frame.
     //
-    m_PartialFrame = (BYTE*)ExAllocatePoolWithTag(
-                                    NonPagedPoolNx,
+    m_PartialFrame = (BYTE*)ExAllocatePool2(
+                                    POOL_FLAG_NON_PAGED,
                                     m_FrameSize,
                                     SYSVAD_POOLTAG);
 

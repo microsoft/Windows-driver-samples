@@ -19,13 +19,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="driver.c">
+    <ClCompile Include="driver.c; hid.c; usb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hid.c">
+    <ClCompile Include="driver.c; hid.c; usb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="usb.c">
+    <ClCompile Include="driver.c; hid.c; usb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,5 +38,13 @@
     <ResourceCompile Include="RadioSwitchHidUsbFx2.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@
     Provider    = %Contoso%
     CatalogFile = StmEdit.cat
     DriverVer   = 01/01/2015,1.0.09.15
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %StmEditDisk%,,,""
@@ -23,17 +24,20 @@
     DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
     StmEdit.DriverFiles = 12                              ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$]
     OptionDesc = %StmEditServiceDesc%
     CopyFiles  = StmEdit.DriverFiles
 
-[DefaultInstall.Services]
+
+[DefaultInstall.NT$ARCH$.Services]
     AddService = %StmEditServiceName%,,StmEdit.Service
 
-[DefaultUninstall]
+[DefaultUninstall.NT$ARCH$]
+    LegacyUninstall=1
     DelFiles = StmEdit.DriverFiles
 
-[DefaultUninstall.Services]
+[DefaultUninstall.NT$ARCH$.Services]
+    LegacyUninstall=1
     DelService = %StmEditServiceName%,0x200               ; SPSVCINST_STOPSERVICE
     DelReg     = StmEdit.DelRegistry
 

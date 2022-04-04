@@ -3,7 +3,7 @@ page_type: sample
 urlFragment: virtual-serial-driver-sample-v2
 description: "Demonstrates UMDF version 2 serial drivers and includes a simple virtual serial driver (ComPort) and a controller-less modem driver (FakeModem)."
 languages:
-- cpp
+- c
 products:
 - windows
 - windows-wdk
@@ -23,37 +23,25 @@ For more information, see the [Serial Controller Driver Design Guide](https://do
 
 ## Code tour
 
-### comsup.cpp and comsup.h
-
-- COM Support code - specifically base classes which provide implementations for the standard COM interfaces **IUnknown** and **IClassFactory** which are used throughout the sample.
-
-- The implementation of **IClassFactory** is designed to create instances of the CMyDriver class. If you should change the name of your base driver class, you would also need to modify this file.
-
-### dllsup.cpp
-
-- DLL Support code - provides the DLL's entry point as well as the single required export (**DllGetClassObject**).
-
-- These depend on comsup.cpp to perform the necessary class creation.
-
-### exports.def
-
-- This file lists the functions that the driver DLL exports.
-
 ### internal.h
 
 - This is the main header file for the sample driver.
 
-### driver.cpp and driver.h
+### driver.c and driver.h
 
-- Definition and implementation of the driver callback class (CMyDriver) for the sample. This includes **DriverEntry** and events on the framework driver object.
+- Definition and implementation of the driver callback function (EVT_WDF_DRIVER_DEVICE_ADD) for the sample. This includes **DriverEntry** and events on the framework driver object.
 
-### device.cpp and driver.h
+### device.c and driver.h
 
-- Definition and implementation of the device callback class (CMyDriver) for the sample. This includes events on the framework device object.
+- Definition and implementation of the device callback interface for the sample. This includes events on the framework device object.
 
-### queue.cpp and queue.h
+### queue.c and queue.h
 
-- Definition and implementation of the base queue callback class (CMyQueue). This includes events on the framework I/O queue object.
+- Definition and implementation of the base queue callback interface. This includes events on the framework I/O queue object.
+
+### ringbuffer.c and ringbuffer.h
+
+- Definition and implement of ring buffer for pending data.
 
 ### VirtualSerial.rc /FakeModem.rc
 

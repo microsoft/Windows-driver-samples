@@ -330,6 +330,56 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE HdmiHostPinSupportedDeviceFormats[] =
             0,
             0,
             STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E1),
+            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+        },
+        {
+            {
+                WAVE_FORMAT_EXTENSIBLE,
+                8,
+                192000,
+                3072000,
+                16,
+                16,
+                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+            },
+            16,
+            KSAUDIO_SPEAKER_7POINT1,
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E1)
+        }
+    },
+    { // 11
+        {
+            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+            0,
+            0,
+            0,
+            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E2),
+            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+        },
+        {
+            {
+                WAVE_FORMAT_EXTENSIBLE,
+                8,
+                192000,
+                3072000,
+                16,
+                16,
+                sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+            },
+            16,
+            KSAUDIO_SPEAKER_7POINT1,
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E2)
+        }
+    },
+    { // 12
+        {
+            sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+            0,
+            0,
+            0,
+            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT20),
             STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
         },
@@ -348,7 +398,7 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE HdmiHostPinSupportedDeviceFormats[] =
             STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT20)
         }
     },
-    { // 11
+    { // 13
         {
             sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
             0,
@@ -519,7 +569,39 @@ KSDATARANGE_AUDIO HdmiPinDataRangesStream[] =
         HDMI_DTS_HD_MIN_SAMPLE_RATE,
         HDMI_DTS_HD_MAX_SAMPLE_RATE
     },
-    { // 6 - DOLBY-MAT20 host
+    { // 6 - DTS:X E1 host
+        {
+            sizeof(KSDATARANGE_AUDIO),
+            KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
+            0,
+            0,
+            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E1),
+            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+        },
+        HDMI_DTS_HD_MAX_CHANNELS,
+        HDMI_DTS_HD_MIN_BITS_PER_SAMPLE,
+        HDMI_DTS_HD_MAX_BITS_PER_SAMPLE,
+        HDMI_DTS_HD_MIN_SAMPLE_RATE,
+        HDMI_DTS_HD_MAX_SAMPLE_RATE
+    },
+    { // 7 - DTS:X E2 host
+        {
+            sizeof(KSDATARANGE_AUDIO),
+            KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
+            0,
+            0,
+            STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+            STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E2),
+            STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+        },
+        HDMI_DTS_HD_MAX_CHANNELS,
+        HDMI_DTS_HD_MIN_BITS_PER_SAMPLE,
+        HDMI_DTS_HD_MAX_BITS_PER_SAMPLE,
+        HDMI_DTS_HD_MIN_SAMPLE_RATE,
+        HDMI_DTS_HD_MAX_SAMPLE_RATE
+    },
+    { // 8 - DOLBY-MAT20 host
         {
             sizeof(KSDATARANGE_AUDIO),
             KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
@@ -535,7 +617,7 @@ KSDATARANGE_AUDIO HdmiPinDataRangesStream[] =
         HDMI_DOLBY_MAT_MIN_SAMPLE_RATE,
         HDMI_DOLBY_MAT_MAX_SAMPLE_RATE
     },
-    { // 7 - DOLBY-MAT21 host
+    { // 9 - DOLBY-MAT21 host
         {
             sizeof(KSDATARANGE_AUDIO),
             KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
@@ -569,6 +651,10 @@ PKSDATARANGE HdmiPinDataRangePointersStream[] =
     PKSDATARANGE(&HdmiPinDataRangesStream[6]),
     PKSDATARANGE(&PinDataRangeAttributeList),
     PKSDATARANGE(&HdmiPinDataRangesStream[7]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&HdmiPinDataRangesStream[8]),
+    PKSDATARANGE(&PinDataRangeAttributeList),
+    PKSDATARANGE(&HdmiPinDataRangesStream[9]),
     PKSDATARANGE(&PinDataRangeAttributeList)
 };
 
@@ -633,10 +719,28 @@ KSDATARANGE HdmiPinDataRangesBridge[] =
         0,
         0,
         STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-        STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT20),
+        STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E1),
         STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
     },
     { // 6
+        sizeof(KSDATARANGE),
+        0,
+        0,
+        0,
+        STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+        STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DTSX_E2),
+        STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+    },
+    { // 7
+        sizeof(KSDATARANGE),
+        0,
+        0,
+        0,
+        STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+        STATICGUIDOF(KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MAT20),
+        STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+    },
+    { // 8
         sizeof(KSDATARANGE),
         0,
         0,
@@ -656,7 +760,9 @@ PKSDATARANGE HdmiPinDataRangePointersBridge[] =
     &HdmiPinDataRangesBridge[3],
     &HdmiPinDataRangesBridge[4],
     &HdmiPinDataRangesBridge[5],
-    &HdmiPinDataRangesBridge[6]
+    &HdmiPinDataRangesBridge[6],
+    &HdmiPinDataRangesBridge[7],
+    &HdmiPinDataRangesBridge[8]
 };
 
 

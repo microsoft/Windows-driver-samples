@@ -459,10 +459,10 @@ Return Value:
     //
     length = directory.Length + fileName->Length;
 
-    absFileName.Buffer = ExAllocatePoolWithTag(PagedPool, length, POOL_TAG);
+    absFileName.Buffer = ExAllocatePool2(POOL_FLAG_PAGED, length, POOL_TAG);
     if(absFileName.Buffer == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
-        TraceEvents(TRACE_LEVEL_ERROR, DBG_INIT, "ExAllocatePoolWithTag failed");
+        TraceEvents(TRACE_LEVEL_ERROR, DBG_INIT, "ExAllocatePool2 failed");
         goto End;
     }
     absFileName.Length = 0;

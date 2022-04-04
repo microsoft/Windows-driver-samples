@@ -39,6 +39,9 @@
     <ProjectReference Include="..\APO\KWSApo\KwsAPO.vcxproj">
       <Project>{47358AD6-A48A-465B-965F-0A66F8BDFE23}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\APO\AecApo\AecAPO.vcxproj">
+      <Project>{83A1B9B0-3CB7-4249-ADEC-C336B0EDDE76}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TabletAudioSample\TabletAudioSample.vcxproj">
       <Project>{E4DF0EEE-D35B-47F2-A9B1-41EA97C465FF}</Project>
     </ProjectReference>

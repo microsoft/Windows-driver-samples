@@ -1,6 +1,6 @@
 ---
 page_type: sample
-description: "The Microsoft Simple Audio Sample Device Driver shows how to develop a simple WDM audio driver that exposes support for two basic audio devices (a speaker and microphone array).”
+description: "The Microsoft Simple Audio Sample Device Driver shows how to develop a simple WDM audio driver that exposes support for two basic audio devices (a speaker and microphone array)."
 languages:
 - cpp
 products:

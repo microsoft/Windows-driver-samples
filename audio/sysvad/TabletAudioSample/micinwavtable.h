@@ -27,7 +27,7 @@ Abstract:
 //
 // Max # of pin instances.
 //
-#define MICIN_MAX_INPUT_STREAMS             4
+#define MICIN_MAX_INPUT_STREAMS             5
 
 //=============================================================================
 static 
@@ -256,7 +256,11 @@ MODE_AND_DEFAULT_FORMAT MicInPinSupportedDeviceModes[] =
     {
         STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,
         &MicInPinSupportedDeviceFormats[4].DataFormat, // 24KHz
-    }
+    },
+    {
+        STATIC_AUDIO_SIGNALPROCESSINGMODE_FAR_FIELD_SPEECH,
+        &MicInPinSupportedDeviceFormats[2].DataFormat, // 16KHz
+    },
 };
 
 //

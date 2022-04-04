@@ -243,6 +243,8 @@ AudioModule_FindModuleInList(
     _In_ ULONG                  InstanceId
     )
 {
+    PAGED_CODE();
+
     for (ULONG i=0; i<AudioModuleCount; ++i)
     {
         AUDIOMODULE * module = &AudioModules[i];

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // Module Name:
 //
@@ -70,4 +70,13 @@ HRESULT GetSupportedFormatRecordsForConnector
     STACKWISE_DATAFLOW      dataFlow,
     ULONG*                  pCount,
     FORMAT_RECORD**         ppFormatRecords
+);
+
+// ----------------------------------------------------------------------
+void VerifyAllEndpointsPluggedIn();
+
+// ----------------------------------------------------------------------
+HRESULT AddDevices
+(
+    WEX::TestExecution::ResourceList& resourceList
 );
