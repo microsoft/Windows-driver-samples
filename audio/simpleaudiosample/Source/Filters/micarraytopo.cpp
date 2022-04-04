@@ -389,7 +389,6 @@ Return Value:
                     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
                     {
                         PKSAUDIO_MIC_ARRAY_GEOMETRY pMAG = (PKSAUDIO_MIC_ARRAY_GEOMETRY)PropertyRequest->Value;
-                        const SHORT MicArray_180_Degrees = 31416; // 10000 * pi
                         const SHORT MicArray_45_Degrees = 7854;  // 10000 * pi / 4
 
                         // fill in mic array geometry fields
