@@ -1288,7 +1288,7 @@ Return Value:
             srbSize = sizeof(SCSI_REQUEST_BLOCK);
         }
 
-        srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+        srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                     srbSize,
                                     DISK_TAG_SRB);
         if (srb == NULL) {
@@ -1303,7 +1303,6 @@ Return Value:
             return(STATUS_INSUFFICIENT_RESOURCES);
         }
 
-        RtlZeroMemory(srb, srbSize);
         if (fdoExtension->AdapterDescriptor->SrbType == SRB_TYPE_STORAGE_REQUEST_BLOCK) {
 
             srbEx = (PSTORAGE_REQUEST_BLOCK)srb;
@@ -1849,15 +1848,13 @@ Return Value:
     // Allocate buffer for mode select header, block descriptor, and mode page.
     //
 
-    buffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                    length2,
                                    DISK_TAG_MODE_DATA);
 
     if (buffer == NULL) {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(buffer, length2);
 
     //
     // Set length in header to size of mode page.
@@ -2719,7 +2716,7 @@ Return Value:
     // Allocate Srb from nonpaged pool.
     //
 
-    context = ExAllocatePoolWithTag(NonPagedPoolNx,
+    context = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                     sizeof(COMPLETION_CONTEXT),
                                     DISK_TAG_CCONTEXT);
 
@@ -2737,12 +2734,6 @@ Return Value:
 
     if (fdoExtension->AdapterDescriptor->SrbType == SRB_TYPE_STORAGE_REQUEST_BLOCK) {
         srbEx = &context->Srb.SrbEx;
-
-        //
-        // Zero out srb
-        //
-
-        RtlZeroMemory(srbEx, sizeof(context->Srb.SrbExBuffer));
 
         //
         // Set up STORAGE_REQUEST_BLOCK fields
@@ -2765,12 +2756,6 @@ Return Value:
         storAddrBtl8->AddressLength = STOR_ADDR_BTL8_ADDRESS_LENGTH;
 
     } else {
-
-        //
-        // Zero out srb.
-        //
-
-        RtlZeroMemory(srb, SCSI_REQUEST_BLOCK_SIZE);
 
         //
         // Write length to SRB.
@@ -2891,7 +2876,7 @@ DiskGetInfoExceptionInformation(
     // ReturnPageData is allocated by the caller
     //
 
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                          MODE_DATA_SIZE,
                                          DISK_TAG_INFO_EXCEPTION);
 
@@ -2901,8 +2886,6 @@ DiskGetInfoExceptionInformation(
                        "data buffer\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(modeData, MODE_DATA_SIZE);
 
     length = ClassModeSense(FdoExtension->DeviceObject,
                             (PCHAR) modeData,
@@ -3031,7 +3014,7 @@ Return Value:
 
 
 
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                      MODE_DATA_SIZE,
                                      DISK_TAG_DISABLE_CACHE);
 
@@ -3041,8 +3024,6 @@ Return Value:
                        "data buffer\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(modeData, MODE_DATA_SIZE);
 
     length = ClassModeSense(FdoExtension->DeviceObject,
                             (PCHAR) modeData,
@@ -3175,7 +3156,7 @@ Return Value:
 
     PAGED_CODE();
 
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                      MODE_DATA_SIZE,
                                      DISK_TAG_DISABLE_CACHE);
 
@@ -3185,8 +3166,6 @@ Return Value:
                        "data buffer\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(modeData, MODE_DATA_SIZE);
 
     length = ClassModeSense(FdoExtension->DeviceObject,
                             (PCHAR) modeData,
@@ -4041,7 +4020,7 @@ Return Value:
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
 
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
 
@@ -4049,8 +4028,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlGetMediaTypesEx: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Send a TUR to determine if media is present.
@@ -4133,7 +4110,7 @@ Return Value:
     }
 
     modeLength = MODE_DATA_SIZE;
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                      modeLength,
                                      DISK_TAG_MODE_DATA);
 
@@ -4142,8 +4119,6 @@ Return Value:
         FREE_POOL(srb);
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(modeData, modeLength);
 
     //
     // Build the MODE SENSE CDB using previous SRB.
@@ -4329,7 +4304,7 @@ Return Value:
         //
 
         readBufferSize = fdoExtension->DiskGeometry.BytesPerSector;
-        readBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
+        readBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                            readBufferSize,
                                            DISK_TAG_SMART);
 
@@ -4553,7 +4528,7 @@ Return Value:
     } else {
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
 
@@ -4561,8 +4536,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlVerify: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Add disk offset to starting sector.
@@ -4593,7 +4566,7 @@ Return Value:
         }
     }
 
-    Context = ExAllocatePoolWithTag(NonPagedPoolNx,
+    Context = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                     sizeof(DISK_VERIFY_WORKITEM_CONTEXT),
                                     DISK_TAG_WI_CONTEXT);
     if (Context) {
@@ -4705,7 +4678,7 @@ Return Value:
     } else {
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
 
@@ -4713,8 +4686,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlReassignBlocks: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Build the data buffer to be transferred in the input buffer.
@@ -4912,7 +4883,7 @@ Return Value:
     } else {
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
 
@@ -4920,8 +4891,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlReassignBlocks: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Build the data buffer to be transferred in the input buffer.
@@ -5098,7 +5067,7 @@ Return Value:
     } else {
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
 
@@ -5106,8 +5075,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlIsWritable: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Allocate memory for a mode header and then some
@@ -5117,7 +5084,7 @@ Return Value:
     //
 
     modeLength = MODE_DATA_SIZE;
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                      modeLength,
                                      DISK_TAG_MODE_DATA);
 
@@ -5126,8 +5093,6 @@ Return Value:
         FREE_POOL(srb);
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(modeData, modeLength);
 
     //
     // Build the MODE SENSE CDB
@@ -5573,7 +5538,7 @@ Return Value:
         return STATUS_BUFFER_TOO_SMALL;
     }
 
-    srbControl = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srbControl = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        sizeof(SRB_IO_CONTROL) +
                                        sizeof(GETVERSIONINPARAMS),
                                        DISK_TAG_SMART);
@@ -5582,8 +5547,6 @@ Return Value:
         TracePrint((TRACE_LEVEL_ERROR, TRACE_FLAG_IOCTL, "DiskIoctlSmartGetVersion: Unable to allocate memory.\n"));
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory(srbControl, sizeof(SRB_IO_CONTROL) + sizeof(GETVERSIONINPARAMS));
 
     //
     // fill in srbControl fields
@@ -5774,7 +5737,7 @@ Return Value:
         return STATUS_INVALID_PARAMETER;
     }
 
-    srbControl = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srbControl = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        sizeof(SRB_IO_CONTROL) + length,
                                        DISK_TAG_SMART);
 
@@ -6032,7 +5995,7 @@ Return Value:
     }
 
     length += max(sizeof(SENDCMDOUTPARAMS), sizeof(SENDCMDINPARAMS));
-    srbControl = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srbControl = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        sizeof(SRB_IO_CONTROL) + length,
                                        DISK_TAG_SMART);
 
