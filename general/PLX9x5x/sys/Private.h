@@ -220,9 +220,7 @@ PLxInitializeDMA(
     );
 
 #ifdef SIMULATE_MEMORY_FRAGMENTATION
-//
-// Passed to ExAllocatePoolWithTag to track memory allocations
-//
+
 #define POOL_TAG 'x5x9'
 
 //
