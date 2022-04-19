@@ -365,11 +365,10 @@ MgntActQuery_802_11_BSSID_LIST(
 	PRT_WLAN_BSS		pBSSDesc = NULL;
 		
 	u1Byte	Rssibuf[MAX_BSS_DESC];
-	u2Byte	idxBuf[MAX_BSS_DESC];
+	u4Byte	idxBuf[MAX_BSS_DESC];
 
 	u1Byte	MaxRSSI=0;
-	u4Byte	a=0, idx=0;
-	u2Byte	findidx=0, tmpidx=0;
+	u4Byte	a=0, idx=0, findidx=0, tmpidx=0;
 
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("[REDX]: MgntActQuery_802_11_BSSID_LIST() ===> \n"));
 	//

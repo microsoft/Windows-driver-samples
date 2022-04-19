@@ -2872,8 +2872,7 @@ Wdi_Set_Add_Wol_Pattern(
 	u1Byte	WoLBitMapPatternMask[MAX_WOL_BIT_MASK_SIZE];
 	u1Byte	WoLBitMapPatternContent[MAX_WOL_PATTERN_SIZE];
 	u1Byte	WoLBitMapPattern[MAX_WOL_PATTERN_SIZE];
-	UINT32	Index;
-	u1Byte	ptnIndex;
+	u1Byte	Index, ptnIndex;
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> Wdi_Set_Add_Wol_Pattern()\n"));
 
@@ -2893,7 +2892,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Pattern
 	pPatternElements = Params->WakePacketPattern.pElements;
-	for(Index = 0; Index < Params->WakePacketPattern.ElementCount; Index++, pPatternElements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketPattern.ElementCount; Index++, pPatternElements++)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN[%d]:\n", Index));
 
@@ -2994,7 +2993,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Ipv4 Tcp Sync: Not verify
 	pIPv4Elements = Params->WakePacketIpv4TcpSync.pElements;
-	for(Index = 0; Index < Params->WakePacketIpv4TcpSync.ElementCount; Index++, pIPv4Elements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketIpv4TcpSync.ElementCount; Index++, pIPv4Elements++)
 	{
 		if(!pPSC->IPv4TcpSynPatternId)
 		{
@@ -3006,7 +3005,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Ipv6 Tcp Sync: Not verify
 	pIPv6Elements = Params->WakePacketIpv6TcpSync.pElements;
-	for(Index = 0; Index < Params->WakePacketIpv6TcpSync.ElementCount; Index++, pIPv6Elements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketIpv6TcpSync.ElementCount; Index++, pIPv6Elements++)
 	{
 		if(!pPSC->IPv6TcpSynPatternId)
 		{
