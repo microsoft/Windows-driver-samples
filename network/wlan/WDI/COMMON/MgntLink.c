@@ -493,7 +493,8 @@ CheckRateSet(
 	POCTET_STRING	pSuppRateSet
 	)
 {
-	u1Byte	index0 = 0, index1=0, index2=0;
+	u2Byte	index0 = 0;
+	u1Byte	index1=0, index2=0;
 	u1Byte	AvailRateTable[] = {0x2, 0x4, 0xb, 0x16, 0xc, 0x12, 0x18, 0x24, 0x30, 0x48, 0x60, 0x6c};
 
 	// Trace each rate in the SuppRateSet.
@@ -3765,7 +3766,7 @@ IncludedInSupportedRates(
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	POCTET_STRING	pSupRateSet = &(pMgntInfo->SupportedRates);
 	u1Byte			RateMask = 0x7F;
-	u1Byte			idx;
+	u2Byte			idx;
 	BOOLEAN			Found = FALSE;
 	u1Byte			NaiveTxRate = TxRate&RateMask;
 

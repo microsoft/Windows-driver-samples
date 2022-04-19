@@ -904,7 +904,7 @@ Wdi_Task_Connect(
 	//Save PMKID
 	u4Byte					ulIndex, i, j;
 	BOOLEAN					blInserted;
-	u1Byte 					bssidcount=0;
+	int 					bssidcount=0;
 	int 					NumPreferredBSSID = Params->PreferredBSSEntryList.ElementCount;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> Wdi_Task_Connect()\n"));
@@ -914,7 +914,7 @@ Wdi_Task_Connect(
 	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
 		DOT11_SSID_LIST	SsidList;
-		u1Byte			i = 0;
+		ULONG			i = 0;
 
 		N6_ASSIGN_OBJECT_HEADER(
 			SsidList.Header,
@@ -1656,7 +1656,7 @@ Wdi_Task_Roam(
 	PWDI_MESSAGE_HEADER					pWdiHeader = (PWDI_MESSAGE_HEADER)pOidHandle->pInputBuffer;
 	u4Byte								ulIndex, i, j;
 	BOOLEAN								blInserted;
-	u1Byte 								bssidcount=0;
+	int 								bssidcount=0;
 	int 								NumPreferredBSSID = Params->PreferredBSSEntryList.ElementCount;
 
 
@@ -1667,7 +1667,7 @@ Wdi_Task_Roam(
 	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
 		DOT11_SSID_LIST	SsidList;
-		u1Byte			i = 0;
+		ULONG			i = 0;
 
 		N6_ASSIGN_OBJECT_HEADER(
 			SsidList.Header,
@@ -2872,7 +2872,8 @@ Wdi_Set_Add_Wol_Pattern(
 	u1Byte	WoLBitMapPatternMask[MAX_WOL_BIT_MASK_SIZE];
 	u1Byte	WoLBitMapPatternContent[MAX_WOL_PATTERN_SIZE];
 	u1Byte	WoLBitMapPattern[MAX_WOL_PATTERN_SIZE];
-	u1Byte	Index, ptnIndex;
+	UINT32	Index;
+	u1Byte	ptnIndex;
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> Wdi_Set_Add_Wol_Pattern()\n"));
 

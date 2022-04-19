@@ -1296,7 +1296,7 @@ CheckSpecialTxPktContentFromHighLayer(
 		if(IP_Src_Port == 7236 || IP_Dst_Port == 7236 ||
 		    IP_Src_Port == 8554 || IP_Dst_Port == 8554)
 		{
-			u1Byte	offset = Check_Buf_Index;
+			u2Byte	offset = Check_Buf_Index;
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("[MIRACAST/P2P] Tx Display Packet:\n"));
 			for(offset = Check_Buf_Index; offset < pTcb->BufferCount; offset ++)
 			{
@@ -2415,7 +2415,8 @@ FragmentTCB(
 	PRT_TCB				pTcb
 	)
 {
-	u2Byte			i, AddLen, Length, Offset=0;
+	u2Byte			i, AddLen, Length;
+	u4Byte			Offset=0;
 	u2Byte			FragThreshold;
 	u2Byte			FragIndex=0, FragLen, FragBufferCount;
 	u2Byte			ReadBufferIndex, WriteBufferIndex=0;

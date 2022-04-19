@@ -444,7 +444,8 @@ AddWoLPatternEntry(
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte	i, j;
+	u4Byte	i;
+	u1Byte	j;
 
 	// Reset the entry.
 	PlatformZeroMemory(&(pWoLPatternInfo[Index].FwPattern),sizeof(H2C_WOL_PATTERN_MATCH_INFO));

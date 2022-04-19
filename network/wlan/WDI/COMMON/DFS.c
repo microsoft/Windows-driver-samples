@@ -918,7 +918,8 @@ DFS_StaConstructAssociateReq(
 	PRT_CHANNEL_LIST		pChannelList;
 	OCTET_STRING			SupportChannelIE;
 	u1Byte					SupportChannelConnent[48];
-	u1Byte					i=0,j=0;
+	u1Byte					i=0;
+	u2Byte					j=0;
 
 	if (Adapter->DFSSupport == FALSE)
 		return;

@@ -659,7 +659,7 @@ N6CSet_DOT11_ENABLED_AUTHENTICATION_ALGORITHM(
 
 	if(pAuthAlgoList->uNumOfEntries > 1)
 	{
-		u1Byte	i = 0;
+		ULONG	i = 0;
 		RT_TRACE( COMP_OID_SET, DBG_WARNING, ("%s pAuthAlgoList->uNumOfEntries > 1, but we don't support now!\n", __FUNCTION__) );
 		for(i = 0; i < pAuthAlgoList->uNumOfEntries; i ++)
 		{
@@ -3236,7 +3236,7 @@ N6CSet_DOT11_DESIRED_PHY_LIST(
 	PDOT11_PHY_ID_LIST	pPhyIdList = (PDOT11_PHY_ID_LIST)InformationBuffer;
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	BOOLEAN			AnyPhyId = FALSE;
-	u1Byte			index;
+	ULONG			index;
 	
 	*BytesRead = 0;
 	*BytesNeeded =0;
