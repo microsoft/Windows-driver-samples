@@ -1092,7 +1092,9 @@ Return Value:
     //
     Irp->IoStatus.Information = 0;
 
-    srb = ExAllocatePool(NonPagedPoolNx, SCSI_REQUEST_BLOCK_SIZE);
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                          SCSI_REQUEST_BLOCK_SIZE,
+                          SFLOPPY_TAG);
 
     if (srb == NULL) {
 
