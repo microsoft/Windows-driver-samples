@@ -44,6 +44,11 @@ Revision History:
 #define WPP_CONTROL_GUIDS       WPP_CONTROL_GUIDS_NORMAL_FLAGS(WPP_GUID_DISK)
 #endif
 
+#ifdef ExAllocatePool
+#undef ExAllocatePool
+#define ExAllocatePool #NT_ASSERT(FALSE)
+#endif
+
 #define DISK_TAG_GENERAL        ' DcS'  // "ScD " - generic tag
 #define DISK_TAG_SMART          'aDcS'  // "ScDa" - SMART allocations
 #define DISK_TAG_INFO_EXCEPTION 'ADcS'  // "ScDA" - Info Exceptions
