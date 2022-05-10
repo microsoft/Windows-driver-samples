@@ -126,9 +126,9 @@ Return Value:
         goto Cleanup;
     }
 
-    zpoddInfo = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                      sizeof(ZERO_POWER_ODD_INFO),
-                                      CDROM_TAG_ZERO_POWER_ODD);
+    zpoddInfo = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                sizeof(ZERO_POWER_ODD_INFO),
+                                CDROM_TAG_ZERO_POWER_ODD);
 
     if (zpoddInfo == NULL)
     {
@@ -136,8 +136,6 @@ Return Value:
 
         goto Cleanup;
     }
-
-    RtlZeroMemory(zpoddInfo, sizeof (ZERO_POWER_ODD_INFO));
 
     //
     // Check the system for the following prerequisites:
