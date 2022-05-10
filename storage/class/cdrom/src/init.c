@@ -698,9 +698,9 @@ Return Value:
 
     // Save away the symbolic link name in the driver data block.  We need
     // it so we can delete the link when the device is removed.
-    savedName = ExAllocatePoolWithTag(PagedPool,
-                                      unicodeLinkName.MaximumLength,
-                                      CDROM_TAG_STRINGS);
+    savedName = ExAllocatePool2(POOL_FLAG_PAGED,
+                                unicodeLinkName.MaximumLength,
+                                CDROM_TAG_STRINGS);
 
     if (savedName == NULL) 
     {
@@ -818,9 +818,9 @@ Return Value:
     // allocate a private extension for class data
     if (DeviceExtension->PrivateFdoData == NULL) 
     {
-        DeviceExtension->PrivateFdoData = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                sizeof(CDROM_PRIVATE_FDO_DATA),
-                                                                CDROM_TAG_PRIVATE_DATA);
+        DeviceExtension->PrivateFdoData = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                          sizeof(CDROM_PRIVATE_FDO_DATA),
+                                                          CDROM_TAG_PRIVATE_DATA);
     }
 
     if (DeviceExtension->PrivateFdoData == NULL) 
@@ -834,9 +834,9 @@ Return Value:
     }
 
     // Allocate request sense buffer.
-    senseData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                      SENSE_BUFFER_SIZE,
-                                      CDROM_TAG_SENSE_INFO);
+    senseData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                SENSE_BUFFER_SIZE,
+                                CDROM_TAG_SENSE_INFO);
 
     if (senseData == NULL) 
     {
@@ -1068,7 +1068,7 @@ Return Value:
     NT_ASSERT(bufferLength >= sizeof(STORAGE_PROPERTY_QUERY));
     bufferLength = max(bufferLength, sizeof(STORAGE_PROPERTY_QUERY));
 
-    descriptor = ExAllocatePoolWithTag(NonPagedPoolNx, bufferLength, CDROM_TAG_DESCRIPTOR);
+    descriptor = ExAllocatePool2(POOL_FLAG_NON_PAGED, bufferLength, CDROM_TAG_DESCRIPTOR);
 
     if(descriptor == NULL)
     {
@@ -1795,9 +1795,9 @@ Return Value:
         // from the PC-standard 2K to 512.  Change the block transfer size
         // back to the PC-standard 2K by using a mode select command.
 
-        modeParameters = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                               sizeof(MODE_PARM_READ_WRITE_DATA),
-                                               CDROM_TAG_MODE_DATA);
+        modeParameters = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                         sizeof(MODE_PARM_READ_WRITE_DATA),
+                                         CDROM_TAG_MODE_DATA);
         if (modeParameters == NULL)
         {
             return;
@@ -1919,9 +1919,9 @@ Return Value:
     // 1. retrieve the inquiry data length
 
     // 1.1 allocate inquiry data buffer
-    tmpInquiry = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                       requestedInquiryTransferBytes,
-                                       CDROM_TAG_INQUIRY);
+    tmpInquiry = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                 requestedInquiryTransferBytes,
+                                 CDROM_TAG_INQUIRY);
     if (tmpInquiry == NULL)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1987,9 +1987,9 @@ Return Value:
         FREE_POOL(tmpInquiry);
         RtlZeroMemory(&srb, sizeof(SCSI_REQUEST_BLOCK));
 
-        tmpInquiry = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                           requestedInquiryTransferBytes,
-                                           CDROM_TAG_INQUIRY);
+        tmpInquiry = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                     requestedInquiryTransferBytes,
+                                     CDROM_TAG_INQUIRY);
         if (tmpInquiry == NULL)
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2025,9 +2025,9 @@ Return Value:
                 FREE_POOL(tmpInquiry);
                 RtlZeroMemory(&srb, sizeof(SCSI_REQUEST_BLOCK));
 
-                tmpInquiry = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                   requestedInquiryTransferBytes,
-                                                   CDROM_TAG_INQUIRY);
+                tmpInquiry = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                             requestedInquiryTransferBytes,
+                                             CDROM_TAG_INQUIRY);
                 if (tmpInquiry == NULL)
                 {
                     status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2283,10 +2283,9 @@ Return Value:
         ULONG   featureSize = sizeof(GET_CONFIGURATION_HEADER)+sizeof(FEATURE_HEADER);
         ULONG   usable = 0;
 
-        PGET_CONFIGURATION_HEADER configBuffer = ExAllocatePoolWithTag(
-                                                            NonPagedPoolNx,
-                                                            featureSize,
-                                                            CDROM_TAG_GET_CONFIG);
+        PGET_CONFIGURATION_HEADER configBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                                 featureSize,
+                                                                 CDROM_TAG_GET_CONFIG);
 
         if (configBuffer == NULL)
         {
@@ -2462,7 +2461,7 @@ Return Value:
         // Set timeout value from device extension.
         srb.TimeOutValue = DeviceExtension->TimeOutValue;
 
-        buffer = ExAllocatePoolWithTag(NonPagedPoolNx, bufferLength, CDROM_TAG_MODE_DATA);
+        buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, bufferLength, CDROM_TAG_MODE_DATA);
 
         if (buffer == NULL) 
         {
@@ -2608,9 +2607,9 @@ Return Value:
 
     // we got a DVD drive.
     bufferLen = DVD_RPC_KEY_LENGTH;
-    copyProtectKey = (PDVD_COPY_PROTECT_KEY)ExAllocatePoolWithTag(PagedPool,
-                                                                  bufferLen,
-                                                                  DVD_TAG_RPC2_CHECK);
+    copyProtectKey = (PDVD_COPY_PROTECT_KEY)ExAllocatePool2(POOL_FLAG_PAGED,
+                                                            bufferLen,
+                                                            DVD_TAG_RPC2_CHECK);
 
     if (copyProtectKey == NULL) 
     {
