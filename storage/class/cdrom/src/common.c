@@ -523,9 +523,9 @@ BufferLength and WriteToDevice to control the data direction of the device
         Srb->SenseInfoBufferLength = SENSE_BUFFER_SIZE;
 
         // Sense buffer is in aligned nonpaged pool.
-        senseInfoBuffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                                SENSE_BUFFER_SIZE,
-                                                CDROM_TAG_SENSE_INFO);
+        senseInfoBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                          SENSE_BUFFER_SIZE,
+                                          CDROM_TAG_SENSE_INFO);
 
         if (senseInfoBuffer == NULL) 
         {
@@ -838,9 +838,9 @@ Return Value:
         return;
     }
 
-    notification = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         requiredSize,
-                                         CDROM_TAG_NOTIFICATION);
+    notification = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                   requiredSize,
+                                   CDROM_TAG_NOTIFICATION);
 
     // if none allocated, exit
     if (notification == NULL) 
@@ -919,9 +919,9 @@ Return Value:
     if (NT_SUCCESS(status))
     {
         // Allocate Srb from nonpaged pool.
-        context = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                        sizeof(COMPLETION_CONTEXT),
-                                        CDROM_TAG_COMPLETION_CONTEXT);
+        context = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                  sizeof(COMPLETION_CONTEXT),
+                                  CDROM_TAG_COMPLETION_CONTEXT);
 
         if (context == NULL) 
         {
@@ -2272,7 +2272,7 @@ Return Value:
                     );
 
     dvdReadStructure = (PDVD_READ_STRUCTURE)
-                        ExAllocatePoolWithTag(PagedPool, bufferLen, DVD_TAG_DVD_REGION);
+                        ExAllocatePool2(POOL_FLAG_PAGED, bufferLen, DVD_TAG_DVD_REGION);
 
     if (dvdReadStructure == NULL) 
     {
@@ -2656,9 +2656,9 @@ Return Value:
 
     TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_IOCTL, "DeviceRestoreDefaultSpeed: Restore device speed for %p\n", device));
 
-    perfDescriptor = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                           transferLength,
-                                           CDROM_TAG_STREAM);
+    perfDescriptor = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                     transferLength,
+                                     CDROM_TAG_STREAM);
     if (perfDescriptor == NULL)
     {
         return;
@@ -2765,9 +2765,9 @@ Return Value:
     PCDROM_REQUEST_CONTEXT  requestContext = RequestGetContext(Request);
     PKEVENT                 syncEvent = NULL;
 
-    syncEvent = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                      sizeof(KEVENT),
-                                      CDROM_TAG_SYNC_EVENT); 
+    syncEvent = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                sizeof(KEVENT),
+                                CDROM_TAG_SYNC_EVENT); 
 
     if (syncEvent == NULL)
     {
@@ -3832,10 +3832,10 @@ Return Value:
         // send request and check status
 
         // Disable SDV warning about infinitely waiting in caller's context:
-        //   1. Some requests (such as SCSI_PASS_THROUGH, contains buffer from user space) need to be sent down in caller’s context. 
-        //      Consequently, these requests wait in caller’s context until they are allowed to be sent down.
+        //   1. Some requests (such as SCSI_PASS_THROUGH, contains buffer from user space) need to be sent down in callerÂ’s context. 
+        //      Consequently, these requests wait in callerÂ’s context until they are allowed to be sent down.
         //   2. Considering the situation that during sleep, a request can be hold by storage port driver. When system resumes, any time out value (if we set using KMDF time out value) might be expires. 
-        //      This will cause the waiting request being failed (behavior change). We’d rather not set time out value.
+        //      This will cause the waiting request being failed (behavior change). WeÂ’d rather not set time out value.
 
         _Analysis_assume_(options.Timeout != 0);
         requestSent = WdfRequestSend(Request, IoTarget, &options);
