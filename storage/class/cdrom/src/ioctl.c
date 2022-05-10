@@ -224,9 +224,9 @@ Return Value:
 
     // Allocate the required memory
     NT_ASSERT(sizeof(SUB_Q_CURRENT_POSITION) >= sizeof(CDROM_SUB_Q_DATA_FORMAT));
-    currentBuffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                          sizeof(SUB_Q_CURRENT_POSITION),
-                                          CDROM_TAG_PLAY_ACTIVE);
+    currentBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                    sizeof(SUB_Q_CURRENT_POSITION),
+                                    CDROM_TAG_PLAY_ACTIVE);
     if (currentBuffer == NULL) 
     {
         return FALSE;
@@ -553,9 +553,9 @@ Return Value:
         // could this be to deal with device alignment issues?
         keyLength += sizeof(ULONGLONG) - (keyLength & (sizeof(ULONGLONG) - 1));
 
-        readStructure = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                              keyLength,
-                                              DVD_TAG_READ_KEY);
+        readStructure = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                        keyLength,
+                                        DVD_TAG_READ_KEY);
         if (readStructure == NULL) 
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -3071,10 +3071,10 @@ Return Value:
 
     if (NT_SUCCESS(status))
     {
-        srb = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                    sizeof(SCSI_REQUEST_BLOCK) +
-                                    (sizeof(ULONG_PTR) * 2),
-                                    CDROM_TAG_SRB);
+        srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                              sizeof(SCSI_REQUEST_BLOCK) +
+                              (sizeof(ULONG_PTR) * 2),
+                              CDROM_TAG_SRB);
 
         if (srb == NULL) 
         {
@@ -3127,9 +3127,9 @@ Return Value:
             status = STATUS_SUCCESS;
         }
 
-        modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                         MODE_PAGE_DATA_SIZE,
-                                         CDROM_TAG_MODE_DATA);
+        modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                   MODE_PAGE_DATA_SIZE,
+                                   CDROM_TAG_MODE_DATA);
 
         if (modeData == NULL) 
         {
@@ -4130,9 +4130,9 @@ Return Value:
 
     if (NT_SUCCESS(status))
     {
-        valueName = ExAllocatePoolWithTag(PagedPool,
-                                          DeviceExtension->DeviceName.Length + sizeof(WCHAR),
-                                          CDROM_TAG_STRINGS);
+        valueName = ExAllocatePool2(POOL_FLAG_PAGED,
+                                    DeviceExtension->DeviceName.Length + sizeof(WCHAR),
+                                    CDROM_TAG_STRINGS);
         if (valueName == NULL) 
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -6622,7 +6622,7 @@ Return Value:
 
     *DataLength = 0;
 
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                          sizeof(SCSI_REQUEST_BLOCK) +
                          (sizeof(ULONG_PTR) * 2),
                          CDROM_TAG_SRB);
@@ -6636,7 +6636,6 @@ Return Value:
     {
         ioctlCode = RequestParameters.Parameters.DeviceIoControl.IoControlCode;
         cdb = (PCDB)srb->Cdb;
-        RtlZeroMemory(srb, sizeof(SCSI_REQUEST_BLOCK));
 
         if (TEST_FLAG(DeviceExtension->PrivateFdoData->HackFlags, FDO_HACK_NO_RESERVE6))
         {
@@ -6895,7 +6894,7 @@ Return Value:
                                            NULL);
     if (NT_SUCCESS(status))
     {
-        srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+        srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                              sizeof(SCSI_REQUEST_BLOCK) +
                              (sizeof(ULONG_PTR) * 2),
                              CDROM_TAG_SRB);
@@ -8538,9 +8537,9 @@ Return Value:
             PDVD_READ_STRUCTURE     readStructureRequest = (PDVD_READ_STRUCTURE)keyParameters;
 
             // save the key header so we can restore the interesting parts later
-            keyHeader = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                              sizeof(DVD_COPY_PROTECT_KEY),
-                                              DVD_TAG_READ_KEY);
+            keyHeader = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                        sizeof(DVD_COPY_PROTECT_KEY),
+                                        DVD_TAG_READ_KEY);
 
             if(keyHeader == NULL)
             {
