@@ -1296,17 +1296,13 @@ Return Value:
     DeviceExtension->KernelModeMcnContext.LockCount       = 0;
     DeviceExtension->KernelModeMcnContext.McnDisableCount = 0;
 
-    mediaChangeInfo = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                            sizeof(MEDIA_CHANGE_DETECTION_INFO),
-                                            CDROM_TAG_MEDIA_CHANGE_DETECTION);
+    mediaChangeInfo = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                      sizeof(MEDIA_CHANGE_DETECTION_INFO),
+                                      CDROM_TAG_MEDIA_CHANGE_DETECTION);
 
     if (mediaChangeInfo == NULL)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
-    }
-    else
-    {
-        RtlZeroMemory(mediaChangeInfo, sizeof(MEDIA_CHANGE_DETECTION_INFO));
     }
 
     if (NT_SUCCESS(status))
@@ -1354,9 +1350,9 @@ Return Value:
 
     if (NT_SUCCESS(status))
     {
-        senseBuffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                            SENSE_BUFFER_SIZE,
-                                            CDROM_TAG_MEDIA_CHANGE_DETECTION);
+        senseBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                      SENSE_BUFFER_SIZE,
+                                      CDROM_TAG_MEDIA_CHANGE_DETECTION);
         if (senseBuffer == NULL)
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1531,9 +1527,9 @@ Return Value:
     {
         if (info->Gesn.Buffer == NULL)
         {
-            info->Gesn.Buffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                                      GESN_BUFFER_SIZE,
-                                                      CDROM_TAG_GESN);
+            info->Gesn.Buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                                GESN_BUFFER_SIZE,
+                                                CDROM_TAG_GESN);
         }
 
         if (info->Gesn.Buffer == NULL)
@@ -2281,10 +2277,10 @@ Return Value:
             // allocate a buffer for the string
             deviceString.Length = (USHORT)( length );
             deviceString.MaximumLength = deviceString.Length + 1;
-            deviceString.Buffer = (PCHAR)ExAllocatePoolWithTag( NonPagedPoolNx,
-                                                                 deviceString.MaximumLength,
-                                                                 CDROM_TAG_AUTORUN_DISABLE
-                                                                 );
+            deviceString.Buffer = (PCHAR)ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                         deviceString.MaximumLength,
+                                                         CDROM_TAG_AUTORUN_DISABLE
+                                                         );
             if (deviceString.Buffer == NULL)
             {
                 TracePrint((TRACE_LEVEL_INFORMATION, TRACE_FLAG_MCN,

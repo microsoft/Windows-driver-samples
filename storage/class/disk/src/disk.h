@@ -44,7 +44,6 @@ Revision History:
 #define WPP_CONTROL_GUIDS       WPP_CONTROL_GUIDS_NORMAL_FLAGS(WPP_GUID_DISK)
 #endif
 
-
 #ifdef ExAllocatePool
 #undef ExAllocatePool
 #define ExAllocatePool #NT_ASSERT(FALSE)
