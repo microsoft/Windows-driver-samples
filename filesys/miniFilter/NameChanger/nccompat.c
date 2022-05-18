@@ -121,7 +121,7 @@ Return Value:
     STATUS_SUCCESS otherwise.
 
 --*/
-{  
+{
     PWSTR Buffer;
     PUNICODE_STRING FileName;
     USHORT NewMaxLength;
@@ -138,14 +138,15 @@ Return Value:
 
     if (FileNameLength <= FileName->MaximumLength) {
 
+        RtlZeroMemory( FileName->Buffer, FileName->MaximumLength );
         goto CopyAndReturn;
     }
 
     NewMaxLength = FileNameLength;
 
-    Buffer = ExAllocatePoolWithTag( PagedPool,
-                                    NewMaxLength,
-                                    NC_FILE_NAME_TAG );
+    Buffer = ExAllocatePoolZero( PagedPool,
+                                 NewMaxLength,
+                                 NC_FILE_NAME_TAG );
 
     if (!Buffer) {
 
@@ -161,8 +162,6 @@ Return Value:
     FileName->MaximumLength = NewMaxLength;
 
 CopyAndReturn:
-
-    RtlZeroMemory(FileName->Buffer, FileName->MaximumLength);
 
     FileName->Length = FileNameLength;
     RtlCopyMemory(FileName->Buffer, NewFileName, FileNameLength);
@@ -307,9 +306,9 @@ NcCreateFileEx2Alternate (
     //
     //  Zero out output parameters.
     //
-    
+
     *FileHandle = INVALID_HANDLE_VALUE;
-    
+
     if (ARGUMENT_PRESENT( FileObject )) {
 
         *FileObject = NULL;
@@ -390,7 +389,7 @@ NcCreateFileEx2Cleanup:
     if (!NT_SUCCESS( Status )) {
 
         if (*FileHandle != INVALID_HANDLE_VALUE) {
-    
+
             FltClose( *FileHandle );
         }
 
@@ -401,16 +400,16 @@ NcCreateFileEx2Cleanup:
                 ObDereferenceObject( *FileObject );
             }
         }
-    }    
+    }
 
     return Status;
-}    
+}
 
 //
 //  Helper routines which manage importing the functions.
 //
 
-VOID 
+VOID
 NcCompatInit( )
 {
     UNICODE_STRING FuncName;
@@ -419,7 +418,7 @@ NcCompatInit( )
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //

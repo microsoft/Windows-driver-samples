@@ -46,7 +46,7 @@ NcLoadRegistryString (
     //
     //  Query the length of the registry value.
     //
-    
+
     RtlInitUnicodeString( &ValueString, valueName );
 
 NcLoadRegistryStringRetry:
@@ -74,11 +74,11 @@ NcLoadRegistryStringRetry:
 
     if (TempMappingBuffer != NULL) {
         ExFreePoolWithTag( TempMappingBuffer, NC_TAG );
-    } 
+    }
 
-    TempMappingBuffer = ExAllocatePoolWithTag( PagedPool,
-                                               TempMappingKeyLength,
-                                               NC_TAG );
+    TempMappingBuffer = ExAllocatePoolZero( PagedPool,
+                                            TempMappingKeyLength,
+                                            NC_TAG );
 
     if (TempMappingBuffer == NULL) {
 
@@ -131,13 +131,13 @@ NcLoadRegistryStringRetry:
 
     //
     //  Allocate a buffer for the target string.  Note that we
-    //  allocate one fewer WCHAR, as we have no need for the 
+    //  allocate one fewer WCHAR, as we have no need for the
     //  NULL terminator in our UNICODE_STRING.
     //
 
-    OutputStringBuffer = ExAllocatePoolWithTag( NonPagedPool,
-                                                TempMappingBuffer->DataLength - sizeof(WCHAR),
-                                                NC_TAG );
+    OutputStringBuffer = ExAllocatePoolZero( NonPagedPool,
+                                             TempMappingBuffer->DataLength - sizeof(WCHAR),
+                                             NC_TAG );
 
     if (OutputStringBuffer == NULL) {
 
@@ -278,7 +278,7 @@ NcIs8DOT3Compatible (
 
 }
 
-NTSTATUS 
+NTSTATUS
 NcInitializeMapping(
     _In_ PUNICODE_STRING RegistryPath
     )
@@ -429,7 +429,7 @@ Return Value:
 
     if (!NcIs8DOT3Compatible( &NcGlobalData.UserMappingFinalComponentShort,
                               &NcGlobalData.UserMappingFinalComponentLong )) {
-        
+
         Status = STATUS_INVALID_PARAMETER;
         goto NcInitializeMappingCleanup;
     }
@@ -443,7 +443,7 @@ Return Value:
     //
 
     if (!NcIs8DOT3Compatible( &NcGlobalData.RealMappingFinalComponent, NULL )) {
-        
+
         Status = STATUS_INVALID_PARAMETER;
         goto NcInitializeMappingCleanup;
     }
