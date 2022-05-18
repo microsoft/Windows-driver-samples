@@ -54,7 +54,7 @@ UNICODE_STRING ScannedExtensionDefault = RTL_CONSTANT_STRING( L"doc" );
 //  Function prototypes
 //
 
-NTSTATUS 
+NTSTATUS
 ScannerInitializeScannedExtensions(
     _In_ PUNICODE_STRING RegistryPath
     );
@@ -105,12 +105,12 @@ ScannerpCheckExtension (
 
 #ifdef ALLOC_PRAGMA
     #pragma alloc_text(INIT, DriverEntry)
-    #pragma alloc_text(INIT, ScannerInitializeScannedExtensions)    
+    #pragma alloc_text(INIT, ScannerInitializeScannedExtensions)
     #pragma alloc_text(PAGE, ScannerInstanceSetup)
     #pragma alloc_text(PAGE, ScannerPreCreate)
     #pragma alloc_text(PAGE, ScannerPortConnect)
     #pragma alloc_text(PAGE, ScannerPortDisconnect)
-    #pragma alloc_text(PAGE, ScannerFreeExtensions)    
+    #pragma alloc_text(PAGE, ScannerFreeExtensions)
     #pragma alloc_text(PAGE, ScannerAllocateUnicodeString)
     #pragma alloc_text(PAGE, ScannerFreeUnicodeString)
 #endif
@@ -221,7 +221,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -247,10 +247,10 @@ Return Value:
     if (!NT_SUCCESS( status )) {
 
         status = STATUS_SUCCESS;
-        
+
         ScannedExtensions = &ScannedExtensionDefault;
-        ScannedExtensionCount = 1;    
-    }    
+        ScannedExtensionCount = 1;
+    }
 
     //
     //  Create a communication port.
@@ -307,12 +307,12 @@ Return Value:
     ScannerFreeExtensions();
 
     FltUnregisterFilter( ScannerData.Filter );
-    
+
     return status;
 }
 
 
-NTSTATUS 
+NTSTATUS
 ScannerInitializeScannedExtensions(
     _In_ PUNICODE_STRING RegistryPath
     )
@@ -322,7 +322,7 @@ Routine Descrition:
 
     This routine sets the the extensions for files to be scanned based
     on the registry.
-    
+
 Arguments:
 
     RegistryPath - The path key passed to the driver during DriverEntry.
@@ -345,7 +345,7 @@ Return Value:
     SIZE_T length;
     ULONG count;
     PUNICODE_STRING ext;
-    
+
     PAGED_CODE();
 
     ScannedExtensions = NULL;
@@ -375,7 +375,7 @@ Return Value:
     //
     //   Query the length of the reg value
     //
-    
+
     RtlInitUnicodeString( &valueName, L"Extensions" );
 
     status = ZwQueryValueKey( driverRegKey,
@@ -395,9 +395,9 @@ Return Value:
     //  Extract the path.
     //
 
-    valueBuffer = ExAllocatePoolWithTag( NonPagedPool,
-                                         valueLength,
-                                         SCANNER_REG_TAG );
+    valueBuffer = ExAllocatePoolZero( NonPagedPool,
+                                      valueLength,
+                                      SCANNER_REG_TAG );
 
     if (valueBuffer == NULL) {
 
@@ -424,38 +424,38 @@ Return Value:
     //
     //  Count how many strings are in the multi string
     //
-    
+
     while (*ch != '\0') {
 
         ch = ch + wcslen( ch ) + 1;
         count++;
     }
 
-    ScannedExtensions = ExAllocatePoolWithTag( PagedPool, 
-                                               count * sizeof(UNICODE_STRING),
-                                               SCANNER_STRING_TAG );
-    
+    ScannedExtensions = ExAllocatePoolZero( PagedPool,
+                                            count * sizeof(UNICODE_STRING),
+                                            SCANNER_STRING_TAG );
+
     if (ScannedExtensions == NULL) {
         goto ScannerInitializeScannedExtensionsCleanup;
     }
 
     ch = (PWCHAR)((PKEY_VALUE_PARTIAL_INFORMATION)valueBuffer->Data);
     ext = ScannedExtensions;
-    
+
     while (ScannedExtensionCount < count) {
 
         length = wcslen( ch ) * sizeof(WCHAR);
 
         ext->MaximumLength = (USHORT) length;
-        
+
         status = ScannerAllocateUnicodeString( ext );
-        
+
         if (!NT_SUCCESS( status )) {
             goto ScannerInitializeScannedExtensionsCleanup;
         }
 
         ext->Length = (USHORT)length;
- 
+
         RtlCopyMemory( ext->Buffer, ch, length );
 
         ch = ch + length/sizeof(WCHAR) + 1;
@@ -463,7 +463,7 @@ Return Value:
         ScannedExtensionCount++;
 
         ext++;
-        
+
     }
 
 ScannerInitializeScannedExtensionsCleanup:
@@ -489,7 +489,7 @@ ScannerInitializeScannedExtensionsCleanup:
 
         ScannerFreeExtensions();
     }
-    
+
     return status;
 }
 
@@ -524,16 +524,16 @@ Return Value:
 
         if (ScannedExtensions != &ScannedExtensionDefault) {
 
-            ScannerFreeUnicodeString( ScannedExtensions + ScannedExtensionCount );        
+            ScannerFreeUnicodeString( ScannedExtensions + ScannedExtensionCount );
         }
     }
-    
+
     if (ScannedExtensions != &ScannedExtensionDefault && ScannedExtensions != NULL) {
 
         ExFreePoolWithTag( ScannedExtensions, SCANNER_STRING_TAG );
     }
 
-    ScannedExtensions = NULL;    
+    ScannedExtensions = NULL;
 
 }
 
@@ -550,22 +550,22 @@ Routine Description:
 
 Arguments:
 
-    String - supplies the size of the string to be allocated in the MaximumLength field 
+    String - supplies the size of the string to be allocated in the MaximumLength field
              return the unicode string
 
 Return Value:
 
     STATUS_SUCCESS                  - success
     STATUS_INSUFFICIENT_RESOURCES   - failure
-  
+
 --*/
 {
 
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( NonPagedPool,
-                                            String->MaximumLength,
-                                            SCANNER_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( NonPagedPool,
+                                         String->MaximumLength,
+                                         SCANNER_STRING_TAG );
 
     if (String->Buffer == NULL) {
 
@@ -590,11 +590,11 @@ Routine Description:
 
 Arguments:
 
-    String - supplies the string to be freed 
+    String - supplies the string to be freed
 
 Return Value:
 
-    None    
+    None
 
 --*/
 {
@@ -662,7 +662,7 @@ Return Value
     //  Set the user process and port. In a production filter it may
     //  be necessary to synchronize access to such fields with port
     //  lifetime. For instance, while filter manager will synchronize
-    //  FltCloseClientPort with FltSendMessage's reading of the port 
+    //  FltCloseClientPort with FltSendMessage's reading of the port
     //  handle, synchronizing access to the UserProcess would be up to
     //  the filter.
     //
@@ -936,7 +936,7 @@ Return Value
     //
 
     for (count = 0; count < ScannedExtensionCount; count++) {
-        
+
         if (RtlCompareUnicodeString( Extension, ScannedExtensions + count, TRUE ) == 0) {
 
             //
@@ -1092,7 +1092,7 @@ Return Value:
 
             //
             //  Normally we would check the results of FltSetStreamHandleContext
-            //  for a variety of error cases. However, The only error status 
+            //  for a variety of error cases. However, The only error status
             //  that could be returned, in this case, would tell us that
             //  contexts are not supported.  Even if we got this error,
             //  we just want to release the context now and that will free
@@ -1283,9 +1283,9 @@ Return Value:
             //  This is just a sample!
             //
 
-            notification = ExAllocatePoolWithTag( NonPagedPool,
-                                                  sizeof( SCANNER_NOTIFICATION ),
-                                                  'nacS' );
+            notification = ExAllocatePoolZero( NonPagedPool,
+                                               sizeof( SCANNER_NOTIFICATION ),
+                                               'nacS' );
             if (notification == NULL) {
 
                 Data->IoStatus.Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1398,7 +1398,7 @@ ScannerPreFileSystemControl (
 
 Routine Description:
 
-    Pre FS Control callback. 
+    Pre FS Control callback.
 
 Arguments:
 
@@ -1460,13 +1460,13 @@ Return Value:
 
             //
             //  Scanner cannot access the data in this offload write request.
-            //  In a production-level filter, we would actually let user mode 
+            //  In a production-level filter, we would actually let user mode
             //  scan the file after offload write completes (on cleanup etc).
             //  Since this is just a sample, block offload write with
             //  STATUS_ACCESS_DENIED, although this is not an acceptable
             //  production-level behavior.
             //
-            
+
             DbgPrint( "!!! scanner.sys -- blocking the offload write !!!\n" );
 
             Data->IoStatus.Status = STATUS_ACCESS_DENIED;
@@ -1474,7 +1474,7 @@ Return Value:
 
             returnStatus = FLT_PREOP_COMPLETE;
         }
-                
+
     } finally {
 
         if (context) {
@@ -1482,7 +1482,7 @@ Return Value:
             FltReleaseContext( context );
         }
     }
-    
+
     return returnStatus;
 }
 
@@ -1600,9 +1600,9 @@ Return Value:
             leave;
         }
 
-        notification = ExAllocatePoolWithTag( NonPagedPool,
-                                              sizeof( SCANNER_NOTIFICATION ),
-                                              'nacS' );
+        notification = ExAllocatePoolZero( NonPagedPool,
+                                           sizeof( SCANNER_NOTIFICATION ),
+                                           'nacS' );
 
         if(NULL == notification) {
 
