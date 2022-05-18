@@ -784,9 +784,9 @@ Return Value:
     //  Extract the old mapping string.
     //
 
-    mappingValue = ExAllocatePoolWithTag( PagedPool,
-                                          mappingValueLength,
-                                          SIMREP_REG_TAG );
+    mappingValue = ExAllocatePoolZero( PagedPool,
+                                       mappingValueLength,
+                                       SIMREP_REG_TAG );
 
     if (mappingValue == NULL) {
 
@@ -855,9 +855,9 @@ Return Value:
 
         ExFreePoolWithTag( mappingValue, SIMREP_REG_TAG );
 
-        mappingValue = ExAllocatePoolWithTag( PagedPool,
-                                               mappingValueLength,
-                                               SIMREP_REG_TAG );
+        mappingValue = ExAllocatePoolZero( PagedPool,
+                                           mappingValueLength,
+                                           SIMREP_REG_TAG );
 
         if (mappingValue == NULL) {
 
@@ -1745,6 +1745,8 @@ Return Value:
 
     fileInfoClass = Cbd->Iopb->Parameters.SetFileInformation.FileInformationClass;
 
+#pragma warning( push )
+#pragma warning( disable:4061 )
     switch (fileInfoClass) {
 
         case FileRenameInformation:
@@ -1835,6 +1837,7 @@ Return Value:
             NT_ASSERTMSG("SimRep passing through unknown information class\n", FALSE);
             goto SimRepPreSetInformationCleanup;
     }
+#pragma warning( pop )
 
     //
     //    When this filter is configured to remap renames and hardlinks we need
@@ -1940,7 +1943,7 @@ Return Value:
 
          bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
 
-         buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
+         buffer = ExAllocatePoolZero( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
          if (buffer == NULL) {
 
@@ -1960,7 +1963,7 @@ Return Value:
 
         bufferLength = FIELD_OFFSET( FILE_LINK_INFORMATION, FileName ) + newFileName.Length;
 
-        buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
+        buffer = ExAllocatePoolZero( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
         if (buffer == NULL) {
 
@@ -2061,9 +2064,9 @@ Return Value:
 
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( NonPagedPool,
-                                            String->MaximumLength,
-                                            SIMREP_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( NonPagedPool,
+                                         String->MaximumLength,
+                                         SIMREP_STRING_TAG );
 
     if (String->Buffer == NULL) {
 
@@ -2161,6 +2164,7 @@ Return Value:
     //
     if (FileNameLength <= fileName->MaximumLength) {
 
+        RtlZeroMemory(fileName->Buffer, fileName->MaximumLength);
         goto CopyAndReturn;
     }
 
@@ -2169,9 +2173,9 @@ Return Value:
     //
     newMaxLength = FileNameLength;
 
-    buffer = ExAllocatePoolWithTag( PagedPool,
-                                    newMaxLength,
-                                    SIMREP_STRING_TAG );
+    buffer = ExAllocatePoolZero( PagedPool,
+                                 newMaxLength,
+                                 SIMREP_STRING_TAG );
 
     if (!buffer) {
 
@@ -2189,7 +2193,6 @@ Return Value:
 CopyAndReturn:
 
     fileName->Length = FileNameLength;
-    RtlZeroMemory(fileName->Buffer, fileName->MaximumLength);
     RtlCopyMemory(fileName->Buffer, NewFileName, FileNameLength);
 
     return STATUS_SUCCESS;
