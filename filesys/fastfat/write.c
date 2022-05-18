@@ -2980,11 +2980,14 @@ Return Value:
     //  Send it off
     //
 
+#pragma prefast( suppress: 28155, "the function prototype is correct ")
+#pragma warning( suppress:4996 )
     ExInitializeWorkItem( &FlushContext->Item,
                           FatDeferredFlush,
                           FlushContext );
 
 #pragma prefast( suppress:28159, "prefast indicates this API is obsolete, but it's ok for fastfat to keep using it" )
+#pragma warning( suppress:4996 )
     ExQueueWorkItem( &FlushContext->Item, CriticalWorkQueue );
 }
 

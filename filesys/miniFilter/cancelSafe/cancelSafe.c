@@ -121,7 +121,7 @@ typedef struct _CSQ_GLOBAL_DATA {
     PWSTR PathBuffer;
 
     LONGLONG TimeDelay;
-    
+
 } CSQ_GLOBAL_DATA;
 
 
@@ -362,7 +362,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -380,8 +380,8 @@ Return Value:
     //
     //  Initialize the configuration to default values
     //
-    
-    Globals.DebugLevel = CSQ_TRACE_ERROR;        
+
+    Globals.DebugLevel = CSQ_TRACE_ERROR;
 
     Globals.TimeDelay = CSQ_DEFAULT_TIME_DELAY;
 
@@ -397,7 +397,7 @@ Return Value:
     Status = SetConfiguration( RegistryPath );
 
     if (!NT_SUCCESS( Status )) {
-        
+
         goto DriverEntryCleanup;
     }
 
@@ -449,10 +449,10 @@ Return Value:
 DriverEntryCleanup:
 
     if (!NT_SUCCESS( Status )) {
-        
+
         FreeGlobals();
     }
-    
+
     return Status;
 }
 
@@ -460,7 +460,7 @@ DriverEntryCleanup:
 NTSTATUS
 SetConfiguration (
     _In_ PUNICODE_STRING RegistryPath
-    ) 
+    )
 /*++
 
 Routine Description:
@@ -510,31 +510,31 @@ Return Value:
     }
 
     CloseHandle = TRUE;
-    
+
     //
     //  Query the debug level
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DEBUG_LEVEL );
-    
+
     Status = ZwQueryValueKey( DriverRegKey,
                               &ValueName,
                               KeyValuePartialInformation,
                               Value,
                               ValueLength,
                               &ResultLength );
-    
+
     if (NT_SUCCESS( Status )) {
 
         Globals.DebugLevel = *(PULONG)(Value->Data);
     }
 
-    
+
     //
     //  Query the queue time delay
     //
 
- 
+
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DELAY );
 
     Status = ZwQueryValueKey( DriverRegKey,
@@ -551,11 +551,11 @@ Return Value:
             Status = STATUS_INVALID_PARAMETER;
             goto SetConfigurationCleanup;
         }
-        
+
         Globals.TimeDelay = (LONGLONG)(*(PULONG)(Value->Data));
-        
+
     }
-  
+
     //
     // Query the mapping path
     //
@@ -594,17 +594,17 @@ Return Value:
         //  Allocate enough space for an extra character in case a trailing '\'
         //  is missing and needs to be added.
         //
-        
+
         Length = Value->DataLength + sizeof(WCHAR),
 
-        Globals.PathBuffer = ExAllocatePoolWithTag( NonPagedPool, Length, CSQ_STRING_TAG );
-        
+        Globals.PathBuffer = ExAllocatePoolZero( NonPagedPool, Length, CSQ_STRING_TAG );
+
         if (Globals.PathBuffer == NULL) {
 
             Status = STATUS_INSUFFICIENT_RESOURCES;
-            goto SetConfigurationCleanup;            
+            goto SetConfigurationCleanup;
         }
-                        
+
         RtlCopyMemory( Globals.PathBuffer, Value->Data, Value->DataLength );
 
         Globals.PathBuffer[Length / sizeof(WCHAR) - 1] = L'\0';
@@ -612,9 +612,9 @@ Return Value:
         //
         //  Add a trailing '\' if one is missing.
         //
-        
+
         if (Globals.PathBuffer[Length/sizeof(WCHAR) - 3] != L'\\') {
-           
+
             Globals.PathBuffer[Length/sizeof(WCHAR) - 2] = L'\\';
 
         }
@@ -627,9 +627,9 @@ Return Value:
     //  Ignore errors when looking for values in the registry.
     //  Default values will be used.
     //
-    
+
     Status = STATUS_SUCCESS;
-    
+
 SetConfigurationCleanup:
 
     if (CloseHandle) {
@@ -667,7 +667,7 @@ Return Value:
     ExDeleteNPagedLookasideList( &Globals.QueueContextLookaside );
 
     if (Globals.PathBuffer != NULL) {
-        
+
         ExFreePoolWithTag( Globals.PathBuffer, CSQ_STRING_TAG );
         Globals.PathBuffer = NULL;
     }
@@ -709,7 +709,7 @@ Return Value:
     FltUnregisterFilter( Globals.FilterHandle );
 
     FreeGlobals();
-    
+
     return STATUS_SUCCESS;
 }
 
@@ -1512,11 +1512,11 @@ Return Value:
 
     if (!RtlPrefixUnicodeString( &Globals.MappingPath, &NameInfo->ParentDir, TRUE )) {
 
-        goto PreReadCleanup;                
+        goto PreReadCleanup;
     }
 
     //
-    //  Since Fast I/O operations cannot be queued, we could return 
+    //  Since Fast I/O operations cannot be queued, we could return
     //  FLT_PREOP_SUCCESS_NO_CALLBACK at this point. In this sample,
     //  we disallow Fast I/O for this magic file in order to force an IRP
     //  to be sent to us again. The purpose of doing that is to demonstrate
@@ -1581,7 +1581,7 @@ Return Value:
         //  In general, we can create a worker thread here as long as we can
         //  correctly handle the insert/remove race conditions b/w multi threads.
         //  In this sample, the worker thread creation is done in CsqInsertIo.
-        //  This is a simpler solution because CsqInsertIo is atomic with 
+        //  This is a simpler solution because CsqInsertIo is atomic with
         //  respect to other CsqXxxIo callback routines.
         //
 
@@ -1707,32 +1707,32 @@ Return Value:
             //
             //  Check to see if we need to lock the user buffer.
             //
-            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't 
+            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't
             //  have to lock the buffer because its already a system buffer.
             //
-            //  If the MdlAddress is NULL and the buffer is a user buffer, 
+            //  If the MdlAddress is NULL and the buffer is a user buffer,
             //  then we have to construct one in order to look at the buffer.
             //
             //  If the length of the buffer is zero there is nothing to read,
             //  so we cannot construct a MDL.
             //
 
-            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) && 
+            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) &&
                 Data->Iopb->Parameters.Read.MdlAddress == NULL &&
                 Data->Iopb->Parameters.Read.Length > 0) {
 
                 Status = FltLockUserBuffer( Data );
 
                 if (!NT_SUCCESS( Status )) {
-                    
+
                     //
                     //  If could not lock the user buffer we cannot
-                    //  allow the IO to go below us. Because we are 
+                    //  allow the IO to go below us. Because we are
                     //  in a different VA space and the buffer is a
-                    //  user mode address, we will either fault or 
+                    //  user mode address, we will either fault or
                     //  corrpt data
                     //
-                   
+
                     DebugTrace( CSQ_TRACE_PRE_READ | CSQ_TRACE_ERROR,
                                 ("[Csq]: Failed to lock user buffer (Status = 0x%x)\n",
                                 Status) );
@@ -1779,10 +1779,10 @@ Return Value:
             //
 
             if (InterlockedDecrement( &InstCtx->WorkerThreadFlag ) == 0) {
-                
+
                 break;
             }
-            
+
         }
     }
 
@@ -1902,17 +1902,17 @@ Return Value:
             //
             //  Check to see if we need to lock the user buffer.
             //
-            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't 
+            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't
             //  have to lock the buffer because its already a system buffer.
             //
-            //  If the MdlAddress is NULL and the buffer is a user buffer, 
+            //  If the MdlAddress is NULL and the buffer is a user buffer,
             //  then we have to construct one in order to look at the buffer.
             //
             //  If the length of the buffer is zero there is nothing to read,
             //  so we cannot construct a MDL.
             //
 
-            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) && 
+            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) &&
                 Data->Iopb->Parameters.Read.MdlAddress == NULL &&
                 Data->Iopb->Parameters.Read.Length > 0) {
 
@@ -1922,12 +1922,12 @@ Return Value:
 
                     //
                     //  If could not lock the user buffer we cannot
-                    //  allow the IO to go below us. Because we are 
+                    //  allow the IO to go below us. Because we are
                     //  in a different VA space and the buffer is a
-                    //  user mode address, we will either fault or 
+                    //  user mode address, we will either fault or
                     //  corrpt data
                     //
-                   
+
                     callbackStatus = FLT_PREOP_COMPLETE;
                     Data->IoStatus.Status = Status;
                 }
