@@ -43,7 +43,7 @@ You can build the sample in two ways: using the Visual Studio Integrated Develop
 
 ### Building the sample using the command line (MSBuild)
 
-1. Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
+1. Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MSBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
 
 1. Navigate to each of the respective project directories and enter the appropriate **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called BthEcho.vcxproj, navigate to the samples\\bluetooth\\bthecho\\bthcli\\sys project directory and enter the following MSBuild command: **msbuild /t:clean /t:build .\\BthEchoSampleCli.vcxproj**.
 
