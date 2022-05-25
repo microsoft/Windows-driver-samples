@@ -30,7 +30,7 @@ Previous versions of the WDK used the Windows Build utility (Build.exe) and prov
 
 ### Building the sample using the command line (MSBuild)
 
-1. Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
+1. Open a Visual Studio Command Prompt window. Click **Start** and search for **Developer Command Prompt**. If your project is under %PROGRAMFILES%, you need to open the command prompt window using elevated permissions (**Run as administrator**). From this window you can use MSBuild.exe to build any Visual Studio project by specifying the project (.vcxproj) or solutions (.sln) file.
 
 1. Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called kbdus.vcxproj, navigate to the project directory and enter the following MSBuild command: **msbuild /t:clean /t:build .\\kbdus.vcxproj**.
 
