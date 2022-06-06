@@ -10,12 +10,12 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         platform: [x64, arm64]
-    runs-on: windows-2022
+    runs-on: windows-2019
     env:
       Solution_Path: general\echo\kmdf\kmdfecho.sln
     steps:
       - run: echo "🎉 Job automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🖥️ Running on {{ runner.os }}"
+      - run: echo "🖥️ Running on ${{ runner.os }}"
 
       # Check out code
       - name: Check out repository code
