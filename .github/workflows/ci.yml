@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         configuration: [Debug, Release]
         platform: [x64, arm64]
@@ -26,7 +27,7 @@ jobs:
       
       # Build sample directly
       - name: Build sample
-        run: msbuild $env:Solution_Path -t:clean,build -verbosity:diag -property:Configuration=$env.Configuration -property:Platform=$env.Platform
+        run: msbuild $env:Solution_Path -t:clean,build -verbosity:diag -property:Configuration=$env:Configuration -property:Platform=$env:Platform
         env:
           Configuration: ${{ matrix.configuration }}
           Platform: ${{ matrix.platform }}
