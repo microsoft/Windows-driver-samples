@@ -313,7 +313,7 @@ Return Value:
         goto exit2;
     }
 
-    serverSdpRecord = ExAllocatePoolWithTag(NonPagedPoolNx, requestSize, POOLTAG_BTHECHOSAMPLE);
+    serverSdpRecord = ExAllocatePool2(POOL_FLAG_NON_PAGED, requestSize, POOLTAG_BTHECHOSAMPLE);
     if (NULL == serverSdpRecord)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
