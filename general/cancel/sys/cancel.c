@@ -84,6 +84,12 @@ Return Value:
 
     CSAMP_KDPRINT(("DriverEntry Enter \n"));
 
+    //
+    // Opt-in to using non-executable pool memory on Windows 8 and later.
+    // https://msdn.microsoft.com/en-us/library/windows/hardware/hh920402(v=vs.85).aspx
+    //
+
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
 
     (void) RtlInitUnicodeString(&unicodeDeviceName, CSAMP_DEVICE_NAME_U);
 
@@ -268,7 +274,7 @@ Return Value:
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
 
-    ASSERT(irpStack->FileObject != NULL);    
+    ASSERT(irpStack->FileObject != NULL);
 
     switch(irpStack->MajorFunction)
     {
@@ -282,9 +288,9 @@ Return Value:
             // layering itself over a this driver. A driver is
             // required to supply a dispatch routine for IRP_MJ_CREATE.
             //
-            fileContext = ExAllocatePoolWithQuotaTag(NonPagedPoolNx, 
-                                              sizeof(FILE_CONTEXT),
-                                              TAG);
+            fileContext = ExAllocatePoolQuotaZero(NonPagedPoolNx | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
+                                                  sizeof(FILE_CONTEXT),
+                                                  TAG);
 
             if (NULL == fileContext) {
                 status =  STATUS_INSUFFICIENT_RESOURCES;
@@ -296,13 +302,13 @@ Return Value:
             //
             // Make sure nobody is using the FsContext scratch area.
             //
-            ASSERT(irpStack->FileObject->FsContext == NULL);    
+            ASSERT(irpStack->FileObject->FsContext == NULL);
 
             //
             // Store the context in the FileObject's scratch area.
             //
             irpStack->FileObject->FsContext = (PVOID) fileContext;
-            
+
             CSAMP_KDPRINT(("IRP_MJ_CREATE\n"));
             break;
 
@@ -314,7 +320,7 @@ Return Value:
             // of the file object is down to 0.
             //
             fileContext = irpStack->FileObject->FsContext;
-            
+
             ExFreePoolWithTag(fileContext, TAG);
 
             CSAMP_KDPRINT(("IRP_MJ_CLOSE\n"));
@@ -379,13 +385,13 @@ CsampRead(
     irpStack = IoGetCurrentIrpStackLocation(Irp);
     ASSERT(irpStack->FileObject != NULL);
 
-    fileContext = irpStack->FileObject->FsContext;    
+    fileContext = irpStack->FileObject->FsContext;
 
     status = IoAcquireRemoveLock(&fileContext->FileRundownLock, Irp);
     if (!NT_SUCCESS(status)) {
         //
-        // Lock is in a removed state. That means we have already received 
-        // cleaned up request for this handle. 
+        // Lock is in a removed state. That means we have already received
+        // cleaned up request for this handle.
         //
         Irp->IoStatus.Status = status;
         IoCompleteRequest(Irp, IO_NO_INCREMENT);
@@ -415,7 +421,7 @@ CsampRead(
     KeQuerySystemTime(&currentTime);
 
     readBuffer = Irp->AssociatedIrp.SystemBuffer;
-    
+
     *((PULONG)readBuffer) = ((currentTime.LowPart/13)%2);
 
     //
@@ -457,7 +463,7 @@ CsampRead(
     // is handled.
     //
     IoReleaseRemoveLock(&fileContext->FileRundownLock, Irp);
-    
+
     return STATUS_PENDING;
 }
 
@@ -470,8 +476,8 @@ CsampPollingThread(
 Routine Description:
 
     This is the main thread that removes IRP from the queue
-    and peforms I/O on it. 
-    
+    and peforms I/O on it.
+
 Arguments:
 
     Context     -- pointer to the device object
@@ -675,9 +681,9 @@ Return Value:
     devExtension = DeviceObject->DeviceExtension;
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
-    ASSERT(irpStack->FileObject != NULL);    
+    ASSERT(irpStack->FileObject != NULL);
 
-    fileContext = irpStack->FileObject->FsContext;    
+    fileContext = irpStack->FileObject->FsContext;
 
     //
     // This acquire cannot fail because you cannot get more than one
@@ -687,7 +693,7 @@ Return Value:
     ASSERT(NT_SUCCESS(status));
 
     //
-    // Wait for all the threads that are currently dispatching to exit and 
+    // Wait for all the threads that are currently dispatching to exit and
     // prevent any threads dispatching I/O on the same handle beyond this point.
     //
     IoReleaseRemoveLockAndWait(&fileContext->FileRundownLock, Irp);
@@ -695,7 +701,7 @@ Return Value:
     pendingIrp = IoCsqRemoveNextIrp(&devExtension->CancelSafeQueue,
                                     irpStack->FileObject);
 
-    while(pendingIrp) 
+    while(pendingIrp)
     {
         //
         // Cancel the IRP
@@ -870,7 +876,7 @@ PIRP CsampPeekNextIrp(
 
 //
 // CsampAcquireLock modifies the execution level of the current processor.
-// 
+//
 // KeAcquireSpinLock raises the execution level to Dispatch Level and stores
 // the current execution level in the Irql parameter to be restored at a later
 // time.  KeAcqurieSpinLock also requires us to be running at no higher than
@@ -901,7 +907,7 @@ VOID CsampAcquireLock(
 
 //
 // CsampReleaseLock modifies the execution level of the current processor.
-// 
+//
 // KeReleaseSpinLock assumes we already hold the spin lock and are therefore
 // running at Dispatch level.  It will use the Irql parameter saved in a
 // previous call to KeAcquireSpinLock to return the thread back to it's original
@@ -942,4 +948,3 @@ VOID CsampCompleteCanceledIrp(
     CSAMP_KDPRINT(("cancelled irp\n"));
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 }
-
