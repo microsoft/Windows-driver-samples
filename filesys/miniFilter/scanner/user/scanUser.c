@@ -341,6 +341,12 @@ main (
 
     messages = malloc(sizeof(SCANNER_MESSAGE) * threadCount * requestCount);
 
+    if (messages == NULL) {
+
+        hr = ERROR_NOT_ENOUGH_MEMORY;
+        goto main_cleanup;
+    }
+    
     //
     //  Create specified number of threads.
     //
