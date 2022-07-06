@@ -339,6 +339,10 @@ main (
     context.Port = port;
     context.Completion = completion;
 
+    //
+    //  Allocate messages.
+    //
+
     messages = malloc(sizeof(SCANNER_MESSAGE) * threadCount * requestCount);
 
     if (messages == NULL) {
@@ -372,11 +376,6 @@ main (
         }
 
         for (j = 0; j < requestCount; j++) {
-
-            //
-            //  Allocate the message.
-            //
-
 
             PSCANNER_MESSAGE msg = &(messages[i * j]);
 
