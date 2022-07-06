@@ -376,8 +376,8 @@ main (
         }
 
         for (j = 0; j < requestCount; j++) {
-
-            PSCANNER_MESSAGE msg = &(messages[i * j]);
+        
+            PSCANNER_MESSAGE msg = &(messages[i * requestCount + j]);
 
             memset( &msg->Ovlp, 0, sizeof( OVERLAPPED ) );
 
