@@ -96,7 +96,7 @@ ToasterEvtDeviceD0Exit(
 /*++
 Routine Description:
 
-    EvtDeviceD0Entry event is called to program the device to goto
+    EvtDeviceD0Exit event is called to program the device to goto
     D1, D2 or D3, which are the low-power states. The framework calls the
     driver's EvtDeviceD0Exit callback when the Power manager sends an
     IRP_MN_SET_POWER-DevicePower request to the driver stack. The Power manager
