@@ -325,6 +325,7 @@ public:
         _In_        eDeviceType             deviceType
     );
 
+    _IRQL_requires_max_(DISPATCH_LEVEL)
     STDMETHODIMP_(BOOL)                 IsNRECSupported();
 
     STDMETHODIMP_(BOOL)                 GetNRECDisableStatus();

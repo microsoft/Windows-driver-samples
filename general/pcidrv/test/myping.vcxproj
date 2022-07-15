@@ -102,6 +102,9 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ResourceCompile>
@@ -118,6 +121,9 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ResourceCompile>
@@ -134,6 +140,9 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ResourceCompile>
@@ -150,6 +159,9 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib;wsock32.lib;ws2_32.lib;ole32.lib</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

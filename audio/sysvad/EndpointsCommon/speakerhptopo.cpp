@@ -245,16 +245,11 @@ Return Value:
 
     DPF_ENTER(("[PropertyHandler_SpeakerHpTopoFilter]"));
 
-    // PropertryRequest structure is filled by portcls. 
+    // PropertyRequest structure is filled by portcls. 
     // MajorTarget is a pointer to miniport object for miniports.
     //
     NTSTATUS            ntStatus = STATUS_INVALID_DEVICE_REQUEST;
-    
-    //
-    // This line shows how to get a pointer to the miniport topology object.
-    //
     PCMiniportTopology  pMiniport = (PCMiniportTopology)PropertyRequest->MajorTarget;
-    UNREFERENCED_VAR(pMiniport);
 
     if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Jack))
     {
@@ -265,6 +260,13 @@ Return Value:
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_JACK_DESCRIPTION2)
         {
             ntStatus = PropertyHandler_SpeakerHpJackDescription2(PropertyRequest);
+        }
+    }
+    else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioResourceManagement))
+    {
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIORESOURCEMANAGEMENT_RESOURCEGROUP)
+        {
+            ntStatus = pMiniport->PropertyHandlerAudioResourceGroup(PropertyRequest);
         }
     }
 

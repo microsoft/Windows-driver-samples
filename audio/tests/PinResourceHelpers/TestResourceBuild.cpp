@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -12,8 +12,10 @@
 //
 // ------------------------------------------------------------------------------
 #include "PreComp.h"
-#include <TestResource.h>
+
+#include <Functiondiscoverykeys_devpkey.h>
 #include <PropertyHelper.h>
+#include <TestResource.h>
 
 using namespace WEX::Common;
 using namespace WEX::Logging;
@@ -33,12 +35,11 @@ HRESULT CreateTestResource
     DeviceDescriptor        descriptor
 )
 {
-    HRESULT                         hr = S_OK;
-    
-    CComHeapPtr<CHalfApp>                        spHalfApp;
-    wil::com_ptr_nothrow<ITestResource>          spTestResource;
-    GUID                            ResourceGUID;
-    CComBSTR                        szResourceName;
+    HRESULT                             hr = S_OK;
+    CComHeapPtr<CHalfApp>               spHalfApp;
+    wil::com_ptr_nothrow<ITestResource> spTestResource;
+    GUID                                ResourceGUID;
+    CComBSTR                            szResourceName;
 
     // Create HalfApp
     spHalfApp.Attach(new CHalfApp(descriptor));
@@ -57,11 +58,11 @@ HRESULT CreateTestResource
     }
 
     // Add to resource list
-    spHalfApp.Detach();
-    if (!VERIFY_SUCCEEDED(hr = resourceList.Add(spTestResource.get()))) {
+    if (!VERIFY_SUCCEEDED(hr = spTestResource->GetValue(CComBSTR(TestResourceProperty::c_szName), &szResourceName))) {
         return hr;
     }
-    if (!VERIFY_SUCCEEDED(hr = spTestResource->GetValue(CComBSTR(TestResourceProperty::c_szName), &szResourceName))) {
+    spHalfApp.Detach();
+    if (!VERIFY_SUCCEEDED(hr = resourceList.Add(spTestResource.get()))) {
         return hr;
     }
     Log::Comment(String().Format(L"Test Resource (%s) added", (PCWSTR)szResourceName));
@@ -313,7 +314,11 @@ HRESULT AddTestResourceForConnector
     UINT32                                      u32MinPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFrames;
     UINT32                                      u32MaxPeriodicityInFramesExtended;
+    bool                                        isPortCls = false;
     bool                                        isAVStream = false;
+    bool                                        isBluetooth = false;
+    bool                                        isSideband = false;
+    bool                                        isMVA = false;
 
     // Get connector id
     if (!VERIFY_SUCCEEDED(hr = GetConnectorId(pDevice, eConnectorType, &bHasConnector, &uConnectorId))) {
@@ -348,8 +353,28 @@ HRESULT AddTestResourceForConnector
             return hr;
         }
 
+        // Check if audio endpoint is PortCls
+        if (!VERIFY_SUCCEEDED(hr = IsPortCls(pDevice, &isPortCls))) {
+            return hr;
+        }
+
         // Check if audio endpoint is AVStream
         if (!VERIFY_SUCCEEDED(hr = IsAVStream(pDevice, &isAVStream))) {
+            return hr;
+        }
+
+        // Check if audio endpoint is Bluetooth
+        if (!VERIFY_SUCCEEDED(hr = IsBluetooth(pDevice, &isBluetooth))) {
+            return hr;
+        }
+
+        // Check if audio endpoint is side band
+        if (!VERIFY_SUCCEEDED(hr = IsSideband(pDevice, &isSideband))) {
+            return hr;
+        }
+
+        // Check if audio endpoint is MVA
+        if (!VERIFY_SUCCEEDED(hr = IsMVA(eConnectorType, pDevice, &isMVA))) {
             return hr;
         }
 
@@ -370,11 +395,17 @@ HRESULT AddTestResourceForConnector
         descriptor.u32FundamentalPeriodicityInFrames = u32FundamentalPeriodicityInFrames;
         descriptor.u32MinPeriodicityInFrames = u32MinPeriodicityInFrames;
         descriptor.u32MaxPeriodicityInFrames = u32MaxPeriodicityInFrames;
+        descriptor.bIsPortCls = isPortCls;
         descriptor.bIsAVStream = isAVStream;
+        descriptor.bIsBluetooth = isBluetooth;
+        descriptor.bIsSideband = isSideband;
+        descriptor.bIsMVA = isMVA;
 
         if (!VERIFY_SUCCEEDED(hr = CreateTestResource(resourceList, descriptor))) {
             return hr;
         }
+
+        spFormatRecords.Free();
     }
 
     return hr;
@@ -424,28 +455,25 @@ HRESULT AddTestResourcesForDevice
         return hr;
     }
 
-    /*
     // Identify existence of keyword detector pin. Add test resources for keyword detector pin.
     if (!VERIFY_SUCCEEDED(hr = AddTestResourceForConnector(resourceList, deviceId, deviceName, spDevice.get(), eKeywordDetectorConnector, dataFlow))) {
         return hr;
     }
-    */
 
     return hr;
 }
 
-HRESULT __cdecl BuildResourceList(ResourceList& resourceList)
+HRESULT AddDevices(ResourceList& resourceList)
 {
     HRESULT hr = S_OK;
     wil::com_ptr_nothrow<IMMDeviceEnumerator>    spEnumerator;
-    wil::com_ptr_nothrow<IMMDeviceCollection>    spRenderEndpoints;
-    wil::com_ptr_nothrow<IMMDeviceCollection>    spCaptureEndpoints;
+    wil::com_ptr_nothrow<IMMDeviceCollection>    spEndpoints;
     wil::com_ptr_nothrow<IMMDevice>              spEndpoint;
-    UINT                                         cRenderDevices = 0;
-    UINT                                         cCaptureDevices = 0;
+    UINT                                         cDevices = 0;
     UINT                                         i = 0;
     wil::unique_cotaskmem_string                 id;
     wil::unique_cotaskmem_string                 friendlyName;
+    EDataFlow                                    endpointDataFlow;
 
     SetVerifyOutput verifySettings(VerifyOutputSettings::LogOnlyFailures);
     DisableVerifyExceptions disable;
@@ -457,50 +485,78 @@ HRESULT __cdecl BuildResourceList(ResourceList& resourceList)
     // Create IMMDevice Enumerator
     VERIFY_SUCCEEDED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void **)&spEnumerator));
 
-    // Enumerate all render endpoints
-    VERIFY_SUCCEEDED(spEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &spRenderEndpoints));
-    VERIFY_SUCCEEDED(spRenderEndpoints->GetCount(&cRenderDevices));
-  
-    // Enumerate all capture endpoints
-    VERIFY_SUCCEEDED(spEnumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &spCaptureEndpoints));
-    VERIFY_SUCCEEDED(spCaptureEndpoints->GetCount(&cCaptureDevices));
+    // Enumerate all endpoints
+    VERIFY_SUCCEEDED(spEnumerator->EnumAudioEndpoints(eAll, DEVICE_STATE_ACTIVE, &spEndpoints));
+    VERIFY_SUCCEEDED(spEndpoints->GetCount(&cDevices));
 
-    if (!VERIFY_IS_TRUE(cRenderDevices | cCaptureDevices))
+    if (!VERIFY_IS_TRUE(cDevices))
     {
-        hr = E_FAIL;
         Log::Comment(L"No device was found!");
-        goto Exit;
+        return E_FAIL;
     }
 
-    Log::Comment(String().Format(L"Found %d viable rendering device!", cRenderDevices));
-    // Add test resources for render endpoints
-    if (cRenderDevices) {
-        for (i = 0; i < cRenderDevices; i++) {
-            VERIFY_SUCCEEDED(spRenderEndpoints->Item(i, &spEndpoint));
-            VERIFY_SUCCEEDED(spEndpoint->GetId(&id));
-            VERIFY_SUCCEEDED(GetEndpointFriendlyName(spEndpoint.get(), &friendlyName));
+    // Check if a device ID was specified.
+    String instanceId;
+    BOOL isDeviceSelected = false;
+    HRESULT res = RuntimeParameters::TryGetValue(L"InstanceId", instanceId);
+    if (res == S_OK)
+    {
+        Log::Comment(String().Format(L"Selected device ID: %s", static_cast<LPCWSTR>(instanceId)));
+        isDeviceSelected = true;
+    }
 
-            Log::Comment(String().Format(L"\\\\ Device: %s (%s)", friendlyName.get(), id.get()));
-            VERIFY_SUCCEEDED(AddTestResourcesForDevice(resourceList, id.get(), friendlyName.get(), render));
+    Log::Comment(String().Format(L"Found %d viable endpoint(s)!", cDevices));
+    // Add test resources for endpoints
+    for (i = 0; i < cDevices; i++) {
+        VERIFY_SUCCEEDED(spEndpoints->Item(i, &spEndpoint));
+        VERIFY_SUCCEEDED(spEndpoint->GetId(&id));
+        VERIFY_SUCCEEDED(GetEndpointFriendlyName(spEndpoint.get(), &friendlyName));
+
+        // Check whether it is a render or capture endpoint.
+        CComPtr<IMMEndpoint> pMmEndpoint;
+        VERIFY_SUCCEEDED(spEndpoint->QueryInterface(__uuidof(IMMEndpoint), (void**)&pMmEndpoint));
+        pMmEndpoint->GetDataFlow(&endpointDataFlow);
+
+        // If there is a device selected, check if the current endpoint belongs to the device.
+        if (isDeviceSelected)
+        {
+            // Get the IDeviceTopology interface of the endpoint.
+            CComPtr<IDeviceTopology> pEndpointTopology;
+            if (!VERIFY_SUCCEEDED(hr = spEndpoint->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&pEndpointTopology))) { return hr; }
+
+            // Get the connector inside the device topology object.
+            CComPtr<IConnector> spConnector;
+            if (!VERIFY_SUCCEEDED(hr = pEndpointTopology->GetConnector(0, &spConnector))) { return hr; }
+
+            // Get the id of the device adapter this endpoint is connected to.
+            CComHeapPtr<WCHAR> szFilterId;
+            if (!VERIFY_SUCCEEDED(hr = spConnector->GetDeviceIdConnectedTo(&szFilterId))) { return hr; }
+
+            // Get the IMMDevice object of this device adapter.
+            CComPtr<IMMDevice> spDevnode;
+            if (!VERIFY_SUCCEEDED(hr = spEnumerator->GetDevice(szFilterId, &spDevnode))) { return hr; }
+
+            // Open the property store and get the instance ID of the device adapter.
+            PROPVARIANT varInstanceId;
+            PropVariantInit(&varInstanceId);
+
+            CComPtr<IPropertyStore> spDevnodePropertyStore;
+            if (!VERIFY_SUCCEEDED(hr = spDevnode->OpenPropertyStore(STGM_READ, &spDevnodePropertyStore))) { return hr; }
+
+            if (!VERIFY_SUCCEEDED(hr = spDevnodePropertyStore->GetValue(PKEY_Device_InstanceId, &varInstanceId))) { return hr; }
+            if (!VERIFY_ARE_EQUAL(varInstanceId.vt, VT_LPWSTR)) { return E_UNEXPECTED; }
+
+            // If this endpoint does not belong to the selected device, skip it.
+            if (0 != _wcsicmp(instanceId, varInstanceId.pwszVal))
+            {
+                continue;
+            }
         }
+        Log::Comment(String().Format(L"\\\\ Device: %s (%s)", friendlyName.get(), id.get()));
+        VERIFY_SUCCEEDED(AddTestResourcesForDevice(resourceList, id.get(), friendlyName.get(), endpointDataFlow == eRender ? render : capture));
     }
 
-    Log::Comment(String().Format(L"Found %d viable capture device!", cCaptureDevices));
-    // Add test resources for capture endpoints
-    if (cCaptureDevices) {
-        for (i = 0; i < cCaptureDevices; i++) {
-            VERIFY_SUCCEEDED(spCaptureEndpoints->Item(i, &spEndpoint));
-            VERIFY_SUCCEEDED(spEndpoint->GetId(&id));
-            VERIFY_SUCCEEDED(GetEndpointFriendlyName(spEndpoint.get(), &friendlyName));
-
-            Log::Comment(String().Format(L"\\\\ Device: %s (%s)", friendlyName.get(), id.get()));
-            VERIFY_SUCCEEDED(AddTestResourcesForDevice(resourceList, id.get(), friendlyName.get(), capture));
-        }
-    }
-
-    Log::Comment(L"Resource enumeration complete.");
     Log::Comment(String().Format(L"Enumerated %u resources", resourceList.Count()));
 
-Exit:
     return hr;
 }

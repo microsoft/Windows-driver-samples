@@ -2575,7 +2575,7 @@ Wdi_Set_Network_List_Offload(
 	WDI_NETWORK_LIST_OFFLOAD_PARAMETERS *Params 		= pOidHandle->tlvParser.parsedTlv.paramNetworkListOffload;
 	PWDI_NETWORK_LIST_OFFLOAD_INFO		pWdiNLO			= NULL;
 	PWDI_SSID_OFFLOAD_CONTAINER			pOffloadItem	= NULL;
-	PWDI_CHANNEL_MAPPING_ENTRY			pChannelItem	= NULL;
+	PWDI_BAND_CHANNEL_MAPPING_ENTRY		pChannelItem	= NULL;
 	PWDI_ALGO_PAIRS						pAlgorithmItem	= NULL;
 
 	NDIS_STATUS			ndisStatus 		= NDIS_STATUS_SUCCESS;
@@ -2629,7 +2629,7 @@ Wdi_Set_Network_List_Offload(
 		for( ItemCnt=0, Index=0 ; ItemCnt<pWdiNLO->SsidOffload.ElementCount ; ++ItemCnt)
 		{
 			pOffloadItem = &(pWdiNLO->SsidOffload.pElements[ItemCnt]);
-			pChannelItem = pOffloadItem->ChannellHintList.pElements;
+			pChannelItem = pOffloadItem->BandChannelHintList.pElements;
 
 			for( i=0 ; i<pOffloadItem->UnicastAlgorithms.ElementCount ; ++i, ++Index)
 			{
@@ -2720,7 +2720,7 @@ Wdi_Set_Network_List_Offload(
 
 				// Save channel info
 				// DOT11_MAX_CHANNEL_HINTS 4
-				for(  ChannelIndex = 0 ;  ChannelIndex < pOffloadItem->ChannellHintList.ElementCount ;  ChannelIndex++ )
+				for (ChannelIndex = 0; ChannelIndex < pOffloadItem->BandChannelHintList.ElementCount; ChannelIndex++)
 				{
 					pNLOInfo->dDot11OffloadNetworkList[Index].channelNumberHit[ChannelIndex] = pChannelItem[ChannelIndex].ChannelNumber;
 					RT_TRACE( COMP_POWER, DBG_LOUD, (" %u", pNLOInfo->dDot11OffloadNetworkList[Index].channelNumberHit[ChannelIndex]));

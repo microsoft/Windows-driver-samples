@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // Module Name:
 //
@@ -16,6 +16,11 @@
 #include <Functiondiscoverykeys_devpkey.h>
 #include <devpkey.h>
 #include <PropertyHelper.h>
+#include <imagehlp.h>
+
+using namespace WEX::Common;
+using namespace WEX::Logging;
+using namespace WEX::TestExecution;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1099,6 +1104,355 @@ HRESULT GetAvailiablePinInstanceCount
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+// GetDriverPathViaService
+//
+// Get the full path to the driver .sys file by the service name
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT GetDriverPathViaService
+(
+    LPWSTR             ServiceName,
+    LPWSTR             DriverFullPath,
+    UINT               cchFullPath
+)
+{
+    HRESULT                             hr = S_OK;
+    wil::unique_schandle                scManager;
+    wil::unique_schandle                scService;
+
+    scManager = wil::unique_schandle(OpenSCManagerW(nullptr, nullptr, GENERIC_READ));
+    if (!VERIFY_IS_NOT_NULL(scManager.get()))
+    {
+        hr = E_OUTOFMEMORY;
+        return hr;
+    }
+
+    scService = wil::unique_schandle(OpenServiceW(scManager.get(), ServiceName, GENERIC_READ));
+    if (!VERIFY_IS_NOT_NULL(scService.get()))
+    {
+        hr = E_OUTOFMEMORY;
+        return hr;
+    }
+
+    DWORD BytesRequired;
+    if (!VERIFY_IS_TRUE(!QueryServiceConfigW(scService.get(), nullptr, 0, &BytesRequired) && ERROR_INSUFFICIENT_BUFFER == GetLastError()))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        return hr;
+    }
+
+    wil::unique_cotaskmem_ptr<BYTE>     pBuff;
+    pBuff.reset((BYTE*)CoTaskMemAlloc(BytesRequired));
+    if (!VERIFY_IS_NOT_NULL(pBuff))
+    {
+        hr = E_OUTOFMEMORY;
+        return hr;
+    }
+
+    LPQUERY_SERVICE_CONFIGW ServiceConfig = (LPQUERY_SERVICE_CONFIGW)pBuff.get();
+    DWORD BytesReturned;
+
+    if (!VERIFY_IS_TRUE(QueryServiceConfigW(scService.get(), ServiceConfig, BytesRequired, &BytesReturned)))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        return hr;
+    }
+
+    if (!VERIFY_IS_NOT_NULL(ServiceConfig->lpBinaryPathName))
+    {
+        hr = E_UNEXPECTED;
+        return hr;
+    }
+
+    if (!VERIFY_IS_TRUE('\0' != ServiceConfig->lpBinaryPathName[0]))
+    {
+        hr = E_UNEXPECTED;
+        return hr;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = GetFullPathFromImagePath(ServiceConfig->lpBinaryPathName, DriverFullPath, cchFullPath)))
+    {
+        return hr;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// GetFullPathFromImagePath
+//
+// Get the full driver path from the image path
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT GetFullPathFromImagePath
+(
+    LPWSTR              ImagePath,
+    LPWSTR              DriverFullPath,
+    UINT                cchFullPath
+)
+{
+    HRESULT hr = S_OK;
+    //
+    // First, check if the ImagePath uses either of the well-known kernel
+    // DosDevices prefixes.  If so, skip over those first since
+    // GetFileAttributes would succeed, leading us to think it is a valid DOS
+    // path, and GetFullPathName handles these incorrectly anyways.  Don't
+    // bother handling the user DosDevices formats since it would be invalid to
+    // specify that format for the ImagePath of a kernel module.
+    //
+    LPWSTR pImagePath = (LPWSTR)ImagePath;
+
+    const wchar_t* DosDevicesPath =  L"\\DosDevices\\";
+    const wchar_t* QuestionPath = L"\\??\\";
+    if (_wcsnicmp(pImagePath,
+        DosDevicesPath,
+        static_cast<int>(wcslen(DosDevicesPath))) == 0)
+    {
+        pImagePath += wcslen(DosDevicesPath);
+    }
+    else if (_wcsnicmp(pImagePath,
+        QuestionPath,
+        static_cast<int>(wcslen(QuestionPath))) == 0)
+    {
+        pImagePath += wcslen(QuestionPath);
+    }
+
+    //
+    // Check if the ImagePath happens to be a valid full path.
+    //
+    if (GetFileAttributesW(pImagePath) != 0xFFFFFFFF)
+    {
+        if (!VERIFY_IS_TRUE(GetFullPathNameW(pImagePath, cchFullPath, DriverFullPath, nullptr)))
+        {
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            return hr;
+        }
+        return hr;
+    }
+
+    //
+    // If the ImagePath starts with "\SystemRoot" or "%SystemRoot%" then
+    // remove those values.
+    //
+    LPWSTR pRelativePath = (LPWSTR)pImagePath;
+
+    const wchar_t* SystemRootPath = L"\\SystemRoot\\";
+    const wchar_t* SystemRootVariablePath = L"%SystemRoot%\\";
+
+    if (_wcsnicmp(pRelativePath,
+        SystemRootPath,
+        static_cast<int>(wcslen(SystemRootPath))) == 0)
+    {
+        pRelativePath += wcslen(SystemRootPath);
+    }
+    else if (_wcsnicmp(pRelativePath,
+        SystemRootVariablePath,
+        static_cast<int>(wcslen(SystemRootVariablePath))) == 0)
+    {
+        pRelativePath += wcslen(SystemRootVariablePath);
+    }
+
+    //
+    // At this point pRelativePath should point to the image path relative to
+    // the windows directory.
+    //
+    WCHAR WindowsPath[MAX_PATH];
+    if (!VERIFY_IS_TRUE(GetSystemWindowsDirectoryW(WindowsPath, MAX_PATH)))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        return hr;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = StringCchPrintfW(DriverFullPath, cchFullPath, L"%s\\%s", WindowsPath, pRelativePath)))
+    {
+        return hr;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// CheckImports
+//
+// Check if the driver imports a specific module
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT CheckImports
+(
+    LPWSTR              DriverPath,
+    LPSTR               ModuleNameToCheck,
+    LPSTR               MethodNameToCheck,
+    bool*               pIsImported
+)
+{
+    HRESULT hr = S_OK;
+
+    *pIsImported = FALSE;
+
+    CHAR szDriverPath[MAX_PATH];
+    size_t bytesConverted = 0;
+    if (!VERIFY_IS_TRUE(0 == wcstombs_s(&bytesConverted, szDriverPath, MAX_PATH, DriverPath, _TRUNCATE)))
+    {
+        hr = E_FAIL;
+        return hr;
+    }
+
+    LOADED_IMAGE image;
+    //Load the image
+    if (!VERIFY_IS_TRUE(MapAndLoad(szDriverPath, NULL, &image, TRUE, TRUE)))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        return hr;
+    }
+
+    auto imageCleanup = wil::scope_exit([&]()
+    {
+        (VOID)UnMapAndLoad(&image);
+    });
+
+    //Get the Import Directory
+    ULONG importDescriptorSize;
+    PIMAGE_SECTION_HEADER sectionHeader;
+    PIMAGE_IMPORT_DESCRIPTOR importDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToDataEx(image.MappedAddress,
+        FALSE,
+        IMAGE_DIRECTORY_ENTRY_IMPORT,
+        &importDescriptorSize,
+        &sectionHeader);
+    if (!VERIFY_IS_NOT_NULL(importDescriptor))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        return hr;
+    }
+
+    //Iterate through each directory entry
+    while (!(importDescriptor->Characteristics == 0 &&
+        importDescriptor->TimeDateStamp == 0 &&
+        importDescriptor->ForwarderChain == 0 &&
+        importDescriptor->Name == 0 &&
+        importDescriptor->FirstThunk == 0))
+    {
+        CHAR* str = (PCHAR)ImageRvaToVa(ImageNtHeader(image.MappedAddress),
+            image.MappedAddress,
+            importDescriptor->Name,
+            NULL);
+        if (!str || !*str)
+        {
+            continue;
+        }
+
+        if (_stricmp(str, ModuleNameToCheck) == 0)
+        {
+            // If a specific method name is provided, check for the specific method
+            if (MethodNameToCheck)
+            {
+                PIMAGE_THUNK_DATA thunk;
+                //Iterate through the INT(Import Name Table)
+                if (importDescriptor->OriginalFirstThunk == 0)
+                {
+                    thunk = nullptr;
+                }
+                else
+                {
+                    thunk = (PIMAGE_THUNK_DATA)ImageRvaToVa(ImageNtHeader(image.MappedAddress),
+                        image.MappedAddress,
+                        importDescriptor->OriginalFirstThunk,
+                        NULL);
+                }
+
+                while (thunk && thunk->u1.Ordinal != 0)
+                {
+                    if (!IMAGE_SNAP_BY_ORDINAL(thunk->u1.Ordinal))
+                    {
+                        PIMAGE_IMPORT_BY_NAME importName = (PIMAGE_IMPORT_BY_NAME)ImageRvaToVa(ImageNtHeader(image.MappedAddress),
+                            image.MappedAddress,
+                            (ULONG)thunk->u1.ForwarderString,
+                            NULL);
+                        if (importName && _stricmp(importName->Name, MethodNameToCheck) == 0)
+                        {
+                            *pIsImported = TRUE;
+                        }
+                    }
+
+                    thunk++;
+                }
+            }
+            else
+            {
+                *pIsImported = TRUE;
+            }
+            
+            break;
+        }
+
+        importDescriptor++;
+    }
+
+    return hr;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IsPortCls
+//
+// Check if audio device is PortCls
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT IsPortCls
+(
+    IMMDevice*          pDevice,
+    bool*               pIsPortCls
+)
+{
+    HRESULT                                 hr = S_OK;
+    wil::com_ptr_nothrow<IMMDevice>         spDevnodeDevice;
+    wil::com_ptr_nothrow<IPropertyStore>    spPnpProperties;
+    wil::unique_prop_variant                varDeviceService;
+
+    *pIsPortCls = false;
+
+    // Find the associated PnP device 
+    if (!VERIFY_SUCCEEDED(hr = GetPnpDevnodeFromMMDevice(pDevice, &spDevnodeDevice))) {
+        return hr;
+    }
+
+    // Open pnp device property store
+    if (!VERIFY_SUCCEEDED(hr = spDevnodeDevice->OpenPropertyStore(STGM_READ, &spPnpProperties))) {
+        return hr;
+    }
+
+    // Read the DEVPKEY_Device_Service
+    if (!VERIFY_SUCCEEDED(hr = spPnpProperties->GetValue((REFPROPERTYKEY)DEVPKEY_Device_Service, &varDeviceService))) {
+        return hr;
+    }
+
+    // If DEVPKEY_Device_Service is empty, it likely means a raw PDO, which means the device is handled by the parent FDO.
+    // For practical purposes, this would most likely mean a non-PortCls pin, which is what we were trying to determine, so it is OK.
+    if (varDeviceService.vt == VT_EMPTY) {
+        return S_OK;
+    }
+
+    if (!VERIFY_IS_TRUE(varDeviceService.vt == VT_LPWSTR && varDeviceService.pwszVal != nullptr)) {
+        hr = E_FAIL;
+        return hr;
+    }
+
+    WCHAR FullPath[MAX_PATH];
+    if (!VERIFY_SUCCEEDED(hr = GetDriverPathViaService(varDeviceService.pwszVal, FullPath, MAX_PATH))) {
+        return hr;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = CheckImports(FullPath, "portcls.sys", "PcNewPort", pIsPortCls))) {
+        return hr;
+    }
+
+    return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 // IsAVStream
 //
 // Check if audio device is AVStream
@@ -1132,13 +1486,24 @@ HRESULT IsAVStream
         return hr;
     }
 
+    // If DEVPKEY_Device_Service is empty, it likely means a raw PDO, which means the device is handled by the parent FDO.
+    // For practical purposes, this would most likely mean a non-AVStream pin, which is what we were trying to determine, so it is OK.
+    if (varDeviceService.vt == VT_EMPTY) {
+        return S_OK;
+    }
+
     if (!VERIFY_IS_TRUE(varDeviceService.vt == VT_LPWSTR && varDeviceService.pwszVal != nullptr)) {
         hr = E_FAIL;
         return hr;
     }
 
-    if (0 == _wcsicmp(varDeviceService.pwszVal, L"usbaudio") || 0 == _wcsicmp(varDeviceService.pwszVal, L"BthHFAud") || 0 == _wcsicmp(varDeviceService.pwszVal, L"BthA2dp")) {
-        *pIsAVStream = true;
+    WCHAR FullPath[MAX_PATH];
+    if (!VERIFY_SUCCEEDED(hr = GetDriverPathViaService(varDeviceService.pwszVal, FullPath, MAX_PATH))) {
+        return hr;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = CheckImports(FullPath, "ks.sys", nullptr, pIsAVStream))) {
+        return hr;
     }
 
     return hr;
@@ -1222,6 +1587,78 @@ HRESULT IsSideband
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+// IsMVA
+//
+// Check if audio device is side band
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT IsMVA
+(
+    EndpointConnectorType eConnectorType,
+    IMMDevice* pDevice,
+    bool* pIsMVA
+)
+{
+    HRESULT hr = S_OK;
+    wil::com_ptr_nothrow<IMMDevice>             adapterDevice;
+    wil::com_ptr_nothrow<IKsControl>            ksControl;
+    ULONG                                       ulReturned = 0;
+    ULONG                                       propertySupportFlags = 0;
+    KSSOUNDDETECTORPROPERTY                     vam2Property = {0};
+
+    if (!VERIFY_IS_TRUE(pDevice != nullptr)) {
+        hr = E_FAIL;
+        return hr;
+    }
+
+    if (!VERIFY_IS_TRUE(pIsMVA != nullptr)) {
+        hr = E_FAIL;
+        return hr;
+    }
+
+    // If it isn't a keyword connector, it's not MVA, we're done.
+    if (eConnectorType != eKeywordDetectorConnector)
+    {
+        *pIsMVA = FALSE;
+        return S_OK;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = GetAudioFilterAsDevice(pDevice, &adapterDevice)))
+    {
+        return hr;
+    }
+
+    if (!VERIFY_SUCCEEDED(hr = adapterDevice->Activate(__uuidof(IKsControl), CLSCTX_ALL, NULL, (VOID**) &ksControl))) {
+        return hr;
+    }
+
+    // At this point we know that it is a keyword detector connector and we have the required interface to call into the driver
+    // to see if it's MVA. If it's not MVA, it's SVA, so mark it as SVA here.
+    *pIsMVA = false;
+
+    vam2Property.Property.Set = KSPROPSETID_SoundDetector2;
+    vam2Property.Property.Id = KSPROPERTY_SOUNDDETECTOR_SUPPORTEDPATTERNS;
+    vam2Property.Property.Flags = KSPROPERTY_TYPE_BASICSUPPORT;
+    vam2Property.EventId = GUID_NULL;
+
+    hr = ksControl->KsProperty(
+                (PKSPROPERTY)&vam2Property,
+                sizeof(vam2Property),
+                &propertySupportFlags,
+                sizeof(propertySupportFlags),
+                &ulReturned);
+    if (SUCCEEDED(hr) && 
+        propertySupportFlags == (KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT))
+    {
+        // Success, we've identified this as a connector which supports MVA, mark it.
+        *pIsMVA = true;
+    }
+
+    return S_OK;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 // GetPnpDevnodeFromMMDeivce
 //
 // Get pnp devnode from mm device
@@ -1260,4 +1697,47 @@ HRESULT GetPnpDevnodeFromMMDevice
     *pDevnodeDevice = spDevnodeAsDevice.detach();
 
     return hr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// VerifyAllEndpointsPluggedIn
+//
+// Verify there is no unplugged endpoint
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+void VerifyAllEndpointsPluggedIn()
+{
+    wil::com_ptr_nothrow<IMMDeviceEnumerator>    spEnumerator;
+    wil::com_ptr_nothrow<IMMDeviceCollection>    spEndpoints;
+    UINT                                         cDevices = 0;
+
+    SetVerifyOutput verifySettings(VerifyOutputSettings::LogOnlyFailures);
+    DisableVerifyExceptions disable;
+
+    VERIFY_SUCCEEDED(::CoInitializeEx(NULL, COINIT_MULTITHREADED));
+
+    // Create IMMDevice Enumerator
+    VERIFY_SUCCEEDED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void **)&spEnumerator));
+
+    // Enumerate all unplugged endpoints
+    VERIFY_SUCCEEDED(spEnumerator->EnumAudioEndpoints(eAll, DEVICE_STATE_UNPLUGGED, &spEndpoints));
+    VERIFY_SUCCEEDED(spEndpoints->GetCount(&cDevices));
+
+    if (!VERIFY_IS_TRUE(cDevices == 0))
+    {
+        Log::Comment(L"Following unplugged audio device(s) found, please plug in unplugged device(s).");
+
+        for (UINT i = 0; i < cDevices; i++) {
+            wil::com_ptr_nothrow<IMMDevice> spEndpoint;
+            wil::unique_cotaskmem_string id;
+            wil::unique_cotaskmem_string friendlyName;
+
+            VERIFY_SUCCEEDED(spEndpoints->Item(i, &spEndpoint));
+            VERIFY_SUCCEEDED(spEndpoint->GetId(&id));
+            VERIFY_SUCCEEDED(GetEndpointFriendlyName(spEndpoint.get(), &friendlyName));
+
+            Log::Comment(String().Format(L"Device: %s (%s) is unplugged.", friendlyName.get(), id.get()));
+        }
+    }
 }

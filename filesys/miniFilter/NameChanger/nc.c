@@ -394,7 +394,7 @@ Logic:
     //
     //  User mapping vars
     //
-    
+
     NC_MAPPING_PATH UserPath;
     HANDLE UserParentHandle = 0;
     PFILE_OBJECT UserParentFileObj = NULL;
@@ -402,23 +402,23 @@ Logic:
     IO_STATUS_BLOCK UserParentStatusBlock;
     PFILE_NAMES_INFORMATION FinalComponentQueryBuffer = NULL;
     ULONG FinalComponentQueryLength;
-    
+
     //
     //  Real Mapping vars
     //
-    
+
     NC_MAPPING_PATH RealPath;
     HANDLE RealParentHandle = 0;
     PFILE_OBJECT RealParentFileObj = NULL;
     OBJECT_ATTRIBUTES RealParentAttributes;
     IO_STATUS_BLOCK RealParentStatusBlock;
-    
+
     //
     //  Context Vars
     //
-    
+
     PNC_INSTANCE_CONTEXT InstanceContext = NULL;
-    
+
     //
     //  Temp vars
     //
@@ -451,7 +451,7 @@ Logic:
         //  We actually return here, rather than goto cleanup, because
         //  we have not yet zeroed out the buffers in the mappings.
         //
-        
+
         return STATUS_FLT_DO_NOT_ATTACH;
     }
 
@@ -513,9 +513,9 @@ Logic:
 
     FinalComponentQueryLength = sizeof(FILE_NAMES_INFORMATION) +
                                 AlignToSize( max( NcGlobalData.UserMappingFinalComponentLong.Length, NcGlobalData.UserMappingFinalComponentShort.Length ), 8 );
-    FinalComponentQueryBuffer = ExAllocatePoolWithTag( PagedPool,
-                                                       FinalComponentQueryLength,
-                                                       NC_NORMALIZE_NAME_TAG );
+    FinalComponentQueryBuffer = ExAllocatePoolZero( PagedPool,
+                                                    FinalComponentQueryLength,
+                                                    NC_NORMALIZE_NAME_TAG );
 
     if (FinalComponentQueryBuffer == NULL) {
 
@@ -755,7 +755,7 @@ Logic:
 
     NcInitMapping( &InstanceContext->Mapping );
 
-    
+
     Status = NcBuildMapping( UserParentFileObj,
                              RealParentFileObj,
                              &NcGlobalData.UserMappingFinalComponentShort,
@@ -933,14 +933,14 @@ Return Value:
     PAGED_CODE();
     UNREFERENCED_PARAMETER( Flags );
 
-    Status = FltGetInstanceContext( FltObjects->Instance, 
+    Status = FltGetInstanceContext( FltObjects->Instance,
                                     &InstanceContext );
 
     if (!NT_SUCCESS( Status )) {
 
         goto NcInstanceTeardownStartCleanup;
     }
-    
+
 NcInstanceTeardownStartCleanup:
 
     if (InstanceContext)  {
@@ -985,7 +985,7 @@ Return Value:
     //
     //  Import routines
     //
-    
+
     NcCompatInit( );
 
     Status = NcInitializeMapping( RegistryPath );
@@ -1230,19 +1230,19 @@ Return Value:
         //  Obtain our handle context.  We should only be called here
         //  if we really have one.
         //
-    
+
         Status = FltGetStreamHandleContext( FltObjects->Instance,
                                             FltObjects->FileObject,
                                             &HandleContext );
-    
+
         if (!NT_SUCCESS( Status )) {
-    
+
             goto NcPostCleanupCallbackCleanup;
-    
+
         }
-    
+
         FLT_ASSERT( HandleContext != NULL );
-    
+
         NcStreamHandleContextNotCleanup( HandleContext );
     }
 
@@ -1407,7 +1407,7 @@ Return Value:
                 break;
 
             case FSCTL_FIND_FILES_BY_SID:
-                
+
                 Status = NcPostFindFilesBySid( Data,
                                                FltObjects,
                                                CompletionContext,
@@ -1416,12 +1416,12 @@ Return Value:
                 break;
 #if FLT_MGR_WIN7
             case FSCTL_LOOKUP_STREAM_FROM_CLUSTER:
-                
+
                 Status = NcPostLookupStreamFromCluster( Data,
                                                         FltObjects,
                                                         CompletionContext,
                                                         Flags );
-                
+
                 break;
 #endif
 
@@ -1627,7 +1627,7 @@ Return Value:
     FLT_PREOP_CALLBACK_STATUS result;
 
     PAGED_CODE();
-    
+
     switch( Data->Iopb->Parameters.SetFileInformation.FileInformationClass ) {
 
         case FileDispositionInformation:
@@ -1662,13 +1662,13 @@ Return Value:
                                         FltObjects,
                                         CompletionContext );
 
-            break; 
+            break;
 
         default:
             result = FLT_PREOP_SUCCESS_NO_CALLBACK;
             break;
     }
-    
+
     return result;
 }
 
@@ -1828,7 +1828,7 @@ Return Value:
     //  TODO We need to pipe these through the existing create path if
     //  possible.
     //
-    
+
     return FLT_PREOP_DISALLOW_FASTIO;
 }
 
@@ -1851,23 +1851,23 @@ Routine Description:
 Arguments:
 
     Instance - Instance pointer for the minifilter instance that this
-        callback routine is registered for. 
+        callback routine is registered for.
 
     FileObject - Pointer to a file object for the file whose name is being
-        requested. 
+        requested.
 
     Data - Pointer to the callback data structure for the operation during
-        which this name is being requested. 
+        which this name is being requested.
 
     NameOptions - FLT_FILE_NAME_OPTIONS value that specifies the name format,
-        query method, and flags for this file name information query. 
+        query method, and flags for this file name information query.
 
     CacheFileNameInformation - Pointer to a Boolean value specifying whether
         this name can be cached. Set to TRUE on output if the name can be
-        cached; set to FALSE otherwise. 
+        cached; set to FALSE otherwise.
 
     OutputNameControl - Pointer to a Filter Manager-allocated FLT_NAME_CONTROL
-        structure to receive the file name on output. 
+        structure to receive the file name on output.
 
 Return Value:
 
@@ -1908,31 +1908,31 @@ Routine Description:
 Arguments:
 
     Instance - Instance pointer for the minifilter instance that this callback
-        routine is registered for. 
+        routine is registered for.
 
     FileObject - Optionally points to a file object that the name query is
         taking place on.  We can use this to flow transaction information
         to any recursive requests.
 
     ParentDirectory - Pointer to a UNICODE_STRING structure that contains the
-        name of the parent directory for this name component. 
+        name of the parent directory for this name component.
 
     DeviceNameLength - Length, in bytes, of the parent directory name stored
-        in the structure that the ParentDirectory parameter points to. 
+        in the structure that the ParentDirectory parameter points to.
 
     Component - Pointer to a UNICODE_STRING structure that contains the name
-        component to be expanded. 
+        component to be expanded.
 
     ExpandComponentName - Pointer to a FILE_NAMES_INFORMATION structure that
         receives the expanded (normalized) file name information for the name
-        component. 
+        component.
 
     ExpandComponentNameLength - Length, in bytes, of the buffer that the
-        ExpandComponentName parameter points to. 
+        ExpandComponentName parameter points to.
 
     NormalizationContext - Pointer to minifilter-provided context information
         to be passed in any subsequent calls to this callback routine that are
-        made to normalize the remaining components in the same file name path. 
+        made to normalize the remaining components in the same file name path.
 
 Return Value:
 
@@ -1975,27 +1975,27 @@ Routine Description:
 Arguments:
 
     Instance - Instance pointer for the minifilter instance that this callback
-        routine is registered for. 
+        routine is registered for.
 
     ParentDirectory - Pointer to a UNICODE_STRING structure that contains the
-        name of the parent directory for this name component. 
+        name of the parent directory for this name component.
 
     DeviceNameLength - Length, in bytes, of the parent directory name stored
-        in the structure that the ParentDirectory parameter points to. 
+        in the structure that the ParentDirectory parameter points to.
 
     Component - Pointer to a UNICODE_STRING structure that contains the name
-        component to be expanded. 
+        component to be expanded.
 
     ExpandComponentName - Pointer to a FILE_NAMES_INFORMATION structure that
         receives the expanded (normalized) file name information for the name
-        component. 
+        component.
 
     ExpandComponentNameLength - Length, in bytes, of the buffer that the
-        ExpandComponentName parameter points to. 
+        ExpandComponentName parameter points to.
 
     NormalizationContext - Pointer to minifilter-provided context information
         to be passed in any subsequent calls to this callback routine that are
-        made to normalize the remaining components in the same file name path. 
+        made to normalize the remaining components in the same file name path.
 
 Return Value:
 
@@ -2006,11 +2006,11 @@ Return Value:
 
     PAGED_CODE();
 
-    return NcNormalizeNameComponentEx( Instance, 
+    return NcNormalizeNameComponentEx( Instance,
                                        NULL,
-                                       ParentDirectory, 
-                                       DeviceNameLength, 
-                                       Component, 
+                                       ParentDirectory,
+                                       DeviceNameLength,
+                                       Component,
                                        ExpandComponentName,
                                        ExpandComponentNameLength,
                                        Flags,

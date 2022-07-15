@@ -12,6 +12,7 @@ Environment:
     Kernel mode
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include "Trace.h"
 #include "StreamEdit.h"
 #include "InlineEdit.tmh"
@@ -54,7 +55,7 @@ InlineEditFlushData(
         if (DataLength == 0)
             break;
 
-        Buffer = ExAllocatePoolWithTag(NonPagedPool, DataLength, STMEDIT_TAG_MDL_DATA);
+        Buffer = ExAllocatePoolZero(NonPagedPool, DataLength, STMEDIT_TAG_MDL_DATA);
         if (Buffer == NULL)
 		{
             Status = STATUS_INSUFFICIENT_RESOURCES;

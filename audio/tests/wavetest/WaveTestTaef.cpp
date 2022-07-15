@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -14,6 +14,7 @@
 #include "PreComp.h"
 #include "WaveTestTaef.h"
 #include "tests.h"
+#include <TestResourceHelper.h>
 
 using namespace WEX::Common;
 using namespace WEX::Logging;
@@ -124,6 +125,12 @@ bool WDMAudio::WaveTest::TestCaseCleanUp()
     }
 
     return true;
+}
+
+// -------------------------------------------------------------------------------
+void WDMAudio::WaveTestPreTest::TAEF_VerifyAllEndpointsPluggedIn()
+{
+    VerifyAllEndpointsPluggedIn();
 }
 
 // -------------------------------------------------------------------------------

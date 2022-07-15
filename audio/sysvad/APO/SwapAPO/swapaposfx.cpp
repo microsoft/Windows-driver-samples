@@ -21,6 +21,7 @@
 #include "SwapAPO.h"
 #include <devicetopology.h>
 #include <CustomPropKeys.h>
+#include <propvarutil.h>
 
 
 // Static declaration of the APO_REG_PROPERTIES structure
@@ -281,7 +282,6 @@ Exit:
 HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
 {
     HRESULT                     hr = S_OK;
-    CComPtr<IMMDevice>	        spMyDevice;
     CComPtr<IDeviceTopology>    spMyDeviceTopology;
     CComPtr<IConnector>         spMyConnector;
     GUID                        processingMode;
@@ -289,7 +289,65 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
     IF_TRUE_ACTION_JUMP( ((NULL == pbyData) && (0 != cbDataSize)), hr = E_INVALIDARG, Exit);
     IF_TRUE_ACTION_JUMP( ((NULL != pbyData) && (0 == cbDataSize)), hr = E_INVALIDARG, Exit);
 
-    if (cbDataSize == sizeof(APOInitSystemEffects2))
+    if (cbDataSize == sizeof(APOInitSystemEffects3))
+    {
+        APOInitSystemEffects3* papoSysFxInit3 = (APOInitSystemEffects3*)pbyData;
+
+        // Try to get the logging service, but ignore errors as failure to do logging it is not fatal.
+        hr = papoSysFxInit3->pServiceProvider->QueryService(SID_AudioProcessingObjectLoggingService, IID_PPV_ARGS(&m_apoLoggingService));
+        IF_FAILED_JUMP(hr, Exit);
+
+       // SampleApo supports the new IAudioSystemEffects3 interface so it will receive APOInitSystemEffects3
+        // in pbyData if the audio driver has declared support for this.
+
+        // Use IMMDevice to activate IAudioSystemEffectsPropertyStore that contains the default, user and
+        // volatile settings.
+        IMMDeviceCollection* deviceCollection = reinterpret_cast<APOInitSystemEffects3*>(pbyData)->pDeviceCollection;
+        if (deviceCollection != nullptr)
+        {
+            UINT32 numDevices;
+            wil::com_ptr_nothrow<IMMDevice> endpoint;
+
+            // Get the endpoint on which this APO has been created
+            // (It is the last device in the device collection)
+            if (SUCCEEDED(deviceCollection->GetCount(&numDevices)) && numDevices > 0 &&
+                SUCCEEDED(deviceCollection->Item(numDevices - 1, &endpoint)))
+            {
+                wil::unique_prop_variant activationParam;
+                hr = InitPropVariantFromCLSID(SWAP_APO_SFX_CONTEXT, &activationParam);
+                IF_FAILED_JUMP(hr, Exit);
+
+                wil::com_ptr_nothrow<IAudioSystemEffectsPropertyStore> effectsPropertyStore;
+                hr = endpoint->Activate(__uuidof(effectsPropertyStore), CLSCTX_ALL, &activationParam, effectsPropertyStore.put_void());
+                IF_FAILED_JUMP(hr, Exit);
+
+                // This is where an APO might want to open the volatile or default property stores as well 
+                // Use STGM_READWRITE if IPropertyStore::SetValue is needed.
+                hr = effectsPropertyStore->OpenUserPropertyStore(STGM_READ, m_userStore.put());
+                IF_FAILED_JUMP(hr, Exit);
+            }
+        }
+
+        // Windows should pass a valid collection.
+        ATLASSERT(papoSysFxInit2->pDeviceCollection != nullptr);
+        IF_TRUE_ACTION_JUMP(papoSysFxInit3->pDeviceCollection == nullptr, hr = E_INVALIDARG, Exit);
+
+        // Get the IDeviceTopology and IConnector interfaces to communicate with this
+        // APO's counterpart audio driver. This can be used for any proprietary
+        // communication.
+        hr = papoSysFxInit3->pDeviceCollection->Item(papoSysFxInit3->nSoftwareIoDeviceInCollection, &m_device);
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = spMyDeviceTopology->GetConnector(papoSysFxInit3->nSoftwareIoConnectorIndex, &spMyConnector);
+        IF_FAILED_JUMP(hr, Exit);
+
+        // Save the processing mode being initialized.
+        processingMode = papoSysFxInit3->AudioProcessingMode;
+    }
+    else if (cbDataSize == sizeof(APOInitSystemEffects2))
     {
         //
         // Initialize for mode-specific signal processing
@@ -307,10 +365,10 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
         // Get the IDeviceTopology and IConnector interfaces to communicate with this
         // APO's counterpart audio driver. This can be used for any proprietary
         // communication.
-        hr = papoSysFxInit2->pDeviceCollection->Item(papoSysFxInit2->nSoftwareIoDeviceInCollection, &spMyDevice);
+        hr = papoSysFxInit2->pDeviceCollection->Item(papoSysFxInit2->nSoftwareIoDeviceInCollection, &m_device);
         IF_FAILED_JUMP(hr, Exit);
 
-        hr = spMyDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+        hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
         IF_FAILED_JUMP(hr, Exit);
 
         hr = spMyDeviceTopology->GetConnector(papoSysFxInit2->nSoftwareIoConnectorIndex, &spMyConnector);
@@ -364,22 +422,34 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
     //
     //  Get the current values
     //
+    if (m_userStore != nullptr)
+    {
+        m_fEnableSwapSFX = GetCurrentEffectsSetting(m_userStore.get(), PKEY_Endpoint_Enable_Channel_Swap_SFX, m_AudioProcessingMode);
+    }
+
     if (m_spAPOSystemEffectsProperties != NULL)
     {
         m_fEnableSwapSFX = GetCurrentEffectsSetting(m_spAPOSystemEffectsProperties, PKEY_Endpoint_Enable_Channel_Swap_SFX, m_AudioProcessingMode);
     }
+    
+    RtlZeroMemory(m_effectInfos, sizeof(m_effectInfos));
+    m_effectInfos[0] = { SwapEffectId, TRUE, m_fEnableSwapSFX ? AUDIO_SYSTEMEFFECT_STATE_ON : AUDIO_SYSTEMEFFECT_STATE_OFF };
 
-    //
-    //  Register for notification of registry updates
-    //
-    hr = m_spEnumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-    IF_FAILED_JUMP(hr, Exit);
+    if (cbDataSize != sizeof(APOInitSystemEffects3))
+    {
+        //
+        //  Register for notification of registry updates
+        //
+        hr = m_spEnumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+        IF_FAILED_JUMP(hr, Exit);
 
-    hr = m_spEnumerator->RegisterEndpointNotificationCallback(this);
-    IF_FAILED_JUMP(hr, Exit);
+        hr = m_spEnumerator->RegisterEndpointNotificationCallback(this);
+        IF_FAILED_JUMP(hr, Exit);
 
-     m_bIsInitialized = true;
+        m_bRegisteredEndpointNotificationCallback = TRUE;
+    }
 
+    m_bIsInitialized = true;
 
 Exit:
     return hr;
@@ -510,6 +580,78 @@ Exit:
     return hr;
 }
 
+HRESULT CSwapAPOSFX::GetControllableSystemEffectsList(_Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event)
+{
+    RETURN_HR_IF_NULL(E_POINTER, effects);
+    RETURN_HR_IF_NULL(E_POINTER, numEffects);
+
+    *effects = nullptr;
+    *numEffects = 0;
+
+    // Always close existing effects change event handle
+    if (m_hEffectsChangedEvent != NULL)
+    {
+        CloseHandle(m_hEffectsChangedEvent);
+        m_hEffectsChangedEvent = NULL;
+    }
+
+    // If an event handle was specified, save it here (duplicated to control lifetime)
+    if (event != NULL)
+    {
+        if (!DuplicateHandle(GetCurrentProcess(), event, GetCurrentProcess(), &m_hEffectsChangedEvent, EVENT_MODIFY_STATE, FALSE, 0))
+        {
+            RETURN_IF_FAILED(HRESULT_FROM_WIN32(GetLastError()));
+        }
+    }
+
+    if (!IsEqualGUID(m_AudioProcessingMode, AUDIO_SIGNALPROCESSINGMODE_RAW))
+    {
+        wil::unique_cotaskmem_array_ptr<AUDIO_SYSTEMEFFECT> audioEffects(
+            static_cast<AUDIO_SYSTEMEFFECT*>(CoTaskMemAlloc(NUM_OF_EFFECTS * sizeof(AUDIO_SYSTEMEFFECT))), NUM_OF_EFFECTS);
+        RETURN_IF_NULL_ALLOC(audioEffects.get());
+
+        for (UINT i = 0; i < NUM_OF_EFFECTS; i++)
+        {
+            audioEffects[i].id = m_effectInfos[i].id;
+            audioEffects[i].state = m_effectInfos[i].state;
+            audioEffects[i].canSetState = m_effectInfos[i].canSetState;
+        }
+
+        *numEffects = (UINT)audioEffects.size();
+        *effects = audioEffects.release();
+    }
+
+    return S_OK;
+}
+
+HRESULT CSwapAPOSFX::SetAudioSystemEffectState(GUID effectId, AUDIO_SYSTEMEFFECT_STATE state)
+{
+    for (auto effectInfo : m_effectInfos)
+    {
+        if (effectId == effectInfo.id)
+        {
+            AUDIO_SYSTEMEFFECT_STATE oldState = effectInfo.state;
+            effectInfo.state = state;
+
+            // Synchronize access to the effects list and effects changed event
+            m_EffectsLock.Enter();
+
+            // If anything changed and a change event handle exists
+            if (oldState != effectInfo.state)
+            {
+                SetEvent(m_hEffectsChangedEvent);
+                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
+            }
+
+            m_EffectsLock.Leave();
+            
+            return S_OK;
+        }
+    }
+
+    return E_NOTFOUND;
+}
+
 //-------------------------------------------------------------------------
 // Description:
 //
@@ -586,6 +728,64 @@ HRESULT CSwapAPOSFX::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERT
     return hr;
 }
 
+HRESULT CSwapAPOSFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO_NOTIFICATION_DESCRIPTOR **apoNotifications, _Out_ DWORD *count)
+{
+    *apoNotifications = nullptr;
+    *count = 0;
+
+    RETURN_HR_IF_NULL(E_FAIL, m_device);
+
+    // Let the OS know what notifications we are interested in by returning an array of
+    // APO_NOTIFICATION_DESCRIPTORs.
+    constexpr DWORD numDescriptors = 1;
+    wil::unique_cotaskmem_ptr<APO_NOTIFICATION_DESCRIPTOR[]> apoNotificationDescriptors;
+
+    apoNotificationDescriptors.reset(static_cast<APO_NOTIFICATION_DESCRIPTOR*>(
+        CoTaskMemAlloc(sizeof(APO_NOTIFICATION_DESCRIPTOR) * numDescriptors)));
+    RETURN_IF_NULL_ALLOC(apoNotificationDescriptors);
+
+    // Our APO wants to get notified when a endpoint property changes on the audio endpoint.
+    apoNotificationDescriptors[0].type = APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE;
+    (void)m_device.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
+
+    *apoNotifications = apoNotificationDescriptors.release();
+    *count = numDescriptors;
+
+    return S_OK;
+}
+
+void CSwapAPOSFX::HandleNotification(APO_NOTIFICATION *apoNotification)
+{
+    if (apoNotification->type == APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE)
+    {
+        // If either the master disable or our APO's enable properties changed...
+        if (PK_EQUAL(apoNotification->audioEndpointPropertyChange.propertyKey, PKEY_Endpoint_Enable_Channel_Swap_SFX) ||
+            PK_EQUAL(apoNotification->audioEndpointPropertyChange.propertyKey, PKEY_AudioEndpoint_Disable_SysFx))
+        {
+            struct KeyControl
+            {
+                PROPERTYKEY key;
+                LONG* value;
+            };
+
+            KeyControl controls[] = {
+                {PKEY_Endpoint_Enable_Channel_Swap_SFX, &m_fEnableSwapSFX},
+            };
+
+            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
+
+            for (int i = 0; i < ARRAYSIZE(controls); i++)
+            {
+                LONG fNewValue = true;
+
+                // Get the state of whether channel swap MFX is enabled or not
+                fNewValue = GetCurrentEffectsSetting(m_userStore.get(), controls[i].key, m_AudioProcessingMode);
+
+                SetAudioSystemEffectState(m_effectInfos[i].id, fNewValue ? AUDIO_SYSTEMEFFECT_STATE_ON : AUDIO_SYSTEMEFFECT_STATE_OFF);
+            }
+        }
+    }
+}
 
 //-------------------------------------------------------------------------
 // Description:
@@ -611,7 +811,7 @@ CSwapAPOSFX::~CSwapAPOSFX(void)
     //
     // unregister for callbacks
     //
-    if (m_bIsInitialized)
+    if (m_bRegisteredEndpointNotificationCallback)
     {
         m_spEnumerator->UnregisterEndpointNotificationCallback(this);
     }

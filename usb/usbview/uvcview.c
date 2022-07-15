@@ -803,7 +803,7 @@ CreateMainWindow (
                   int nCmdShow
                   )
 {
-    RECT rc;
+    RECT rc = { 0 };
 
     InitCommonControls();
 
@@ -849,10 +849,10 @@ ResizeWindows (
                int     BarLocation
                )
 {
-    RECT    MainClientRect;
-    RECT    MainWindowRect;
-    RECT    TreeWindowRect;
-    RECT    StatusWindowRect;
+    RECT    MainClientRect = { 0 };
+    RECT    MainWindowRect = { 0 };
+    RECT    TreeWindowRect = { 0 };
+    RECT    StatusWindowRect = { 0 };
     int     right;
 
     // Is the user moving the bar?

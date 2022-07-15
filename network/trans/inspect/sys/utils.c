@@ -13,7 +13,7 @@ Environment:
 
 --*/
 
-
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntddk.h>
 #include <wdf.h>
 
@@ -291,7 +291,7 @@ AllocateAndInitializePendedPacket(
 {
    TL_INSPECT_PENDED_PACKET* pendedPacket;
 
-   pendedPacket = ExAllocatePoolWithTag(
+   pendedPacket = ExAllocatePoolZero(
                         NonPagedPool,
                         sizeof(TL_INSPECT_PENDED_PACKET),
                         TL_INSPECT_PENDED_PACKET_POOL_TAG
@@ -301,8 +301,6 @@ AllocateAndInitializePendedPacket(
    {
       return NULL;
    }
-
-   RtlZeroMemory(pendedPacket, sizeof(TL_INSPECT_PENDED_PACKET));
 
    pendedPacket->type = packetType;
    pendedPacket->direction = packetDirection;
@@ -346,7 +344,7 @@ AllocateAndInitializePendedPacket(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         pendedPacket->controlData = ExAllocatePoolWithTag(
+         pendedPacket->controlData = ExAllocatePoolZero(
                                        NonPagedPool,
                                        inMetaValues->controlDataLength,
                                        TL_INSPECT_CONTROL_DATA_POOL_TAG

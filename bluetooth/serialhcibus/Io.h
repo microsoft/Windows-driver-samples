@@ -50,6 +50,8 @@ Revision History:
 
 #define BUFFER_AND_SIZE_ADJUSTED(Buffer, Size, SegmentCount, Increment) {Buffer += Increment; Size -= Increment; SegmentCount += Increment;}
 
+#define POOLTAG_BTHSERIALHCIBUSSAMPLE 'htbw'
+
 #include <PSHPACK1.H>
 
 //

@@ -27,10 +27,7 @@ CreateMiniportTopologySYSVAD
     _Out_           PUNKNOWN *                              Unknown,
     _In_            REFCLSID,
     _In_opt_        PUNKNOWN                                UnknownOuter,
-    _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-       __drv_reportError("Must succeed pool allocations are forbidden. "
-             "Allocation failures cause a system crash"))
-    _In_            POOL_TYPE                               PoolType, 
+    _In_            POOL_FLAGS                              PoolFlags, 
     _In_            PUNKNOWN                                UnknownAdapter,
     _In_opt_        PVOID                                   DeviceContext,
     _In_            PENDPOINT_MINIPAIR                      MiniportPair
@@ -69,7 +66,7 @@ Return Value:
     ASSERT(MiniportPair);
 
     CMiniportTopology *obj = 
-        new (PoolType, MINWAVERT_POOLTAG) 
+        new (PoolFlags, MINWAVERT_POOLTAG) 
             CMiniportTopology( UnknownOuter,
                                MiniportPair->TopoDescriptor,
                                MiniportPair->DeviceMaxChannels,
@@ -581,6 +578,266 @@ Return Value:
     return ntStatus;
 }
 
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportTopology::PropertyHandlerAudioResourceGroup
+( 
+    _In_        PPCPROPERTY_REQUEST         PropertyRequest
+)
+/*++
+
+Routine Description:
+
+  Handles ( KSPROPSETID_AudioResourceManagement, KSPROPERTY_AUDIORESOURCEMANAGEMENT_RESOURCEGROUP )
+
+Arguments:
+
+  PropertyRequest       - 
+
+Return Value:
+
+  NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertryHandlerAudioResourceGroup]"));
+
+    NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
+
+    if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+    {
+        status = PropertyHandler_SetAudioResourceGroup(PropertyRequest);
+    }
+
+    return status;
+}
+
+NTSTATUS
+CMiniportTopology::PropertyHandler_SetAudioResourceGroup
+(
+    _In_ PPCPROPERTY_REQUEST                    PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandler_SetAudioResourceGroup]"));
+
+    NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
+
+    ULONG cbNeeded = sizeof(m_ResourceGroup);
+
+    if (PropertyRequest->ValueSize == 0)
+    {
+        PropertyRequest->ValueSize = cbNeeded;
+        status = STATUS_BUFFER_OVERFLOW;
+    }
+    else if (PropertyRequest->ValueSize < cbNeeded)
+    {
+        status = STATUS_BUFFER_TOO_SMALL;
+    }
+    else
+    {
+        PAUDIORESOURCEMANAGEMENT_RESOURCEGROUP pResourceGroup = (PAUDIORESOURCEMANAGEMENT_RESOURCEGROUP)PropertyRequest->Value;
+
+        // When resource group is released, the resource group should be one that was previously assigned to the endpoint
+        // Check the cached resource group, make sure the release resource group and the cached resource group are the same, if not, return failure
+        if (!pResourceGroup->ResourceGroupAcquired && (wcscmp(pResourceGroup->ResourceGroupName, m_ResourceGroup.ResourceGroupName) != 0))
+        {
+            status = STATUS_INVALID_DEVICE_REQUEST;
+        }
+        else
+        {
+            if (pResourceGroup->ResourceGroupAcquired)
+            {
+                RtlCopyMemory(&m_ResourceGroup, pResourceGroup, sizeof(m_ResourceGroup));
+            }
+            else
+            {
+                m_ResourceGroup = {0};
+            }
+
+            DbgPrintEx(DPFLTR_IHVAUDIO_ID, DPFLTR_INFO_LEVEL, "AudioResourceGroup - SET Resource Group %S %S\n", pResourceGroup->ResourceGroupName, pResourceGroup->ResourceGroupAcquired ? L"acquired" : L"released");
+
+            status = STATUS_SUCCESS;
+        }
+    }
+
+    return status;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CMiniportTopology::PropertyHandlerAudioPostureOrientation
+(
+    _In_        PPCPROPERTY_REQUEST                                         PropertyRequest,
+    _In_        ULONG                                                       cAudioPostureInfos,
+    _In_reads_(cAudioPostureInfos) PSYSVAD_AUDIOPOSTURE_INFO                *AudioPostureInfos
+)
+/*++
+
+Routine Description:
+
+  Handles ( KSPROPSETID_AudioPosture, KSPROPERTY_AUDIOPOSTURE_ORIENTATION )
+
+Arguments:
+
+  PropertyRequest           -
+  cAudioPostureInfos         - # of elements in the AudioPosture Infos array.
+  AudioPostureInfos          - Array of AudioPosture Infos pointers.
+
+Return Value:
+
+  NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandlerAudioPostureOrientation]"));
+
+    NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
+    ULONG    nPinId = (ULONG)-1;
+
+    if (PropertyRequest->InstanceSize >= sizeof(ULONG))
+    {
+        nPinId = *(PULONG(PropertyRequest->Instance));
+
+        if ((nPinId < cAudioPostureInfos) && (AudioPostureInfos[nPinId] != NULL) && (AudioPostureInfos[nPinId]->OrientationSupported))
+        {
+            if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+            {
+                status = PropertyHandler_AudioPostureOrientationBasicSupport(PropertyRequest);
+            }
+            else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+            {
+                status = PropertyHandler_SetAudioPostureOrientation(PropertyRequest);
+            }
+        }
+    }
+
+    return status;
+}
+
+NTSTATUS
+CMiniportTopology::PropertyHandler_AudioPostureOrientationBasicSupport
+(
+    _In_ PPCPROPERTY_REQUEST                        PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandler_AudioPostureOrientationBasicSupport]"));
+
+    NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
+
+    ULONG ulExpectedSize = sizeof(KSPROPERTY_DESCRIPTION);
+
+    if (PropertyRequest->ValueSize >= sizeof(KSPROPERTY_DESCRIPTION))
+    {
+        // if return buffer can hold a KSPROPERTY_DESCRIPTION, return it
+        //
+        PKSPROPERTY_DESCRIPTION PropDesc = PKSPROPERTY_DESCRIPTION(PropertyRequest->Value);
+
+        PropDesc->AccessFlags = KSPROPERTY_TYPE_BASICSUPPORT |
+                                KSPROPERTY_TYPE_GET |
+                                KSPROPERTY_TYPE_SET;
+        PropDesc->DescriptionSize = ulExpectedSize;
+        PropDesc->PropTypeSet.Set = KSPROPTYPESETID_General;
+        PropDesc->PropTypeSet.Id = VT_UI4;
+        PropDesc->PropTypeSet.Flags = 0;
+        PropDesc->MembersListCount = 0;
+        PropDesc->Reserved = 0;
+
+        // tell them how much space we really used, which controls how much data is copied into the user buffer.
+        PropertyRequest->ValueSize = ulExpectedSize;
+
+        status = STATUS_SUCCESS;
+    }
+    else if (PropertyRequest->ValueSize >= sizeof(ULONG))
+    {
+        // if return buffer can hold a ULONG, return the access flags.
+        *(PULONG(PropertyRequest->Value)) = KSPROPERTY_TYPE_BASICSUPPORT |
+                                            KSPROPERTY_TYPE_GET |
+                                            KSPROPERTY_TYPE_SET;
+        PropertyRequest->ValueSize = sizeof(ULONG);
+        status = STATUS_SUCCESS;
+    }
+    else if (PropertyRequest->ValueSize == 0)
+    {
+        PropertyRequest->ValueSize = ulExpectedSize;
+        status = STATUS_BUFFER_OVERFLOW;
+    }
+    else
+    {
+        status = STATUS_BUFFER_TOO_SMALL;
+    }
+
+    return status;
+}
+
+NTSTATUS
+CMiniportTopology::PropertyHandler_SetAudioPostureOrientation
+(
+
+    _In_ PPCPROPERTY_REQUEST                    PropertyRequest
+)
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandler_SetAudioPostureOrientation]"));
+
+    NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
+
+    ULONG cbNeeded = sizeof(AUDIOPOSTURE_ORIENTATION);
+
+    if (PropertyRequest->ValueSize == 0)
+    {
+        PropertyRequest->ValueSize = cbNeeded;
+        status = STATUS_BUFFER_OVERFLOW;
+    }
+    else if (PropertyRequest->ValueSize < cbNeeded)
+    {
+        status = STATUS_BUFFER_TOO_SMALL;
+    }
+    else
+    {
+        AUDIOPOSTURE_ORIENTATION Orientation = *((AUDIOPOSTURE_ORIENTATION*)PropertyRequest->Value);
+
+        // Validation
+        switch (Orientation)
+        {
+            case AUDIOPOSTURE_ORIENTATION_NOTROTATED:
+            case AUDIOPOSTURE_ORIENTATION_ROTATED90DEGREESCOUNTERCLOCKWISE:
+            case AUDIOPOSTURE_ORIENTATION_ROTATED180DEGREESCOUNTERCLOCKWISE:
+            case AUDIOPOSTURE_ORIENTATION_ROTATED270DEGREESCOUNTERCLOCKWISE:
+                DbgPrintEx(DPFLTR_IHVAUDIO_ID, DPFLTR_INFO_LEVEL, "AudioPosture - SET Orientation = %d\n", Orientation);
+
+                m_PostureCache.Orientation = Orientation;
+
+                status = STATUS_SUCCESS;
+                break;
+            default:
+                status = STATUS_INVALID_DEVICE_REQUEST;
+                break;
+        }
+    }
+
+    return status;
+}
 
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
 //=============================================================================

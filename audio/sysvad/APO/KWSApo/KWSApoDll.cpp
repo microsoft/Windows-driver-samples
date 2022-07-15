@@ -65,7 +65,7 @@ STDAPI DllCanUnloadNow(void)
 
 
 // {secret}
-STDAPI DllGetClassObject(_In_ REFCLSID rclsid,_In_  REFIID riid, _Outptr_ LPVOID* ppv)
+STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID FAR* ppv)
 {
     return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }

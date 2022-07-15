@@ -95,21 +95,25 @@ VOID ToneGenerator::InitNewFrame
         RtlZeroMemory(Frame, FrameSize);
         return;
     }
-    
+
+    /* Use __analysis_assume to suppress the reports of a false OACR error. */
     for(ULONG i = 0; i < m_ChannelCount; ++i)
     {
         if (m_BitsPerSample == 8)
         {
+            __analysis_assume((DWORD)m_ChannelCount == FrameSize);
             unsigned char *dataBuffer = reinterpret_cast<unsigned char *>(Frame);
-             dataBuffer[i] = ConvertToUChar(sinValue);
+            dataBuffer[i] = ConvertToUChar(sinValue);
         }
         else if (m_BitsPerSample == 16)
         {
+            __analysis_assume((DWORD)(m_ChannelCount) * 2 == FrameSize);
             short *dataBuffer = reinterpret_cast<short *>(Frame);
             dataBuffer[i] = ConvertToShort(sinValue);
         }
         else if (m_BitsPerSample == 24)
         {
+            __analysis_assume((DWORD)(m_ChannelCount) * 3 == FrameSize);
             BYTE *dataBuffer = Frame;
             long val = ConvertToLong(sinValue);
             val = val >> 8;
@@ -117,6 +121,7 @@ VOID ToneGenerator::InitNewFrame
         }
         else if (m_BitsPerSample == 32)
         {
+            __analysis_assume((DWORD)(m_ChannelCount) * 4 == FrameSize);
             long *dataBuffer = reinterpret_cast<long *>(Frame);
             dataBuffer[i] = ConvertToLong(sinValue);
         }

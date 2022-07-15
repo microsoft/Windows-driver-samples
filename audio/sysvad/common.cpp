@@ -39,6 +39,12 @@ Abstract:
 #include "UsbHsDevice.h"
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+#include <SidebandAudio.h>
+#include <A2DPSidebandAudio.h>
+#include "A2dpHpMinipairs.h"
+#include "A2dpHpDevice.h"
+#endif // SYSVAD_A2DP_SIDEBAND
 
 //-----------------------------------------------------------------------------
 // CSaveData statics
@@ -57,6 +63,9 @@ class BthHfpDevice;     // Forward declaration.
 class UsbHsDevice;     // Forward declaration.
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+class A2dpHpDevice;     // Forward declaration.
+#endif // SYSVAD_A2DP_SIDEBAND
 
 ///////////////////////////////////////////////////////////////////////////////
 // CAdapterCommon
@@ -299,6 +308,11 @@ class CAdapterCommon :
         );
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+        STDMETHODIMP_(NTSTATUS) InitA2dpSideband();
+        
+        STDMETHODIMP_(VOID)     CleanupA2dpSideband();
+#endif // SYSVAD_A2DP_SIDEBAND
 
         STDMETHODIMP_(VOID) Cleanup();
 
@@ -313,10 +327,7 @@ class CAdapterCommon :
             _Out_       PUNKNOWN *              Unknown,
             _In_        REFCLSID,
             _In_opt_    PUNKNOWN                UnknownOuter,
-            _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-                __drv_reportError("Must succeed pool allocations are forbidden. "
-                        "Allocation failures cause a system crash"))
-            _In_        POOL_TYPE               PoolType 
+            _In_        POOL_FLAGS              PoolFlags
         );
 
 #ifdef SYSVAD_BTH_BYPASS
@@ -396,6 +407,43 @@ class CAdapterCommon :
 
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+        //=====================================================================
+        // A2DP Sideband Audio support.
+
+    private:
+        PVOID                   m_A2dpSidebandNotificationHandle;
+        FAST_MUTEX              m_A2dpSidebandFastMutex;              // To serialize access.
+        WDFWORKITEM             m_A2dpSidebandWorkItem;               // Async work-item.
+        LIST_ENTRY              m_A2dpSidebandWorkTasks;              // Work-item's tasks.
+        LIST_ENTRY              m_A2dpSidebandDevices;                // A2DP Sideband devices.
+        NPAGED_LOOKASIDE_LIST   m_A2dpSidebandWorkTaskPool;           // LookasideList
+        size_t                  m_A2dpSidebandWorkTaskPoolElementSize;
+        BOOL                    m_A2dpSidebandEnableCleanup;          // Do cleanup if true.
+
+    private:
+        static
+            DRIVER_NOTIFICATION_CALLBACK_ROUTINE  EvtA2dpSidebandInterfaceChange;
+
+        static
+            EVT_WDF_WORKITEM                      EvtA2dpSidebandInterfaceWorkItem;
+
+    protected:
+        A2dpHpDevice * A2dpSidebandDeviceFind
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+
+        NTSTATUS A2dpSidebandInterfaceArrival
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+
+        NTSTATUS A2dpSidebandInterfaceRemoval
+        (
+            _In_ PUNICODE_STRING SymbolicLinkName
+        );
+#endif // SYSVAD_A2DP_SIDEBAND
 
     private:
 
@@ -505,10 +553,7 @@ NewAdapterCommon
     _Out_       PUNKNOWN *              Unknown,
     _In_        REFCLSID,
     _In_opt_    PUNKNOWN                UnknownOuter,
-    _When_((PoolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-                "Allocation failures cause a system crash"))
-    _In_        POOL_TYPE               PoolType 
+    _In_        POOL_FLAGS               PoolFlags
 )
 /*++
 
@@ -550,7 +595,7 @@ Return Value:
     //
     // Allocate an adapter object.
     //
-    CAdapterCommon *p = new(PoolType, MINADAPTER_POOLTAG) CAdapterCommon(UnknownOuter);
+    CAdapterCommon *p = new(PoolFlags, MINADAPTER_POOLTAG) CAdapterCommon(UnknownOuter);
     if (p == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -733,6 +778,11 @@ Return Value:
     m_UsbSidebandEnableCleanup = FALSE;
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+    m_A2dpSidebandEnableCleanup = FALSE;
+#endif // SYSVAD_A2DP_SIDEBAND
+
+
 
     m_pServiceGroupWave     = NULL;
     m_pDeviceObject         = DeviceObject;
@@ -777,7 +827,7 @@ Return Value:
 
     // Initialize HW.
     // 
-    m_pHW = new (NonPagedPoolNx, SYSVAD_POOLTAG)  CSYSVADHW;
+    m_pHW = new (POOL_FLAG_NON_PAGED, SYSVAD_POOLTAG)  CSYSVADHW;
     if (!m_pHW)
     {
         DPF(D_TERSE, ("Insufficient memory for SYSVAD HW"));
@@ -1772,7 +1822,7 @@ Return Value:
                     &miniport,
                     MiniportClassId,
                     NULL,
-                    NonPagedPoolNx,
+                    POOL_FLAG_NON_PAGED,
                     adapterCommon,
                     DeviceContext,
                     MiniportPair
@@ -2175,7 +2225,7 @@ CAdapterCommon::CacheSubdevice
     NTSTATUS         ntStatus       = STATUS_SUCCESS;
     MINIPAIR_UNKNOWN *pNewSubdevice = NULL;
 
-    pNewSubdevice = new(NonPagedPoolNx, MINADAPTER_POOLTAG) MINIPAIR_UNKNOWN;
+    pNewSubdevice = new(POOL_FLAG_NON_PAGED, MINADAPTER_POOLTAG) MINIPAIR_UNKNOWN;
 
     if (!pNewSubdevice)
     {
@@ -2300,6 +2350,13 @@ CAdapterCommon::Cleanup()
     CleanupUsbSideband();
 #endif // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+    //
+    // This ensures A2DP Sideband notifications are turned off when port class
+    // cleanups and unregisters the static subdevices.
+    //
+    CleanupA2dpSideband();
+#endif // SYSVAD_A2DP_SIDEBAND
 
     EmptySubdeviceCache();
 }
@@ -2310,6 +2367,8 @@ CAdapterCommon::Cleanup()
 NTSTATUS 
 CAdapterCommon::UpdatePowerRelations(_In_ PIRP Irp)
 {
+    PAGED_CODE();
+
     PDEVICE_RELATIONS   priorRelations = NULL;
     PDEVICE_RELATIONS   newRelations = NULL;
     ULONG               qprPdosCount = 0;
@@ -2354,7 +2413,7 @@ CAdapterCommon::UpdatePowerRelations(_In_ PIRP Irp)
     // space for the extra PDEVICE_OBJECTs we need.
     //
     size = sizeof(DEVICE_RELATIONS) + (count - 1) * sizeof(PDEVICE_OBJECT);
-    newRelations = (PDEVICE_RELATIONS)ExAllocatePoolWithTag(PagedPool, size, USBSIDEBANDTEST_POOLTAG015);
+    newRelations = (PDEVICE_RELATIONS)ExAllocatePool2(POOL_FLAG_PAGED, size, USBSIDEBANDTEST_POOLTAG015);
     ASSERT(newRelations);
     if (NULL == newRelations)
     {
@@ -2367,7 +2426,6 @@ CAdapterCommon::UpdatePowerRelations(_In_ PIRP Irp)
     // If there was an existing device relations structure, copy
     // the entries to the new structure.
     //
-    RtlZeroMemory(newRelations, size);
     if (priorRelations != NULL && priorRelations->Count > 0)
     {
         size = sizeof(DEVICE_RELATIONS) + (priorRelations->Count - 1) * sizeof(PDEVICE_OBJECT);
@@ -2974,7 +3032,7 @@ Return Value:
     //
     // Alloc a new structure for this Bluetooth hands-free device.
     //
-    bthDevice = new (NonPagedPoolNx, MINADAPTER_POOLTAG) BthHfpDevice(NULL); // NULL -> OuterUnknown
+    bthDevice = new (POOL_FLAG_NON_PAGED, MINADAPTER_POOLTAG) BthHfpDevice(NULL); // NULL -> OuterUnknown
     if (NULL == bthDevice)
     {
         DPF(D_ERROR, ("BthHfpScoInterfaceArrival: unable to allocate BthHfpDevice, out of memory"));
@@ -3582,7 +3640,7 @@ NT status code.
     //
     // Alloc a new structure for this USB device.
     //
-    usbHsDevice = new (NonPagedPoolNx, MINADAPTER_POOLTAG) UsbHsDevice(NULL); // NULL -> OuterUnknown
+    usbHsDevice = new (POOL_FLAG_NON_PAGED, MINADAPTER_POOLTAG) UsbHsDevice(NULL); // NULL -> OuterUnknown
     if (NULL == usbHsDevice)
     {
         DPF(D_ERROR, ("UsbSidebandInterfaceArrival: unable to allocate UsbSidebandDevice, out of memory"));
@@ -3931,7 +3989,7 @@ CAdapterCommon::AddDeviceAsPowerDependency
     NTSTATUS status = STATUS_SUCCESS;
 
     // allocate SysVadPowerRelationsDo
-    PSysVadPowerRelationsDo powerDepDo = (PSysVadPowerRelationsDo)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(SysVadPowerRelationsDo), USBSIDEBANDTEST_POOLTAG014);
+    PSysVadPowerRelationsDo powerDepDo = (PSysVadPowerRelationsDo)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SysVadPowerRelationsDo), USBSIDEBANDTEST_POOLTAG014);
     if (NULL == powerDepDo)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -4064,6 +4122,637 @@ Cleanup the USB Sideband environment.
 }
 #endif  // SYSVAD_USB_SIDEBAND
 
+#ifdef SYSVAD_A2DP_SIDEBAND
+//
+// CAdapterCommon A2DP Sideband function implementation.
+//
+
+//=============================================================================
+#pragma code_seg("PAGE")
+VOID
+CAdapterCommon::EvtA2dpSidebandInterfaceWorkItem
+(
+    _In_    WDFWORKITEM WorkItem
+)
+/*++
+
+Routine Description:
+
+The function handles the arrival or removal of a A2DP Sideband interface.
+
+Arguments:
+
+WorkItem    - WDF work-item object.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[EvtA2dpSidebandInterfaceWorkItem]"));
+
+    CAdapterCommon        * This;
+
+    if (WorkItem == NULL)
+    {
+        return;
+    }
+
+    This = GetA2dpHpWorkItemContext(WorkItem)->Adapter;
+    ASSERT(This != NULL);
+
+    for (;;)
+    {
+        PLIST_ENTRY         le = NULL;
+        A2dpHpWorkTask    * task = NULL;
+
+        //
+        // Retrieve a taask.
+        //
+        ExAcquireFastMutex(&This->m_A2dpSidebandFastMutex);
+        if (!IsListEmpty(&This->m_A2dpSidebandWorkTasks))
+        {
+            le = RemoveHeadList(&This->m_A2dpSidebandWorkTasks);
+            task = CONTAINING_RECORD(le, A2dpHpWorkTask, ListEntry);
+            InitializeListHead(le);
+        }
+        ExReleaseFastMutex(&This->m_A2dpSidebandFastMutex);
+
+        if (task == NULL)
+        {
+            break;
+        }
+
+        ASSERT(task->Device != NULL);
+        _Analysis_assume_(task->Device != NULL);
+
+        //
+        // Process the task.
+        //
+        switch (task->Action)
+        {
+        case eA2dpHpTaskStart:
+            task->Device->Start();
+            break;
+
+        case eA2dpHpTaskStop:
+            task->Device->Stop();
+            break;
+
+        default:
+            DPF(D_ERROR, ("EvtA2dpSidebandInterfaceWorkItem: invalid action %d", task->Action));
+            break;
+        }
+
+        //
+        // Release the ref we took on the device when we inserted the task in the queue.
+        // For a stop operation this may be the last reference.
+        //
+        SAFE_RELEASE(task->Device);
+
+        //
+        // Free the task.
+        //
+        ExFreeToNPagedLookasideList(&This->m_A2dpSidebandWorkTaskPool, task);
+    }
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+A2dpHpDevice *
+CAdapterCommon::A2dpSidebandDeviceFind
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function looks for the specified device in the adapter's list.
+
+Arguments:
+
+SymbolicLinkName - interface's symbolic link.
+
+Return Value:
+
+A2dpSidebandDevice pointer or NULL.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::A2dpSidebandDeviceFind]"));
+
+    PLIST_ENTRY     le = NULL;
+    A2dpHpDevice  * a2dpDevice = NULL;
+
+    ExAcquireFastMutex(&m_A2dpSidebandFastMutex);
+
+    for (le = m_A2dpSidebandDevices.Flink; le != &m_A2dpSidebandDevices; le = le->Flink)
+    {
+        A2dpHpDevice  *     tmpA2dpHpDevice = A2dpHpDevice::GetA2dpHpDevice(le);
+        ASSERT(tmpA2dpHpDevice != NULL);
+
+        PUNICODE_STRING     unicodeStr = tmpA2dpHpDevice->GetSymbolicLinkName();
+        ASSERT(unicodeStr != NULL);
+
+        if (unicodeStr->Length == SymbolicLinkName->Length &&
+            0 == wcsncmp(unicodeStr->Buffer, SymbolicLinkName->Buffer, unicodeStr->Length / sizeof(WCHAR)))
+        {
+            // Found it!
+            a2dpDevice = tmpA2dpHpDevice;
+            a2dpDevice->AddRef();
+            break;
+        }
+    }
+
+    ExReleaseFastMutex(&m_A2dpSidebandFastMutex);
+
+    return a2dpDevice;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::A2dpSidebandInterfaceArrival
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function handles the arrival of a new A2DP Sideband interface.
+
+Arguments:
+
+SymbolicLinkName - new interface's symbolic link.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::A2dpSidebandInterfaceArrival]"));
+
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    A2dpHpDevice         *a2dpHpDevice = NULL;
+    A2dpHpWorkTask       *a2dpHpWorkTask = NULL;
+
+    DPF(D_VERBOSE, ("A2dpSidebandInterfaceArrival: SymbolicLinkName %wZ", SymbolicLinkName));
+
+    //
+    // Check if the A2DP device is already present.
+    // According to the docs it is possible to receive two notifications for the same
+    // interface.
+    //
+    a2dpHpDevice = A2dpSidebandDeviceFind(SymbolicLinkName);
+    if (a2dpHpDevice != NULL)
+    {
+        DPF(D_VERBOSE, ("A2dpSidebandInterfaceArrival: A2DP device already present"));
+        SAFE_RELEASE(a2dpHpDevice);
+        ntStatus = STATUS_SUCCESS;
+        goto Done;
+    }
+
+    //
+    // Alloc a new structure for this A2DP device.
+    //
+    a2dpHpDevice = new (POOL_FLAG_NON_PAGED, MINADAPTER_POOLTAG) A2dpHpDevice(NULL); // NULL -> OuterUnknown
+    if (NULL == a2dpHpDevice)
+    {
+        DPF(D_ERROR, ("A2dpSidebandInterfaceArrival: unable to allocate A2dpSidebandDevice, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    DPF(D_VERBOSE, ("A2dpSidebandInterfaceArrival: created A2dpSidebandDevice 0x%p ", a2dpHpDevice));
+
+    //
+    // Basic initialization of the A2DP Sideband interface.
+    // The audio miniport creation is done later by the A2dpSidebandDevice.Start()
+    // which is invoked asynchronously by a worker thread.
+    // A2dpSidebandDevice->Init() must be invoked just after the creation of the object.
+    //
+    ntStatus = a2dpHpDevice->Init(this, SymbolicLinkName);
+    IF_FAILED_JUMP(ntStatus, Done);
+
+    //
+    // Get and init a work task.
+    //
+    a2dpHpWorkTask = (A2dpHpWorkTask*)ExAllocateFromNPagedLookasideList(&m_A2dpSidebandWorkTaskPool);
+    if (NULL == a2dpHpWorkTask)
+    {
+        DPF(D_ERROR, ("A2dpSidebandInterfaceArrival: unable to allocate A2dpSidebandWorkTask, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    // a2dpWorkTask->L.Size is set to sizeof(A2dpSidebandWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
+    RtlZeroMemory(a2dpHpWorkTask, sizeof(*a2dpHpWorkTask));
+    a2dpHpWorkTask->Action = eA2dpHpTaskStart;
+    InitializeListHead(&a2dpHpWorkTask->ListEntry);
+    // Note that a2dpDevice has one reference at this point.
+    a2dpHpWorkTask->Device = a2dpHpDevice;
+
+    ExAcquireFastMutex(&m_A2dpSidebandFastMutex);
+
+    //
+    // Insert this new A2DP Sideband device in our list.
+    //
+    InsertTailList(&m_A2dpSidebandDevices, a2dpHpDevice->GetListEntry());
+
+    //
+    // Add a new task for the worker thread.
+    //
+    InsertTailList(&m_A2dpSidebandWorkTasks, &a2dpHpWorkTask->ListEntry);
+    a2dpHpDevice->AddRef();    // released when task runs.
+
+                               //
+                               // Schedule a work-item if not already running.
+                               //
+    WdfWorkItemEnqueue(m_A2dpSidebandWorkItem);
+
+    ExReleaseFastMutex(&m_A2dpSidebandFastMutex);
+
+Done:
+    if (!NT_SUCCESS(ntStatus))
+    {
+        // Release the last ref, this will delete the A2dpSidebandDevice 
+        SAFE_RELEASE(a2dpHpDevice);
+
+        if (a2dpHpWorkTask != NULL)
+        {
+            ExFreeToNPagedLookasideList(&m_A2dpSidebandWorkTaskPool, a2dpHpWorkTask);
+            a2dpHpWorkTask = NULL;
+        }
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::A2dpSidebandInterfaceRemoval
+(
+    _In_ PUNICODE_STRING SymbolicLinkName
+)
+/*++
+
+Routine Description:
+
+The function handles the removal of a A2DP Sideband interface.
+
+Arguments:
+
+SymbolicLinkName - interface's symbolic link to remove.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::A2dpSidebandInterfaceRemoval]"));
+
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    A2dpHpDevice         *a2dpHpDevice = NULL;
+    A2dpHpWorkTask       *a2dpHpWorkTask = NULL;
+
+    DPF(D_VERBOSE, ("A2dpSidebandInterfaceRemoval: SymbolicLinkName %wZ", SymbolicLinkName));
+
+    //
+    // Check if the A2DP device is present.
+    //
+    a2dpHpDevice = A2dpSidebandDeviceFind(SymbolicLinkName);
+    if (a2dpHpDevice == NULL)
+    {
+        // This can happen if the init/start of the A2dpSidebandDevice failed.
+        DPF(D_VERBOSE, ("A2dpSidebandInterfaceRemoval: A2DP device not found"));
+        ntStatus = STATUS_SUCCESS;
+        goto Done;
+    }
+
+    //
+    // Init a work task.
+    //
+    a2dpHpWorkTask = (A2dpHpWorkTask*)ExAllocateFromNPagedLookasideList(&m_A2dpSidebandWorkTaskPool);
+    if (NULL == a2dpHpWorkTask)
+    {
+        DPF(D_ERROR, ("A2dpSidebandInterfaceRemoval: unable to allocate A2dpSidebandWorkTask, out of memory"));
+        ntStatus = STATUS_INSUFFICIENT_RESOURCES;
+        goto Done;
+    }
+
+    // a2dpWorkTask->L.Size is set to sizeof(A2dpSidebandWorkTask) in the Look Aside List configuration
+#pragma warning(suppress: 6386)
+    RtlZeroMemory(a2dpHpWorkTask, sizeof(*a2dpHpWorkTask));
+    a2dpHpWorkTask->Action = eA2dpHpTaskStop;
+    InitializeListHead(&a2dpHpWorkTask->ListEntry);
+    // Work-item callback will release the reference we got above from A2dpSidebandDeviceFind.
+    a2dpHpWorkTask->Device = a2dpHpDevice;
+
+    ExAcquireFastMutex(&m_A2dpSidebandFastMutex);
+
+    //
+    // Remove this A2DP device from our list and release the associated reference.
+    //
+    RemoveEntryList(a2dpHpDevice->GetListEntry());
+    InitializeListHead(a2dpHpDevice->GetListEntry());
+    a2dpHpDevice->Release();   // This is not the last ref.
+
+                               //
+                               // Add a new task for the worker thread.
+                               //
+    InsertTailList(&m_A2dpSidebandWorkTasks, &a2dpHpWorkTask->ListEntry);
+
+    //
+    // Schedule a work-item if not already running.
+    //
+    WdfWorkItemEnqueue(m_A2dpSidebandWorkItem);
+
+    ExReleaseFastMutex(&m_A2dpSidebandFastMutex);
+
+    //
+    // All done.
+    //
+    ntStatus = STATUS_SUCCESS;
+
+Done:
+
+    if (!NT_SUCCESS(ntStatus))
+    {
+        // Release the ref we got in find.
+        SAFE_RELEASE(a2dpHpDevice);
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::EvtA2dpSidebandInterfaceChange(
+    _In_          PVOID   NotificationPointer,
+    _Inout_opt_   PVOID   Context
+)
+/*++
+
+Routine Description:
+
+This callback is invoked when a new A2DP Sideband interface is added or removed.
+
+Arguments:
+NotificationPointer - Interface change notification
+Context - CAdapterCommon ptr.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[EvtA2dpSidebandInterfaceChange]"));
+
+    NTSTATUS                              ntStatus = STATUS_SUCCESS;
+    CAdapterCommon                      * This = NULL;
+    PDEVICE_INTERFACE_CHANGE_NOTIFICATION Notification = (PDEVICE_INTERFACE_CHANGE_NOTIFICATION)NotificationPointer;
+
+    //
+    // Make sure this is the interface class we extect. Any other class guid
+    // is an error, but let it go since it is not fatal to the machine.
+    //
+    if (!IsEqualGUID(Notification->InterfaceClassGuid, GUID_DEVINTERFACE_A2DP_SIDEBAND_AUDIO))
+    {
+        DPF(D_VERBOSE, ("EvtA2dpSidebandInterfaceChange: bad interface ClassGuid"));
+        ASSERTMSG("EvtA2dpSidebandInterfaceChange: bad interface ClassGuid ", FALSE);
+
+        goto Done;
+    }
+
+    This = (CAdapterCommon *)Context;
+    ASSERT(This != NULL);
+    _Analysis_assume_(This != NULL);
+
+    //
+    // Take action based on the event. Any other event type is an error, 
+    // but let it go since it is not fatal to the machine.
+    //
+    if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_ARRIVAL))
+    {
+        ntStatus = This->A2dpSidebandInterfaceArrival(Notification->SymbolicLinkName);
+    }
+    else if (IsEqualGUID(Notification->Event, GUID_DEVICE_INTERFACE_REMOVAL))
+    {
+        ntStatus = This->A2dpSidebandInterfaceRemoval(Notification->SymbolicLinkName);
+    }
+    else
+    {
+        DPF(D_VERBOSE, ("EvtA2dpSidebandInterfaceChange: bad "
+            "GUID_DEVINTERFACE_A2DP_SIDEBAND_AUDIO event"));
+        ASSERTMSG("EvtA2dpSidebandInterfaceChange: bad "
+            "GUID_DEVINTERFACE_A2DP_SIDEBAND_AUDIO event ", FALSE);
+
+        goto Done;
+    }
+
+Done:
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
+CAdapterCommon::InitA2dpSideband()
+/*++
+
+Routine Description:
+
+Initialize the A2DP Sideband environment.
+
+Return Value:
+
+NT status code.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::InitA2dpSideband]"));
+
+    NTSTATUS                ntStatus = STATUS_SUCCESS;
+    WDF_WORKITEM_CONFIG     wiConfig;
+    WDF_OBJECT_ATTRIBUTES   attributes;
+    A2dpHpWorkItemContext * wiContext;
+    DECLARE_CONST_UNICODE_STRING(a2dpSidebandSupportInterface, L"A2dpSidebandSupport");
+    UNICODE_STRING sidebandSupportRefString;
+    RtlInitUnicodeString(&sidebandSupportRefString, NULL);
+
+    //
+    // Init spin-lock, linked lists, work-item, event, etc.
+    // Init all members to default values. This basic init should not fail.
+    //
+    m_A2dpSidebandWorkItem = NULL;
+    m_A2dpSidebandNotificationHandle = NULL;
+    ExInitializeFastMutex(&m_A2dpSidebandFastMutex);
+    InitializeListHead(&m_A2dpSidebandWorkTasks);
+    InitializeListHead(&m_A2dpSidebandDevices);
+    m_A2dpSidebandWorkTaskPoolElementSize = sizeof(A2dpHpWorkTask);
+    ExInitializeNPagedLookasideList(&m_A2dpSidebandWorkTaskPool,
+        NULL,
+        NULL,
+        POOL_NX_ALLOCATION,
+        m_A2dpSidebandWorkTaskPoolElementSize,
+        MINADAPTER_POOLTAG,
+        0);
+    //
+    // Enable A2DP Sideband Cleanup.
+    // Do any allocation/initialization that can fail after this point.
+    //
+    m_A2dpSidebandEnableCleanup = TRUE;
+
+    //
+    // Allocate a WDF work-item.
+    //
+    WDF_WORKITEM_CONFIG_INIT(&wiConfig, EvtA2dpSidebandInterfaceWorkItem);
+    wiConfig.AutomaticSerialization = FALSE;
+
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, A2dpHpWorkItemContext);
+    attributes.ParentObject = GetWdfDevice();
+    ntStatus = WdfWorkItemCreate(&wiConfig,
+        &attributes,
+        &m_A2dpSidebandWorkItem);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitA2dpSideband: WdfWorkItemCreate failed: 0x%x", ntStatus)),
+        Done);
+
+    wiContext = GetA2dpHpWorkItemContext(m_A2dpSidebandWorkItem);
+    wiContext->Adapter = this; // weak ref.
+
+    //
+    // Publish A2DP Sideband support interface.
+    //
+    ntStatus = IoRegisterDeviceInterface(
+        GetPhysicalDeviceObject(),
+        &GUID_SIDEBANDAUDIO_A2DP_SUPPORT_INTERFACE,
+        (PUNICODE_STRING)&a2dpSidebandSupportInterface,
+        &sidebandSupportRefString);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitA2dpSideband: IoRegisterDeviceInterface(GUID_SIDEBANDAUDIO_A2DP_SUPPORT_INTERFACE) failed: 0x%x", ntStatus)),
+        Done);
+
+    ntStatus = IoSetDeviceInterfaceState(&sidebandSupportRefString, TRUE);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitA2dpSideband: IoSetDeviceInterfaceState failed: 0x%x", ntStatus)),
+        Done);
+
+    //
+    // Register for A2DP Sideband interface changes.
+    //
+    ntStatus = IoRegisterPlugPlayNotification(
+        EventCategoryDeviceInterfaceChange,
+        PNPNOTIFY_DEVICE_INTERFACE_INCLUDE_EXISTING_INTERFACES,
+        (PVOID)&GUID_DEVINTERFACE_A2DP_SIDEBAND_AUDIO,
+        m_pDeviceObject->DriverObject,
+        EvtA2dpSidebandInterfaceChange,
+        (PVOID)this,
+        &m_A2dpSidebandNotificationHandle);
+
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("InitA2dpSideband: IoRegisterPlugPlayNotification(GUID_DEVINTERFACE_A2DP_SIDEBAND_AUDIO) failed: 0x%x", ntStatus)),
+        Done);
+
+    //
+    // Initialization completed.
+    //
+    ntStatus = STATUS_SUCCESS;
+
+Done:
+    RtlFreeUnicodeString(&sidebandSupportRefString);
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+VOID
+CAdapterCommon::CleanupA2dpSideband()
+/*++
+
+Routine Description:
+
+Cleanup the A2DP Sideband environment.
+
+--*/
+{
+    PAGED_CODE();
+    DPF_ENTER(("[CAdapterCommon::CleanupA2dpSideband]"));
+
+    //
+    // Do nothing if A2DP Sideband environment was not correctly initialized.
+    //
+    if (m_A2dpSidebandEnableCleanup == FALSE)
+    {
+        return;
+    }
+
+    //
+    // Unregister for A2DP Sideband interface changes.
+    //
+    if (m_A2dpSidebandNotificationHandle != NULL)
+    {
+        (void)IoUnregisterPlugPlayNotificationEx(m_A2dpSidebandNotificationHandle);
+        m_A2dpSidebandNotificationHandle = NULL;
+    }
+
+    //
+    // Wait for the A2DP Sideband worker thread to be done.
+    //
+    if (m_A2dpSidebandWorkItem != NULL)
+    {
+        WdfWorkItemFlush(m_A2dpSidebandWorkItem);
+        WdfObjectDelete(m_A2dpSidebandWorkItem);
+        m_A2dpSidebandWorkItem = NULL;
+    }
+
+    ASSERT(IsListEmpty(&m_A2dpSidebandWorkTasks));
+
+    //
+    // Stop and delete all A2dpSidebandDevices. We are the only thread accessing this list, 
+    // so there is no need to acquire the mutex.
+    //
+    while (!IsListEmpty(&m_A2dpSidebandDevices))
+    {
+        A2dpHpDevice  * a2dpHpDevice = NULL;
+        PLIST_ENTRY     le = NULL;
+
+        le = RemoveHeadList(&m_A2dpSidebandDevices);
+
+        a2dpHpDevice = A2dpHpDevice::GetA2dpHpDevice(le);
+        InitializeListHead(le);
+
+        // a2dpDevice is invalid after this call.
+        a2dpHpDevice->Stop();
+
+        // This should be the last reference.
+        a2dpHpDevice->Release();
+    }
+
+    ASSERT(IsListEmpty(&m_A2dpSidebandDevices));
+
+    //
+    // General cleanup.
+    //
+    ExDeleteNPagedLookasideList(&m_A2dpSidebandWorkTaskPool);
+}
+#endif  // SYSVAD_A2DP_SIDEBAND
+
 
 #pragma code_seg("PAGE")
 NTSTATUS
@@ -4089,7 +4778,7 @@ Return Value:
     PAGED_CODE();
     // Allocate the KEY_VALUE_FULL_INFORMATION structure
     ulFullInfoLength = sizeof(KEY_VALUE_FULL_INFORMATION) + MAX_DEVICE_REG_KEY_LENGTH;
-    kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulFullInfoLength, MINADAPTER_POOLTAG);
+    kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePool2(POOL_FLAG_NON_PAGED, ulFullInfoLength, MINADAPTER_POOLTAG);
     IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, Exit);
 
     // Iterate over each value and copy it to the destination
@@ -4109,7 +4798,7 @@ Return Value:
 
             ulFullInfoLength = ulFullInfoResultLength;
 
-            kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulFullInfoLength, MINADAPTER_POOLTAG);
+            kvFullInfo = (PKEY_VALUE_FULL_INFORMATION)ExAllocatePool2(POOL_FLAG_NON_PAGED, ulFullInfoLength, MINADAPTER_POOLTAG);
             IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
             // Try to enumerate the current value again
@@ -4125,7 +4814,7 @@ Return Value:
         }
 
         // Allocate the key value name string
-        pwstrKeyValueName = (PWSTR)ExAllocatePoolWithTag(NonPagedPoolNx, kvFullInfo->NameLength + sizeof(WCHAR)*2, MINADAPTER_POOLTAG);
+        pwstrKeyValueName = (PWSTR)ExAllocatePool2(POOL_FLAG_NON_PAGED, kvFullInfo->NameLength + sizeof(WCHAR)*2, MINADAPTER_POOLTAG);
         IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
         // Copy the key value name from the full information struct
@@ -4196,7 +4885,7 @@ Return Value:
 
     // Allocate the KEY_BASIC_INFORMATION structure
     ulBasicInfoLength = sizeof(KEY_BASIC_INFORMATION) + MAX_DEVICE_REG_KEY_LENGTH;
-    kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulBasicInfoLength, MINADAPTER_POOLTAG);
+    kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePool2(POOL_FLAG_NON_PAGED, ulBasicInfoLength, MINADAPTER_POOLTAG);
     IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, Exit);
 
     ntStatus = STATUS_SUCCESS;
@@ -4215,7 +4904,7 @@ Return Value:
             // Free and re-allocate the KEY_BASIC_INFORMATION structure with the correct size.
             ExFreePoolWithTag(kBasicInfo, MINADAPTER_POOLTAG);
             ulBasicInfoLength = ulBasicInfoResultLength;
-            kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePoolWithTag(NonPagedPoolNx, ulBasicInfoLength, MINADAPTER_POOLTAG);
+            kBasicInfo = (PKEY_BASIC_INFORMATION)ExAllocatePool2(POOL_FLAG_NON_PAGED, ulBasicInfoLength, MINADAPTER_POOLTAG);
             IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
             // Try to enumerate the current key again.
@@ -4231,7 +4920,7 @@ Return Value:
         }
 
         // Allocate the key name string 
-        pwstrKeyName = (PWSTR)ExAllocatePoolWithTag(NonPagedPoolNx, kBasicInfo->NameLength + sizeof(WCHAR), MINADAPTER_POOLTAG);
+        pwstrKeyName = (PWSTR)ExAllocatePool2(POOL_FLAG_NON_PAGED, kBasicInfo->NameLength + sizeof(WCHAR), MINADAPTER_POOLTAG);
         IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
         // Copy the key name from the basic information struct
@@ -4338,6 +5027,8 @@ Return Value:
 --*/
 
 {
+    PAGED_CODE();
+
     NTSTATUS            ntStatus = STATUS_SUCCESS;
     HANDLE              hDeviceInterfaceParametersKey(NULL);
     HANDLE              hTemplateDeviceInterfaceParametersKey(NULL);

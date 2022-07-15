@@ -26,6 +26,7 @@ Abstract:
 // CMiniportTopology 
 //   
 
+#pragma code_seg()
 class CMiniportTopology : 
     public CMiniportTopologySYSVAD,
     public IMiniportTopology,
@@ -34,6 +35,15 @@ class CMiniportTopology :
   private:
     eDeviceType             m_DeviceType;
 
+    typedef struct
+    {
+        AUDIOPOSTURE_ORIENTATION    Orientation;
+    }SYSVAD_AUDIOPOSTURE;
+
+    // Assuming that Each filter will have only one endpoint supporting posture
+    SYSVAD_AUDIOPOSTURE m_PostureCache;
+
+    AUDIORESOURCEMANAGEMENT_RESOURCEGROUP   m_ResourceGroup {0};
 
     union {
         PVOID               m_DeviceContext;
@@ -57,6 +67,7 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
+        m_PostureCache.Orientation = AUDIOPOSTURE_ORIENTATION_NOTROTATED;  
 
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
@@ -89,6 +100,32 @@ public:
         _In_        DWORD                                       JackCapabilities
     );
 
+    NTSTATUS PropertyHandlerAudioResourceGroup
+    (
+        _In_        PPCPROPERTY_REQUEST         PropertyRequest
+    );
+
+    NTSTATUS PropertyHandler_SetAudioResourceGroup
+    (
+        _In_        PPCPROPERTY_REQUEST         PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerAudioPostureOrientation
+    ( 
+        _In_        PPCPROPERTY_REQUEST                                         PropertyRequest,
+        _In_        ULONG                                                       cAudioPostureInfos,
+        _In_reads_(cAudioPostureInfos) PSYSVAD_AUDIOPOSTURE_INFO                *AudioPostureInfos
+    );
+
+    NTSTATUS PropertyHandler_AudioPostureOrientationBasicSupport
+    (
+        _In_ PPCPROPERTY_REQUEST    PropertyRequest
+    );
+
+    NTSTATUS PropertyHandler_SetAudioPostureOrientation
+    (
+        _In_ PPCPROPERTY_REQUEST                    PropertyRequest
+    );
     
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
     BOOL IsSidebandDevice()

@@ -164,7 +164,7 @@ NcReissueNotifyRequestWorkerRoutine (
     FLT_ASSERT( (US)->Length > 0 );                                          \
     if ( (US)->Buffer[(US)->Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) { \
         (US)->Length -= sizeof(WCHAR);                                   \
-    } 
+    }
 
 
 NTSTATUS
@@ -181,7 +181,7 @@ NcDirNotifyTranslateBuffers (
     _Out_ PULONG OutputBufferWritten,
     _In_ BOOLEAN ReturnRealMappingPaths,
     _In_ BOOLEAN ReturnInMappingOnly
-    ) 
+    )
 /*++
 
 Routine Description:
@@ -369,9 +369,9 @@ Return Value:
                     NcFreeUnicodeString( &NameString );
                 }
 
-                NameString.Buffer = ExAllocatePoolWithTag( PagedPool,
-                                                           EntryLength,
-                                                           NC_TAG );
+                NameString.Buffer = ExAllocatePoolZero( PagedPool,
+                                                        EntryLength,
+                                                        NC_TAG );
 
                 if (NameString.Buffer == NULL) {
 
@@ -475,9 +475,9 @@ Return Value:
 
                 EntryLengthExact = FIELD_OFFSET( FILE_NOTIFY_INFORMATION, FileName );
                 EntryLengthExact += (ReturnName->Length - UserRequestName->Length - sizeof(WCHAR));
-    
+
                 EntryLength = AlignToSize( EntryLengthExact, 8);
-    
+
                 //
                 //  We've done all we can.  Return now to let our caller deal
                 //  with the remaining buffer.
@@ -498,7 +498,7 @@ Return Value:
                     DestEntry = NULL;
                     break;
                 }
-    
+
                 //
                 //  Copy the relative path name, taking care to exclude the
                 //  initial slash.
@@ -513,7 +513,7 @@ Return Value:
                                ReturnName->Length - UserRequestName->Length - sizeof(WCHAR));
                 DestEntry->Action = SourceEntry->Action;
                 DestEntry->NextEntryOffset = EntryLength;
-    
+
                 //
                 //  Advance the destination that we're writing new entries by
                 //  however much we just consumed.
@@ -522,7 +522,7 @@ Return Value:
                 PrevDestEntry = DestEntry;
                 *OutputBufferWritten += EntryLength;
                 DestEntry = Add2Ptr( DestEntry, EntryLength );
-    
+
                 if (MungedName.Buffer != NULL) {
                     ExFreePoolWithTag( MungedName.Buffer, NC_GENERATE_NAME_TAG );
                     MungedName.Buffer = NULL;
@@ -540,7 +540,7 @@ Return Value:
             //  SourceEntry->NextEntryOffset is untrusted, since it may have been
             //  copied from a user-provided buffer.
             //
-            
+
             EntryLength = SourceEntry->NextEntryOffset;
 
             PointerResult = Add2Ptr( SourceEntry, EntryLength );
@@ -556,7 +556,7 @@ Return Value:
             //  2) We wrapped when advancing SourceEntry
             //  3) PointerResult is not within InputSystemBuffer
             //
-            
+
             if (!NT_SUCCESS( Status ) ||
                 (PointerResult < (PVOID)SourceEntry) ||
                 (PointerResult < Add2Ptr( InputSystemBuffer, sizeof(FILE_NOTIFY_INFORMATION) ))) {
@@ -566,7 +566,7 @@ Return Value:
                 Status = STATUS_INVALID_USER_BUFFER;
                 goto NcDirNotifyTranslateBuffersCleanup;
             }
-            
+
             SourceEntry = (PFILE_NOTIFY_INFORMATION)PointerResult;
 
             if ((EntryLength == 0)) {
@@ -585,7 +585,7 @@ Return Value:
             //  structure, terminate the loop by setting SourceEntry to NULL so
             //  we can at least return the valid entries we have.
             //
-            
+
             FLT_ASSERT( *InputBufferConsumed <= InputBufferLength );
 
             if ((SourceEntry != NULL) &&
@@ -601,7 +601,7 @@ Return Value:
 
                 *InputBufferConsumed = InputBufferLength;
                 SourceEntry = NULL;
-            }            
+            }
         }
 
     } except (NcExceptionFilter( GetExceptionInformation(), TRUE )) {
@@ -678,9 +678,9 @@ Return Value:
 
     PAGED_CODE();
 
-    RequestContext = ExAllocatePoolWithTag( PagedPool,
-                                            sizeof(NC_NOTIFY_REQUEST_CONTEXT), 
-                                            NC_TAG );
+    RequestContext = ExAllocatePoolZero( PagedPool,
+                                         sizeof(NC_NOTIFY_REQUEST_CONTEXT),
+                                         NC_TAG );
 
     if (RequestContext == NULL) {
         return STATUS_INSUFFICIENT_RESOURCES;
@@ -737,7 +737,7 @@ Return Value:
     FltReleaseContext( NotifyRequestContext->UserHandleContext );
 
     ExFreePoolWithTag( NotifyRequestContext, NC_TAG );
-    
+
 }
 
 NTSTATUS
@@ -805,11 +805,11 @@ Return Value:
         //  MDL now so we can copy to system address space rather than
         //  back to the originating usermode process.
         //
-    
+
         Status = FltLockUserBuffer( PrimaryRequest );
 
         if (!NT_SUCCESS( Status )) {
-    
+
             return Status;
         }
 
@@ -823,12 +823,12 @@ Return Value:
         //
 
 #pragma warning(suppress: 6014)
-        MyBuffer = ExAllocatePoolWithTag( PagedPool,
-                                          BufferLength,
-                                          NC_TAG );
-    
+        MyBuffer = ExAllocatePoolZero( PagedPool,
+                                       BufferLength,
+                                       NC_TAG );
+
         if (MyBuffer == NULL) {
-    
+
             Status = STATUS_INSUFFICIENT_RESOURCES;
             return Status;
         }
@@ -1176,7 +1176,7 @@ Return Value:
                                        NULL,
                                        NULL,
                                        FLT_FILE_NAME_OPENED | FLT_FILE_NAME_QUERY_DEFAULT,
-                                       &FileNameInformation ); 
+                                       &FileNameInformation );
 
     if (!NT_SUCCESS( Status )) {
 
@@ -1272,7 +1272,7 @@ Return Value:
     //
     //  Before looking at the context, we have to acquire the lock.
     //
-    
+
     NcLockStreamHandleContext( HandleContext );
     UnlockContext = TRUE;
 
@@ -1306,9 +1306,9 @@ Return Value:
 
     if (NotCtx->UserRequestName.Buffer == NULL) {
 
-        NotCtx->UserRequestName.Buffer = ExAllocatePoolWithTag( PagedPool,
-                                                                FileNameInformation->Name.Length,
-                                                                NC_TAG );
+        NotCtx->UserRequestName.Buffer = ExAllocatePoolZero( PagedPool,
+                                                             FileNameInformation->Name.Length,
+                                                             NC_TAG );
 
         if (NotCtx->UserRequestName.Buffer == NULL) {
 
@@ -1683,13 +1683,13 @@ Return Value:
             //  the parent specifically so that a caller can monitor changes
             //  to the mapping itself.
             //
-        
+
             InitializeObjectAttributes( &MappingParentAttributes,
                                         &InstanceContext->Mapping.RealMapping.LongNamePath.ParentPath,
                                         OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                         NULL,
                                         NULL);
-        
+
             Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                          FltObjects->Instance,                 // InstanceOffsets
                                          &MappingParentHandle,                 // Returned Handle
@@ -1706,7 +1706,7 @@ Return Value:
                                          0,                                    // EA Length
                                          IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                          FltObjects->FileObject );             // Transaction info
-           
+
             if (!NT_SUCCESS( Status )) {
 
                 //
@@ -1750,9 +1750,9 @@ Return Value:
                 goto NcPreNotifyDirectoryCleanup;
             }
 
-            MappingParentName = ExAllocatePoolWithTag( PagedPool,
-                                                       FileInfoInternalHandle->Name.Length,
-                                                       NC_TAG );
+            MappingParentName = ExAllocatePoolZero( PagedPool,
+                                                    FileInfoInternalHandle->Name.Length,
+                                                    NC_TAG );
 
             if (MappingParentName == NULL) {
 
@@ -1838,7 +1838,7 @@ Return Value:
                 //
                 //  The only way to be here is if a cleanup request has
                 //  occurred and we're aborting.
-                //  
+                //
 
                 FLT_ASSERT( NotCtx->CleanupSeen );
 
@@ -2054,20 +2054,20 @@ Return Value:
 NcPreNotifyDirectoryCleanup:
 
     if (ReturnValue == FLT_PREOP_COMPLETE) {
- 
+
         //
         //  We need to write back results of query.
         //
- 
+
         Data->IoStatus.Status = Status;
- 
+
         if (NT_SUCCESS( Status )) {
- 
+
             //success
             Data->IoStatus.Information = SizeWeReturn;
 
         } else {
- 
+
             //failure
             Data->IoStatus.Information = 0;
 
@@ -2136,14 +2136,14 @@ NcPreNotifyDirectoryCleanup:
         NcCleanupSubNotifyRequest( NewMappingParentRequest );
         NotCtx->MappingRequest = NewMappingParentRequest = NULL;
     }
- 
+
     if (InstanceContext != NULL) {
 
         FltReleaseContext( InstanceContext );
     }
- 
+
     if (UnlockContext) {
- 
+
         FLT_ASSERT( HandleContext != NULL );
         NcUnlockStreamHandleContext( HandleContext );
     }
@@ -2160,12 +2160,12 @@ NcPreNotifyDirectoryCleanup:
     if (MappingParentRequestContext) {
         NcFreeNotifyRequestContext( MappingParentRequestContext );
     }
- 
+
     if (HandleContext != NULL) {
 
         FltReleaseContext( HandleContext );
     }
- 
+
     if (FileNameInformation != NULL) {
 
         FltReleaseFileNameInformation( FileNameInformation );
@@ -2237,7 +2237,7 @@ Return Value:
     //
     //  Before looking at the context, we have to acquire the lock.
     //
-    
+
     NcLockStreamHandleContext( HandleContext );
     UnlockContext = TRUE;
 
@@ -2300,7 +2300,7 @@ Return Value:
                 //  note to tell the app that it must rescan as soon as it
                 //  asks us again.
                 //
-    
+
                 NotCtx->InsufficientBufferSeen = TRUE;
             }
         }
@@ -2332,7 +2332,7 @@ Return Value:
         //
         //  If this assumption is wrong, we need to be smarter about whether
         //  we want to complete the user's request in this path or not.
-        //  
+        //
 
         FLT_ASSERT( Data == NotCtx->UserRequest );
         goto NcPostNotifyDirectoryRealCleanup;
@@ -2356,16 +2356,16 @@ Return Value:
 
         //
         //  Allocate a new buffer and copy the contents.  Note that this is
-        //  particularly important with this call, since it's not always 
+        //  particularly important with this call, since it's not always
         //  system buffered; the contents are free to change underneath us.
         //  This allocation protects us against that, but we still must be
         //  paranoid touching the buffer, since we cannot trust that it has
         //  any integrity at this point.
         //
 
-        SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                              SizeActuallyReturned,
-                                              NC_TAG );
+        SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                           SizeActuallyReturned,
+                                           NC_TAG );
 
         if (SourceBuffer == NULL) {
 
@@ -2457,17 +2457,17 @@ Return Value:
                     //  process the data now because we won't know which call
                     //  generated the data later.
                     //
-    
-                    NotCtx->BufferToFree = ExAllocatePoolWithTag( PagedPool,
-                                                                  BufferSize,
-                                                                  NC_TAG );
-    
+
+                    NotCtx->BufferToFree = ExAllocatePoolZero( PagedPool,
+                                                               BufferSize,
+                                                               NC_TAG );
+
                     if (NotCtx->BufferToFree == NULL) {
-    
+
                         Status = STATUS_INSUFFICIENT_RESOURCES;
                         goto NcPostNotifyDirectoryRealCleanup;
                     }
-    
+
                 }
 
                 DestBuffer = NotCtx->BufferToFree;
@@ -2558,7 +2558,7 @@ Return Value:
         //  request but we filtered out all the contents.  We certainly
         //  don't want to tell the caller nothing whatsoever happened, so we
         //  try to reissue this request.
-        //  
+        //
 
         if (SizeWeReturn == 0) {
 
@@ -2651,7 +2651,7 @@ Return Value:
 
     } else {
 
-        // 
+        //
         //  If the filesystem returned something less than one single
         //  entry, return nothing.
         //
@@ -2688,7 +2688,7 @@ NcPostNotifyDirectoryRealCleanup:
             //
             //  This routine will free the FLT_CALLBACK_DATA.
             //
-            
+
             NcCleanupSubNotifyRequest( Data );
         }
     }
@@ -2708,12 +2708,12 @@ NcPostNotifyDirectoryRealCleanup:
         NotCtx->UserRequest->IoStatus.Status = Status;
 
         if (NT_SUCCESS( Status )) {
- 
+
             //success
             NotCtx->UserRequest->IoStatus.Information = SizeWeReturn;
 
         } else {
- 
+
             //failure
             NotCtx->UserRequest->IoStatus.Information = 0;
         }
@@ -2756,9 +2756,9 @@ NcPostNotifyDirectoryRealCleanup:
 
         ExFreePoolWithTag( SourceBuffer, NC_TAG );
     }
- 
+
     if (UnlockContext) {
- 
+
         FLT_ASSERT( HandleContext != NULL );
         NcUnlockStreamHandleContext( HandleContext );
     }
@@ -2770,7 +2770,7 @@ NcPostNotifyDirectoryRealCleanup:
     if (!ReissuedRequest) {
         NcFreeNotifyRequestContext( RequestContext );
     }
- 
+
 }
 
 FLT_POSTOP_CALLBACK_STATUS
@@ -3059,7 +3059,7 @@ Return Value:
     //  is owned by the filesystem, so we leave the filesystem to deal with this
     //  when it gets the cleanup request.
     //
-    //  Cancel any outstanding requests we have issued (if any.)  
+    //  Cancel any outstanding requests we have issued (if any.)
     //
 
     if ((NotCtx->Mode == Filter) ||
@@ -3215,7 +3215,7 @@ Return Value:
     //
     //  Before looking at the context, we have to acquire the lock.
     //
-    
+
     NcLockStreamHandleContext( HandleContext );
     UnlockContext = TRUE;
 
@@ -3223,7 +3223,7 @@ Return Value:
     //  We should only ever be called on the user's request.
     //  It follows that this is a Merge or Filter operation.
     //
-    
+
     FLT_ASSERT( Data == NotCtx->UserRequest );
     FLT_ASSERT( NotCtx->Mode == Filter || NotCtx->Mode == Merge );
 
@@ -3250,7 +3250,7 @@ Return Value:
     //
 
     if (NotCtx->BufferToFree != NULL) {
-    
+
         ExFreePoolWithTag( NotCtx->BufferToFree, NC_TAG );
         NotCtx->BufferToFree = NULL;
         NotCtx->BufferLength = 0;
@@ -3272,8 +3272,8 @@ Return Value:
     FltReleaseContext( HandleContext );
 }
 
-NTSTATUS 
-NcStreamHandleContextNotCreate( 
+NTSTATUS
+NcStreamHandleContextNotCreate(
     _Out_ PNC_DIR_NOT_CONTEXT Context
     )
 /*++
@@ -3321,9 +3321,9 @@ Return Value:
     return Status;
 }
 
-VOID 
+VOID
 NcStreamHandleContextNotCleanup(
-    _In_ PNC_STREAM_HANDLE_CONTEXT HandleContext 
+    _In_ PNC_STREAM_HANDLE_CONTEXT HandleContext
     )
 /*++
 
@@ -3392,17 +3392,17 @@ Return Value:
     //  Although requests may remain, if we've been through cleanup our post
     //  routine will ensure they can't do squat.
     //
-    
+
     if (NotCtx->UserRequestName.Buffer != NULL) {
         NcFreeUnicodeString( &NotCtx->UserRequestName );
     }
-    
+
     if (NotCtx->MappingParentName.Buffer != NULL) {
         NcFreeUnicodeString( &NotCtx->MappingParentName );
     }
-    
+
     if (NotCtx->BufferToFree != NULL) {
-    
+
         ExFreePoolWithTag( NotCtx->BufferToFree, NC_TAG );
         NotCtx->BufferToFree = NULL;
         NotCtx->BufferLength = 0;
@@ -3412,16 +3412,16 @@ Return Value:
         FltReleaseContext( NotCtx->InstanceContext );
         NotCtx->InstanceContext = NULL;
     }
-    
+
     NotCtx->Mode = Uninitialized;
 
     NcUnlockStreamHandleContext( HandleContext );
     UnlockContext = FALSE;
 }
 
-VOID 
+VOID
 NcStreamHandleContextNotClose(
-    _In_ PNC_DIR_NOT_CONTEXT Context 
+    _In_ PNC_DIR_NOT_CONTEXT Context
     )
 /*++
 

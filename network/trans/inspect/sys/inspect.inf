@@ -12,6 +12,7 @@
     Provider    = %ProviderString%
     CatalogFile = Inspect.cat
     DriverVer   = 11/24/2014,14.24.55.836
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %InspectDisk%,,,""
@@ -23,17 +24,19 @@
     DefaultDestDir      = 12                                               ; %WinDir%\System32\Drivers
     Inspect.DriverFiles = 12                                               ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$]
     OptionDesc = %InspectServiceDesc%
     CopyFiles  = Inspect.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.Services]
     AddService = %InspectServiceName%,,Inspect.Service
 
-[DefaultUninstall]
+[DefaultUninstall.NT$ARCH$]
+    LegacyUninstall = 1
     DelFiles = Inspect.DriverFiles
 
-[DefaultUninstall.Services]
+[DefaultUninstall.NT$ARCH$.Services]
+    LegacyUninstall = 1
     DelService = %InspectServiceName%,0x200                                ; SPSVCINST_STOPSERVICE
     DelReg     = Inspect.DelRegistry
 
