@@ -210,7 +210,7 @@ Return Value:
 
 --*/
 {
-    UINT8 index;
+    ULONG index;
     PNDIS_RSS_PROCESSOR processor;
 
     for (index = 0; 
