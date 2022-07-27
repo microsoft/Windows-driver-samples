@@ -32,11 +32,17 @@ SimdeviceUMDF.dll=1
 ; =================== Simdevice Sample UMDF Driver ==================================
 
 [SimdeviceUMDF_Install.NT]
+Include=WUDFRD.INF
+Needs=WUDFRD.NT
 CopyFiles=UMDriverCopy
 
 [SimdeviceUMDF_Install.NT.hw]
+Include=WUDFRD.INF
+Needs=WUDFRD.NT.HW
 
 [SimdeviceUMDF_Install.NT.Services]
+Include=WUDFRD.INF
+Needs=WUDFRD.NT.Services
 AddService=SimdeviceUMDF,0x000001fa,SimdeviceUMDF_ServiceInstall
 
 [SimdeviceUMDF_Install.NT.Wdf]
