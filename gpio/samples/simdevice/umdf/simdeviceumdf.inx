@@ -32,12 +32,17 @@ SimdeviceUMDF.dll=1
 ; =================== Simdevice Sample UMDF Driver ==================================
 
 [SimdeviceUMDF_Install.NT]
+Include=WUDFRD.INF
+Needs=WUDFRD.NT
 CopyFiles=UMDriverCopy
 
 [SimdeviceUMDF_Install.NT.hw]
+Include=WUDFRD.INF
+Needs=WUDFRD.NT.HW
 
 [SimdeviceUMDF_Install.NT.Services]
-AddService=SimdeviceUMDF,0x000001fa,SimdeviceUMDF_ServiceInstall
+Include=WUDFRD.INF
+Needs=WUDFRD.NT.Services
 
 [SimdeviceUMDF_Install.NT.Wdf]
 UmdfService=SimdeviceUMDF,SimdeviceUMDF_Install
@@ -52,13 +57,6 @@ UmdfHostProcessSharing=ProcessSharingDisabled
 [SimdeviceUMDF_Install]
 UmdfLibraryVersion=$UMDFVERSION$
 ServiceBinary=%12%\UMDF\SimdeviceUMDF.dll
-
-[SimdeviceUMDF_ServiceInstall]
-DisplayName = %SimdeviceUMDFDisplayName%
-ServiceType = 1
-StartType = 3
-ErrorControl = 1
-ServiceBinary = %12%\WUDFRd.sys
 
 [DestinationDirs]
 UMDriverCopy=12,UMDF ; copy to drivers\UMDF
