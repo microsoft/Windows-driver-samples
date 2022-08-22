@@ -32,4 +32,3 @@ jobs:
         env:
           Configuration: ${{ matrix.configuration }}
           Platform: ${{ matrix.platform }}
-
