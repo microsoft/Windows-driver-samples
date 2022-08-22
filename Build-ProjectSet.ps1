@@ -19,5 +19,5 @@ $ProjectSet.GetEnumerator() | ForEach-Object {
         return;
     }
     $directory = $_.Value
-    .\Build-Project -Directory $directory -ProjectName $ProjectName
+    .\Build-Project -Directory $directory -ProjectName $ProjectName -Configuration $Configuration -Platform $Platform
 }
