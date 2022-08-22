@@ -1,8 +1,9 @@
-name: Build all driver samples
+name: Build changes to driver samples
 on:
-  push:
+  pull_request:
     branches:
-      - actions-test
+      - main
+      - develop
     paths-ignore:
       - '**.md'
       - 'LICENSE'
@@ -12,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Debug, Release]
-        platform: [x64]
+        platform: [x64, arm64]
     runs-on: windows-2022
     env:
       Solution_Path: general\echo\kmdf\kmdfecho.sln
@@ -25,10 +26,15 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Get all available solutions, then build
-        id: build-all-projects
+      - name: Get changed files
+        id: get-changed-files
+        uses: tj-actions/changed-files@v27
+
+      - name: Get related .sln files to changed files, then build
+        id: build-changed-projects
         run: |
-          .\Build-AllProjects.ps1
+          $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(' ')
+          .\.github\scripts\Build-ChangedProjects.ps1 -ChangedFiles $changedFiles
         env:
           Configuration: ${{ matrix.configuration }}
           Platform: ${{ matrix.platform }}
