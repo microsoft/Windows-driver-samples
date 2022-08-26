@@ -29,5 +29,10 @@ $ProjectSet.GetEnumerator() | ForEach-Object {
 
 if ($failSet.Count -gt 0)
 {
+    Write-Output "Some projects were built with errors:"
+    foreach ($failedProject in $failSet)
+    {
+        Write-Output "$failedProject"
+    }
     Write-Error "Some projects were built with errors."
 }
