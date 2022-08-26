@@ -31,7 +31,7 @@ jobs:
         id: get-changed-files
         uses: tj-actions/changed-files@v27
 
-      - name: Get related .sln files to changed files, then build
+      - name: Retrieve and build solutions from changed files
         id: build-changed-projects
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(' ')

@@ -59,5 +59,6 @@ Write-Output "[$ProjectName] ⚒️ Building project..."
 msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo
 if ($LASTEXITCODE -ne 0)
 {
-    Write-Output "❌ Build failed. Log available at $errorLogFilePath"
+    Write-Warning "❌ Build failed. Log available at $errorLogFilePath"
+    exit 1
 }

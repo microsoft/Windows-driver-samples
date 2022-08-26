@@ -25,7 +25,7 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Get all available solutions, then build
+      - name: Retrieve and build all available solutions
         id: build-all-projects
         run: |
           .\Build-AllProjects.ps1
