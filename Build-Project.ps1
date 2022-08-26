@@ -50,7 +50,7 @@ foreach ($line in Get-Content -Path $solutionFile)
 if (-not $configurationIsSupported)
 {
     Write-Output "[$ProjectName] ⏩ Skipped. Configuration $Configuration|$Platform not supported."
-    return;
+    exit 0
 }
 
 $errorLogFilePath = "$LogFilesDirectory\$ProjectName.err"
