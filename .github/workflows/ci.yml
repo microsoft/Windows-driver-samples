@@ -2,7 +2,8 @@ name: Build all driver samples
 on:
   push:
     branches:
-      - actions-test
+      - main
+      - develop
     paths-ignore:
       - '**.md'
       - 'LICENSE'
