@@ -1214,7 +1214,7 @@ Return Value:
                                                 &IoStatus,
                                                 0 );
 
-                SuccessfulPurge = NT_SUCCESS( IoStatus.Status );
+                SuccessfulPurge = NT_SUCCESS( IoStatus.Status ) && (IoStatus.Status != STATUS_CACHE_PAGE_LOCKED);
 
 #else
 
