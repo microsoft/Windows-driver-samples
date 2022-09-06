@@ -7,7 +7,7 @@ foreach ($file in $solutionFiles)
 {
     $dir = (Get-Item $file).DirectoryName
     $dir_norm = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
-    echo "🔎 Found project [$dir_norm] at $dir"
+    Write-Output "`u{1F50E} Found project [$dir_norm] at $dir"
     $projectSet[$dir_norm] = $dir
 }
 

@@ -4,7 +4,34 @@ param(
     [string]$Platform = $env:Platform
 )
 
-#TODO validate params
+if ([string]::IsNullOrEmpty($Configuration))
+{
+    $Configuration = "Debug"
+}
+
+if ([string]::IsNullOrEmpty($Platform))
+{
+    $Platform = "x64"
+}
+
+$oldPreference = $ErrorActionPreference
+$ErrorActionPreference = "stop"
+try
+{
+    # Check that msbuild can be called before trying anything.
+    Get-Command "msbuild" | Out-Null
+}
+catch
+{
+    Write-Host "`u{274C} msbuild cannot be called from current environment. Check that msbuild is set in current path (for example, that it is called from a Visual Studio developer command)."
+    Write-Error "msbuild cannot be called from current environment."
+    exit 1
+}
+finally
+{
+    $ErrorActionPreference = $oldPreference
+}
+
 
 $exclusionsSet = @{}
 $failSet = @()
@@ -16,7 +43,7 @@ $ProjectSet.GetEnumerator() | ForEach-Object {
     $projectName = $_.Key
     if ($exclusionsSet.ContainsKey($projectName))
     {
-        Write-Output "[$projectName] ⏩ Excluded and skipped. Reason: $($exclusionsSet[$projectName])"
+        Write-Output "[$projectName] `u{23E9} Excluded and skipped. Reason: $($exclusionsSet[$projectName])"
         return;
     }
     $directory = $_.Value
