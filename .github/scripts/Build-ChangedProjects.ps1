@@ -9,7 +9,7 @@ $projectSet = @{}
 foreach ($file in $ChangedFiles)
 {
     if (-not (Test-Path $file)) {
-        Write-Output "❔ Changed file $file cannot be found"
+        Write-Output "`u{2754} Changed file $file cannot be found"
         continue
     }
     $dir = (Get-Item $file).DirectoryName
@@ -19,11 +19,11 @@ foreach ($file in $ChangedFiles)
     }
     if ($dir -eq $root)
     {
-        Write-Output "❔ Changed file $file does not match a project."
+        Write-Output "`u{2754} Changed file $file does not match a project."
         continue
     }
     $projectName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
-    Write-Output "🔎 Found project [$projectName] at $dir from changed file $file"
+    Write-Output "`u{1F50E} Found project [$projectName] at $dir from changed file $file"
     if (-not ($projectSet.ContainsKey($projectName)))
     {
         $projectSet[$projectName] = $dir
