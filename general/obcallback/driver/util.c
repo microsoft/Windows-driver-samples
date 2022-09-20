@@ -33,16 +33,14 @@ void TdSetCallContext (
 {
     PTD_CALL_CONTEXT CallContext;
 
-    CallContext = (PTD_CALL_CONTEXT) ExAllocatePoolWithTag (
-        PagedPool, sizeof(TD_CALL_CONTEXT), TD_CALL_CONTEXT_TAG
+    CallContext = (PTD_CALL_CONTEXT) ExAllocatePool2 (
+        POOL_FLAG_PAGED, sizeof(TD_CALL_CONTEXT), TD_CALL_CONTEXT_TAG
     );
 
     if (CallContext == NULL)
     {
         return;
     }
-
-    RtlZeroMemory (CallContext, sizeof(TD_CALL_CONTEXT));
 
     CallContext->CallbackRegistration = CallbackRegistration;
     CallContext->Operation  = PreInfo->Operation;

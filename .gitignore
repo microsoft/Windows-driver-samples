@@ -20,8 +20,11 @@ bld/
 [Bb]in/
 [Oo]bj/
 
-# Visual Studo 2015 cache/options directory
+# Visual Studio 2015 cache/options directory
 .vs/
+
+# Visual Studio Code directory
+.vscode/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -54,6 +57,7 @@ dlldata.c
 *.tmp
 *.tmp_proj
 *.log
+*.tlog
 *.vspscc
 *.vssscc
 .builds
