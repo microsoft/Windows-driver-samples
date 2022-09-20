@@ -334,7 +334,11 @@ Routine Description:
     for (i = 0; i < count; i ++) {
 
         ioTarget = WdfCollectionGetItem(deviceExtension->TargetDeviceCollection, i);
-        WdfIoTargetStart(ioTarget);
+        NTSTATUS status = WdfIoTargetStart(ioTarget);
+        if (!NT_SUCCESS(status)) {
+            KdPrint(("WdfIoTargetStart failed: 0x%x\n", status));
+            continue;
+        }
 
         targetDeviceInfo = GetTargetDeviceInfo(ioTarget);
         WdfTimerStart(targetDeviceInfo->TimerForPostingRequests,
