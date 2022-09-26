@@ -12,4 +12,4 @@ network\wlan\wdi,Invalid architecture
 print\oem printer customization plug-in samples\c++,Invalid architecture
 print\v4printdriversamples\printerextensionsample,Invalid architecture
 tree,Missing headers
-video\indirectdisplay,ARM64 Warning C4530: C++ exception handler used, but unwind semantics are not enabled
+video\indirectdisplay,ARM64 Warning C4530: C++ exception handler used but unwind semantics are not enabled
