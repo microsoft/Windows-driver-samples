@@ -25,6 +25,7 @@ Provider = %ManufacturerName%
 ExtensionId = {aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa} ; replace with your own GUID {zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz}
 CatalogFile = osrfx2_DCHU_extension.cat
 DriverVer = 05/16/2017,15.14.36.721
+PnpLockdown = 1
 
 [Manufacturer]
 %ManufacturerName% = OsrFx2Extension, NT$ARCH$
