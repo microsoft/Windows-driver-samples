@@ -15,6 +15,7 @@ ClassGUID={4d36e967-e325-11ce-bfc1-08002be10318}
 Class=DiskDrive
 DriverVer=08/27/1999,5.2.1425.0
 ;CatalogFile=your_cat_here.cat	; Supply your own catalog file here.
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir   = 12

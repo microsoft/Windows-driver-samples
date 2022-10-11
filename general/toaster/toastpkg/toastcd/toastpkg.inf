@@ -28,6 +28,7 @@ DriverVer=09/21/2006,6.0.5736.1
 CatalogFile.NTx86  = tostx86.cat
 CatalogFile.NTIA64 = tostia64.cat
 CatalogFile.NTAMD64 = tstamd64.cat
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12

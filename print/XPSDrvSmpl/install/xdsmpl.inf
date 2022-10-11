@@ -22,6 +22,7 @@ Provider=%ProviderString%
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=10/17/2008,6.1.6930.0
+PnpLockdown=1
 
 [Manufacturer]
 %ManufacturerName%=Standard,NTx86,NTia64,NTamd64,NTx86.6.0,NTia64.6.0,NTamd64.6.0,NTarm64.6.0

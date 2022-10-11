@@ -11,7 +11,8 @@ Class=Image
 ClassGUID={6bdd1fc6-810f-11d0-bec7-08002be2092f}
 Provider=%ProviderString%
 DriverVer=10/16/2015,1.0.0.2
-CatalogFile = prodscan.cat
+CatalogFile=prodscan.cat
+PnpLockdown=1
 
 [SourceDisksFiles]
 ProdScan.dll=1
