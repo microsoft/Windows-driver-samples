@@ -36,8 +36,7 @@ CoInstaller_CopyFiles = 11
 ; ================= Class section =====================
 
 [ClassInstall32]
-Addreg=ToasterClassReg     
-CopyFiles=ToasterClassInstallerCopyFiles
+Addreg=ToasterClassReg
 
 [ToasterClassReg]
 HKR,,,0,%ClassName%
