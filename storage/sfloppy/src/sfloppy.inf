@@ -11,6 +11,7 @@ ClassGuid={4D36E980-E325-11CE-BFC1-08002BE10318}
 Provider=%ProviderString%
 CatalogFile=ddk_sample.cat
 DriverVer=05/17/2002,5.2.3635.0
+PnpLockdown=1
 
 ;You must specify which platform is supported by each SourceDisksNames section
 ;Valid platform identifiers include .x86, .ia64, .alpha, .axp64

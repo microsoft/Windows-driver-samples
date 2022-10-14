@@ -9,6 +9,7 @@ ClassGUID={6bdd1fc6-810f-11d0-bec7-08002be2092f}
 Provider=%ProviderString%
 DriverVer=09/20/2004,1.0.0.7
 CatalogFile=wiadriver.cat
+PnpLockdown=1
 
 [SourceDisksFiles]
 wiadriverex.dll=1

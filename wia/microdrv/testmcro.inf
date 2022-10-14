@@ -9,6 +9,7 @@ ClassGUID={6bdd1fc6-810f-11d0-bec7-08002be2092f}
 Provider=%ProviderString%
 DriverVer=11/02/2007,1.0.0.1
 CatalogFile=testmcro.cat
+PnpLockdown=1
 
 [SourceDisksFiles.x86]
 testmcro.dll=1
