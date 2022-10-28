@@ -80,15 +80,12 @@ MbbBusInitializeByWdf(
     UCHAR numInterfaces;
     UCHAR interfaceIndex;
     UCHAR i;
-    UCHAR index;
     USHORT DescriptorSize = 0;
-    UCHAR DummyBuffer;
     UCHAR CurrentSetting;
     USHORT BulkInPacketSize = 0;
     WDF_USB_CONTINUOUS_READER_CONFIG ReaderConfig;
 
     PIRP UsbSsIrp = NULL;
-    USB_IDLE_CALLBACK_INFO UsbSsCallback;
 
     PBUS_OBJECT BusObject = NULL;
 
@@ -1367,7 +1364,6 @@ VOID InterruptPipeReadComplete(__in WDFUSBPIPE Pipe, __in WDFMEMORY Memory, __in
     PVOID Buffer = NULL;
     PUSB_CDC_NOTIFICATION CdcNotification = NULL;
     PUSB_CDC_NOTIFICATION_SPEED_CHANGE CdcSpeedChangeNotification = NULL;
-    MBB_CONNECTION_STATE ConnectStateChange;
     ULONG TempBytesTransfered = (ULONG)NumBytesTransfered;
     UCHAR IndicateBuffer[INTERRUPT_REASSEMBLY_BUFFER_SIZE];
     ULONG BufferLength = 0;
@@ -1409,7 +1405,6 @@ MbbBusQueryBusParameters(__in MBB_BUS_HANDLE BusHandle, __out PMBB_BUS_PARAMETER
 
 {
     PBUS_OBJECT BusObject = (PBUS_OBJECT)BusHandle;
-    NTSTATUS Status;
 
     RtlZeroMemory(BusParameters, sizeof(*BusParameters));
 
@@ -1943,7 +1938,6 @@ MbbBusClose(__in MBB_BUS_HANDLE BusHandle, __in ULONG TransactionId, __in BOOLEA
     MBB_CLOSE_MESSAGE CloseMessage;
     PMBB_CLOSE_DONE CloseDoneMessage = NULL;
     UCHAR ReadBuffer[256];
-    WDF_USB_CONTINUOUS_READER_CONFIG ReaderConfig;
 
     PUSB_DEVICE_CONTEXT usbDeviceContext = NULL;
 

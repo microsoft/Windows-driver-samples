@@ -3,6 +3,7 @@
 
 #include <ntddk.h>
 #include <ntstrsafe.h>
+
 #include <wdm.h>
 #include <wdf.h>
 #include <wdfminiport.h>
@@ -28,9 +29,10 @@
 #include <devpkey.h>
 
 #include <limits.h>
-#include "mbbncm.h"
-#include "mbbmessages.h"
 
+#include "mbbncm.h"
+
+#include "mbbmessages.h"
 #define MBB_MAX_NUMBER_OF_SESSIONS 17 // including the default session for the physical/primary interface
 #define MBB_DEFAULT_SESSION_ID 0      // for physical/primay interface. Must be 0. Do NOT change it.
 #define MBB_INVALID_SESSION_ID MBB_MAX_NUMBER_OF_SESSIONS

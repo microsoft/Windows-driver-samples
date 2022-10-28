@@ -9,6 +9,7 @@
 // Its context is similar to MINIPORT_ADAPTER_CONTEXT in wmbclass.sys.
 //
 // See wmbclass.h for the definition of MBB_DEVICE_CONTEXT
+#pragma once
 
 typedef struct _WMBCLASS_DEVICE_CONTEXT
 {

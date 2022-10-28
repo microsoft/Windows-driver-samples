@@ -764,7 +764,7 @@ void EvtTxQueueAdvance(_In_ NETPACKETQUEUE TxQueue)
     NET_RING * pr = NetRingCollectionGetPacketRing(rings);
      while (pr->BeginIndex != pr->EndIndex)
     {
-        UINT32 const packetIndex = pr->BeginIndex;
+        UINT32 packetIndex = pr->BeginIndex;
         auto packet = NetRingGetPacketAtIndex(pr, packetIndex);
         if (packet->Ignore)
         {
@@ -806,7 +806,7 @@ void EvtTxQueueAdvance(_In_ NETPACKETQUEUE TxQueue)
                 break;
             }
 
-            UINT32 const packetIndex = pr->BeginIndex;
+            packetIndex = pr->BeginIndex;
             packet = NetRingGetPacketAtIndex(pr, packetIndex);
         }
 

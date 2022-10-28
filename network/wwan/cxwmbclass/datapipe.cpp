@@ -199,7 +199,6 @@ NTSTATUS
 MbbUsbDeviceStartDataPipes(__in PUSB_DEVICE_CONTEXT usbDeviceContext)
 {
     NTSTATUS Status;
-    NTSTATUS TempStatus;
 
     WdfWaitLockAcquire(usbDeviceContext->PipeStateLock, NULL);
 
@@ -263,9 +262,7 @@ MbbBusStartDataPipes(__in MBB_BUS_HANDLE BusHandle)
 
 VOID MbbUsbDeviceStopDataPipes(__in PUSB_DEVICE_CONTEXT usbDeviceContext)
 {
-    WDF_USB_INTERFACE_SELECT_SETTING_PARAMS SettingParams;
     WDFUSBINTERFACE UsbInterface = NULL;
-    NTSTATUS Status;
 
     WdfWaitLockAcquire(usbDeviceContext->PipeStateLock, NULL);
 

@@ -1,7 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-
+#pragma once
 NTSTATUS
 SendSyncControlCommand(
     __in WDFUSBDEVICE WdfUsbDevice,

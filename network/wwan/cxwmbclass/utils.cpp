@@ -2,7 +2,7 @@
 //    Copyright (C) Microsoft.  All rights reserved.
 //
 #include <precomp.h>
-
+#include "util.h"
 NTSTATUS
 SendSyncControlCommand(
     __in WDFUSBDEVICE WdfUsbDevice,
@@ -107,7 +107,6 @@ ReadInterrupt(_In_ PBUS_OBJECT BusObject, _Inout_updates_bytes_(BufferLength) PU
 {
 
     NTSTATUS status;
-    WDF_OBJECT_ATTRIBUTES attributes;
     WDFMEMORY memHandle = NULL;
 
     WDFREQUEST request = NULL;

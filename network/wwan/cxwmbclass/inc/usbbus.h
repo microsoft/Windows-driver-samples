@@ -1,14 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-
-#define ALLOCATE_PAGED_POOL(_y) ExAllocatePool2(POOL_FLAG_PAGED, _y, 'UBMW')
-
-#define FREE_POOL(_x) \
-    { \
-        ExFreePool(_x); \
-        _x = NULL; \
-    };
+#pragma once
 
 #define INITIALIZE_PASSIVE_LOCK(__lock) KeInitializeGuardedMutex(__lock)
 
