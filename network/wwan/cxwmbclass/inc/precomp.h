@@ -12,7 +12,6 @@
 #include <usbiodef.h>
 #include <usbioctl.h>
 #include <wdfusb.h>
-#include <ntstrsafe.h>
 #include <netadaptercx.h>
 #include <netdevice.h>
 #include <mbbcx.h>
