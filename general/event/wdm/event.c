@@ -97,7 +97,7 @@ Return Value:
 
 {
 
-    
+
 
     PDEVICE_OBJECT      deviceObject;
     PDEVICE_EXTENSION   deviceExtension;
@@ -107,7 +107,7 @@ Return Value:
 
     UNREFERENCED_PARAMETER(RegistryPath);
 
-	DebugPrint(("==>DriverEntry\n")); DbgBreakPoint();
+    DebugPrint(("==>DriverEntry\n")); DbgBreakPoint();
 
     //
     // Opt-in to using non-executable pool memory on Windows 8 and later.
@@ -258,16 +258,16 @@ Return Value:
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
 
-    ASSERT(irpStack->FileObject != NULL);    
+    ASSERT(irpStack->FileObject != NULL);
 
     switch (irpStack->MajorFunction)
     {
         case IRP_MJ_CREATE:
             DebugPrint(("IRP_MJ_CREATE\n"));
 
-            fileContext = ExAllocatePoolWithQuotaTag(NonPagedPool, 
-                                              sizeof(FILE_CONTEXT),
-                                              TAG);
+            fileContext = ExAllocatePoolQuotaZero(NonPagedPool | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
+                                                  sizeof(FILE_CONTEXT),
+                                                  TAG);
 
             if (NULL == fileContext) {
                 status =  STATUS_INSUFFICIENT_RESOURCES;
@@ -279,13 +279,13 @@ Return Value:
             //
             // Make sure nobody is using the FsContext scratch area.
             //
-            ASSERT(irpStack->FileObject->FsContext == NULL);    
+            ASSERT(irpStack->FileObject->FsContext == NULL);
 
             //
             // Store the context in the FileObject's scratch area.
             //
             irpStack->FileObject->FsContext = (PVOID) fileContext;
-            
+
             status = STATUS_SUCCESS;
             break;
 
@@ -293,9 +293,9 @@ Return Value:
             DebugPrint(("IRP_MJ_CLOSE\n"));
 
             fileContext = irpStack->FileObject->FsContext;
-            
+
             ExFreePoolWithTag(fileContext, TAG);
-            
+
             status = STATUS_SUCCESS;
             break;
 
@@ -350,9 +350,9 @@ Return Value:
     deviceExtension = DeviceObject->DeviceExtension;
     irpStack = IoGetCurrentIrpStackLocation(Irp);
 
-    ASSERT(irpStack->FileObject != NULL);    
+    ASSERT(irpStack->FileObject != NULL);
 
-    fileContext = irpStack->FileObject->FsContext;    
+    fileContext = irpStack->FileObject->FsContext;
 
     //
     // This acquire cannot fail because you cannot get more than one
@@ -362,11 +362,11 @@ Return Value:
     ASSERT(NT_SUCCESS(status));
 
     //
-    // Wait for all the threads that are currently dispatching to exit and 
+    // Wait for all the threads that are currently dispatching to exit and
     // prevent any threads dispatching I/O on the same handle beyond this point.
     //
     IoReleaseRemoveLockAndWait(&fileContext->FileRundownLock, Irp);
-    
+
     InitializeListHead(&cleanupList);
 
     //
@@ -456,19 +456,19 @@ Return Value:
     //
     while (!IsListEmpty(&cleanupList))
     {
-        PIRP                pendingIrp;   
+        PIRP                pendingIrp;
         //
         // Complete the IRP
         //
         thisEntry = RemoveHeadList(&cleanupList);
         pendingIrp = CONTAINING_RECORD(thisEntry, IRP, Tail.Overlay.ListEntry);
-        
+
         DebugPrint(("\t canceled IRP %p\n", pendingIrp));
-        
+
         pendingIrp->Tail.Overlay.DriverContext[3] = NULL;
         pendingIrp->IoStatus.Information = 0;
         pendingIrp->IoStatus.Status = STATUS_CANCELLED;
-        
+
         IoCompleteRequest(pendingIrp, IO_NO_INCREMENT);
     }
 
@@ -478,7 +478,7 @@ Return Value:
     Irp->IoStatus.Status = status = STATUS_SUCCESS;
     Irp->IoStatus.Information = 0;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
-    
+
     DebugPrint(("<== EventCleanup\n"));
     return status;
 
@@ -518,22 +518,22 @@ Return Value:
     DebugPrint(("==> EventDispatchIoControl\n"));
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
-    
+
     ASSERT(irpStack->FileObject != NULL);
 
-    fileContext = irpStack->FileObject->FsContext;    
+    fileContext = irpStack->FileObject->FsContext;
 
     status = IoAcquireRemoveLock(&fileContext->FileRundownLock, Irp);
     if (!NT_SUCCESS(status)) {
         //
-        // Lock is in a removed state. That means we have already received 
-        // cleaned up request for this handle. 
+        // Lock is in a removed state. That means we have already received
+        // cleaned up request for this handle.
         //
         Irp->IoStatus.Status = status;
         IoCompleteRequest(Irp, IO_NO_INCREMENT);
         return status;
     }
-    
+
     switch (irpStack->Parameters.DeviceIoControl.IoControlCode)
     {
         case IOCTL_REGISTER_EVENT:
@@ -587,7 +587,7 @@ Return Value:
     // lock is meant to rundown currently dispatching threads when the cleanup
     // is handled.
     //
-    IoReleaseRemoveLock(&fileContext->FileRundownLock, Irp);        
+    IoReleaseRemoveLock(&fileContext->FileRundownLock, Irp);
 
     DebugPrint(("<== EventDispatchIoControl\n"));
     return status;
@@ -746,7 +746,7 @@ Return Value:
         irp = notifyRecord->Message.PendingIrp;
         if (irp != NULL) {
             if (IoSetCancelRoutine(irp, NULL) != NULL) {
-                
+
                 irp->Tail.Overlay.DriverContext[3] = NULL;
 
                 //
@@ -806,7 +806,7 @@ Return Value:
         ExFreePoolWithTag(notifyRecord, TAG);
         notifyRecord = NULL;
     }
-    
+
     DebugPrint(("<== CustomTimerDPC\n"));
 
     return;
@@ -856,9 +856,9 @@ Return Value:
     // Allocate a record and save all the event context.
     //
 
-    notifyRecord = ExAllocatePoolWithQuotaTag(NonPagedPool, 
-                                              sizeof(NOTIFY_RECORD),
-                                              TAG);
+    notifyRecord = ExAllocatePoolQuotaZero(NonPagedPool | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
+                                           sizeof(NOTIFY_RECORD),
+                                           TAG);
 
     if (NULL == notifyRecord) {
         return  STATUS_INSUFFICIENT_RESOURCES;
@@ -1009,9 +1009,9 @@ Return Value:
     //
     // Allocate a record and save all the event context.
     //
-    notifyRecord = ExAllocatePoolWithQuotaTag(NonPagedPool, 
-                                              sizeof(NOTIFY_RECORD),
-                                              TAG);
+    notifyRecord = ExAllocatePoolQuotaZero(NonPagedPool | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE,
+                                           sizeof(NOTIFY_RECORD),
+                                           TAG);
 
     if (NULL == notifyRecord) {
         return  STATUS_INSUFFICIENT_RESOURCES;
@@ -1072,5 +1072,3 @@ Return Value:
               );
     return STATUS_SUCCESS;
 }
-
-

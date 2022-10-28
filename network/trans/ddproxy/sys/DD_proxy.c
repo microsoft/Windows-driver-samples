@@ -22,6 +22,7 @@ Environment:
 
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntddk.h>
 
 #pragma warning(push)
@@ -102,7 +103,7 @@ DDProxyFlowEstablishedClassify(
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
    UNREFERENCED_PARAMETER(flowContext);
 
-   flowContextLocal = ExAllocatePoolWithTag(
+   flowContextLocal = ExAllocatePoolZero(
                         NonPagedPool,
                         sizeof(DD_PROXY_FLOW_CONTEXT),
                         DD_PROXY_FLOW_CONTEXT_POOL_TAG
@@ -113,8 +114,6 @@ DDProxyFlowEstablishedClassify(
       status = STATUS_NO_MEMORY;
       goto Exit;
    }
-
-   RtlZeroMemory(flowContextLocal, sizeof(DD_PROXY_FLOW_CONTEXT));
 
    flowContextLocal->refCount = 1;
    flowContextLocal->flowType = (DD_PROXY_FLOW_TYPE)(filter->context);
@@ -334,7 +333,7 @@ DDProxyClassify(
       goto Exit;
    }
 
-   packet = ExAllocatePoolWithTag(
+   packet = ExAllocatePoolZero(
                      NonPagedPool,
                      sizeof(DD_PROXY_PENDED_PACKET),
                      DD_PROXY_PENDED_PACKET_POOL_TAG
@@ -346,8 +345,6 @@ DDProxyClassify(
       classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
       goto Exit;
    }
-
-   RtlZeroMemory(packet, sizeof(DD_PROXY_PENDED_PACKET));
 
    NT_ASSERT(flowContextLocal != NULL);
 
@@ -413,7 +410,7 @@ DDProxyClassify(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         packet->controlData = ExAllocatePoolWithTag(
+         packet->controlData = ExAllocatePoolZero(
                                  NonPagedPool,
                                  inMetaValues->controlDataLength,
                                  DD_PROXY_CONTROL_DATA_POOL_TAG

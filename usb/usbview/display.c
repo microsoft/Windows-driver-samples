@@ -2671,7 +2671,7 @@ DisplaySuperSpeedPlusCapabilityDescriptor (
     PUSB_DEVICE_CAPABILITY_SUPERSPEEDPLUS_USB_DESCRIPTOR sspCapDesc
     )
 {
-    UCHAR i;
+    ULONG i;
 
     AppendTextBuffer("\r\n          ===>SuperSpeed USB Device Capability Descriptor<===\r\n");
 

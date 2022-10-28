@@ -194,7 +194,7 @@ Return Value:
     FatFastIoDispatch.MdlWriteComplete =        FsRtlMdlWriteCompleteDev;
 
 #pragma prefast( pop )
-    
+
     //
     //  Initialize the filter callbacks we use.
     //
@@ -240,7 +240,7 @@ Return Value:
 
     InitializeListHead( &FatData.AsyncCloseList );
     InitializeListHead( &FatData.DelayedCloseList );
-    
+
     FatData.FatCloseItem = IoAllocateWorkItem( FatDiskFileSystemDeviceObject);
 
     if (FatData.FatCloseItem == NULL) {
@@ -253,13 +253,12 @@ Return Value:
     //  Allocate the zero page
     //
 
-    FatData.ZeroPage = ExAllocatePoolWithTag( NonPagedPoolNx, PAGE_SIZE, 'ZtaF' );
+    FatData.ZeroPage = ExAllocatePoolZero( NonPagedPoolNx, PAGE_SIZE, 'ZtaF' );
     if (FatData.ZeroPage == NULL) {
         IoDeleteDevice (FatDiskFileSystemDeviceObject);
-        IoDeleteDevice (FatCdromFileSystemDeviceObject);        
+        IoDeleteDevice (FatCdromFileSystemDeviceObject);
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    RtlZeroMemory( FatData.ZeroPage, PAGE_SIZE );
 
 
     //
@@ -286,7 +285,7 @@ Return Value:
 
     case MmLargeSystem:
     default:
-        
+
         MaxDepth = 16;
         FatMaxDelayedCloseCount = 16 * FAT_MAX_DELAYED_CLOSES;
         break;
@@ -313,8 +312,8 @@ Return Value:
 
     FatData.OurProcess = PsGetCurrentProcess();
 
-    // 
-    //  Setup the number of processors we support for statistics as the current number 
+    //
+    //  Setup the number of processors we support for statistics as the current number
     //  running.
     //
 
@@ -558,9 +557,9 @@ Return Value:
             RequestLength += 256;
 
             KeyValueInformation = (PKEY_VALUE_FULL_INFORMATION)
-                                  ExAllocatePoolWithTag(PagedPool,
-                                                        RequestLength,
-                                                        ' taF');
+                                  ExAllocatePoolZero(PagedPool,
+                                                     RequestLength,
+                                                     ' taF');
 
             if (!KeyValueInformation) {
 
@@ -699,7 +698,7 @@ Return Value:
             RequestLength += 256;
 
             KeyValueInformation = (PKEY_VALUE_FULL_INFORMATION)
-                                  ExAllocatePoolWithTag(PagedPool, RequestLength, ' taF');
+                                  ExAllocatePoolZero(PagedPool, RequestLength, ' taF');
 
             if (!KeyValueInformation) {
 

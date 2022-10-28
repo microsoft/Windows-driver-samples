@@ -63,11 +63,6 @@ Revision History:
 
 #define SERENUM_POOL_TAG (ULONG)'mneS'
 
-/*#undef ExAllocatePool
-#define ExAllocatePool(type, size) \
-   ExAllocatePoolWithTag(type, size, SERENUM_POOL_TAG)*/
-
-
 #pragma warning(error:4100)   // Unreferenced formal parameter
 #pragma warning(error:4705)   // Statement has no effect
 // disable warnings

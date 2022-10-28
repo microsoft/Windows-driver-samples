@@ -614,7 +614,7 @@ Note:
     // Currently StorAHCI does not utilize CAP.NP. It remains useful to identify platform BIOSes
     // which may violate the specification.
     //
-    NT_ASSERT(portCount > 0 && portCount <= (adapterExtension->CAP.NP + 1));
+    NT_ASSERT(portCount > 0 && portCount <= (ULONG)(adapterExtension->CAP.NP + 1));
 
     //3.4 Initializing the rest of PORT_CONFIGURATION_INFORMATION
     ConfigInfo->MaximumTransferLength = AHCI_MAX_TRANSFER_LENGTH_DEFAULT;
@@ -890,7 +890,7 @@ AhciHwPassiveInitialize (
     _In_ PVOID AdapterExtension
     )
 {
-    UCHAR i;
+    ULONG i;
     ULONG status = STOR_STATUS_SUCCESS;
     BOOLEAN enableD3Cold = FALSE;
     BOOLEAN d3ColdSupported = FALSE;

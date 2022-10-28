@@ -1,0 +1,15 @@
+Path,Reason
+general\dchu\osrfx2_dchu_base,Wrong Toolset - needs migration
+general\dchu\osrfx2_dchu_extension_loose,Needs fix for project not found
+general\dchu\osrfx2_dchu_extension_tight,Wrong Toolset - needs migration
+general\filehistory,Deprecated APIs
+general\simplemediasource,ARM64 LNK1181: cannot open input file 'SimpleMediaSource.lib'
+general\winhec 2017 lab\toaster driver,Needs input from end user
+general\winhec 2017 lab\toaster support app,Needs input from end user
+network\trans\stmedit,Invalid Win32 architecture
+network\trans\wfpsampler,Missing INF section; missing libs
+network\wlan\wdi,Invalid architecture
+print\oem printer customization plug-in samples\c++,Invalid architecture
+print\v4printdriversamples\printerextensionsample,Invalid architecture
+tree,Missing headers
+video\indirectdisplay,ARM64 Warning C4530: C++ exception handler used but unwind semantics are not enabled

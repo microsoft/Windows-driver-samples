@@ -37,7 +37,7 @@ Environment:
 //
 
 _At_(String->Length, _Out_range_(==, 0))
-_At_(String->MaximumLength, _In_) 
+_At_(String->MaximumLength, _In_)
 _At_(String->Buffer, _Pre_maybenull_ _Post_notnull_ _Post_writable_byte_size_(String->MaximumLength))
 NTSTATUS
 CtxAllocateUnicodeString (
@@ -63,9 +63,9 @@ Return Value:
 {
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( PagedPool,
-                                            String->MaximumLength,
-                                            CTX_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( PagedPool,
+                                         String->MaximumLength,
+                                         CTX_STRING_TAG );
 
     if (String->Buffer == NULL) {
 

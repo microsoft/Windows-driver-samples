@@ -137,8 +137,8 @@ Return Value:
         goto ExitAndFree;
     }
 
-    preparsedData = (PHIDP_PREPARSED_DATA) ExAllocatePoolWithTag(
-        NonPagedPoolNx, collectionInformation.DescriptorSize, 'ffly');
+    preparsedData = (PHIDP_PREPARSED_DATA) ExAllocatePool2(
+        POOL_FLAG_NON_PAGED, collectionInformation.DescriptorSize, 'ffly');
 
     if (preparsedData == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -177,8 +177,8 @@ Return Value:
     //
     // Create a report to send to the device.
     //
-    report = (PCHAR) ExAllocatePoolWithTag(
-        NonPagedPoolNx, caps.FeatureReportByteLength, 'ffly');
+    report = (PCHAR) ExAllocatePool2(
+        POOL_FLAG_NON_PAGED, caps.FeatureReportByteLength, 'ffly');
 
     if (report == NULL) {
         goto ExitAndFree;
@@ -188,7 +188,6 @@ Return Value:
     // Start with a zeroed report. If we are disabling the feature, this might
     // be all we need to do.
     //
-    RtlZeroMemory(report, caps.FeatureReportByteLength);
     status = STATUS_SUCCESS;
 
     if (EnableFeature) {

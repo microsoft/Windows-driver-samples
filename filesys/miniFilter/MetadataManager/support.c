@@ -62,9 +62,9 @@ Return Value:
 {
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( PagedPool,
-                                            String->MaximumLength,
-                                            FMM_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( PagedPool,
+                                         String->MaximumLength,
+                                         FMM_STRING_TAG );
 
     if (String->Buffer == NULL) {
 
@@ -119,7 +119,7 @@ FmmTargetIsVolumeOpen (
 Routine Description:
 
     This routine returns if the target object in this callback datastructure
-    is a volume.  If the file object is NULL then assume this is NOT a volume 
+    is a volume.  If the file object is NULL then assume this is NOT a volume
     file object
 
 Arguments:
@@ -147,7 +147,7 @@ Return Value:
 }
 
 NTSTATUS
-FmmIsImplicitVolumeLock( 
+FmmIsImplicitVolumeLock(
     _In_ PFLT_CALLBACK_DATA Cbd,
     _Out_ PBOOLEAN IsLock
     )
@@ -158,17 +158,17 @@ Routine Description:
     This routine determines if an open is a implicit volume lock.
 
 Arguments
-    
-    Cbd                   - Supplies a pointer to the callbackData which 
+
+    Cbd                   - Supplies a pointer to the callbackData which
                             declares the requested operation.
 
     IsLock                - Supplies a pointer to a user allocated boolean
                             which is used to tell the user whether the
                             operation is an implied volume lock.
 Return Value:
- 
+
     Returns STATUS_SUCCESS if the the function determined whether or not
-    the operation was a volume lock. On STATUS_SUCCESS it is safe to check 
+    the operation was a volume lock. On STATUS_SUCCESS it is safe to check
     IsLock to get the answer. Otherwise, the check failed and we don't know
     if it is a lock or not. STATUS_INVALID_PARAMETER indicates that the
     volume's file system type is unrecognized by the check function. This is
@@ -183,13 +183,13 @@ Return Value:
     PAGED_CODE();
 
     //
-    //  Get the instance context so we know 
+    //  Get the instance context so we know
     //  which file system we are attached to.
     //
 
     status = FltGetInstanceContext( Cbd->Iopb->TargetInstance,
                                     &instanceContext );
-    
+
     if (!NT_SUCCESS( status )) {
 
         DebugTrace( DEBUG_TRACE_ERROR | DEBUG_TRACE_METADATA_OPERATIONS,
@@ -208,6 +208,8 @@ Return Value:
 
     shareAccess = Cbd->Iopb->Parameters.Create.ShareAccess;
 
+#pragma warning( push )
+#pragma warning( disable: 4061 )
     switch (instanceContext->FilesystemType) {
 
         case FLT_FSTYPE_REFS:
@@ -221,6 +223,7 @@ Return Value:
             status = STATUS_INVALID_PARAMETER;
             break;
     }
+#pragma warning( pop )
 
 FmmIsImplicitVolumeLockCleanup:
 

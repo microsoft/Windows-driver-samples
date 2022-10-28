@@ -26,13 +26,13 @@ Environment:
 
 _When_(Data == NULL, _Pre_satisfies_(FileObject != NULL && Instance != NULL))
 _When_(FileObject == NULL || Instance == NULL, _Pre_satisfies_(Data != NULL))
-NTSTATUS 
+NTSTATUS
 NcGetFileNameInformation(
     _In_opt_ PFLT_CALLBACK_DATA Data,
     _In_opt_ PFILE_OBJECT FileObject,
     _In_opt_ PFLT_INSTANCE Instance,
     _In_ FLT_FILE_NAME_OPTIONS NameOptions,
-    _Outptr_ PFLT_FILE_NAME_INFORMATION *FileNameInformation 
+    _Outptr_ PFLT_FILE_NAME_INFORMATION *FileNameInformation
     )
 /*++
 
@@ -102,7 +102,7 @@ Return Value:
 
 NTSTATUS
 NcAllocateEResource(
-    _Out_ PERESOURCE * OutputLock 
+    _Out_ PERESOURCE * OutputLock
     )
 /*++
 
@@ -126,12 +126,12 @@ Return Value:
 
     PERESOURCE Lock = NULL;
     BOOLEAN DeleteLock = FALSE;
-    
+
     PAGED_CODE();
 
-    Lock = ExAllocatePoolWithTag( NonPagedPool,
-                                  sizeof(ERESOURCE),
-                                  NC_LOCK_TAG );
+    Lock = ExAllocatePoolZero( NonPagedPool,
+                               sizeof(ERESOURCE),
+                               NC_LOCK_TAG );
 
     if (Lock == NULL) {
 
@@ -155,7 +155,7 @@ NcAllocateEResourceCleanup:
     if (!NT_SUCCESS( Status )) {
 
         if (Lock) {
-        
+
             if (DeleteLock) {
 
                 ExDeleteResourceLite( Lock );

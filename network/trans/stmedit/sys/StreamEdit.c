@@ -464,7 +464,7 @@ StreamEditFlowEstablishedClassify(
 
     do
     {
-        StreamFlowContext = ExAllocatePoolWithTag(NonPagedPoolNx,
+        StreamFlowContext = ExAllocatePoolZero(NonPagedPoolNx,
                                 sizeof(STREAM_FLOW_CONTEXT),
                                 STMEDIT_TAG_FLOWCTX);
 
@@ -477,7 +477,6 @@ StreamEditFlowEstablishedClassify(
 
         // Initialize the flow-context
         //
-        RtlZeroMemory(StreamFlowContext, sizeof(STREAM_FLOW_CONTEXT));
 
         StreamFlowContext->IpProto = InFixedValues->incomingValue[ipProtIndex].value.uint16;
         StreamFlowContext->bFlowActive = TRUE;
@@ -1371,6 +1370,10 @@ DriverEntry(
    DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT,"--> %!FUNC!: DrvObj %p, Regpath %wZ",  DriverObject, RegistryPath);
 
    do {
+
+       // Request NX Non-Paged Pool when available
+       ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
         //
         // Initialize globals and Configuration structures.
         //
@@ -1557,7 +1560,7 @@ _In_ SIZE_T BytesToCopy
     {
         size_t NewBufferSize = BytesToCopy + ExistingDataLength;
 
-        PVOID  NewBuffer = ExAllocatePoolWithTag(
+        PVOID  NewBuffer = ExAllocatePoolZero(
                                     NonPagedPool,
                                     (NewBufferSize + (NewBufferSize >> 1) ), // 1.5 times the needed size.
                                     STMEDIT_TAG_FLAT_BUFFER);
@@ -1567,7 +1570,7 @@ _In_ SIZE_T BytesToCopy
 
             // We are not able to allocate a much bigger buffer ... lets try an exact fit.
             //
-            NewBuffer = ExAllocatePoolWithTag(NonPagedPool, NewBufferSize, STMEDIT_TAG_FLAT_BUFFER);
+            NewBuffer = ExAllocatePoolZero(NonPagedPool, NewBufferSize, STMEDIT_TAG_FLAT_BUFFER);
         }
 
         if (NewBuffer != NULL) 

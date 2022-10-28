@@ -469,9 +469,9 @@ NOTE: does not handle case where more than 65000 bytes are returned,
             if (NT_SUCCESS(status))
             {
                 // allocate the memory
-                buffer = (PGET_CONFIGURATION_HEADER)ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                                                                          size,
-                                                                          CDROM_TAG_FEATURE);
+                buffer = (PGET_CONFIGURATION_HEADER)ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
+                                                                    size,
+                                                                    CDROM_TAG_FEATURE);
 
                 if (buffer == NULL) 
                 {

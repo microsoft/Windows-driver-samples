@@ -473,9 +473,9 @@ Return Value:
             //
 
 #pragma prefast(suppress:__WARNING_MEMORY_LEAK, "ctx->Name.Buffer will not be leaked because it is freed in CleanupVolumeContext")
-            ctx->Name.Buffer = ExAllocatePoolWithTag( NonPagedPool,
-                                                      size,
-                                                      NAME_TAG );
+            ctx->Name.Buffer = ExAllocatePoolZero( NonPagedPool,
+                                                   size,
+                                                   NAME_TAG );
             if (ctx->Name.Buffer == NULL) {
 
                 status = STATUS_INSUFFICIENT_RESOURCES;
@@ -671,7 +671,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -865,7 +865,7 @@ Return Value:
         //  don't swap buffers on this operation.
         //
 
-        newBuf = FltAllocatePoolAlignedWithTag( FltObjects->Instance, 
+        newBuf = FltAllocatePoolAlignedWithTag( FltObjects->Instance,
                                                 NonPagedPool,
                                                 (SIZE_T) readLen,
                                                 BUFFER_SWAP_TAG );
@@ -1076,7 +1076,7 @@ Return Value:
             //  This should be a simple MDL. We don't expect chained MDLs
             //  this high up the stack
             //
-            
+
             FLT_ASSERT( ((PMDL)iopb->Parameters.Read.MdlAddress)->Next == NULL);
 
             //
@@ -1427,9 +1427,9 @@ Return Value:
         //  operation.
         //
 
-        newBuf = ExAllocatePoolWithTag( NonPagedPool,
-                                        iopb->Parameters.DirectoryControl.QueryDirectory.Length,
-                                        BUFFER_SWAP_TAG );
+        newBuf = ExAllocatePoolZero( NonPagedPool,
+                                     iopb->Parameters.DirectoryControl.QueryDirectory.Length,
+                                     BUFFER_SWAP_TAG );
 
         if (newBuf == NULL) {
 
@@ -1442,15 +1442,7 @@ Return Value:
         }
 
         //
-        //  Zero the new buffer so as not to potentially expose any sensitive
-        //  data to the user.
-        //
-
-        RtlZeroMemory( newBuf, iopb->Parameters.DirectoryControl.QueryDirectory.Length );
-
-
-        //
-        //  We need to build a MDL because Directory Control Operations are always IRP operations.  
+        //  We need to build a MDL because Directory Control Operations are always IRP operations.
         //
 
 
@@ -1729,9 +1721,9 @@ Return Value:
         //  NOTE:  Due to a bug in FASTFAT where it is returning the wrong
         //         length in the information field (it is sort) we are always
         //         going to copy the original buffer length. Please note that
-        //         this is a potential security problem because we will copy 
-        //         more than what was touched by the FS. So we have to make 
-        //         sure the buffer is clean before calling into the FS or we 
+        //         this is a potential security problem because we will copy
+        //         more than what was touched by the FS. So we have to make
+        //         sure the buffer is clean before calling into the FS or we
         //         risk exposing sensitive data to the user.
         //
 
@@ -1997,7 +1989,7 @@ Return Value:
         //  don't swap buffers on this operation.
         //
 
-        newBuf = FltAllocatePoolAlignedWithTag( FltObjects->Instance, 
+        newBuf = FltAllocatePoolAlignedWithTag( FltObjects->Instance,
                                                 NonPagedPool,
                                                 (SIZE_T) writeLen,
                                                 BUFFER_SWAP_TAG );
@@ -2058,7 +2050,7 @@ Return Value:
             //  This should be a simple MDL. We don't expect chained MDLs
             //  this high up the stack
             //
-            
+
             FLT_ASSERT( ((PMDL)iopb->Parameters.Write.MdlAddress)->Next == NULL);
 
             origBuf = MmGetSystemAddressForMdlSafe( iopb->Parameters.Write.MdlAddress,

@@ -439,9 +439,9 @@ Return Value:
 
     // 7. Now, the device can be created.
     {
-        wideDeviceName = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                               64 * sizeof(WCHAR),
-                                               CDROM_TAG_STRINGS);
+        wideDeviceName = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                         64 * sizeof(WCHAR),
+                                         CDROM_TAG_STRINGS);
 
         if (wideDeviceName == NULL)
         {

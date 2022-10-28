@@ -178,9 +178,9 @@ Return Value:
     // allocate the buffer
     if (NT_SUCCESS(status))
     {
-        DeviceExtension->ScratchContext.ScratchBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                              DeviceExtension->ScratchContext.ScratchBufferSize,
-                                                                              CDROM_TAG_SCRATCH);
+        DeviceExtension->ScratchContext.ScratchBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                                        DeviceExtension->ScratchContext.ScratchBufferSize,
+                                                                        CDROM_TAG_SCRATCH);
         if (DeviceExtension->ScratchContext.ScratchBuffer == NULL)
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -243,9 +243,9 @@ Return Value:
     // allocate the srb
     if (NT_SUCCESS(status))
     {
-        DeviceExtension->ScratchContext.ScratchSrb = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                           sizeof(SCSI_REQUEST_BLOCK),
-                                                                           CDROM_TAG_SCRATCH);
+        DeviceExtension->ScratchContext.ScratchSrb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                                     sizeof(SCSI_REQUEST_BLOCK),
+                                                                     CDROM_TAG_SCRATCH);
 
         if (DeviceExtension->ScratchContext.ScratchSrb == NULL)
         {
@@ -258,9 +258,9 @@ Return Value:
     // allocate the sense buffer
     if (NT_SUCCESS(status))
     {
-        DeviceExtension->ScratchContext.ScratchSense = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                             sizeof(SENSE_DATA),
-                                                                             CDROM_TAG_SCRATCH);
+        DeviceExtension->ScratchContext.ScratchSense = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                                       sizeof(SENSE_DATA),
+                                                                       CDROM_TAG_SCRATCH);
 
         if (DeviceExtension->ScratchContext.ScratchSense == NULL)
         {
@@ -277,9 +277,9 @@ Return Value:
         size_t allocationSize = sizeof(SRB_HISTORY) - sizeof(SRB_HISTORY_ITEM);
         allocationSize += 20 * sizeof(SRB_HISTORY_ITEM);
 
-        DeviceExtension->ScratchContext.ScratchHistory = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                               allocationSize,
-                                                                               CDROM_TAG_SCRATCH);
+        DeviceExtension->ScratchContext.ScratchHistory = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                                         allocationSize,
+                                                                         CDROM_TAG_SCRATCH);
         if (DeviceExtension->ScratchContext.ScratchHistory == NULL)
         {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -290,7 +290,6 @@ Return Value:
         else
         {
             // must be initialized here...
-            RtlZeroMemory(DeviceExtension->ScratchContext.ScratchHistory, allocationSize);
             DeviceExtension->ScratchContext.ScratchHistory->TotalHistoryCount = 20;
         }
     }

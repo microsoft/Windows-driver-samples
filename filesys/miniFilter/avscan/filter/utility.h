@@ -10,8 +10,8 @@ Abstract:
 
     Header file which contains the structures, type definitions,
     constants, global variables and function prototypes that are
-    only visible within the kernel. The functions include 
-    generic table routines. 
+    only visible within the kernel. The functions include
+    generic table routines.
 
 Environment:
 
@@ -59,7 +59,7 @@ typedef union _AV_FILE_REFERENCE {
 //
 
 typedef struct _AV_GENERIC_TABLE_ENTRY {
-    
+
     AV_FILE_REFERENCE FileId;
     ULONG      InfectedState;
 
@@ -69,7 +69,7 @@ typedef struct _AV_GENERIC_TABLE_ENTRY {
     LONGLONG   VolumeRevision;
     LONGLONG   CacheRevision;
     LONGLONG   FileRevision;
-    
+
 } AV_GENERIC_TABLE_ENTRY, *PAV_GENERIC_TABLE_ENTRY;
 
 #define AV_GENERIC_TABLE_ENTRY_SIZE         sizeof( AV_GENERIC_TABLE_ENTRY )
@@ -93,9 +93,9 @@ AvAllocateGenericTableEntry (
     _In_ PRTL_GENERIC_TABLE Table,
     _In_ CLONG ByteSize
     );
-    
+
 _IRQL_requires_same_
-_Function_class_(RTL_GENERIC_FREE_ROUTINE)    
+_Function_class_(RTL_GENERIC_FREE_ROUTINE)
 VOID
 NTAPI
 AvFreeGenericTableEntry (
@@ -112,7 +112,7 @@ RTL_GENERIC_FREE_ROUTINE AvFreeGenericTableEntry;
 
 //
 // NTFS supports a file state cache. Since CSVFS is built on top of
-// NTFS, it can also support the cache. 
+// NTFS, it can also support the cache.
 //
 #define FS_SUPPORTS_FILE_STATE_CACHE(VolumeFilesystemType) \
   ( ((VolumeFilesystemType) == FLT_FSTYPE_NTFS) || \
@@ -130,10 +130,10 @@ AvAllocateResource (
     //  eResource by its rule has to be in the non-paged pool
     //  NonPagedPoolNx: non-executable non-paged pool
     //
-    
-    return ExAllocatePoolWithTag( NonPagedPoolNx,
-                                  sizeof( ERESOURCE ),
-                                  AV_RESOURCE_TAG );
+
+    return ExAllocatePoolZero( NonPagedPoolNx,
+                               sizeof( ERESOURCE ),
+                               AV_RESOURCE_TAG );
 }
 
 FORCEINLINE
@@ -156,10 +156,10 @@ AvAllocateKevent (
     //
     //  KEVENT has to be in the non-paged pool
     //
-    
-    return ExAllocatePoolWithTag( NonPagedPoolNx,
-                                  sizeof( KEVENT ),
-                                  AV_KEVENT_TAG );
+
+    return ExAllocatePoolZero( NonPagedPoolNx,
+                               sizeof( KEVENT ),
+                               AV_KEVENT_TAG );
 }
 
 FORCEINLINE
@@ -186,7 +186,7 @@ AvGetFileSize (
     _In_    PFILE_OBJECT FileObject,
     _Out_   PLONGLONG Size
     );
-    
+
 NTSTATUS
 AvGetFileEncrypted (
     _In_   PFLT_INSTANCE Instance,
@@ -199,7 +199,7 @@ AvExceptionFilter (
     _In_ PEXCEPTION_POINTERS ExceptionPointer,
     _In_ BOOLEAN AccessingUserBuffer
     );
-    
+
 FORCEINLINE
 VOID
 _Acquires_lock_(_Global_critical_region_)
