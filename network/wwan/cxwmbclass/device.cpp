@@ -1,7 +1,6 @@
-//-------------------------------------------------------------------------------
-// Net Adapter source file
 //
-// Copyright (c) Microsoft Corporation.  All rights reserved.
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 
 #include "precomp.h"
 
@@ -58,12 +57,6 @@ _Use_decl_annotations_ VOID EvtMbbDeviceReceiveMbimFragment(WDFDEVICE Device, MB
 
     if (receiveStatus != STATUS_PENDING)
     {
-        // Note: There isn't a case where receiveStatus is STATUS_SUCCESS, it is either pending
-        // or an error code. The API signature itself is incomplete since it does not return how
-        // many bytes were read if the request was completed synchronously. Leaving a telemetry
-        // assert here in case someone changes MbbBusReceiveMessageFragment
-        //MICROSOFT_TELEMETRY_ASSERT_KM(NT_ERROR(receiveStatus));
-
         completionRoutine(deviceContext, Fragment, receiveStatus, 0);
     }
 }
@@ -196,9 +189,6 @@ MbbInitializeHardware(_In_ PWMBCLASS_DEVICE_CONTEXT DeviceContext)
         mbimExVer);
 
     MbbDeviceSetMbimParameters(DeviceContext->WdfDevice, &mbimParams);
-    //MBB_DEVICE_OPTIONAL_PARAMETERS optionalParameters;
-    //MBB_DEVICE_OPTIONAL_PARAMETERS_INIT(&optionalParameters, manufacturer, model, MbbBusIsUde(DeviceContext->BusHandle));
-    //MbbDeviceSetOptionalParameters(DeviceContext->WdfDevice, &optionalParameters);
 
     MBB_DEVICE_WAKE_CAPABILITIES mbbWakeCapabilities;
     MBB_DEVICE_WAKE_CAPABILITIES_INIT(&mbbWakeCapabilities);

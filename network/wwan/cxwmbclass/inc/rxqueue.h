@@ -1,3 +1,7 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
+
 #pragma once
 
 typedef struct _MBB_RXQUEUE_CONTEXT

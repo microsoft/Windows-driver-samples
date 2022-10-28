@@ -1,7 +1,6 @@
-//-------------------------------------------------------------------------------
-// Net Adapter source file
 //
-// Copyright (c) Microsoft Corporation.  All rights reserved.
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 
 #include "precomp.h"
 
@@ -255,15 +254,11 @@ MbbRecvNtbUnpackIpNdp32(_In_ PMBB_RECEIVE_NDP_CONTEXT ReceiveNdpContext, _In_ PN
     NTSTATUS status = STATUS_SUCCESS;
     ULONG datagramCount = MBB_NDP32_GET_DATAGRAM_COUNT(Ndp32);
 
-//    NET_RING_PACKET_ITERATOR pi = NetRingGetAllPackets(RxQueueContext->DatapathDescriptor);
-//    NET_RING_FRAGMENT_ITERATOR fi = NetRingGetAllFragments(RxQueueContext->DatapathDescriptor);
     NET_RING * pr = NetRingCollectionGetPacketRing(RxQueueContext->DatapathDescriptor);
     NET_RING * fr = NetRingCollectionGetFragmentRing(RxQueueContext->DatapathDescriptor);
 
     while ((incompletedDatagram = MBB_NDP32_GET_DATAGRAM(Nth32, Ndp32, *IncompletedDatagramIndex)) != NULL)
     {
-        // If all packets have been unpacked, break to avoid inappropriate device which doesn't fully follow NCM protocol to have zero dwDatagramIndex and zero dwDatagramLength as a terminator.
-        // It will crash OS like bug https://microsoft.visualstudio.com/DefaultCollection/OS/_workitems/edit/19970558
         if (*IncompletedDatagramIndex >= datagramCount)
         {
             break;
@@ -323,8 +318,6 @@ MbbRecvNtbUnpackIpNdp16(_In_ PMBB_RECEIVE_NDP_CONTEXT ReceiveNdpContext, _In_ PN
 
     while ((incompletedDatagram = MBB_NDP16_GET_DATAGRAM(Nth16, Ndp16, *IncompletedDatagramIndex)) != NULL)
     {
-        // If all packets have been unpacked, break to avoid inappropriate device which doesn't fully follow NCM protocol to have zero dwDatagramIndex and zero dwDatagramLength as a terminator.
-        // It will crash OS like bug https://microsoft.visualstudio.com/DefaultCollection/OS/_workitems/edit/19970558
         if (*IncompletedDatagramIndex >= datagramCount)
         {
             break;

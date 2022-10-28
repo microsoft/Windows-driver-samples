@@ -1,5 +1,8 @@
-#pragma once
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 
+#pragma once
 
 #include <ntddk.h>
 #include <ntstrsafe.h>

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2010 Microsoft Corporation
+//    Copyright (C) Microsoft.  All rights reserved.
 //
 #pragma once
 typedef enum

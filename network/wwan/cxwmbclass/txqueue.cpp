@@ -1,7 +1,6 @@
-//-------------------------------------------------------------------------------
-// Net Adapter source file
 //
-// Copyright (c) Microsoft Corporation.  All rights reserved.
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 
 #include "precomp.h"
 

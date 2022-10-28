@@ -1,3 +1,6 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 #pragma once
 
 typedef struct _MBB_TXQUEUE_CONTEXT

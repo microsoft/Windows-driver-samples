@@ -1,3 +1,7 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
+
 #pragma once
 
 EVT_WDF_DEVICE_D0_ENTRY EvtDeviceD0Entry;

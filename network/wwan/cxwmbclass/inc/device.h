@@ -1,14 +1,5 @@
 #pragma once
 
-// "Device" in nawmbclass.sys represents an MBB device (or a modem). It may be embbeded or USB-plugged.
-// A device may contain multiple NetAdapter instances for the support of MPDP.
-// Each NetAdapter instance in a device corresponds to one PDP context in the modem.
-// Each NetAdapter instance in a device presents an IP interface to TCP/IP.
-//
-// "Device" in nawmbclass.sys is the equivalent of "Adapter" in wmbclass.sys.
-// Its context is similar to MINIPORT_ADAPTER_CONTEXT in wmbclass.sys.
-//
-// See wmbclass.h for the definition of MBB_DEVICE_CONTEXT
 #pragma once
 
 typedef struct _WMBCLASS_DEVICE_CONTEXT
