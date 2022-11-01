@@ -146,14 +146,6 @@ typedef struct _BUS_OBJECT
     USB_CAP_DEVICE_INFO UsbCapDeviceInfo;
     PVOID ModemContext;
 
-    FastIOSendNetBufferListsHandler SendNetBufferListsHandler;
-    FastIOReturnNetBufferListsHandler ReturnNetBufferListsHandler;
-    FastIOCancelSendHandler CancelSendHandler;
-    FastIOHaltHandler HaltHandler;
-    FastIOPauseHandler PauseHandler;
-    FastIOShutdownHandler ShutdownHandler;
-    FastIOResetHandler ResetHandler;
-    FastIORestartHandler RestartHandler;
 } BUS_OBJECT, *PBUS_OBJECT;
 
 typedef struct _WDF_DEVICE_INFO

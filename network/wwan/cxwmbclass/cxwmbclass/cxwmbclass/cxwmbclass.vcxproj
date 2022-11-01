@@ -125,14 +125,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adapter.cpp" />
-    <ClCompile Include="..\..\BusFastIO.cpp" />
     <ClCompile Include="..\..\businit.cpp" />
     <ClCompile Include="..\..\datapipe.cpp" />
     <ClCompile Include="..\..\device.cpp" />
     <ClCompile Include="..\..\driver.cpp" />
     <ClCompile Include="..\..\power.cpp" />
     <ClCompile Include="..\..\rxqueue.cpp" />
-    <ClCompile Include="..\..\selsuspend.cpp" />
     <ClCompile Include="..\..\txqueue.cpp" />
     <ClCompile Include="..\..\util.cpp" />
     <ClCompile Include="..\..\utils.cpp" />
@@ -140,11 +138,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\inc\adapter.h" />
     <ClInclude Include="..\..\inc\align.h" />
-    <ClInclude Include="..\..\inc\BusFastIO.h" />
     <ClInclude Include="..\..\inc\BusInterface.h" />
     <ClInclude Include="..\..\inc\data.h" />
     <ClInclude Include="..\..\inc\device.h" />
-    <ClInclude Include="..\..\inc\mbbfastio.h" />
     <ClInclude Include="..\..\inc\mbbmessages.h" />
     <ClInclude Include="..\..\inc\mbbncm.h" />
     <ClInclude Include="..\..\inc\power.h" />

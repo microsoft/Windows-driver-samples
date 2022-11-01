@@ -12,7 +12,7 @@ typedef struct _USB_DESCRIPTOR_HEADER
     BYTE bLength;
     BYTE bDescriptorType;
 
-} USB_DESCRIPTOR_HEADER, *PUSB_DESCRIPTOR_HEADER;
+} USB_DESCRIPTOR_HEADER, * PUSB_DESCRIPTOR_HEADER;
 
 #pragma pack(pop)
 
@@ -89,7 +89,7 @@ MbbBusInitializeByWdf(
 
     PBUS_OBJECT BusObject = NULL;
 
-    USB_CAP_DEVICE_INFO usbCapDeviceInfo = {USB_CAP_DEVICE_TYPE_MAXIMUM, 0, 0, 0};
+    USB_CAP_DEVICE_INFO usbCapDeviceInfo = { USB_CAP_DEVICE_TYPE_MAXIMUM, 0, 0, 0 };
     ULONG capResultLength = 0;
 
     WDF_USB_DEVICE_INFORMATION deviceInformation;
@@ -436,8 +436,8 @@ MbbBusInitializeByWdf(
     if (BusObject->UsbCapDeviceInfo.DeviceInfoHeader.DeviceType == USB_CAP_DEVICE_TYPE_UDE_MBIM)
     {
         BusObject->MaxBulkInTransfer = BusObject->NtbParam.dwNtbInMaxSize < MAX_HOST_NTB_SIZE_FOR_UDE_MBIM
-                                           ? BusObject->NtbParam.dwNtbInMaxSize
-                                           : MAX_HOST_NTB_SIZE_FOR_UDE_MBIM;
+            ? BusObject->NtbParam.dwNtbInMaxSize
+            : MAX_HOST_NTB_SIZE_FOR_UDE_MBIM;
     }
     else
     {
@@ -675,8 +675,8 @@ MbbParseConfigDescriptor(
             if ((InterfaceDescriptor->bInterfaceClass == MBIM_CC_INTERFACE_CLASS) &&
                 ((InterfaceDescriptor->bInterfaceSubClass == MBIM_CC_INTERFACE_SUBCLASS)) &&
                 (InterfaceDescriptor->bInterfaceProtocol == MBIM_CC_INTERFACE_PROTOCOL ||
-                 InterfaceDescriptor->bInterfaceProtocol == MBIM_CC_INTERFACE_NBL_PROTOCOL ||
-                 InterfaceDescriptor->bInterfaceProtocol == MBIM_CC_INTERFACE_NETPACKET_PROTOCOL))
+                    InterfaceDescriptor->bInterfaceProtocol == MBIM_CC_INTERFACE_NBL_PROTOCOL ||
+                    InterfaceDescriptor->bInterfaceProtocol == MBIM_CC_INTERFACE_NETPACKET_PROTOCOL))
             {
 
                 *CommunicationClassInterface = InterfaceDescriptor->bInterfaceNumber;
@@ -983,7 +983,7 @@ SetActivityIdForRequest(__in WDFREQUEST Request, __in LPGUID ActivityId)
 
     do
     {
-        GUID zeroGuid = {0};
+        GUID zeroGuid = { 0 };
 
         if (ActivityId == NULL || IsEqualGUID(*ActivityId, zeroGuid))
         {
@@ -1029,50 +1029,50 @@ MbbBusSendMessageFragment(
     __in LPGUID ActivityId,
     __in MBB_BUS_SEND_COMPLETION_CALLBACK SendCompletionCallback)
 
-/*
-    Description
-        The protocol layer call this routine to request the bus layer to
-        send a message fragment. Fragmentation / Reassembly is handled by
-        the protocol layer and it will only handle fragments that are within
-        the maximum transfer size of the bus.
+    /*
+        Description
+            The protocol layer call this routine to request the bus layer to
+            send a message fragment. Fragmentation / Reassembly is handled by
+            the protocol layer and it will only handle fragments that are within
+            the maximum transfer size of the bus.
 
-        This routine is asynchronous and returns immediately after queueing
-        the transfer. The caller is notified of the completion through the
-        callback.
+            This routine is asynchronous and returns immediately after queueing
+            the transfer. The caller is notified of the completion through the
+            callback.
 
-    Parameters
-        __in MBB_BUS_HANDLE BusHandle,
-            BusHandle identifies the instance of the bus layer.
+        Parameters
+            __in MBB_BUS_HANDLE BusHandle,
+                BusHandle identifies the instance of the bus layer.
 
-        __in MBB_REQUEST_HANDLE RequestHandle,
-            Identifies the request.
+            __in MBB_REQUEST_HANDLE RequestHandle,
+                Identifies the request.
 
-        __in PVOID MessageFragment,
-            The data payload that needs to be sent.
+            __in PVOID MessageFragment,
+                The data payload that needs to be sent.
 
-        __in ULONG FragmentLength,
-            Length of the data payload. This will not be greater than the
-            maximum transfer size supported by the bus.
+            __in ULONG FragmentLength,
+                Length of the data payload. This will not be greater than the
+                maximum transfer size supported by the bus.
 
-        __in LPGUID ActivityId,
-            The activity Id to be associated with this fragment transfer.
-            This activity Id will also be used by USB for logging USB events.
+            __in LPGUID ActivityId,
+                The activity Id to be associated with this fragment transfer.
+                This activity Id will also be used by USB for logging USB events.
 
-        __in MBB_BUS_SEND_COMPLETION_CALLBACK SendCompletionCallback
-            The completion callback routine that will be called by the bus
-            when the transfer is complete.
+            __in MBB_BUS_SEND_COMPLETION_CALLBACK SendCompletionCallback
+                The completion callback routine that will be called by the bus
+                when the transfer is complete.
 
-    Return Value
+        Return Value
 
-        NTSTATUS_SUCCESS
-            The transfer has completed successfully. SendCompletionCallback will NOT be called.
+            NTSTATUS_SUCCESS
+                The transfer has completed successfully. SendCompletionCallback will NOT be called.
 
-        NTSTATUS_PENDING
-            The transfer was queued. SendCompletionCallback will be called on completion.
+            NTSTATUS_PENDING
+                The transfer was queued. SendCompletionCallback will be called on completion.
 
-        Other failure code
-            The transfer could not be queued. SendCompletionCallback will NOT be called.
-*/
+            Other failure code
+                The transfer could not be queued. SendCompletionCallback will NOT be called.
+    */
 
 {
 
@@ -1173,7 +1173,7 @@ VOID ReceiveCompletionRoutine(__in WDFREQUEST Request, __in WDFIOTARGET Target, 
 
 {
     PREQUEST_CONTEXT ReqContext = NULL;
-    GUID ActivityId = {0};
+    GUID ActivityId = { 0 };
     PIRP Irp = NULL;
     NTSTATUS Status = STATUS_INVALID_PARAMETER;
 
@@ -1208,61 +1208,61 @@ MbbBusReceiveMessageFragment(
     _In_ ULONG FragmentLength,
     _In_ LPGUID ActivityId,
     _In_ MBB_BUS_RECEIVE_COMPLETION_CALLBACK ReceiveCompletionCallback)
-/*
-    Description
+    /*
+        Description
 
-    Parameters
+        Parameters
 
 
-    Return Value
+        Return Value
 
-        NTSTATUS_SUCCESS
-            Initialization was successful.
+            NTSTATUS_SUCCESS
+                Initialization was successful.
 
-        Other failure code
-*/
-/*
-    Description
-        The protocol layer call this routine to request the bus layer to
-        receive data from the device. Reassembly is handled by the protocol layer.
+            Other failure code
+    */
+    /*
+        Description
+            The protocol layer call this routine to request the bus layer to
+            receive data from the device. Reassembly is handled by the protocol layer.
 
-        This routine is asynchronous and returns immediately after queueing
-        the transfer. The caller is notified of the completion through the
-        callback.
+            This routine is asynchronous and returns immediately after queueing
+            the transfer. The caller is notified of the completion through the
+            callback.
 
-    Parameters
-        _In_ MBB_BUS_HANDLE BusHandle,
-            BusHandle identifies the instance of the bus layer.
+        Parameters
+            _In_ MBB_BUS_HANDLE BusHandle,
+                BusHandle identifies the instance of the bus layer.
 
-        _In_ MBB_REQUEST_HANDLE RequestHandle,
-            Identifies the request.
+            _In_ MBB_REQUEST_HANDLE RequestHandle,
+                Identifies the request.
 
-        _In_ __drv_aliasesMem PVOID MessageFragment,
-            The data buffer that would be filled with the received data.
+            _In_ __drv_aliasesMem PVOID MessageFragment,
+                The data buffer that would be filled with the received data.
 
-        _In_ ULONG FragmentLength,
-            Length of the data requested from the device. This will not be
-            greater than the maximum transfer size supported by the bus.
+            _In_ ULONG FragmentLength,
+                Length of the data requested from the device. This will not be
+                greater than the maximum transfer size supported by the bus.
 
-        _In_ LPGUID ActivityId,
-            The activity Id to be associated with this fragment transfer.
-            This activity Id will also be used by USB for logging USB events.
+            _In_ LPGUID ActivityId,
+                The activity Id to be associated with this fragment transfer.
+                This activity Id will also be used by USB for logging USB events.
 
-        _In_ MBB_BUS_RECEIVE_COMPLETION_CALLBACK ReceiveCompletionCallback
-            The completion callback routine that will be called by the bus
-            when the transfer is complete.
+            _In_ MBB_BUS_RECEIVE_COMPLETION_CALLBACK ReceiveCompletionCallback
+                The completion callback routine that will be called by the bus
+                when the transfer is complete.
 
-    Return Value
+        Return Value
 
-        NTSTATUS_SUCCESS
-            The transfer has completed successfully. ReceiveCompletionCallback will NOT be called.
+            NTSTATUS_SUCCESS
+                The transfer has completed successfully. ReceiveCompletionCallback will NOT be called.
 
-        NTSTATUS_PENDING
-            The transfer was queued. ReceiveCompletionCallback will be called on completion.
+            NTSTATUS_PENDING
+                The transfer was queued. ReceiveCompletionCallback will be called on completion.
 
-        Other failure code
-            The transfer could not be queued. ReceiveCompletionCallback will NOT be called.
-*/
+            Other failure code
+                The transfer could not be queued. ReceiveCompletionCallback will NOT be called.
+    */
 
 {
     WDF_USB_CONTROL_SETUP_PACKET packet;
@@ -1477,146 +1477,32 @@ NTSTATUS MbbBusHandshake(_In_ PBUS_OBJECT BusObject, _In_ ULONG TransactionId, _
     MBB_OPEN_MESSAGE_FASTIO OpenMessageFastIO;
     PMBB_OPEN_DONE_FASTIO OpenDoneMessageFastIO = NULL;
 
-    if (MbbBusIsFastIO(BusObject))
+    RtlZeroMemory(&OpenMessage, sizeof(OpenMessage));
+
+    OpenMessage.MessageHeader.MessageType = MBB_MESSAGE_TYPE_OPEN;
+    OpenMessage.MessageHeader.MessageLength = sizeof(OpenMessage);
+    OpenMessage.MessageHeader.MessageTransactionId = TransactionId;
+    OpenMessage.MaximumControlTransfer =
+        BusObject->MaxControlChannelSize < MAX_CONTROL_MESSAGE_SIZE ? BusObject->MaxControlChannelSize : MAX_CONTROL_MESSAGE_SIZE;
+
+    do
     {
-        if (FastIOSendNetBufferListsComplete == NULL || FastIOIndicateReceiveNetBufferLists == NULL)
+        RetryCount++;
+
+        Status = TransactControlChannel(
+            BusObject, RetryCount * INITIAL_OPEN_TIMEOUT, (PUCHAR)&OpenMessage, sizeof(OpenMessage), (PUCHAR)&ReadBuffer[0], sizeof(ReadBuffer), &BytesTransferred);
+    } while ((Status == STATUS_IO_TIMEOUT) && (RetryCount < MAX_OPEN_RETRY_ATTEMPTS));
+
+    if (NT_SUCCESS(Status))
+    {
+        if (BytesTransferred < sizeof(*OpenDoneMessage))
         {
-            Status = STATUS_NOT_SUPPORTED;
-            goto Cleanup;
-        }
-        RtlZeroMemory(&OpenMessageFastIO, sizeof(OpenMessageFastIO));
-
-        OpenMessageFastIO.MessageHeader.MessageType = MBB_MESSAGE_TYPE_OPEN;
-        OpenMessageFastIO.MessageHeader.MessageLength = sizeof(OpenMessageFastIO);
-        OpenMessageFastIO.MessageHeader.MessageTransactionId = TransactionId;
-        OpenMessageFastIO.MaximumControlTransfer =
-            BusObject->MaxControlChannelSize < MAX_CONTROL_MESSAGE_SIZE ? BusObject->MaxControlChannelSize : MAX_CONTROL_MESSAGE_SIZE;
-        OpenMessageFastIO.AdapterContext = BusObject->ProtocolHandle;
-        OpenMessageFastIO.SendNetBufferListsCompleteHandler = FastIOSendNetBufferListsComplete;
-        OpenMessageFastIO.ReceiveNetBufferListsHandler = FastIOIndicateReceiveNetBufferLists;
-
-        do
-        {
-
-            RetryCount++;
-
-            Status = TransactControlChannel(
-                BusObject,
-                RetryCount * INITIAL_OPEN_TIMEOUT,
-                (PUCHAR)&OpenMessageFastIO,
-                sizeof(OpenMessageFastIO),
-                (PUCHAR)&ReadBuffer[0],
-                sizeof(ReadBuffer),
-                &BytesTransferred);
-        } while ((Status == STATUS_IO_TIMEOUT) && (RetryCount < MAX_OPEN_RETRY_ATTEMPTS));
-
-        if (NT_SUCCESS(Status))
-        {
-            if (BytesTransferred < sizeof(*OpenDoneMessageFastIO))
-            {
-                Status = STATUS_INFO_LENGTH_MISMATCH;
-            }
-        }
-
-        if (!NT_SUCCESS(Status))
-        {
-            goto Cleanup;
-        }
-
-        OpenDoneMessageFastIO = (PMBB_OPEN_DONE_FASTIO)&ReadBuffer[0];
-
-        if ((OpenDoneMessageFastIO->MessageHeader.MessageType != MBB_MESSAGE_TYPE_OPEN_DONE) ||
-            (OpenDoneMessageFastIO->MessageHeader.MessageLength < sizeof(MBB_OPEN_DONE_FASTIO)) ||
-            (OpenDoneMessageFastIO->MessageHeader.MessageTransactionId != OpenMessageFastIO.MessageHeader.MessageTransactionId))
-        {
-            Status = STATUS_NDIS_INVALID_DATA;
-
-            goto Cleanup;
-        }
-
-        if (OpenDoneMessageFastIO->MbbStatus != STATUS_SUCCESS)
-        {
-            Status = STATUS_OPEN_FAILED;
-
-            goto Cleanup;
-        }
-
-        if (BusObject->UsbCapDeviceInfo.DeviceInfoHeader.DeviceMajorVersion == 0x1 &&
-            BusObject->UsbCapDeviceInfo.DeviceInfoHeader.DeviceMinorVersion == 0x0)
-        {
-            BusObject->ModemContext = OpenDoneMessageFastIO->ModemContext;
-            BusObject->SendNetBufferListsHandler = (FastIOSendNetBufferListsHandler)OpenDoneMessageFastIO->SendNetBufferListsHandler;
-            if (BusObject->SendNetBufferListsHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
-            BusObject->ReturnNetBufferListsHandler = (FastIOReturnNetBufferListsHandler)OpenDoneMessageFastIO->ReturnNetBufferListsHandler;
-            if (BusObject->ReturnNetBufferListsHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
-            BusObject->CancelSendHandler = (FastIOCancelSendHandler)OpenDoneMessageFastIO->CancelSendHandler;
-            if (BusObject->CancelSendHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
-            BusObject->HaltHandler = (FastIOHaltHandler)OpenDoneMessageFastIO->HaltHandler;
-            if (BusObject->HaltHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
-            BusObject->PauseHandler = (FastIOPauseHandler)OpenDoneMessageFastIO->PauseHandler;
-            if (BusObject->PauseHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
-            BusObject->ShutdownHandler = (FastIOShutdownHandler)OpenDoneMessageFastIO->ShutdownHandler;
-            BusObject->ResetHandler = (FastIOResetHandler)OpenDoneMessageFastIO->ResetHandler;
-            BusObject->RestartHandler = (FastIORestartHandler)OpenDoneMessageFastIO->RestartHandler;
-            if (BusObject->RestartHandler == NULL)
-            {
-                Status = STATUS_OPEN_FAILED;
-                goto Cleanup;
-            }
+            Status = STATUS_INFO_LENGTH_MISMATCH;
         }
     }
-    else
+
+    if (NT_SUCCESS(Status))
     {
-        RtlZeroMemory(&OpenMessage, sizeof(OpenMessage));
-
-        OpenMessage.MessageHeader.MessageType = MBB_MESSAGE_TYPE_OPEN;
-        OpenMessage.MessageHeader.MessageLength = sizeof(OpenMessage);
-        OpenMessage.MessageHeader.MessageTransactionId = TransactionId;
-        OpenMessage.MaximumControlTransfer =
-            BusObject->MaxControlChannelSize < MAX_CONTROL_MESSAGE_SIZE ? BusObject->MaxControlChannelSize : MAX_CONTROL_MESSAGE_SIZE;
-
-        do
-        {
-
-            RetryCount++;
-
-            Status = TransactControlChannel(
-                BusObject, RetryCount * INITIAL_OPEN_TIMEOUT, (PUCHAR)&OpenMessage, sizeof(OpenMessage), (PUCHAR)&ReadBuffer[0], sizeof(ReadBuffer), &BytesTransferred);
-        } while ((Status == STATUS_IO_TIMEOUT) && (RetryCount < MAX_OPEN_RETRY_ATTEMPTS));
-
-        if (NT_SUCCESS(Status))
-        {
-            if (BytesTransferred < sizeof(*OpenDoneMessage))
-            {
-                Status = STATUS_INFO_LENGTH_MISMATCH;
-            }
-        }
-
-        if (!NT_SUCCESS(Status))
-        {
-            goto Cleanup;
-        }
-
         OpenDoneMessage = (PMBB_OPEN_DONE)&ReadBuffer[0];
 
         if ((OpenDoneMessage->MessageHeader.MessageType != MBB_MESSAGE_TYPE_OPEN_DONE) ||
@@ -1624,28 +1510,11 @@ NTSTATUS MbbBusHandshake(_In_ PBUS_OBJECT BusObject, _In_ ULONG TransactionId, _
             (OpenDoneMessage->MessageHeader.MessageTransactionId != OpenMessage.MessageHeader.MessageTransactionId))
         {
             Status = STATUS_NDIS_INVALID_DATA;
-
-            goto Cleanup;
         }
-
-        if (OpenDoneMessage->MbbStatus != STATUS_SUCCESS)
+        else if (OpenDoneMessage->MbbStatus != STATUS_SUCCESS)
         {
             Status = STATUS_OPEN_FAILED;
-
-            goto Cleanup;
         }
-    }
-Cleanup:
-    if (!NT_SUCCESS(Status))
-    {
-        BusObject->SendNetBufferListsHandler = NULL;
-        BusObject->ReturnNetBufferListsHandler = NULL;
-        BusObject->CancelSendHandler = NULL;
-        BusObject->HaltHandler = NULL;
-        BusObject->PauseHandler = NULL;
-        BusObject->ShutdownHandler = NULL;
-        BusObject->ResetHandler = NULL;
-        BusObject->RestartHandler = NULL;
     }
     return Status;
 }

@@ -26,8 +26,6 @@
 
 #include <netiodef.h>
 
-#include "mbbfastio.h"
-
 #define INITGUID
 #include <devpkey.h>
 
@@ -44,7 +42,6 @@
 #define WMBCLASS_RADIO_STATE_ON 1
 
 #include "BusInterface.h"
-#include "BusFastIO.h"
 
 #include "align.h"
 #include "device.h"
