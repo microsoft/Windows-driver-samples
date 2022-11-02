@@ -27,8 +27,7 @@ DefaultDestDir=13
 [Msft.NT$ARCH$]
  ; DisplayName           Section        DeviceID
  ; -----------           -------        --------
-%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\MS_COMP_MBIM
-%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\class_02&subclass_0e&prot_00
+%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\VID_1199&PID_9071&MI_0C ;Sierra Wireless EM7430 Qualcomm Snapdragon X7 LTE-A
 
 ;-------------------------------------------------------------------------------
 ; Adapter DDInstall and Services section
