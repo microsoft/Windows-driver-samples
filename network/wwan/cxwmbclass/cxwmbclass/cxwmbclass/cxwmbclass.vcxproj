@@ -80,9 +80,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>
@@ -111,11 +115,23 @@
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\arm64\ndis.lib;$(WindowsDDK_LibraryPath)\arm64\netio.lib;$(WindowsDDK_LibraryPath)\arm64\usbd.lib;$(WindowsDDK_LibraryPath)\arm64\usbdex.lib;$(WindowsDDK_LibraryPath)\arm64\wdmguid.lib;$(WindowsDDK_LibraryPath)\arm64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\arm64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\arm64\ndis.lib;$(WindowsDDK_LibraryPath)\arm64\netio.lib;$(WindowsDDK_LibraryPath)\arm64\usbd.lib;$(WindowsDDK_LibraryPath)\arm64\usbdex.lib;$(WindowsDDK_LibraryPath)\arm64\wdmguid.lib;$(WindowsDDK_LibraryPath)\arm64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\arm64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Inf Include="cxwmbclass.inf" />
