@@ -24,83 +24,83 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\adapter.cpp">
+    <ClCompile Include="..\adapter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\businit.cpp">
+    <ClCompile Include="..\businit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\datapipe.cpp">
+    <ClCompile Include="..\datapipe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\device.cpp">
+    <ClCompile Include="..\device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\driver.cpp">
+    <ClCompile Include="..\driver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\power.cpp">
+    <ClCompile Include="..\power.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rxqueue.cpp">
+    <ClCompile Include="..\rxqueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\txqueue.cpp">
+    <ClCompile Include="..\txqueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util.cpp">
+    <ClCompile Include="..\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils.cpp">
+    <ClCompile Include="..\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\inc\adapter.h">
+    <ClInclude Include="..\inc\adapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\align.h">
+    <ClInclude Include="..\inc\align.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\BusInterface.h">
+    <ClInclude Include="..\inc\BusInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\data.h">
+    <ClInclude Include="..\inc\data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\device.h">
+    <ClInclude Include="..\inc\device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\mbbmessages.h">
+    <ClInclude Include="..\inc\mbbmessages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\mbbncm.h">
+    <ClInclude Include="..\inc\mbbncm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\power.h">
+    <ClInclude Include="..\inc\power.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\precomp.h">
+    <ClInclude Include="..\inc\precomp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\rxqueue.h">
+    <ClInclude Include="..\inc\rxqueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\txqueue.h">
+    <ClInclude Include="..\inc\txqueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\usbbus.h">
+    <ClInclude Include="..\inc\usbbus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\util.h">
+    <ClInclude Include="..\inc\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\utils.h">
+    <ClInclude Include="..\inc\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\cxwmbclass.rc">
+    <ResourceCompile Include="..\cxwmbclass.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

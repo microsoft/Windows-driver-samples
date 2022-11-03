@@ -70,22 +70,22 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(SolutionDir)\..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,35 +140,35 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\adapter.cpp" />
-    <ClCompile Include="..\..\businit.cpp" />
-    <ClCompile Include="..\..\datapipe.cpp" />
-    <ClCompile Include="..\..\device.cpp" />
-    <ClCompile Include="..\..\driver.cpp" />
-    <ClCompile Include="..\..\power.cpp" />
-    <ClCompile Include="..\..\rxqueue.cpp" />
-    <ClCompile Include="..\..\txqueue.cpp" />
-    <ClCompile Include="..\..\util.cpp" />
-    <ClCompile Include="..\..\utils.cpp" />
+    <ClCompile Include="..\adapter.cpp" />
+    <ClCompile Include="..\businit.cpp" />
+    <ClCompile Include="..\datapipe.cpp" />
+    <ClCompile Include="..\device.cpp" />
+    <ClCompile Include="..\driver.cpp" />
+    <ClCompile Include="..\power.cpp" />
+    <ClCompile Include="..\rxqueue.cpp" />
+    <ClCompile Include="..\txqueue.cpp" />
+    <ClCompile Include="..\util.cpp" />
+    <ClCompile Include="..\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\inc\adapter.h" />
-    <ClInclude Include="..\..\inc\align.h" />
-    <ClInclude Include="..\..\inc\BusInterface.h" />
-    <ClInclude Include="..\..\inc\data.h" />
-    <ClInclude Include="..\..\inc\device.h" />
-    <ClInclude Include="..\..\inc\mbbmessages.h" />
-    <ClInclude Include="..\..\inc\mbbncm.h" />
-    <ClInclude Include="..\..\inc\power.h" />
-    <ClInclude Include="..\..\inc\precomp.h" />
-    <ClInclude Include="..\..\inc\rxqueue.h" />
-    <ClInclude Include="..\..\inc\txqueue.h" />
-    <ClInclude Include="..\..\inc\usbbus.h" />
-    <ClInclude Include="..\..\inc\util.h" />
-    <ClInclude Include="..\..\inc\utils.h" />
+    <ClInclude Include="..\inc\adapter.h" />
+    <ClInclude Include="..\inc\align.h" />
+    <ClInclude Include="..\inc\BusInterface.h" />
+    <ClInclude Include="..\inc\data.h" />
+    <ClInclude Include="..\inc\device.h" />
+    <ClInclude Include="..\inc\mbbmessages.h" />
+    <ClInclude Include="..\inc\mbbncm.h" />
+    <ClInclude Include="..\inc\power.h" />
+    <ClInclude Include="..\inc\precomp.h" />
+    <ClInclude Include="..\inc\rxqueue.h" />
+    <ClInclude Include="..\inc\txqueue.h" />
+    <ClInclude Include="..\inc\usbbus.h" />
+    <ClInclude Include="..\inc\util.h" />
+    <ClInclude Include="..\inc\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\cxwmbclass.rc" />
+    <ResourceCompile Include="..\cxwmbclass.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
