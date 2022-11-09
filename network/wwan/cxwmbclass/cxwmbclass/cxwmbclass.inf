@@ -1,0 +1,119 @@
+;-------------------------------------------------------------------------------
+; netwmbclass.inf
+;
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+
+[version]
+Signature               = "$Windows NT$"
+Class                   = Net
+ClassGUID               = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider                = %ManufacturerName%
+CatalogFile=cxwmbclass.cat
+DriverVer               = ; will be filled in at build time by StampInf
+PnpLockdown             = 1
+
+[SourceDisksNames]
+3426=windows cd
+
+[SourceDisksFiles]
+cxwmbclass.sys         = 3426
+
+[DestinationDirs]
+DefaultDestDir=13
+
+[Manufacturer]
+%ManufacturerName% = Msft,NT$ARCH$
+
+[Msft.NT$ARCH$]
+ ; DisplayName           Section        DeviceID
+ ; -----------           -------        --------
+;%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\MS_COMP_MBIM
+;%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\class_02&subclass_0e&prot_00
+%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\VID_1199&PID_9071&MI_0C ;Sierra Wireless EM7430 Qualcomm Snapdragon X7 LTE-A
+
+;-------------------------------------------------------------------------------
+; Adapter DDInstall and Services section
+; for NetAdapter drivers
+[wmbclass.ndi]
+AddReg          = wmbclass.Reg
+CopyFiles       = wmbclassCopyFiles
+Characteristics = 0x4   ; NCF_PHYSICAL
+BusType         = 15
+*IfType         = 243; IF_TYPE_WWANPP 
+*MediaType      = 9; NdisMediumWirelessWan
+*PhysicalMediaType  = 8; NdisPhysicalMediumWirelessWan
+EnableDhcp      = 0; Disable DHCP
+
+[wmbclassCopyFiles]
+cxwmbclass.sys,,,0x0100 
+
+[wmbclass.ndi.HW]
+Include = pci.inf
+Needs = PciD3ColdSupported.HW
+AddReg = wmbclass.ndi.AddReg.HW  
+
+[wmbclass.ndi.AddReg.HW]  
+HKR,,"AllowIdleIrpInD3",0x00010001,0x1
+
+[wmbclass.ndi.Services]
+AddService = %ServiceName%, 2, wmbclass.Service, wmbclass.EventLog
+
+; For mobile broadband drivers
+[wmbclass.Reg]
+HKR, Ndi,                         Service,             0, %ServiceName%
+HKR, Ndi\Interfaces, UpperRange, 0, "flpp4, flpp6"
+HKR, Ndi\Interfaces, LowerRange, 0, "ppip"
+HKR, , AllowDriverToOverrideDeviceName, 0x00010001, 1
+
+; standard INF keywords for NetAdapter drivers
+; using AddReg directive so they will work when this INF being Includes/Needs
+
+HKR, NetworkInterface, *IfConnectorPresent, 0x00010001, 1
+HKR, NetworkInterface, *ConnectionType, 0x00010001, 1     
+HKR, NetworkInterface, *DirectionType, 0x00010001, 0      
+HKR, NetworkInterface, *AccessType, 0x00010001, 2         
+HKR, NetworkInterface, *HardwareLoopback, 0x00010001, 0   
+HKR, , NumberOfNetworkInterfaces, 0x00010001, 17          
+
+; Selective Suspend
+HKR,Ndi\params\*SelectiveSuspend,ParamDesc,,%SelectiveSuspend%
+HKR,Ndi\params\*SelectiveSuspend,default,,"1"
+HKR,Ndi\params\*SelectiveSuspend,type,,"enum"
+HKR,Ndi\params\*SelectiveSuspend\enum,0,,%Disabled%
+HKR,Ndi\params\*SelectiveSuspend\enum,1,,%Enabled%
+
+;-----------------------------------------------------------------------------
+; Driver and Service Section
+;
+
+; For wmbclass.x drivers
+[wmbclass.Service]
+DisplayName     = %wmbclass.Service.DispName%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %13%\cxwmbclass.sys
+LoadOrderGroup  = NDIS
+
+[wmbclass.EventLog]
+AddReg = wmbclass.AddEventLog.Reg
+
+[wmbclass.AddEventLog.Reg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported,   0x00010001, 7
+
+;-----------------------------------------------------------------------------
+; Non-localizable Strings
+;
+[Strings]
+ServiceName            = "cxwmbclass"
+
+;-----------------------------------------------------------------------------
+; Localizable Strings
+;
+ManufacturerName             = "Sample Code"
+wmbclass.DeviceDesc          = "Generic Mobile Broadband Adapter"
+wmbclass.Service.DispName    = "USB Mobile Broadband Adapter Driver"
+Disabled                     = "Disabled"
+Enabled                      = "Enabled"
+SelectiveSuspend             = "Selective Suspend"
