@@ -170,14 +170,14 @@ DelService=NdisLwf,0x200 ; SPSVCINST_STOPSERVICE
 ; TODO: Remove the sample parameters below.
 
 ; Sample 1: "DriverParam" is a per-driver parameter.
-HKR, FilterDriverParams\DriverParam,     ParamDesc,   , "Driverparam for lwf"
-HKR, FilterDriverParams\DriverParam,     default,     , "5"
-HKR, FilterDriverParams\DriverParam,     type,        , "int"
+HKR, Parameters\FilterDriverParams\DriverParam,     ParamDesc,   , "Driverparam for lwf"
+HKR, Parameters\FilterDriverParams\DriverParam,     default,     , "5"
+HKR, Parameters\FilterDriverParams\DriverParam,     type,        , "int"
 
 ; Sample 2: "AdapterParam" is a per-module parameter.
-HKR, FilterAdapterParams\AdapterParam,   ParamDesc,   , "Adapterparam for lwf"
-HKR, FilterAdapterParams\AdapterParam,   default,     , "10"
-HKR, FilterAdapterParams\AdapterParam,   type,        , "int"
+HKR, Parameters\FilterAdapterParams\AdapterParam,   ParamDesc,   , "Adapterparam for lwf"
+HKR, Parameters\FilterAdapterParams\AdapterParam,   default,     , "10"
+HKR, Parameters\FilterAdapterParams\AdapterParam,   type,        , "int"
 
 [NdisImPlatformBindingOptions.reg]
 ; By default, when an LBFO team or Bridge is created, all filters will be
