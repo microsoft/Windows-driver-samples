@@ -1908,7 +1908,7 @@ GetValueFromBeaconOrProbeRsp(
 	if(RSNIE.Length != 0)
 	{
 		u1Byte	*pCurr;
-		u1Byte	count;
+		u2Byte	count;
 		u4Byte	Readlength =0;
 		
 		pCurr = RSNIE.Octet;
@@ -9234,7 +9234,7 @@ MgntLinkStatusUpdateRxCounts(
 {
 	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;
 	u2Byte 			SlotIndex;
-	u1Byte			i;
+	u2Byte			i;
 
 	*TotalRxBcnNum = 0;
 	*TotalRxDataNum = 0;

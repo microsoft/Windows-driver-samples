@@ -5872,11 +5872,11 @@ PnpWorkItemCallback(
 		{
 			if( pNLOInfo->NumDot11OffloadNetwork != 0 && Adapter->bInHctTest)
 			{
-				u1Byte i = 0;
+				ULONG i = 0;
 				BOOLEAN bTargetInNLO = FALSE;
 				
 				if(Adapter->MgntInfo.bMediaConnect || pNdisCommon->bDissociateBeforeSleep)
-				{				
+				{
 					for(i=0; i<pNLOInfo->NumDot11OffloadNetwork; i++)
 					{
 						if(pMgntInfo->Ssid.Length && (pMgntInfo->Ssid.Length == pNLOInfo->dDot11OffloadNetworkList[i].ssidlen))

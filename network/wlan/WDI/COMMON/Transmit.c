@@ -3630,7 +3630,7 @@ TCB_CopySystemPacketToLocal(
 	)
 {
 	PRT_TX_LOCAL_BUFFER		pBuf;
-	u1Byte					i = 0;
+	u2Byte					i = 0;
 	SHARED_MEMORY			tmpBufferList[MAX_PER_PACKET_BUFFER_LIST_LENGTH];
 	u4Byte					localBufOffset = 0;
 
