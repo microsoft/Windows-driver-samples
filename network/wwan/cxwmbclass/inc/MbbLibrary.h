@@ -22,7 +22,7 @@ Notes:
 
      This library can be used both in user and kernel mode because it does not
      to make any memory allocations.
-         
+
 Revision History:
 
     2/7/2010 : created
@@ -30,7 +30,7 @@ Revision History:
 Authors:
 
     TriRoy
-    
+
 ****************************************************************************/
 EXTERN_C
 NTSTATUS
@@ -38,7 +38,7 @@ MbbLibForamtBufferAsOpenMessage(__out_bcount_opt(*BufferLength) PVOID MessageBuf
 /*
     Description
         Formats an input buffer as a MBB Open Message.
-        
+
     Parameters
         __out_opt_bcount(*BufferLength) PVOID MessageBuffer
             The input message buffer. This parameter may be NULL
@@ -71,7 +71,7 @@ MbbLibForamtBufferAsCloseMessage(__out_bcount_opt(*BufferLength) PVOID MessageBu
 /*
     Description
         Formats an input buffer as a MBB Close Message.
-        
+
     Parameters
         __out_opt_bcount(*BufferLength) PVOID MessageBuffer
             The input message buffer. This parameter may be NULL
@@ -111,7 +111,7 @@ MbbLibFragmentBufferToCommandMessages(
     Description
         Given the Payload the routine fragments the payload
         in to the FragmentBuffers.
-        
+
     Parameters
         __in MBB_COMMAND Command
             Command contains the GUID and Cid.

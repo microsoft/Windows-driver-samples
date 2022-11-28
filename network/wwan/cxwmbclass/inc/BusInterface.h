@@ -27,7 +27,7 @@ Revision History:
 Authors:
 
     TriRoy
-    
+
 ****************************************************************************/
 
 #ifndef _BusInterface_H_
