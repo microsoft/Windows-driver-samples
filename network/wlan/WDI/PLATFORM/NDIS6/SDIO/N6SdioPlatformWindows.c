@@ -1664,7 +1664,7 @@ PlatformSdioCmd52ReadWrite(
 	PVOID			buffer
     )
 {
-	u1Byte	i = 0;
+	ULONG	i = 0;
 	u4Byte	TargetAddr = registerIndex;
 	PADAPTER	pAdapter = (PADAPTER)sdiodevice->pAdapter;
 	RT_STATUS	status = RT_STATUS_FAILURE;

@@ -3349,7 +3349,7 @@ N6ReceiveCoalescingFilter(
 	BOOLEAN						bBufferPkt = FALSE;
 	PMGNT_INFO 					pMgntInfo = &Adapter->MgntInfo;
 	u1Byte						ColseParIndex = 0;
-	u1Byte						ColseFieldIndex = 0;
+	u4Byte						ColseFieldIndex = 0;
 	BOOLEAN						bFiledMatch = TRUE;
 	PRT_DO_COALESICING_FILTER_PARAMETER		pCurrFilterPar =NULL;
 	PRT_DO_COALESICING_FIELD_INFO			pCurrFieldInfo = NULL;
