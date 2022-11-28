@@ -659,7 +659,7 @@ N6CSet_DOT11_ENABLED_AUTHENTICATION_ALGORITHM(
 
 	if(pAuthAlgoList->uNumOfEntries > 1)
 	{
-		u1Byte	i = 0;
+		ULONG	i = 0;
 		RT_TRACE( COMP_OID_SET, DBG_WARNING, ("%s pAuthAlgoList->uNumOfEntries > 1, but we don't support now!\n", __FUNCTION__) );
 		for(i = 0; i < pAuthAlgoList->uNumOfEntries; i ++)
 		{
@@ -3236,7 +3236,7 @@ N6CSet_DOT11_DESIRED_PHY_LIST(
 	PDOT11_PHY_ID_LIST	pPhyIdList = (PDOT11_PHY_ID_LIST)InformationBuffer;
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	BOOLEAN			AnyPhyId = FALSE;
-	u1Byte			index;
+	ULONG			index;
 	
 	*BytesRead = 0;
 	*BytesNeeded =0;
@@ -4498,9 +4498,9 @@ N6C_SET_OID_PNP_ADD_WAKE_UP_PATTERN(
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
 	NDIS_PM_PACKET_PATTERN PMPacketPattern = *((PNDIS_PM_PACKET_PATTERN)InformationBuffer);	
 				
-	u1Byte	WoLBitMapPatternMask[MAX_WOL_BIT_MASK_SIZE];
-	u1Byte	WoLBitMapPatternContent[MAX_WOL_PATTERN_SIZE];
-	u1Byte	Index;
+	u1Byte WoLBitMapPatternMask[MAX_WOL_BIT_MASK_SIZE];
+	u1Byte WoLBitMapPatternContent[MAX_WOL_PATTERN_SIZE];
+	int Index;
 	PMGNT_INFO				pMgntInfo = &(pTargetAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
@@ -4596,7 +4596,7 @@ N6C_SET_OID_PNP_ADD_WAKE_UP_PATTERN(
 					PMPacketPattern.MaskSize, 
 					(pu1Byte)&WoLBitMapPatternContent, 
 					PMPacketPattern.PatternSize,
-					Index,
+					(u1Byte)Index,
 					FALSE);
 						
 				pPSC->WoLPatternNum++;	
@@ -4618,9 +4618,9 @@ N6C_SET_OID_PNP_REMOVE_WAKE_UP_PATTERN(
 	OUT	PULONG			BytesNeeded
 )
 {
-	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
+	NDIS_STATUS ndisStatus = NDIS_STATUS_SUCCESS;
 	NDIS_PM_PACKET_PATTERN PMPacketPattern = *((PNDIS_PM_PACKET_PATTERN)InformationBuffer);
-	u1Byte	Index;
+	int Index;
 	PMGNT_INFO				pMgntInfo = &(pTargetAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);

@@ -902,9 +902,9 @@ Wdi_Task_Connect(
 		= (PWDI_MESSAGE_HEADER)pOidHandle->pInputBuffer;
 
 	//Save PMKID
-	u4Byte					ulIndex, i, j;
+	int						ulIndex, i, j;
 	BOOLEAN					blInserted;
-	u1Byte 					bssidcount=0;
+	int 					bssidcount=0;
 	int 					NumPreferredBSSID = Params->PreferredBSSEntryList.ElementCount;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> Wdi_Task_Connect()\n"));
@@ -914,7 +914,7 @@ Wdi_Task_Connect(
 	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
 		DOT11_SSID_LIST	SsidList;
-		u1Byte			i = 0;
+		ULONG			i = 0;
 
 		N6_ASSIGN_OBJECT_HEADER(
 			SsidList.Header,
@@ -1656,7 +1656,7 @@ Wdi_Task_Roam(
 	PWDI_MESSAGE_HEADER					pWdiHeader = (PWDI_MESSAGE_HEADER)pOidHandle->pInputBuffer;
 	u4Byte								ulIndex, i, j;
 	BOOLEAN								blInserted;
-	u1Byte 								bssidcount=0;
+	int 								bssidcount=0;
 	int 								NumPreferredBSSID = Params->PreferredBSSEntryList.ElementCount;
 
 
@@ -1667,7 +1667,7 @@ Wdi_Task_Roam(
 	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
 		DOT11_SSID_LIST	SsidList;
-		u1Byte			i = 0;
+		ULONG			i = 0;
 
 		N6_ASSIGN_OBJECT_HEADER(
 			SsidList.Header,
@@ -2585,7 +2585,7 @@ Wdi_Set_Network_List_Offload(
 	u4Byte				ChannelIndex 	= 0;
 	u4Byte				Index			= 0;
 	u4Byte				ItemCnt			= 0;
-	u1Byte				i				= 0;
+	UINT32				i				= 0;
 
 	RT_TRACE( COMP_POWER, DBG_LOUD , (" ===>Wdi_Set_Network_List_Offload\n") );
 
@@ -2872,7 +2872,7 @@ Wdi_Set_Add_Wol_Pattern(
 	u1Byte	WoLBitMapPatternMask[MAX_WOL_BIT_MASK_SIZE];
 	u1Byte	WoLBitMapPatternContent[MAX_WOL_PATTERN_SIZE];
 	u1Byte	WoLBitMapPattern[MAX_WOL_PATTERN_SIZE];
-	u1Byte	Index, ptnIndex;
+	int		Index, ptnIndex;
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> Wdi_Set_Add_Wol_Pattern()\n"));
 
@@ -2892,7 +2892,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Pattern
 	pPatternElements = Params->WakePacketPattern.pElements;
-	for(Index = 0; Index < Params->WakePacketPattern.ElementCount; Index++, pPatternElements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketPattern.ElementCount; Index++, pPatternElements++)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN[%d]:\n", Index));
 
@@ -2969,7 +2969,7 @@ Wdi_Set_Add_Wol_Pattern(
 						pPatternElements->PacketPatternMask.ElementCount,
 						(pu1Byte)&WoLBitMapPatternContent,
 						pPatternElements->PacketPattern.ElementCount,
-						Index,
+						(u1Byte)Index,
 						FALSE
 					);
 
@@ -2993,7 +2993,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Ipv4 Tcp Sync: Not verify
 	pIPv4Elements = Params->WakePacketIpv4TcpSync.pElements;
-	for(Index = 0; Index < Params->WakePacketIpv4TcpSync.ElementCount; Index++, pIPv4Elements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketIpv4TcpSync.ElementCount; Index++, pIPv4Elements++)
 	{
 		if(!pPSC->IPv4TcpSynPatternId)
 		{
@@ -3005,7 +3005,7 @@ Wdi_Set_Add_Wol_Pattern(
 
 	//2 Wake Packet Ipv6 Tcp Sync: Not verify
 	pIPv6Elements = Params->WakePacketIpv6TcpSync.pElements;
-	for(Index = 0; Index < Params->WakePacketIpv6TcpSync.ElementCount; Index++, pIPv6Elements++)
+	for(Index = 0; Index < (u1Byte)Params->WakePacketIpv6TcpSync.ElementCount; Index++, pIPv6Elements++)
 	{
 		if(!pPSC->IPv6TcpSynPatternId)
 		{
@@ -3086,7 +3086,7 @@ Wdi_Set_Remove_Wol_Pattern(
 	}
 	else
 	{
-		u1Byte	Index;
+		int	Index;
 
 		for(Index = 0; Index < MAX_SUPPORT_WOL_PATTERN_NUM(pAdapter); Index++)
 		{
@@ -3539,7 +3539,7 @@ Wdi_IHV_Request(
 #if 	1
 	PCCX_NIC_SPECIFIC_EXTENSION	ccxData;
 	PIHV_CCX_TLV				pTlv = NULL;
-	u1Byte i = 0;
+	ULONG i = 0;
 #endif
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> Wdi_IHV_Request()\n"));
 	pWdiHeader->Status = NDIS_STATUS_SUCCESS;
@@ -3729,7 +3729,7 @@ Wdi_Get_Statistics(
 	}
 	else
 	{
-		u1Byte	count = 0;
+		ULONG count = 0;
 
 		PlatformZeroMemory(&MacStatistics[0], sizeof(WDI_MAC_STATISTICS_CONTAINER)*2);
 		cpMacAddr(MacStatistics[0].MACAddress.Address, BroadcastAddress);
