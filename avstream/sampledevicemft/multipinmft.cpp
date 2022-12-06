@@ -205,7 +205,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
     
     DMFTCHECKHR_GOTO( m_spSourceTransform.As( &m_spIkscontrol ), done );
     
-    DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamCount( &inputStreams, &outputStreams ), done );
+    DMFTCHECKHR_GOTO( m_spSourceTransform->GetStreamCount( &inputStreams, &outputStreams ), done );
 
     spFilterUnk = nullptr;
 
@@ -222,7 +222,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
         pcOutputStreams = new (std::nothrow) DWORD[ outputStreams ];
         DMFTCHECKNULL_GOTO( pcOutputStreams, done, E_OUTOFMEMORY );
         
-        DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamIDs( inputStreams, pcInputStreams,
+        DMFTCHECKHR_GOTO( m_spSourceTransform->GetStreamIDs( inputStreams, pcInputStreams,
             outputStreams,
             pcOutputStreams ),done );
 
@@ -461,7 +461,7 @@ STDMETHODIMP  CMultipinMft::GetInputAvailableType(
     )
 {
     HRESULT hr = S_OK;
-        
+    CAutoLock   lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin( dwInputStreamID );
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO( spiPin, done, MF_E_INVALIDSTREAMNUMBER );
@@ -721,7 +721,7 @@ STDMETHODIMP  CMultipinMft::ProcessInput(
 {
     HRESULT     hr = S_OK;
     UNREFERENCED_PARAMETER( dwFlags );
-    
+    CAutoLock   lock(m_critSec);
     ComPtr<CInPin> spInPin = GetInPin( dwInputStreamID );
     DMFTCHECKNULL_GOTO(spInPin, done, MF_E_INVALIDSTREAMNUMBER);
 
@@ -762,6 +762,7 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     HRESULT     hr      = S_OK;
     BOOL       gotOne   = false;
     ComPtr<COutPin> spOpin;
+    CAutoLock _lock(m_critSec);
     UNREFERENCED_PARAMETER( dwFlags );
 
     if (cOutputBufferCount > m_OutputPinCount )
@@ -774,7 +775,6 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     {
         DWORD dwStreamID = pOutputSamples[i].dwStreamID;
         {
-            CAutoLock _lock(m_critSec);
             spOpin = nullptr;
             spOpin = GetOutPin(dwStreamID);
             GUID     pinGuid = GUID_NULL;
@@ -828,7 +828,7 @@ STDMETHODIMP  CMultipinMft::GetInputStreamAttributes(
 {
     HRESULT hr = S_OK;
     ComPtr<CInPin> spIPin;
-
+    CAutoLock Lock(m_critSec);
     DMFTCHECKNULL_GOTO( ppAttributes, done, E_INVALIDARG );
     *ppAttributes = nullptr;
 
@@ -857,7 +857,7 @@ STDMETHODIMP  CMultipinMft::GetOutputStreamAttributes(
 {
     HRESULT hr = S_OK;
     ComPtr<COutPin> spoPin;
-
+    CAutoLock Lock(m_critSec);
     DMFTCHECKNULL_GOTO(ppAttributes, done, E_INVALIDARG);
 
     *ppAttributes = nullptr;
@@ -893,6 +893,7 @@ STDMETHODIMP CMultipinMft::SetInputStreamState(
     --*/
 {
     HRESULT hr = S_OK;
+    CAutoLock Lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin(dwStreamID);
     DMFTCHECKNULL_GOTO(spiPin, done, MF_E_INVALIDSTREAMNUMBER);
     
@@ -909,6 +910,7 @@ STDMETHODIMP CMultipinMft::GetInputStreamState(
     )
 {
     HRESULT hr = S_OK;
+    CAutoLock Lock(m_critSec);
     ComPtr<CInPin> piPin = GetInPin(dwStreamID);
 
     DMFTCHECKNULL_GOTO(piPin, done, MF_E_INVALIDSTREAMNUMBER);
@@ -994,6 +996,7 @@ STDMETHODIMP CMultipinMft::GetInputStreamPreferredState(
     --*/
 {
     HRESULT hr = S_OK;
+    CAutoLock lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin(dwStreamID);
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(spiPin, done, MF_E_INVALIDSTREAMNUMBER);
@@ -1509,7 +1512,10 @@ HRESULT CMultipinMft::ChangeMediaTypeEx(
         //
         //  The media type will be set on the input pin by the time we return from the wait
         //          
-        DMFTCHECKHR_GOTO(spinPin->WaitForSetInputPinMediaChange(), done);
+        m_critSec.Unlock();
+        hr = spinPin->WaitForSetInputPinMediaChange();
+        m_critSec.Lock();
+        DMFTCHECKHR_GOTO(hr, done);
         // Change the media type on the output..
         DMFTCHECKHR_GOTO(spoPin->ChangeMediaTypeFromInpin(pFullType.Get(), pMediaType , reqState), done);
         //

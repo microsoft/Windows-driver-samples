@@ -219,7 +219,7 @@ CInPin::~CInPin()
 }
 
 STDMETHODIMP CInPin::Init( 
-    _In_ IMFTransform* pTransform
+    _In_ IMFDeviceTransform* pTransform
     )
 {
     
@@ -239,7 +239,7 @@ STDMETHODIMP CInPin::Init(
     m_waitInputMediaTypeWaiter = CreateEvent( NULL,
         FALSE,
         FALSE,
-        TEXT("MediaTypeWaiter")
+        nullptr
         );
     DMFTCHECKNULL_GOTO( m_waitInputMediaTypeWaiter, done, E_OUTOFMEMORY );
 
@@ -275,7 +275,7 @@ HRESULT CInPin::GenerateMFMediaTypeListFromDevice(
         ComPtr<IMFMediaType> spMediaType;
         DWORD pos = 0;
 
-        hr = m_spSourceTransform->MFTGetOutputAvailableType(uiStreamId, iMediaType, spMediaType.GetAddressOf());
+        hr = m_spSourceTransform->GetOutputAvailableType(uiStreamId, iMediaType, spMediaType.GetAddressOf());
         if (hr != S_OK)
             break;
      

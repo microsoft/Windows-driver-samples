@@ -461,7 +461,7 @@ public:
     ~CInPin();
 
     STDMETHOD ( Init )(
-        _In_ IMFTransform * 
+        _In_ IMFDeviceTransform * 
         );
     STDMETHOD_( VOID, ConnectPin)(
         _In_ CBasePin * 
@@ -514,7 +514,7 @@ public:
     STDMETHOD_( VOID, ShutdownPin)();
 
 protected:
-    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
+    ComPtr<IMFDeviceTransform>  m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ComPtr<CBasePin>            m_outpin;            //Only one output pin connected per input pin. There can be multiple pins connected and this could be a list   
     DeviceStreamState           m_preferredStreamState;
