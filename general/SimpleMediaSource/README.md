@@ -27,6 +27,9 @@ For more information, see the accompanying documentation at [Frame Server Custom
 
 1. Deploy the driver package with the following command:
 
-    `devcon dp_add SimpleMediaSourceDriver.inf`
+    `devgen /add /bus ROOT /hardwareid root\SimpleMediaSource /compatibleid root\SimpleMediaSource`
+    `pnputil /add-driver SimpleMediaSourceDriver.inf`
 
-1. In Device Manager, locate **SimpleMediaSource Capture Source**, under the Camera category. Open the Microsoft Camera App, switch cameras if necessary until the camera is streaming from the SimpleMediaSource. You should see a scrolling black and white gradient.
+1. In Device Manager, locate **SimpleMediaSource Capture Source**, under the Camera category. If it is not present, locate **Unknown Device**, under Other devices category and choose to Update Driver. Search Automatically for Driver should update the device to SimpleMediaSource Capture Source, under the Camera category.
+
+1. Open the Microsoft Camera App, switch cameras if necessary until the camera is streaming from the SimpleMediaSource. You should see a scrolling black and white gradient.
