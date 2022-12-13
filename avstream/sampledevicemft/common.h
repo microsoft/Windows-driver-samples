@@ -232,7 +232,7 @@ typedef enum _DMFT_conversion_type{
 
 typedef  std::vector< IMFMediaType *> IMFMediaTypeArray;
 typedef  std::vector< CBasePin *>     CBasePinArray;
-typedef  std::vector< IMFSample *>    IMFSampleList;
+typedef  std::vector<ComPtr<IMFSample>>  IMFSampleList;
 typedef  std::pair< std::multimap<int, int>::iterator, std::multimap<int, int>::iterator > MMFTMMAPITERATOR;
 
 

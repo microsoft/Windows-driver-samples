@@ -663,7 +663,7 @@ public:
         _In_ IMFMediaType *pInMediatype,
         _In_ IMFMediaType* pOutMediaType,
         _In_ DeviceStreamState state);
-
+    virtual ~CTranslateOutPin() {}
 protected:
 
     map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
