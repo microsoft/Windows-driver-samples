@@ -13,6 +13,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=01/01/2006,1.0.0.1
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
