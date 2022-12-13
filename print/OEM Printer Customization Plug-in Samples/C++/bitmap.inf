@@ -12,6 +12,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=6/07/2001,1.0.0.1
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -29,9 +30,6 @@ DriverVer=6/07/2001,1.0.0.1
 ; [Manufacturer] section, above. The models will be displayed in the order
 ; that they appear in the INF file.
 ;
-
-[Microsoft]
-"Bitmap Driver"      = BITMAP
 
 [Microsoft.NTx86]
 "Bitmap Driver"      = BITMAP
@@ -106,7 +104,7 @@ bitmap.dll    = 100,bitmap\ia64
 bitmap.dll    = 100,bitmap\arm64
 
 [SourceDisksFiles]
-BITMAP.GPD       = 100
+BITMAP.GPD    = 100
 BITMAP.INI    = 100
 
 ;
@@ -122,3 +120,5 @@ DefaultDestDir=66000
 ;
 [Strings]
 MS="Microsoft WDK Sample"
+OEMSample="Sample Disk"
+

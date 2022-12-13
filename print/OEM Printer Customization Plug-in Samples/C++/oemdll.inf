@@ -13,6 +13,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=6/07/2001,1.0.0.1
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -21,7 +22,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTamd64, NTia64, NTarm64
+"Microsoft"=Microsoft, NTx86, NTamd64, NTia64, NTarm64
 
 ;
 ; Model sections. 
@@ -31,7 +32,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that they appear in the INF file.
 ;
 
-[Microsoft]
+[Microsoft.NTx86]
 "PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
 "Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
 "OEM PostScript Customization Sample"  = INSTALL_OEMPS

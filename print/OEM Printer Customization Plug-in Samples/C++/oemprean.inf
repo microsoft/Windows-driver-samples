@@ -12,6 +12,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=6/07/2001,1.0.0.1
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -29,9 +30,6 @@ DriverVer=6/07/2001,1.0.0.1
 ; [Manufacturer] section, above. The models will be displayed in the order
 ; that they appear in the INF file.
 ;
-
-[Microsoft]
-"OEM Pre-Analysis sample"      = OEM_PREAN
 
 [Microsoft.NTx86]
 "OEM Pre-Analysis sample"      = OEM_PREAN
@@ -105,7 +103,7 @@ oemprean.dll    = 100,oemprean\ia64
 oemprean.dll    = 100,oemprean\arm64
 
 [SourceDisksFiles]
-OEMPREAN.GPD       = 100
+OEMPREAN.GPD    = 100
 OEMPREAN.INI    = 100
 
 ;
@@ -121,3 +119,5 @@ DefaultDestDir=66000
 ;
 [Strings]
 MS="Microsoft WDK Sample"
+OEMSample="Sample Disk"
+
