@@ -22,7 +22,7 @@ PnpLockdown=1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft,NTx86,NTamd64,NTia64
+"Microsoft"=Microsoft,NTx86,NTamd64
 
 ;
 ; Model sections. 
@@ -36,9 +36,6 @@ PnpLockdown=1
 "Unidrv Full UI Replacement Sample"      = UNIUIREP
 
 [Microsoft.NTamd64]
-"Unidrv Full UI Replacement Sample"      = UNIUIREP
-
-[Microsoft.NTia64]
 "Unidrv Full UI Replacement Sample"      = UNIUIREP
 
 
@@ -73,11 +70,8 @@ uniuirep.dll    = 100,x86
 [SourceDisksFiles.amd64]
 uniuirep.dll    = 100,amd64
 
-[SourceDisksFiles.IA64]
-uniuirep.dll    = 100,ia64
-
 [SourceDisksFiles]
-uniuirep.GPD       = 100
+uniuirep.GPD    = 100
 uniuirep.INI    = 100
 
 ;

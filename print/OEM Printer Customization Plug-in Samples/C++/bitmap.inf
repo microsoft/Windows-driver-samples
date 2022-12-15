@@ -21,7 +21,7 @@ PnpLockdown=1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64, NTarm64
+"Microsoft"=Microsoft, NTx86, NTamd64, NTarm64
 
 ;
 ; Model sections. 
@@ -35,9 +35,6 @@ PnpLockdown=1
 "Bitmap Driver"      = BITMAP
 
 [Microsoft.NTamd64]
-"Bitmap Driver"      = BITMAP
-
-[Microsoft.NTia64]
 "Bitmap Driver"      = BITMAP
 
 [Microsoft.NTarm64]
@@ -96,9 +93,6 @@ bitmap.dll    = 100,bitmap\x86
 
 [SourceDisksFiles.amd64]
 bitmap.dll    = 100,bitmap\amd64
-
-[SourceDisksFiles.ia64]
-bitmap.dll    = 100,bitmap\ia64
 
 [SourceDisksFiles.arm64]
 bitmap.dll    = 100,bitmap\arm64

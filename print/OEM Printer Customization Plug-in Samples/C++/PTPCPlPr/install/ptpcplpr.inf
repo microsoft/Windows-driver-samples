@@ -20,7 +20,7 @@ PnpLockdown=1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64
+"Microsoft"=Microsoft, NTx86, NTamd64
 
 ;
 ; Model sections. 
@@ -34,9 +34,6 @@ PnpLockdown=1
 "UniDrv PT/PC Plugin Provider"	= PTPCPLPR
 
 [Microsoft.NTamd64]
-"UniDrv PT/PC Plugin Provider"	= PTPCPLPR
-
-[Microsoft.NTia64]
 "UniDrv PT/PC Plugin Provider"	= PTPCPLPR
 
 ;
@@ -81,9 +78,6 @@ PTPCPLPR.DLL   = 100,x86
 
 [SourceDisksFiles.amd64]
 PTPCPLPR.DLL   = 100,amd64
-
-[SourceDisksFiles.IA64]
-PTPCPLPR.DLL   = 100,ia64
 
 [SourceDisksFiles]
 PTPCPLPR.GPD   = 100
