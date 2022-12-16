@@ -16,11 +16,6 @@ testmcro.dll=1
 [SourceDisksNames.x86]
 1=%Location%,,,
 
-[SourceDisksFiles.ia64]
-testmcro.dll=1
-[SourceDisksNames.ia64]
-1=%Location%,,,
-
 [SourceDisksFiles.amd64]
 testmcro.dll=1
 [SourceDisksNames.amd64]
@@ -31,7 +26,7 @@ testmcro.dll=1
 DefaultDestDir=11
 
 [Manufacturer]
-%ManufacturerName%=Models, NTx86, NTamd64, NTia64
+%ManufacturerName%=Models, NTx86, NTamd64
 
 ; This is the models section for the x86 driver
 [Models.NTx86]
@@ -39,10 +34,6 @@ DefaultDestDir=11
 
 ; This is the models section for the amd64 driver
 [Models.NTamd64]
-%WIASample.DeviceDesc% = WIASample.Scanner, PnPIDInformation
-
-; This is the models section for the ia64 driver
-[Models.NTia64]
 %WIASample.DeviceDesc% = WIASample.Scanner, PnPIDInformation
 
 [WIASample.Scanner]
