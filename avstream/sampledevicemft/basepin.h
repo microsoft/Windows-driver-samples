@@ -458,7 +458,7 @@ private:
 class CInPin: public CBasePin{
 public:
     CInPin( _In_opt_ IMFAttributes*, _In_ ULONG ulPinId = 0, _In_ CMultipinMft *pParent=NULL);
-    ~CInPin();
+    virtual ~CInPin();
 
     STDMETHOD ( Init )(
         _In_ IMFDeviceTransform * 
@@ -541,7 +541,7 @@ public:
         , _In_     MFSampleAllocatorUsage allocatorUsage = MFSampleAllocatorUsage_DoesNotAllocate
 #endif
     );
-    ~COutPin();
+    virtual ~COutPin();
     STDMETHODIMP FlushQueues();
     STDMETHODIMP AddPin(
         _In_ DWORD pinId
@@ -619,7 +619,7 @@ public:
         Init();
     }
     STDMETHOD_(VOID, ShutdownPin)();
-    ~CAsyncInPin()
+    virtual ~CAsyncInPin()
     {
         FlushQueues();
     }

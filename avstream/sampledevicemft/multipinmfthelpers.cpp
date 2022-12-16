@@ -403,10 +403,9 @@ HRESULT CXvptee::StopStreaming()
     HRESULT hr = S_OK;
     CAutoLock Lock(m_Lock);
     SetAsyncStatus(MF_E_SHUTDOWN);
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0), done); // Flush the stream
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0), done); // Notify end of stream
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0), done); // Notify end of streaming
-done:
+    Transform()->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0); // Flush the stream
+    Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0); // Notify end of stream
+    Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0); // Notify end of streaming
     return hr;
 }
 
@@ -569,9 +568,9 @@ HRESULT CDecoderTee::StopStreaming()
     if (spTransform.Get())
     {
         ComPtr<IMFShutdown> spShutdown;
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, m_dwMFTInputId), done);
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0), done);
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0), done);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, m_dwMFTInputId);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0);
         // Shut it down
         if (SUCCEEDED(spTransform->QueryInterface(IID_PPV_ARGS(&spShutdown))))
         {
@@ -580,7 +579,6 @@ HRESULT CDecoderTee::StopStreaming()
         
         spTransform = nullptr;
     }
-done:
     return hr;
 }
 
