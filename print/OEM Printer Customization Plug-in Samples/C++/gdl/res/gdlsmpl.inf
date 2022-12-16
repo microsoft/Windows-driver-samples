@@ -22,7 +22,7 @@ PnpLockdown=1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Fabrikam"=Fabrikam,NTx86,NTamd64,NTia64
+"Fabrikam"=Fabrikam,NTx86,NTamd64
 
 ;
 ; Model sections. 
@@ -36,9 +36,6 @@ PnpLockdown=1
 "GDL Sample"      = GDLSMPL
 
 [Fabrikam.NTamd64]
-"GDL Sample"      = GDLSMPL
-
-[Fabrikam.NTia64]
 "GDL Sample"      = GDLSMPL
 
 
@@ -72,9 +69,6 @@ GDLSMPL.dll    = 100,x86
 
 [SourceDisksFiles.amd64]
 GDLSMPL.dll    = 100,amd64
-
-[SourceDisksFiles.IA64]
-GDLSMPL.dll    = 100,ia64
 
 [SourceDisksFiles]
 GDLSMPL.GPD       = 100

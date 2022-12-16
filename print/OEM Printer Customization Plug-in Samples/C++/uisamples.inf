@@ -22,7 +22,7 @@ PnpLockdown=1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64, NTarm64
+"Microsoft"=Microsoft, NTx86, NTamd64, NTarm64
 
 ;
 ; Model sections. 
@@ -37,10 +37,6 @@ PnpLockdown=1
 "OEM Custom Help"       = CUSTHELP.UNI
 
 [Microsoft.NTamd64]
-"OEM Custom UI Plugin"  = SYNCSET.UNI
-"OEM Custom Help"       = CUSTHELP.UNI
-
-[Microsoft.NTia64]
 "OEM Custom UI Plugin"  = SYNCSET.UNI
 "OEM Custom Help"       = CUSTHELP.UNI
 
@@ -107,10 +103,6 @@ SYNCSET.DLL   = 100,SyncSet\x86
 [SourceDisksFiles.amd64]
 CUSTHLP.DLL   = 100,CustHlp\amd64
 SYNCSET.DLL   = 100,SyncSet\amd64
-
-[SourceDisksFiles.ia64]
-CUSTHLP.DLL   = 100,CustHlp\ia64
-SYNCSET.DLL   = 100,SyncSet\ia64
 
 [SourceDisksFiles.arm64]
 CUSTHLP.DLL   = 100,CustHlp\arm64
