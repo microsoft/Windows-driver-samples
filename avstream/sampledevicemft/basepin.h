@@ -666,7 +666,7 @@ public:
     virtual ~CTranslateOutPin() {}
 protected:
 
-    map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
+    map<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> m_TranslatedMediaTypes;
 };
 
 

@@ -174,33 +174,31 @@ STDMETHODIMP CPinQueue::RecreateTeeByAllocatorMode(
 
     Ctee::ReleaseTee(m_spTeer);// Should release the reference
 
-    wistd::unique_ptr<CNullTee> nulltee = wil::make_unique_nothrow<CNullTee>(this);
-    RETURN_IF_NULL_ALLOC(nulltee);
+    ComPtr<CNullTee> spNulltee = new (std::nothrow) CNullTee(this);
+    DMFTCHECKNULL_GOTO(spNulltee.Get(), done, E_OUTOFMEMORY);
 
     if (allocatorUsage == MFSampleAllocatorUsage_DoesNotAllocate)
     {
-        m_spTeer.Attach(nulltee.release()); /*A simple passthrough*/
+        m_spTeer = spNulltee.Get();
     }
     else
     {
-        wistd::unique_ptr<CSampleCopytee> sampleCopytee;
-        RETURN_IF_NULL_ALLOC(sampleCopytee);
-        (void)sampleCopytee->SetD3DManager(punkManager);
-
+        ComPtr<CSampleCopytee> spSampleCopytee;
         if (allocatorUsage == MFSampleAllocatorUsage_UsesProvidedAllocator)
         {
             RETURN_HR_IF_NULL(E_INVALIDARG, pAllocator);
-            sampleCopytee = wil::make_unique_nothrow<CSampleCopytee>(nulltee.release(), pinCategory(), pAllocator);
+            spSampleCopytee = new (std::nothrow) CSampleCopytee(spNulltee.Get(), pinCategory(), pAllocator);
         }
         else
         {
-            sampleCopytee = wil::make_unique_nothrow<CSampleCopytee>(nulltee.release(), pinCategory(), nullptr);
+            spSampleCopytee = new (std::nothrow) CSampleCopytee(spNulltee.Get(), pinCategory(), nullptr);
         }
-
-        RETURN_IF_FAILED(sampleCopytee->SetMediaTypes(inMediatype, outMediatype));
-        m_spTeer.Attach(sampleCopytee.release());
+        DMFTCHECKNULL_GOTO(spSampleCopytee.Get(), done, E_OUTOFMEMORY);
+        (void)spSampleCopytee->SetD3DManager(punkManager);
+        RETURN_IF_FAILED(spSampleCopytee->SetMediaTypes(inMediatype, outMediatype));
+        m_spTeer = spSampleCopytee.Get();
     }
-
+done:
     return hr;
 }
 #endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))

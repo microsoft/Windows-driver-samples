@@ -82,7 +82,8 @@ HRESULT CBasePin::GetMediaTypeAt( _In_ DWORD pos, _Outptr_result_maybenull_ IMFM
     {
         DMFTCHECKHR_GOTO(MF_E_NO_MORE_TYPES,done);
     }
-    spMediaType = m_listOfMediaTypes[pos];
+    DMFTCHECKHR_GOTO(MFCreateMediaType(spMediaType.GetAddressOf()), done);
+    DMFTCHECKHR_GOTO(m_listOfMediaTypes[pos]->CopyAllItems(spMediaType.Get()), done);
     *ppMediaType = spMediaType.Detach();
 done:
     return hr;
@@ -122,8 +123,10 @@ STDMETHODIMP_(BOOL) CBasePin::IsMediaTypeSupported
         {
             bFound = TRUE;
             if (ppIMFMediaTypeFull) {
-                *ppIMFMediaTypeFull = m_listOfMediaTypes[uIIndex].Get();
-                (*ppIMFMediaTypeFull)->AddRef();
+                ComPtr<IMFMediaType> spMediaType;
+                DMFTCHECKHR_GOTO(MFCreateMediaType(spMediaType.GetAddressOf()), done);
+                DMFTCHECKHR_GOTO(m_listOfMediaTypes[uIIndex]->CopyAllItems(spMediaType.Get()), done);
+                *ppIMFMediaTypeFull = spMediaType.Detach();
             }
             break;
         }
@@ -831,7 +834,7 @@ STDMETHODIMP CTranslateOutPin::AddMediaType(
         DMFTCHECKHR_GOTO(pNewMediaType->SetUINT32(MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_0_255), done);
         hr = ExceptionBoundary([&]()
         {
-            m_TranslatedMediaTypes.insert(std::pair<IMFMediaType*, IMFMediaType*>( pNewMediaType.Get(), pMediaType));
+            m_TranslatedMediaTypes.insert(std::pair<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>>( pNewMediaType.Get(), pMediaType));
         });
         DMFTCHECKHR_GOTO(hr, done);
     }
@@ -858,18 +861,22 @@ STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
 {
     DWORD dwFlags = 0, dwMatchedFlags = (MF_MEDIATYPE_EQUAL_MAJOR_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_DATA);
 
-    std::map<IMFMediaType*, IMFMediaType*>::iterator found = std::find_if(m_TranslatedMediaTypes.begin(), m_TranslatedMediaTypes.end(),
-        [&](std::pair<IMFMediaType*, IMFMediaType*> p)
+    auto found = std::find_if(m_TranslatedMediaTypes.begin(), m_TranslatedMediaTypes.end(),
+        [&](std::pair<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> p)
     {
-        return (SUCCEEDED(pMediaType->IsEqual(p.first, &dwFlags))
+        return (SUCCEEDED(pMediaType->IsEqual(p.first.Get(), &dwFlags))
             && ((dwFlags & dwMatchedFlags) == (dwMatchedFlags)));
     });
 
     if (found != m_TranslatedMediaTypes.end())
     {
-        ComPtr<IMFMediaType> spMediaType = (*found).second;
+        ComPtr<IMFMediaType> spMediaType;
         if (ppIMFMediaTypeFull)
         {
+            if (FAILED(MFCreateMediaType(spMediaType.GetAddressOf()))|| FAILED((*found).second->CopyAllItems(spMediaType.Get())))
+            {
+                return false;
+            }
             *ppIMFMediaTypeFull = spMediaType.Detach();
         }
         return true;
