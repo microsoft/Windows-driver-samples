@@ -32,6 +32,7 @@ HRESULT SimpleFrameGenerator::CreateFrame(
     _In_ LONG pitch,
     _In_ ULONG rgbMask)
 {
+    RETURN_HR_IF_NULL(E_POINTER, pBuf);
     if (m_subType == MFVideoFormat_RGB32)
     {
         DEBUG_MSG(L"RGB32 frames %s\n", winrt::to_hstring(MFVideoFormat_RGB32).data());

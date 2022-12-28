@@ -1,8 +1,9 @@
 /*++
+Copyright (C) Microsoft Corporation. All rights reserved.
 
 Module Name:
 
-    Internal.h
+    Trace.h
 
 Abstract:
 

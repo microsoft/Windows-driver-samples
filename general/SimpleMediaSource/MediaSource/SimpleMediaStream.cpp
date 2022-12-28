@@ -262,6 +262,7 @@ namespace winrt::WindowsSample::implementation
         winrt::slim_lock_guard lock(m_Lock);
         RETURN_IF_FAILED(_CheckShutdownRequiresLock());
 
+        RETURN_HR_IF_NULL(E_POINTER, pState);
         *pState = m_streamState;
 
         return S_OK;
