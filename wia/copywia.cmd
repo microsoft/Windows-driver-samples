@@ -92,11 +92,11 @@ copy wiadriverex\segfilter\%build_samples%\%cpu_samples%\segfilter.dll   %1wiabi
 copy wiadriverex\imgfilter\%build_samples%\%cpu_samples%\imgfilter.dll   %1wiabins\drivers
 copy wiadriverex\errhandler\%build_samples%\%cpu_samples%\errhandler.dll %1wiabins\drivers
 copy wiadriverex\uiext2\%build_samples%\%cpu_samples%\uiext2.dll         %1wiabins\drivers
-copy wiadriverex\wiadriver.inf                                           %1wiabins\drivers
+copy wiadriverex\usd\%build_samples%\%cpu_samples%\wiadriver.inf         %1wiabins\drivers
 copy wiadriverex\sample.bmp                                              %1wiabins\drivers
 
 copy prodscan\%build_samples%\%cpu_samples%\prodscan.dll                 %1wiabins\drivers
-copy prodscan\prodscan.inf                                               %1wiabins\drivers
+copy prodscan\%build_samples%\%cpu_samples%\prodscan.inf                 %1wiabins\drivers
 
 copy "%build_tools%\%cpu_tools%\wiainfo2.exe"                            %1wiabins
 copy "%build_tools%\%cpu_tools%\wiatrcvw.exe"                            %1wiabins
