@@ -27,17 +27,17 @@ See [Deploying a Driver to a Test Computer](https://docs.microsoft.com/windows-h
 
 #### New
 
-It is highly encouraged when testing the driver to use [DevGen](https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/devgen) to create a SW device.
+It is highly encouraged when testing the driver to use [DevGen](https://learn.microsoft.com/windows-hardware/drivers/devtest/devgen) to create a `SwDevice`.
 
 __DevGen Usage Example__
 
-1. From a terminal on test computer go to the WDK tools path and run `.\devgen /add /bus SWD /hardwareid root\defect_toastmon`. ***If WDK is not available on test computer, simply copy over `devgen.exe`***
+1. From a terminal (running as admin) on test computer go to the WDK tools path and run `.\devgen /add /bus SWD /hardwareid root\defect_toastmon`. ***If WDK is not available on test computer, simply copy over `devgen.exe`***
 
-2. There is now a `Generic software device` available in the system. ***Use Device Manager as a simple means to inspect.***
+2. There is now a `Generic software device` available in the system. ***Use Device Manager as a simple means to inspect or from a terminal run `pnputil /enum-devices /deviceid "root\defect_toastmon".***
 
-3. Now that there is a device with the appropriate hardware id, deploy/install driver sample accordingly.
+3. Now that there is a device with the appropriate hardware ID, deploy/install driver sample accordingly.
 
-> Note: Use `.\devgen /remove "<Device instance path>"` to remove SW device (the path can be copied from Device Manager).
+> Note: Use `.\devgen /remove "<Device instance path>"` to remove SW device (the path can be copied from output of `.\devgen /add` or from Device Manager).
 >
 > Device instance path example `"SWD\DEVGEN\{D0299946-2EC2-C146-B00B-E01144166F8B}"`
 
