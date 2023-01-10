@@ -45,10 +45,6 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Get changed files
-      id: get-changed-files
-      uses: tj-actions/changed-files@v27
-
     - name: Retrieve and build all available solutions
       id: build-all-projects
       run: |
