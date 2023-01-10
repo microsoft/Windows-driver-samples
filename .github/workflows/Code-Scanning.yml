@@ -1,5 +1,5 @@
 # This workflow runs the latest CodeQL CLI and checks against CodeQL's Cpp library.
-# It will only analyze solutions which have been changed.
+# This is the source for the GitHub Security Code Scanning job.
 
 name: "CodeQL Analysis"
 
@@ -13,12 +13,6 @@ on:
     branches:
       - main
       - develop
-    
-    # Do not perform analysis if only config or text files are changed
-    paths-ignore:
-        - '**/*.md'
-        - '**/*.txt'
-        - '.github/**'
     
   # Allow manual scheduling
   workflow_dispatch:
@@ -55,11 +49,10 @@ jobs:
       id: get-changed-files
       uses: tj-actions/changed-files@v27
 
-    - name: Retrieve and build solutions from changed files
-      id: build-changed-projects
+    - name: Retrieve and build all available solutions
+      id: build-all-projects
       run: |
-        $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(' ')
-        .\.github\scripts\Build-ChangedProjects.ps1 -ChangedFiles $changedFiles
+          .\Build-AllProjects.ps1
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
