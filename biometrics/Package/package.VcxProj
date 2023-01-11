@@ -28,9 +28,6 @@
     <ProjectReference Include="..\adapters\storage_adapter\StorageAdapter.vcxproj">
       <Project>{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\driver\WudfBioUsbSample.vcxproj">
-      <Project>{474A1976-0414-48E7-9F2B-4FDED5BA700C}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
