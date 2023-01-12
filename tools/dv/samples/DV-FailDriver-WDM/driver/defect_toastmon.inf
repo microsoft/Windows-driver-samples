@@ -58,9 +58,6 @@ StartType      = 1                  ; SERVICE_SYSTEM_START
 ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\defect_toastmon.sys                            
 
-[ToastMonBuggy]
-HardwareIds=root\defect_toastmon
-
 ; ================= Source Media Section =====================
 
 [SourceDisksFiles]
