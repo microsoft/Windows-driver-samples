@@ -1,6 +1,0 @@
-; Socketecho.def : Declares the module parameters.
-
-LIBRARY      "SocketEcho"
-
-EXPORTS
-    DllGetClassObject   PRIVATE
