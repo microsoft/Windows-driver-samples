@@ -58,7 +58,7 @@ You can build the sample in two ways: using the Visual Studio Integrated Develop
 
 #### Server Installation
 
-1. Copy KMDF coinstaller (wdfcoinstallerMMmmm.dll, from redist\\wdf\\ ), BthEchoSampleSrv.Sys, BthEchoSampleSrv.inf and bthsrvinst.exe on a temporary directory on the target machine.
+1. Copy BthEchoSampleSrv.Sys, BthEchoSampleSrv.inf and bthsrvinst.exe on a temporary directory on the target machine.
 
 1. Run bthsrvinst.exe /i to install the echo server device. This enables the Bluetooth Enumerator (BthEnum.sys) to enumerate echo server device and create a PDO for the device (please refer to the device tree below).
 
@@ -111,7 +111,7 @@ You can build the sample in two ways: using the Visual Studio Integrated Develop
 > [!IMPORTANT]
 > This must be done on a separate machine from the one where echo server device was installed.
 
-1. Copy KMDF coinstaller (wdfcoinstallerMMmmm.dll, from redist\\wdf\\), BthEchoSampleCli.Sys, BthEchoSampleCli.inf and bthecho.exe on a temporary directory on the target machine.
+1. Copy BthEchoSampleCli.Sys, BthEchoSampleCli.inf and bthecho.exe on a temporary directory on the target machine.
 
 1. Run bthprops.cpl from a command line or right click on the Bluetooth icon in the system tray and select 'Show Devices' to bring up a list of installed Bluetooth devices.
 
