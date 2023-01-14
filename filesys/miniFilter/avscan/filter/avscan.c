@@ -1981,8 +1981,6 @@ Return Value:
 
 --*/
 {
-    ULONG_PTR stackLow;
-    ULONG_PTR stackHigh;
     PFILE_OBJECT FileObject = Data->Iopb->TargetFileObject;
     AV_STREAMHANDLE_CONTEXT streamHandleContext;
     
@@ -1993,18 +1991,6 @@ Return Value:
                   ("[AV] AvPreCreate: Entered\n") );
 
     streamHandleContext.Flags = 0;
-    
-    //
-    //  Stack file objects are never scanned.
-    //
-
-    IoGetStackLimits( &stackLow, &stackHigh );
-
-    if (((ULONG_PTR)FileObject > stackLow) && 
-        ((ULONG_PTR)FileObject < stackHigh)) {
-
-        return FLT_PREOP_SUCCESS_NO_CALLBACK;
-    }
     
     //
     //  Directory opens don't need to be scanned.
@@ -2719,8 +2705,6 @@ Return Value:
     BOOLEAN encrypted = FALSE;
     PAV_STREAM_CONTEXT streamContext = NULL;
     PAV_STREAMHANDLE_CONTEXT streamHandleContext = NULL;
-    ULONG_PTR stackLow;
-    ULONG_PTR stackHigh;
 
     BOOLEAN updateRevisionNumbers;
     LONGLONG VolumeRevision, CacheRevision, FileRevision;
@@ -2761,18 +2745,6 @@ Return Value:
         }
 
         FltReleaseContext( streamHandleContext );
-    }
-
-    //
-    //  Stack file objects are never scanned.
-    //
-
-    IoGetStackLimits( &stackLow, &stackHigh );
-
-    if (((ULONG_PTR)FltObjects->FileObject > stackLow) && 
-        ((ULONG_PTR)FltObjects->FileObject < stackHigh)) {
-
-        return FLT_PREOP_SUCCESS_NO_CALLBACK;
     }
 
     status = FltGetStreamContext( FltObjects->Instance,
