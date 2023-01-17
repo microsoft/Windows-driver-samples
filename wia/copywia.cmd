@@ -70,7 +70,7 @@ rem WIA 1.0
 rem
 
 copy microdrv\%build_samples%\%cpu_samples%\testmcro.dll                 %1wiabins\drivers
-copy microdrv\testmcro.inf                                               %1wiabins\drivers
+copy microdrv\%build_samples%\%cpu_samples%\testmcro.inf                 %1wiabins\drivers
 copy "%build_tools%\%cpu_tools%\wiatest.exe"                             %1wiabins
 
 if /I "%DDK_TARGET_OS%" EQU "WinXP" (
