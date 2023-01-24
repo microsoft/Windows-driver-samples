@@ -1,7 +1,7 @@
 param(
     $Directory,
     [string]$ProjectName,
-    $LogFilesDirectory = "_logfiles",
+    $LogFilesDirectory,
     [string]$Configuration = "Debug",
     [string]$Platform = "x64"
 )
@@ -49,16 +49,20 @@ foreach ($line in Get-Content -Path $solutionFile)
 
 if (-not $configurationIsSupported)
 {
-    Write-Output "[$ProjectName] `u{23E9} Skipped. Configuration $Configuration|$Platform not supported."
-    exit 0
+    # jjj42: Write-Output "[$ProjectName] `u{23E9} Skipped. Configuration $Configuration|$Platform not supported."
+    exit 2
 }
 
-$errorLogFilePath = "$LogFilesDirectory\$ProjectName.err"
-$warnLogFilePath = "$LogFilesDirectory\$ProjectName.wrn"
-Write-Output "[$ProjectName] `u{2692} Building project..."
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo
+$errorLogFilePath = "$LogFilesDirectory\$ProjectName.$Configuration.$Platform.err"
+$warnLogFilePath = "$LogFilesDirectory\$ProjectName.$Configuration.$Platform.wrn"
+$OutLogFilePath = "$LogFilesDirectory\$ProjectName.$Configuration.$Platform.out"
+# jjj42: Write-Output "Building Project: $ProjectName; Configuration: $Configuration; Platform: $Platform {"
+#sleep 1
+#msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
 if ($LASTEXITCODE -ne 0)
 {
-    Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
+    #jjj Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
     exit 1
 }
+# jjj42: Write-Output "Building Project: $ProjectName; Configuration: $Configuration; Platform: $Platform }"
