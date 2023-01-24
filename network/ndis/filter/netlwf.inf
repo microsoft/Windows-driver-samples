@@ -13,6 +13,7 @@ Signature       = "$Windows NT$"
 Class           = NetService
 ClassGUID       = {4D36E974-E325-11CE-BFC1-08002BE10318}
 CatalogFile     = netlwf.cat
+PnpLockdown     = 1
 
 ; TODO: Customize this string for your company name
 Provider        = %ProviderString%
