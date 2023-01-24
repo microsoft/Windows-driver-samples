@@ -155,29 +155,13 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %12%\ndislwf.sys
 LoadOrderGroup  = NDIS
 Description     = %NdisLwf_Desc%
-AddReg          = Common.Params.reg, NdisImPlatformBindingOptions.reg
+AddReg          = NdisImPlatformBindingOptions.reg
 
 [Install.Remove.Services]
 ; TODO: Customize the name of your NT service here.
 ; The SPSVCINST_STOPSERVICE flag instructs SCM to stop the NT service
 ; before uninstalling the driver.
 DelService=NdisLwf,0x200 ; SPSVCINST_STOPSERVICE
-
-[Common.Params.reg]
-; TODO: You can add any sort of NDIS parameters here.  Filter drivers
-; don't always need NDIS parameters, so it's okay to have nothing here.
-
-; TODO: Remove the sample parameters below.
-
-; Sample 1: "DriverParam" is a per-driver parameter.
-HKR, FilterDriverParams\DriverParam,     ParamDesc,   , "Driverparam for lwf"
-HKR, FilterDriverParams\DriverParam,     default,     , "5"
-HKR, FilterDriverParams\DriverParam,     type,        , "int"
-
-; Sample 2: "AdapterParam" is a per-module parameter.
-HKR, FilterAdapterParams\AdapterParam,   ParamDesc,   , "Adapterparam for lwf"
-HKR, FilterAdapterParams\AdapterParam,   default,     , "10"
-HKR, FilterAdapterParams\AdapterParam,   type,        , "int"
 
 [NdisImPlatformBindingOptions.reg]
 ; By default, when an LBFO team or Bridge is created, all filters will be
