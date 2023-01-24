@@ -50,10 +50,10 @@ Built solutions.
 
 Total elapsed time:   5 minutes, 57 seconds.
 SolutionsTotal:       160
-SolutionsSucceeded:   145
-SolutionsExcluded:    14
+SolutionsSucceeded:   147
+SolutionsExcluded:    13
 SolutionsUnsupported: 0
-SolutionsFailed:      1
+SolutionsFailed:      0
 
 Results saved to .\SampleBuilder.htm
 
