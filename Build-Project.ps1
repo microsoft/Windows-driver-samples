@@ -58,8 +58,8 @@ $warnLogFilePath = "$LogFilesDirectory\$ProjectName.$Configuration.$Platform.wrn
 $OutLogFilePath = "$LogFilesDirectory\$ProjectName.$Configuration.$Platform.out"
 # jjj42: Write-Output "Building Project: $ProjectName; Configuration: $Configuration; Platform: $Platform {"
 #sleep 1
-#msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
+#msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo >$OutLogFilePath
 if ($LASTEXITCODE -ne 0)
 {
     #jjj Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
