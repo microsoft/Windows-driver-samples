@@ -63,8 +63,8 @@ Copyfiles = ndislwf.copyfiles.sys
 ndislwf.sys=1
 
 [DestinationDirs]
-DefaultDestDir=12
-ndislwf.copyfiles.sys=12
+DefaultDestDir=13
+ndislwf.copyfiles.sys=13
 
 [ndislwf.copyfiles.sys]
 ; TODO: Customize the name of your binary here.
@@ -152,7 +152,7 @@ ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 1 ;SERVICE_SYSTEM_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ; TODO: Customize this to your binary's filename.
-ServiceBinary   = %12%\ndislwf.sys
+ServiceBinary   = %13%\ndislwf.sys
 LoadOrderGroup  = NDIS
 Description     = %NdisLwf_Desc%
 AddReg          = NdisImPlatformBindingOptions.reg
