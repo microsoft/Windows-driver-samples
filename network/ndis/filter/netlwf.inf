@@ -26,10 +26,16 @@ DriverVer       = 10/01/2002,6.0.5019.0
 ; compiled binary.  If you do not supply a driver compiled for ia64, delete the
 ; NTia64 section.
 [Manufacturer]
-%ManufacturerName%=Standard,NTamd64.10.0,NTamd64.10.0...25286
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64.10.0,NTamd64.10.0...25286
 
 ; TODO: Change the "MS_NdisLwf" name below to identify your component.
 ; This name can be used with netcfg.exe to install/uninstall the driver.
+
+[Standard.NTx86]
+%NdisLwf_Desc%=Install, MS_NdisLwf
+
+[Standard.NTia64]
+%NdisLwf_Desc%=Install, MS_NdisLwf
 
 [Standard.NTamd64.10.0]
 %NdisLwf_Desc%=Install, MS_NdisLwf
