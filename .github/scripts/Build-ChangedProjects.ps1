@@ -1,15 +1,21 @@
+[CmdletBinding()]
 param (
     [array]$ChangedFiles
 )
 
+$Verbose = $false
+if ($PSBoundParameters.ContainsKey('Verbose')) {
+    $Verbose = $PsBoundParameters.Get_Item('Verbose')
+}
+
 $root = (Get-Location).Path
 
 # To include in CI gate
-$projectSet = @{}
+$sampleSet = @{}
 foreach ($file in $ChangedFiles)
 {
     if (-not (Test-Path $file)) {
-        Write-Output "`u{2754} Changed file $file cannot be found"
+        Write-Verbose "`u{2754} Changed file $file cannot be found"
         continue
     }
     $dir = (Get-Item $file).DirectoryName
@@ -19,16 +25,16 @@ foreach ($file in $ChangedFiles)
     }
     if ($dir -eq $root)
     {
-        Write-Output "`u{2754} Changed file $file does not match a project."
+        Write-Verbose "`u{2754} Changed file $file does not match a sample."
         continue
     }
-    $projectName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
-    Write-Output "`u{1F50E} Found project [$projectName] at $dir from changed file $file"
-    if (-not ($projectSet.ContainsKey($projectName)))
+    $sampleName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
+    Write-Verbose "`u{1F50E} Found sample [$sampleName] at $dir from changed file $file"
+    if (-not ($sampleSet.ContainsKey($sampleName)))
     {
-        $projectSet[$projectName] = $dir
+        $sampleSet[$sampleName] = $dir
     }
 }
 
-.\Build-ProjectSet -ProjectSet $projectSet
+.\Build-SampleSet -SampleSet $sampleSet -Verbose:$Verbose
 

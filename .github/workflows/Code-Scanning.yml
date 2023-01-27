@@ -46,9 +46,9 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Retrieve and build all available solutions
-      id: build-all-projects
+      id: build-all-samples
       run: |
-          .\Build-AllProjects.ps1
+          .\Build-AllSamples.ps1
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
