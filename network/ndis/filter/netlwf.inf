@@ -25,6 +25,11 @@ DriverVer       = 10/01/2002,6.0.5019.0
 ; TODO: Include each architecture for which your driver package contains a
 ; compiled binary.  If you do not supply a driver compiled for ia64, delete the
 ; NTia64 section.
+; Note: Starting with OS build version 25286* there is an update to the Network Installation UI
+; that allows for installation in the driver package's Driver store directory. All builds 
+; above that build version should use this updated installation.
+; *This build verion will depend on which build will first get the update to the Network Installation UI
+
 [Manufacturer]
 %ManufacturerName%=Standard,NTx86,NTia64,NTamd64.10.0,NTamd64.10.0...25286
 
@@ -39,11 +44,6 @@ DriverVer       = 10/01/2002,6.0.5019.0
 
 [Standard.NTamd64.10.0]
 %NdisLwf_Desc%=Install, MS_NdisLwf
-
-; Added section for Target OS version 25286* and above. 
-; This OS version and future versions have an update to the
-; Network Installation UI that allows it to install using DIRID13
-; * The version may need to change depending on what version first gets the edit to Network Installation UI
 
 [Standard.NTamd64.10.0...25286]
 %NdisLwf_Desc%=Install_update, MS_NdisLwf
