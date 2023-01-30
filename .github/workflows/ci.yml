@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - build-scripts-update
     paths-ignore:
       - '**.md'
       - 'LICENSE'
