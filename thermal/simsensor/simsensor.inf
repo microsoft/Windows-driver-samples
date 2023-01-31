@@ -19,6 +19,7 @@ ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider=%ProviderString%
 DriverVer=09/02/2011, 6.02.8105
 CatalogFile=simsensor.cat
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12

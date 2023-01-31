@@ -9,6 +9,7 @@ ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
 Provider=%ProviderName%
 CatalogFile=gpiosamples.cat
 DriverVer=03/20/2003,5.00.3788
+PnpLockdown=1
 
 [Manufacturer]
 %ManufacturerName%=Standard,NT$ARCH$

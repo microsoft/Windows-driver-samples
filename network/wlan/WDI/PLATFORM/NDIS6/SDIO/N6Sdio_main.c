@@ -1542,7 +1542,7 @@ N6SdioDumpDeviceProperty(
 	IN PRT_SDIO_DEVICE	pDevice
 )
 {
-	u2Byte	Idx = 0;
+	int	Idx = 0;
 	u1Byte	Data;
 	NTSTATUS ntStatus = STATUS_SUCCESS;	
 	RT_STATUS	rtstatus = RT_STATUS_SUCCESS;
@@ -2651,7 +2651,7 @@ Routine Description:
 	that the device has been removed and cancel any pending Requests
 	that it sent down to the underlying bus driver. After calling
 	the MiniportPnPEventNotify function to indicate the surprise
-	removal, NDIS calls the miniportŠö MiniportHalt function.
+	removal, NDIS calls the miniportï¿½ï¿½ MiniportHalt function.
 	If the miniport driver receives any requests to send packets
 	or query or set OIDs before its MiniportHalt function is
 	called, it should immediately complete such requests with a
@@ -5872,11 +5872,11 @@ PnpWorkItemCallback(
 		{
 			if( pNLOInfo->NumDot11OffloadNetwork != 0 && Adapter->bInHctTest)
 			{
-				u1Byte i = 0;
+				ULONG i = 0;
 				BOOLEAN bTargetInNLO = FALSE;
 				
 				if(Adapter->MgntInfo.bMediaConnect || pNdisCommon->bDissociateBeforeSleep)
-				{				
+				{
 					for(i=0; i<pNLOInfo->NumDot11OffloadNetwork; i++)
 					{
 						if(pMgntInfo->Ssid.Length && (pMgntInfo->Ssid.Length == pNLOInfo->dDot11OffloadNetworkList[i].ssidlen))

@@ -13,6 +13,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=6/07/2001,1.0.0.1
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -21,7 +22,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTamd64, NTia64, NTarm64
+"Microsoft"=Microsoft, NTx86, NTamd64, NTarm64
 
 ;
 ; Model sections. 
@@ -31,7 +32,7 @@ DriverVer=6/07/2001,1.0.0.1
 ; that they appear in the INF file.
 ;
 
-[Microsoft]
+[Microsoft.NTx86]
 "PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
 "Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
 "OEM PostScript Customization Sample"  = INSTALL_OEMPS
@@ -40,14 +41,6 @@ DriverVer=6/07/2001,1.0.0.1
 "OEM UI Customization Sample (Unidrv)" = INSTALL_OEMUI.UNI
 
 [Microsoft.NTamd64]
-"PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
-"Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
-"OEM PostScript Customization Sample"  = INSTALL_OEMPS
-"OEM Unidrv Customization Sample"      = INSTALL_OEMUNI
-"OEM UI Customization Sample (PS)"     = INSTALL_OEMUI.PS
-"OEM UI Customization Sample (Unidrv)" = INSTALL_OEMUI.UNI
-
-[Microsoft.NTia64]
 "PostScript WaterMark Sample"          = INSTALL_WATERMARK.PS
 "Unidrv WaterMark Sample"              = INSTALL_WATERMARK.UNI
 "OEM PostScript Customization Sample"  = INSTALL_OEMPS
@@ -189,15 +182,6 @@ wmarkps.dll    = 100,WaterMark\amd64
 wmarkuni.dll   = 100,WaterMarkUni\amd64
 wmarkuniui.dll = 100,WaterMarkUni\amd64
 wmarkui.dll    = 100,WaterMark\amd64
-
-[SourceDisksFiles.ia64]
-oemps.dll      = 100,OEMPS\ia64
-oemui.dll      = 100,OEMUI\ia64
-oemuni.dll     = 100,OEMUNI\ia64
-wmarkps.dll    = 100,WaterMark\ia64
-wmarkuni.dll   = 100,WaterMarkUni\ia64
-wmarkuniui.dll = 100,WaterMarkUni\ia64
-wmarkui.dll    = 100,WaterMark\ia64
 
 [SourceDisksFiles.arm64]
 oemps.dll      = 100,OEMPS\arm64

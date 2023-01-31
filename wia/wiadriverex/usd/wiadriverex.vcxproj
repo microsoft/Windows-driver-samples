@@ -74,7 +74,14 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
-  <ItemGroup Label="WrappedTaskItems" />
+  <ItemGroup Label="WrappedTaskItems">
+    <Inf Include="WiaDriver.inx">
+      <Architecture>$(InfArch)</Architecture>
+      <SpecifyArchitecture>true</SpecifyArchitecture>
+      <Verbose>true</Verbose>
+      <CopyOutput>.\$(IntDir)\WiaDriver.inf</CopyOutput>
+    </Inf>
+  </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>wiadriverex</TargetName>
   </PropertyGroup>
