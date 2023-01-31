@@ -142,6 +142,13 @@ PCPROPERTY_ITEM PropertiesSpeakerTopoFilter[] =
         PropertyHandler_SpeakerTopoFilter
     },
     {
+        &KSPROPSETID_Jack,
+        KSPROPERTY_JACK_DESCRIPTION3,
+        KSPROPERTY_TYPE_GET |
+        KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_SpeakerTopoFilter
+    },
+    {
         &KSPROPSETID_AudioResourceManagement,
         KSPROPERTY_AUDIORESOURCEMANAGEMENT_RESOURCEGROUP,
         KSPROPERTY_TYPE_SET,
