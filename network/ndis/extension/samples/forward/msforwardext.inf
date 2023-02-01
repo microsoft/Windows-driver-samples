@@ -39,8 +39,8 @@ Copyfiles = MSForwardExt.copyfiles.sys
 MSForwardExt.sys=1
 
 [DestinationDirs]
-DefaultDestDir=12
-MSForwardExt.copyfiles.sys=12
+DefaultDestDir=13
+MSForwardExt.copyfiles.sys=13
 
 [MSForwardExt.copyfiles.sys]
 MSForwardExt.sys,,,2
@@ -72,7 +72,7 @@ DisplayName     = %MSForwardExt_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 1 ;SERVICE_SYSTEM_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\MSForwardExt.sys
+ServiceBinary   = %13%\MSForwardExt.sys
 LoadOrderGroup  = NDIS
 Description     = %MSForwardExt_Desc%
 
