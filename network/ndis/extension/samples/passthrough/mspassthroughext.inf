@@ -39,8 +39,8 @@ Copyfiles = MSPassthroughExt.copyfiles.sys
 MSPassthroughExt.sys=1
 
 [DestinationDirs]
-DefaultDestDir=12
-MSPassthroughExt.copyfiles.sys=12
+DefaultDestDir=13
+MSPassthroughExt.copyfiles.sys=13
 
 [MSPassthroughExt.copyfiles.sys]
 MSPassthroughExt.sys,,,2
@@ -72,7 +72,7 @@ DisplayName     = %MSPassthroughExt_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 1 ;SERVICE_SYSTEM_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\MSPassthroughExt.sys
+ServiceBinary   = %13%\MSPassthroughExt.sys
 LoadOrderGroup  = NDIS
 Description     = %MSPassthroughExt_Desc%
 
