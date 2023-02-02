@@ -46,7 +46,7 @@ HKR,"Ndi\Interfaces","LowerRange",,"ndis5,ndis4,ndis5_prot"
 ; Service installation support
 ;-------------------------------------------------------------------------
 [Install.Services]
-AddService=Ndisprot,,NDISPROT_Service_Inst
+AddService=Ndisprot60,,NDISPROT_Service_Inst
 
 [NDISPROT_Service_Inst]
 DisplayName     = %NDISPROT_Desc%
@@ -57,7 +57,7 @@ ServiceBinary   = %12%\ndisprot60.sys
 Description     = %NDISPROT_Desc%
 
 [Install.Remove.Services]
-DelService=Ndisprot,0x200
+DelService=Ndisprot60,0x200
 
 ;-------------------------------------------------------------------------
 ; Declare Destination Directories for file copy/deletion
