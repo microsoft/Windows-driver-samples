@@ -375,6 +375,39 @@ STDMETHODIMP CAecApoMFX::GetEffectsList(_Outptr_result_buffer_maybenull_(*pcEffe
     return S_OK;
 }
 
+STDMETHODIMP CAecApoMFX::GetControllableSystemEffectsList(_Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event)
+{
+    UNREFERENCED_PARAMETER(event);
+
+    RETURN_HR_IF_NULL(E_POINTER, effects);
+    RETURN_HR_IF_NULL(E_POINTER, numEffects);
+
+    *effects = nullptr;
+    *numEffects = 0;
+
+    if (m_audioSignalProcessingMode == AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS)
+    {
+        // Return the list of effects implemented by this APO for COMMUNICATIONS processing mode
+        static const GUID effectsList[] = {AUDIO_EFFECT_TYPE_ACOUSTIC_ECHO_CANCELLATION};
+
+        wil::unique_cotaskmem_array_ptr<AUDIO_SYSTEMEFFECT> audioEffects(
+            static_cast<AUDIO_SYSTEMEFFECT*>(CoTaskMemAlloc(ARRAYSIZE(effectsList) * sizeof(AUDIO_SYSTEMEFFECT))), ARRAYSIZE(effectsList));
+        RETURN_IF_NULL_ALLOC(audioEffects.get());
+
+        for (UINT i = 0; i < ARRAYSIZE(effectsList); i++)
+        {
+            audioEffects[i].id = effectsList[i];
+            audioEffects[i].state = AUDIO_SYSTEMEFFECT_STATE_ON;
+            audioEffects[i].canSetState = FALSE;
+        }
+
+        *numEffects = (UINT)audioEffects.size();
+        *effects = audioEffects.release();
+    }
+
+    return S_OK;
+}
+
 HRESULT IsInputFormatSupportedForAec(IAudioMediaType* pMediaType, BOOL * pSupported)
 {
     ASSERT_NONREALTIME();
