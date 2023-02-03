@@ -140,6 +140,11 @@ $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
 
 msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/msft /sw1205 /sw1324 /sw1420 /sw1421" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+Write-Warning ("Removing folder: "+$Directory+"\...\x64 {")
+Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
+$x=Get-Volume
+foreach($y in $x) { Write-Warning ($y.DriveLetter+" "+$y.SizeRemaining) }
+Write-Warning ("Removing folder: "+$Directory+"\...\x64 }")
 
 if ($LASTEXITCODE -ne 0)
 {
