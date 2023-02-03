@@ -14,6 +14,7 @@ In the following example that is what we will do:
   * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
   * Mount ISO image
   * From a terminal, run `.\LaunchBuildEnv`
+  * set PLATFORM=
 
 ## Step 3: Clone Windows Driver Samples and checkout main branch
 
@@ -27,12 +28,24 @@ cd Windows-driver-samples
 
 ```
 pwsh
-.\Build-AllSamples.ps1 -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory '_logs'
+.\Build-AllSamples
+```
+Above builds all samples for all configurations and archictures.  You can refine, for example as follows:
+```
+.\Build-AllSamples -Samples 'tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
 ```
 
 Expected output:
 ```
-T: Total solutions: 612
+Samples:              153
+Configurations:       2 (Debug Release)
+Platforms:            2 (x64 arm64)
+Combinations:         612
+Logical Processors:   12
+Throttle factor:      5
+Throttle limit:       60
+
+T: Combinations
 B: Built
 R: Build is running currently
 P: Build is pending an available build slot
@@ -42,16 +55,19 @@ E: Built and result was 'Excluded'
 U: Built and result was 'Unsupported' (Platform and Configuration combination)
 F: Built and result was 'Failed'
 
-Building driver solutions...
+Building all combinations...
 
-Built solutions.
+Built all combinations.
 
-Total elapsed time:   11 minutes, 18 seconds.
-SolutionsTotal:       612
-SolutionsSucceeded:   316
-SolutionsExcluded:    56
-SolutionsUnsupported: 240
-SolutionsFailed:      0
-
-Results saved to _logs\overview.htm
+Elapsed time:         12 minutes, 34 seconds.
+Samples:              153
+Configurations:       2 (Debug Release)
+Platforms:            2 (x64 arm64)
+Combinations:         612
+Succeeded:            326
+Excluded:             56
+Unsupported:          230
+Failed:               0
+Log files directory:  .\_logs
+Overview report:      .\_logs\overview.htm
 ```
