@@ -9,10 +9,10 @@ This script searches for all available Visual Studio Solutions (.sln files) and 
 A regular expression matching the samples to be built.  Default is '' that matches all samples.  Examples include '^tools.' or '.dchu'.
 
 .PARAMETER Configurations
-A list of configurations to build samples under. Values available are 'Debug' and 'Release'. By default, $env:Configuration will be used as the sole configuration to build for. Default is 'Debug' and 'Release'.
+A list of configurations to build samples under. Values available are 'Debug' and 'Release'. By default, $env:Configuration will be used as the sole configuration to build for. If this environment variable is not set the default is 'Debug' and 'Release'.
 
 .PARAMETER Platforms
-A list of platforms to build samples under (e.g. 'x64', 'arm64'). By default, $env:Platform will be used as the sole platform to build for. Default is 'x64' and'arm64'.
+A list of platforms to build samples under (e.g. 'x64', 'arm64'). By default, $env:Platform will be used as the sole platform to build for. If this environment variable is not set the default is 'x64' and'arm64'.
 
 .PARAMETER LogFilesDirectory
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the '_logs' directory within the current working directory.
@@ -27,7 +27,7 @@ None.
 .\Build-AllSamples
 
 .EXAMPLE
-.\Build-AllSamples -Samples 'tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
+.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
 
 #>
 
