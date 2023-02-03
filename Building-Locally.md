@@ -10,15 +10,14 @@ winget install --id Git.Git --source winget`
 
 There are multiple ways to achieve this. For example, [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk). 
 
-You can also just download and mount the EWDK as well.
-
-In the following example that is what we will do:
+You can also just download and mount the EWDK as well and in the following example that is what we will do:
   * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
   * Mount ISO image
-  * From a terminal, run `.\LaunchBuildEnv`
+  * Open a terminal
+  * `.\LaunchBuildEnv`
   * `set PLATFORM=`
 
-Note: The last command to clear the PLATFORM variable is added so as to allow the next part to iteration over all target platforms automatically.
+Note: The last command to clear the PLATFORM variable is added so as to allow the next part to iterate over all platforms automatically without having to add explicit arguments.
 
 ## Step 3: Clone Windows Driver Samples and checkout main branch
 
