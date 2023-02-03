@@ -48,7 +48,7 @@ jobs:
     - name: Retrieve and build all available solutions
       id: build-all-samples
       run: |
-          .\Build-AllSamples.ps1 -Verbose -Drivers '^tools.'
+          .\Build-AllSamples.ps1 -Verbose -Samples '^tools.'
       env:
         Configuration: Debug
         Platform: x64
