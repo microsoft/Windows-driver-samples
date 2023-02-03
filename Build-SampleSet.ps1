@@ -20,7 +20,7 @@ New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
 
 $NumberOfLogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 $Throttlefactor = 5
-$SolutionsInParallel = $Throttlefactor * $NumberOfLogicalProcessors
+$SolutionsInParallel = 1 # $Throttlefactor * $NumberOfLogicalProcessors
 
 $oldPreference = $ErrorActionPreference
 $ErrorActionPreference = "stop"
