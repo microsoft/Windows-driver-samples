@@ -35,7 +35,7 @@ None.
 param(
     [string]$Samples = "",
     [string[]]$Configurations = @([string]::IsNullOrEmpty($env:Configuration) ? ('Debug','Release') : $env:Configuration),
-    [string[]]$Platforms = @([string]::IsNullOrEmpty($env:Platform) ? ('x64','arm64'): $env:Platform),
+    [string[]]$Platforms = @([string]::IsNullOrEmpty($env:Platform) ? ('x64','arm64') : $env:Platform),
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs")
 )
 

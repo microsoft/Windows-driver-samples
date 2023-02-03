@@ -8,13 +8,17 @@ winget install --id Git.Git --source winget`
 
 ## Step 2: Create a "driver build environment"
 
-There are multiple ways to achieve this. For example, [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk). You can just download and mount the EWDK as well.
+There are multiple ways to achieve this. For example, [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk). 
+
+You can also just download and mount the EWDK as well.
 
 In the following example that is what we will do:
   * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
   * Mount ISO image
   * From a terminal, run `.\LaunchBuildEnv`
-  * set PLATFORM=
+  * `set PLATFORM=`
+
+Note: The last command to clear the PLATFORM variable is added so as to allow the next part to iteration over all target platforms automatically.
 
 ## Step 3: Clone Windows Driver Samples and checkout main branch
 
@@ -30,8 +34,11 @@ cd Windows-driver-samples
 pwsh
 .\Build-AllSamples
 ```
-Above builds all samples for all configurations and archictures.  You can refine, for example as follows:
+Above builds all samples for all configurations and archictures.  
+
+You can refine, for example as follows:
 ```
+pwsh
 .\Build-AllSamples -Samples 'tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
 ```
 
