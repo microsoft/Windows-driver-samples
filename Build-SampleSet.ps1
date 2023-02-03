@@ -19,12 +19,8 @@ Remove-Item  -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
 
 $NumberOfLogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
-$SolutionsInParallel = 5 * $NumberOfLogicalProcessors
-
-Write-Verbose "Log files directory: $LogFilesDirectory"
-Write-Verbose "Results overview report: $sampleBuilderFilePath"
-Write-Verbose "Logical Processors: $NumberOfLogicalProcessors"
-Write-Verbose "Solutions in Parallel: $SolutionsInParallel"
+$Throttlefactor = 5
+$SolutionsInParallel = $Throttlefactor * $NumberOfLogicalProcessors
 
 $oldPreference = $ErrorActionPreference
 $ErrorActionPreference = "stop"
@@ -58,7 +54,15 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output "T: Total solutions: $SolutionsTotal"
+Write-Output ("Samples:              "+$sampleSet.Count)
+Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
+Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
+Write-Output "Combinations:         $SolutionsTotal"
+Write-Output "Logical Processors:   $NumberOfLogicalProcessors"
+Write-Output "Throttle factor:      $Throttlefactor"
+Write-Output "Throttle limit:       $SolutionsInParallel"
+Write-Output ""
+Write-Output "T: Combinations"
 Write-Output "B: Built"
 Write-Output "R: Build is running currently"
 Write-Output "P: Build is pending an available build slot"
@@ -68,7 +72,7 @@ Write-Output "E: Built and result was 'Excluded'"
 Write-Output "U: Built and result was 'Unsupported' (Platform and Configuration combination)"
 Write-Output "F: Built and result was 'Failed'"
 Write-Output ""
-Write-Output "Building driver solutions..."
+Write-Output "Building all combinations..."
 
 $Results = @()
 
@@ -137,7 +141,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $SolutionsInParallel 
                 $SolutionsBuiltPercent = [Math]::Round(100 * ($SolutionsBuilt / $using:SolutionsTotal))
                 $TBRP = "T:" + ($SolutionsTotal) + "; B:" + (($using:jresult).SolutionsBuilt) + "; R:" + ($SolutionsRunning) + "; P:" + ($SolutionsPending)
                 $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed)
-                Write-Progress -Activity "Building driver solutions" -Status "$SolutionsBuilt of $using:SolutionsTotal solutions built ($SolutionsBuiltPercent%) | $TBRP | $rstr" -PercentComplete $SolutionsBuiltPercent
+                Write-Progress -Activity "Building combinations" -Status "$SolutionsBuilt of $using:SolutionsTotal combinations built ($SolutionsBuiltPercent%) | $TBRP | $rstr" -PercentComplete $SolutionsBuiltPercent
             }
             finally {
                 ($using:jresult).lock.ReleaseMutex()
@@ -156,11 +160,11 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $SolutionsInParallel 
 $sw.Stop()
 
 if ($failSet.Count -gt 0) {
-    Write-Output "Some samples were built with errors:"
+    Write-Output "Some combinations were built with errors:"
     foreach ($failedSample in $failSet) {
         Write-Output "$failedSample"
     }
-    Write-Error "Some samples were built with errors."
+    Write-Error "Some combinations were built with errors."
 }
 
 # Display timer statistics to host
@@ -174,16 +178,19 @@ $SolutionsFailed = $jresult.SolutionsFailed
 $Results = $jresult.Results
 
 Write-Output ""
-Write-Output "Built solutions."
+Write-Output "Built all combinations."
 Write-Output ""
-Write-Output "Total elapsed time:   $min minutes, $seconds seconds."
-Write-Output "SolutionsTotal:       $SolutionsTotal"
-Write-Output "SolutionsSucceeded:   $SolutionsSucceeded"
-Write-Output "SolutionsExcluded:    $SolutionsExcluded"
-Write-Output "SolutionsUnsupported: $SolutionsUnsupported"
-Write-Output "SolutionsFailed:      $SolutionsFailed"
-Write-Output ""
-Write-Output "Results saved to $sampleBuilderFilePath"
+Write-Output "Elapsed time:         $min minutes, $seconds seconds."
+Write-Output ("Samples:              "+$sampleSet.Count)
+Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
+Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
+Write-Output "Combinations:         $SolutionsTotal"
+Write-Output "Succeeded:            $SolutionsSucceeded"
+Write-Output "Excluded:             $SolutionsExcluded"
+Write-Output "Unsupported:          $SolutionsUnsupported"
+Write-Output "Failed:               $SolutionsFailed"
+Write-Output "Log files directory:  $LogFilesDirectory"
+Write-Output "Overview report:      $sampleBuilderFilePath"
 Write-Output ""
 
 $Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $sampleBuilderFilePath

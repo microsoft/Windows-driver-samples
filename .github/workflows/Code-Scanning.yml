@@ -48,10 +48,10 @@ jobs:
     - name: Retrieve and build all available solutions
       id: build-all-samples
       run: |
-          .\Build-AllSamples.ps1
+          .\Build-AllSamples.ps1 -Verbose
       env:
-        Configuration: ${{ matrix.configuration }}
-        Platform: ${{ matrix.platform }}
+        Configuration: Debug
+        Platform: x64
 
     - name: Perform CodeQL analysis
       uses: github/codeql-action/analyze@v2
