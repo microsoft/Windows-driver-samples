@@ -50,13 +50,6 @@ UmdfLibraryVersion=$UMDFVERSION$
 ServiceBinary=%13%\windows-drivertemplate-nfc.dll
 UmdfExtensions=NfcCx0102
 
-[WUDFRD_ServiceInstall]
-DisplayName = %WudfRdDisplayName%
-ServiceType = 1 ; SERVICE_KERNEL_DRIVER
-StartType = 3 ; SERVICE_DEMAND_START
-ErrorControl = 1 ; SERVICE_ERROR_NORMAL
-ServiceBinary = %13%\WUDFRd.sys
-
 [CoInstallers_AddReg]
 HKR,,CoInstallers32,0x00010000,"WUDFCoinstaller.dll"
 
