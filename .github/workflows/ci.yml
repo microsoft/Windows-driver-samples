@@ -29,5 +29,5 @@ jobs:
         run: |
           .\Build-AllSamples.ps1 -Verbose
         env:
-          Configuration: ${{ matrix.configuration }}
-          Platform: ${{ matrix.platform }}
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}
