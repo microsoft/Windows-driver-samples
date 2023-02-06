@@ -126,7 +126,6 @@ Return Value:
     if (FatDeviceIsFatFsdo( VolumeDeviceObject))  {
 
         Irp->IoStatus.Status = STATUS_SUCCESS;
-        Irp->IoStatus.Information = FILE_OPENED;
 
         IoCompleteRequest( Irp, IO_DISK_INCREMENT );
 
