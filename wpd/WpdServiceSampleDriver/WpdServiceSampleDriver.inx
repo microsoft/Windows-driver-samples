@@ -9,6 +9,7 @@ ClassGuid={EEC5AD98-8080-425f-922A-DABF3DE3F69A}
 Provider=%Provider%
 CatalogFile=WpdServiceSampleDriver.cat
 DriverVer=01/24/2007,1.1.1.1
+PnpLockdown=1
 
 [Manufacturer]
 %Mfg%=Standard,NT$ARCH$

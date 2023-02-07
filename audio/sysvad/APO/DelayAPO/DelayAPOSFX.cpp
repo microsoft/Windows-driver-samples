@@ -388,7 +388,8 @@ HRESULT CDelayAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //
