@@ -36,5 +36,5 @@ jobs:
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
           .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
         env:
-          Configuration: ${{ matrix.configuration }}
-          Platform: ${{ matrix.platform }}
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}

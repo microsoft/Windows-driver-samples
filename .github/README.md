@@ -28,8 +28,8 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild $${{ env.Solution_Path }} -p:Configuration:${{ env.Configuration }} -p:Platform:${{ env.Platform }}
+          msbuild $${{ env.Solution_Path }}
         env:
-          Configuration: ${{ matrix.configuration }}
-          Platform: ${{ matrix.platform }}
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}
 ```

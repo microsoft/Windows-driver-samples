@@ -50,8 +50,10 @@ jobs:
       run: |
           .\Build-AllSamples.ps1 -Verbose
       env:
-        Configuration: Debug
-        Platform: x64
+        WDS_Configuration: ${{ matrix.configuration }}
+        WDS_Platform: ${{ matrix.platform }}
+        WDS_ThrottleLimit: ${{ 1 }}
+        WDS_WipeOutputs: ${{ true }}
 
     - name: Perform CodeQL analysis
       uses: github/codeql-action/analyze@v2
