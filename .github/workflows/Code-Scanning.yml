@@ -50,8 +50,8 @@ jobs:
       run: |
           .\Build-AllSamples.ps1 -Verbose
       env:
-        WDS_Configuration: ${{ matrix.configuration }}
-        WDS_Platform: ${{ matrix.platform }}
+        WDS_Configuration: Debug
+        WDS_Platform: x64
         WDS_ThrottleLimit: ${{ 1 }}
         WDS_WipeOutputs: ${{ true }}
 
