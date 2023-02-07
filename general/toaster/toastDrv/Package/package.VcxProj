@@ -40,12 +40,6 @@
     <ProjectReference Include="..\kmdf\toastmon\wdftoastmon.vcxproj">
       <Project>{D15FD911-F2DA-4644-8142-6D22756AD287}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\umdf\func\WUDFToaster.vcxproj">
-      <Project>{3A32C2D4-D40F-4DB8-9F25-ABB21CEB7C7F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\umdf\Toastmon\WUDFToastMon.vcxproj">
-      <Project>{F575419D-099B-4DA0-B80C-88D766DD7542}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="PropertySheets">
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
