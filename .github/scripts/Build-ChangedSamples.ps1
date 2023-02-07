@@ -36,5 +36,4 @@ foreach ($file in $ChangedFiles)
     }
 }
 
-.\Build-SampleSet -SampleSet $sampleSet -Verbose:$Verbose -LogFilesDirectory (Join-Path $root "_logs")
-
+.\Build-SampleSet -SampleSet $sampleSet -Verbose:$Verbose

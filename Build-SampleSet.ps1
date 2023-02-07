@@ -7,6 +7,10 @@ param(
     [int]$ThrottleLimit
 )
 
+$ThrottleFactor = 5
+$LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
+$ThrottleLimit = $ThrottleLimit -eq 0 ? ($ThrottleFactor * $LogicalProcessors) : $ThrottleLimit
+
 $Verbose = $false
 if ($PSBoundParameters.ContainsKey('Verbose')) {
     $Verbose = $PsBoundParameters.Get_Item('Verbose')
@@ -55,7 +59,8 @@ Write-Output ("Samples:              "+$sampleSet.Count)
 Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
 Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
 Write-Output "Combinations:         $SolutionsTotal"
-Write-Output ("Logical Processors:   "+(Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors)
+Write-Output "LogicalProcessors:    $LogicalProcessors"
+Write-Output "ThrottleFactor:       $ThrottleFactor"
 Write-Output "ThrottleLimit:        $ThrottleLimit"
 Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
 Write-Output ("Disk Remaining (GB):  "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))

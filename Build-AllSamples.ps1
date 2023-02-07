@@ -18,7 +18,7 @@ A list of platforms to build samples under (e.g. 'x64', 'arm64'). By default, $e
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the '_logs' directory within the current working directory.
 
 .PARAMETER ThrottleLimit
-An integer indicating how many combinations to build in parallel.  Defaults to 5 x number of logical processors.
+An integer indicating how many combinations to build in parallel.  If 0 or not provided this defaults to 5 x number of logical processors.
 
 .INPUTS
 None.
@@ -40,7 +40,7 @@ param(
     [string[]]$Configurations = @([string]::IsNullOrEmpty($env:WDS_Configuration) ? ('Debug','Release') : $env:WDS_Configuration),
     [string[]]$Platforms = @([string]::IsNullOrEmpty($env:WDS_Platform) ? ('x64','arm64') : $env:WDS_Platform),
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
-    [int]$ThrottleLimit = (5 * (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors)
+    [int]$ThrottleLimit
 )
 
 $Verbose = $false
@@ -66,7 +66,5 @@ foreach ($file in $solutionFiles) {
         Write-Verbose "`u{1F50E} Found and excluded sample [$dir_norm] at $dir"
     }
 }
-
-
 
 .\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit
