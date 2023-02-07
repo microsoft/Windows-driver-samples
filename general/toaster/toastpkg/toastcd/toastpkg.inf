@@ -39,9 +39,6 @@ CoInstaller_CopyFiles = 11
 [SourceDisksNames.x86]
 1 = %DiskId1%, toastpkg.tag,,\i386
 
-[SourceDisksNames.ia64]
-1 = %DiskId1%, toastpkg.tag,,\ia64
-
 [SourceDisksNames.amd64]
 1 = %DiskId1%, toastpkg.tag,,\amd64
 
