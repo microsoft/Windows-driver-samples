@@ -35,7 +35,7 @@ Above builds all samples for all configurations and platforms.
 You can refine, for example as follows:
 ```
 pwsh
-.\Build-AllSamples -Samples 'tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
+.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64'
 ```
 
 Expected output:

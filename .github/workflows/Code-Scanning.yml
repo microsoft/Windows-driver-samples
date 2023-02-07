@@ -48,11 +48,10 @@ jobs:
     - name: Retrieve and build all available solutions
       id: build-all-samples
       run: |
-          .\Build-AllSamples.ps1 -Verbose
+          .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
       env:
         WDS_Configuration: Debug
         WDS_Platform: x64
-        WDS_ThrottleLimit: ${{ 1 }}
         WDS_WipeOutputs: ${{ true }}
 
     - name: Perform CodeQL analysis

@@ -17,6 +17,9 @@ A list of platforms to build samples under (e.g. 'x64', 'arm64'). By default, $e
 .PARAMETER LogFilesDirectory
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the '_logs' directory within the current working directory.
 
+.PARAMETER ThrottleLimit
+An integer indicating how many combinations to build in parallel.  Defaults to 5 x number of logical processors.
+
 .INPUTS
 None.
 
@@ -27,7 +30,7 @@ None.
 .\Build-AllSamples
 
 .EXAMPLE
-.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
+.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64'
 
 #>
 
@@ -36,7 +39,8 @@ param(
     [string]$Samples = "",
     [string[]]$Configurations = @([string]::IsNullOrEmpty($env:WDS_Configuration) ? ('Debug','Release') : $env:WDS_Configuration),
     [string[]]$Platforms = @([string]::IsNullOrEmpty($env:WDS_Platform) ? ('x64','arm64') : $env:WDS_Platform),
-    [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs")
+    [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
+    [int]$ThrottleLimit = (5 * (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors)
 )
 
 $Verbose = $false
@@ -65,4 +69,4 @@ foreach ($file in $solutionFiles) {
 
 
 
-.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose
+.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit

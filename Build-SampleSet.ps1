@@ -2,8 +2,9 @@
 param(
     [hashtable]$SampleSet,
     [string[]]$Configurations = @([string]::IsNullOrEmpty($env:WDS_Configuration) ? "Debug" : $env:WDS_Configuration),
-    [string[]]$Platforms = @([string]::IsNullOrEmpty($env:Platform) ? "x64" : $env:WDS_Platform),
-    $LogFilesDirectory = (Get-Location)
+    [string[]]$Platforms = @([string]::IsNullOrEmpty($env:WDS_Platform) ? "x64" : $env:WDS_Platform),
+    $LogFilesDirectory = (Get-Location),
+    [int]$ThrottleLimit
 )
 
 $Verbose = $false
@@ -17,10 +18,6 @@ $sampleBuilderFilePath = "$LogFilesDirectory\overview.htm"
 
 Remove-Item  -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
-
-$NumberOfLogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
-$ThrottleFactor = 5
-$ThrottleLimit = $env:WDS_ThrottleLimit -eq $null ? $ThrottleFactor * $NumberOfLogicalProcessors : $env:WDS_ThrottleLimit
 
 $oldPreference = $ErrorActionPreference
 $ErrorActionPreference = "stop"
@@ -58,11 +55,9 @@ Write-Output ("Samples:              "+$sampleSet.Count)
 Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
 Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
 Write-Output "Combinations:         $SolutionsTotal"
-Write-Output "Logical Processors:   $NumberOfLogicalProcessors"
-Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
-Write-Output "WDS_ThrottleLimit:    $env:WDS_ThrottleLimit"
-Write-Output "ThrottleFactor:       $ThrottleFactor"
+Write-Output ("Logical Processors:   "+(Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors)
 Write-Output "ThrottleLimit:        $ThrottleLimit"
+Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
 Write-Output ("Disk Remaining (GB):  "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
 Write-Output ""
 Write-Output "T: Combinations"
