@@ -38,9 +38,6 @@ Needs=WUDFRD.NT.HW
 Include=WUDFRD.inf
 Needs=WUDFRD.NT.Services
 
-[MyDevice_Install.NT.CoInstallers]
-AddReg=CoInstallers_AddReg
-
 [MyDevice_Install.NT.Wdf]
 UmdfService=windows-drivertemplate-nfc,windows-drivertemplate-nfc_Install
 UmdfServiceOrder=windows-drivertemplate-nfc
@@ -49,9 +46,6 @@ UmdfServiceOrder=windows-drivertemplate-nfc
 UmdfLibraryVersion=$UMDFVERSION$ 
 ServiceBinary=%13%\windows-drivertemplate-nfc.dll
 UmdfExtensions=NfcCx0102
-
-[CoInstallers_AddReg]
-HKR,,CoInstallers32,0x00010000,"WUDFCoinstaller.dll"
 
 [DestinationDirs]
 UMDriverCopy=13 ; copy to driver store
