@@ -15,10 +15,7 @@ You can also just download and mount the EWDK as well and in the following examp
   * Mount ISO image
   * Open a terminal
   * `.\LaunchBuildEnv`
-  * `set PLATFORM=`
-
-Note: The last command to clear the PLATFORM variable is added so as to allow the next part to iterate over all platforms automatically without having to add explicit arguments.
-
+  
 ## Step 3: Clone Windows Driver Samples and checkout main branch
 
 ```
@@ -33,12 +30,12 @@ cd Windows-driver-samples
 pwsh
 .\Build-AllSamples
 ```
-Above builds all samples for all configurations and archictures.  
+Above builds all samples for all configurations and platforms.  
 
 You can refine, for example as follows:
 ```
 pwsh
-.\Build-AllSamples -Samples 'tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64' -LogFilesDirectory .\_logs
+.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64'
 ```
 
 Expected output:
