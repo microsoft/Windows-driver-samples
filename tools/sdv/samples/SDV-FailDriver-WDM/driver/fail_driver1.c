@@ -121,9 +121,21 @@ DispatchCreate (
 
     PAGED_CODE();
     
+    // Injected defects for testing CodeQL CI:
+    unsigned long x=42;
+    unsigned long y=43;
+    unsigned long long z;
+    
+    // Injected defects #1:
+    z = x*y;
+
+    // Injected defects #2:
+    z = x*y;
+
+    // Injected defects #3:
+    z = x*y;
 
     ExFreePool(badPointer);
-
 
     extension = (PDRIVER_DEVICE_EXTENSION)DeviceObject -> DeviceExtension;
 
