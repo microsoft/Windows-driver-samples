@@ -34,6 +34,21 @@ Environment:
 #pragma alloc_text (PAGE, DriverUnload)
 #endif
 
+// CodeQL Injected Defect #1:
+int foo1(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
+// CodeQL Injected Defect #2:
+int foo2(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
+// CodeQL Injected Defect #3:
+int foo3(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
 NTSTATUS
 DriverEntry(
     _In_ PDRIVER_OBJECT  DriverObject,
@@ -121,21 +136,9 @@ DispatchCreate (
 
     PAGED_CODE();
     
-    // Injected defects for testing CodeQL CI:
-    unsigned long x=42;
-    unsigned long y=43;
-    unsigned long long z;
-    
-    // Injected defects #1:
-    z = x*y;
-
-    // Injected defects #2:
-    z = x*y;
-
-    // Injected defects #3:
-    z = x*y;
 
     ExFreePool(badPointer);
+
 
     extension = (PDRIVER_DEVICE_EXTENSION)DeviceObject -> DeviceExtension;
 
