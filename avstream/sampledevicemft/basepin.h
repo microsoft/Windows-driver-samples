@@ -458,10 +458,10 @@ private:
 class CInPin: public CBasePin{
 public:
     CInPin( _In_opt_ IMFAttributes*, _In_ ULONG ulPinId = 0, _In_ CMultipinMft *pParent=NULL);
-    ~CInPin();
+    virtual ~CInPin();
 
     STDMETHOD ( Init )(
-        _In_ IMFTransform * 
+        _In_ IMFDeviceTransform * 
         );
     STDMETHOD_( VOID, ConnectPin)(
         _In_ CBasePin * 
@@ -514,7 +514,7 @@ public:
     STDMETHOD_( VOID, ShutdownPin)();
 
 protected:
-    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
+    ComPtr<IMFDeviceTransform>  m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ComPtr<CBasePin>            m_outpin;            //Only one output pin connected per input pin. There can be multiple pins connected and this could be a list   
     DeviceStreamState           m_preferredStreamState;
@@ -541,7 +541,7 @@ public:
         , _In_     MFSampleAllocatorUsage allocatorUsage = MFSampleAllocatorUsage_DoesNotAllocate
 #endif
     );
-    ~COutPin();
+    virtual ~COutPin();
     STDMETHODIMP FlushQueues();
     STDMETHODIMP AddPin(
         _In_ DWORD pinId
@@ -619,7 +619,7 @@ public:
         Init();
     }
     STDMETHOD_(VOID, ShutdownPin)();
-    ~CAsyncInPin()
+    virtual ~CAsyncInPin()
     {
         FlushQueues();
     }
@@ -663,10 +663,10 @@ public:
         _In_ IMFMediaType *pInMediatype,
         _In_ IMFMediaType* pOutMediaType,
         _In_ DeviceStreamState state);
-
+    virtual ~CTranslateOutPin() {}
 protected:
 
-    map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
+    map<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> m_TranslatedMediaTypes;
 };
 
 

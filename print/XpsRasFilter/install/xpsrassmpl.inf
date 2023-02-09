@@ -22,15 +22,13 @@ Provider=%ProviderString%
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=10/17/2008,6.1.6930.0
+PnpLockdown=1
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86.6.1,NTia64.6.1,NTamd64.6.1,NTarm64.6.1
+%ManufacturerName%=Standard,NTx86.6.1,NTamd64.6.1,NTarm64.6.1
 
 
 [Standard.NTx86.6.1]
-"XPSRas WDK Sample Driver" = INSTALL_FILTER
-
-[Standard.NTia64.6.1]
 "XPSRas WDK Sample Driver" = INSTALL_FILTER
 
 [Standard.NTamd64.6.1]
@@ -55,10 +53,6 @@ CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-49
 PackageAware=TRUE
 CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
 
-[PrinterPackageInstallation.ia64]
-PackageAware=TRUE
-CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
-
 [PrinterPackageInstallation.arm64]
 PackageAware=TRUE
 CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
@@ -74,10 +68,6 @@ xpsrasfilter.dll
 [SourceDisksNames.x86]
 1 = %Location%,,
 2 = %Location%,,,x86
-
-[SourceDisksNames.ia64]
-1 = %Location%,,
-2 = %Location%,,,ia64
 
 [SourceDisksNames.amd64]
 1 = %Location%,,

@@ -297,48 +297,48 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
         hr = papoSysFxInit3->pServiceProvider->QueryService(SID_AudioProcessingObjectLoggingService, IID_PPV_ARGS(&m_apoLoggingService));
         IF_FAILED_JUMP(hr, Exit);
 
-       // SampleApo supports the new IAudioSystemEffects3 interface so it will receive APOInitSystemEffects3
+        // SampleApo supports the new IAudioSystemEffects3 interface so it will receive APOInitSystemEffects3
         // in pbyData if the audio driver has declared support for this.
+
+        // Windows should pass a valid collection.
+        ATLASSERT(papoSysFxInit3->pDeviceCollection != nullptr);
+        IF_TRUE_ACTION_JUMP(papoSysFxInit3->pDeviceCollection == nullptr, hr = E_INVALIDARG, Exit);
 
         // Use IMMDevice to activate IAudioSystemEffectsPropertyStore that contains the default, user and
         // volatile settings.
         IMMDeviceCollection* deviceCollection = reinterpret_cast<APOInitSystemEffects3*>(pbyData)->pDeviceCollection;
-        if (deviceCollection != nullptr)
-        {
-            UINT32 numDevices;
-            wil::com_ptr_nothrow<IMMDevice> endpoint;
+        UINT32 numDevices;
+        // Get the endpoint on which this APO has been created
+        // (It is the last device in the device collection)
+        hr = deviceCollection->GetCount(&numDevices);
+        IF_FAILED_JUMP(hr, Exit);
 
-            // Get the endpoint on which this APO has been created
-            // (It is the last device in the device collection)
-            if (SUCCEEDED(deviceCollection->GetCount(&numDevices)) && numDevices > 0 &&
-                SUCCEEDED(deviceCollection->Item(numDevices - 1, &endpoint)))
-            {
-                wil::unique_prop_variant activationParam;
-                hr = InitPropVariantFromCLSID(SWAP_APO_SFX_CONTEXT, &activationParam);
-                IF_FAILED_JUMP(hr, Exit);
+        hr = numDevices > 0 ? S_OK : E_UNEXPECTED;
+        IF_FAILED_JUMP(hr, Exit);
 
-                wil::com_ptr_nothrow<IAudioSystemEffectsPropertyStore> effectsPropertyStore;
-                hr = endpoint->Activate(__uuidof(effectsPropertyStore), CLSCTX_ALL, &activationParam, effectsPropertyStore.put_void());
-                IF_FAILED_JUMP(hr, Exit);
+        hr = deviceCollection->Item(numDevices - 1, &m_audioEndpoint);
+        IF_FAILED_JUMP(hr, Exit);
 
-                // This is where an APO might want to open the volatile or default property stores as well 
-                // Use STGM_READWRITE if IPropertyStore::SetValue is needed.
-                hr = effectsPropertyStore->OpenUserPropertyStore(STGM_READ, m_userStore.put());
-                IF_FAILED_JUMP(hr, Exit);
-            }
-        }
+        wil::unique_prop_variant activationParam;
+        hr = InitPropVariantFromCLSID(SWAP_APO_SFX_CONTEXT, &activationParam);
+        IF_FAILED_JUMP(hr, Exit);
 
-        // Windows should pass a valid collection.
-        ATLASSERT(papoSysFxInit2->pDeviceCollection != nullptr);
-        IF_TRUE_ACTION_JUMP(papoSysFxInit3->pDeviceCollection == nullptr, hr = E_INVALIDARG, Exit);
+        wil::com_ptr_nothrow<IAudioSystemEffectsPropertyStore> effectsPropertyStore;
+        hr = m_audioEndpoint->Activate(__uuidof(effectsPropertyStore), CLSCTX_ALL, &activationParam, effectsPropertyStore.put_void());
+        IF_FAILED_JUMP(hr, Exit);
+
+        // This is where an APO might want to open the volatile or default property stores as well
+        // Use STGM_READWRITE if IPropertyStore::SetValue is needed.
+        hr = effectsPropertyStore->OpenUserPropertyStore(STGM_READ, m_userStore.put());
+        IF_FAILED_JUMP(hr, Exit);
 
         // Get the IDeviceTopology and IConnector interfaces to communicate with this
         // APO's counterpart audio driver. This can be used for any proprietary
         // communication.
-        hr = papoSysFxInit3->pDeviceCollection->Item(papoSysFxInit3->nSoftwareIoDeviceInCollection, &m_device);
+        hr = papoSysFxInit3->pDeviceCollection->Item(papoSysFxInit3->nSoftwareIoDeviceInCollection, &m_deviceTopologyMMDevice);
         IF_FAILED_JUMP(hr, Exit);
 
-        hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+        hr = m_deviceTopologyMMDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
         IF_FAILED_JUMP(hr, Exit);
 
         hr = spMyDeviceTopology->GetConnector(papoSysFxInit3->nSoftwareIoConnectorIndex, &spMyConnector);
@@ -365,10 +365,10 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
         // Get the IDeviceTopology and IConnector interfaces to communicate with this
         // APO's counterpart audio driver. This can be used for any proprietary
         // communication.
-        hr = papoSysFxInit2->pDeviceCollection->Item(papoSysFxInit2->nSoftwareIoDeviceInCollection, &m_device);
+        hr = papoSysFxInit2->pDeviceCollection->Item(papoSysFxInit2->nSoftwareIoDeviceInCollection, &m_deviceTopologyMMDevice);
         IF_FAILED_JUMP(hr, Exit);
 
-        hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+        hr = m_deviceTopologyMMDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
         IF_FAILED_JUMP(hr, Exit);
 
         hr = spMyDeviceTopology->GetConnector(papoSysFxInit2->nSoftwareIoConnectorIndex, &spMyConnector);
@@ -407,7 +407,8 @@ HRESULT CSwapAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //
@@ -640,7 +641,7 @@ HRESULT CSwapAPOSFX::SetAudioSystemEffectState(GUID effectId, AUDIO_SYSTEMEFFECT
             if (oldState != effectInfo.state)
             {
                 SetEvent(m_hEffectsChangedEvent);
-                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
+                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"CSwapAPOSFX::SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
             }
 
             m_EffectsLock.Leave();
@@ -733,8 +734,6 @@ HRESULT CSwapAPOSFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO
     *apoNotifications = nullptr;
     *count = 0;
 
-    RETURN_HR_IF_NULL(E_FAIL, m_device);
-
     // Let the OS know what notifications we are interested in by returning an array of
     // APO_NOTIFICATION_DESCRIPTORs.
     constexpr DWORD numDescriptors = 1;
@@ -746,7 +745,7 @@ HRESULT CSwapAPOSFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO
 
     // Our APO wants to get notified when a endpoint property changes on the audio endpoint.
     apoNotificationDescriptors[0].type = APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE;
-    (void)m_device.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
+    (void)m_audioEndpoint.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
 
     *apoNotifications = apoNotificationDescriptors.release();
     *count = numDescriptors;
@@ -772,7 +771,7 @@ void CSwapAPOSFX::HandleNotification(APO_NOTIFICATION *apoNotification)
                 {PKEY_Endpoint_Enable_Channel_Swap_SFX, &m_fEnableSwapSFX},
             };
 
-            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
+            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"CSwapAPOSFX::HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
 
             for (int i = 0; i < ARRAYSIZE(controls); i++)
             {

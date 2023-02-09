@@ -54,21 +54,10 @@ done:
 
 CMultipinMft::~CMultipinMft( )
 {
-    
-
-    for ( ULONG ulIndex = 0, ulSize = (ULONG) m_InPins.size(); ulIndex < ulSize; ulIndex++ )
-    {
-        SAFERELEASE(m_InPins[ ulIndex ]);
-    }
     m_InPins.clear();
-    for (ULONG ulIndex = 0, ulSize = (ULONG) m_OutPins.size(); ulIndex < ulSize; ulIndex++)
-    {
-        SAFERELEASE(m_OutPins[ ulIndex ]);
-    }
     m_OutPins.clear();
     SAFE_ARRAYDELETE(m_SymbolicLink);
     m_spSourceTransform = nullptr;
-
 }
 
 STDMETHODIMP_(ULONG) CMultipinMft::AddRef(
@@ -205,7 +194,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
     
     DMFTCHECKHR_GOTO( m_spSourceTransform.As( &m_spIkscontrol ), done );
     
-    DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamCount( &inputStreams, &outputStreams ), done );
+    DMFTCHECKHR_GOTO( m_spSourceTransform->GetStreamCount( &inputStreams, &outputStreams ), done );
 
     spFilterUnk = nullptr;
 
@@ -222,7 +211,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
         pcOutputStreams = new (std::nothrow) DWORD[ outputStreams ];
         DMFTCHECKNULL_GOTO( pcOutputStreams, done, E_OUTOFMEMORY );
         
-        DMFTCHECKHR_GOTO( m_spSourceTransform->MFTGetStreamIDs( inputStreams, pcInputStreams,
+        DMFTCHECKHR_GOTO( m_spSourceTransform->GetStreamIDs( inputStreams, pcInputStreams,
             outputStreams,
             pcOutputStreams ),done );
 
@@ -252,7 +241,6 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
             });
             DMFTCHECKHR_GOTO(hr, done);
             DMFTCHECKHR_GOTO( spInPin->Init(m_spSourceTransform.Get() ), done);
-            spInPin.Detach();
         }
         
         //
@@ -263,7 +251,7 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
             
             ComPtr<COutPin> spoPin;
             BOOL     bCustom = FALSE;
-            ComPtr<CInPin> spiPin = ( CInPin * )m_InPins[ ulIndex ];
+            ComPtr<CInPin> spiPin = ( CInPin * )m_InPins[ ulIndex ].Get();
             
             if (spiPin.Get())
             {
@@ -292,7 +280,6 @@ STDMETHODIMP CMultipinMft::InitializeTransform (
                     {
                         m_OutPins.push_back(spoPin.Get());
                     }), done);
-                    spoPin.Detach();
                     ulOutPinIndex++;
                     hr = S_OK;
                 }
@@ -329,15 +316,7 @@ done:
     if ( FAILED( hr ) )
     {
         //Release the pins and the resources acquired
-        for (ULONG ulIndex = 0, ulSize = (ULONG)m_InPins.size(); ulIndex < ulSize; ulIndex++)
-        {
-            SAFERELEASE(m_InPins[ulIndex]);
-        }
         m_InPins.clear();
-        for (ULONG ulIndex = 0, ulSize = (ULONG)m_OutPins.size(); ulIndex < ulSize; ulIndex++)
-        {
-            SAFERELEASE(m_OutPins[ulIndex]);
-        }
         m_OutPins.clear();
         //
         // Simply clear the custom pins since the input pins must have deleted the pin
@@ -461,7 +440,7 @@ STDMETHODIMP  CMultipinMft::GetInputAvailableType(
     )
 {
     HRESULT hr = S_OK;
-        
+    CAutoLock   lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin( dwInputStreamID );
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO( spiPin, done, MF_E_INVALIDSTREAMNUMBER );
@@ -721,7 +700,7 @@ STDMETHODIMP  CMultipinMft::ProcessInput(
 {
     HRESULT     hr = S_OK;
     UNREFERENCED_PARAMETER( dwFlags );
-    
+    CAutoLock   lock(m_critSec);
     ComPtr<CInPin> spInPin = GetInPin( dwInputStreamID );
     DMFTCHECKNULL_GOTO(spInPin, done, MF_E_INVALIDSTREAMNUMBER);
 
@@ -762,6 +741,7 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     HRESULT     hr      = S_OK;
     BOOL       gotOne   = false;
     ComPtr<COutPin> spOpin;
+    CAutoLock _lock(m_critSec);
     UNREFERENCED_PARAMETER( dwFlags );
 
     if (cOutputBufferCount > m_OutputPinCount )
@@ -774,7 +754,6 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     {
         DWORD dwStreamID = pOutputSamples[i].dwStreamID;
         {
-            CAutoLock _lock(m_critSec);
             spOpin = nullptr;
             spOpin = GetOutPin(dwStreamID);
             GUID     pinGuid = GUID_NULL;
@@ -828,7 +807,7 @@ STDMETHODIMP  CMultipinMft::GetInputStreamAttributes(
 {
     HRESULT hr = S_OK;
     ComPtr<CInPin> spIPin;
-
+    CAutoLock Lock(m_critSec);
     DMFTCHECKNULL_GOTO( ppAttributes, done, E_INVALIDARG );
     *ppAttributes = nullptr;
 
@@ -857,7 +836,7 @@ STDMETHODIMP  CMultipinMft::GetOutputStreamAttributes(
 {
     HRESULT hr = S_OK;
     ComPtr<COutPin> spoPin;
-
+    CAutoLock Lock(m_critSec);
     DMFTCHECKNULL_GOTO(ppAttributes, done, E_INVALIDARG);
 
     *ppAttributes = nullptr;
@@ -893,6 +872,7 @@ STDMETHODIMP CMultipinMft::SetInputStreamState(
     --*/
 {
     HRESULT hr = S_OK;
+    CAutoLock Lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin(dwStreamID);
     DMFTCHECKNULL_GOTO(spiPin, done, MF_E_INVALIDSTREAMNUMBER);
     
@@ -909,6 +889,7 @@ STDMETHODIMP CMultipinMft::GetInputStreamState(
     )
 {
     HRESULT hr = S_OK;
+    CAutoLock Lock(m_critSec);
     ComPtr<CInPin> piPin = GetInPin(dwStreamID);
 
     DMFTCHECKNULL_GOTO(piPin, done, MF_E_INVALIDSTREAMNUMBER);
@@ -994,6 +975,7 @@ STDMETHODIMP CMultipinMft::GetInputStreamPreferredState(
     --*/
 {
     HRESULT hr = S_OK;
+    CAutoLock lock(m_critSec);
     ComPtr<CInPin> spiPin = GetInPin(dwStreamID);
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO(spiPin, done, MF_E_INVALIDSTREAMNUMBER);
@@ -1061,7 +1043,7 @@ STDMETHODIMP_(VOID) CMultipinMft::FlushAllStreams(
     CAutoLock Lock(m_critSec);
     for ( DWORD dwIndex = 0, dwSize = (DWORD)m_OutPins.size(); dwIndex < dwSize; dwIndex++ )
     {
-        ComPtr<COutPin> spoPin = (COutPin *)m_OutPins[dwIndex];
+        ComPtr<COutPin> spoPin = (COutPin *)m_OutPins[dwIndex].Get();
         oldState = spoPin->SetState(DeviceStreamState_Disabled);
         spoPin->FlushQueues();
         //
@@ -1391,7 +1373,7 @@ CInPin* CMultipinMft::GetInPin(
     CInPin *inPin = NULL;
     for (DWORD dwIndex = 0, dwSize = (DWORD)m_InPins.size(); dwIndex < dwSize; dwIndex++)
     {
-         inPin = (CInPin *)m_InPins[dwIndex];
+         inPin = (CInPin *)m_InPins[dwIndex].Get();
         if (dwStreamId == inPin->streamId())
         {
             break;
@@ -1408,7 +1390,7 @@ COutPin* CMultipinMft::GetOutPin(
     COutPin *outPin = NULL;
     for ( DWORD dwIndex = 0, dwSize = (DWORD) m_OutPins.size(); dwIndex < dwSize; dwIndex++ )
     {
-        outPin = ( COutPin * )m_OutPins[ dwIndex ];
+        outPin = ( COutPin * )m_OutPins[ dwIndex ].Get();
 
         if ( dwStreamId == outPin->streamId() )
         {
@@ -1509,7 +1491,10 @@ HRESULT CMultipinMft::ChangeMediaTypeEx(
         //
         //  The media type will be set on the input pin by the time we return from the wait
         //          
-        DMFTCHECKHR_GOTO(spinPin->WaitForSetInputPinMediaChange(), done);
+        m_critSec.Unlock();
+        hr = spinPin->WaitForSetInputPinMediaChange();
+        m_critSec.Lock();
+        DMFTCHECKHR_GOTO(hr, done);
         // Change the media type on the output..
         DMFTCHECKHR_GOTO(spoPin->ChangeMediaTypeFromInpin(pFullType.Get(), pMediaType , reqState), done);
         //
@@ -1728,10 +1713,8 @@ STDMETHODIMP CMultipinMft::Shutdown(
 
     for (ULONG ulIndex = 0, ulSize = (ULONG)m_InPins.size(); ulIndex < ulSize; ulIndex++ )
     {
-        CInPin *pInPin = static_cast<CInPin *>(m_InPins[ulIndex]);
-
         // Deref on the connected outpins to break reference loop
-        (VOID)pInPin->ShutdownPin();
+        (VOID)((CInPin*)m_InPins[ulIndex].Get())->ShutdownPin();
     }
 #if defined (MF_DEVICEMFT_ALLOW_MFT0_LOAD) && defined (MFT_UNIQUE_METHOD_NAMES)
     for (ULONG ulIndex = 0, ulSize = (ULONG)m_OutPins.size(); ulIndex < ulSize; ulIndex++)
@@ -1833,7 +1816,7 @@ HRESULT CMultipinMft::SetStreamingStateCustomPins(
         for (ULONG ulIndex = 0; ulIndex < m_InPins.size(); ulIndex++)
         {
             BOOL isCustom = false;
-            CInPin* pInPin = static_cast<CInPin*>(m_InPins[ulIndex]);
+            CInPin* pInPin = static_cast<CInPin*>(m_InPins[ulIndex].Get());
 
             if ( SUCCEEDED( CheckCustomPin(pInPin, &isCustom) )
                 && ( isCustom ) )
