@@ -25,6 +25,7 @@ ClassGuid={72631e54-78a4-11d0-bcf7-00aa00b7b32a}
 Provider=%ProviderName%
 DriverVer=04/30/2008, 6.01.6598
 CatalogFile=simbatt-wdfcoinstall.cat           ; TODO: Add a signed catalog file
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12

@@ -230,9 +230,9 @@ typedef enum _DMFT_conversion_type{
     DeviceMftTransformTypeIllegal           // We cannot satisfy the input and output combination
 }DMFT_conversion_type,*PDMFT_conversion_type;
 
-typedef  std::vector< IMFMediaType *> IMFMediaTypeArray;
-typedef  std::vector< CBasePin *>     CBasePinArray;
-typedef  std::vector< IMFSample *>    IMFSampleList;
+typedef  std::vector <ComPtr<IMFMediaType>>  IMFMediaTypeArray;
+typedef  std::vector <ComPtr<CBasePin>>      CBasePinArray;
+typedef  std::vector <ComPtr<IMFSample>>     IMFSampleList;
 typedef  std::pair< std::multimap<int, int>::iterator, std::multimap<int, int>::iterator > MMFTMMAPITERATOR;
 
 

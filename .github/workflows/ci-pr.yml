@@ -15,8 +15,6 @@ jobs:
         configuration: [Debug, Release]
         platform: [x64, arm64]
     runs-on: windows-2022
-    env:
-      Solution_Path: general\echo\kmdf\kmdfecho.sln
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -29,12 +27,14 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         uses: tj-actions/changed-files@v27
+        with:
+          separator: ","
 
       - name: Retrieve and build solutions from changed files
-        id: build-changed-projects
+        id: build-changed-samples
         run: |
-          $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(' ')
-          .\.github\scripts\Build-ChangedProjects.ps1 -ChangedFiles $changedFiles
+          $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
+          .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
         env:
-          Configuration: ${{ matrix.configuration }}
-          Platform: ${{ matrix.platform }}
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}

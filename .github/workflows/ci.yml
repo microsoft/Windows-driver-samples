@@ -15,8 +15,6 @@ jobs:
         configuration: [Debug, Release]
         platform: [x64, arm64]
     runs-on: windows-2022
-    env:
-      Solution_Path: general\echo\kmdf\kmdfecho.sln
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -27,9 +25,9 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Retrieve and build all available solutions
-        id: build-all-projects
+        id: build-all-samples
         run: |
-          .\Build-AllProjects.ps1
+          .\Build-AllSamples.ps1 -Verbose
         env:
-          Configuration: ${{ matrix.configuration }}
-          Platform: ${{ matrix.platform }}
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}

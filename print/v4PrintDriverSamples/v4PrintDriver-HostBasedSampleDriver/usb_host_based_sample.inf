@@ -13,6 +13,7 @@ ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=03/12/2013,1.0.0.1
 ClassVer=4.0
+PnpLockdown=1
 
 ;
 ; Manufacturer section.

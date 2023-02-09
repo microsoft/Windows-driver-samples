@@ -13,6 +13,7 @@ ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=11/17/2005,1.0.0.2
 CatalogFile=AutoCnfg.cat
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -21,7 +22,7 @@ CatalogFile=AutoCnfg.cat
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-%ManufacturerName%=Standard, NTx86, NTamd64, NTia64, NTarm64
+%ManufacturerName%=Standard, NTx86, NTamd64, NTarm64
 
 ;
 ; Model sections.
@@ -35,10 +36,6 @@ CatalogFile=AutoCnfg.cat
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 
 [Standard.NTamd64]
-"Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
-"PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
-
-[Standard.NTia64]
 "Unidrv AutoConfiguration Sample"    = INSTALL_AUTO_CONFIG.UNI,DO_NOT_USE_THIS_HWID1
 "PScript5 AutoConfiguration Sample"  = INSTALL_AUTO_CONFIG.PS,DO_NOT_USE_THIS_HWID2
 

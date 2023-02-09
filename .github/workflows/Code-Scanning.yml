@@ -1,0 +1,60 @@
+# This workflow runs the latest CodeQL CLI and checks against CodeQL's Cpp library.
+# This is the source for the GitHub Security Code Scanning job.
+
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches:
+      - main
+      - develop
+    
+  # Allow manual scheduling
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analysis
+    runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Retrieve and build all available solutions
+      id: build-all-samples
+      run: |
+          .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+      env:
+        WDS_Configuration: Debug
+        WDS_Platform: x64
+        WDS_WipeOutputs: ${{ true }}
+
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:${{matrix.language}}"

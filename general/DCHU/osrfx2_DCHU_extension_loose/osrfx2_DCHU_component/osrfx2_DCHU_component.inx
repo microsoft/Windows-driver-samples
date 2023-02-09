@@ -24,6 +24,7 @@ Class = SoftwareComponent
 ClassGuid = {5c4c3332-344d-483c-8739-259e934c9cc8}
 Provider = %ManufacturerName%
 CatalogFile = osrfx2_DCHU_component.cat
+PnpLockdown = 1
 
 [Manufacturer]
 %ManufacturerName% = OsrFx2Component, NT$ARCH$
