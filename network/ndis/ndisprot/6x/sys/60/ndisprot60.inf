@@ -13,8 +13,12 @@ CatalogFile  = ndisprot60.cat
 PnpLockdown = 1
 
 
+; Note: Starting with OS build version 25292* there is an update to the Network Installation UI
+; that allows for installation in the driver package's Driver store directory. All builds 
+; above that build version should use this updated installation.
+; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NTx86,NTia64,NTamd64,NTamd64.10.0...25292
 
 [Standard.NTx86]
 %NDISPROT_Desc%=Install, MS_NDISPROT
@@ -25,6 +29,9 @@ PnpLockdown = 1
 [Standard.NTamd64]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
+[Standard.NTamd64.10.0...25292]
+%NDISPROT_Desc%=Install_Update, MS_NDISPROT
+
 ;-------------------------------------------------------------------------
 ; Installation Section
 ;-------------------------------------------------------------------------
@@ -32,6 +39,11 @@ PnpLockdown = 1
 AddReg=Inst_Ndi
 Characteristics=0x0 ; 
 CopyFiles=CpyFiles_Sys
+
+[Install_Update]
+AddReg=Inst_Ndi
+Characteristics=0x0 ; 
+CopyFiles=CpyFiles_Sys_Update
 
 ;-------------------------------------------------------------------------
 ; Ndi installation support
@@ -56,6 +68,17 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %12%\ndisprot60.sys
 Description     = %NDISPROT_Desc%
 
+[Install_Update.Services]
+AddService=Ndisprot60,,NDISPROT_Service_Inst_Update
+
+[NDISPROT_Service_Inst_Update]
+DisplayName     = %NDISPROT_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %13%\ndisprot60.sys
+Description     = %NDISPROT_Desc%
+
 [Install.Remove.Services]
 DelService=Ndisprot60,0x200
 
@@ -70,13 +93,17 @@ ndisprot60.sys=1
 
 
 [DestinationDirs]
-CpyFiles_Sys    = 12    ; DIRID_DRIVERS
+CpyFiles_Sys        = 12
+CpyFiles_Sys_Update = 13
 
 
 ;-------------------------------------------------------------------------
 ; Files to Copy/Delete - Referenced by Install and Remove sections above
 ;-------------------------------------------------------------------------
 [CpyFiles_Sys]
+Ndisprot60.sys,,,2
+
+[CpyFiles_Sys_Update]
 Ndisprot60.sys,,,2
 
 [Strings]
