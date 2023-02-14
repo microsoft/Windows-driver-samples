@@ -167,9 +167,13 @@ $sw.Stop()
 if ($jresult.FailSet.Count -gt 0) {
     Write-Output "Some combinations were built with errors:"
     foreach ($failedSample in $jresult.FailSet) {
-        Write-Output "== $failedSample =="
         $failedSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
-        Get-Content "$LogFilesDirectory\$($Matches[1]).$($Matches[2]).$($Matches[3]).err" | Write-Output
+        $failName = $Matches[1]
+        $failConfiguration = $Matches[2]
+        $failPlatform = $Matches[3]
+        Write-Output "Build errors in Sample $failName; Configuration: $failConfiguration; Platform: $failPlatform {"
+        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.err" | Write-Output
+        Write-Output "} $failedSample"
     }
     Write-Error "Some combinations were built with errors."
 }
