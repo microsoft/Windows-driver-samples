@@ -82,6 +82,9 @@ Description     = %NDISPROT_Desc%
 [Install.Remove.Services]
 DelService=Ndisprot60,0x200
 
+[Install_Update.Remove.Services]
+DelService=Ndisprot60,0x200
+
 ;-------------------------------------------------------------------------
 ; Declare Destination Directories for file copy/deletion
 ;-------------------------------------------------------------------------
