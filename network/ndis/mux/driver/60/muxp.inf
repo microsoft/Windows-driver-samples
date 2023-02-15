@@ -8,6 +8,7 @@
 Signature   = "$Windows NT$"
 Class       = NetTrans
 ClassGUID   = {4D36E975-E325-11CE-BFC1-08002BE10318}
+CatalogFile = muxp.cat
 Provider    = %ProviderString%
 DriverVer   =10/01/2002,6.0.5019.0
 PnpLockdown = 1
