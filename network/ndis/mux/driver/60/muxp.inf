@@ -85,12 +85,6 @@ AddReg = MUXP.AddEventLog.AddReg
 HKR, , EventMessageFile, 0x20000, "%%SystemRoot%%\System32\netevent.dll"
 HKR, , TypesSupported,   0x10001, 7
 
-[MUXP.ndi.Remove.Services]
-DelService = MUXP
-
-[MUXP.ndi.Remove]
-DelFiles = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
-
 [Strings]
 ProviderString = "TODO-Set-Provider"
 ManufacturerName="TODO-Set-Manufacturer"
