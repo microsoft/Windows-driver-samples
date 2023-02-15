@@ -26,9 +26,9 @@ CatalogFile = osrfx2_DCHU_base.cat
 PnpLockDown = 1
 
 [Manufacturer]
-%ManufacturerName% = OsrBase, NT$ARCH$
+%ManufacturerName% = OsrBase, NT$ARCH$.10.0...19041
 
-[OsrBase.NT$ARCH$]
+[OsrBase.NT$ARCH$.10.0...19041]
 %OsrFx2DeviceName% = OsrFx2_Install, USB\VID_0547&PID_1002
 
 [SourceDisksFiles]
