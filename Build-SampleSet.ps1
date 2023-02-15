@@ -40,7 +40,6 @@ finally {
 
 # TODO: Make exclusion more granular; allow for configuration|platform exclusions
 $exclusionsSet = @{}
-$failSet = @()
 Import-Csv 'exclusions.csv' | ForEach-Object {
     $exclusionsSet[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Reason
 }
@@ -50,6 +49,7 @@ $jresult = @{
     SolutionsExcluded = 0
     SolutionsFailed   = 0
     Results           = @()
+    FailSet           = @()
     lock              = [System.Threading.Mutex]::new($false)
 }
 
@@ -100,6 +100,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
             $thisexcluded = 0
             $thissucceeded = 0
             $thisresult = "Not run"
+            $thisfailset = @()
 
             if ($exclusionsSet.ContainsKey($sampleName)) {
                 # Verbose
@@ -116,7 +117,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                     $thisresult = "Succeeded"
                 }
                 elseif ($LASTEXITCODE -eq 1) {
-                    $failSet += "$sampleName $configuration|$platform"
+                    $thisfailset += "$sampleName $configuration|$platform"
                     $thisfailed += 1
                     $thisresult = "Failed"
                 }
@@ -135,6 +136,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 ($using:jresult).SolutionsExcluded += $thisexcluded
                 ($using:jresult).SolutionsUnsupported += $thisunsupported
                 ($using:jresult).SolutionsFailed += $thisfailed
+                ($using:jresult).FailSet += $thisfailset
                 $SolutionsTotal = $using:SolutionsTotal
                 $ThrottleLimit = $using:ThrottleLimit
                 $SolutionsBuilt = ($using:jresult).SolutionsBuilt
@@ -162,10 +164,16 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
 
 $sw.Stop()
 
-if ($failSet.Count -gt 0) {
+if ($jresult.FailSet.Count -gt 0) {
     Write-Output "Some combinations were built with errors:"
-    foreach ($failedSample in $failSet) {
-        Write-Output "$failedSample"
+    foreach ($failedSample in $jresult.FailSet) {
+        $failedSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
+        $failName = $Matches[1]
+        $failConfiguration = $Matches[2]
+        $failPlatform = $Matches[3]
+        Write-Output "Build errors in Sample $failName; Configuration: $failConfiguration; Platform: $failPlatform {"
+        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.err" | Write-Output
+        Write-Output "} $failedSample"
     }
     Write-Error "Some combinations were built with errors."
 }
