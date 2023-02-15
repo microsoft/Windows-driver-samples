@@ -45,9 +45,9 @@ mux.dll     = 1
 
 
 [DestinationDirs]
-DefaultDestDir      = 12
-MUXP.CopyFiles.DLL  = 11   ; %windir%\System32
-MUXP.CopyFiles.Sys  = 12   ; %windir%\System32\drivers
+DefaultDestDir      = 13
+MUXP.CopyFiles.DLL  = 13   ; %windir%\System32
+MUXP.CopyFiles.Sys  = 13   ; %windir%\System32\drivers
 
 [MUXP.CopyFiles.Sys]
 mux.sys,,,2
@@ -77,7 +77,7 @@ DisplayName     = %MUXP_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\mux.sys
+ServiceBinary   = %13%\mux.sys
 Description     = %MUXP_Desc%
 
 [MUXP.AddEventLog]
