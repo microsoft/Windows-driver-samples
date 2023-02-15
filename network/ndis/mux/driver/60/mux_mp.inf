@@ -58,7 +58,7 @@ DisplayName     = %MUXMP_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\mux.sys
+ServiceBinary   = %13%\mux.sys
 Description     = %MUXMP_Desc%
 
 
