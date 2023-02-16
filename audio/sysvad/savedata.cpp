@@ -47,12 +47,13 @@ Abstract:
 #define DEFAULT_FRAME_SIZE          PAGE_SIZE * 4 
 #define DEFAULT_BUFFER_SIZE         DEFAULT_FRAME_SIZE * DEFAULT_FRAME_COUNT
 
-#define DEFAULT_FILE_NAME           L"\\DosDevices\\C:\\STREAM"
-#define OSDATA_FILE_NAME            L"\\DosDevices\\O:\\STREAM"
+#define DEFAULT_FILE_FOLDER1        L"\\DriverData\\Audio_Samples"
+#define DEFAULT_FILE_FOLDER2        L"\\DriverData\\Audio_Samples\\Sysvad"
+#define DEFAULT_FILE_NAME           L"\\DriverData\\Audio_Samples\\Sysvad\\STREAM"
 #define OFFLOAD_FILE_NAME           L"OFFLOAD"
 #define HOST_FILE_NAME              L"HOST"
 
-#define MAX_WORKER_ITEM_COUNT       15
+#define MAX_WORKER_ITEM_COUNT       8
 
 //=============================================================================
 // Statics
@@ -91,6 +92,7 @@ CSaveData::CSaveData()
     m_DataHeader.dwData           = DATA_TAG;
     m_DataHeader.dwDataLength     = 0;
 
+    RtlZeroMemory(&m_FileName, sizeof(m_FileName));
     RtlZeroMemory(&m_objectAttributes, sizeof(m_objectAttributes));
 } // CSaveData
 
@@ -100,6 +102,12 @@ CSaveData::~CSaveData()
     PAGED_CODE();
 
     DPF_ENTER(("[CSaveData::~CSaveData]"));
+
+    //
+    // All write activity is done at this point (see acquire->stop stream transition).
+    // Safe to call even if the Initialize function failed.
+    //
+    DestroyWorkItems();
 
     // Update the wave header in data file with real file size.
     //
@@ -415,6 +423,7 @@ CSaveData::GetNewWorkItem
 {
     LARGE_INTEGER               timeOut = { 0 };
     NTSTATUS                    ntStatus;
+    PSAVEWORKER_PARAM           saveWorker = NULL;
 
     for (int i = 0; i < MAX_WORKER_ITEM_COUNT; i++)
     {
@@ -430,13 +439,16 @@ CSaveData::GetNewWorkItem
         if (STATUS_SUCCESS == ntStatus)
         {
             if (m_pWorkItems[i].WorkItem)
-                return &(m_pWorkItems[i]);
-            else
-                return NULL;
+            {
+                saveWorker = &(m_pWorkItems[i]);
+                KeResetEvent(&saveWorker->EventDone);
+                break;
+            }
         }
     }
 
-    return NULL;
+
+    return saveWorker;
 } // GetNewWorkItem
 #pragma code_seg("PAGE")
 
@@ -449,13 +461,13 @@ CSaveData::Initialize
 {
     PAGED_CODE();
 
-    NTSTATUS    ntStatus = STATUS_SUCCESS;
-    WCHAR       szTemp[MAX_PATH];
-    size_t      cLen;
-    OBJECT_ATTRIBUTES objectAttributes; 
-    UNICODE_STRING    osDataVolumeString;
-    HANDLE            osDataFileHandle = NULL;     
-    IO_STATUS_BLOCK   ioStatusBlock;
+    NTSTATUS            ntStatus = STATUS_SUCCESS;
+    WCHAR               szTemp[MAX_PATH];
+    size_t              cLen = 0;
+    IO_STATUS_BLOCK     ioStatusBlock = {0};
+    HANDLE              fileHandle;
+    OBJECT_ATTRIBUTES   objectAttributes;
+    UNICODE_STRING      fileName;
 
     DPF_ENTER(("[CSaveData::Initialize]"));
 
@@ -468,47 +480,74 @@ CSaveData::Initialize
         m_ulStreamId++;
     }
 
-    // Probe if OSData volume exists.
-    //
-    RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_probe.txt", OSDATA_FILE_NAME);
-    RtlInitUnicodeString(&osDataVolumeString, szTemp);
-    InitializeObjectAttributes
-    (
-        &objectAttributes,
-        &osDataVolumeString,
-        OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-        NULL,
-        NULL
-    );
+    RtlInitUnicodeString(&fileName, DEFAULT_FILE_FOLDER1);
+    InitializeObjectAttributes(
+            &objectAttributes,
+            &fileName,
+            OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+            NULL,
+            NULL);
 
-    ntStatus =
-        ZwCreateFile
-        (
-            &osDataFileHandle,
-            GENERIC_WRITE | SYNCHRONIZE,
+    // Create the folder.
+    ntStatus = ZwCreateFile(
+            &fileHandle,
+            0,
             &objectAttributes,
             &ioStatusBlock,
             NULL,
             FILE_ATTRIBUTE_NORMAL,
             0,
-            FILE_OVERWRITE_IF,
-            FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
+            FILE_OPEN_IF,
+            FILE_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
             NULL,
-            0
-        );
+            0);
+
     if (NT_SUCCESS(ntStatus))
     {
-        ZwClose(osDataFileHandle);
+        ZwClose(fileHandle);
+        fileHandle = NULL;
+
+        RtlInitUnicodeString(&fileName, DEFAULT_FILE_FOLDER2);
+        InitializeObjectAttributes(
+                &objectAttributes,
+                &fileName,
+                OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+                NULL,
+                NULL);
+
+        // Create the folder.
+        ntStatus = ZwCreateFile(
+                &fileHandle,
+                0,
+                &objectAttributes,
+                &ioStatusBlock,
+                NULL,
+                FILE_ATTRIBUTE_NORMAL,
+                0,
+                FILE_OPEN_IF,
+                FILE_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
+                NULL,
+                0);
+
+        if (NT_SUCCESS(ntStatus))
+        {
+            ZwClose(fileHandle);
+            fileHandle = NULL;
+        }
     }
 
-    // Allocate data file name.
-    //
-    RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_%s_%d.wav", NT_SUCCESS(ntStatus) ? OSDATA_FILE_NAME : DEFAULT_FILE_NAME, _bOffloaded ? OFFLOAD_FILE_NAME : HOST_FILE_NAME, _bOffloaded ? m_ulOffloadStreamId : m_ulStreamId);
-    m_FileName.Length = 0;
-    ntStatus = RtlStringCchLengthW (szTemp, sizeof(szTemp)/sizeof(szTemp[0]), &cLen);
     if (NT_SUCCESS(ntStatus))
     {
-        m_FileName.MaximumLength = (USHORT)((cLen * sizeof(WCHAR)) +  sizeof(WCHAR));//convert to wchar and add room for NULL
+        // Allocate data file name.
+        //
+        RtlStringCchPrintfW(szTemp, MAX_PATH, L"%s_%s_%d.wav", DEFAULT_FILE_NAME, _bOffloaded ? OFFLOAD_FILE_NAME : HOST_FILE_NAME, _bOffloaded ? m_ulOffloadStreamId : m_ulStreamId);
+        m_FileName.Length = 0;
+        ntStatus = RtlStringCchLengthW (szTemp, sizeof(szTemp)/sizeof(szTemp[0]), &cLen);
+    }
+
+    if (NT_SUCCESS(ntStatus))
+    {
+        m_FileName.MaximumLength = (USHORT)((cLen * sizeof(WCHAR)) + sizeof(WCHAR));//convert to wchar and add room for NULL
         m_FileName.Buffer = (PWSTR)
             ExAllocatePool2
             (
@@ -572,6 +611,13 @@ CSaveData::Initialize
     //
     KeInitializeMutex( &m_FileSync, 1 ) ;
 
+    // Allocate work-items.
+    //
+    if (NT_SUCCESS(ntStatus))
+    {
+        ntStatus = InitializeWorkItems(m_pDeviceObject);
+    }
+
     // Open the data file.
     //
     if (NT_SUCCESS(ntStatus))
@@ -586,7 +632,7 @@ CSaveData::Initialize
         (
             &m_objectAttributes,
             &m_FileName,
-            OBJ_CASE_INSENSITIVE|OBJ_KERNEL_HANDLE,
+            OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
             NULL,
             NULL
         );
@@ -896,7 +942,6 @@ CSaveData::SaveFrame
         pParam->ulFrameNo = ulFrameNo;
         pParam->ulDataSize = ulDataSize;
         pParam->pData = m_pDataBuffer + ulFrameNo * m_ulFrameSize;
-        KeResetEvent(&pParam->EventDone);
         IoQueueWorkItem(pParam->WorkItem, SaveFrameWorkerCallback,
                         CriticalWorkQueue, (PVOID)pParam);
     }

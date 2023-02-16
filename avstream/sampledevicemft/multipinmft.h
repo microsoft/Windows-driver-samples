@@ -377,7 +377,7 @@ protected:
     //Inline functions
     //
 
-    __inline IMFTransform* Parent()
+    __inline IMFDeviceTransform* Parent()
     {
         return m_spSourceTransform.Get();
     }
@@ -406,7 +406,7 @@ private:
     long                         m_nRefCount;                 // Reference count
     CCritSec                     m_critSec;                   // Control lock.. taken only durign state change operations   
     ComPtr <IUnknown>            m_spDeviceManagerUnk;        // D3D Manager set, when MFT_MESSAGE_SET_D3D_MANAGER is called through ProcessMessage
-    ComPtr<IMFTransform>         m_spSourceTransform;         // The sources transform. This is the pipeline DevProxy
+    ComPtr<IMFDeviceTransform>   m_spSourceTransform;         // The sources transform. This is the pipeline DevProxy
     MFSHUTDOWN_STATUS            m_eShutdownStatus;
     DWORD                        m_dwWorkQueueId;
     LONG                         m_lWorkQueuePriority;
