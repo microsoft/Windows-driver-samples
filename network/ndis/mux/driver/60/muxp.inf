@@ -46,8 +46,8 @@ mux.dll     = 1
 
 [DestinationDirs]
 DefaultDestDir      = 13
-MUXP.CopyFiles.DLL  = 13   ; %windir%\System32
-MUXP.CopyFiles.Sys  = 13   ; %windir%\System32\drivers
+MUXP.CopyFiles.DLL  = 13
+MUXP.CopyFiles.Sys  = 13
 
 [MUXP.CopyFiles.Sys]
 mux.sys,,,2
