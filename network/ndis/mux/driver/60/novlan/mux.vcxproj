@@ -288,7 +288,11 @@
     <Inf Include="..\muxp.inf" />
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include="$(SolutionDir)mux.dll">
+    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Release\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Debug\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
