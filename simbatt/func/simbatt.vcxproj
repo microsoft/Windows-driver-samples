@@ -190,7 +190,8 @@
     <ResourceCompile Include="simbatt.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="*.inx" />
+    <Inf Include="simbatt-wdfcoinstall.inx" />
+    <Inf Include="simbatt.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

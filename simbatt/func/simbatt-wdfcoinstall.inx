@@ -28,7 +28,7 @@ CatalogFile=simbatt-wdfcoinstall.cat           ; TODO: Add a signed catalog file
 PnpLockdown=1
 
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir = 13
 SimBatt_Device_CoInstaller_CopyFiles = 11
 
 [SourceDisksNames]
@@ -74,7 +74,7 @@ DisplayName    = %SimBatt.SVCDESC%
 ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
 StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %12%\simbatt.sys
+ServiceBinary  = %13%\simbatt.sys
 
 ;*****************************************
 ; WDF CoInstaller
