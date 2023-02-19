@@ -3,7 +3,7 @@
 ## Step 1: Install git and pwsh 7.3.0
 ```
 winget install --id Microsoft.Powershell --source winget
-winget install --id Git.Git --source winget`
+winget install --id Git.Git --source winget
 ```
 
 ## Step 2: Create a "driver build environment"
