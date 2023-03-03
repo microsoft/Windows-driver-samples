@@ -189,7 +189,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -204,7 +204,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -219,7 +219,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -234,7 +234,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
