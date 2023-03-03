@@ -8,7 +8,7 @@ Class       = NetService
 ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
 Provider    = %ProviderString%
 CatalogFile = msforwardext.cat
-DriverVer   = 07/29/2011,2.0
+DriverVer   = 07/29/2011,2.0.0.0
 
 [Manufacturer]
 %ManufacturerName%=Standard,NTx86,NTia64,NTamd64
