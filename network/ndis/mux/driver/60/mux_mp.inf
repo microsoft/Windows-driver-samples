@@ -16,27 +16,41 @@ PnpLockdown = 1
 [ControlFlags]
 ExcludeFromSelect = MS_MUXMP	
 
+
+; Note: Starting with OS build version 25286* there is an update to the Network Installation UI
+; that allows for installation in the driver package's Driver store directory. All builds 
+; above that build version should use this updated installation.
+; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName% = Standard,NTx86,NTia64,NTamd64
+%ManufacturerName% = Standard,NTamd64.10.0...25286,NTx86,NTia64,NTamd64
+
+[Standard.NTamd64.10.0...25286]
+%MUXMP_Desc% = MUXP.ndi, MS_MUXMP
 
 [Standard.NTx86]
-%MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
+%MUXMP_Desc% = MUXP_NC.ndi, MS_MUXMP
 
 [Standard.NTia64]
-%MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
+%MUXMP_Desc% = MUXP_NC.ndi, MS_MUXMP
 
 [Standard.NTamd64]
-%MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
+%MUXMP_Desc% = MUXP_NC.ndi, MS_MUXMP
 
-[MUXMP.ndi]
-AddReg  = MUXMP.ndi.AddReg
+[MUXP.ndi]
+AddReg  = MUXP.ndi.AddReg
 Characteristics = 0xA1 ;NCF_NOT_USER_REMOVABLE | NCF_VIRTUAL | NCF_HAS_UI
 *IfType         = 6             ; IF_TYPE_ETHERNET_CSMACD 
 *MediaType      = 0             ; NdisMedium802_3 
 *PhysicalMediaType = 0          ; NdisPhysicalMediumUnspecified 
 
+[MUXP_NC.ndi]
+AddReg  = MUXP_NC.ndi.AddReg
+Characteristics = 0xA1 ;NCF_NOT_USER_REMOVABLE | NCF_VIRTUAL | NCF_HAS_UI
+*IfType         = 6             ; IF_TYPE_ETHERNET_CSMACD 
+*MediaType      = 0             ; NdisMedium802_3 
+*PhysicalMediaType = 0          ; NdisPhysicalMediumUnspecified 
 
-[MUXMP.ndi.AddReg]
+[MUXP.ndi.AddReg]
 HKR, Ndi, Service,  0,  MUXMP
 HKR, Ndi, HelpText, 0,  "%MUXMP_HELP%"
 HKR, Ndi\Interfaces,    UpperRange, 0,  "ndis5"
@@ -50,10 +64,27 @@ HKR, Ndi\params\VlanID,     max,             0, "4095"
 HKR, Ndi\params\VlanID,     step,            0, "1"
 HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
 
-[MUXMP.ndi.Services]
-AddService = MUXMP, 2, MUXMP.AddService
+[MUXP_NC.ndi.AddReg]
+HKR, Ndi, Service,  0,  MUXMP
+HKR, Ndi, HelpText, 0,  "%MUXMP_HELP%"
+HKR, Ndi\Interfaces,    UpperRange, 0,  "ndis5"
+HKR, Ndi\Interfaces,    LowerRange, 0,  "ethernet"
 
-[MUXMP.AddService]
+HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
+HKR, Ndi\params\VlanID,     default,         0, "0"
+HKR, Ndi\params\VlanID,     type,            0, "long"
+HKR, Ndi\params\VlanID,     min,             0, "0"
+HKR, Ndi\params\VlanID,     max,             0, "4095"
+HKR, Ndi\params\VlanID,     step,            0, "1"
+HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
+
+[MUXP.ndi.Services]
+AddService = MUXP, 2, MUXP.AddService
+
+[MUXP_NC.ndi.Services]
+AddService = MUXMP, 2, MUXP_NC.AddService
+
+[MUXP.AddService]
 DisplayName     = %MUXMP_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
@@ -61,6 +92,13 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %13%\mux.sys
 Description     = %MUXMP_Desc%
 
+[MUXP_NC.AddService]
+DisplayName     = %MUXMP_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\mux.sys
+Description     = %MUXMP_Desc%
 
 [Strings]
 ProviderString = "TODO-Set-Provider"
