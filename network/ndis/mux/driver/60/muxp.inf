@@ -18,7 +18,10 @@ PnpLockdown = 1
 ; above that build version should use this updated installation.
 ; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName% = Standard,NTx86,NTia64,NTamd64,NTamd64.10.0...25286
+%ManufacturerName% = Standard,NTamd64.10.0...25286,NTx86,NTia64,NTamd64
+
+[Standard.NTamd64.10.0...25286]
+%MUXP_Desc% = MUXP.ndi, MS_MUXP
 
 [Standard.NTx86]
 %MUXP_Desc% = MUXP_NC.ndi, MS_MUXP
@@ -29,24 +32,21 @@ PnpLockdown = 1
 [Standard.NTamd64]
 %MUXP_Desc% = MUXP_NC.ndi, MS_MUXP
 
-[Standard.NTamd64.10.0...25286]
-%MUXP_Desc% = MUXP.ndi, MS_MUXP
-
 ; Note:
 ; 1. The NCF_* flags are defined in netcfgx.h
 ; 2. NCF_HAS_UI (0x80) is required for custom property pages.
 ;
 
+[MUXP.ndi]
+AddReg          = MUXP.ndi.AddReg
+Characteristics = 0x80 ; NCF_HAS_UI
+copyfiles       = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
+CopyInf	        = mux_mp.inf
+
 [MUXP_NC.ndi]
 AddReg          = MUXP_NC.ndi.AddReg
 Characteristics = 0x80 ; NCF_HAS_UI
 copyfiles       = MUXP_NC.CopyFiles.DLL, MUXP_NC.CopyFiles.sys
-CopyInf	        = mux_mp.inf
-
-[MUXP.ndi]
-AddReg          = MUXP_NC.ndi.AddReg
-Characteristics = 0x80 ; NCF_HAS_UI
-copyfiles       = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
 CopyInf	        = mux_mp.inf
 
 [SourceDisksNames]
@@ -58,34 +58,26 @@ mux.dll     = 1
 
 [DestinationDirs]
 DefaultDestDir      = 13
-MUXP_NC.CopyFiles.DLL  = 11    ;CHECK THIS
-MUXP_NC.CopyFiles.Sys  = 12	;CHECK THIS
 MUXP.CopyFiles.DLL  = 13
 MUXP.CopyFiles.Sys  = 13
-
-[MUXP_NC.CopyFiles.Sys]
-mux.sys,,,2
+MUXP_NC.CopyFiles.DLL  = 11 ;CHECK THIS
+MUXP_NC.CopyFiles.Sys  = 12	;CHECK THIS
 
 [MUXP.CopyFiles.Sys]
 mux.sys,,,2
 
-[MUXP_NC.CopyFiles.DLL]
-mux.dll,,,2
+[MUXP_NC.CopyFiles.Sys]
+mux.sys,,,2
 
 [MUXP.CopyFiles.DLL]
+mux.dll,,,2
+
+[MUXP_NC.CopyFiles.DLL]
 mux.dll,,,2
 
 ;-----------------------------------------------------------------------
 ;  Install parameters
 ;
-
-[MUXP_NC.ndi.AddReg]
-HKR, Ndi,            ClsID,         0, {ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a}
-HKR, Ndi,            ComponentDll,   , mux.dll
-HKR, Ndi,            HelpText,      0,          "%MUXP_HELP%"
-HKR, Ndi,            Service,       0,          "MUXP"
-HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
-HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
 
 [MUXP.ndi.AddReg]
 HKR, Ndi,            ClsID,         0, {ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a}
@@ -95,19 +87,19 @@ HKR, Ndi,            Service,       0,          "MUXP"
 HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
 HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
 
-[MUXP_NC.ndi.Services]
-AddService = MUXP, , MUXP_NC.AddService, MUXP.AddEventLog
+[MUXP_NC.ndi.AddReg]
+HKR, Ndi,            ClsID,         0, {ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a}
+HKR, Ndi,            ComponentDll,   , mux.dll
+HKR, Ndi,            HelpText,      0,          "%MUXP_HELP%"
+HKR, Ndi,            Service,       0,          "MUXP"
+HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
+HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
 
 [MUXP.ndi.Services]
-AddService = MUXP_Update, , MUXP.AddService, MUXP.AddEventLog
+AddService = MUXP, , MUXP.AddService, MUXP.AddEventLog
 
-[MUXP_NC.AddService]
-DisplayName     = %MUXP_Desc%
-ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
-StartType       = 3 ;SERVICE_DEMAND_START
-ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\mux.sys
-Description     = %MUXP_Desc%
+[MUXP_NC.ndi.Services]
+AddService = MUXP_NC, , MUXP_NC.AddService, MUXP.AddEventLog
 
 [MUXP.AddService]
 DisplayName     = %MUXP_Desc%
@@ -115,6 +107,14 @@ ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %13%\mux.sys
+Description     = %MUXP_Desc%
+
+[MUXP_NC.AddService]
+DisplayName     = %MUXP_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\mux.sys
 Description     = %MUXP_Desc%
 
 [MUXP.AddEventLog]
