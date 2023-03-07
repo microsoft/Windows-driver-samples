@@ -20,6 +20,9 @@ PnpLockdown = 1
 [Manufacturer]
 %ManufacturerName%=Standard,NTamd64.10.0...25292,NTx86,NTia64,NTamd64
 
+[Standard.NTamd64.10.0...25292]
+%NDISPROT_Desc%=Install, MS_NDISPROT
+
 [Standard.NTx86]
 %NDISPROT_Desc%=Install_NC, MS_NDISPROT
 
@@ -29,21 +32,18 @@ PnpLockdown = 1
 [Standard.NTamd64]
 %NDISPROT_Desc%=Install_NC, MS_NDISPROT
 
-[Standard.NTamd64.10.0...25292]
-%NDISPROT_Desc%=Install, MS_NDISPROT
-
 ;-------------------------------------------------------------------------
 ; Installation Section
 ;-------------------------------------------------------------------------
-[Install_NC]
-AddReg=Inst_Ndi
-Characteristics=0x0 ; 
-CopyFiles=CpyFiles_Sys_NC
-
 [Install]
 AddReg=Inst_Ndi
 Characteristics=0x0 ; 
 CopyFiles=CpyFiles_Sys
+
+[Install_NC]
+AddReg=Inst_Ndi
+Characteristics=0x0 ; 
+CopyFiles=CpyFiles_Sys_NC
 
 ;-------------------------------------------------------------------------
 ; Ndi installation support
@@ -57,17 +57,6 @@ HKR,"Ndi\Interfaces","LowerRange",,"ndis5,ndis4,ndis5_prot"
 ;-------------------------------------------------------------------------
 ; Service installation support
 ;-------------------------------------------------------------------------
-[Install_NC.Services]
-AddService=Ndisprot60,,NDISPROT_Service_Inst_NC
-
-[NDISPROT_Service_Inst_NC]
-DisplayName     = %NDISPROT_Desc%
-ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
-StartType       = 3 ;SERVICE_DEMAND_START
-ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\ndisprot60.sys
-Description     = %NDISPROT_Desc%
-
 [Install.Services]
 AddService=Ndisprot60,,NDISPROT_Service_Inst
 
@@ -79,10 +68,21 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %13%\ndisprot60.sys
 Description     = %NDISPROT_Desc%
 
-[Install_NC.Remove.Services]
-DelService=Ndisprot60,0x200
+[Install_NC.Services]
+AddService=Ndisprot60,,NDISPROT_Service_Inst_NC
+
+[NDISPROT_Service_Inst_NC]
+DisplayName     = %NDISPROT_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\ndisprot60.sys
+Description     = %NDISPROT_Desc%
 
 [Install.Remove.Services]
+DelService=Ndisprot60,0x200
+
+[Install_NC.Remove.Services]
 DelService=Ndisprot60,0x200
 
 ;-------------------------------------------------------------------------
@@ -94,19 +94,17 @@ DelService=Ndisprot60,0x200
 [SourceDisksFiles]
 ndisprot60.sys=1
 
-
 [DestinationDirs]
-CpyFiles_Sys_NC     = 12
 CpyFiles_Sys        = 13
-
+CpyFiles_Sys_NC     = 12
 
 ;-------------------------------------------------------------------------
 ; Files to Copy/Delete - Referenced by Install and Remove sections above
 ;-------------------------------------------------------------------------
-[CpyFiles_Sys_NC]
+[CpyFiles_Sys]
 Ndisprot60.sys,,,2
 
-[CpyFiles_Sys]
+[CpyFiles_Sys_NC]
 Ndisprot60.sys,,,2
 
 [Strings]
