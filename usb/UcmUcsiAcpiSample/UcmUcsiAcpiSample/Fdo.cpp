@@ -372,6 +372,7 @@ VOID
 Fdo::DestroyPpmObject()
 {
     TRACE_FUNC_ENTRY(TRACE_FLAG_FDO);
+    PAGED_CODE();
     
     WDFDEVICE device = GetObjectHandle();
 
