@@ -37,35 +37,22 @@ DriverVer       = 10/01/2002,6.0.5019.0
 ; This name can be used with netcfg.exe to install/uninstall the driver.
 
 [Standard.NTamd64.10.0...25310]
-%NdisLwf_Desc%=Install_update, MS_NdisLwf
+%NdisLwf_Desc%=Install, MS_NdisLwf
 
 [Standard.NTx86]
-%NdisLwf_Desc%=Install, MS_NdisLwf
+%NdisLwf_Desc%=Install_NC, MS_NdisLwf
 
 [Standard.NTia64]
-%NdisLwf_Desc%=Install, MS_NdisLwf
+%NdisLwf_Desc%=Install_NC, MS_NdisLwf
 
 [Standard.NTamd64.10.0]
-%NdisLwf_Desc%=Install, MS_NdisLwf
+%NdisLwf_Desc%=Install_NC, MS_NdisLwf
 
 ;-------------------------------------------------------------------------
 ; Installation Section
 ;-------------------------------------------------------------------------
-[Install_Update]
-AddReg=Inst_Ndi
-; All LWFs must include the 0x40000 bit (NCF_LW_FILTER). Unlike miniports, you
-; don't usually need to customize this value.
-Characteristics=0x40000
-
-; TODO: You must generate your own random GUID and insert it here.  Then, update
-; FILTER_UNIQUE_NAME in filter.h to match this GUID identically.  Both should
-; have {curly braces}.
-NetCfgInstanceId="{5cbf81bd-5055-47cd-9055-a76b2b4e3697}"
-
-Copyfiles = ndislwf.copyfiles.sys.update
-
 [Install]
-AddReg=Inst_Ndi
+AddReg=LWF_Ndi
 ; All LWFs must include the 0x40000 bit (NCF_LW_FILTER). Unlike miniports, you
 ; don't usually need to customize this value.
 Characteristics=0x40000
@@ -77,6 +64,19 @@ NetCfgInstanceId="{5cbf81bd-5055-47cd-9055-a76b2b4e3697}"
 
 Copyfiles = ndislwf.copyfiles.sys
 
+[Install_NC]
+AddReg=LWF_Ndi
+; All LWFs must include the 0x40000 bit (NCF_LW_FILTER). Unlike miniports, you
+; don't usually need to customize this value.
+Characteristics=0x40000
+
+; TODO: You must generate your own random GUID and insert it here.  Then, update
+; FILTER_UNIQUE_NAME in filter.h to match this GUID identically.  Both should
+; have {curly braces}.
+NetCfgInstanceId="{5cbf81bd-5055-47cd-9055-a76b2b4e3697}"
+
+Copyfiles = ndislwf_nc.copyfiles.sys
+
 [SourceDisksNames]
 1=%NdisLwf_Desc%,"",,
 
@@ -86,21 +86,21 @@ Copyfiles = ndislwf.copyfiles.sys
 ndislwf.sys=1
 
 [DestinationDirs]
-ndislwf.copyfiles.sys.update=13
-ndislwf.copyfiles.sys=12
+ndislwf.copyfiles.sys=13
+ndislwf_nc.copyfiles.sys=12
 
-[ndislwf.copyfiles.sys.update]
+[ndislwf.copyfiles.sys]
 ; TODO: Customize the name of your binary here.
 ndislwf.sys,,,2
 
-[ndislwf.copyfiles.sys]
+[ndislwf_nc.copyfiles.sys]
 ; TODO: Customize the name of your binary here.
 ndislwf.sys,,,2
 
 ;-------------------------------------------------------------------------
 ; Ndi installation support
 ;-------------------------------------------------------------------------
-[Inst_Ndi]
+[LWF_Ndi]
 ; TODO: Customize the name of the NT service that will start your driver.
 ; Then, update FILTER_SERVICE_NAME in filter.h.
 HKR, Ndi,Service,,"NdisLwf"
@@ -164,25 +164,6 @@ HKR, Ndi,FilterRunType,0x00010001, 1 ; Mandatory filter
 ;-------------------------------------------------------------------------
 ; Service installation support
 ;-------------------------------------------------------------------------
-[Install_Update.Services]
-; TODO: Customize the name of your NT service here.
-; You may also want to add the SPSVCINST_STARTSERVICE flag, like this:
-;     AddService=NdisLwf,0x800,NdisLwf_Service_Inst_Update ; SPSVCINST_STARTSERVICE
-AddService=NdisLwf,,NdisLwf_Service_Inst_Update
-
-[NdisLwf_Service_Inst_Update]
-DisplayName     = %NdisLwf_Desc%
-ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
-; Typically you will want your filter driver to start with SERVICE_SYSTEM_START.
-; If it is an Optional filter, you may also use 3;SERVICE_DEMAND_START.
-StartType       = 1 ;SERVICE_SYSTEM_START
-ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-; TODO: Customize this to your binary's filename.
-ServiceBinary   = %13%\ndislwf.sys
-LoadOrderGroup  = NDIS
-Description     = %NdisLwf_Desc%
-AddReg          = NdisImPlatformBindingOptions.reg
-
 [Install.Services]
 ; TODO: Customize the name of your NT service here.
 ; You may also want to add the SPSVCINST_STARTSERVICE flag, like this:
@@ -197,18 +178,37 @@ ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 1 ;SERVICE_SYSTEM_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ; TODO: Customize this to your binary's filename.
+ServiceBinary   = %13%\ndislwf.sys
+LoadOrderGroup  = NDIS
+Description     = %NdisLwf_Desc%
+AddReg          = NdisImPlatformBindingOptions.reg
+
+[Install_NC.Services]
+; TODO: Customize the name of your NT service here.
+; You may also want to add the SPSVCINST_STARTSERVICE flag, like this:
+;     AddService=NdisLwf,0x800,NdisLwf_NC_Service_Inst ; SPSVCINST_STARTSERVICE
+AddService=NdisLwf,,NdisLwf_NC_Service_Inst
+
+[NdisLwf_NC_Service_Inst]
+DisplayName     = %NdisLwf_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+; Typically you will want your filter driver to start with SERVICE_SYSTEM_START.
+; If it is an Optional filter, you may also use 3;SERVICE_DEMAND_START.
+StartType       = 1 ;SERVICE_SYSTEM_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+; TODO: Customize this to your binary's filename.
 ServiceBinary   = %12%\ndislwf.sys
 LoadOrderGroup  = NDIS
 Description     = %NdisLwf_Desc%
 AddReg          = NdisImPlatformBindingOptions.reg
 
-[Install_Update.Remove.Services]
+[Install.Remove.Services]
 ; TODO: Customize the name of your NT service here.
 ; The SPSVCINST_STOPSERVICE flag instructs SCM to stop the NT service
 ; before uninstalling the driver.
 DelService=NdisLwf,0x200 ; SPSVCINST_STOPSERVICE
 
-[Install.Remove.Services]
+[Install_NC.Remove.Services]
 ; TODO: Customize the name of your NT service here.
 ; The SPSVCINST_STOPSERVICE flag instructs SCM to stop the NT service
 ; before uninstalling the driver.
