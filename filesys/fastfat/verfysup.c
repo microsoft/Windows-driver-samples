@@ -1487,6 +1487,8 @@ FatMatchFileSize (
 
     UNREFERENCED_PARAMETER(IrpContext);
 
+    PAGED_CODE();
+
     if (NodeType(Fcb) != FAT_NTC_FCB) {
         return TRUE;
     }
