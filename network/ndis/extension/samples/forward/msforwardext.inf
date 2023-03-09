@@ -11,6 +11,7 @@ CatalogFile = msforwardext.cat
 DriverVer   = 07/29/2011,2.0.0.0
 PnpLockdown = 1
 
+
 [Manufacturer]
 %ManufacturerName%=Standard,NTx86,NTia64,NTamd64
 

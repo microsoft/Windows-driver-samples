@@ -10,7 +10,7 @@ products:
 
 # Toaster Sample Driver
 
-The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for both Kernel-Mode Driver Framework (KMDF) and User-Mode Driver Framework (UMDF) version 1.
+The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for both Kernel-Mode Driver Framework (KMDF).
 
 All the samples work with a hypothetical toaster bus, over which toaster devices can be connected to a PC.
 
@@ -76,89 +76,3 @@ As an alternative to building the Toaster sample in Visual Studio, you can build
 
 For more information about using MSBuild to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).
 
-## UMDF Toaster File Manifest
-
-### WUDFToaster.idl
-
-Component Interface file
-
-### WUDFToaster.cpp
-
-DLL Support code - provides the DLL's entry point as well as the DllGetClassObject export.
-
-### WUDFToaster.def
-
-This file lists the functions that the driver DLL exports.
-
-### stdafx.h
-
-This is the main header file for the sample driver.
-
-### driver.cpp and driver.h (WUDFToaster)
-
-Definition and implementation of the IDriverEntry callbacks in CDriver class.
-
-### device.cpp and device.h (WUDFToaster)
-
-Definition and implementation of various interfaces and their callbacks in CDevice class. Add your PnP and Power interfaces specific for your hardware.
-
-### queue.cpp and queue.h
-
-Definition and implementation of the base queue callback class (CQueue). IQueueCallbackDevicekIoControl, IQueueCallbackRead and IQueueCallBackWrite callbacks are implemented to handle I/O control requests.
-
-### WUDFToaster.rc
-
-This file defines resource information for the WUDF Toaster sample driver.
-
-### WUDFToaster.inf
-
-Sample INF for installing the sample WUDF Toaster driver under the Toaster class of devices.
-
-### WUDFtoaster.ctl, internal.h
-
-This file lists the WPP trace control GUID(s) for the sample driver. This file can be used with the tracelog command's -guid flag to enable the collection of these trace events within an established trace session.
-These GUIDs must remain in sync with the trace control guids defined in internal.h.
-
-## Toastmon File Manifest
-
-### comsup.cpp and comsup.h
-
-Boilerplate COM Support code - specifically base classes which provide implementations for the standard COM interfaces IUnknown and IClassFactory which are used throughout the sample.
-The implementation of IClassFactory is designed to create instances of the CMyDriver class. If you should change the name of your base driver class, you would also need to modify this file.
-
-### dllsup.cpp
-
-Boilerplate DLL Support code - provides the DLL's entry point as well as the single required export (DllGetClassObject).
-These depend on comsup.cpp to perform the necessary class creation.
-
-### exports.def
-
-This file lists the functions that the driver DLL exports.
-
-### internal.h
-
-This is the main header file for the ToastMon driver
-
-### driver.cpp and driver.h (Toastmon)
-
-Definition and implementation of the driver callback class for the ToastMon sample.
-
-### device.cpp and device.h (Toastmon)
-
-Definition and implementation of the device callback class for the ToastMon sample. This is mostly boilerplate, but also registers for RemoteInterface Arrival notifications. When a RemoteInterface arrival callback occurs, it calls CreateRemoteInterface and creates a CMyRemoteTarget callback object to handle I/O on that RemoteInterface.
-
-### RemoteTarget.cpp and RemoteTarget.h
-
-Definition and implementation of the remote target callback class for the ToastMon sample.
-
-### list.h
-
-Doubly-linked-list code
-
-### ToastMon.rc
-
-This file defines resource information for the ToastMon sample driver.
-
-### UMDFToastMon.inf
-
-Sample INF for installing the Skeleton driver to control a root enumerated device with a hardware ID of UMDFSamples\\ToastMon
