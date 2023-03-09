@@ -2547,6 +2547,7 @@ Exit:
     return ntStatus;
 }
 
+#pragma code_seg("PAGE")
 NTSTATUS
 CopyRegistryKey(HANDLE _hSourceKey, HANDLE _hDestinationKey, BOOL _bOverwrite = FALSE)
 /*++
@@ -2686,7 +2687,7 @@ Exit:
     return ntStatus;
 }
 
-
+#pragma code_seg("PAGE")
 NTSTATUS CAdapterCommon::MigrateDeviceInterfaceTemplateParameters
 (
     _In_ PUNICODE_STRING    SymbolicLinkName,
@@ -2728,6 +2729,8 @@ Return Value:
     HANDLE              hTemplateDeviceInterfaceParametersKey(NULL);
     UNICODE_STRING      TemplateSymbolicLinkName;
     UNICODE_STRING      referenceString;
+
+    PAGED_CODE(); 
 
     RtlInitUnicodeString(&TemplateSymbolicLinkName, NULL);
     RtlInitUnicodeString(&referenceString, TemplateReferenceString);
