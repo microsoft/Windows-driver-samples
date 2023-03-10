@@ -61,12 +61,12 @@ HKR,,DeviceCharacteristics,0x10001,0x100        ; Use same security checks on re
 ;*****************************************
 
 [Manufacturer]
-%ToastRUs%=ToastRUs,NTx86, NTamd64
+%ToastRUs%=ToastRUs,NTx86.10.0...16299, NTamd64.10.0...16299
 
-[ToastRUs.NTx86]
+[ToastRUs.NTx86.10.0...16299]
 %ToasterDevice.DeviceDesc%=Toaster_Device, {b85b7c50-6a01-11d2-b841-00c04fad5171}\MsToaster
 
-[ToastRUs.NTamd64]
+[ToastRUs.NTamd64.10.0...16299]
 %ToasterDevice.DeviceDesc%=Toaster_Device, {b85b7c50-6a01-11d2-b841-00c04fad5171}\MsToaster
 
 
