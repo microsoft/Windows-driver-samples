@@ -1041,10 +1041,7 @@ STDMETHODIMP CMuxNotify::ApplyProperties (VOID)
     INetLanConnectionUiInfo *pLanConnUiInfo;
     CMuxPhysicalAdapter     *pAdapter;
     GUID                    guidAdapter;
-    INetCfgComponent        *pncc;
     HRESULT                 hr = S_OK;
-
-    UNREFERENCED_PARAMETER(pncc);
 
     TraceMsg(L"-->CMuxNotify INetCfgPropertyUi::ApplyProperties\n");
 
@@ -1232,8 +1229,13 @@ HRESULT CMuxNotify::HrLoadAdapterConfiguration (VOID)
                 // Subkeys are actually a guid/bindname of the adapters.
                 //
                 szAdapterGuid[MAX_PATH]='\0';
-                CLSIDFromString( szAdapterGuid,
+                HRESULT hrResult = CLSIDFromString( szAdapterGuid,
                                  &guidAdapter );
+
+                if (hrResult != NOERROR)
+                {
+                    lResult = E_INVALIDARG;
+                }
 
                 //
                 // Create an instance representing the adapter.
