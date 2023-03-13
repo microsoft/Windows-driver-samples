@@ -10,7 +10,7 @@
 ;     INF for installing the UCM-UCSI ACPI client driver.
 ;
 ; Important:
-;    This INF depends on features for the Driver Store DIRIDs which are available starting Windows 10 1809
+;    This INF depends on features for the Driver Store DIRIDs which are available starting Windows 10 1709
 ;
 
 [Version]
@@ -32,9 +32,9 @@ DefaultDestDir = 13
 UcmUcsiAcpiSample.sys = 3426
 
 [Manufacturer]
-%ProviderName% = UcmUcsiAcpiSample, NT$ARCH$
+%ProviderName% = UcmUcsiAcpiSample, NT$ARCH$.10.0...16299
 
-[UcmUcsiAcpiSample.NT$ARCH$]
+[UcmUcsiAcpiSample.NT$ARCH$.10.0...16299]
 %UcmUcsiAcpiSample.DeviceDesc% = UcmUcsiAcpiSample.Install, ACPI\USBC000, ACPI\PNP0CA0
 
 [UcmUcsiAcpiSample.Install.NT]
