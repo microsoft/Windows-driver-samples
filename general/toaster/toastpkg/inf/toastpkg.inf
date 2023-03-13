@@ -19,7 +19,7 @@
 ;    x86 and amd64 platforms.
 ;
 ; Important:
-;    This INF depends on features for the Driver Store DIRIDs which are available starting Windows 10 1809
+;    This INF depends on features for the Driver Store DIRIDs which are available starting Windows 10 1709
 ;
 ;--*/
 [Version]
