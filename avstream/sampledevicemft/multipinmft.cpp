@@ -774,7 +774,11 @@ output pins and populate the corresponding MFT_OUTPUT_DATA_BUFFER with the sampl
     {
         DWORD dwStreamID = pOutputSamples[i].dwStreamID;
         {
-            CAutoLock _lock(m_critSec);
+            CTryLock _lock(m_critSec);
+            if (!_lock.Locked())
+            {
+                break;
+            }
             spOpin = nullptr;
             spOpin = GetOutPin(dwStreamID);
             GUID     pinGuid = GUID_NULL;

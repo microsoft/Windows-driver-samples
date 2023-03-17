@@ -177,6 +177,8 @@ public:
     ~CCritSec();
     _Requires_lock_not_held_(m_criticalSection) _Acquires_lock_(m_criticalSection)
     void Lock();
+    _Requires_lock_not_held_(m_criticalSection) _Acquires_lock_(m_criticalSection)
+    BOOL TryLock();
     _Requires_lock_held_(m_criticalSection) _Releases_lock_(m_criticalSection)
     void Unlock();
 };
@@ -199,6 +201,22 @@ public:
     CAutoLock(CCritSec* crit);
     _Releases_lock_(this->m_pCriticalSection->m_criticalSection)
     ~CAutoLock();
+};
+
+class CTryLock
+{
+protected:
+    CCritSec    *m_pCriticalSection;
+    BOOL        m_bLocked;
+public:
+    _Acquires_lock_(this->m_pCriticalSection->m_criticalSection)
+    CTryLock(CCritSec& crit);
+    _Acquires_lock_(this->m_pCriticalSection->m_criticalSection)
+    CTryLock(CCritSec* crit);
+    _Releases_lock_(this->m_pCriticalSection->m_criticalSection)
+    ~CTryLock();
+
+    BOOL Locked();
 };
 
 //////////////////////////////////////////////////////////////////////////
