@@ -15,8 +15,6 @@
 ;
 ;    INF file for installing toaster device drivers (and, optionally, value-
 ;    added software) via device-specific coinstaller.
-;    This is a mutlios INF file. Same INF file cab be used on
-;    x86 and amd64 platforms.
 ;
 ; Important:
 ;    This INF depends on features for the Driver Store DIRIDs which are available starting Windows 10 1709
@@ -28,23 +26,17 @@ Class=TOASTER
 ClassGuid={B85B7C50-6A01-11d2-B841-00C04FAD5171}
 Provider=%ProviderName%
 DriverVer=09/21/2006,6.0.5736.1
-CatalogFile.NTx86  = tostx86.cat
-CatalogFile.NTAMD64 = tstamd64.cat
+CatalogFile = toastpkg.cat
 PnpLockdown = 1
 
 [DestinationDirs]
 DefaultDestDir = 13
-CoInstaller_CopyFiles = 11
 
-[SourceDisksNames.x86]
-1 = %DiskId1%, toastpkg.tag,,\i386
-
-[SourceDisksNames.amd64]
-1 = %DiskId1%, toastpkg.tag,,\amd64
+[SourceDisksNames]
+1 = %DiskId1%
 
 [SourceDisksFiles]
 toaster.sys  = 1,,
-tostrco2.dll = 1,,
 
 ; ================= Class section =====================
 
@@ -94,23 +86,6 @@ ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
 StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %13%\toaster.sys
-
-;-------------- Coinstaller installation
-
-[Toaster_Device.NT.CoInstallers]
-AddReg=CoInstaller_AddReg
-CopyFiles=CoInstaller_CopyFiles
-
-[CoInstaller_CopyFiles]
-tostrco2.dll
-
-[CoInstaller_AddReg]
-HKR,,CoInstallers32,0x00010000,"tostrco2.dll,ToasterCoInstaller"
-
-[ToastCoInfo]
-; Used by the toaster co-installer to figure out where the original media is
-; located (so it can launch value-added setup programs).
-OriginalInfSourcePath = %1%
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
