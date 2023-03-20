@@ -27,9 +27,9 @@ CatalogFile = osrfx2_DCHU_component.cat
 PnpLockdown = 1
 
 [Manufacturer]
-%ManufacturerName% = OsrFx2Component, NT$ARCH$.10.0...15063
+%ManufacturerName% = OsrFx2Component, NT$ARCH$.10.0...16299
 
-[OsrFx2Component.NT$ARCH$.10.0...15063]
+[OsrFx2Component.NT$ARCH$.10.0...16299]
 %DeviceName% = OsrFx2Component_Install, SWC\VID_045e&PID_94ab
 
 [SourceDisksFiles]

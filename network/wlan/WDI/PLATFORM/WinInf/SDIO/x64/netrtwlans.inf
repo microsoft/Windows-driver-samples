@@ -19,12 +19,12 @@ CatalogFile.NT	= netrtwlans.cat		;; for WHQL certified
 DriverVer = 11/23/2015,3008.22.1030.2015
 
 [Manufacturer]
-%Realtek% = Realtek,NTamd64.10.0
+%Realtek% = Realtek,NTamd64.10.0...16299
 
 [ControlFlags]
 ExcludeFromSelect = *
 
-[Realtek.NTamd64.10.0]
+[Realtek.NTamd64.10.0...16299]
 ;; For 8723 RTK common		================================================================
 
 ;; For 8723 RTK common		================================================================

@@ -22,9 +22,9 @@ cxwmbclass.sys         = 3426
 DefaultDestDir=13
 
 [Manufacturer]
-%ManufacturerName% = Msft,NT$ARCH$
+%ManufacturerName% = Msft,NT$ARCH$.10.0...16299
 
-[Msft.NT$ARCH$]
+[Msft.NT$ARCH$.10.0...16299]
  ; DisplayName           Section        DeviceID
  ; -----------           -------        --------
 ;%wmbclass.DeviceDesc%    = wmbclass.ndi, USB\MS_COMP_MBIM
