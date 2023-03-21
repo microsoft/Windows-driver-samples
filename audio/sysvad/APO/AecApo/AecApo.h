@@ -99,13 +99,8 @@ public:
         ) override;
 
     // IAudioSystemEffects3
-    STDMETHODIMP GetControllableSystemEffectsList(_Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event) override
-    {
-        UNREFERENCED_PARAMETER(effects);
-        UNREFERENCED_PARAMETER(numEffects);
-        UNREFERENCED_PARAMETER(event);
-        return S_OK; 
-    }
+    STDMETHOD(GetControllableSystemEffectsList)(
+        _Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event) override;
 
     STDMETHODIMP SetAudioSystemEffectState(GUID, AUDIO_SYSTEMEFFECT_STATE) override {return S_OK;}
 

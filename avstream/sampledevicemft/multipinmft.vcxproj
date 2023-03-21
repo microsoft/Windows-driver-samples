@@ -30,7 +30,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -38,7 +38,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -46,7 +46,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -54,7 +54,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -189,7 +189,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -204,7 +204,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -219,7 +219,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -234,7 +234,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);UNICODE;MF_WPP;SECURITY_WIN32;MFT_UNIQUE_METHOD_NAMES;MF_DEVICEMFT_ALLOW_MFT0_LOAD</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);D2d1.lib;mf.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;D2d1.lib;mfcore.lib;mfplat.lib;mfuuid.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

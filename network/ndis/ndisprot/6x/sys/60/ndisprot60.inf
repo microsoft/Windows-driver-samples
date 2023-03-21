@@ -18,18 +18,12 @@ PnpLockdown = 1
 ; above that build version should use this updated installation.
 ; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName%=Standard,NTamd64.10.0...25292,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25292
 
-[Standard.NTamd64.10.0...25292]
+[Standard.NT$ARCH$.10.0...25292]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
-[Standard.NTx86]
-%NDISPROT_Desc%=Install_NC, MS_NDISPROT
-
-[Standard.NTia64]
-%NDISPROT_Desc%=Install_NC, MS_NDISPROT
-
-[Standard.NTamd64]
+[Standard.NT$ARCH$]
 %NDISPROT_Desc%=Install_NC, MS_NDISPROT
 
 ;-------------------------------------------------------------------------

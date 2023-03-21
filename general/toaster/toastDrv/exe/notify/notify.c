@@ -35,7 +35,7 @@ Revision History:
 // Annotation to indicate to prefast that this is nondriver user-mode code.
 //
 #include <DriverSpecs.h>
-_Analysis_mode_(_Analysis_code_type_user_code_)  
+_Analysis_mode_(_Analysis_code_type_user_code_)
 
 #include <windows.h>
 #include <stdlib.h>
@@ -494,7 +494,7 @@ HandleDeviceInterfaceChange(
 
 
         if(!GetDeviceDescription(dip->dbcc_name,
-                                 (PBYTE)deviceInfo->DeviceName,
+                                 deviceInfo->DeviceName,
                                  sizeof(deviceInfo->DeviceName),
                                  &deviceInfo->SerialNo)) {
             MessageBox(hWnd, TEXT("GetDeviceDescription failed"), TEXT("Error!"), MB_OK);
@@ -783,7 +783,7 @@ EnumExistingDevices(
         // Get the device details such as friendly name and SerialNo
         //
         if(!GetDeviceDescription(deviceInterfaceDetailData->DevicePath,
-                                 (PBYTE)deviceInfo->DeviceName,
+                                 deviceInfo->DeviceName,
                                  sizeof(deviceInfo->DeviceName),
                                  &deviceInfo->SerialNo)){
             goto Error;
@@ -873,7 +873,7 @@ BOOLEAN Cleanup(HWND hWnd)
 BOOL
 GetDeviceDescription(
     _In_ LPTSTR DevPath,
-    _Out_writes_bytes_(OutBufferLen) PBYTE OutBuffer,
+    _Out_writes_bytes_(OutBufferLen) PTSTR OutBuffer,
     _In_ ULONG OutBufferLen,
     _In_ PULONG SerialNo
 )
@@ -917,14 +917,14 @@ GetDeviceDescription(
     if(!SetupDiGetDeviceRegistryProperty(hardwareDeviceInfo, &deviceInfoData,
                                      SPDRP_FRIENDLYNAME,
                                      &dwRegType,
-                                     OutBuffer,
+                                     (PBYTE) OutBuffer,
                                      OutBufferLen,
                                      NULL))
     {
         if(!SetupDiGetDeviceRegistryProperty(hardwareDeviceInfo, &deviceInfoData,
                                      SPDRP_DEVICEDESC,
                                      &dwRegType,
-                                     OutBuffer,
+                                     (PBYTE) OutBuffer,
                                      OutBufferLen,
                                      NULL)){
             goto Error;
