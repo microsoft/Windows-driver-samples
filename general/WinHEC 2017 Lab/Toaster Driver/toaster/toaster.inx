@@ -5,7 +5,7 @@ Signature = "$WINDOWS NT$"
 Class = System
 ClassGuid = {4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider = Contoso
-DriverVer = 06/16/1999, 5.00.2064
+DriverVer = 06/16/1999, 5.0.2064.0
 CatalogFile = toaster.cat
 PnpLockdown = 1
 
