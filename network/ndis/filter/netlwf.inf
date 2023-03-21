@@ -31,22 +31,17 @@ DriverVer       = 10/01/2002,6.0.5019.0
 ; *This build verion will depend on which build will first get the update to the Network Installation UI
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTamd64.10.0...25310,NTx86,NTia64,NTamd64.10.0
+%ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25310
 
 ; TODO: Change the "MS_NdisLwf" name below to identify your component.
 ; This name can be used with netcfg.exe to install/uninstall the driver.
 
-[Standard.NTamd64.10.0...25310]
+[Standard.NT$ARCH$.10.0...25310]
 %NdisLwf_Desc%=Install, MS_NdisLwf
 
-[Standard.NTx86]
+[Standard.NT$ARCH$]
 %NdisLwf_Desc%=Install_NC, MS_NdisLwf
 
-[Standard.NTia64]
-%NdisLwf_Desc%=Install_NC, MS_NdisLwf
-
-[Standard.NTamd64.10.0]
-%NdisLwf_Desc%=Install_NC, MS_NdisLwf
 
 ;-------------------------------------------------------------------------
 ; Installation Section
