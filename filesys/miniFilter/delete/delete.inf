@@ -12,6 +12,7 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.1
 CatalogFile = delete.cat
+PnpLockdown = 1
 
 
 [DestinationDirs]
