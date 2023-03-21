@@ -13,14 +13,13 @@ CatalogFile  = ndisprot60.cat
 PnpLockdown = 1
 
 
-; Note: Starting with OS build version 25292* there is an update to the Network Installation UI
+; Note: Starting with OS build version 25319 there is an update to the Network Installation UI
 ; that allows for installation in the driver package's Driver store directory. All builds 
 ; above that build version should use this updated installation.
-; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25292
+%ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25319
 
-[Standard.NT$ARCH$.10.0...25292]
+[Standard.NT$ARCH$.10.0...25319]
 %NDISPROT_Desc%=Install, MS_NDISPROT
 
 [Standard.NT$ARCH$]
