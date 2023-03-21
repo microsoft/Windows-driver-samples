@@ -22,13 +22,9 @@ Provider        = %ProviderString%
 DriverVer       = 10/01/2002,6.0.5019.0
 
 
-; TODO: Include each architecture for which your driver package contains a
-; compiled binary.  If you do not supply a driver compiled for ia64, delete the
-; NTia64 section.
-; Note: Starting with OS build version 25310* there is an update to the Network Installation UI
+; Note: Starting with OS build version 25319 there is an update to the Network Installation UI
 ; that allows for installation in the driver package's Driver store directory. All builds 
-; above that build version should use this updated installation.
-; *This build verion will depend on which build will first get the update to the Network Installation UI
+; above 25319 can and should install drivers using DIRID 13.
 
 [Manufacturer]
 %ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25319
