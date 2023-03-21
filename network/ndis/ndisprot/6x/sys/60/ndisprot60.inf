@@ -15,7 +15,7 @@ PnpLockdown = 1
 
 ; Note: Starting with OS build version 25319 there is an update to the Network Installation UI
 ; that allows for installation in the driver package's Driver store directory. All builds 
-; above that build version should use this updated installation.
+; above 25319 can and should install drivers using DIRID 13.
 [Manufacturer]
 %ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25319
 
