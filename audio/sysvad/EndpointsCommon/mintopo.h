@@ -100,6 +100,14 @@ public:
         _In_        DWORD                                       JackCapabilities
     );
 
+    NTSTATUS PropertyHandlerJackDescription3
+    ( 
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions,
+        _In_        ULONG                                       ConfigId
+    );
+
     NTSTATUS PropertyHandlerAudioResourceGroup
     (
         _In_        PPCPROPERTY_REQUEST         PropertyRequest

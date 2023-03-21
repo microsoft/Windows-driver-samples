@@ -25,13 +25,9 @@ DefaultDestDir   = 12
 ;
 
 [Manufacturer]
-%MfgName% = Standard.Mfg, NTx86, NTia64, NTamd64
+%MfgName% = Standard.Mfg, NTx86, NTamd64
 
 [Standard.Mfg.NTx86]
-%GenDisk.DeviceDesc%    = disk, GenDisk
-%GenOptical.DeviceDesc% = disk, GenOptical
-
-[Standard.Mfg.NTia64]
 %GenDisk.DeviceDesc%    = disk, GenDisk
 %GenOptical.DeviceDesc% = disk, GenOptical
 
@@ -77,9 +73,6 @@ ServiceBinary  = %12%\disk.sys
 
 [SourceDisksNames.x86]
 1 = %DiskId1%,,,\i386
-
-[SourceDisksNames.ia64]
-1 = %DiskId1%,,,\ia64
 
 [SourceDisksNames.amd64]
 1 = %DiskId1%,,,\amd64

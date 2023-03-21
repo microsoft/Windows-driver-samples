@@ -1873,7 +1873,7 @@ HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
 HKR, , TypesSupported  , 0x00010001, 7
 
 [CIHVS.reg]
-HKR, Ndi\IHVExtensions, ExtensibilityDLL,       0,  "%SystemRoot%\system32\Rtlihvs.dll"
+HKR, Ndi\IHVExtensions, ExtensibilityDLL,       0,  "%%SystemRoot%%\system32\Rtlihvs.dll"
 HKR, Ndi\IHVExtensions, UIExtensibilityCLSID,   0,  "{6C2A8CCA-B2A2-4d81-A3B2-4E15F445C312}"
 HKR, Ndi\IHVExtensions, GroupName,              0,  "Realtek CCX SDK IHV Service"
 HKR, Ndi\IHVExtensions, AdapterOUI,             0x00010001, 0x00e04c

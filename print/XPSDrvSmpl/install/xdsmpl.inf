@@ -25,21 +25,15 @@ DriverVer=10/17/2008,6.1.6930.0
 PnpLockdown=1
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86,NTia64,NTamd64,NTx86.6.0,NTia64.6.0,NTamd64.6.0,NTarm64.6.0
+%ManufacturerName%=Standard,NTx86,NTamd64,NTx86.6.0,NTamd64.6.0,NTarm64.6.0
 
 [Standard.NTx86]
-"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
-
-[Standard.NTia64]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
 
 [Standard.NTamd64]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_PRE_VISTA
 
 [Standard.NTx86.6.0]
-"XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
-
-[Standard.NTia64.6.0]
 "XPSDrv Sample Driver" = INSTALL_XDSMPL_FILTERS_VISTA
 
 [Standard.NTamd64.6.0]
@@ -72,10 +66,6 @@ PackageAware=TRUE
 CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
 
 [PrinterPackageInstallation.amd64]
-PackageAware=TRUE
-CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
-
-[PrinterPackageInstallation.ia64]
 PackageAware=TRUE
 CoreDriverDependencies={D20EA372-DD35-4950-9ED8-A6335AFE79F0}, {D20EA372-DD35-4950-9ED8-A6335AFE79F5}
 
@@ -113,10 +103,6 @@ xdsmpl-pipelineconfig.xml
 [SourceDisksNames.x86]
 1 = %Location%,,
 2 = %Location%,,,x86
-
-[SourceDisksNames.ia64]
-1 = %Location%,,
-2 = %Location%,,,ia64
 
 [SourceDisksNames.amd64]
 1 = %Location%,,

@@ -28,7 +28,6 @@ Environment:
 //      Global variables
 //---------------------------------------------------------------------------
 
-#define NULL_FILTER_FILTER_NAME     L"NullFilter"
 
 typedef struct _NULL_FILTER_DATA {
 

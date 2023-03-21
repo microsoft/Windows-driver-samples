@@ -11,6 +11,7 @@ LayoutFile=ntprint.inf
 ClassGUID={4D36E979-E325-11CE-BFC1-08002BE10318}
 Class=Printer
 DriverVer=09/09/2005,1.0.0.2
+PnpLockdown=1
 
 ;
 ; Manufacturer section.
@@ -19,7 +20,7 @@ DriverVer=09/09/2005,1.0.0.2
 ; that we will display in the Dialog box
 ;
 [Manufacturer]
-"Microsoft"=Microsoft, NTx86, NTamd64, NTia64
+"Microsoft"=Microsoft, NTx86, NTamd64
 
 ;
 ; Model sections. 
@@ -29,16 +30,10 @@ DriverVer=09/09/2005,1.0.0.2
 ; that they appear in the INF file.
 ;
 
-[Microsoft]
-"UniDrv PT/PC Plugin Provider"	= PTPCPLPR
-
 [Microsoft.NTx86]
 "UniDrv PT/PC Plugin Provider"	= PTPCPLPR
 
 [Microsoft.NTamd64]
-"UniDrv PT/PC Plugin Provider"	= PTPCPLPR
-
-[Microsoft.NTia64]
 "UniDrv PT/PC Plugin Provider"	= PTPCPLPR
 
 ;
@@ -83,9 +78,6 @@ PTPCPLPR.DLL   = 100,x86
 
 [SourceDisksFiles.amd64]
 PTPCPLPR.DLL   = 100,amd64
-
-[SourceDisksFiles.IA64]
-PTPCPLPR.DLL   = 100,ia64
 
 [SourceDisksFiles]
 PTPCPLPR.GPD   = 100

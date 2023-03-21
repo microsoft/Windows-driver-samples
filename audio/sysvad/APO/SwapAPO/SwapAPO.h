@@ -195,7 +195,8 @@ public:
 public:
     LONG                                    m_fEnableSwapMFX;
     GUID                                    m_AudioProcessingMode;
-    wil::com_ptr_nothrow<IMMDevice>         m_device;
+    wil::com_ptr_nothrow<IMMDevice>         m_deviceTopologyMMDevice;
+    wil::com_ptr_nothrow<IMMDevice>         m_audioEndpoint;
     CComPtr<IPropertyStore>                 m_spAPOSystemEffectsProperties;
     CComPtr<IMMDeviceEnumerator>            m_spEnumerator;
     static const CRegAPOProperties<1>       sm_RegProperties;   // registration properties
@@ -315,7 +316,8 @@ public:
     LONG                                    m_fEnableSwapSFX;
     LONG                                    m_fEnableDelaySFX;
     GUID                                    m_AudioProcessingMode;
-    wil::com_ptr_nothrow<IMMDevice>         m_device;
+    wil::com_ptr_nothrow<IMMDevice>         m_deviceTopologyMMDevice;
+    wil::com_ptr_nothrow<IMMDevice>         m_audioEndpoint;
     CComPtr<IPropertyStore>                 m_spAPOSystemEffectsProperties;
     CComPtr<IMMDeviceEnumerator>            m_spEnumerator;
     static const CRegAPOProperties<1>       sm_RegProperties;   // registration properties

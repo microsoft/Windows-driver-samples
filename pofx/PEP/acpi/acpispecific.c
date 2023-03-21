@@ -30,7 +30,7 @@ Environment:
 #endif
 
 //
-// To add new devices that will be accpeted by the platform extension,
+// To add new devices that will be accepted by the platform extension,
 // follow to the example below.
 //
 
@@ -50,9 +50,9 @@ Environment:
 
 //
 // The common library will consume the PepDeviceMatchArray to determine
-// whether a device should be accpeted by the platform extension.
+// whether a device should be accepted by the platform extension.
 // And then the common library will consult PepDeviceDefinitionArray for
-// the native methods and device-specific notification handlers of the accpeted
+// the native methods and device-specific notification handlers of the accepted
 // devices.
 //
 

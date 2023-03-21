@@ -3667,7 +3667,7 @@ AP_CheckRSNIE(
 	}
 
 	if(RSNIE.Length != 0){
-		u1Byte	count;
+		u2Byte	count;
 		
 		//2004/09/15, kcwu, parse WPA2 packet
 		if(pEntry->perSTAKeyInfo.SecLvl == RT_SEC_LVL_WPA)
