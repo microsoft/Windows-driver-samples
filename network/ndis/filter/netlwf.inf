@@ -21,11 +21,9 @@ Provider        = %ProviderString%
 ; TODO: Customize this string for the driver version
 DriverVer       = 10/01/2002,6.0.5019.0
 
-
 ; Note: Starting with OS build version 25319 there is an update to the Network Installation UI
 ; that allows for installation in the driver package's Driver store directory. All builds 
 ; above 25319 can and should install drivers using DIRID 13.
-
 [Manufacturer]
 %ManufacturerName%=Standard,NT$ARCH$,NT$ARCH$.10.0...25319
 
@@ -37,7 +35,6 @@ DriverVer       = 10/01/2002,6.0.5019.0
 
 [Standard.NT$ARCH$]
 %NdisLwf_Desc%=Install_NC, MS_NdisLwf
-
 
 ;-------------------------------------------------------------------------
 ; Installation Section
