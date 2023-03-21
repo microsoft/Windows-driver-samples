@@ -13,15 +13,9 @@ PnpLockdown = 1
 
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
+%ManufacturerName%=Standard,NT$ARCH$.10.0...16299
 
-[Standard.NTx86]
-%MSForwardExt_Desc%=Install, MS_forwardext
-
-[Standard.NTia64]
-%MSForwardExt_Desc%=Install, MS_forwardext
-
-[Standard.NTamd64]
+[Standard.NT$ARCH$.10.0...16299]
 %MSForwardExt_Desc%=Install, MS_forwardext
 
 ;-------------------------------------------------------------------------
