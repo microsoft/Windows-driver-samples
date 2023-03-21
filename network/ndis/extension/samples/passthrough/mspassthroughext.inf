@@ -12,15 +12,8 @@ DriverVer   = 08/29/2011,1.0.0.0
 PnpLockdown = 1
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86.10.0...16299,NTia64.10.0...16299,NTamd64.10.0...16299
-
-[Standard.NTx86.10.0...16299]
-%MSPassthroughExt_Desc%=Install, MS_passthroughext
-
-[Standard.NTia64.10.0...16299]
-%MSPassthroughExt_Desc%=Install, MS_passthroughext
-
-[Standard.NTamd64.10.0...16299]
+%ManufacturerName%=Standard,NT$ARCH$.10.0...16299
+[Standard.NT$ARCH$.10.0...16299]
 %MSPassthroughExt_Desc%=Install, MS_passthroughext
 
 ;-------------------------------------------------------------------------
