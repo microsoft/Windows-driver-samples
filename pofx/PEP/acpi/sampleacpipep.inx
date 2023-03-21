@@ -21,7 +21,7 @@ CatalogFile=sampleacpipep.cat
 PnpLockdown=1
 
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir = 13
 
 [SourceDisksNames]
 1 = %DiskId1%,,,""
@@ -62,7 +62,7 @@ DisplayName    = %sampleacpipep.SVCDESC%
 ServiceType    = %SERVICE_KERNEL_DRIVER%
 StartType      = %SERVICE_BOOT_START%
 ErrorControl   = %SERVICE_ERROR_NORMAL%
-ServiceBinary  = %12%\sampleacpipep.sys
+ServiceBinary  = %13%\sampleacpipep.sys
 LoadOrderGroup = Core Platform Extensions
 ;ensure the test PEP loads at same time as ACPI (before real PEPs)
 
