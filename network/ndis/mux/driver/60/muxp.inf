@@ -18,12 +18,12 @@ PnpLockdown = 1
 ; above that build version should use this updated installation.
 ; *This build verion will depend on which build will first get the update to the Network Installation UI
 [Manufacturer]
-%ManufacturerName% = Standard,NT$ARCH$,,NT$ARCH$.10.0...25286
+%ManufacturerName% = Standard,NT$ARCH$,NT$ARCH$.10.0...25286
 
-[Standard.,NT$ARCH$.10.0...25286]
+[Standard.NT$ARCH$.10.0...25286]
 %MUXP_Desc% = MUXP.ndi, MS_MUXP
 
-[Standard.,NT$ARCH$]
+[Standard.NT$ARCH$]
 %MUXP_Desc% = MUXP_NC.ndi, MS_MUXP
 
 ; Note:
