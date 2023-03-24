@@ -22,7 +22,7 @@ CatalogFile=simsensor.cat
 PnpLockdown=1
 
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir = 13
 
 [SourceDisksNames]
 1 = %DiskId1%,,,""
@@ -35,21 +35,21 @@ simsensor.sys  = 1,,
 ;********************************************
 
 [Manufacturer]
-%StdMfg%=Standard,NTx86
-%StdMfg%=Standard,NTamd64
-%StdMfg%=Standard,NTarm
-%StdMfg%=Standard,NTarm64
+%StdMfg%=Standard,NTx86.10.0...16299
+%StdMfg%=Standard,NTamd64.10.0...16299
+%StdMfg%=Standard,NTarm.10.0...16299
+%StdMfg%=Standard,NTarm64.10.0...16299
 
-[Standard.NTx86]
+[Standard.NTx86.10.0...16299]
 %simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
 
-[Standard.NTamd64]
+[Standard.NTamd64.10.0...16299]
 %simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
 
-[Standard.NTarm]
+[Standard.NTarm.10.0...16299]
 %simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
 
-[Standard.NTarm64]
+[Standard.NTarm64.10.0...16299]
 %simsensor.DeviceDesc% = simsensor_Device, ACPI\MSNS0042
 
 [simsensor_Device.NT]
@@ -78,7 +78,7 @@ DisplayName    = %simsensor.SVCDESC%
 ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
 StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %12%\simsensor.sys
+ServiceBinary  = %13%\simsensor.sys
 
 [Temperature_Power_Setting]
 SubGroup = {7D54AE13-7A01-469d-8AF3-6FF4662C5371}

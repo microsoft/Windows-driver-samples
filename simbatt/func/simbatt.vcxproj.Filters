@@ -43,10 +43,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="*.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
-    <Inf Include="*.inx">
+    <Inf Include="simbatt.inx">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>

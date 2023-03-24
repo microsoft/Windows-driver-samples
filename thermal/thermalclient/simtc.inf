@@ -22,7 +22,7 @@ CatalogFile=thermalclient.cat
 PnpLockdown=1
 
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir = 13
 
 [SourceDisksNames]
 1 = %DiskId1%,,,""
@@ -35,21 +35,21 @@ simtc.sys  = 1,,
 ;********************************************
 
 [Manufacturer]
-%StdMfg%=Standard,NTx86
-%StdMfg%=Standard,NTamd64
-%StdMfg%=Standard,NTarm
-%StdMfg%=Standard,NTarm64
+%StdMfg%=Standard,NTx86.10.0...16299
+%StdMfg%=Standard,NTamd64.10.0...16299
+%StdMfg%=Standard,NTarm.10.0...16299
+%StdMfg%=Standard,NTarm64.10.0...16299
 
-[Standard.NTx86]
+[Standard.NTx86.10.0...16299]
 %SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
 
-[Standard.NTamd64]
+[Standard.NTamd64.10.0...16299]
 %SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
 
-[Standard.NTarm]
+[Standard.NTarm.10.0...16299]
 %SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
 
-[Standard.NTarm64]
+[Standard.NTarm64.10.0...16299]
 %SimTc.DeviceDesc% = SimTc_Device, ACPI\STCL0001
 
 [SimTc_Device.NT]
@@ -77,7 +77,7 @@ DisplayName    = %SimTc.SVCDESC%
 ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
 StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %12%\simtc.sys
+ServiceBinary  = %13%\simtc.sys
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
