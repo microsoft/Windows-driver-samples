@@ -12,6 +12,7 @@ ClassGuid   = {3e3f0674-c83c-4558-bb26-9820e1eba5c5}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.0
 CatalogFile = scanner.cat
+PnpLockdown = 1
 
 
 [DestinationDirs]

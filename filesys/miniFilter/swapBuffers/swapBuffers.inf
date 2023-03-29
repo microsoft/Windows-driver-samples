@@ -12,6 +12,7 @@ ClassGuid   = {a0a701c0-a511-42ff-aa6c-06dc0395576f}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.3
 CatalogFile = swapbuffers.cat
+PnpLockdown = 1
 
 
 [DestinationDirs]
