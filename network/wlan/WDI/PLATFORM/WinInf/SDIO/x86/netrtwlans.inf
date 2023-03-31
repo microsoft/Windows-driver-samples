@@ -7,8 +7,6 @@
 ;; This release is primarily for WHQL test.
 ;;
 
-;; FOR XP/Vista/Win7/Win8
-
 [Version]
 Signature	= "$Windows NT$"
 Class		= Net

@@ -29,7 +29,6 @@ DefaultDestDir = 12
 [Manufacturer]
 %ManufacturerString%=Sample_Manufacturer,NTx86, NTamd64, NTARM, NTARM64
 
-; For XP and later
 [Sample_Manufacturer.NTx86]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
 
