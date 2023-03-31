@@ -17,7 +17,7 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider=%ProviderString%
-DriverVer=09/02/2011, 6.02.8105
+DriverVer=09/02/2011, 6.2.8105.0
 CatalogFile=simsensor.cat
 PnpLockdown=1
 
