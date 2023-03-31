@@ -25,6 +25,7 @@
    Provider    = %ProviderString%
    CatalogFile = WFPSamplerCalloutDriver.Cat
    DriverVer   =
+   PnpLockdown = 1
 
 [SourceDisksNames.$ARCH$]
    1 = %WFPSamplerCalloutDriverDiskId%,,,""

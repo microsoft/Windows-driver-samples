@@ -9,7 +9,8 @@ Signature   = "$Windows NT$"
 Class       = NetTrans
 ClassGUID   = {4D36E975-E325-11CE-BFC1-08002BE10318}
 Provider    = %ProviderString%
-DriverVer   =10/01/2002,6.0.5019.0
+DriverVer   = 10/01/2002,6.0.5019.0
+PnpLockdown = 1
 
 [Manufacturer]
 %ManufacturerName% = Standard,NTx86,NTia64,NTamd64
@@ -32,7 +33,7 @@ DriverVer   =10/01/2002,6.0.5019.0
 AddReg          = MUXP.ndi.AddReg
 Characteristics = 0x80 ; NCF_HAS_UI
 copyfiles       = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
-CopyInf	        = mux_mp.inf
+CopyInf	    = mux_mp.inf
 
 [SourceDisksNames]
 1=%DiskDescription%,"",,

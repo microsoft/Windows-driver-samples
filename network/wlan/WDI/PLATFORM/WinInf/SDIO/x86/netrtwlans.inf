@@ -15,7 +15,8 @@ Class		= Net
 ClassGUID	= {4d36e972-e325-11ce-bfc1-08002be10318}
 Provider	= %Realtek%
 CatalogFile.NT	= netrtwlans.cat		;; for WHQL certified
-DriverVer = 11/23/2015,3008.22.1030.2015
+DriverVer   = 11/23/2015,3008.22.1030.2015
+PnpLockdown = 1
 
 [Manufacturer]
 %Realtek% = Realtek,NTx86.10.0
