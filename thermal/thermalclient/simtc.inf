@@ -17,7 +17,7 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider=%ProviderString%
-DriverVer=07/22/2011, 6.02.8040
+DriverVer=07/22/2011, 6.2.8040.0
 CatalogFile=thermalclient.cat
 PnpLockdown=1
 
