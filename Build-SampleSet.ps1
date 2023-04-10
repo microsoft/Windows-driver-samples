@@ -1,15 +1,18 @@
 [CmdletBinding()]
 param(
     [hashtable]$SampleSet,
-    [string[]]$Configurations = @([string]::IsNullOrEmpty($env:WDS_Configuration) ? "Debug" : $env:WDS_Configuration),
-    [string[]]$Platforms = @([string]::IsNullOrEmpty($env:WDS_Platform) ? "x64" : $env:WDS_Platform),
+    [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { "Debug" } else { $env:WDS_Configuration }),
+    [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { "x64" } else { $env:WDS_Platform }),
     $LogFilesDirectory = (Get-Location),
-    [int]$ThrottleLimit
+    [int]$ThrottleLimit = 0
 )
 
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
-$ThrottleLimit = $ThrottleLimit -eq 0 ? ($ThrottleFactor * $LogicalProcessors) : $ThrottleLimit
+
+if ($ThrottleLimit -eq 0) {
+    $ThrottleLimit = $ThrottleFactor * $LogicalProcessors
+}
 
 $Verbose = $false
 if ($PSBoundParameters.ContainsKey('Verbose')) {
@@ -55,15 +58,15 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Samples:              "+$sampleSet.Count)
-Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
-Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
+Write-Output ("Samples:              " + $sampleSet.Count)
+Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
+Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
 Write-Output "Combinations:         $SolutionsTotal"
 Write-Output "LogicalProcessors:    $LogicalProcessors"
 Write-Output "ThrottleFactor:       $ThrottleFactor"
 Write-Output "ThrottleLimit:        $ThrottleLimit"
 Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):  "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
+Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
@@ -141,8 +144,8 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $ThrottleLimit = $using:ThrottleLimit
                 $SolutionsBuilt = ($using:jresult).SolutionsBuilt
                 $SolutionsRemaining = $SolutionsTotal - $SolutionsBuilt
-                $SolutionsRunning = $SolutionsRemaining -ge $ThrottleLimit ? ($ThrottleLimit) : ($SolutionsRemaining)
-                $SolutionsPending = $SolutionsRemaining -ge $ThrottleLimit ? ($SolutionsRemaining - $ThrottleLimit) : (0)
+                $SolutionsRunning = if ($SolutionsRemaining -ge $ThrottleLimit) { $ThrottleLimit } else { $SolutionsRemaining }
+                $SolutionsPending = if ($SolutionsRemaining -ge $ThrottleLimit) { ($SolutionsRemaining - $ThrottleLimit) } else { 0 }
                 $SolutionsBuiltPercent = [Math]::Round(100 * ($SolutionsBuilt / $using:SolutionsTotal))
                 $TBRP = "T:" + ($SolutionsTotal) + "; B:" + (($using:jresult).SolutionsBuilt) + "; R:" + ($SolutionsRunning) + "; P:" + ($SolutionsPending)
                 $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed)
@@ -192,10 +195,10 @@ Write-Output ""
 Write-Output "Built all combinations."
 Write-Output ""
 Write-Output "Elapsed time:         $min minutes, $seconds seconds."
-Write-Output ("Disk Remaining (GB):  "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
-Write-Output ("Samples:              "+$sampleSet.Count)
-Write-Output ("Configurations:       "+$Configurations.Count+" ("+$Configurations+")")
-Write-Output ("Platforms:            "+$Platforms.Count+" ("+$Platforms+")")
+Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output ("Samples:              " + $sampleSet.Count)
+Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
+Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
 Write-Output "Combinations:         $SolutionsTotal"
 Write-Output "Succeeded:            $SolutionsSucceeded"
 Write-Output "Excluded:             $SolutionsExcluded"
