@@ -110,6 +110,7 @@ IrpSynchronousCompletion(
     IN PVOID          pKevent
     )
 {
+    PAGED_CODE();
     if (Irp->PendingReturned)
     {
         NT_ASSERT(pKevent);

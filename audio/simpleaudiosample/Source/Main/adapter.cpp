@@ -59,6 +59,8 @@ UNICODE_STRING g_RegistryPath;      // This is used to store the registry settin
 #pragma code_seg("PAGE")
 void ReleaseRegistryStringBuffer()
 {
+    PAGED_CODE();
+
     if (g_RegistryPath.Buffer != NULL)
     {
         ExFreePool(g_RegistryPath.Buffer);
