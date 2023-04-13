@@ -143,6 +143,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ndis.lib;$(DDK_LIB_PATH)\wdmsec.lib</AdditionalDependencies>
+      <CETCompat>true</CETCompat>
     </Link>
     <ClCompile>
       <ExceptionHandling>
