@@ -341,8 +341,8 @@ HRESULT HrFindInstance (INetCfg *pnc,
                       szGuid,
                       MAX_PATH+1 );
 
-        if (numChars == 0)
-        {
+        if (numChars == 0) {
+
             return ERROR_BUFFER_OVERFLOW;
         }
 
@@ -363,8 +363,10 @@ HRESULT HrFindInstance (INetCfg *pnc,
                                 szGuid,
                                 MAX_PATH+1 );
 
-                if (numChars == 0)
-                {
+                if (numChars == 0) {
+
+                    ReleaseObj(pencc);
+
                     return ERROR_BUFFER_OVERFLOW;
                 }
 

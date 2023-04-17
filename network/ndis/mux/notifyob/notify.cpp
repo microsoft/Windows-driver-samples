@@ -1232,8 +1232,8 @@ HRESULT CMuxNotify::HrLoadAdapterConfiguration (VOID)
                 HRESULT hrResult = CLSIDFromString( szAdapterGuid,
                                  &guidAdapter );
 
-                if (hrResult != NOERROR)
-                {
+                if (hrResult != NOERROR) {
+
                     lResult = E_INVALIDARG;
                 }
 

@@ -341,8 +341,8 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
                              szAdapterGuid,
                              MAX_PATH+1 );
 
-            if (numChars == 0)
-            {
+            if (numChars == 0) {
+
                 return ERROR_BUFFER_OVERFLOW;
             }
 
@@ -370,8 +370,8 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
                                  szMiniportGuid,
                                  MAX_PATH+1 );
 
-                if (numChars == 0)
-                {
+                if (numChars == 0) {
+
                     return ERROR_BUFFER_OVERFLOW;
                 }
 
@@ -425,8 +425,8 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
                              szAdapterGuid,
                              MAX_PATH+1 );
 
-            if (numChars == 0)
-            {
+            if (numChars == 0) {
+
                 return ERROR_BUFFER_OVERFLOW;
             }
 
@@ -453,8 +453,8 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
                                  szMiniportGuid,
                                  MAX_PATH+1 );
 
-                if (numChars == 0)
-                {
+                if (numChars == 0) {
+
                     return ERROR_BUFFER_OVERFLOW;
                 }
 
