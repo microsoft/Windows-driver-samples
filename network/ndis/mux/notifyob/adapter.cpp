@@ -151,7 +151,7 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
                     MAX_PATH+1 );
     if (numChars == 0) {
 
-        return ERROR_BUFFER_OVERFLOW;
+        return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
     }
 
     StringCchPrintfW ( szAdapterGuidKey,
@@ -232,9 +232,9 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
                             HRESULT hrResult = CLSIDFromString( lpMiniportGuid,
                                              &guidMiniport );
 
-                            if (hrResult != NOERROR) {
+                            if (hrResult != S_OK) {
 
-                                lResult = E_INVALIDARG;
+                                lResult = ERROR_INVALID_PARAMETER;
                             }
 
                             //
@@ -547,7 +547,7 @@ HRESULT CMuxPhysicalAdapter::ApplyRegistryChanges (ConfigAction eApplyAction)
 
     if (numChars == 0) {
 
-        return ERROR_BUFFER_OVERFLOW;
+        return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
     }
 
 
@@ -806,7 +806,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                          MAX_PATH+1 );
         if (numChars == 0) {
 
-            return ERROR_BUFFER_OVERFLOW;
+            return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
         }
 
         lpDevice = AddDevicePrefix( szMiniportGuid );
@@ -890,7 +890,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                              MAX_PATH+1 );
             if(numChars == 0) {
 
-                return ERROR_BUFFER_OVERFLOW;
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
             }
 
             lpDevice = AddDevicePrefix( szMiniportGuid );

@@ -365,9 +365,11 @@ HRESULT HrFindInstance (INetCfg *pnc,
 
                 if (numChars == 0) {
 
+                    ReleaseObj(pncc);
+
                     ReleaseObj(pencc);
 
-                    return ERROR_BUFFER_OVERFLOW;
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
                 }
 
 

@@ -372,7 +372,9 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
                 if (numChars == 0) {
 
-                    return ERROR_BUFFER_OVERFLOW;
+                    RegCloseKey(hkeyAdapterGuid);
+
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
                 }
 
                 lpDevice = AddDevicePrefix( szMiniportGuid );
@@ -455,7 +457,9 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
                 if (numChars == 0) {
 
-                    return ERROR_BUFFER_OVERFLOW;
+                    RegCloseKey(hkeyAdapterGuid);
+
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
                 }
 
                 lpDevice = AddDevicePrefix( szMiniportGuid );
