@@ -296,8 +296,20 @@
     <ResourceCompile Include="..\mux.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\vlan\x64\Release\muxvlan.sys">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\notifyob\x64\Release\mux.dll">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\novlan\x64\Release\mux.sys">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
     <Inf Exclude="@(Inf)" Include="*.inf" />
-    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+    <Inf Include="..\muxp.inf" />
     <Inf Include="..\mux_mp.inf" />
   </ItemGroup>
   <ItemGroup>

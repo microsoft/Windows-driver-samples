@@ -284,19 +284,21 @@
     <ResourceCompile Include="..\mux.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\vlan\x64\Release\muxvlan.sys" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\notifyob\x64\Release\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
     <Inf Exclude="@(Inf)" Include="*.inf" />
-    <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
+    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\novlan\x64\Release\mux.sys">
+      <PackageRelativeDirectory>
+      </PackageRelativeDirectory>
+    </FilesToPackage>
     <Inf Include="..\muxp.inf" />
-  </ItemGroup>
-  <ItemGroup>
-    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Release\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      <PackageRelativeDirectory>
-      </PackageRelativeDirectory>
-    </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Debug\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      <PackageRelativeDirectory>
-      </PackageRelativeDirectory>
-    </FilesToPackage>
+    <Inf Include="..\mux_mp.inf" />
   </ItemGroup>
   <ItemGroup>
     <None Exclude="@(None)" Include="*.txt;*.htm;*.html" />
