@@ -76,16 +76,16 @@
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>muxvlan</TargetName>
+    <TargetName>mux</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>muxvlan</TargetName>
+    <TargetName>mux</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>muxvlan</TargetName>
+    <TargetName>mux</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>muxvlan</TargetName>
+    <TargetName>mux</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -296,15 +296,15 @@
     <ResourceCompile Include="..\mux.rc" />
   </ItemGroup>
   <ItemGroup>
-    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\vlan\x64\Release\muxvlan.sys">
+    <FilesToPackage Include="$(TargetPath)">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\notifyob\x64\Release\mux.dll">
+    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Release\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="C:\Users\kahashimoto\source\repos\Updated\Windows-driver-samples\network\ndis\mux\driver\60\novlan\x64\Release\mux.sys">
+    <FilesToPackage Include="$(SolutionDir)notifyob\x64\Debug\mux.dll" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
