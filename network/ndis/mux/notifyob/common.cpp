@@ -343,7 +343,9 @@ HRESULT HrFindInstance (INetCfg *pnc,
 
         if (numChars == 0) {
 
-            return ERROR_BUFFER_OVERFLOW;
+            ReleaseObj(pencc);
+
+            return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
         }
 
         TraceMsg( L"  Looking for component with InstanceGuid %s\n",

@@ -343,7 +343,7 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
             if (numChars == 0) {
 
-                return ERROR_BUFFER_OVERFLOW;
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
             }
 
             StringCchPrintfW ( szAdapterGuidKey,
@@ -429,7 +429,7 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
             if (numChars == 0) {
 
-                return ERROR_BUFFER_OVERFLOW;
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
             }
 
             StringCchPrintfW( szAdapterGuidKey,
