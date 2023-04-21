@@ -806,6 +806,8 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                          MAX_PATH+1 );
         if (numChars == 0) {
 
+            CoTaskMemFree(lpszBindName);
+
             return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
         }
 
@@ -889,6 +891,8 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                              szMiniportGuid,
                              MAX_PATH+1 );
             if(numChars == 0) {
+
+                CoTaskMemFree(lpszBindName);
 
                 return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
             }
