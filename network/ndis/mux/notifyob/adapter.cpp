@@ -146,9 +146,13 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
     // device IDs of the virtual miniports are stored.
     //
 
-    StringFromGUID2( m_guidAdapter,
+    int numChars = StringFromGUID2( m_guidAdapter,
                     szAdapterGuid,
                     MAX_PATH+1 );
+    if (numChars == 0) {
+
+        return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+    }
 
     StringCchPrintfW ( szAdapterGuidKey,
         celems(szAdapterGuidKey),
@@ -225,9 +229,14 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
 
                         if ( lpMiniportGuid != NULL ) {
 
-                            CLSIDFromString( lpMiniportGuid,
+                            HRESULT hrResult = CLSIDFromString( lpMiniportGuid,
                                              &guidMiniport );
-         
+
+                            if (hrResult != S_OK) {
+
+                                lResult = ERROR_INVALID_PARAMETER;
+                            }
+
                             //
                             // Create an instance representing the virtual miniport.
                             //
@@ -532,9 +541,15 @@ HRESULT CMuxPhysicalAdapter::ApplyRegistryChanges (ConfigAction eApplyAction)
     // Open/create and then close the registry key to ensure that it does exist.
     //
 
-    StringFromGUID2( m_guidAdapter,
+    int numChars = StringFromGUID2( m_guidAdapter,
                      szAdapterGuid,
                      MAX_PATH+1 );
+
+    if (numChars == 0) {
+
+        return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+    }
+
 
     lResult = RegCreateKeyExW( HKEY_LOCAL_MACHINE,
                                c_szAdapterList,
@@ -786,9 +801,16 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
         // Notify the driver that one or more virtual miniports have been added.
         //
 
-        StringFromGUID2( guidMiniport,
+        int numChars = StringFromGUID2( guidMiniport,
                          szMiniportGuid,
                          MAX_PATH+1 );
+        if (numChars == 0) {
+
+            CoTaskMemFree(lpszBindName);
+
+            return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+        }
+
         lpDevice = AddDevicePrefix( szMiniportGuid );
 
         if ( lpDevice ) {
@@ -865,9 +887,16 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
 
         if ( eApplyAction != eActRemove ) {
 
-            StringFromGUID2( guidMiniport,
+            int numChars = StringFromGUID2( guidMiniport,
                              szMiniportGuid,
                              MAX_PATH+1 );
+            if(numChars == 0) {
+
+                CoTaskMemFree(lpszBindName);
+
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+            }
+
             lpDevice = AddDevicePrefix( szMiniportGuid );
 
             if ( lpDevice ) {
