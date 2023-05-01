@@ -19,18 +19,17 @@ foreach ($file in $ChangedFiles) {
         continue
     }
     $dir = (Get-Item $file).DirectoryName
-    $origdir = $dir
     $filename = Split-Path $file -Leaf
 
     # Files that can affect how every sample is built should trigger a full build
     if ($filename -eq "Build-AllSamples.ps1" -or $filename -eq "Build-Sample.ps1") {
-        $buildAll = true
+        $buildAll = $true
     }
-    if ($dir -like "*\.github\scripts" -or $dir -like "*\.github\scripts\*") {
-        $buildAll = true
+    if ($dir -like "$root\.github\scripts" -or $dir -like "$root\.github\scripts\*") {
+        $buildAll = $true
     }
-    if ($dir -like "*\.github\workflows" -or $dir -like "*\.github\workflows\*") {
-        $buildAll = true
+    if ($dir -like "$root\.github\workflows" -or $dir -like "$root\.github\workflows\*") {
+        $buildAll = $true
     }
     if ($buildAll)
     {
@@ -42,7 +41,7 @@ foreach ($file in $ChangedFiles) {
         $dir = (Get-Item $dir).Parent.FullName
     }
     if ($dir -eq $root) {
-        Write-Verbose "`u{2754} Changed file $file at $origdir does not match a sample"
+        Write-Verbose "`u{2754} Changed file $file does not match a sample"
         continue
     }
     $sampleName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
