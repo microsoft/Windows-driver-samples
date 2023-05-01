@@ -19,6 +19,7 @@ foreach ($file in $ChangedFiles) {
         continue
     }
     $dir = (Get-Item $file).DirectoryName
+    $origdir = $dir
     $filename = Split-Path $file -Leaf
 
     # Files that can affect how every sample is built should trigger a full build
@@ -41,7 +42,7 @@ foreach ($file in $ChangedFiles) {
         $dir = (Get-Item $dir).Parent.FullName
     }
     if ($dir -eq $root) {
-        Write-Verbose "`u{2754} Changed file $file at $dir does not match a sample"
+        Write-Verbose "`u{2754} Changed file $file at $origdir does not match a sample"
         continue
     }
     $sampleName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
