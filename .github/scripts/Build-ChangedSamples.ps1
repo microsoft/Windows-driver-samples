@@ -25,10 +25,10 @@ foreach ($file in $ChangedFiles) {
     if ($filename -eq "Build-AllSamples.ps1" -or $filename -eq "Build-Sample.ps1") {
         $buildAll = true
     }
-    if ($dir -like "$root\.github\scripts*") {
+    if ($dir -like "*\.github\scripts" -or $dir -like "*\.github\scripts\*") {
         $buildAll = true
     }
-    if ($dir -like "$root\.github\workflows*") {
+    if ($dir -like "*\.github\workflows" -or $dir -like "*\.github\workflows\*") {
         $buildAll = true
     }
     if ($buildAll)
@@ -41,7 +41,7 @@ foreach ($file in $ChangedFiles) {
         $dir = (Get-Item $dir).Parent.FullName
     }
     if ($dir -eq $root) {
-        Write-Verbose "`u{2754} Changed file $file does not match a sample."
+        Write-Verbose "`u{2754} Changed file $file at $dir does not match a sample"
         continue
     }
     $sampleName = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
