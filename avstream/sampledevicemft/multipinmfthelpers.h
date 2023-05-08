@@ -201,10 +201,10 @@ public:
 private:
     DWORD                m_dwInPinId;           /* This is the input pin       */
     IMFSampleList        m_sampleList;          /* List storing the samples    */
-    IMFDeviceTransform*  m_pTransform;         /* Weak reference to the the device MFT */
     GUID                 m_streamCategory;
     ULONG                m_cRef;
 protected:
+    IMFDeviceTransform* m_pTransform;         /* Weak reference to the the device MFT */
     ComPtr<Ctee>         m_spTeer;                /*Tee that acts as a passthrough or an XVP  */
  };
 
@@ -473,6 +473,7 @@ protected:
     DWORD                m_lNeedInputRequest;
     GUID                 m_streamCategory; // Needed for bind flags
     BOOL                 m_bXvpAdded;
+    ComPtr<CVideoProcTee> m_spXvp;
     DWORD                m_dwMFTInputId;
     DWORD                m_dwMFTOutputId;
     ComPtr<IMFSample>    m_spUnprocessedSample;
