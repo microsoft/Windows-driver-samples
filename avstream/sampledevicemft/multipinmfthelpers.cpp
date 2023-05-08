@@ -38,7 +38,6 @@ Description:
 --*/
 STDMETHODIMP_(VOID) CPinQueue::InsertInternal( _In_ IMFSample *pSample )
 {
-    pSample->AddRef();
     HRESULT hr = ExceptionBoundary([&]()
     {
         m_sampleList.push_back(pSample);
@@ -52,8 +51,6 @@ STDMETHODIMP_(VOID) CPinQueue::InsertInternal( _In_ IMFSample *pSample )
     if (FAILED(hr))
     {
         DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
-        // There is a bug in the pipeline that doesn't release the sample fed from processinput. We have to explicitly release the sample here
-        SAFE_RELEASE(pSample);
     }
 }
 
@@ -78,7 +75,7 @@ STDMETHODIMP CPinQueue::Remove( _Outptr_result_maybenull_ IMFSample **ppSample)
 
     if ( !m_sampleList.empty() )
     {
-        *ppSample = m_sampleList.front();
+        *ppSample = m_sampleList.front().Detach();
     }
 
     DMFTCHECKNULL_GOTO( *ppSample, done, MF_E_TRANSFORM_NEED_MORE_INPUT );
@@ -177,33 +174,31 @@ STDMETHODIMP CPinQueue::RecreateTeeByAllocatorMode(
 
     Ctee::ReleaseTee(m_spTeer);// Should release the reference
 
-    wistd::unique_ptr<CNullTee> nulltee = wil::make_unique_nothrow<CNullTee>(this);
-    RETURN_IF_NULL_ALLOC(nulltee);
+    ComPtr<CNullTee> spNulltee = new (std::nothrow) CNullTee(this);
+    DMFTCHECKNULL_GOTO(spNulltee.Get(), done, E_OUTOFMEMORY);
 
     if (allocatorUsage == MFSampleAllocatorUsage_DoesNotAllocate)
     {
-        m_spTeer.Attach(nulltee.release()); /*A simple passthrough*/
+        m_spTeer = spNulltee.Get();
     }
     else
     {
-        wistd::unique_ptr<CSampleCopytee> sampleCopytee;
-        RETURN_IF_NULL_ALLOC(sampleCopytee);
-        (void)sampleCopytee->SetD3DManager(punkManager);
-
+        ComPtr<CSampleCopytee> spSampleCopytee;
         if (allocatorUsage == MFSampleAllocatorUsage_UsesProvidedAllocator)
         {
             RETURN_HR_IF_NULL(E_INVALIDARG, pAllocator);
-            sampleCopytee = wil::make_unique_nothrow<CSampleCopytee>(nulltee.release(), pinCategory(), pAllocator);
+            spSampleCopytee = new (std::nothrow) CSampleCopytee(spNulltee.Get(), pinCategory(), pAllocator);
         }
         else
         {
-            sampleCopytee = wil::make_unique_nothrow<CSampleCopytee>(nulltee.release(), pinCategory(), nullptr);
+            spSampleCopytee = new (std::nothrow) CSampleCopytee(spNulltee.Get(), pinCategory(), nullptr);
         }
-
-        RETURN_IF_FAILED(sampleCopytee->SetMediaTypes(inMediatype, outMediatype));
-        m_spTeer.Attach(sampleCopytee.release());
+        DMFTCHECKNULL_GOTO(spSampleCopytee.Get(), done, E_OUTOFMEMORY);
+        (void)spSampleCopytee->SetD3DManager(punkManager);
+        RETURN_IF_FAILED(spSampleCopytee->SetMediaTypes(inMediatype, outMediatype));
+        m_spTeer = spSampleCopytee.Get();
     }
-
+done:
     return hr;
 }
 #endif // ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
@@ -283,28 +278,13 @@ this path traversed. This function feeds the sample to the XVP or the decoding T
 STDMETHODIMP CWrapTee::PassThrough( _In_ IMFSample* pInSample )
 {
     HRESULT hr = S_OK;
-    IMFSample* pOutSample = nullptr;
-    bool       newSample = false;
+    ComPtr<IMFSample> spOutSample = nullptr;
     DMFTCHECKNULL_GOTO(pInSample, done, S_OK); // pass through for no sample
-    DMFTCHECKHR_GOTO(Do(pInSample, &pOutSample,newSample),done);
+    DMFTCHECKHR_GOTO(Do(pInSample, spOutSample.ReleaseAndGetAddressOf()), done);
     
     if (m_spObjectWrapped)
     {
-        if (SUCCEEDED(hr = m_spObjectWrapped->PassThrough( pOutSample )))
-        {
-            //@@@@README There is a very bad bug in the pipeline that the device transform manager
-            // is not releasing the reference on the sample when it is passed to the device MFT so any
-            // sample produced has to be referenced matched in the deviceMFT so that the net reference remains one
-            // This goes against the ownership rules in Com, but this bug has existed in the pipeline so far,
-            // so until we rev the interface we will have to live with it
-            //
-            if (newSample)
-            {
-                // If we produce the sample, then we have to release the sample
-                SAFE_RELEASE(pOutSample);
-            }
-        }
-        
+        DMFTCHECKHR_GOTO(m_spObjectWrapped->PassThrough(spOutSample.Get()), done);
     }
 
 done:
@@ -326,7 +306,7 @@ HRESULT CVideoProcTee::SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMe
     ComPtr<IMFTransform> spTransform;
     DMFTCHECKHR_GOTO(CWrapTee::SetMediaTypes(pInMediaType, pOutMediaType),done);
     DMFTCHECKHR_GOTO(Configure(pInMediaType, pOutMediaType, spTransform.GetAddressOf()), done);
-    m_spVideoProcessor = spTransform.Detach();
+    m_spVideoProcessor = spTransform;
     //
     // Start streaming
     //
@@ -380,6 +360,15 @@ HRESULT CVideoProcTee::CreateAllocator()
     return hr;
 }
 
+CVideoProcTee::~CVideoProcTee()
+{
+    if (m_spPrivateAllocator.Get())
+    {
+        (VOID)m_spPrivateAllocator->UninitializeSampleAllocator();
+        m_spPrivateAllocator = nullptr;
+    }
+}
+
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 // @@@@ README: Video Processor functions below
 //
@@ -412,10 +401,9 @@ HRESULT CXvptee::StopStreaming()
     HRESULT hr = S_OK;
     CAutoLock Lock(m_Lock);
     SetAsyncStatus(MF_E_SHUTDOWN);
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0), done); // Flush the stream
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0), done); // Notify end of stream
-    DMFTCHECKHR_GOTO(Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0), done); // Notify end of streaming
-done:
+    Transform()->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0); // Flush the stream
+    Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0); // Notify end of stream
+    Transform()->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0); // Notify end of streaming
     return hr;
 }
 
@@ -429,7 +417,7 @@ outpin should be in Open state for the sample to reach the XVP and consequetivel
 Output Pin.
 
 --*/
-STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample, _Inout_ bool &newSample)
+STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample)
 {
     HRESULT                  hr = S_OK;
     MFT_OUTPUT_DATA_BUFFER   outputSample;
@@ -474,7 +462,6 @@ STDMETHODIMP CXvptee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSamp
  
     if (spXVPOutputSample.Get())
     {
-        newSample = true;
         *ppOutSample = spXVPOutputSample.Detach();
     }
 done:
@@ -554,11 +541,6 @@ CDecoderTee::~CDecoderTee()
 {
     (VOID)StopStreaming();
     MFUnlockWorkQueue(m_dwCameraStreamWorkQueueId);
-    if (m_spPrivateAllocator)
-    {
-        m_spPrivateAllocator->UninitializeSampleAllocator();
-        m_spPrivateAllocator = nullptr;
-    }
 }
 
 HRESULT CDecoderTee::StartStreaming()
@@ -584,9 +566,9 @@ HRESULT CDecoderTee::StopStreaming()
     if (spTransform.Get())
     {
         ComPtr<IMFShutdown> spShutdown;
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, m_dwMFTInputId), done);
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0), done);
-        DMFTCHECKHR_GOTO(spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0), done);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, m_dwMFTInputId);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0);
+        spTransform->MFTProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, 0);
         // Shut it down
         if (SUCCEEDED(spTransform->QueryInterface(IID_PPV_ARGS(&spShutdown))))
         {
@@ -595,7 +577,6 @@ HRESULT CDecoderTee::StopStreaming()
         
         spTransform = nullptr;
     }
-done:
     return hr;
 }
 
@@ -675,14 +656,13 @@ done:
 }
 
 
-STDMETHODIMP CDecoderTee::Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **ppoutSample, _Inout_ bool &newSample)
+STDMETHODIMP CDecoderTee::Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **ppoutSample)
 {
     HRESULT hr = S_OK;
     ComPtr<IMFSample> spOutputSample;
     CAutoLock lock(m_Lock);
     ComPtr<IMFTransform> spTransform = Transform();
 
-    newSample = false;
     DMFTCHECKNULL_GOTO(ppoutSample, done, E_INVALIDARG);
     *ppoutSample = nullptr;
     DMFTCHECKHR_GOTO(GetAsyncStatus(), done);
@@ -983,6 +963,7 @@ HRESULT CDecoderTee::ConfigDecoder(_In_ IMFTransform* pTransform, _In_ GUID guid
     GUID guidMajorType;
     GUID guidSubtype;
     DWORD dwMediaTypeIndex = 0;
+    DWORD dwFlags = 0;
     ComPtr<IMFDXGIDeviceManager> spDxgiManager;
     UNREFERENCED_PARAMETER(guidSubType);
     DMFTCHECKNULL_GOTO(pTransform, done, E_INVALIDARG);
@@ -1050,6 +1031,18 @@ HRESULT CDecoderTee::ConfigDecoder(_In_ IMFTransform* pTransform, _In_ GUID guid
 
     // Try to set output type on the MJPG decoder.
     DMFTCHECKHR_GOTO(pTransform->MFTSetOutputType(m_dwMFTOutputId, spMediaType.Get(), 0), done);
+    if (S_OK != (spMediaType->IsEqual(m_pOutputMediaType.Get(), &dwFlags)))
+    {
+        ComPtr<CXvptee> spXvpTee = new (std::nothrow) CXvptee(m_spObjectWrapped.Get(), m_streamCategory);
+        DMFTCHECKNULL_GOTO(spXvpTee.Get(), done, E_OUTOFMEMORY);
+        (VOID)spXvpTee->SetD3DManager(m_spDeviceManagerUnk.Get());
+        DMFTCHECKHR_GOTO(spXvpTee->SetMediaTypes(spMediaType.Get(), m_pOutputMediaType.Get()), done);
+        m_spObjectWrapped = spXvpTee;
+        m_pOutputMediaType = spMediaType;
+        //Recreate the Allocator
+        DMFTCHECKHR_GOTO(CreateAllocator(), done);
+        m_bXvpAdded = TRUE;
+    }
 done:
     if (FAILED(hr))
     {
@@ -1125,7 +1118,7 @@ VOID CDecoderTee::ShutdownTee()
 CGrayTee::CGrayTee(_In_ Ctee *tee) : CWrapTee(tee),m_transformfn(nullptr)
 {
 }
-STDMETHODIMP CGrayTee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample, _Inout_ bool &newSample)
+STDMETHODIMP CGrayTee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample)
 {
     HRESULT                 hr = S_OK;
     ComPtr<IMFSample>       spOutputSample;
@@ -1190,7 +1183,6 @@ STDMETHODIMP CGrayTee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSam
     }
     if (spOutputSample.Get())
     {
-        newSample = true;
         *ppOutSample = spOutputSample.Detach();
     }
 done:
@@ -1275,7 +1267,7 @@ HRESULT CSampleCopytee::StopStreaming()
     return S_OK;
 }
 
-STDMETHODIMP CSampleCopytee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample, _Inout_ bool &newSample)
+STDMETHODIMP CSampleCopytee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** ppOutSample)
 {
 
     HRESULT hr = S_OK;
@@ -1318,7 +1310,6 @@ STDMETHODIMP CSampleCopytee::Do(_In_ IMFSample *pSample, _Outptr_ IMFSample** pp
 
     if (spXVPOutputSample.Get())
     {
-        newSample = true;
         *ppOutSample = spXVPOutputSample.Detach();
     }
 
