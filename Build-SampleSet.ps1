@@ -20,7 +20,7 @@ if ($PSBoundParameters.ContainsKey('Verbose')) {
 }
 
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
-$sampleBuilderFilePath = "$LogFilesDirectory\overview.htm"
+$sampleBuilderFilePath = "$LogFilesDirectory\_overview.htm"
 
 
 Remove-Item  -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
