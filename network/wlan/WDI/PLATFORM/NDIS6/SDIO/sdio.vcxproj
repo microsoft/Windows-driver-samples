@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Win10 Debug|x64">
-      <Configuration>Win10 Debug</Configuration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Win10 Release|x64">
-      <Configuration>Win10 Release</Configuration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -30,13 +30,13 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{105EA485-B9B6-48AE-B8B0-96BBEA575973}</ProjectGuid>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
     <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
     <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
@@ -46,7 +46,7 @@
     <DebuggerFlavor Condition="'$(IsKernelModeToolset)'=='true'">DbgengKernelDebugger</DebuggerFlavor>
     <DebuggerFlavor Condition="'$(IsUserModeToolset)'=='true'">DbgengRemoteDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
     <EnableInf2cat>true</EnableInf2cat>
     <Inf2CatWindowsVersionList>10_x64;$(Inf2CatWindowsVersionList)</Inf2CatWindowsVersionList>
@@ -59,7 +59,7 @@
     <SourcePath>$(VC_SourcePath);</SourcePath>
     <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.sys</TargetExt>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
@@ -72,7 +72,7 @@
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
     <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
@@ -125,7 +125,7 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\km\;$(WindowsSdkDir)Include\shared\;$(WindowsSdkDir)Include\wdf\kmdf\1.15\;$(WindowsSdkDir)Include\km\crt\;$(SolutionDir)HEADER;$(SolutionDir)PLATFORM\NDIS6\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)PLATFORM\NdisComm\;$(SolutionDir)HAL\;$(SolutionDir)HAL\phydm\;$(SolutionDir)HAL\rtl8723B\;$(SolutionDir)HAL\rtl8723B\rtl8723bs\;$(SolutionDir)HAL\phydm\rtl8723b\;$(SolutionDir)PLATFORM\NDIS6\SDIO;$(SolutionDir)COMMON\;$(SolutionDir)PLATFORM\NDIS6;</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -184,19 +184,19 @@
   <!-- The WrappedTaskItems label is used by the conversion tool to identify the location where items
         associated with wrapped tasks will reside.-->
   <ItemGroup Label="WrappedTaskItems">
-    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <FilesToPackage Include="$(SolutionDir)\PLATFORM\WinInf\SDIO\x64\netrtwlans.inf" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
-    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <FilesToPackage Include="$(OutDir)$(TargetName)$(TargetExt)" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <PackageRelativeDirectory>
       </PackageRelativeDirectory>
     </FilesToPackage>
