@@ -22,12 +22,18 @@ jobs:
           submodules: 'recursive'
 
       - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.3.1
 
       - name: Retrieve and build all available solutions
-        id: build-all-samples
         run: |
           .\Build-AllSamples.ps1 -Verbose
         env:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
+
+      - name: Archive logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: logs
+          path: _logs
