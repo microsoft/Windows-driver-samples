@@ -1,7 +1,8 @@
+$logsPath = Join-Path (Get-Location).Path "_logs"
 $idProperty = 'Sample'
 $results = $null
 
-Get-ChildItem -Path (Get-Location).Path -Filter '*.csv' | ForEach-Object {
+Get-ChildItem -Path $logsPath -Filter '*.csv' | ForEach-Object {
     $csv = Import-Csv -Path $_
     if ($results -eq $null) {
         $results = $csv
@@ -29,5 +30,5 @@ Get-ChildItem -Path (Get-Location).Path -Filter '*.csv' | ForEach-Object {
     }
 }
 
-$results | ConvertTo-Csv | Out-File "_global_overview.csv"
-$results | ConvertTo-Html -Title "Overview" | Out-File "_global_overview.htm"
+$results | ConvertTo-Csv | Out-File "$logsPath\_global_overview.csv"
+$results | ConvertTo-Html -Title "Overview" | Out-File "$logsPath\_global_overview.htm"

@@ -33,7 +33,7 @@ jobs:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
 
-      - name: Archive logs
+      - name: Archive build logs
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -43,7 +43,7 @@ jobs:
             _logs/*.wrn
             _logs/*.err
 
-      - name: Archive overview reports
+      - name: Archive overview build reports
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -66,9 +66,8 @@ jobs:
       - name: Join and generate global reports
         run: |
           .\.github\scripts\Join-CsvReports.ps1
-        working-directory: _logs
 
-      - name: Archive global overview reports
+      - name: Archive global overview build reports
         uses: actions/upload-artifact@v3
         with:
           name: overview
