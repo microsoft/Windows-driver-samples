@@ -19,8 +19,13 @@ if ($PSBoundParameters.ContainsKey('Verbose')) {
     $Verbose = $PsBoundParameters.Get_Item('Verbose')
 }
 
+$overviewFileName = "_overview"
+if ($Configurations.Count -eq 1 -and $Platforms.Count -eq 1) {
+    $overviewFileName += "_$($Configurations)_$($Platforms)"
+}
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
-$sampleBuilderFilePath = "$LogFilesDirectory\_overview.htm"
+$overviewFilePath = "$LogFilesDirectory\$overviewFileName.htm"
+$overviewCsvFilePath = "$LogFilesDirectory\$overviewFileName.csv"
 
 
 Remove-Item  -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
@@ -205,8 +210,9 @@ Write-Output "Excluded:             $SolutionsExcluded"
 Write-Output "Unsupported:          $SolutionsUnsupported"
 Write-Output "Failed:               $SolutionsFailed"
 Write-Output "Log files directory:  $LogFilesDirectory"
-Write-Output "Overview report:      $sampleBuilderFilePath"
+Write-Output "Overview report:      $overviewFilePath"
 Write-Output ""
 
-$Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $sampleBuilderFilePath
-Invoke-Item $sampleBuilderFilePath
+$Results | Sort-Object { $_.Sample } | ConvertTo-Csv | Out-File $overviewCsvFilePath
+$Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $overviewFilePath
+Invoke-Item $overviewFilePath
