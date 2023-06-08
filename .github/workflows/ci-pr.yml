@@ -38,9 +38,46 @@ jobs:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
 
-      - name: Archive logs
+      - name: Archive build logs
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: logs
+          path: |
+            _logs/*.out
+            _logs/*.wrn
+            _logs/*.err
+  
+      - name: Archive overview build reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: overview
+          path: |
+            _logs/_overview_${{ matrix.configuration }}_${{ matrix.platform }}.*
+  
+  report:
+    name: Generate global report
+    runs-on: windows-2022
+    needs: build
+    if: always()
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Retrieve overview reports
+        uses: actions/download-artifact@v3
+        with:
+          name: overview
           path: _logs
+
+      - name: Join and generate global reports
+        run: |
+          .\.github\scripts\Join-CsvReports.ps1
+
+      - name: Archive global overview build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: overview
+          path: _logs/_global_overview.*
+  
