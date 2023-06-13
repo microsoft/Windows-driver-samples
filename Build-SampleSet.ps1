@@ -4,6 +4,7 @@ param(
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { "Debug" } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { "x64" } else { $env:WDS_Platform }),
     $LogFilesDirectory = (Get-Location),
+    [string]$ReportFileName = (if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [int]$ThrottleLimit = 0
 )
 
@@ -19,13 +20,9 @@ if ($PSBoundParameters.ContainsKey('Verbose')) {
     $Verbose = $PsBoundParameters.Get_Item('Verbose')
 }
 
-$overviewFileName = "_overview"
-if ($Configurations.Count -eq 1 -and $Platforms.Count -eq 1) {
-    $overviewFileName += "_$($Configurations)_$($Platforms)"
-}
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
-$overviewFilePath = "$LogFilesDirectory\$overviewFileName.htm"
-$overviewCsvFilePath = "$LogFilesDirectory\$overviewFileName.csv"
+$reportFilePath = Join-Path $LogFilesDirectory "$ReportFileName.htm"
+$reportCsvFilePath = Join-Path $LogFilesDirectory "$ReportFileName.csv"
 
 
 Remove-Item  -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
@@ -210,9 +207,9 @@ Write-Output "Excluded:             $SolutionsExcluded"
 Write-Output "Unsupported:          $SolutionsUnsupported"
 Write-Output "Failed:               $SolutionsFailed"
 Write-Output "Log files directory:  $LogFilesDirectory"
-Write-Output "Overview report:      $overviewFilePath"
+Write-Output "Overview report:      $reportFilePath"
 Write-Output ""
 
-$Results | Sort-Object { $_.Sample } | ConvertTo-Csv | Out-File $overviewCsvFilePath
-$Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $overviewFilePath
-Invoke-Item $overviewFilePath
+$Results | Sort-Object { $_.Sample } | ConvertTo-Csv | Out-File $reportCsvFilePath
+$Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $reportFilePath
+Invoke-Item $reportFilePath

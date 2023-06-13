@@ -1,4 +1,5 @@
 $logsPath = Join-Path (Get-Location).Path "_logs"
+$reportFileName = '_overview.all'
 $idProperty = 'Sample'
 $results = $null
 
@@ -30,5 +31,5 @@ Get-ChildItem -Path $logsPath -Filter '*.csv' | ForEach-Object {
     }
 }
 
-$results | ConvertTo-Csv | Out-File "$logsPath\_global_overview.csv"
-$results | ConvertTo-Html -Title "Overview" | Out-File "$logsPath\_global_overview.htm"
+$results | ConvertTo-Csv | Out-File (Join-Path $logsPath "$reportFileName.csv")
+$results | ConvertTo-Html -Title "Overview" | Out-File (Join-Path $logsPath "$reportFileName.htm")
