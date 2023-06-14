@@ -4,7 +4,7 @@ param(
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { "Debug" } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { "x64" } else { $env:WDS_Platform }),
     $LogFilesDirectory = (Get-Location),
-    [string]$ReportFileName = $env:WDS_ReportFileName,
+    [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [int]$ThrottleLimit = 0
 )
 
@@ -20,9 +20,6 @@ if ($PSBoundParameters.ContainsKey('Verbose')) {
     $Verbose = $PsBoundParameters.Get_Item('Verbose')
 }
 
-if ([string]::IsNullOrEmpty($ReportFileName)) {
-    $ReportFileName = "_overview"
-}
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
 $reportFilePath = Join-Path $LogFilesDirectory "$ReportFileName.htm"
 $reportCsvFilePath = Join-Path $LogFilesDirectory "$ReportFileName.csv"
