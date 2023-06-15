@@ -23,6 +23,7 @@ Environment:
 --*/
 #include "luminous.h"
 #include <dontuse.h>
+#include <memory>
 
 #define USAGE  \
 _T("Usage: Flicker <-0 | -1 | -2>\n\
@@ -57,7 +58,7 @@ main(
         exit(0);
     }
 
-    CLuminous *luminous = new CLuminous();
+    auto luminous = std::make_unique<CLuminous>();
 
     if (luminous == NULL) {
 
@@ -68,7 +69,6 @@ main(
     if (!luminous->Open()) {
 
         _tprintf(_T("Problem opening Luminous\n"));
-        delete(luminous);
         return 0;
     }
 
@@ -123,8 +123,6 @@ main(
 
 End:
     luminous->Close();
-
-    delete(luminous);
 
     return 0;
 }
