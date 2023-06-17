@@ -24,8 +24,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="nullFilter.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <Inf Include="nullFilter.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 ;;; NullFilter
 ;;;
 ;;;
-;;; Copyright (c) 1999 - 2002, Microsoft Corporation
+;;; Copyright (c) 1999 - 2023, Microsoft Corporation
 ;;;
 
 [Version]
@@ -12,31 +12,32 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.0
 CatalogFile = nullfilter.cat
+PnpLockdown = 1
 
 
 [DestinationDirs]
 DefaultDestDir          = 12
-NullFilter.DriverFiles  = 12            ;%windir%\system32\drivers
 
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NTamd64]
 OptionDesc  = %ServiceDescription%
-CopyFiles   = NullFilter.DriverFiles
+CopyFiles   = NullFilter.DriverFiles1
 
-[DefaultInstall.Services]
+[DefaultInstall.NTamd64.Services]
 AddService  = %ServiceName%,,NullFilter.Service
 
 ;;
 ;; Default uninstall sections
 ;;
 
-[DefaultUninstall]
-DelFiles   = NullFilter.DriverFiles
+[DefaultUninstall.NTamd64]
+LegacyUninstall = 1
+DelFiles   = NullFilter.DriverFiles2
 
-[DefaultUninstall.Services]
+[DefaultUninstall.NTamd64.Services]
 DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
 
 ;
@@ -59,7 +60,7 @@ AddReg           = NullFilter.AddRegistry
 ;
 
 [NullFilter.AddRegistry]
-HKR,,"SupportedFeatures",0x00010001,0x3
+HKR,,"SupportedFeatures",0x00010001,0xb
 HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
 HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
 HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
@@ -68,7 +69,9 @@ HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
 ; Copy Files
 ;
 
-[NullFilter.DriverFiles]
+[NullFilter.DriverFiles1]
+%DriverName%.sys
+[NullFilter.DriverFiles2]
 %DriverName%.sys
 
 [SourceDisksFiles]
@@ -92,4 +95,4 @@ DiskId1                 = "NullFilter Device Installation Disk"
 DefaultInstance         = "Null Instance"
 Instance1.Name          = "Null Instance"
 Instance1.Altitude      = "370020"
-Instance1.Flags         = 0x1          ; Suppress automatic attachments
+Instance1.Flags         = 0x0              ; Allow all attachments
