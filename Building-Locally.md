@@ -72,5 +72,5 @@ Excluded:             56
 Unsupported:          230
 Failed:               0
 Log files directory:  .\_logs
-Overview report:      .\_logs\overview.htm
+Overview report:      .\_logs\_overview.htm
 ```

@@ -1977,7 +1977,7 @@ DisplayConfigDesc (
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Device Qualifier incorrect, "\
                     "should be %d\r\n",
                     commonDesc->bLength,
-                    sizeof(USB_DEVICE_QUALIFIER_DESCRIPTOR));
+                    (UCHAR) sizeof(USB_DEVICE_QUALIFIER_DESCRIPTOR));
                 OOPS();
                 displayUnknown = TRUE;
                 break;
@@ -1997,7 +1997,7 @@ DisplayConfigDesc (
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Other Speed Configuration "\
                     "incorrect, should be %d\r\n",
                     commonDesc->bLength,
-                    sizeof(USB_CONFIGURATION_DESCRIPTOR));
+                    (UCHAR) sizeof(USB_CONFIGURATION_DESCRIPTOR));
                 OOPS();
                 displayUnknown = TRUE;
             }
@@ -2019,7 +2019,7 @@ DisplayConfigDesc (
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Configuration incorrect, "\
                     "should be %d\r\n",
                     commonDesc->bLength,
-                    sizeof(USB_CONFIGURATION_DESCRIPTOR));
+                    (UCHAR) sizeof(USB_CONFIGURATION_DESCRIPTOR));
                 OOPS();
                 displayUnknown = TRUE;
                 break;
@@ -2042,8 +2042,8 @@ DisplayConfigDesc (
                 AppendTextBuffer("*!*ERROR:  bLength of %d for Interface incorrect, "\
                     "should be %d or %d\r\n",
                     commonDesc->bLength,
-                    sizeof(USB_INTERFACE_DESCRIPTOR),
-                    sizeof(USB_INTERFACE_DESCRIPTOR2));
+                    (UCHAR) sizeof(USB_INTERFACE_DESCRIPTOR),
+                    (UCHAR) sizeof(USB_INTERFACE_DESCRIPTOR2));
                 OOPS();
                 displayUnknown = TRUE;
                 break;
@@ -2078,8 +2078,8 @@ DisplayConfigDesc (
                     AppendTextBuffer("*!*ERROR:  bLength of %d for Endpoint incorrect, "\
                         "should be %d or %d\r\n",
                         commonDesc->bLength,
-                        sizeof(USB_ENDPOINT_DESCRIPTOR),
-                        sizeof(USB_ENDPOINT_DESCRIPTOR2));
+                        (UCHAR) sizeof(USB_ENDPOINT_DESCRIPTOR),
+                        (UCHAR) sizeof(USB_ENDPOINT_DESCRIPTOR2));
                     OOPS();
                     displayUnknown = TRUE;
                     break;
@@ -2506,7 +2506,7 @@ DisplayUsb20ExtensionCapabilityDescriptor (
     AppendTextBuffer("bDevCapabilityType:                0x%02X\r\n",
         extCapDesc->bDevCapabilityType);
     AppendTextBuffer("bmAttributes:                      0x%08X",
-        extCapDesc->bmAttributes);
+        extCapDesc->bmAttributes.AsUlong);
     if (extCapDesc->bmAttributes.AsUlong & USB_DEVICE_CAPABILITY_USB20_EXTENSION_BMATTRIBUTES_RESERVED_MASK)
     {
         if(gDoAnnotation)
@@ -2955,7 +2955,7 @@ DisplayBillboardCapabilityDescriptor (
         billboardCapDesc->bPreferredAlternateMode);
 
     AppendTextBuffer("VCONN Power:                       0x%04X",
-        billboardCapDesc->VconnPower);
+        billboardCapDesc->VconnPower.AsUshort);
 
     if (billboardCapDesc->VconnPower.NoVconnPowerRequired)
     {

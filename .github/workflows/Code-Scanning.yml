@@ -35,7 +35,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+        submodules: 'recursive'
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
@@ -43,10 +43,9 @@ jobs:
         languages: ${{ matrix.language }}
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.3.1
 
     - name: Retrieve and build all available solutions
-      id: build-all-samples
       run: |
           .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
       env:

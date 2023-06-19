@@ -92,7 +92,7 @@ DllMain(
     return TRUE;
 }
 
-
+__control_entrypoint(DllExport)
 STDAPI DllCanUnloadNow(
     )
 {
