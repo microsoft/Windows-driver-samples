@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - test
     paths-ignore:
       - '**.md'
       - 'LICENSE'
