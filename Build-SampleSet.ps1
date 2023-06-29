@@ -97,6 +97,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $exclusionReasons = $using:exclusionReasons
     $Configurations = $using:Configurations
     $Platforms = $using:Platforms
+    $Verbose = $using:Verbose
 
     $sampleName = $_.Key
     $directory = $_.Value
