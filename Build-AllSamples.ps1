@@ -65,4 +65,4 @@ foreach ($file in $solutionFiles) {
     }
 }
 
-.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit
+.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit -Verbose:$Verbose

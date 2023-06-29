@@ -7,6 +7,7 @@ param(
     [int]$ThrottleLimit = 0
 )
 
+$root = Get-Location
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 
@@ -41,10 +42,16 @@ finally {
     $ErrorActionPreference = $oldPreference
 }
 
-# TODO: Make exclusion more granular; allow for configuration|platform exclusions
-$exclusionsSet = @{}
+$exclusionConfigurations = @{}
+$exclusionReasons = @{}
 Import-Csv 'exclusions.csv' | ForEach-Object {
-    $exclusionsSet[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Reason
+    if ($_.Configurations) {
+        $exclusionConfigurations[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Configurations
+    }
+    else {
+        $exclusionConfigurations[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = '*'
+    }
+    $exclusionReasons[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Reason
 }
 
 $jresult = @{
@@ -86,7 +93,8 @@ $sw = [Diagnostics.Stopwatch]::StartNew()
 
 $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
     $LogFilesDirectory = $using:LogFilesDirectory
-    $exclusionsSet = $using:exclusionsSet
+    $exclusionConfigurations = $using:exclusionConfigurations
+    $exclusionReasons = $using:exclusionReasons
     $Configurations = $using:Configurations
     $Platforms = $using:Platforms
 
@@ -105,11 +113,9 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
             $thisresult = "Not run"
             $thisfailset = @()
 
-            if ($exclusionsSet.ContainsKey($sampleName)) {
+            if ($exclusionConfigurations.ContainsKey($sampleName) -and ($exclusionConfigurations[$sampleName].Split(';') | Where-Object { "$configuration|$platform" -like $_ })) {
                 # Verbose
-                if ($thisexcluded -eq 0) {
-                    Write-Verbose "[$sampleName] `u{23E9} Excluded and skipped. Reason: $($exclusionsSet[$sampleName])"
-                }
+                Write-Verbose "[$sampleName $configuration|$platform] `u{23E9} Excluded and skipped. Reason: $($exclusionReasons[$sampleName])"
                 $thisexcluded += 1
                 $thisresult = "Excluded"
             }
