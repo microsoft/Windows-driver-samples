@@ -625,7 +625,7 @@ Return Value:
 
     PAGED_CODE();
 
-    if (Temperature <= LowerBound || Temperature >= UpperBound) {
+    if (Temperature < LowerBound || Temperature > UpperBound) {
         return TRUE;
     }
 
@@ -1420,8 +1420,8 @@ Return Value:
     // need to be fired.
     //
 
-    if ((DevExt->Sensor.Temperature <= DevExt->Sensor.LowerBound) ||
-        (DevExt->Sensor.Temperature >= DevExt->Sensor.UpperBound)) {
+    if ((DevExt->Sensor.Temperature < DevExt->Sensor.LowerBound) ||
+        (DevExt->Sensor.Temperature > DevExt->Sensor.UpperBound)) {
 
         Interrupt = TRUE;
 
@@ -1485,8 +1485,8 @@ Return Value:
 
     DevExt->Sensor.LowerBound = LowerBound;
     DevExt->Sensor.UpperBound = UpperBound;
-    if ((DevExt->Sensor.Temperature <= DevExt->Sensor.LowerBound) ||
-        (DevExt->Sensor.Temperature >= DevExt->Sensor.UpperBound)) {
+    if ((DevExt->Sensor.Temperature < DevExt->Sensor.LowerBound) ||
+        (DevExt->Sensor.Temperature > DevExt->Sensor.UpperBound)) {
 
         Interrupt = TRUE;
 
