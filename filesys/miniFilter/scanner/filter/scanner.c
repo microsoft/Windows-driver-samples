@@ -56,6 +56,7 @@ UNICODE_STRING ScannedExtensionDefault = RTL_CONSTANT_STRING( L"doc" );
 
 NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -242,7 +243,7 @@ Return Value:
     // Obtain the extensions to scan from the registry
     //
 
-    status = ScannerInitializeScannedExtensions( RegistryPath );
+    status = ScannerInitializeScannedExtensions( DriverObject, RegistryPath );
 
     if (!NT_SUCCESS( status )) {
 
@@ -314,6 +315,7 @@ Return Value:
 
 NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -324,6 +326,9 @@ Routine Descrition:
     on the registry.
 
 Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
 
     RegistryPath - The path key passed to the driver during DriverEntry.
 
@@ -336,6 +341,7 @@ Return Value:
 {
     NTSTATUS status;
     OBJECT_ATTRIBUTES attributes;
+    OSVERSIONINFOW versionInfo;
     HANDLE driverRegKey = NULL;
     UNICODE_STRING valueName;
     PKEY_VALUE_PARTIAL_INFORMATION valueBuffer = NULL;
@@ -351,23 +357,59 @@ Return Value:
     ScannedExtensions = NULL;
     ScannedExtensionCount = 0;
 
+    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
+
     //
-    //  Open the driver registry key.
+    // Determine the OS version being run.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    status = RtlGetVersion( &versionInfo );
 
     if (!NT_SUCCESS( status )) {
 
         goto ScannerInitializeScannedExtensionsCleanup;
+    }
+
+    //
+    //  Open the desired registry key
+    //
+
+    if (versionInfo.dwBuildNumber >= 25900) {
+        //
+        // Open the Parameters key for the service.
+        //
+
+        status = IoOpenDriverRegistryKey( DriverObject,
+                                          DriverRegKeyParameters,
+                                          KEY_READ,
+                                          0,
+                                          &driverRegKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerInitializeScannedExtensionsCleanup;
+        }
+    } else {
+        //
+        // Open legacy registry key.
+        //
+
+        InitializeObjectAttributes( &attributes,
+                                    RegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &driverRegKey,
+                            KEY_READ,
+                            &attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerInitializeScannedExtensionsCleanup;
+        }
     }
 
     closeHandle = TRUE;
@@ -675,7 +717,7 @@ Return Value
     return STATUS_SUCCESS;
 }
 
-
+
 VOID
 ScannerPortDisconnect(
      _In_opt_ PVOID ConnectionCookie
@@ -717,7 +759,7 @@ Return value
     ScannerData.UserProcess = NULL;
 }
 
-
+
 NTSTATUS
 ScannerUnload (
     _In_ FLT_FILTER_UNLOAD_FLAGS Flags

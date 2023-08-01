@@ -80,6 +80,7 @@ CtxInstanceTeardownComplete (
 
 VOID
 CtxInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -217,7 +218,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     RtlZeroMemory( &Globals, sizeof( Globals ) );
@@ -228,7 +229,7 @@ Return Value:
     //  Initialize global debug level
     //
 
-    CtxInitializeDebugLevel( RegistryPath );
+    CtxInitializeDebugLevel( DriverObject, RegistryPath );
 
 #else
 
@@ -276,6 +277,7 @@ Return Value:
 
 VOID
 CtxInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -288,6 +290,9 @@ Routine Description:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -297,7 +302,8 @@ Return Value:
 --*/
 {
     OBJECT_ATTRIBUTES attributes;
-    HANDLE driverRegKey;
+    OSVERSIONINFOW versionInfo;
+    HANDLE driverRegKey = NULL;
     NTSTATUS status;
     ULONG resultLength;
     UNICODE_STRING valueName;
@@ -305,48 +311,88 @@ Return Value:
 
     Globals.DebugLevel = DEBUG_TRACE_ERROR;
 
+    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
+
+    //
+    // Determine the OS version being run.
+    //
+
+    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
+
+    status = RtlGetVersion( &versionInfo );
+
+    if (!NT_SUCCESS( status )) {
+
+        goto cleanup;
+    }
+
     //
     //  Open the desired registry key
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    if (versionInfo.dwBuildNumber >= 25900) {
+        //
+        // Open the Parameters key for the service.
+        //
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+        status = IoOpenDriverRegistryKey( DriverObject,
+                                          DriverRegKeyParameters,
+                                          KEY_READ,
+                                          0,
+                                          &driverRegKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    } else {
+        //
+        // Open legacy registry key.
+        //
+
+        InitializeObjectAttributes( &attributes,
+                                    RegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &driverRegKey,
+                            KEY_READ,
+                            &attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    }
+
+    //
+    // Read the DebugFlags value from the registry.
+    //
+
+    RtlInitUnicodeString( &valueName, L"DebugLevel" );
+
+    status = ZwQueryValueKey( driverRegKey,
+                              &valueName,
+                              KeyValuePartialInformation,
+                              buffer,
+                              sizeof(buffer),
+                              &resultLength );
 
     if (NT_SUCCESS( status )) {
 
-        //
-        // Read the DebugFlags value from the registry.
-        //
-
-        RtlInitUnicodeString( &valueName, L"DebugLevel" );
-
-        status = ZwQueryValueKey( driverRegKey,
-                                  &valueName,
-                                  KeyValuePartialInformation,
-                                  buffer,
-                                  sizeof(buffer),
-                                  &resultLength );
-
-        if (NT_SUCCESS( status )) {
-
-            Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
-        }
-
-        //
-        //  Close the registry entry
-        //
-
-        ZwClose( driverRegKey );        
-
+        Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
     }
 
+cleanup:
+
+    //
+    //  Close the registry entry
+    //
+
+    if (driverRegKey != NULL) {
+        ZwClose( driverRegKey );
+    }
 }
 
 #endif

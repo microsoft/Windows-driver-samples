@@ -245,6 +245,7 @@ DriverEntry (
 
 NTSTATUS
 SimRepSetConfiguration(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -609,7 +610,7 @@ Return Value:
     //  Set the filter configuration based on registry keys
     //
 
-    status = SimRepSetConfiguration( RegistryPath );
+    status = SimRepSetConfiguration( DriverObject, RegistryPath );
 
     DebugTrace( DEBUG_TRACE_LOAD_UNLOAD,
                 ("[SimRep]: Driver being loaded\n") );
@@ -666,6 +667,7 @@ DriverEntryCleanup:
 
 NTSTATUS
 SimRepSetConfiguration(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -675,6 +677,9 @@ Routine Descrition:
     This routine sets the filter configuration based on registry values.
 
 Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
 
     RegistryPath - The path key passed to the driver during DriverEntry.
 
@@ -687,6 +692,7 @@ Return Value:
 {
     NTSTATUS status;
     OBJECT_ATTRIBUTES attributes;
+    OSVERSIONINFOW versionInfo;
     HANDLE driverRegKey = NULL;
     UNICODE_STRING valueName;
     UCHAR buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + sizeof(ULONG)];
@@ -700,23 +706,59 @@ Return Value:
 
     PAGED_CODE();
 
+    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
+
     //
-    //  Open the SimRep registry key.
+    // Determine the OS version being run.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    status = RtlGetVersion( &versionInfo );
 
     if (!NT_SUCCESS( status )) {
 
         goto SimRepSetConfigurationCleanup;
+    }
+
+    //
+    //  Open the desired registry key
+    //
+
+    if (versionInfo.dwBuildNumber >= 25900) {
+        //
+        // Open the Parameters key for the service.
+        //
+
+        status = IoOpenDriverRegistryKey( DriverObject,
+                                          DriverRegKeyParameters,
+                                          KEY_READ,
+                                          0,
+                                          &driverRegKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto SimRepSetConfigurationCleanup;
+        }
+    } else {
+        //
+        // Open legacy registry key.
+        //
+
+        InitializeObjectAttributes( &attributes,
+                                    RegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &driverRegKey,
+                            KEY_READ,
+                            &attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto SimRepSetConfigurationCleanup;
+        }
     }
 
 

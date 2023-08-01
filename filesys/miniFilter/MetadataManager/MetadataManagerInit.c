@@ -88,6 +88,7 @@ FmmInstanceTeardownComplete (
 
 VOID
 FmmInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -115,11 +116,11 @@ FmmInitializeDebugLevel (
 
 //
 //  If we need to verify that the metadata file is indeed open whenever
-//  a create suceeds on the volume, then we need to monitor all creates 
+//  a create suceeds on the volume, then we need to monitor all creates
 //  not just DASD creates.
 
-//  If that is not the case, then we are better off telling filter manager 
-//  to show us only DASD creates. That way we can avoid the performance 
+//  If that is not the case, then we are better off telling filter manager
+//  to show us only DASD creates. That way we can avoid the performance
 //  penalty of being called for all creates when we only have use for DASD
 //  creates.
 //
@@ -241,7 +242,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
 
@@ -253,7 +254,7 @@ Return Value:
     //  Initialize global debug level
     //
 
-    FmmInitializeDebugLevel( RegistryPath );
+    FmmInitializeDebugLevel( DriverObject, RegistryPath );
 
 #else
 
@@ -301,6 +302,7 @@ Return Value:
 
 VOID
 FmmInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -313,6 +315,9 @@ Routine Description:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -322,7 +327,8 @@ Return Value:
 --*/
 {
     OBJECT_ATTRIBUTES attributes;
-    HANDLE driverRegKey;
+    OSVERSIONINFOW versionInfo;
+    HANDLE driverRegKey = NULL;
     NTSTATUS status;
     ULONG resultLength;
     UNICODE_STRING valueName;
@@ -330,48 +336,84 @@ Return Value:
 
     Globals.DebugLevel = DEBUG_TRACE_ERROR;
 
+    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
+
+    //
+    // Determine the OS version being run.
+    //
+
+    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
+
+    status = RtlGetVersion( &versionInfo );
+
+    if (!NT_SUCCESS( status )) {
+
+        goto cleanup;
+    }
+
     //
     //  Open the desired registry key
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    if (versionInfo.dwBuildNumber >= 25900) {
+        //
+        // Open the Parameters key for the service.
+        //
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+        status = IoOpenDriverRegistryKey( DriverObject,
+                                          DriverRegKeyParameters,
+                                          KEY_READ,
+                                          0,
+                                          &driverRegKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    } else {
+        InitializeObjectAttributes( &attributes,
+                                    RegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &driverRegKey,
+                            KEY_READ,
+                            &attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    }
+
+    //
+    // Read the DebugFlags value from the registry.
+    //
+
+    RtlInitUnicodeString( &valueName, L"DebugLevel" );
+
+    status = ZwQueryValueKey( driverRegKey,
+                              &valueName,
+                              KeyValuePartialInformation,
+                              buffer,
+                              sizeof(buffer),
+                              &resultLength );
 
     if (NT_SUCCESS( status )) {
 
-        //
-        // Read the DebugFlags value from the registry.
-        //
-
-        RtlInitUnicodeString( &valueName, L"DebugLevel" );
-
-        status = ZwQueryValueKey( driverRegKey,
-                                  &valueName,
-                                  KeyValuePartialInformation,
-                                  buffer,
-                                  sizeof(buffer),
-                                  &resultLength );
-
-        if (NT_SUCCESS( status )) {
-
-            Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
-        }
-        
-        //
-        //  Close the registry entry
-        //
-        
-        ZwClose( driverRegKey );
-        
+        Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
     }
 
+cleanup:
+
+    //
+    //  Close the registry entry
+    //
+
+    if (driverRegKey != NULL) {
+        ZwClose( driverRegKey );
+    }
 }
 
 #endif
@@ -678,22 +720,22 @@ FmmInstanceSetupCleanup:
     }
 
     //
-    //  If this is an automatic attachment (mount, load, etc) and we are not 
-    //  attaching to this volume because we do not support attaching to this 
-    //  volume, then simply return STATUS_FLT_DO_NOT_ATTACH. If we return 
-    //  anything else fltmgr logs an event log indicating failure to attach. 
-    //  Since this failure to attach is not really an error, we do not want 
+    //  If this is an automatic attachment (mount, load, etc) and we are not
+    //  attaching to this volume because we do not support attaching to this
+    //  volume, then simply return STATUS_FLT_DO_NOT_ATTACH. If we return
+    //  anything else fltmgr logs an event log indicating failure to attach.
+    //  Since this failure to attach is not really an error, we do not want
     //  this failure to be logged as an error in the event log. For all other
     //  error codes besides the ones we consider "normal", if is ok for fltmgr
     //  to actually log the failure to attach.
     //
-    //  If this is a manual attach attempt that we have failed then we want to 
-    //  give the user a clear indication of why the attachment failed. Hence in 
+    //  If this is a manual attach attempt that we have failed then we want to
+    //  give the user a clear indication of why the attachment failed. Hence in
     //  this case, we will not override the error status with STATUS_FLT_DO_NOT_ATTACH
     //  irrespective of the cause of the failure to attach
     //
 
-    if (status == STATUS_NOT_SUPPORTED && 
+    if (status == STATUS_NOT_SUPPORTED &&
        !FlagOn( Flags, FLTFL_INSTANCE_SETUP_MANUAL_ATTACHMENT )) {
 
         status = STATUS_FLT_DO_NOT_ATTACH;

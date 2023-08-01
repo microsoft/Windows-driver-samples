@@ -280,6 +280,7 @@ NcIs8DOT3Compatible (
 
 NTSTATUS
 NcInitializeMapping(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -292,6 +293,9 @@ Routine Descrition:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -301,6 +305,7 @@ Return Value:
 --*/
 {
     NTSTATUS Status;
+    OSVERSIONINFOW versionInfo;
     OBJECT_ATTRIBUTES Attributes;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING TempPath = EMPTY_UNICODE_STRING;
@@ -310,24 +315,60 @@ Return Value:
 
     RtlZeroMemory( &NcGlobalData, sizeof( NcGlobalData ));
 
+    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
+
     //
-    //  Open the mapping registry key.
+    // Determine the OS version being run.
     //
 
-    InitializeObjectAttributes( &Attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
 
-    Status = ZwOpenKey( &DriverRegKey,
-                        KEY_READ,
-                        &Attributes );
+    Status = RtlGetVersion( &versionInfo );
 
     if (!NT_SUCCESS( Status )) {
 
-        FLT_ASSERT( DriverRegKey == NULL );
         goto NcInitializeMappingCleanup;
+    }
+
+    //
+    //  Open the desired registry key
+    //
+
+    if (versionInfo.dwBuildNumber >= 25900) {
+        //
+        // Open the Parameters key for the service.
+        //
+
+        Status = IoOpenDriverRegistryKey( DriverObject,
+                                          DriverRegKeyParameters,
+                                          KEY_READ,
+                                          0,
+                                          &DriverRegKey );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto NcInitializeMappingCleanup;
+        }
+    } else {
+        //
+        // Open legacy registry key.
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    RegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        Status = ZwOpenKey( &DriverRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            FLT_ASSERT( DriverRegKey == NULL );
+            goto NcInitializeMappingCleanup;
+        }
     }
 
     Status = NcLoadRegistryString( DriverRegKey,
