@@ -1,0 +1,8 @@
+# GitHub configuration
+/.github/ @NeoAdonis
+
+# Code Scanning workflow
+/.github/workflows/Code-Scanning.yml @NeoAdonis
+
+# Root files
+/* @NeoAdonis
