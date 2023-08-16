@@ -26,8 +26,8 @@ For more information, type: %1 help %2
 MessageId=60100 SymbolicName=MSG_HELP_LONG
 Language=English
 ------------------------------------------------------------------------------
-|           Devcon is a code sample intended for learning purposes           |
-|       Use PnpUtil for optimal functionality/compatiblity with this OS      |
+|          Devcon is a code sample intended for learning purposes.           |
+|      Use PnpUtil for optimal functionality/compatiblity with this OS.      |
 ------------------------------------------------------------------------------
 Device Console Help:
 %1 [-r] [-m:\\<machine>] <command> [<arg>...]
@@ -629,7 +629,8 @@ Installs the specified device manually. Valid only on the local computer.
 <hwid>       Specifies a hardware ID for the device.
 -r           Reboots the system only when a restart or reboot is required.
 
-Recommended Equivalent: pnputil /add-driver <inf> /install
+Recommended Equivalent: devgen /add /bus ROOT /hardwareid <hwid>
+                        pnputil /add-driver <inf> /install
 .
 MessageId=61001 SymbolicName=MSG_INSTALL_SHORT
 Language=English
@@ -652,6 +653,7 @@ Valid only on the local computer. (To reboot when necesary, Include -r .)
 -r           Reboots the system only when a restart or reboot is required.
 <inf>        Specifies an INF file with installation information for the devices.
 <hwid>       Specifies the hardware ID of the devices.
+Recommended Equivalent: pnputil /add-driver <inf> /install
 .
 MessageId=61101 SymbolicName=MSG_UPDATE_SHORT
 Language=English
