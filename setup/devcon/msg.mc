@@ -872,7 +872,7 @@ Examples of <id>:
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
 
-Recommended Equivalent: pnputil /remove-device /deviceid <id> 
+Recommended Equivalent: pnputil /remove-device <id> 
 .
 MessageId=61206 SymbolicName=MSG_REMOVEALL_SHORT
 Language=English
