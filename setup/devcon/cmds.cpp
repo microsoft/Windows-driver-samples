@@ -2036,7 +2036,7 @@ Return Value:
     }
 
     //
-    // modify hwid list (only relevent for root-enumerated devices)
+    // modify hwid list (only relevant for root-enumerated devices)
     //
     int i;
     int mark = -1;

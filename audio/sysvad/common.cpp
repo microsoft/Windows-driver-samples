@@ -2148,7 +2148,7 @@ Return Value:
                     break;
             }
 
-            // cache and return the first error encountered, as it's likely the most relevent
+            // cache and return the first error encountered, as it's likely the most relevant
             if (NT_SUCCESS(ntStatus))
             {
                 ntStatus = ntStatus2;
