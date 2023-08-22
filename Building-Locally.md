@@ -1,6 +1,7 @@
 # How to build locally
 
-## Step 1: Install git and pwsh 7.3.0
+## Step 1: Install Git and PowerShell 7
+
 ```
 winget install --id Microsoft.Powershell --source winget
 winget install --id Git.Git --source winget`
@@ -10,7 +11,7 @@ winget install --id Git.Git --source winget`
 
 There are multiple ways to achieve this. For example, [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk). 
 
-You can also just download and mount the EWDK as well and in the following example that is what we will do:
+You can also use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers:
   * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
   * Mount ISO image
   * Open a terminal
