@@ -34,6 +34,12 @@ void CCritSec::Lock()
     EnterCriticalSection(&m_criticalSection);
 }
 
+_Requires_lock_not_held_(m_criticalSection) _Acquires_lock_(m_criticalSection)
+BOOL CCritSec::TryLock()
+{
+    return TryEnterCriticalSection(&m_criticalSection);
+}
+
 _Requires_lock_held_(m_criticalSection) _Releases_lock_(m_criticalSection)
 void CCritSec::Unlock()
 {
@@ -57,6 +63,32 @@ _Releases_lock_(this->m_pCriticalSection->m_criticalSection)
 CAutoLock::~CAutoLock()
 {
     m_pCriticalSection->Unlock();
+}
+
+_Acquires_lock_(this->m_pCriticalSection->m_criticalSection)
+CTryLock::CTryLock(CCritSec& crit)
+{
+    m_pCriticalSection = &crit;
+    m_bLocked = m_pCriticalSection->TryLock();
+}
+_Acquires_lock_(this->m_pCriticalSection->m_criticalSection)
+CTryLock::CTryLock(CCritSec* crit)
+{
+    m_pCriticalSection = crit;
+    m_bLocked = m_pCriticalSection->TryLock();
+}
+_Releases_lock_(this->m_pCriticalSection->m_criticalSection)
+CTryLock::~CTryLock()
+{
+    if (m_bLocked)
+    {
+        m_pCriticalSection->Unlock();
+    }
+}
+
+BOOL CTryLock::Locked()
+{
+    return m_bLocked;
 }
 
 //
