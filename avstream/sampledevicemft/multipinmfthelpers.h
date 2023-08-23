@@ -204,8 +204,8 @@ private:
     GUID                 m_streamCategory;
     ULONG                m_cRef;
 protected:
-    IMFDeviceTransform* m_pTransform;         /* Weak reference to the the device MFT */
-    ComPtr<Ctee>         m_spTeer;                /*Tee that acts as a passthrough or an XVP  */
+    IMFDeviceTransform*  m_pTransform;          /* Weak reference to the the device MFT */
+    ComPtr<Ctee>         m_spTeer;              /*Tee that acts as a passthrough or an XVP  */
  };
 
 
