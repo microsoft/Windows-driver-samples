@@ -224,7 +224,7 @@ STDMETHODIMP CPinQueueWithGrayScale::RecreateTee( _In_  IMFMediaType *inMediatyp
         ||IsEqualCLSID(gInputSubType, MFVideoFormat_RGB32))
     {
         CGrayTee *pTee = NULL;
-        pTee = new (std::nothrow) CGrayTee(m_spTeer);
+        pTee = new (std::nothrow) CGrayTee(m_spTeer.Get());
         DMFTCHECKHR_GOTO(pTee->SetMediaTypes(inMediatype, outMediatype), done);
         m_spTeer = dynamic_cast< Ctee* >(pTee);
     }
@@ -305,7 +305,7 @@ HRESULT CVideoProcTee::SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMe
     HRESULT hr = S_OK;
     ComPtr<IMFTransform> spTransform;
     DMFTCHECKHR_GOTO(CWrapTee::SetMediaTypes(pInMediaType, pOutMediaType),done);
-    DMFTCHECKHR_GOTO(Configure(pInMediaType, pOutMediaType, spTransform.GetAddressOf()), done);
+    DMFTCHECKHR_GOTO(Configure(pInMediaType, pOutMediaType, spTransform.ReleaseAndGetAddressOf()), done);
     m_spVideoProcessor = spTransform;
     //
     // Start streaming
@@ -610,12 +610,14 @@ STDMETHODIMP CDecoderTee::Configure(_In_opt_ IMFMediaType *inType,
             m_pOutputMediaType.Get(),
             spTransform.ReleaseAndGetAddressOf(), m_hwMFT)))
         {
+            m_hwMFT = TRUE;
             hr = ConfigDecoder(spTransform.Get(), gInSubType);
         }
         if (FAILED(hr))
         {
             // Try creating SW deocder
             hr = S_OK;
+            m_hwMFT = FALSE;
             DMFTCHECKHR_GOTO(EnumSWDecoder(spTransform.ReleaseAndGetAddressOf(), gInSubType), done);
             DMFTCHECKHR_GOTO(ConfigDecoder(spTransform.Get(), gInSubType), done);
         }
@@ -907,7 +909,7 @@ HRESULT CDecoderTee::ProcessFormatChange()
         // Also note, The platform doesn't support dynamic media type changes from the stream coming from the
         // source.
         //
-        ComPtr<CXvptee> spXvpTee;
+        ComPtr<CVideoProcTee> spXvpTee;
         DMFTCHECKHR_GOTO(m_pOutputMediaType->GetGUID(MF_MT_SUBTYPE, &guidPreviousSubType), done);
 
         for (DWORD i = 0; ; i++)
@@ -935,9 +937,21 @@ HRESULT CDecoderTee::ProcessFormatChange()
         //
         // Create the XVP and insert it into the chain manually. set the output to the mediatype requested by the platform
         //
-        spXvpTee = new (std::nothrow) CXvptee(m_spObjectWrapped.Get() ,m_streamCategory);
+        if (m_bXvpAdded && m_spXvp.Get())
+        {
+            // The XVP was already created. change the xvp to handle format change
+            spXvpTee = m_spXvp;
+        }
+        else
+        {
+            spXvpTee = new (std::nothrow) CXvptee(m_spObjectWrapped.Get(), m_streamCategory);
+            m_spXvp = spXvpTee;
+        }
         DMFTCHECKNULL_GOTO(spXvpTee.Get(), done, E_OUTOFMEMORY);
-        (VOID)spXvpTee->SetD3DManager(m_spDeviceManagerUnk.Get());
+        if(m_hwMFT)
+        {
+            (VOID)spXvpTee->SetD3DManager(m_spDeviceManagerUnk.Get());
+        }
         DMFTCHECKHR_GOTO(spXvpTee->SetMediaTypes(spDecoderOutputMediaType.Get(), m_pOutputMediaType.Get()), done);
         m_spObjectWrapped = spXvpTee;
         
@@ -965,6 +979,8 @@ HRESULT CDecoderTee::ConfigDecoder(_In_ IMFTransform* pTransform, _In_ GUID guid
     DWORD dwMediaTypeIndex = 0;
     DWORD dwFlags = 0;
     ComPtr<IMFDXGIDeviceManager> spDxgiManager;
+    DWORD dwDesiredFlags = MF_MEDIATYPE_EQUAL_MAJOR_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_DATA;
+
     UNREFERENCED_PARAMETER(guidSubType);
     DMFTCHECKNULL_GOTO(pTransform, done, E_INVALIDARG);
 
@@ -995,7 +1011,7 @@ HRESULT CDecoderTee::ConfigDecoder(_In_ IMFTransform* pTransform, _In_ GUID guid
     DMFTCHECKHR_GOTO(m_pOutputMediaType->GetMajorType(&guidMajorType), done);
     DMFTCHECKHR_GOTO(m_pOutputMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubtype), done);
 
-    if (m_spDeviceManagerUnk.Get())
+    if (m_hwMFT && m_spDeviceManagerUnk.Get())
     {
         DMFTCHECKHR_GOTO(m_spDeviceManagerUnk.As(&spDxgiManager), done);
         if (m_D3daware && SUCCEEDED(IsDXFormatSupported(spDxgiManager.Get(), guidSubtype, nullptr, nullptr)))
@@ -1025,22 +1041,30 @@ HRESULT CDecoderTee::ConfigDecoder(_In_ IMFTransform* pTransform, _In_ GUID guid
         spMediaType = nullptr;
         dwMediaTypeIndex++;
     }
-
     // If cannot find a matchig mediatype, bail out.
     DMFTCHECKNULL_GOTO(spMediaType.Get(), done, MF_E_INVALIDMEDIATYPE);
 
-    // Try to set output type on the MJPG decoder.
-    DMFTCHECKHR_GOTO(pTransform->MFTSetOutputType(m_dwMFTOutputId, spMediaType.Get(), 0), done);
-    if (S_OK != (spMediaType->IsEqual(m_pOutputMediaType.Get(), &dwFlags)))
+    hr = spMediaType->IsEqual(m_pOutputMediaType.Get(), &dwFlags);
+    if ((S_OK == hr) ||
+        (hr == S_FALSE && ((dwFlags & dwDesiredFlags) == dwDesiredFlags)))
     {
+        // Try to set output type on the MJPG decoder.
+        DMFTCHECKHR_GOTO(pTransform->MFTSetOutputType(m_dwMFTOutputId, spMediaType.Get(), 0), done);
+    }
+    else
+    {
+        // Set the media type and also create an XVP to manage the conversion
+        DMFTCHECKHR_GOTO(pTransform->MFTSetOutputType(m_dwMFTOutputId, spMediaType.Get(), 0), done);
         ComPtr<CXvptee> spXvpTee = new (std::nothrow) CXvptee(m_spObjectWrapped.Get(), m_streamCategory);
         DMFTCHECKNULL_GOTO(spXvpTee.Get(), done, E_OUTOFMEMORY);
-        (VOID)spXvpTee->SetD3DManager(m_spDeviceManagerUnk.Get());
+        if (m_hwMFT)
+        {
+            (VOID)spXvpTee->SetD3DManager(m_spDeviceManagerUnk.Get());
+        }
         DMFTCHECKHR_GOTO(spXvpTee->SetMediaTypes(spMediaType.Get(), m_pOutputMediaType.Get()), done);
         m_spObjectWrapped = spXvpTee;
         m_pOutputMediaType = spMediaType;
         //Recreate the Allocator
-        DMFTCHECKHR_GOTO(CreateAllocator(), done);
         m_bXvpAdded = TRUE;
     }
 done:
