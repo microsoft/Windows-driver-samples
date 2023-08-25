@@ -638,7 +638,17 @@ class CTranslateOutPin : public COutPin {
         MFVideoFormat_H264,
         MFVideoFormat_MJPG
     };
-    // @@@@README : This is what the compressed media types will be translated into
+
+    // @@@@README 
+    // If you translate to YUY2 in D3D mode it is a suboptimal path, because the 
+    // pipeline i.e. Frameserver will lock the surface into a staging buffer and 
+    // map it to the client process like Teams, Camera App etc.
+    // Ideally when translating to YUY2, don't pass the D3D Manager to the 
+    // Decoder (CDecoderTee) or the Video Processor (CXVPTee). The pipeline will
+    // shove the system buffer back into the DX surface on the client side, if the App
+    // demands DX surfaces. NV12 is sharable from frameserver to clients and hence
+    // the preferred format to decode into.
+    // The below subtype is what the compressed media types will be translated into.
     const GUID translatedGUID = MFVideoFormat_NV12; // Translating to NV12
 public:
     CTranslateOutPin(_In_ ULONG         id = 0,
