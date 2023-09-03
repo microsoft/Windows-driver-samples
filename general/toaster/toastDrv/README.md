@@ -26,7 +26,7 @@ For detailed descriptions and code walkthroughs of each project, see [Sample Toa
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from where you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
-The process of moving the driver package to the target computer and installing the driver is called *deploying the driver*. You can deploy components of the Toaster Sample automatically or manually. Here, we install the wdfsimple driver on the target computer.
+The process of moving the driver package to the target computer and installing the driver is called *deploying the driver*. You can deploy components of the Toaster Sample automatically or manually. Here, we install the wdf_simple driver on the target computer.
 
 ### Specifying which projects to deploy
 
@@ -34,7 +34,7 @@ Before doing this, you should back up your package.vcxproj file, located in your
 
 1. In the Properties for the package project, navigate to **Common Properties \> References**.
 
-1. Remove all references except WdfSimple. (Use the **Remove Reference** button at the bottom.)
+1. Remove all references except wdf_simple. (Use the **Remove Reference** button at the bottom.)
 
 ### Automatic deployment (root enumerated)
 
@@ -42,7 +42,7 @@ Before you automatically deploy a driver, you must provision the target computer
 
 1. On the host computer, in Visual Studio, in Solution Explorer, right click the **package** project (within the package folder), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
 
-1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, use the drop down to select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter **{b85b7c50-6a01-11d2-b841-00c04fad5171}\\MsToaster** for the hardware ID. (You can find this value in the WdfSimple.inx file.) Click **Apply** and **OK**.
+1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, use the drop down to select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter **{b85b7c50-6a01-11d2-b841-00c04fad5171}\\MsToaster** for the hardware ID. (You can find this value in the wdf_simple.inx file.) Click **Apply** and **OK**.
 
 1. Because this solution contains many projects, you may find it easier to remove some of them before you build and deploy a driver package. To do so, right click **package** (lower case), and choose **Properties**. Navigate to **Common Properties-\>References** and click **Remove Reference** to remove projects you don't want. (You can add them back later by using **Add New Reference**.) Click **OK**.
 
@@ -54,11 +54,11 @@ Before you automatically deploy a driver, you must provision the target computer
 
 Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
-1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\WdfSimplePackage).
+1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\wdf_simplePackage).
 
 1. On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
 
-   `devcon install WdfSimple.inf {b85b7c50-6a01-11d2-b841-00c04fad5171}\\MsToaster`
+   `devcon install wdf_simple.inf {b85b7c50-6a01-11d2-b841-00c04fad5171}\\MsToaster`
 
 ### View the root enumerated driver in Device Manager
 

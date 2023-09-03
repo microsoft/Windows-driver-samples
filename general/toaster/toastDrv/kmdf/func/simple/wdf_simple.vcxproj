@@ -78,23 +78,23 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <Inf Include=".\wdfsimple.inx">
+    <Inf Include=".\wdf_simple.inx">
       <Architecture>$(InfArch)</Architecture>
       <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\wdfsimple.inf</CopyOutput>
+      <CopyOutput>.\$(IntDir)\wdf_simple.inf</CopyOutput>
     </Inf>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>wdfsimple</TargetName>
+    <TargetName>wdf_simple</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>wdfsimple</TargetName>
+    <TargetName>wdf_simple</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>wdfsimple</TargetName>
+    <TargetName>wdf_simple</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>wdfsimple</TargetName>
+    <TargetName>wdf_simple</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ResourceCompile>

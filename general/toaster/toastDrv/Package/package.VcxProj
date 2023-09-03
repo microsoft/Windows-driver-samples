@@ -34,7 +34,7 @@
     <ProjectReference Include="..\kmdf\func\featured\wdffeatured.vcxproj">
       <Project>{C0049CDD-7551-4681-9E30-EFE32868F651}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\kmdf\func\simple\wdfsimple.vcxproj">
+    <ProjectReference Include="..\kmdf\func\simple\wdf_simple.vcxproj">
       <Project>{1C73C590-1F01-45BF-9BFA-97F8BCEB2795}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\toastmon\wdftoastmon.vcxproj">

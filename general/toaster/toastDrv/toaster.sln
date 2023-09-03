@@ -49,7 +49,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enum", "exe\enum\Enum.vcxpr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdftoastmon", "kmdf\toastmon\wdftoastmon.vcxproj", "{D15FD911-F2DA-4644-8142-6D22756AD287}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdfsimple", "kmdf\func\simple\wdfsimple.vcxproj", "{1C73C590-1F01-45BF-9BFA-97F8BCEB2795}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdf_simple", "kmdf\func\simple\wdf_simple.vcxproj", "{1C73C590-1F01-45BF-9BFA-97F8BCEB2795}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdffeatured", "kmdf\func\featured\wdffeatured.vcxproj", "{C0049CDD-7551-4681-9E30-EFE32868F651}"
 EndProject
