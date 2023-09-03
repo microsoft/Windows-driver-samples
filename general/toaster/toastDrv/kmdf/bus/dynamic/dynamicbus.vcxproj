@@ -78,10 +78,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <Inf Include=".\dynambus.inx">
+    <Inf Include=".\dynamicbus.inx">
       <Architecture>$(InfArch)</Architecture>
       <SpecifyArchitecture>true</SpecifyArchitecture>
-      <CopyOutput>.\$(IntDir)\dynambus.inf</CopyOutput>
+      <CopyOutput>.\$(IntDir)\dynamicbus.inf</CopyOutput>
     </Inf>
     <MofComp Include="busenum.mof">
       <CreateBinaryMofFile>".\$(IntDir)\busenum.bmf"</CreateBinaryMofFile>
@@ -95,16 +95,16 @@
     </Wmimofck>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>dynambus</TargetName>
+    <TargetName>dynamicbus</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>dynambus</TargetName>
+    <TargetName>dynamicbus</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>dynambus</TargetName>
+    <TargetName>dynamicbus</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>dynambus</TargetName>
+    <TargetName>dynamicbus</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ResourceCompile>

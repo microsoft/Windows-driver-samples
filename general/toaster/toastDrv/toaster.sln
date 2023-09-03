@@ -59,7 +59,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "filter", "kmdf\filter\gener
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StatBus", "kmdf\bus\static\StatBus.vcxproj", "{6C6E0C23-5B37-4BBB-8909-435078D49364}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynambus", "kmdf\bus\dynamic\dynambus.vcxproj", "{E5E1F492-05BB-45A3-B09F-F643DC1C6B03}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamicbus", "kmdf\bus\dynamic\dynamicbus.vcxproj", "{E5E1F492-05BB-45A3-B09F-F643DC1C6B03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
