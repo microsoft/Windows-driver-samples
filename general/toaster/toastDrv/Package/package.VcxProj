@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\kmdf\bus\dynamic\dynambus.vcxproj">
+    <ProjectReference Include="..\kmdf\bus\dynamic\dynamicbus.vcxproj">
       <Project>{E5E1F492-05BB-45A3-B09F-F643DC1C6B03}</Project>
     </ProjectReference>
     <ProjectReference Include="..\kmdf\bus\static\StatBus.vcxproj">
