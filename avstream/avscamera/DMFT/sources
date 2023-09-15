@@ -1,0 +1,84 @@
+#
+# project.mk defines _MEDIAFOUNDATION_DIR and general MF build env variables.
+#
+# @@BEGIN_DDKSPLIT
+!include $(_PROJECT_MK_PATH)\project.mk
+# @@END_DDKSPLIT
+
+TARGETNAME=AvsCameraDMFT
+TARGET_DESTINATION = TEST
+TARGETTYPE=DYNLINK
+
+USE_NATIVE_EH=1
+
+# @@BEGIN_DDKSPLIT
+BUILD_FOR_CORESYSTEM=1
+BUILD_MOBILECORE=1
+USE_NOLIBS=1
+USE_DEFAULT_WIN32_LIBS=0
+USE_DEFAULT_GUI32_LIBS=0
+# @@END_DDKSPLIT
+
+PRECOMPILED_CXX=1
+PRECOMPILED_INCLUDE=stdafx.h
+
+# @@BEGIN_DDKSPLIT
+INCLUDES = \
+    ..\..\common; \
+    $(_MEDIAFOUNDATION_DIR)\core\transforms\devproxy; \
+    $(MF_INC_PATH); \
+    $(DRIVERS_INC_PATH); \
+    $(INTERNAL_SDK_INC_PATH); \
+    $(ONECORE_INTERNAL_SDK_INC_PATH); \
+    $(ONECORE_EXTERNAL_SDK_INC_PATH); \
+    $(SDK_INC_PATH); \
+    $(ONECOREUAP_EXTERNAL_SDK_INC_PATH); \
+    $(ONECOREUAP_INTERNAL_SDK_INC_PATH)\amovie; \
+    $(ONECOREUAP_EXTERNAL_SDK_INC_PATH)\amovie; \
+    $(ONECOREUAP_INTERNAL_SDK_INC_PATH)\amovie; \
+    $(ONECOREUAPAVCORE_INTERNAL_WIL_INC_PATH_L); \
+    $(_MEDIAFOUNDATION_OBJ_DIR)\setup\manifests\MF\$O; \
+    $(PUBLIC_INTERNAL_PATH)\base\inc; \
+    $(COM_INC_PATH); \
+    $(PUBLIC_INTERNAL_PATH)\shell\inc;
+# @@END_DDKSPLIT
+
+SOURCES = \
+    mftpeventgenerator.cpp \
+    AvsCameraDMFT.cpp      \
+    basepin.cpp            \
+    AvsCameraDMFTutils.cpp \
+    dllmain.cpp \
+
+USE_MSVCRT         =   1
+USE_STL            =   1
+STL_VER            =   STL_VER_CURRENT
+DLLDEF=Source.def
+
+C_DEFINES = \
+    $(C_DEFINES) -DUNICODE  -DMF_WPP  \
+    -DSECURITY_WIN32                  \
+
+# Check out https://osgwiki.com/wiki/Dev_14_Migration for more details about CRT_IMPLICIT_NOEXCEPT
+CRT_IMPLICIT_NOEXCEPT=1
+
+# @@BEGIN_DDKSPLIT 
+TARGETLIBS_APISETS = \
+    $(ONECORE_INTERNAL_PRIV_SDK_LIB_VPATH_L)\onecore_internal.lib          \
+# @@END_DDKSPLIT   
+
+TARGETLIBS_LEGACY = \
+    $(ONECOREUAP_EXTERNAL_SDK_LIB_PATH)\mfplat.lib \
+    $(ONECOREUAP_EXTERNAL_SDK_LIB_PATH)\Mfuuid.lib \
+    $(ONECOREUAP_EXTERNAL_SDK_LIB_PATH)\mfcore.lib \
+
+TARGETLIBS = \
+# @@BEGIN_DDKSPLIT \
+   $(TARGETLIBS_APISETS) \
+# @@END_DDKSPLIT   \
+    $(TARGETLIBS_LEGACY)
+
+DDK_TARGET_PLATFORM=Universal
+DDK_NO_PACKAGE_PROJECT=1
+
+RUN_WPP=$(SOURCES) -dll -func:DMFTRACE(FLAG,LEVEL,MSG,...) -gen:{um-default.tpl}*.tmh -scan:common.h
