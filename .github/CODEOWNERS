@@ -4,5 +4,8 @@
 # Code Scanning workflow
 /.github/workflows/Code-Scanning.yml @microsoft/driver-samples-maintainers
 
+# Configuration description files
+/configurations/ @microsoft/driver-samples-maintainers
+
 # Root files
 /* @microsoft/driver-samples-maintainers
