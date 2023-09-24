@@ -1,9 +1,5 @@
-//*@@@+++@@@@******************************************************************
 //
-// Microsoft Windows Media Foundation
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-//*@@@---@@@@******************************************************************
+//    Copyright (C) Microsoft.  All rights reserved.
 //
 
 #include "stdafx.h"
@@ -45,14 +41,14 @@ CMultipinMft::~CMultipinMft( )
 
 }
 
-STDMETHODIMP_(ULONG) CMultipinMft::AddRef(
+IFACEMETHODIMP_(ULONG) CMultipinMft::AddRef(
     void
     )
 {
     return InterlockedIncrement(&m_nRefCount);
 }
 
-STDMETHODIMP_(ULONG) CMultipinMft::Release(
+IFACEMETHODIMP_(ULONG) CMultipinMft::Release(
     void
     )
 {
@@ -65,7 +61,7 @@ STDMETHODIMP_(ULONG) CMultipinMft::Release(
     return uCount;
 }
 
-STDMETHODIMP CMultipinMft::QueryInterface(
+IFACEMETHODIMP CMultipinMft::QueryInterface(
     _In_ REFIID iid,
     _COM_Outptr_ void** ppv
     )
@@ -120,7 +116,7 @@ done:
 
 --*/
 
-STDMETHODIMP CMultipinMft::InitializeTransform ( 
+IFACEMETHODIMP CMultipinMft::InitializeTransform ( 
     _In_ IMFAttributes *pAttributes
     )
 {
@@ -270,7 +266,7 @@ done:
 }
 
 
-STDMETHODIMP CMultipinMft::SetWorkQueueEx(
+IFACEMETHODIMP CMultipinMft::SetWorkQueueEx(
     _In_  DWORD dwWorkQueueId,
     _In_ LONG lWorkItemBasePriority
     )
@@ -303,7 +299,7 @@ STDMETHODIMP CMultipinMft::SetWorkQueueEx(
 //
 // IMFDeviceTransform functions
 //
-STDMETHODIMP  CMultipinMft::GetStreamCount(
+IFACEMETHODIMP  CMultipinMft::GetStreamCount(
     _Inout_ DWORD  *pdwInputStreams,
     _Inout_ DWORD  *pdwOutputStreams
     )
@@ -325,7 +321,7 @@ done:
 //
 //Doesn't strictly conform to the GetStreamIDs on IMFTransform Interface!
 //
-STDMETHODIMP  CMultipinMft::GetStreamIDs(
+IFACEMETHODIMP  CMultipinMft::GetStreamIDs(
     _In_                                    DWORD  dwInputIDArraySize,
     _When_(dwInputIDArraySize >= m_InputPinCount, _Out_writes_(dwInputIDArraySize))  DWORD* pdwInputIDs,
     _In_                                    DWORD  dwOutputIDArraySize,
@@ -375,7 +371,7 @@ Implements IMFTransform::GetInputAvailableType function. This function
 gets the media type supported by the specified stream based on the
 index dwTypeIndex.
 --*/
-STDMETHODIMP  CMultipinMft::GetInputAvailableType(
+IFACEMETHODIMP  CMultipinMft::GetInputAvailableType(
     _In_        DWORD           dwInputStreamID,
     _In_        DWORD           dwTypeIndex,
     _Out_ IMFMediaType**        ppMediaType
@@ -403,7 +399,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::GetOutputAvailableType(
+IFACEMETHODIMP CMultipinMft::GetOutputAvailableType(
     _In_         DWORD           dwOutputStreamID,
     _In_         DWORD           dwTypeIndex,
     _Out_        IMFMediaType**  ppMediaType
@@ -441,7 +437,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP  CMultipinMft::GetInputCurrentType(
+IFACEMETHODIMP  CMultipinMft::GetInputCurrentType(
     _In_        DWORD           dwInputStreamID,
     _COM_Outptr_result_maybenull_ IMFMediaType**  ppMediaType
     )
@@ -461,7 +457,7 @@ STDMETHODIMP  CMultipinMft::GetInputCurrentType(
     return S_OK;
 }
 
-STDMETHODIMP  CMultipinMft::GetOutputCurrentType(
+IFACEMETHODIMP  CMultipinMft::GetOutputCurrentType(
     _In_         DWORD           dwOutputStreamID,
     _Out_        IMFMediaType**  ppMediaType
     )
@@ -495,7 +491,7 @@ done:
 }
 
 
-STDMETHODIMP  CMultipinMft::ProcessEvent(
+IFACEMETHODIMP  CMultipinMft::ProcessEvent(
     _In_    DWORD           dwInputStreamID,
     _In_    IMFMediaEvent*  pEvent
     )
@@ -514,7 +510,7 @@ STDMETHODIMP  CMultipinMft::ProcessEvent(
 
 
 
-STDMETHODIMP  CMultipinMft::ProcessMessage(
+IFACEMETHODIMP  CMultipinMft::ProcessMessage(
     _In_ MFT_MESSAGE_TYPE    eMessage,
     _In_ ULONG_PTR           ulParam
     )
@@ -615,7 +611,7 @@ STDMETHODIMP  CMultipinMft::ProcessMessage(
     return hr;
 }
 
-STDMETHODIMP  CMultipinMft::ProcessInput(
+IFACEMETHODIMP  CMultipinMft::ProcessInput(
     _In_ DWORD      dwInputStreamID,
     _In_ IMFSample* pSample,
     _In_ DWORD      dwFlags
@@ -655,7 +651,7 @@ done:
 
 }
 
-STDMETHODIMP  CMultipinMft::ProcessOutput(
+IFACEMETHODIMP  CMultipinMft::ProcessOutput(
     _In_    DWORD                       dwFlags,
     _In_    DWORD                       cOutputBufferCount,
     _Inout_updates_(cOutputBufferCount)  MFT_OUTPUT_DATA_BUFFER  *pOutputSamples,
@@ -712,7 +708,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP  CMultipinMft::GetInputStreamAttributes(
+IFACEMETHODIMP  CMultipinMft::GetInputStreamAttributes(
     _In_        DWORD           dwInputStreamID,
     _COM_Outptr_result_maybenull_ IMFAttributes** ppAttributes
     )
@@ -742,7 +738,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP  CMultipinMft::GetOutputStreamAttributes(
+IFACEMETHODIMP  CMultipinMft::GetOutputStreamAttributes(
     _In_        DWORD           dwOutputStreamID,
     _Out_ IMFAttributes** ppAttributes
     )
@@ -773,7 +769,7 @@ done:
 }
 
 _Requires_no_locks_held_
-STDMETHODIMP CMultipinMft::SetInputStreamState(
+IFACEMETHODIMP CMultipinMft::SetInputStreamState(
     _In_    DWORD               dwStreamID,
     _In_    IMFMediaType        *pMediaType,
     _In_    DeviceStreamState   value,
@@ -805,7 +801,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::GetInputStreamState(
+IFACEMETHODIMP CMultipinMft::GetInputStreamState(
     _In_    DWORD               dwStreamID,
     _Out_   DeviceStreamState   *value
     )
@@ -823,7 +819,7 @@ done:
 }
 
 
-STDMETHODIMP CMultipinMft::SetOutputStreamState(
+IFACEMETHODIMP CMultipinMft::SetOutputStreamState(
     _In_ DWORD                  dwStreamID,
     _In_ IMFMediaType           *pMediaType,
     _In_ DeviceStreamState      state,
@@ -856,7 +852,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::GetOutputStreamState(
+IFACEMETHODIMP CMultipinMft::GetOutputStreamState(
     _In_    DWORD               dwStreamID,
     _Out_   DeviceStreamState   *pState
     )
@@ -880,7 +876,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::GetInputStreamPreferredState(
+IFACEMETHODIMP CMultipinMft::GetInputStreamPreferredState(
     _In_              DWORD                             dwStreamID,
     _Inout_           DeviceStreamState                 *value,
     _Outptr_opt_result_maybenull_ IMFMediaType          **ppMediaType
@@ -906,7 +902,7 @@ done:
    return hr;
 }
 
-STDMETHODIMP CMultipinMft::FlushInputStream(
+IFACEMETHODIMP CMultipinMft::FlushInputStream(
     _In_ DWORD dwStreamIndex,
     _In_ DWORD dwFlags
     )
@@ -923,7 +919,7 @@ STDMETHODIMP CMultipinMft::FlushInputStream(
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::FlushOutputStream(
+IFACEMETHODIMP CMultipinMft::FlushOutputStream(
     _In_ DWORD                  dwStreamIndex,
     _In_ DWORD                  dwFlags
     )
@@ -956,7 +952,7 @@ done:
     Called when the Device Transform gets a MFT_MESSAGE_COMMAND_FLUSH. We drain all the queues. 
     This is called in device source when the source gets end of streaming.
     --*/
-STDMETHODIMP_(VOID) CMultipinMft::FlushAllStreams(
+IFACEMETHODIMP_(VOID) CMultipinMft::FlushAllStreams(
     VOID
     )
 {
@@ -974,11 +970,10 @@ STDMETHODIMP_(VOID) CMultipinMft::FlushAllStreams(
     }
 }
 
-
 //
 // IKsControl interface functions
 //
-STDMETHODIMP CMultipinMft::KsProperty(
+IFACEMETHODIMP CMultipinMft::KsProperty(
     _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
     _In_ ULONG ulPropertyLength,
     _Inout_updates_bytes_(ulDataLength) LPVOID pvPropertyData,
@@ -1005,7 +1000,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::KsMethod(
+IFACEMETHODIMP CMultipinMft::KsMethod(
     _In_reads_bytes_(ulPropertyLength) PKSMETHOD   pMethod,
     _In_ ULONG ulPropertyLength,
     _Inout_updates_bytes_(ulDataLength) LPVOID pvPropertyData,
@@ -1031,7 +1026,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CMultipinMft::KsEvent(
+IFACEMETHODIMP CMultipinMft::KsEvent(
     _In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
     _In_ ULONG ulEventLength,
     _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
@@ -1282,7 +1277,7 @@ done:
 Description:
 Implements the Shutdown from IMFShutdown
 --*/
-STDMETHODIMP CMultipinMft::Shutdown(
+IFACEMETHODIMP CMultipinMft::Shutdown(
     void
     )
 {

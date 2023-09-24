@@ -1,9 +1,5 @@
-//*@@@+++@@@@******************************************************************
 //
-// Microsoft Windows Media Foundation
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-//*@@@---@@@@******************************************************************
+//    Copyright (C) Microsoft.  All rights reserved.
 //
 
 #pragma once
@@ -50,13 +46,13 @@ public:
     //
     // IUnknown
     //
-    STDMETHOD_(ULONG, AddRef)(
+    IFACEMETHODIMP_(ULONG) AddRef(
         void );
 
-    STDMETHOD_(ULONG, Release)(
+    IFACEMETHODIMP_(ULONG) Release(
         void );
 
-    STDMETHOD(QueryInterface)(
+    IFACEMETHODIMP QueryInterface(
         _In_ REFIID iid,
         _COM_Outptr_ void** ppv);
 
@@ -64,12 +60,12 @@ public:
     //
     // IMFDeviceTransform functions
     //
-    STDMETHOD(GetStreamCount)(
+    IFACEMETHODIMP GetStreamCount (
         _Inout_ DWORD   *pdwInputStreams,
         _Inout_ DWORD   *pdwOutputStreams);
 
 
-    STDMETHOD(GetStreamIDs)(
+    IFACEMETHODIMP GetStreamIDs (
         _In_                                    DWORD  dwInputIDArraySize,
         _When_(dwInputIDArraySize >= m_InputPinCount, _Out_writes_(dwInputIDArraySize))  DWORD* pdwInputIDs,
         _In_                                    DWORD  dwOutputIDArraySize,
@@ -77,47 +73,47 @@ public:
         _Out_writes_(dwOutputIDArraySize)) _On_failure_(_Valid_) DWORD* pdwOutputIDs
         );
 
-    STDMETHOD(GetInputStreamAttributes)(
+    IFACEMETHODIMP GetInputStreamAttributes(
         _In_        DWORD           dwInputStreamID,
         _COM_Outptr_result_maybenull_ IMFAttributes** ppAttributes);
 
-    STDMETHOD(GetOutputStreamAttributes)(
+    IFACEMETHODIMP GetOutputStreamAttributes(
         _In_        DWORD           dwOutputStreamID,
         _Out_ IMFAttributes** ppAttributes);
 
-    STDMETHOD(GetInputAvailableType)(
+    IFACEMETHODIMP GetInputAvailableType(
         _In_        DWORD           dwInputStreamID,
         _In_        DWORD           dwTypeIndex,
         _Out_ IMFMediaType**  ppType);
 
-    STDMETHOD(GetOutputAvailableType)(
+    IFACEMETHODIMP GetOutputAvailableType(
         _In_        DWORD           dwOutputStreamID,
         _In_        DWORD           dwTypeIndex,
         _Out_ IMFMediaType**  ppMediaType);
 
-    STDMETHOD(GetInputCurrentType)(
+    IFACEMETHODIMP GetInputCurrentType(
         _In_        DWORD           dwInputStreamID,
         _COM_Outptr_result_maybenull_ IMFMediaType**  ppMediaType);
 
-    STDMETHOD(GetOutputCurrentType)(
+    IFACEMETHODIMP GetOutputCurrentType(
         _In_        DWORD           dwOutputStreamID,
         _Out_       IMFMediaType**  ppMediaType);
 
-    STDMETHOD(ProcessMessage)(
+    IFACEMETHODIMP ProcessMessage(
         _In_    MFT_MESSAGE_TYPE    eMessage,
         _In_    ULONG_PTR           ulParam );
 
-    STDMETHOD(ProcessEvent)(
+    IFACEMETHODIMP ProcessEvent(
         _In_  DWORD dwInputStreamID,
         _In_  IMFMediaEvent *pEvent);
 
 
-    STDMETHOD(ProcessInput)(
+    IFACEMETHODIMP ProcessInput(
         _In_    DWORD       dwInputStreamID,
         _In_    IMFSample*  pSample,
         _In_    DWORD       dwFlags );
 
-    STDMETHOD(ProcessOutput)(
+    IFACEMETHODIMP ProcessOutput(
         _In_    DWORD                       dwFlags,
         _In_    DWORD                       cOutputBufferCount,
         _Inout_updates_(cOutputBufferCount)  MFT_OUTPUT_DATA_BUFFER  *pOutputSamples,
@@ -126,7 +122,7 @@ public:
     //
     // IMFRealTimeClientEx
     //
-    STDMETHOD(RegisterThreadsEx)(
+    IFACEMETHODIMP RegisterThreadsEx(
         _Inout_ DWORD* pdwTaskIndex,
         _In_ LPCWSTR wszClassName,
         _In_ LONG lBasePriority )
@@ -137,22 +133,22 @@ public:
         return S_OK;
     }
 
-    STDMETHOD(UnregisterThreads)()
+    IFACEMETHODIMP UnregisterThreads()
     {
         return S_OK;
     }
 
-    STDMETHOD(SetWorkQueueEx)(
+    IFACEMETHODIMP SetWorkQueueEx(
         _In_ DWORD dwWorkQueueId,
         _In_ LONG lWorkItemBasePriority );
 
     //
     // IMFShutdown
     //
-    STDMETHOD(Shutdown)(
+    IFACEMETHODIMP Shutdown(
         void );
 
-    STDMETHOD(GetShutdownStatus)(
+    IFACEMETHODIMP GetShutdownStatus(
         MFSHUTDOWN_STATUS *pStatus)
     {
         UNREFERENCED_PARAMETER(pStatus);
@@ -162,111 +158,73 @@ public:
     //
     // IMFDeviceTransform function declarations
     //
-    STDMETHODIMP InitializeTransform(
+    IFACEMETHODIMP InitializeTransform(
         _In_ IMFAttributes *pAttributes );
 
     _Requires_no_locks_held_
-    STDMETHODIMP SetInputStreamState(
+    IFACEMETHODIMP SetInputStreamState(
         _In_ DWORD dwStreamID,
         _In_ IMFMediaType *pMediaType,
         _In_ DeviceStreamState value,
         _In_ DWORD dwFlags );
 
-    STDMETHODIMP GetInputStreamState(
+    IFACEMETHODIMP GetInputStreamState(
         _In_ DWORD dwStreamID,
         _Out_ DeviceStreamState *value );
 
-    STDMETHODIMP SetOutputStreamState(
+    IFACEMETHODIMP SetOutputStreamState(
         _In_ DWORD dwStreamID,
         _In_ IMFMediaType *pMediaType,
         _In_ DeviceStreamState value,
         _In_ DWORD dwFlags );
 
-    STDMETHODIMP GetOutputStreamState(
+    IFACEMETHODIMP GetOutputStreamState(
         _In_ DWORD dwStreamID,
         _Out_ DeviceStreamState *value );
 
-    STDMETHODIMP GetInputStreamPreferredState(
+    IFACEMETHODIMP GetInputStreamPreferredState(
         _In_              DWORD                             dwStreamID,
         _Inout_           DeviceStreamState                 *value,
         _Outptr_opt_result_maybenull_ IMFMediaType          **ppMediaType );
 
-    STDMETHODIMP FlushInputStream(
+    IFACEMETHODIMP FlushInputStream(
         _In_ DWORD dwStreamIndex,
         _In_ DWORD dwFlags );
 
-    STDMETHODIMP FlushOutputStream(
+    IFACEMETHODIMP FlushOutputStream(
         _In_ DWORD dwStreamIndex,
         _In_ DWORD dwFlags );
 
-    STDMETHODIMP_(VOID) FlushAllStreams(
+    IFACEMETHODIMP_(VOID) FlushAllStreams(
         VOID
         );
 
     //
     //IKSControl Inferface function declarations
     //
-    STDMETHOD(KsEvent)(
+    IFACEMETHODIMP KsEvent(
         _In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
         _In_ ULONG ulEventLength,
         _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
         _In_ ULONG ulDataLength,
         _Inout_ ULONG* pBytesReturned
         );
-    STDMETHOD(KsProperty)(
+    IFACEMETHODIMP KsProperty(
         _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
         _In_ ULONG ulPropertyLength,
         _Inout_updates_bytes_(ulDataLength) LPVOID pPropertyData,
         _In_ ULONG ulDataLength,
         _Inout_ ULONG* pBytesReturned
         );
-    STDMETHOD(KsMethod)(
+    IFACEMETHODIMP KsMethod(
         _In_reads_bytes_(ulPropertyLength) PKSMETHOD pProperty,
         _In_ ULONG ulPropertyLength,
         _Inout_updates_bytes_(ulDataLength) LPVOID pPropertyData,
         _In_ ULONG ulDataLength,
         _Inout_ ULONG* pBytesReturned
         );
-#if defined (MF_DEVICEMFT_PHTOTOCONFIRMATION)
-    //
-    // The Below functions are needed for photoconfirmation
-    //
-    //
-    STDMETHOD(GetService)(
-        __in REFGUID guidService,
-        __in REFIID riid,
-        __deref_out LPVOID* ppvObject
-        );
-    //
-    //IMFCapturePhotoConfirmation Inferface function declarations
-    //
-    STDMETHOD(SetPhotoConfirmationCallback)(
-        _In_ IMFAsyncCallback* pNotificationCallback
-        );
-    STDMETHOD(SetPixelFormat)(
-        _In_ GUID subtype
-        );
-    STDMETHOD(GetPixelFormat)(
-        _Out_ GUID* subtype
-        );
 
-    __inline BOOL IsPhotoConfirmationEnabled()
-    {
-        return (m_spPhotoConfirmationCallback != nullptr);
-    }
-
-    STDMETHODIMP ProcessCapturePhotoConfirmationCallBack(
-        _In_ IMFMediaType* pMediaType,
-        _In_ IMFSample*    pSample
-        );
-
-    __inline VOID SetPhotoConfirmationCallBack(_In_ IMFAsyncCallback *Callback)
-    {
-        m_spPhotoConfirmationCallback = Callback;
-    }
-
-#endif
-    static STDMETHODIMP CreateInstance(
+    static HRESULT CreateInstance(
         REFIID iid, void **ppMFT);
  
     __inline BOOL isPhotoModePhotoSequence()
@@ -274,7 +232,7 @@ public:
         return m_PhotoModeIsPhotoSequence;
     }
 
-    _inline DWORD GetQueueId()
+    __inline DWORD GetQueueId()
     {
         return m_dwWorkQueueId;
     }
@@ -282,7 +240,7 @@ public:
     //
     //Will be used from Pins to get the D3D manager once set!!!
     //
-    __inline STDMETHODIMP_(VOID) GetD3DDeviceManager(
+    __inline IFACEMETHODIMP_(VOID) GetD3DDeviceManager(
         IUnknown** ppDeviceManagerUnk
         )
     {
@@ -333,10 +291,12 @@ protected:
     {
         InterlockedExchange((LONG*)&m_StreamingState, state);
     }
+
     __inline DeviceStreamState GetStreamingState()
     {
         return (DeviceStreamState)InterlockedCompareExchange((LONG*)&m_StreamingState, 0L, 0L);
     }
+
     __inline BOOL IsStreaming()
     {
         return (InterlockedCompareExchange((LONG*)&m_StreamingState, DeviceStreamState_Run, DeviceStreamState_Run) == DeviceStreamState_Run);

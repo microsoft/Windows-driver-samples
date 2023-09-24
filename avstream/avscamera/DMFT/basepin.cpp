@@ -1,3 +1,6 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 #include "stdafx.h"
 
 #ifdef MF_WPP
@@ -36,12 +39,12 @@ CBasePin::~CBasePin()
     m_spAttributes = nullptr;
 }
 
-STDMETHODIMP_(DeviceStreamState) CBasePin::GetState()
+IFACEMETHODIMP_(DeviceStreamState) CBasePin::GetState()
 {
     return (DeviceStreamState) InterlockedCompareExchange((PLONG)&m_state, 0L,0L);
 }
 
-STDMETHODIMP_(DeviceStreamState) CBasePin::SetState(_In_ DeviceStreamState state)
+IFACEMETHODIMP_(DeviceStreamState) CBasePin::SetState(_In_ DeviceStreamState state)
 {
     return (DeviceStreamState) InterlockedExchange((LONG*)&m_state, state);
 }
@@ -83,7 +86,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP_(BOOL) CBasePin::IsMediaTypeSupported
+IFACEMETHODIMP_(BOOL) CBasePin::IsMediaTypeSupported
 (
     _In_ IMFMediaType *pMediaType, 
     _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
@@ -130,7 +133,7 @@ done:
     return SUCCEEDED(hr) ? TRUE : FALSE;
 }
 
-STDMETHODIMP CBasePin::GetOutputAvailableType( 
+IFACEMETHODIMP CBasePin::GetOutputAvailableType( 
     _In_ DWORD dwTypeIndex,
     _Out_opt_ IMFMediaType** ppType)
 {
@@ -167,6 +170,7 @@ HRESULT CBasePin::QueryInterface(
 done:
     return hr;
 }
+
 VOID CBasePin::SetD3DManager(_In_opt_ IUnknown* pManager)
 {
     //
@@ -205,7 +209,7 @@ CInPin::~CInPin()
     }
 }
 
-STDMETHODIMP CInPin::Init( 
+IFACEMETHODIMP CInPin::Init( 
     _In_ IMFDeviceTransform* pTransform
     )
 {
@@ -275,7 +279,7 @@ done:
     return hr;
 }
 
-STDMETHODIMP CInPin::SendSample(
+IFACEMETHODIMP CInPin::SendSample(
     _In_ IMFSample *pSample
     )
 {
@@ -293,7 +297,7 @@ STDMETHODIMP CInPin::SendSample(
     return hr;
 }
 
-STDMETHODIMP_(VOID) CInPin::ConnectPin( _In_ CBasePin * poPin )
+IFACEMETHODIMP_(VOID) CInPin::ConnectPin( _In_ CBasePin * poPin )
 {
     CAutoLock Lock(lock());
     if (poPin!=nullptr)
@@ -302,7 +306,7 @@ STDMETHODIMP_(VOID) CInPin::ConnectPin( _In_ CBasePin * poPin )
     }
 }
 
-STDMETHODIMP CInPin::WaitForSetInputPinMediaChange()
+IFACEMETHODIMP CInPin::WaitForSetInputPinMediaChange()
 {
     DWORD   dwWait  = 0;
     HRESULT hr      = S_OK;
@@ -369,7 +373,7 @@ HRESULT CInPin::SetInputStreamState(
     return hr;
 }
 
-STDMETHODIMP_(VOID) CInPin::ShutdownPin()
+IFACEMETHODIMP_(VOID) CInPin::ShutdownPin()
 {
     m_spSourceTransform = nullptr;
     m_outpin = nullptr;
@@ -416,7 +420,7 @@ Description:
 Called from AddSample if the Output Pin is in open state. This function looks for the queue
 corresponding to the input pin and adds it in the queue.
 --*/
-STDMETHODIMP COutPin::AddPin(
+IFACEMETHODIMP COutPin::AddPin(
     _In_ DWORD inputPinId
     )
 {
@@ -440,7 +444,7 @@ Called when ProcessInput is called on the Device Transform. The Input Pin puts t
 in the pins connected. If the Output pins are in open state the sample lands in the queues
 --*/
 
-STDMETHODIMP COutPin::AddSample( 
+IFACEMETHODIMP COutPin::AddSample( 
     _In_ IMFSample *pSample,
     _In_ CBasePin *pPin)
 {
@@ -469,7 +473,7 @@ COutPin::SetState
 Description:
 State setter for the output pin
 --*/
-STDMETHODIMP_(VOID) COutPin::SetFirstSample(
+IFACEMETHODIMP_(VOID) COutPin::SetFirstSample(
     _In_ BOOL fisrtSample )
 {
     m_firstSample = fisrtSample;
@@ -523,7 +527,7 @@ Description:
  called from the IMFdeviceTransform's 
 --*/
 
-STDMETHODIMP COutPin::GetOutputStreamInfo(
+IFACEMETHODIMP COutPin::GetOutputStreamInfo(
     _Out_ MFT_OUTPUT_STREAM_INFO *pStreamInfo
     )
 {
@@ -555,7 +559,7 @@ Description:
  If we have received the sample and we are passing out a sample we should reset the trigger set on the Device Transform
 --*/
 
-STDMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
+IFACEMETHODIMP COutPin::ProcessOutput(_In_  DWORD dwFlags,
     _Inout_  MFT_OUTPUT_DATA_BUFFER  *pOutputSample,
     _Out_   DWORD                       *pdwStatus
     )
@@ -601,7 +605,7 @@ done:
 Description:
 The KsProperty for the Pin.. this is to reroute all pin kscontrols to the input pin
 --*/
-STDMETHODIMP COutPin::KsProperty(
+IFACEMETHODIMP COutPin::KsProperty(
     _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
     _In_ ULONG ulPropertyLength,
     _Inout_updates_bytes_(ulDataLength) LPVOID pPropertyData,

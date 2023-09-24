@@ -1,9 +1,5 @@
-//*@@@+++@@@@******************************************************************
 //
-// Microsoft Windows Media Foundation
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-//*@@@---@@@@******************************************************************
+//    Copyright (C) Microsoft.  All rights reserved.
 //
 #pragma once
 #include "stdafx.h"
@@ -23,21 +19,21 @@ public:
     CBasePin( _In_ ULONG _id=0, _In_ CMultipinMft *parent=NULL);
 
     virtual ~CBasePin() = 0;
-    virtual STDMETHODIMP_(DeviceStreamState) GetState();
-    virtual STDMETHODIMP_(DeviceStreamState) SetState( _In_ DeviceStreamState State);
+    virtual IFACEMETHODIMP_(DeviceStreamState) GetState();
+    virtual IFACEMETHODIMP_(DeviceStreamState) SetState( _In_ DeviceStreamState State);
  
 
     //
     //IUnknown Interface functions
     //
 
-    STDMETHODIMP_(ULONG) AddRef(
+    IFACEMETHODIMP_(ULONG) AddRef(
         void
         )
     {
         return InterlockedIncrement(&m_nRefCount);
     }
-    STDMETHODIMP_(ULONG) Release(
+    IFACEMETHODIMP_(ULONG) Release(
         void
         )
     {
@@ -49,7 +45,7 @@ public:
         return uCount;
     }
 
-    STDMETHODIMP_(HRESULT) QueryInterface(
+    IFACEMETHODIMP_(HRESULT) QueryInterface(
         _In_   REFIID riid,
         _Outptr_result_maybenull_  void **ppvObject
         );
@@ -57,7 +53,7 @@ public:
     // IKsControl Interface functions
     //
   
-  STDMETHOD(KsProperty)(
+  IFACEMETHODIMP KsProperty(
       _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
       _In_ ULONG ulPropertyLength,
       _Inout_updates_bytes_(ulDataLength) LPVOID pPropertyData,
@@ -78,7 +74,7 @@ public:
           return E_NOTIMPL;
       }
   }
-  virtual STDMETHODIMP FlushQueues(
+  virtual IFACEMETHODIMP FlushQueues(
   )
   {
       return S_OK;
@@ -86,7 +82,7 @@ public:
   //
   // NOOPs for this iteration..
   //
-  STDMETHOD(KsMethod)(
+  IFACEMETHODIMP KsMethod(
       _In_reads_bytes_(ulMethodLength) PKSMETHOD pMethod,
       _In_ ULONG ulMethodLength,
       _Inout_updates_bytes_(ulDataLength) LPVOID pMethodData,
@@ -102,7 +98,7 @@ public:
       return S_OK;
   }
   
-  STDMETHOD(KsEvent)(
+  IFACEMETHODIMP KsEvent(
       _In_reads_bytes_(ulEventLength) PKSEVENT pEvent,
       _In_ ULONG ulEventLength,
       _Inout_updates_bytes_opt_(ulDataLength) LPVOID pEventData,
@@ -121,7 +117,7 @@ public:
     //
     //IMFAttributes implementation
     //
-    STDMETHOD(GetItem)(
+    IFACEMETHODIMP GetItem(
         _In_ REFGUID guidKey,
         _Inout_opt_  PROPVARIANT* pValue
         )
@@ -129,7 +125,7 @@ public:
         return m_spAttributes->GetItem(guidKey, pValue);
     }
 
-    STDMETHOD(GetItemType)(
+    IFACEMETHODIMP GetItemType(
         _In_ REFGUID guidKey,
         _Out_ MF_ATTRIBUTE_TYPE* pType
         )
@@ -137,7 +133,7 @@ public:
         return m_spAttributes->GetItemType(guidKey, pType);
     }
 
-    STDMETHOD(CompareItem)(
+    IFACEMETHODIMP CompareItem(
         _In_ REFGUID guidKey,
         _In_ REFPROPVARIANT Value,
         _Out_ BOOL* pbResult
@@ -146,7 +142,7 @@ public:
         return m_spAttributes->CompareItem(guidKey, Value, pbResult);
     }
 
-    STDMETHOD(Compare)(
+    IFACEMETHODIMP Compare(
         _In_ IMFAttributes* pTheirs,
         _In_ MF_ATTRIBUTES_MATCH_TYPE MatchType,
         _Out_ BOOL* pbResult
@@ -155,7 +151,7 @@ public:
         return m_spAttributes->Compare(pTheirs, MatchType, pbResult);
     }
 
-    STDMETHOD(GetUINT32)(
+    IFACEMETHODIMP GetUINT32(
         _In_ REFGUID guidKey,
         _Out_ UINT32* punValue
         )
@@ -163,7 +159,7 @@ public:
         return m_spAttributes->GetUINT32(guidKey, punValue);
     }
 
-    STDMETHOD(GetUINT64)(
+    IFACEMETHODIMP GetUINT64(
         _In_ REFGUID guidKey,
         _Out_ UINT64* punValue
         )
@@ -171,7 +167,7 @@ public:
         return m_spAttributes->GetUINT64(guidKey, punValue);
     }
 
-    STDMETHOD(GetDouble)(
+    IFACEMETHODIMP GetDouble(
         _In_ REFGUID guidKey,
         _Out_ double* pfValue
         )
@@ -179,7 +175,7 @@ public:
         return m_spAttributes->GetDouble(guidKey, pfValue);
     }
 
-    STDMETHOD(GetGUID)(
+    IFACEMETHODIMP GetGUID(
         _In_ REFGUID guidKey,
         _Out_ GUID* pguidValue
         )
@@ -187,7 +183,7 @@ public:
         return m_spAttributes->GetGUID(guidKey, pguidValue);
     }
 
-    STDMETHOD(GetStringLength)(
+    IFACEMETHODIMP GetStringLength(
         _In_ REFGUID guidKey,
         _Out_ UINT32* pcchLength
         )
@@ -195,7 +191,7 @@ public:
         return m_spAttributes->GetStringLength(guidKey, pcchLength);
     }
 
-    STDMETHOD(GetString)(
+    IFACEMETHODIMP GetString(
         _In_ REFGUID guidKey,
         _Out_writes_(cchBufSize) LPWSTR pwszValue,
         _In_ UINT32 cchBufSize,
@@ -205,7 +201,7 @@ public:
         return m_spAttributes->GetString(guidKey, pwszValue, cchBufSize, pcchLength);
     }
 
-    STDMETHOD(GetAllocatedString)(
+    IFACEMETHODIMP GetAllocatedString(
         _In_ REFGUID guidKey,
         _Out_writes_(*pcchLength + 1) LPWSTR* ppwszValue,
         _Inout_  UINT32* pcchLength
@@ -214,7 +210,7 @@ public:
         return m_spAttributes->GetAllocatedString(guidKey, ppwszValue, pcchLength);
     }
 
-    STDMETHOD(GetBlobSize)(
+    IFACEMETHODIMP GetBlobSize(
         _In_ REFGUID guidKey,
         _Out_ UINT32* pcbBlobSize
         )
@@ -222,7 +218,7 @@ public:
         return m_spAttributes->GetBlobSize(guidKey, pcbBlobSize);
     }
 
-    STDMETHOD(GetBlob)(
+    IFACEMETHODIMP GetBlob(
         _In_                    REFGUID  guidKey,
         _Out_writes_(cbBufSize) UINT8* pBuf,
         UINT32 cbBufSize,
@@ -232,7 +228,7 @@ public:
         return m_spAttributes->GetBlob(guidKey, pBuf, cbBufSize, pcbBlobSize);
     }
 
-    STDMETHOD(GetAllocatedBlob)(
+    IFACEMETHODIMP GetAllocatedBlob(
         __RPC__in REFGUID guidKey,
         __RPC__deref_out_ecount_full_opt(*pcbSize) UINT8** ppBuf,
         __RPC__out UINT32* pcbSize
@@ -241,7 +237,7 @@ public:
         return m_spAttributes->GetAllocatedBlob(guidKey, ppBuf, pcbSize);
     }
 
-    STDMETHOD(GetUnknown)(
+    IFACEMETHODIMP GetUnknown(
         __RPC__in REFGUID guidKey,
         __RPC__in REFIID riid,
         __RPC__deref_out_opt LPVOID *ppv
@@ -250,7 +246,7 @@ public:
         return m_spAttributes->GetUnknown(guidKey, riid, ppv);
     }
 
-    STDMETHOD(SetItem)(
+    IFACEMETHODIMP SetItem(
         _In_ REFGUID guidKey,
         _In_ REFPROPVARIANT Value
         )
@@ -258,19 +254,19 @@ public:
         return m_spAttributes->SetItem(guidKey, Value);
     }
 
-    STDMETHOD(DeleteItem)(
+    IFACEMETHODIMP DeleteItem(
         _In_ REFGUID guidKey
         )
     {
         return m_spAttributes->DeleteItem(guidKey);
     }
 
-    STDMETHOD(DeleteAllItems)()
+    IFACEMETHODIMP DeleteAllItems()
     {
         return m_spAttributes->DeleteAllItems();
     }
 
-    STDMETHOD(SetUINT32)(
+    IFACEMETHODIMP SetUINT32(
         _In_ REFGUID guidKey,
         _In_ UINT32  unValue
         )
@@ -278,7 +274,7 @@ public:
         return m_spAttributes->SetUINT32(guidKey, unValue);
     }
 
-    STDMETHOD(SetUINT64)(
+    IFACEMETHODIMP SetUINT64(
         _In_ REFGUID guidKey,
         _In_ UINT64  unValue
         )
@@ -286,7 +282,7 @@ public:
         return m_spAttributes->SetUINT64(guidKey, unValue);
     }
 
-    STDMETHOD(SetDouble)(
+    IFACEMETHODIMP SetDouble(
         _In_ REFGUID guidKey,
         _In_ double  fValue
         )
@@ -294,7 +290,7 @@ public:
         return m_spAttributes->SetDouble(guidKey, fValue);
     }
 
-    STDMETHOD(SetGUID)(
+    IFACEMETHODIMP SetGUID(
         _In_ REFGUID guidKey,
         _In_ REFGUID guidValue
         )
@@ -302,7 +298,7 @@ public:
         return m_spAttributes->SetGUID(guidKey, guidValue);
     }
 
-    STDMETHOD(SetString)(
+    IFACEMETHODIMP SetString(
         _In_ REFGUID guidKey,
         _In_ LPCWSTR wszValue
         )
@@ -310,7 +306,7 @@ public:
         return m_spAttributes->SetString(guidKey, wszValue);
     }
 
-    STDMETHOD(SetBlob)(
+    IFACEMETHODIMP SetBlob(
         _In_ REFGUID guidKey,
         _In_reads_(cbBufSize) const UINT8* pBuf,
         UINT32 cbBufSize
@@ -319,7 +315,7 @@ public:
         return m_spAttributes->SetBlob(guidKey, pBuf, cbBufSize);
     }
 
-    STDMETHOD(SetUnknown)(
+    IFACEMETHODIMP SetUnknown(
         _In_ REFGUID guidKey,
         _In_ IUnknown* pUnknown
         )
@@ -327,24 +323,24 @@ public:
         return m_spAttributes->SetUnknown(guidKey, pUnknown);
     }
 
-    STDMETHOD(LockStore)()
+    IFACEMETHODIMP LockStore()
     {
         return m_spAttributes->LockStore();
     }
 
-    STDMETHOD(UnlockStore)()
+    IFACEMETHODIMP UnlockStore()
     {
         return m_spAttributes->UnlockStore();
     }
 
-    STDMETHOD(GetCount)(
+    IFACEMETHODIMP GetCount(
         _Out_ UINT32* pcItems
         )
     {
         return m_spAttributes->GetCount(pcItems);
     }
 
-    STDMETHOD(GetItemByIndex)(
+    IFACEMETHODIMP GetItemByIndex(
         UINT32 unIndex,
         _Out_ GUID* pguidKey,
         _Inout_ PROPVARIANT* pValue
@@ -353,7 +349,7 @@ public:
         return m_spAttributes->GetItemByIndex(unIndex, pguidKey, pValue);
     }
 
-    STDMETHOD(CopyAllItems)(
+    IFACEMETHODIMP CopyAllItems(
         _In_ IMFAttributes* pDest
         )
     {
@@ -395,22 +391,22 @@ public:
         return hr;
     }
 
-    __inline  STDMETHOD (getPinAttributes) (_In_ IMFAttributes **ppAttributes)
+    __inline  IFACEMETHODIMP getPinAttributes (_In_ IMFAttributes **ppAttributes)
     {
         return QueryInterface( IID_PPV_ARGS(ppAttributes) );
     }
 
-    STDMETHOD(AddMediaType)(
+    IFACEMETHODIMP AddMediaType(
         _Inout_ DWORD *pos,
         _In_ IMFMediaType *pMediatype);      /*Filling the media types data structure*/
-    STDMETHODIMP GetMediaTypeAt(
+    IFACEMETHODIMP GetMediaTypeAt(
          _In_ DWORD pos,
          _Outptr_result_maybenull_ IMFMediaType **pMediaType);   /* getting the data from the data structure*/
-    STDMETHOD_(BOOL, IsMediaTypeSupported)(
+    IFACEMETHODIMP_(BOOL) IsMediaTypeSupported(
         _In_ IMFMediaType *pMediaType, 
         _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
         IMFMediaType **ppIMFMediaTypeFull);
-    STDMETHODIMP GetOutputAvailableType(
+    IFACEMETHODIMP GetOutputAvailableType(
         _In_ DWORD dwTypeIndex,
         _Out_opt_ IMFMediaType **ppType);
 
@@ -457,19 +453,19 @@ public:
     CInPin( _In_opt_ IMFAttributes*, _In_ ULONG ulPinId = 0, _In_ CMultipinMft *pParent=NULL);
     ~CInPin();
 
-    STDMETHOD ( Init )(
+    IFACEMETHODIMP Init(
         _In_ IMFDeviceTransform * 
         );
-    STDMETHOD_( VOID, ConnectPin)(
+    IFACEMETHODIMP_(VOID) ConnectPin(
         _In_ CBasePin * 
         );
-    STDMETHOD (SendSample)(
+    IFACEMETHODIMP SendSample(
         _In_ IMFSample *
         );
     HRESULT GenerateMFMediaTypeListFromDevice(
         _In_ UINT uiStreamId
         );
-    STDMETHODIMP WaitForSetInputPinMediaChange(
+    IFACEMETHODIMP WaitForSetInputPinMediaChange(
         );
     //
     //Corresponding IMFDeviceTransform functions for the Pin
@@ -484,7 +480,7 @@ public:
         _In_ DWORD dwFlags
         );
 
-    virtual STDMETHODIMP FlushQueues()
+    virtual IFACEMETHODIMP FlushQueues()
     {
         return S_OK;
     }
@@ -508,7 +504,7 @@ public:
         return m_preferredStreamState;
     }
 
-    STDMETHOD_( VOID, ShutdownPin)();
+    IFACEMETHODIMP_( VOID) ShutdownPin();
 
 protected:
     ComPtr<IMFDeviceTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
@@ -530,33 +526,33 @@ public:
         _In_     IKsControl*   iksControl=NULL
     );
     ~COutPin();
-    STDMETHODIMP FlushQueues();
-    STDMETHODIMP AddPin(
+    IFACEMETHODIMP FlushQueues();
+    IFACEMETHODIMP AddPin(
         _In_ DWORD pinId
         );
-    virtual STDMETHODIMP AddSample(
+    virtual IFACEMETHODIMP AddSample(
         _In_ IMFSample *pSample,
         _In_ CBasePin *inPin
         );
-    STDMETHODIMP GetOutputStreamInfo(
+    IFACEMETHODIMP GetOutputStreamInfo(
         _Out_  MFT_OUTPUT_STREAM_INFO *pStreamInfo
         );
-    virtual STDMETHODIMP ChangeMediaTypeFromInpin(
+    virtual IFACEMETHODIMP ChangeMediaTypeFromInpin(
         _In_ IMFMediaType* pOutMediaType,
         _In_ DeviceStreamState state );
-    STDMETHODIMP  ProcessOutput (
+    IFACEMETHODIMP  ProcessOutput (
         _In_      DWORD dwFlags,
         _Inout_   MFT_OUTPUT_DATA_BUFFER  *pOutputSample,
         _Out_     DWORD                   *pdwStatus
         );
-    STDMETHODIMP KsProperty(
+    IFACEMETHODIMP KsProperty(
         _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
         _In_ ULONG ulPropertyLength,
         _Inout_updates_bytes_(ulDataLength) LPVOID pPropertyData,
         _In_ ULONG ulDataLength,
         _Out_opt_ ULONG* pBytesReturned
         );
-    STDMETHODIMP_(VOID) SetFirstSample(
+    IFACEMETHODIMP_(VOID) SetFirstSample(
         _In_    BOOL 
         );
 

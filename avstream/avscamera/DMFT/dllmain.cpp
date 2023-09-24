@@ -1,3 +1,6 @@
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
 //////////////////////////////////////////////////////////////////////////
 //
 // dllmain.cpp : Implements DLL exports and COM class factory
@@ -67,7 +70,7 @@ struct CLASS_OBJECT_INIT
 // Classes supported by this module:
 const CLASS_OBJECT_INIT c_rgClassObjectInit[] =
 {
-    { &CLSID_MultiPinMFT, MFT_CreateInstance },
+    { &CLSID_AvsCameraDMFT, MFT_CreateInstance },
 };
 
 class CClassFactory : public IClassFactory
@@ -185,7 +188,7 @@ private:
 // Standard DLL functions
 //
 
-STDMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *)
+IFACEMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void*)
 {
     if (dwReason == DLL_PROCESS_ATTACH)
     {
@@ -205,7 +208,7 @@ STDMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *)
     return TRUE;
 }
 
-STDMETHODIMP DllCanUnloadNow()
+IFACEMETHODIMP DllCanUnloadNow()
 {
     HRESULT hr = ((g_cRefModule == 0) && (CDMFTModuleLifeTimeManager::GetDMFTObjCount() == 0)) ? S_OK : S_FALSE;
     //
@@ -226,27 +229,27 @@ STDAPI  DllGetClassObject(_In_ REFCLSID clsid, _In_ REFIID riid, _Outptr_ LPVOID
     return CClassFactory::CreateInstance(clsid, c_rgClassObjectInit, ARRAYSIZE(c_rgClassObjectInit), riid, ppv);
 }
 
-STDMETHODIMP DllRegisterServer()
+IFACEMETHODIMP DllRegisterServer()
 {
     assert(g_hModule != NULL);
 
     // Register the CLSID for CoCreateInstance.
-    HRESULT hr = RegisterObject(g_hModule, CLSID_MultiPinMFT, TEXT("Multiple MFTs"), TEXT("Both"));
+    HRESULT hr = RegisterObject(g_hModule, CLSID_AvsCameraDMFT, TEXT("Multiple MFTs"), TEXT("Both"));
 
     return hr;
 }
 
-STDMETHODIMP DllUnregisterServer()
+IFACEMETHODIMP DllUnregisterServer()
 {
     // Unregister the CLSID.
-    UnregisterObject(CLSID_MultiPinMFT);
+    UnregisterObject(CLSID_AvsCameraDMFT);
 
     return S_OK;
 }
 
 
 // Converts a CLSID into a string with the form "CLSID\{clsid}"
-STDMETHODIMP CreateObjectKeyName(REFGUID guid, _Out_writes_(cchMax) PWSTR pszName, DWORD cchMax)
+IFACEMETHODIMP CreateObjectKeyName(REFGUID guid, _Out_writes_(cchMax) PWSTR pszName, DWORD cchMax)
 {
     const DWORD chars_in_guid = 39;
 
@@ -262,7 +265,7 @@ STDMETHODIMP CreateObjectKeyName(REFGUID guid, _Out_writes_(cchMax) PWSTR pszNam
 }
 
 // Creates a registry key (if needed) and sets the default value of the key
-STDMETHODIMP CreateRegKeyAndValue(HKEY hKey, PCWSTR pszSubKeyName, PCWSTR pszValueName,
+IFACEMETHODIMP CreateRegKeyAndValue(HKEY hKey, PCWSTR pszSubKeyName, PCWSTR pszValueName,
     PCWSTR pszData, PHKEY phkResult)
 {
     *phkResult = NULL;
