@@ -6,3 +6,24 @@
 
 # Root files
 /* @microsoft/driver-samples-maintainers
+
+# Connection Awareness
+/gnss/ @microsoft/connection-awareness
+/network/radio/ @microsoft/connection-awareness
+
+# Core Networking
+/network/wsk/ @microsoft/corenetworking
+
+# Event Tracing for Windows
+/general/perfcounters/ @microsoft/etw
+/general/tracing/ @microsoft/etw
+
+# Filter Manager
+/filesys/miniFilter/ @microsoft/filter-manager
+
+# Storage
+/storage/ @microsoft/storage-core
+
+# Windows Internet of Things
+/pos/ @microsoft/winiotdev
+/wpd/ @microsoft/winiotdev
