@@ -56,6 +56,7 @@ Environment:
 #define CSQ_KEY_NAME_DELAY                L"OperatingDelay"
 #define CSQ_KEY_NAME_PATH                 L"OperatingPath"
 #define CSQ_KEY_NAME_DEBUG_LEVEL          L"DebugLevel"
+#define CSQ_KEY_NAME_USE_PARAMETERS       L"UseParameters"
 #define CSQ_MAX_PATH_LENGTH               256
 
 
@@ -457,6 +458,31 @@ DriverEntryCleanup:
     return Status;
 }
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey)(
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+GetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
 
 NTSTATUS
 SetConfiguration (
@@ -485,7 +511,7 @@ Return Value:
 --*/
 {
     NTSTATUS Status;
-    OSVERSIONINFOW versionInfo;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
     OBJECT_ATTRIBUTES Attributes;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING ValueName;
@@ -496,42 +522,55 @@ Return Value:
     ULONG ResultLength;
     ULONG Length;
 
-    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
-
     //
-    // Determine the OS version being run.
+    // Determine if parameters key should be used. Downlevel OS versions may not
+    // have IoOpenDriverRegistryKey present, so this must by dynamically loaded
+    // to determine the correct behavior.
     //
+    pIoOpenDriverRegistryKey = GetIoOpenDriverRegistryKey();
 
-    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
+    if (pIoOpenDriverRegistryKey != NULL) {
+        //
+        // Open the parameters key.
+        //
+        Status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &DriverRegKey );
 
-    Status = RtlGetVersion( &versionInfo );
+        if (NT_SUCCESS( Status )) {
+            //
+            // Query value to determine that parameters subkey should be used.
+            //
+            RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_USE_PARAMETERS );
 
-    if (!NT_SUCCESS( Status )) {
+            Status = ZwQueryValueKey( DriverRegKey,
+                                      &ValueName,
+                                      KeyValuePartialInformation,
+                                      Value,
+                                      ValueLength,
+                                      &ResultLength );
 
-        goto SetConfigurationCleanup;
+            //
+            // If the UseParameters value cannot be found or is not set correctly,
+            // close the parameters key and read values from the legacy locations.
+            //
+            if ((!NT_SUCCESS( Status )) || (*(PULONG)(Value->Data) != 1)) {
+                ZwClose( DriverRegKey );
+                DriverRegKey = NULL;
+
+            } else {
+                CloseHandle = TRUE;
+            }
+        }
     }
 
     //
-    // Open corresponding registry root.
-    // NOTE: Build number should match the INF file.
+    // Open legacy registry root if the modern one was not opened earlier.
     //
 
-    if (versionInfo.dwBuildNumber >= 25900) {
-        //
-        // Open the Parameters key for the service.
-        //
-
-        Status = IoOpenDriverRegistryKey( DriverObject,
-                                          DriverRegKeyParameters,
-                                          KEY_READ,
-                                          0,
-                                          &DriverRegKey );
-
-        if (!NT_SUCCESS( Status )) {
-
-            goto SetConfigurationCleanup;
-        }
-    } else {
+    if (DriverRegKey == NULL) {
         //
         //  Open the legacy driver registry key.
         //
@@ -550,12 +589,13 @@ Return Value:
 
             goto SetConfigurationCleanup;
         }
+
+        CloseHandle = TRUE;
     }
 
-    CloseHandle = TRUE;
 
     //
-    //  Query the debug level
+    //  Query the debug level.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DEBUG_LEVEL );
@@ -574,7 +614,7 @@ Return Value:
 
 
     //
-    //  Query the queue time delay
+    //  Query the queue time delay.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DELAY );
@@ -599,7 +639,7 @@ Return Value:
     }
 
     //
-    // Query the mapping path
+    // Query the mapping path.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_PATH );
