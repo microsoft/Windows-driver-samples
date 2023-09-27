@@ -244,7 +244,7 @@ Return Value:
     //  Open the desired registry key
     //
 
-    if (versionInfo.dwBuildNumber >= 25900) {
+    if (versionInfo.dwBuildNumber >= 25952) {
         //
         // Open the Parameters key for the service.
         //
