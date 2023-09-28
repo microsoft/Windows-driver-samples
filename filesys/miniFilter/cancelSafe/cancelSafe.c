@@ -56,7 +56,6 @@ Environment:
 #define CSQ_KEY_NAME_DELAY                L"OperatingDelay"
 #define CSQ_KEY_NAME_PATH                 L"OperatingPath"
 #define CSQ_KEY_NAME_DEBUG_LEVEL          L"DebugLevel"
-#define CSQ_KEY_NAME_USE_PARAMETERS       L"UseParameters"
 #define CSQ_MAX_PATH_LENGTH               256
 
 
@@ -186,6 +185,28 @@ InstanceTeardownComplete (
     _In_ FLT_INSTANCE_TEARDOWN_FLAGS Flags
     );
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+GetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+OpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 NTSTATUS
 SetConfiguration (
     _In_ PDRIVER_OBJECT DriverObject,
@@ -271,6 +292,8 @@ PreReadEmptyQueueAndComplete(
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)
+#pragma alloc_text(INIT, GetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, OpenServiceParametersKey)
 #pragma alloc_text(INIT, SetConfiguration)
 #pragma alloc_text(PAGE, Unload)
 #pragma alloc_text(PAGE, FreeGlobals)
@@ -458,16 +481,6 @@ DriverEntryCleanup:
     return Status;
 }
 
-typedef
-NTSTATUS
-(*PFN_IoOpenDriverRegistryKey)(
-    PDRIVER_OBJECT     DriverObject,
-    DRIVER_REGKEY_TYPE RegKeyType,
-    ACCESS_MASK        DesiredAccess,
-    ULONG              Flags,
-    PHANDLE            DriverRegKey
-    );
-
 PFN_IoOpenDriverRegistryKey
 GetIoOpenDriverRegistryKey (
     VOID
@@ -477,11 +490,133 @@ GetIoOpenDriverRegistryKey (
     UNICODE_STRING FunctionName = {0};
 
     if (pIoOpenDriverRegistryKey == NULL) {
+
         RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
         pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
     }
 
     return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+OpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS Status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible.
+    //
+
+    pIoOpenDriverRegistryKey = GetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API.
+        //
+
+        Status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key.
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        Status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path.
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        Status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller.
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+OpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return Status;
+
 }
 
 NTSTATUS
@@ -511,8 +646,6 @@ Return Value:
 --*/
 {
     NTSTATUS Status;
-    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
-    OBJECT_ATTRIBUTES Attributes;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING ValueName;
     BOOLEAN CloseHandle = FALSE;
@@ -523,76 +656,19 @@ Return Value:
     ULONG Length;
 
     //
-    // Determine if parameters key should be used. Downlevel OS versions may not
-    // have IoOpenDriverRegistryKey present, so this must by dynamically loaded
-    // to determine the correct behavior.
+    //  Open service parameters key to query values from.
     //
-    pIoOpenDriverRegistryKey = GetIoOpenDriverRegistryKey();
 
-    if (pIoOpenDriverRegistryKey != NULL) {
-        //
-        // Open the parameters key.
-        //
-        Status = pIoOpenDriverRegistryKey( DriverObject,
-                                           DriverRegKeyParameters,
-                                           KEY_READ,
-                                           0,
-                                           &DriverRegKey );
+    Status = OpenServiceParametersKey( DriverObject,
+                                       RegistryPath,
+                                       &DriverRegKey );
 
-        if (NT_SUCCESS( Status )) {
-            //
-            // Query value to determine that parameters subkey should be used.
-            //
-            RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_USE_PARAMETERS );
+    if (!NT_SUCCESS( Status )) {
 
-            Status = ZwQueryValueKey( DriverRegKey,
-                                      &ValueName,
-                                      KeyValuePartialInformation,
-                                      Value,
-                                      ValueLength,
-                                      &ResultLength );
-
-            //
-            // If the UseParameters value cannot be found or is not set correctly,
-            // close the parameters key and read values from the legacy locations.
-            //
-            if ((!NT_SUCCESS( Status )) || (*(PULONG)(Value->Data) != 1)) {
-                ZwClose( DriverRegKey );
-                DriverRegKey = NULL;
-
-            } else {
-                CloseHandle = TRUE;
-            }
-        }
+        goto SetConfigurationCleanup;
     }
 
-    //
-    // Open legacy registry root if the modern one was not opened earlier.
-    //
-
-    if (DriverRegKey == NULL) {
-        //
-        //  Open the legacy driver registry key.
-        //
-
-        InitializeObjectAttributes( &Attributes,
-                                    RegistryPath,
-                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                    NULL,
-                                    NULL );
-
-        Status = ZwOpenKey( &DriverRegKey,
-                            KEY_READ,
-                            &Attributes );
-
-        if (!NT_SUCCESS( Status )) {
-
-            goto SetConfigurationCleanup;
-        }
-
-        CloseHandle = TRUE;
-    }
-
+    CloseHandle = TRUE;
 
     //
     //  Query the debug level.
@@ -611,7 +687,6 @@ Return Value:
 
         Globals.DebugLevel = *(PULONG)(Value->Data);
     }
-
 
     //
     //  Query the queue time delay.
@@ -639,7 +714,7 @@ Return Value:
     }
 
     //
-    // Query the mapping path.
+    //  Query the mapping path.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_PATH );
