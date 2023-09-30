@@ -34,6 +34,29 @@ DriverEntry (
     _In_ PUNICODE_STRING RegistryPath
     );
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+AvGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+AvOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
+
 NTSTATUS
 AvSetConfiguration (
     _In_ PDRIVER_OBJECT DriverObject,
@@ -202,6 +225,8 @@ AvSendUnloadingToUser (
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)
+#pragma alloc_text(INIT, AvGetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, AvOpenServiceParametersKey)
 #pragma alloc_text(INIT, AvSetConfiguration)
 #pragma alloc_text(PAGE, AvUnload)
 #pragma alloc_text(PAGE, AvInstanceQueryTeardown)
@@ -3028,6 +3053,144 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
+PFN_IoOpenDriverRegistryKey
+AvGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+AvOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS Status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = AvGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        Status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        Status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        Status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+OpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return Status;
+
+}
+
 NTSTATUS
 AvSetConfiguration (
     _In_ PDRIVER_OBJECT DriverObject,
@@ -3054,8 +3217,6 @@ Return Value:
 --*/
 {
     NTSTATUS status;
-    OSVERSIONINFOW versionInfo;
-    OBJECT_ATTRIBUTES attributes;
     HANDLE settingsKey = NULL;
     UNICODE_STRING valueName;
     UCHAR buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + sizeof(ULONG)];
@@ -3063,61 +3224,17 @@ Return Value:
     ULONG valueLength = sizeof(buffer);
     ULONG resultLength;
 
-    RtlZeroMemory( &versionInfo, sizeof( versionInfo ) );
-
     //
-    // Determine the OS version being run.
+    //  Open service parameters key to query values from
     //
 
-    versionInfo.dwOSVersionInfoSize = sizeof( versionInfo );
-
-    status = RtlGetVersion( &versionInfo );
+    status = AvOpenServiceParametersKey( DriverObject,
+                                         RegistryPath,
+                                         &settingsKey );
 
     if (!NT_SUCCESS( status )) {
 
         goto Cleanup;
-    }
-
-    //
-    // Open corresponding registry root.
-    // NOTE: Build number should match the INF file.
-    //
-
-    if (versionInfo.dwBuildNumber >= 25952) {
-        //
-        // Open the Parameters key for the service.
-        //
-
-        status = IoOpenDriverRegistryKey( DriverObject,
-                                          DriverRegKeyParameters,
-                                          KEY_READ,
-                                          0,
-                                          &settingsKey );
-
-        if (!NT_SUCCESS( status )) {
-
-            goto Cleanup;
-        }
-
-    } else {
-        //
-        //  Open the legacy settings registry key.
-        //
-
-        InitializeObjectAttributes( &attributes,
-                                    RegistryPath,
-                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                    NULL,
-                                    NULL );
-
-        status = ZwOpenKey( &settingsKey,
-                            KEY_READ,
-                            &attributes );
-
-        if (!NT_SUCCESS( status )) {
-
-            goto Cleanup;
-        }
     }
 
 #if DBG

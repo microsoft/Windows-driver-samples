@@ -665,10 +665,9 @@ Return Value:
 
     if (!NT_SUCCESS( Status )) {
 
+        DriverRegKey = NULL;
         goto SetConfigurationCleanup;
     }
-
-    CloseHandle = TRUE;
 
     //
     //  Query the debug level.
@@ -789,7 +788,7 @@ Return Value:
 
 SetConfigurationCleanup:
 
-    if (CloseHandle) {
+    if (DriverRegKey != NULL) {
 
         ZwClose( DriverRegKey );
     }
