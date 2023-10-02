@@ -648,7 +648,6 @@ Return Value:
     NTSTATUS Status;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING ValueName;
-    BOOLEAN CloseHandle = FALSE;
     UCHAR Buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + CSQ_MAX_PATH_LENGTH  * sizeof(WCHAR)];
     PKEY_VALUE_PARTIAL_INFORMATION Value = (PKEY_VALUE_PARTIAL_INFORMATION)Buffer;
     ULONG ValueLength = sizeof(Buffer);
