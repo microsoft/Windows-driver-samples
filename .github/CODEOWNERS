@@ -7,6 +7,13 @@
 # Root files
 /* @microsoft/driver-samples-maintainers
 
+# Bluetooth
+/bluetooth/ @microsoft/bluetooth
+
+# Cellular Core
+/network/wwan/ @microsoft/cellcore
+/nfc/ @microsoft/cellcore
+
 # Connection Awareness
 /gnss/ @microsoft/connection-awareness
 /network/radio/ @microsoft/connection-awareness
@@ -20,6 +27,9 @@
 
 # Filter Manager
 /filesys/miniFilter/ @microsoft/filter-manager
+
+# Platform Integrity
+/security/ @microsoft/platform-integrity
 
 # Storage
 /storage/ @microsoft/storage-core
