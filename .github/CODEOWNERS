@@ -10,6 +10,12 @@
 # Bluetooth
 /bluetooth/ @microsoft/bluetooth
 
+# Camera Platform
+/avstream/avscamera/ @microsoft/cameraplatdev
+/avstream/avssamp/ @microsoft/cameraplatdev
+/avstream/avshws/ @microsoft/cameraplatdev
+/general/SimpleMediaSource/ @microsoft/cameraplatdev
+
 # Cellular Core
 /network/wwan/ @microsoft/cellcore
 /nfc/ @microsoft/cellcore
@@ -27,6 +33,9 @@
 
 # Filter Manager
 /filesys/miniFilter/ @microsoft/filter-manager
+
+# Indirect Display
+/video/IndirectDisplay/ @microsoft/indirectdisplay-devs
 
 # Platform Integrity
 /security/ @microsoft/platform-integrity
