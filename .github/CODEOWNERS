@@ -7,13 +7,14 @@
 # Root files
 /* @microsoft/driver-samples-maintainers
 
+# Audio
+/audio @microsoft/windowsaudio
+
 # Bluetooth
 /bluetooth/ @microsoft/bluetooth
 
 # Camera Platform
-/avstream/avscamera/ @microsoft/cameraplatdev
-/avstream/avssamp/ @microsoft/cameraplatdev
-/avstream/avshws/ @microsoft/cameraplatdev
+/avstream/ @microsoft/cameraplatdev
 /general/SimpleMediaSource/ @microsoft/cameraplatdev
 
 # Cellular Core
@@ -36,6 +37,9 @@
 
 # Indirect Display
 /video/IndirectDisplay/ @microsoft/indirectdisplay-devs
+
+# Network Security
+/network/trans @microsoft/netsec
 
 # Platform Integrity
 /security/ @microsoft/platform-integrity
