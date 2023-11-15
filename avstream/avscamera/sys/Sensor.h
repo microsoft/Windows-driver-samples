@@ -284,7 +284,7 @@ public:
     // Pause():
     //
     // Called to pause or unpause the hardware simulation.  This will be
-    // indentical to a start or stop but it will not reset formats and
+    // identical to a start or stop but it will not reset formats and
     // counters.
     //
     NTSTATUS
