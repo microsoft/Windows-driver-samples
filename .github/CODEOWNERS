@@ -38,6 +38,9 @@
 # Indirect Display
 /video/IndirectDisplay/ @microsoft/indirectdisplay-devs
 
+# Kernel Core
+/general/registry/ @microsoft/kernel-core
+
 # Network Security
 /network/trans @microsoft/netsec
 
