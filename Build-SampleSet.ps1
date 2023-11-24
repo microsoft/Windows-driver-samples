@@ -178,6 +178,7 @@ $sw.Stop()
 
 if ($jresult.FailSet.Count -gt 0) {
     Write-Output "Some combinations were built with errors:"
+    $jresult.FailSet = $jresult.FailSet | Sort-Object
     foreach ($failedSample in $jresult.FailSet) {
         $failedSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
         $failName = $Matches[1]
