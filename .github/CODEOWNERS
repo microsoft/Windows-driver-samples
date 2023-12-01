@@ -28,6 +28,10 @@
 # Core Networking
 /network/wsk/ @microsoft/corenetworking
 
+# Consumer Storage
+/sd/ @microsoft/consumer-storage
+/smartcrd/ @microsoft/consumer-storage
+
 # Event Tracing for Windows
 /general/perfcounters/ @microsoft/etw
 /general/tracing/ @microsoft/etw
@@ -46,6 +50,9 @@
 
 # Platform Integrity
 /security/ @microsoft/platform-integrity
+
+# Sensors Platform
+/sensors/ @microsoft/sensors-platform
 
 # Storage
 /storage/ @microsoft/storage-core
