@@ -15,6 +15,7 @@ properties:
         - vsPackage
       directives:
         description: Install required VS workloads
+        maxVersion: "1.0.15"
         allowPrerelease: true
       settings:
         productId: Microsoft.VisualStudio.Product.Community
