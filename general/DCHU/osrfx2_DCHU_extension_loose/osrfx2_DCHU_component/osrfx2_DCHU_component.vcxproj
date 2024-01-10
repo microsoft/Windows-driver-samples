@@ -74,8 +74,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -86,8 +84,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -98,8 +94,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -110,8 +104,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -122,8 +114,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
@@ -134,8 +124,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
@@ -146,8 +134,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
@@ -158,8 +144,6 @@
     <DriverType>Package</DriverType>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
-    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
     <SupportsPackaging>true</SupportsPackaging>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
