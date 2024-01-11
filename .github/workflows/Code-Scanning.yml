@@ -54,6 +54,8 @@ jobs:
         WDS_WipeOutputs: ${{ true }}
 
     - name: Perform CodeQL analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
+        packs: microsoft/windows-drivers-packs-beta
         category: "/language:${{matrix.language}}"
+      
