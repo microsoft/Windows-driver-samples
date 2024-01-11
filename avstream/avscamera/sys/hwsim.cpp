@@ -796,6 +796,7 @@ bool
 CHardwareSimulation::
 CheckForAvailableBuffer()
 {
+    PAGED_CODE();
     return true;
 }
 
@@ -803,6 +804,7 @@ NTSTATUS
 CHardwareSimulation::
 CommitImageData(PSCATTER_GATHER_ENTRY sGEntry, ULONG stride)
 {
+    PAGED_CODE();
     //  Have the synthesizer output a frame to the buffer.
     ULONG CommitBufferSize = sGEntry->ByteCount;
     PUCHAR CommitBufferAddress = sGEntry->Virtual;
@@ -818,6 +820,7 @@ NTSTATUS
 CHardwareSimulation::
 ValidateBuffer(PSCATTER_GATHER_ENTRY sGEntry)
 {
+    PAGED_CODE();
     return STATUS_SUCCESS;
 }
 

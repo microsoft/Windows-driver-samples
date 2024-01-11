@@ -230,7 +230,7 @@ SerenumDoEnumProtocol(
    LOGENTRY(LOG_ENUM, 'SDEP', PFdoData,  PpBuf, PDSRMissing);
 
 
-   pReadBuf = ExAllocatePoolWithTag(NonPagedPoolNx, MAX_DEVNODE_NAME + sizeof(CHAR) ,SERENUM_POOL_TAG);
+   pReadBuf = ExAllocatePoolZero(NonPagedPoolNx, MAX_DEVNODE_NAME + sizeof(CHAR) ,SERENUM_POOL_TAG);
    
    if (pReadBuf == NULL) {
       status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1580,7 +1580,7 @@ Return Value:
 
     length = sizeof(KEY_VALUE_FULL_INFORMATION) + KeyNameStringLength
       + DataLength;
-    fullInfo = ExAllocatePoolWithTag(PagedPool, length,SERENUM_POOL_TAG);
+    fullInfo = ExAllocatePoolZero(PagedPool, length,SERENUM_POOL_TAG);
 
     if (ActualLength != NULL) {
        *ActualLength = 0;

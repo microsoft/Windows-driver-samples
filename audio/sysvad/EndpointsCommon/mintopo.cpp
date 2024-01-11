@@ -581,6 +581,100 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 NTSTATUS
+CMiniportTopology::PropertyHandlerJackDescription3
+( 
+    _In_        PPCPROPERTY_REQUEST                      PropertyRequest,
+    _In_        ULONG                                    cJackDescriptions,
+    _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION *  JackDescriptions,
+    _In_        ULONG                                    ConfigId
+)
+/*++
+
+Routine Description:
+
+  Handles ( KSPROPSETID_Jack, KSPROPERTY_JACK_DESCRIPTION3 )
+
+Arguments:
+
+  PropertyRequest       - 
+  cJackDescriptions     - # of elements in the jack descriptions array. 
+  JackDescriptions      - Array of jack descriptions pointers. 
+  ConfigId              - Current endpoint config id
+
+Return Value:
+
+  NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandlerJackDescription3]"));
+
+    NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    ULONG    nPinId = (ULONG)-1;
+
+    if (PropertyRequest->InstanceSize >= sizeof(ULONG))
+    {
+        nPinId = *(PULONG(PropertyRequest->Instance));
+
+        if ((nPinId < cJackDescriptions) && (JackDescriptions[nPinId] != NULL))
+        {
+            if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+            {
+                ntStatus = 
+                    PropertyHandler_BasicSupport
+                    (
+                        PropertyRequest,
+                        KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_GET,
+                        VT_ILLEGAL
+                    );
+            }
+            else
+            {
+                ULONG cbNeeded = sizeof(KSMULTIPLE_ITEM) + sizeof(KSJACK_DESCRIPTION3);
+
+                if (PropertyRequest->ValueSize == 0)
+                {
+                    PropertyRequest->ValueSize = cbNeeded;
+                    ntStatus = STATUS_BUFFER_OVERFLOW;
+                }
+                else if (PropertyRequest->ValueSize < cbNeeded)
+                {
+                    ntStatus = STATUS_BUFFER_TOO_SMALL;
+                }
+                else
+                {
+                    if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                    {
+                        PKSMULTIPLE_ITEM pMI = (PKSMULTIPLE_ITEM)PropertyRequest->Value;
+                        PKSJACK_DESCRIPTION3 pDesc = (PKSJACK_DESCRIPTION3)(pMI+1);
+
+                        pMI->Size = cbNeeded;
+                        pMI->Count = 1;
+                        
+                        RtlZeroMemory(pDesc, sizeof(KSJACK_DESCRIPTION3));
+
+                        //
+                        // hardware config id
+                        //
+                        pDesc->ConfigId = ConfigId;
+
+                        ntStatus = STATUS_SUCCESS;
+                    }
+                }
+            }
+        }
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+#pragma code_seg("PAGE")
+NTSTATUS
 CMiniportTopology::PropertyHandlerAudioResourceGroup
 ( 
     _In_        PPCPROPERTY_REQUEST         PropertyRequest

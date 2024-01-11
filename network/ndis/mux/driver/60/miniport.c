@@ -710,25 +710,23 @@ Return Value:
                                                  NDIS_STATISTICS_FLAGS_VALID_RCV_ERROR             |
                                                  NDIS_STATISTICS_FLAGS_VALID_XMIT_ERROR;
                     
-            StatisticsInfo.ifInDiscards = pVElan->RcvCrcErrors +
-                                          pVElan->RcvAlignmentErrors +
-                                          pVElan->RcvResourceErrors +
-                                          pVElan->RcvDmaOverrunErrors +
-                                          pVElan->RcvRuntErrors;
+            StatisticsInfo.ifInDiscards =
+                (ULONG64)pVElan->RcvCrcErrors +
+                (ULONG64)pVElan->RcvAlignmentErrors +
+                (ULONG64)pVElan->RcvResourceErrors +
+                (ULONG64)pVElan->RcvDmaOverrunErrors +
+                (ULONG64)pVElan->RcvRuntErrors;
 
 #if IEEE_VLAN_SUPPORT
-            StatisticsInfo.ifInDiscards += (pVElan->RcvVlanIdErrors +
-                                            pVElan->RcvFormatErrors);
+            StatisticsInfo.ifInDiscards += ((ULONG64)pVElan->RcvVlanIdErrors + (ULONG64)pVElan->RcvFormatErrors);
 #endif
-            
             StatisticsInfo.ifInErrors = StatisticsInfo.ifInDiscards -
-                                            pVElan->RcvResourceErrors;
+                (ULONG64)pVElan->RcvResourceErrors;
 
-            
-            StatisticsInfo.ifOutErrors = pVElan->TxAbortExcessCollisions +
-                                         pVElan->TxDmaUnderrun +
-                                         pVElan->TxLostCRS +
-                                         pVElan->TxLateCollisions;
+            StatisticsInfo.ifOutErrors = (ULONG64)pVElan->TxAbortExcessCollisions +
+                (ULONG64)pVElan->TxDmaUnderrun +
+                (ULONG64)pVElan->TxLostCRS +
+                (ULONG64)pVElan->TxLateCollisions;
 
             pInfo = &StatisticsInfo;
             break;

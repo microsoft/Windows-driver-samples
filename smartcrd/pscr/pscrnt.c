@@ -406,8 +406,8 @@ PscrRegisterWithSmcLib(
     SmartcardExtension = &DeviceExtension->SmartcardExtension;
 
    //   allocate the reader extension
-    ReaderExtension = ExAllocatePoolWithTag(
-                                    NonPagedPoolNx,
+    ReaderExtension = ExAllocatePool2(
+                                    POOL_FLAG_NON_PAGED,
                                     sizeof( READER_EXTENSION ),
                                     SMARTCARD_POOL_TAG
                                     );

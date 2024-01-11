@@ -1,3 +1,0 @@
-LIBRARY        ThemeUISmpl
-EXPORTS        DllGetClassObject   PRIVATE
-               DllCanUnloadNow     PRIVATE

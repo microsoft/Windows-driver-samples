@@ -1,8 +1,0 @@
-LIBRARY      "FilterSample.DLL"
-
-EXPORTS
-        DllGetClassObject     PRIVATE
-        DllCanUnloadNow       PRIVATE
-
-
-

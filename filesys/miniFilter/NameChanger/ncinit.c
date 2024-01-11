@@ -15,7 +15,31 @@ NcIs8DOT3Compatible (
     _In_opt_ PUNICODE_STRING LongName
     );
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+NcGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+NcOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 #ifdef ALLOC_PRAGMA
+#pragma alloc_text(INIT, NcGetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, NcOpenServiceParametersKey)
 #pragma alloc_text(INIT, NcInitializeMapping)
 #pragma alloc_text(INIT, NcLoadRegistryString)
 #pragma alloc_text(INIT, NcIs8DOT3Compatible)
@@ -278,8 +302,147 @@ NcIs8DOT3Compatible (
 
 }
 
+PFN_IoOpenDriverRegistryKey
+NcGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+NcOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = NcGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+cleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
 NTSTATUS
 NcInitializeMapping(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -292,6 +455,9 @@ Routine Descrition:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -301,7 +467,6 @@ Return Value:
 --*/
 {
     NTSTATUS Status;
-    OBJECT_ATTRIBUTES Attributes;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING TempPath = EMPTY_UNICODE_STRING;
     USHORT Index;
@@ -311,22 +476,16 @@ Return Value:
     RtlZeroMemory( &NcGlobalData, sizeof( NcGlobalData ));
 
     //
-    //  Open the mapping registry key.
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &Attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
-
-    Status = ZwOpenKey( &DriverRegKey,
-                        KEY_READ,
-                        &Attributes );
+    Status = NcOpenServiceParametersKey( DriverObject,
+                                         RegistryPath,
+                                         &DriverRegKey );
 
     if (!NT_SUCCESS( Status )) {
 
-        FLT_ASSERT( DriverRegKey == NULL );
+        DriverRegKey = NULL;
         goto NcInitializeMappingCleanup;
     }
 
