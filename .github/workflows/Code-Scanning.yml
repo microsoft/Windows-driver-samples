@@ -45,13 +45,13 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.3.1
 
-    # - name: Retrieve and build all available solutions
-    #   run: |
-    #       .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
-    #   env:
-    #     WDS_Configuration: Debug
-    #     WDS_Platform: x64
-    #     WDS_WipeOutputs: ${{ true }}
+    - name: Retrieve and build all available solutions
+      run: |
+          .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+      env:
+        WDS_Configuration: Debug
+        WDS_Platform: x64
+        WDS_WipeOutputs: ${{ true }}
 
     - name: Perform CodeQL analysis
       uses: github/codeql-action/analyze@v3
