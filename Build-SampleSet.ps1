@@ -45,8 +45,8 @@ finally {
 }
 
 #
-# Determine build environment type (not currently used). WDK, EWDK, or GitHub.  Only used to determine build number.
-# Determine build number (used for exclusions).  Five digits.  Say, '22621'.
+# Determine build environment: 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 #
 $build_environment=""
 $build_number=0
