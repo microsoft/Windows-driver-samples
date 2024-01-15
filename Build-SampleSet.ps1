@@ -45,7 +45,7 @@ finally {
 }
 
 #
-# Determine whether WDK or EWDK build environment (not currently used)
+# Determine whether  build environment type (not currently used)
 # Determine WDK/EWDK build number (used for exclusions)
 #
 $build_environment=""
@@ -60,9 +60,13 @@ if($env:Version_Number -match '10.0.(?<build>.*).0') {
 #
 # WDK sets environment variable UCRTVersion.  For example '10.0.22621.0'.
 #
-elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
+elseif ($env:UCRTVersionx -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
+}
+elseif (-not $env:GITHUB_REPOSITORY -eq '') {
+    $build_environment="WDKGitHub"
+    $build_number=22621
 }
 else {
 
