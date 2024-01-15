@@ -65,6 +65,12 @@ elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
     $build_number=$Matches.build
 }
 else {
+
+    # Dump all environment variables so as to help debug error:
+    Write-Output "Environment variables {"
+    gci env:* | sort-object name
+    Write-Output "Environment variables }"
+
     Write-Error "Could not determine build environment."
     exit 1
 }
