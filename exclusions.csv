@@ -1,9 +1,9 @@
-Path,Reason
-audio\acx\samples\audiocodec\driver,error C1083: Cannot open include file: 'acx.h': No such file or directory
-general\dchu\osrfx2_dchu_extension_loose,Needs fix for project not found
-general\dchu\osrfx2_dchu_extension_tight,LINK : error LNK4075: ignoring '/INCREMENTAL' due to '/OPT:ICF' specification
-general\winhec 2017 lab\toaster driver,Needs input from end user
-general\winhec 2017 lab\toaster support app,Needs input from end user
-network\trans\wfpsampler,Missing INF section; missing libs
-tree,Missing headers
-video\indirectdisplay,ARM64 Warning C4530: C++ exception handler used but unwind semantics are not enabled
+Path,Configurations,MinBuild,MaxBuild,Reason
+audio\acx\samples\audiocodec\driver,*,,22621,Only 22621: error C1083: Cannot open include file: 'acx.h': No such file or directory
+general\dchu\osrfx2_dchu_extension_loose,*,,,Needs fix for project not found
+general\dchu\osrfx2_dchu_extension_tight,*,,,LINK : error LNK4075: ignoring '/INCREMENTAL' due to '/OPT:ICF' specification
+general\winhec 2017 lab\toaster driver,*,,,Needs input from end user
+general\winhec 2017 lab\toaster support app,*,,,Needs input from end user
+network\trans\wfpsampler,*,,,Missing INF section; missing libs
+tree,*,,,Missing headers
+video\indirectdisplay,*|arm64,,,Only arm64: Warning C4530: C++ exception handler used but unwind semantics are not enabled

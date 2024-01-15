@@ -44,16 +44,61 @@ finally {
     $ErrorActionPreference = $oldPreference
 }
 
+#
+# Determine whether WDK or EWDK build environment (not currently used)
+# Determine WDK/EWDK build number (used for exclusions)
+#
+$build_environment=""
+$build_number=0
+#
+# EWDK sets environment variable Version_Number.  For example '10.0.22621.0'.
+#
+if($env:Version_Number -match '10.0.(?<build>.*).0') {
+    $build_environment="EWDK"
+    $build_number=$Matches.build
+}
+#
+# WDK sets environment variable UCRTVersion.  For example '10.0.22621.0'.
+#
+elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
+    $build_environment="WDK"
+    $build_number=$Matches.build
+}
+else {
+    Write-Error "Could not determine build environment."
+    exit 1
+}
+
+#
+# Determine exclusions.  
+#
+# Exclusions are loaded from .\exclusions.csv.
+# Each line has form:
+#   Path,Configurations,MinBuild,MaxBuild,Reason
+# Where:
+#   Path: Is the path to folder containing solution(s) using backslashes. For example: 'audio\acx\samples\audiocodec\driver' .
+#   Configurations: Are the configurations to exclude.  For example: '*|arm64' .
+#   MinBuild: Is the minimum WDK/EWDK build number the exclusion is applicable for.  For example: '22621' .
+#   MaxBuild: Is the maximum WDK/EWDK build number the exclusion is applicable for.  For example: '26031' .
+#   Reason: Is plain text documenting the reason for the exclusion. For example: 'error C1083: Cannot open include file: 'acx.h': No such file or directory' .
+#
 $exclusionConfigurations = @{}
 $exclusionReasons = @{}
 Import-Csv 'exclusions.csv' | ForEach-Object {
-    if ($_.Configurations) {
-        $exclusionConfigurations[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Configurations
+    $excluded_driver=$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
+    $excluded_configurations=($_.configurations -eq '' ? '*' : $_.configurations)
+    $excluded_minbuild=($_.MinBuild -eq '' ? 00000 : $_.MinBuild)
+    $excluded_maxbuild=($_.MaxBuild -eq '' ? 99999 : $_.MaxBuild)
+    if (($excluded_minbuild -le $build_number) -and ($build_number -le $excluded_maxbuild) )
+    {
+        $exclusionConfigurations[$excluded_driver] = $excluded_configurations
+        $exclusionReasons[$excluded_driver] = $_.Reason
+        Write-Verbose "Exclusion.csv entry applied for '$excluded_driver' for configuration '$excluded_configurations'."
     }
-    else {
-        $exclusionConfigurations[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = '*'
+    else
+    {
+        Write-Verbose "Exclusion.csv entry not applied for '$excluded_driver' due to build number."
     }
-    $exclusionReasons[$_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()] = $_.Reason
 }
 
 $jresult = @{
@@ -67,6 +112,8 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
+Write-Output ("Build Environment:    " + $build_environment)
+Write-Output ("Build Number:         " + $build_number)
 Write-Output ("Samples:              " + $sampleSet.Count)
 Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
