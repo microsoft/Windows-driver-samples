@@ -45,8 +45,8 @@ finally {
 }
 
 #
-# Determine whether  build environment type (not currently used)
-# Determine WDK/EWDK build number (used for exclusions)
+# Determine build environment type (not currently used). WDK, EWDK, or GitHub.  Only used to determine build number.
+# Determine build number (used for exclusions).  Five digits.  Say, '22621'.
 #
 $build_environment=""
 $build_number=0
@@ -64,8 +64,11 @@ elseif ($env:UCRTVersionx -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
 }
+#
+# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
+#
 elseif (-not $env:GITHUB_REPOSITORY -eq '') {
-    $build_environment="WDKGitHub"
+    $build_environment="GitHub"
     $build_number=22621
 }
 else {
