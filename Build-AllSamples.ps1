@@ -57,11 +57,11 @@ foreach ($file in $solutionFiles) {
     $dir = (Get-Item $file).DirectoryName
     $dir_norm = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
     if ($dir_norm -match ($Samples)) {
-        Write-Verbose "`u{1F50E} Found and included sample [$dir_norm] at $dir"
+        Write-Verbose "`u{1F50E} Found and filtered in sample [$dir_norm] at $dir"
         $sampleSet[$dir_norm] = $dir
     }
     else {
-        Write-Verbose "`u{1F50E} Found and excluded sample [$dir_norm] at $dir"
+        Write-Verbose "`u{1F50E} Found and filtered out sample [$dir_norm] at $dir"
     }
 }
 
