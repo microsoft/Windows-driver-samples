@@ -139,14 +139,16 @@ $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
 
-# Exclude certain InfVerif exceptions to allow samples to build and detect other errors.
-# error 1205: Section [xxx] referenced from DelFiles and CopyFiles directive - network\trans
-# error 1144: Device software with SoftwareType 1 may not execute on all product types - general\dchu\osrfx2_dchu_extension_tight
-# error 1233: Missing directive CatalogFile required for digital signature - storage\class\disk
-# error 2083: Section [xxx] not referenced or used - network\trans, storage\msdsm
-# error 2084: Service binary 'xxx' should reference a CopyFiles destination file - network\trans, wpd\wpdservicesampledriver
-# errors 1324, 1420, 1421 will be excluded in main branch only until the fixes are merged.
-# error 2086 will be excluded until the WDK used in GitHub is updated.
+#
+# Samples must build cleanly and even without warnings.
+#
+# An exception is for infverifier where followings warnings are acceptable: 1284, 1285, and 1293. 
+# Those warning indicates issues intentially present in the samples, that anyone that clones the samples
+# must fix as part of productizing a driver.
+# 
+# The special flag /samples suppress exactly these warnings, so that full build test in the sample repo 
+# can be done without noise, but once you build from command line or in VS IDE those warnings will be visible.
+#
 msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
