@@ -147,7 +147,7 @@ Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Plat
 # error 2084: Service binary 'xxx' should reference a CopyFiles destination file - network\trans, wpd\wpdservicesampledriver
 # errors 1324, 1420, 1421 will be excluded in main branch only until the fixes are merged.
 # error 2086 will be excluded until the WDK used in GitHub is updated.
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /msft /sw1144 /sw1199 /sw1205 /sw1233 /sw1324 /sw1420 /sw1421 /sw2083 /sw2084 /sw2086" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
     Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
