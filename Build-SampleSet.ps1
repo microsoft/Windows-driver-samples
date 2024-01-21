@@ -115,12 +115,14 @@ Import-Csv 'exclusions.csv' | ForEach-Object {
 }
 
 $jresult = @{
-    SolutionsBuilt    = 0
-    SolutionsExcluded = 0
-    SolutionsFailed   = 0
-    Results           = @()
-    FailSet           = @()
-    lock              = [System.Threading.Mutex]::new($false)
+    SolutionsBuilt       = 0
+    SolutionsSucceeded   = 0
+    SolutionsExcluded    = 0
+    SolutionsUnsupported = 0
+    SolutionsFailed      = 0
+    Results              = @()
+    FailSet              = @()
+    lock                 = [System.Threading.Mutex]::new($false)
 }
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
