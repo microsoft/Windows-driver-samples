@@ -51,10 +51,10 @@ finally {
 $build_environment=""
 $build_number=0
 #
-# EWDK sets environment variable Version_Number.  For example '10.0.22621.0'.
+# EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
 #
-if($env:Version_Number -match '10.0.(?<build>.*).0') {
-    $build_environment="EWDK"
+if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
+    $build_environment=("EWDK."+$Matches.branch+"."+$Matches.build+"."+$Matches.qfe)
     $build_number=$Matches.build
 }
 #
@@ -115,12 +115,14 @@ Import-Csv 'exclusions.csv' | ForEach-Object {
 }
 
 $jresult = @{
-    SolutionsBuilt    = 0
-    SolutionsExcluded = 0
-    SolutionsFailed   = 0
-    Results           = @()
-    FailSet           = @()
-    lock              = [System.Threading.Mutex]::new($false)
+    SolutionsBuilt       = 0
+    SolutionsSucceeded   = 0
+    SolutionsExcluded    = 0
+    SolutionsUnsupported = 0
+    SolutionsFailed      = 0
+    Results              = @()
+    FailSet              = @()
+    lock                 = [System.Threading.Mutex]::new($false)
 }
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count

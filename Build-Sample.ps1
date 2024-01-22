@@ -142,14 +142,20 @@ Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Plat
 #
 # Samples must build cleanly and even without warnings.
 #
-# An exception is for infverifier where followings warnings are acceptable: 1284, 1285, and 1293. 
-# Those warning indicates issues intentially present in the samples, that anyone that clones the samples
-# must fix as part of productizing a driver.
-# 
-# The special flag /samples suppress exactly these warnings, so that full build test in the sample repo 
-# can be done without noise, but once you build from command line or in VS IDE those warnings will be visible.
+# An exception is for infverifier where a few warnings are acceptable.  Those
+# specific warnings indicates issues intentially present in the samples, that
+# anyone that clones the samples must fix as part of productizing a driver.
+# Those warnings are suppressed with the /samples flag and that flag is 
+# added here, so that full build test in the sample repo can be done without
+# noise.
 #
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+# Once you build from command line or in VS IDE those warnings will be visible.
+#
+# Note: We temporarily are also excluding:
+# * 1402: A number of samples
+# * 2084: Samples wpd.wpdhelloworlddriver, wpd.wpdmultitransportdriver, wpd.wpdservicesampledriver, wpd.wpdwudfsampledriver
+#
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /sw1402 /sw2084" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
     Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))

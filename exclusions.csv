@@ -7,7 +7,3 @@ general\winhec 2017 lab\toaster support app,*,,,Needs input from end user
 network\trans\wfpsampler,*,,,missing libs
 tree,*,,,Missing headers
 video\indirectdisplay,*|arm64,,,Only arm64: Warning C4530: C++ exception handler used but unwind semantics are not enabled
-wpd\wpdhelloworlddriver,*,26031,,Only GE: Fails with infverif error 2084 (tracked by ADO 45520404)
-wpd\wpdmultitransportdriver,*,26031,,Only GE: Fails with infverif error 2084 (tracked by ADO 45520404)
-wpd\wpdservicesampledriver,*,26031,,Only GE: Fails with infverif error 2084 (tracked by ADO 45520404)
-wpd.wpdwudfsampledriver,*,26031,,Only GE: Fails with infverif error 2084 (tracked by ADO 45520404)
