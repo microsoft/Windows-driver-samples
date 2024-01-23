@@ -160,7 +160,7 @@ Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Plat
 # * Sample wpd.wpdservicesampledriver error 1402 and 2084
 # * Sample wpd.wpdwudfsampledriver error 1402 and 2084
 #
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /sw1402 /sw2084" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
     Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
