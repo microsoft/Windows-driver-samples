@@ -151,14 +151,16 @@ Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Plat
 #
 # Once you build from command line or in VS IDE those warnings will be visible.
 #
-# Note: We temporarily are also excluding: 1402 and 2084.
+# Note: We temporarily are also excluding:
+#   Error 1402.
+#   Error 2084.
 # Here are reasons:
-# * Sample biometrics: 1402
-# * Sample wpd.wpdbasichardwaredriver: error 1402
-# * Sample wpd.wpdhelloworlddriver: error 1402 and 2084
-# * Sample wpd.wpdmultitransportdriver error 1402 and 2084
-# * Sample wpd.wpdservicesampledriver error 1402 and 2084
-# * Sample wpd.wpdwudfsampledriver error 1402 and 2084
+# * Sample biometrics: Error 1402.
+# * Sample wpd.wpdbasichardwaredriver: error 1402.
+# * Sample wpd.wpdhelloworlddriver: error 1402 and 2084.
+# * Sample wpd.wpdmultitransportdriver error 1402 and 2084.
+# * Sample wpd.wpdservicesampledriver error 1402 and 2084.
+# * Sample wpd.wpdwudfsampledriver error 1402 and 2084.
 #
 msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /sw1402 /sw2084" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
