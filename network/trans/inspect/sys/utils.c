@@ -291,8 +291,8 @@ AllocateAndInitializePendedPacket(
 {
    TL_INSPECT_PENDED_PACKET* pendedPacket;
 
-   pendedPacket = ExAllocatePoolWithTag(
-                        NonPagedPool,
+   pendedPacket = ExAllocatePool2(
+                        POOL_FLAG_NON_PAGED,
                         sizeof(TL_INSPECT_PENDED_PACKET),
                         TL_INSPECT_PENDED_PACKET_POOL_TAG
                         );
@@ -346,8 +346,8 @@ AllocateAndInitializePendedPacket(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         pendedPacket->controlData = ExAllocatePoolWithTag(
-                                       NonPagedPool,
+         pendedPacket->controlData = ExAllocatePool2(
+                                       POOL_FLAG_NON_PAGED,
                                        inMetaValues->controlDataLength,
                                        TL_INSPECT_CONTROL_DATA_POOL_TAG
                                        );
