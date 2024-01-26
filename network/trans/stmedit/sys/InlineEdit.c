@@ -54,7 +54,7 @@ InlineEditFlushData(
         if (DataLength == 0)
             break;
 
-        Buffer = ExAllocatePoolWithTag(NonPagedPool, DataLength, STMEDIT_TAG_MDL_DATA);
+        Buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, DataLength, STMEDIT_TAG_MDL_DATA);
         if (Buffer == NULL)
 		{
             Status = STATUS_INSUFFICIENT_RESOURCES;
