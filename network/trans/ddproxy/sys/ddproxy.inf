@@ -12,6 +12,7 @@
     Provider    = %ProviderString%
     CatalogFile = DDProxy.cat
     DriverVer   = 11/24/2014,14.24.55.836
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %DDProxyDisk%,,,""
@@ -23,14 +24,15 @@
     DefaultDestDir      = 12                                               ; %WinDir%\System32\Drivers
     DDProxy.DriverFiles = 12                                               ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NTAMD64]
     OptionDesc = %DDProxyServiceDesc%
     CopyFiles  = DDProxy.DriverFiles
+    LegacyUninstall = 1
 
 [DefaultInstall.Services]
     AddService = %DDProxyServiceName%,,DDProxy.Service
 
-[DefaultUninstall]
+[DefaultUninstall.NTAMD64]
     DelFiles = DDProxy.DriverFiles
 
 [DefaultUninstall.Services]
