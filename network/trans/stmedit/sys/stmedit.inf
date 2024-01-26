@@ -11,7 +11,7 @@
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
     Provider    = %Contoso%
     CatalogFile = StmEdit.cat
-    DriverVer   = 01/01/2015,1.0.09.15
+    DriverVer   = 01/26/2024,1.0.09.24
 
 [SourceDisksNames]
    1 = %StmEditDisk%,,,""
