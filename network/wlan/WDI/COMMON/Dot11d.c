@@ -1133,11 +1133,13 @@ _ForcedChannelPlan(
 	pu1Byte				pChannelLen
 	)
 {
-	ps1Byte s =  (ps1Byte)((bIs5G) ? pMgntInfo->RegChannelPlan5G.Octet : 
+	ps1Byte s =  (ps1Byte)((bIs5G) ? 
+pMgntInfo->RegChannelPlan5G.Octet : 
 		                             pMgntInfo->RegChannelPlan2G.Octet);
-	u2Byte  len = ((bIs5G) ? pMgntInfo->RegChannelPlan5G.Length : 
+	u2Byte  len = ((bIs5G) ? 
+pMgntInfo->RegChannelPlan5G.Length : 
 		                     pMgntInfo->RegChannelPlan2G.Length); 
-	u1Byte  c = 0, n = 0, i = 0;
+	u2Byte  c = 0, n = 0, i = 0;
 
 	RT_TRACE( COMP_INIT, DBG_LOUD, ("===> _ForcedChannelPlan\n"));
 	
@@ -1156,11 +1158,11 @@ _ForcedChannelPlan(
 			c = 10 * c + (*s - '0');
 			s++, i++;
 		}
-		pChnlList[n++] = c;
+		pChnlList[n++] = (u1Byte)c;
 		c = 0;
 	}
 
-	*pChannelLen = n;
+	*pChannelLen = (u1Byte)n;
 	
 	RT_TRACE( COMP_INIT, DBG_LOUD, ("<=== _ForcedChannelPlan\n"));	
 }

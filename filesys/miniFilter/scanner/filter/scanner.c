@@ -54,8 +54,31 @@ UNICODE_STRING ScannedExtensionDefault = RTL_CONSTANT_STRING( L"doc" );
 //  Function prototypes
 //
 
-NTSTATUS 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+ScannerGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+ScannerOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
+NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -105,12 +128,14 @@ ScannerpCheckExtension (
 
 #ifdef ALLOC_PRAGMA
     #pragma alloc_text(INIT, DriverEntry)
-    #pragma alloc_text(INIT, ScannerInitializeScannedExtensions)    
+    #pragma alloc_text(INIT, ScannerGetIoOpenDriverRegistryKey)
+    #pragma alloc_text(INIT, ScannerOpenServiceParametersKey)
+    #pragma alloc_text(INIT, ScannerInitializeScannedExtensions)
     #pragma alloc_text(PAGE, ScannerInstanceSetup)
     #pragma alloc_text(PAGE, ScannerPreCreate)
     #pragma alloc_text(PAGE, ScannerPortConnect)
     #pragma alloc_text(PAGE, ScannerPortDisconnect)
-    #pragma alloc_text(PAGE, ScannerFreeExtensions)    
+    #pragma alloc_text(PAGE, ScannerFreeExtensions)
     #pragma alloc_text(PAGE, ScannerAllocateUnicodeString)
     #pragma alloc_text(PAGE, ScannerFreeUnicodeString)
 #endif
@@ -221,7 +246,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -242,15 +267,15 @@ Return Value:
     // Obtain the extensions to scan from the registry
     //
 
-    status = ScannerInitializeScannedExtensions( RegistryPath );
+    status = ScannerInitializeScannedExtensions( DriverObject, RegistryPath );
 
     if (!NT_SUCCESS( status )) {
 
         status = STATUS_SUCCESS;
-        
+
         ScannedExtensions = &ScannedExtensionDefault;
-        ScannedExtensionCount = 1;    
-    }    
+        ScannedExtensionCount = 1;
+    }
 
     //
     //  Create a communication port.
@@ -307,13 +332,152 @@ Return Value:
     ScannerFreeExtensions();
 
     FltUnregisterFilter( ScannerData.Filter );
-    
+
     return status;
 }
 
 
-NTSTATUS 
+PFN_IoOpenDriverRegistryKey
+ScannerGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+ScannerOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = ScannerGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+ScannerOpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
+NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -322,8 +486,11 @@ Routine Descrition:
 
     This routine sets the the extensions for files to be scanned based
     on the registry.
-    
+
 Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
 
     RegistryPath - The path key passed to the driver during DriverEntry.
 
@@ -335,47 +502,38 @@ Return Value:
 --*/
 {
     NTSTATUS status;
-    OBJECT_ATTRIBUTES attributes;
     HANDLE driverRegKey = NULL;
     UNICODE_STRING valueName;
     PKEY_VALUE_PARTIAL_INFORMATION valueBuffer = NULL;
     ULONG valueLength = 0;
-    BOOLEAN closeHandle = FALSE;
     PWCHAR ch;
     SIZE_T length;
     ULONG count;
     PUNICODE_STRING ext;
-    
+
     PAGED_CODE();
 
     ScannedExtensions = NULL;
     ScannedExtensionCount = 0;
 
     //
-    //  Open the driver registry key.
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
-
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    status = ScannerOpenServiceParametersKey( DriverObject,
+                                              RegistryPath,
+                                              &driverRegKey );
 
     if (!NT_SUCCESS( status )) {
 
+        driverRegKey = NULL;
         goto ScannerInitializeScannedExtensionsCleanup;
     }
-
-    closeHandle = TRUE;
 
     //
     //   Query the length of the reg value
     //
-    
+
     RtlInitUnicodeString( &valueName, L"Extensions" );
 
     status = ZwQueryValueKey( driverRegKey,
@@ -395,9 +553,9 @@ Return Value:
     //  Extract the path.
     //
 
-    valueBuffer = ExAllocatePoolWithTag( NonPagedPool,
-                                         valueLength,
-                                         SCANNER_REG_TAG );
+    valueBuffer = ExAllocatePoolZero( NonPagedPool,
+                                      valueLength,
+                                      SCANNER_REG_TAG );
 
     if (valueBuffer == NULL) {
 
@@ -424,38 +582,38 @@ Return Value:
     //
     //  Count how many strings are in the multi string
     //
-    
+
     while (*ch != '\0') {
 
         ch = ch + wcslen( ch ) + 1;
         count++;
     }
 
-    ScannedExtensions = ExAllocatePoolWithTag( PagedPool, 
-                                               count * sizeof(UNICODE_STRING),
-                                               SCANNER_STRING_TAG );
-    
+    ScannedExtensions = ExAllocatePoolZero( PagedPool,
+                                            count * sizeof(UNICODE_STRING),
+                                            SCANNER_STRING_TAG );
+
     if (ScannedExtensions == NULL) {
         goto ScannerInitializeScannedExtensionsCleanup;
     }
 
     ch = (PWCHAR)((PKEY_VALUE_PARTIAL_INFORMATION)valueBuffer->Data);
     ext = ScannedExtensions;
-    
+
     while (ScannedExtensionCount < count) {
 
         length = wcslen( ch ) * sizeof(WCHAR);
 
         ext->MaximumLength = (USHORT) length;
-        
+
         status = ScannerAllocateUnicodeString( ext );
-        
+
         if (!NT_SUCCESS( status )) {
             goto ScannerInitializeScannedExtensionsCleanup;
         }
 
         ext->Length = (USHORT)length;
- 
+
         RtlCopyMemory( ext->Buffer, ch, length );
 
         ch = ch + length/sizeof(WCHAR) + 1;
@@ -463,7 +621,7 @@ Return Value:
         ScannedExtensionCount++;
 
         ext++;
-        
+
     }
 
 ScannerInitializeScannedExtensionsCleanup:
@@ -480,7 +638,7 @@ ScannerInitializeScannedExtensionsCleanup:
         valueBuffer = NULL;
     }
 
-    if (closeHandle) {
+    if (driverRegKey != NULL) {
 
         ZwClose( driverRegKey );
     }
@@ -489,7 +647,7 @@ ScannerInitializeScannedExtensionsCleanup:
 
         ScannerFreeExtensions();
     }
-    
+
     return status;
 }
 
@@ -524,16 +682,16 @@ Return Value:
 
         if (ScannedExtensions != &ScannedExtensionDefault) {
 
-            ScannerFreeUnicodeString( ScannedExtensions + ScannedExtensionCount );        
+            ScannerFreeUnicodeString( ScannedExtensions + ScannedExtensionCount );
         }
     }
-    
+
     if (ScannedExtensions != &ScannedExtensionDefault && ScannedExtensions != NULL) {
 
         ExFreePoolWithTag( ScannedExtensions, SCANNER_STRING_TAG );
     }
 
-    ScannedExtensions = NULL;    
+    ScannedExtensions = NULL;
 
 }
 
@@ -550,22 +708,22 @@ Routine Description:
 
 Arguments:
 
-    String - supplies the size of the string to be allocated in the MaximumLength field 
+    String - supplies the size of the string to be allocated in the MaximumLength field
              return the unicode string
 
 Return Value:
 
     STATUS_SUCCESS                  - success
     STATUS_INSUFFICIENT_RESOURCES   - failure
-  
+
 --*/
 {
 
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( NonPagedPool,
-                                            String->MaximumLength,
-                                            SCANNER_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( NonPagedPool,
+                                         String->MaximumLength,
+                                         SCANNER_STRING_TAG );
 
     if (String->Buffer == NULL) {
 
@@ -590,11 +748,11 @@ Routine Description:
 
 Arguments:
 
-    String - supplies the string to be freed 
+    String - supplies the string to be freed
 
 Return Value:
 
-    None    
+    None
 
 --*/
 {
@@ -662,7 +820,7 @@ Return Value
     //  Set the user process and port. In a production filter it may
     //  be necessary to synchronize access to such fields with port
     //  lifetime. For instance, while filter manager will synchronize
-    //  FltCloseClientPort with FltSendMessage's reading of the port 
+    //  FltCloseClientPort with FltSendMessage's reading of the port
     //  handle, synchronizing access to the UserProcess would be up to
     //  the filter.
     //
@@ -675,7 +833,7 @@ Return Value
     return STATUS_SUCCESS;
 }
 
-
+
 VOID
 ScannerPortDisconnect(
      _In_opt_ PVOID ConnectionCookie
@@ -717,7 +875,7 @@ Return value
     ScannerData.UserProcess = NULL;
 }
 
-
+
 NTSTATUS
 ScannerUnload (
     _In_ FLT_FILTER_UNLOAD_FLAGS Flags
@@ -936,7 +1094,7 @@ Return Value
     //
 
     for (count = 0; count < ScannedExtensionCount; count++) {
-        
+
         if (RtlCompareUnicodeString( Extension, ScannedExtensions + count, TRUE ) == 0) {
 
             //
@@ -1092,7 +1250,7 @@ Return Value:
 
             //
             //  Normally we would check the results of FltSetStreamHandleContext
-            //  for a variety of error cases. However, The only error status 
+            //  for a variety of error cases. However, The only error status
             //  that could be returned, in this case, would tell us that
             //  contexts are not supported.  Even if we got this error,
             //  we just want to release the context now and that will free
@@ -1283,9 +1441,9 @@ Return Value:
             //  This is just a sample!
             //
 
-            notification = ExAllocatePoolWithTag( NonPagedPool,
-                                                  sizeof( SCANNER_NOTIFICATION ),
-                                                  'nacS' );
+            notification = ExAllocatePoolZero( NonPagedPool,
+                                               sizeof( SCANNER_NOTIFICATION ),
+                                               'nacS' );
             if (notification == NULL) {
 
                 Data->IoStatus.Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1398,7 +1556,7 @@ ScannerPreFileSystemControl (
 
 Routine Description:
 
-    Pre FS Control callback. 
+    Pre FS Control callback.
 
 Arguments:
 
@@ -1460,13 +1618,13 @@ Return Value:
 
             //
             //  Scanner cannot access the data in this offload write request.
-            //  In a production-level filter, we would actually let user mode 
+            //  In a production-level filter, we would actually let user mode
             //  scan the file after offload write completes (on cleanup etc).
             //  Since this is just a sample, block offload write with
             //  STATUS_ACCESS_DENIED, although this is not an acceptable
             //  production-level behavior.
             //
-            
+
             DbgPrint( "!!! scanner.sys -- blocking the offload write !!!\n" );
 
             Data->IoStatus.Status = STATUS_ACCESS_DENIED;
@@ -1474,7 +1632,7 @@ Return Value:
 
             returnStatus = FLT_PREOP_COMPLETE;
         }
-                
+
     } finally {
 
         if (context) {
@@ -1482,7 +1640,7 @@ Return Value:
             FltReleaseContext( context );
         }
     }
-    
+
     return returnStatus;
 }
 
@@ -1600,9 +1758,9 @@ Return Value:
             leave;
         }
 
-        notification = ExAllocatePoolWithTag( NonPagedPool,
-                                              sizeof( SCANNER_NOTIFICATION ),
-                                              'nacS' );
+        notification = ExAllocatePoolZero( NonPagedPool,
+                                           sizeof( SCANNER_NOTIFICATION ),
+                                           'nacS' );
 
         if(NULL == notification) {
 

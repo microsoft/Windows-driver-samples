@@ -94,7 +94,7 @@ Return value:
    // Allocate the string buffers
    //
 
-   pStrBuffer = ExAllocatePoolWithTag(PagedPool, MAX_DEVNODE_NAME * 7 + 1,SERENUM_POOL_TAG);
+   pStrBuffer = ExAllocatePoolZero(PagedPool, MAX_DEVNODE_NAME * 7 + 1,SERENUM_POOL_TAG);
 
    if (pStrBuffer == NULL) {
       status = STATUS_INSUFFICIENT_RESOURCES;
@@ -384,7 +384,7 @@ Return Value:
    multiLength += sizeof(WCHAR);
 
    MultiString->MaximumLength = (USHORT)multiLength;
-   MultiString->Buffer = ExAllocatePoolWithTag(PagedPool, multiLength,SERENUM_POOL_TAG);
+   MultiString->Buffer = ExAllocatePoolZero(PagedPool, multiLength,SERENUM_POOL_TAG);
    MultiString->Length = 0;
 
    if (MultiString->Buffer == NULL) {

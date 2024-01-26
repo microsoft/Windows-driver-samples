@@ -57,9 +57,9 @@ Remarks:
     } KSAUDIOENGINE_DESCRIPTOR, *PKSAUDIOENGINE_DESCRIPTOR;
 
     The fields are defined as:
-    nHostPinId – The ID of the pin factory connected to the audio engine node that is intended for host processed audio data.  This is the pin factory on which a software audio engine will run.
-    nOffloadPinId – The ID of the pin factory connected to the audio engine node that is intended for offloaded streams.
-    nLoopbackPinId – The ID of the pin factory connected to the audio engine that is intended for supplying a post-mix loopback or reference stream.
+    nHostPinId - The ID of the pin factory connected to the audio engine node that is intended for host processed audio data.  This is the pin factory on which a software audio engine will run.
+    nOffloadPinId - The ID of the pin factory connected to the audio engine node that is intended for offloaded streams.
+    nLoopbackPinId - The ID of the pin factory connected to the audio engine that is intended for supplying a post-mix loopback or reference stream.
 
     All pin ids need to be unique for each audio engine node.
 

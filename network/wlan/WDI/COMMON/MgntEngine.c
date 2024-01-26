@@ -200,7 +200,8 @@ AsocEntry_AddIbssPeerSta(
 	pEntry = AsocEntry_GetEntry(pMgntInfo, pTaddr);
 	if(pEntry != NULL)
 	{
-		u1Byte			i, rate;
+		u2Byte i;
+		u1Byte rate;
 
 		pEntry->AID = AsocEntry_AssignAvailableAID(pMgntInfo, pTaddr);
 		pEntry->IOTPeer = pBssDesc->Vender;

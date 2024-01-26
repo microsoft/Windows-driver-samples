@@ -113,6 +113,7 @@ public:
             _In_ PACPI_NOTIFICATION_CALLBACK_CONTEXT CallbackConext
         )
     {
+        PAGED_CODE();
         return RegisterNotificationCallbackInternal(CallbackConext);
     }
 

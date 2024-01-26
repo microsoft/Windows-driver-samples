@@ -180,7 +180,7 @@ FatSingleNonAlignedSync (
 #else
 #define FatUpdateIOCountersPCW(IsAWrite,Count)
 #endif
-    
+
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(PAGE, FatMultipleAsync)
 #pragma alloc_text(PAGE, FatSingleAsync)
@@ -505,7 +505,7 @@ Return Value:
 
             AssocIrp = IoMakeAssociatedIrp( Irp, (CCHAR)(DeviceObject->StackSize + 1) );
         }
-        
+
         if (AssocIrp == NULL) {
 
             AssocIrp = Irp;
@@ -527,7 +527,7 @@ Return Value:
             //  Note that since we failed to launch this associated Irp, that the completion
             //  code at the bottom will take care of completing the master Irp.
             //
-            
+
             if (!NT_SUCCESS(Irp->IoStatus.Status)) {
 
                 NT_ASSERT( IrpCount );
@@ -535,22 +535,22 @@ Return Value:
             }
 
         } else {
-                        
+
             //
             //  Indicate we used an associated Irp.
             //
 
             IrpCount -= 1;
         }
-        
+
         //
         //  With an associated IRP, we must take over the first stack location so
         //  we can have one to put the completion routine on.  When re-using the
         //  master IRP, its already there.
         //
-        
+
         if (!IrpIsMaster) {
-            
+
             //
             //  Get the first IRP stack location in the associated Irp
             //
@@ -572,7 +572,7 @@ Return Value:
             //
 
             NextIrpSp->DeviceObject = IrpSp->DeviceObject;
-            
+
         } else {
 
             //
@@ -602,7 +602,7 @@ Return Value:
         //
 
         if (IrpIsMaster) {
-            
+
             IoSetCompletionRoutine( AssocIrp,
                                     FatPagingFileCompletionRoutineCatch,
                                     &Context,
@@ -611,7 +611,7 @@ Return Value:
                                     TRUE );
 
         } else {
-            
+
             IoSetCompletionRoutine( AssocIrp,
                                     FatPagingFileCompletionRoutine,
                                     Irp,
@@ -656,7 +656,7 @@ Return Value:
         //
 
         if (IrpIsMaster) {
-            
+
             KeWaitForSingleObject( &Context.Event, Executive, KernelMode, FALSE, NULL );
             IrpIsMaster = MdlIsReserve = FALSE;
 
@@ -669,7 +669,7 @@ Return Value:
             //  associated Irp, and thus the completion code at the bottom will take care
             //  of that for us.
             //
-            
+
             if (!NT_SUCCESS(Irp->IoStatus.Status)) {
 
                 NT_ASSERT( IrpCount );
@@ -695,14 +695,14 @@ Return Value:
             //
             //  Advance the Lbo/Vbo if we have more to do in the current run.
             //
-            
+
             NextLbo += NextByteCount;
             NextVbo += NextByteCount;
 
             NextByteCount = RemainingByteCount;
-        
+
         } else {
-        
+
             CurrentIndex += 1;
 
             if ( CurrentIndex <= LastIndex ) {
@@ -724,11 +724,11 @@ Return Value:
     //  If we didn't get enough associated Irps going to make this asynchronous, we
     //  twiddle our thumbs and wait for those we did launch to complete.
     //
-    
+
     if (IrpCount) {
 
         while (Irp->AssociatedIrp.IrpCount != IrpCount) {
-            
+
             KeDelayExecutionThread (KernelMode, FALSE, &Fat30Milliseconds);
         }
 
@@ -760,7 +760,7 @@ Arguments:
     Irp - Supplies the requesting Irp.
 
     ByteCount - The lengh of the operation.
-    
+
 Return Value:
 
     None.
@@ -862,7 +862,7 @@ Return Value:
 
 
 
-_Requires_lock_held_(_Global_critical_region_)    
+_Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
 FatNonCachedIo (
     IN PIRP_CONTEXT IrpContext,
@@ -871,7 +871,7 @@ FatNonCachedIo (
     IN ULONG StartingVbo,
     IN ULONG ByteCount,
     IN ULONG UserByteCount,
-    IN ULONG StreamFlags    
+    IN ULONG StreamFlags
     )
 /*++
 
@@ -892,7 +892,7 @@ Arguments:
     StartingVbo - The starting point for the operation.
 
     ByteCount - The lengh of the operation.
-    
+
     UserByteCount - The last byte the user can see, rest to be zeroed.
 
     StreamFlags - flag to indicate special attributes for a NonCachedIo.
@@ -1107,7 +1107,7 @@ Return Value:
                 Stats->Fat.NonCachedDiskWrites += 1;
             }
         }
-        
+
         DebugTrace( 0, Dbg, "Passing 1 Irp on to Disk Driver\n", 0 );
 
         FatSingleAsync( IrpContext,
@@ -1192,7 +1192,7 @@ Return Value:
             IoRuns[NextRun].Offset = BufferOffset;
             IoRuns[NextRun].ByteCount = NextByteCount;
             NextRun += 1;
-            
+
             //
             // Now adjust everything for the next pass through the loop.
             //
@@ -1218,7 +1218,7 @@ Return Value:
                                     &NextByteCount );
 
 
-                NT_ASSERT(NextVbo == StartingVbo); 
+                NT_ASSERT(NextVbo == StartingVbo);
 
 
             }
@@ -1275,7 +1275,7 @@ Return Value:
 }
 
 
-_Requires_lock_held_(_Global_critical_region_)    
+_Requires_lock_held_(_Global_critical_region_)
 VOID
 FatNonCachedNonAlignedRead (
     IN PIRP_CONTEXT IrpContext,
@@ -1856,7 +1856,7 @@ Return Value:
 
             //
             //  For async requests if we acquired locks, transition the lock owners to an
-            //  object, since when we return this thread could go away before request 
+            //  object, since when we return this thread could go away before request
             //  completion, and the resource package may try to boost priority.
             //
 
@@ -1932,7 +1932,7 @@ Return Value:
 
             if (!ExceptionExpected) {
                 NT_ASSERT( ExceptionExpected );
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )                
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
                 FatBugCheck( 0, 0, 0 );
             }
 
@@ -2070,15 +2070,15 @@ Return Value:
     //
     //  If this I/O requires override verify, bypass the verify logic.
     //
-    
+
     if (FlagOn( IrpContext->Flags, IRP_CONTEXT_FLAG_OVERRIDE_VERIFY )) {
-    
+
         SetFlag( IrpSp->Flags, SL_OVERRIDE_VERIFY_VOLUME );
     }
 
     //
     //  For async requests if we acquired locks, transition the lock owners to an
-    //  object, since when we return this thread could go away before request 
+    //  object, since when we return this thread could go away before request
     //  completion, and the resource package may try to boost priority.
     //
 
@@ -2103,7 +2103,7 @@ Return Value:
     //
     //  Back up a copy of the IrpContext flags for later use in async completion.
     //
-    
+
     IrpContext->FatIoContext->IrpContextFlags = IrpContext->Flags;
 
     //
@@ -2281,9 +2281,9 @@ Return Value:
     //
     //  If this I/O requires override verify, bypass the verify logic.
     //
-    
+
     if (FlagOn( IrpContext->Flags, IRP_CONTEXT_FLAG_OVERRIDE_VERIFY )) {
-    
+
         SetFlag( IrpSp->Flags, SL_OVERRIDE_VERIFY_VOLUME );
     }
 
@@ -2543,11 +2543,11 @@ Return Value:
 #endif
 
         MasterIrp->IoStatus = Irp->IoStatus;
-    
+
     }
 
     NT_ASSERT( !(NT_SUCCESS( Irp->IoStatus.Status ) && Irp->IoStatus.Information == 0 ));
-    
+
     if (InterlockedDecrement(&Context->IrpCount) == 0) {
 
         FatDoCompletionZero( MasterIrp, Context );
@@ -2569,19 +2569,19 @@ Return Value:
                          IoGetCurrentIrpStackLocation(MasterIrp)->MajorFunction == IRP_MJ_READ ?
                          FO_FILE_FAST_IO_READ : FO_FILE_MODIFIED );
             }
-            
+
         } else {
 
             //
             // Post STATUS_VERIFY_REQUIRED failures. Only post top level IRPs, because recursive I/Os
             // cannot process volume verification.
             //
-            
-            if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) && 
+
+            if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) &&
                 (MasterIrp->IoStatus.Status == STATUS_VERIFY_REQUIRED)) {
                 PostRequest = TRUE;
-            }        
-            
+            }
+
         }
 
         //
@@ -2612,7 +2612,7 @@ Return Value:
         }
 
         if (Context->Wait.Async.Resource2 != NULL) {
-            
+
             ExReleaseResourceForThreadLite( Context->Wait.Async.Resource2,
                                             Context->Wait.Async.ResourceThreadId );
         }
@@ -2634,22 +2634,22 @@ Return Value:
             PIRP_CONTEXT IrpContext = NULL;
 
             try {
-                
+
                 IrpContext = FatCreateIrpContext(Irp, TRUE );
                 ClearFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_RECURSIVE_CALL);
                 FatFsdPostRequest( IrpContext, Irp );
                 Status = STATUS_MORE_PROCESSING_REQUIRED;
-                
+
             } except( FatExceptionFilter(NULL, GetExceptionInformation()) ) {
 
                 //
                 // If we failed to post the IRP, we just have to return the failure
                 // to the user. :(
                 //
-                
+
                 NOTHING;
             }
-        }        
+        }
     }
 
     DebugTrace(-1, Dbg, "FatMultiAsyncCompletionRoutine -> SUCCESS\n", 0 );
@@ -2672,36 +2672,36 @@ Routine Description:
 
     This routine attempts to guarantee that the media is marked dirty
     with the surface test bit if a paging file IO fails.
-    
+
     The work done here has several basic problems
-    
+
         1) when paging file writes start failing, this is a good sign
            that the rest of the system is about to fall down around us
-           
+
         2) it has no forward progress guarantee
-        
+
     With Whistler, it is actually quite intentional that we're rejiggering
     the paging file write path to make forward progress at all times.  This
     means that the cases where it *does* fail, we're truly seeing media errors
     and this is probably going to mean the paging file is going to stop working
     very soon.
-    
+
     It'd be nice to make this guarantee progress.  It would need
-    
+
         1) a guaranteed worker thread which can only be used by items which
            will make forward progress (i.e., not block out this one)
-           
+
         2) the virtual volume file's pages containing the boot sector and
            1st FAT entry would have to be pinned resident and have a guaranteed
            mapping address
-           
+
         3) mark volume would have to have a stashed irp/mdl and roll the write
            irp, or use a generalized mechanism to guarantee issue of the irp
-           
+
         4) the lower stack would have to guarantee progress
-        
+
     Of these, 1 and 4 may actually exist shortly.
-        
+
 Arguments:
 
     Irp - Pointer to the associated Irp which is being failed.
@@ -2736,7 +2736,7 @@ Return Value:
         //  If we can't get pool, oh well....
         //
 
-        Packet = ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(CLEAN_AND_DIRTY_VOLUME_PACKET), ' taF');
+        Packet = ExAllocatePoolZero(NonPagedPoolNx, sizeof(CLEAN_AND_DIRTY_VOLUME_PACKET), ' taF');
 
         if ( Packet ) {
 
@@ -2744,11 +2744,14 @@ Return Value:
             Packet->Irp = Irp;
             Packet->Event = Event;
 
+#pragma prefast( suppress: 28155, "the function prototype is correct" )
+#pragma warning( suppress:4996 )
             ExInitializeWorkItem( &Packet->Item,
                                   &FatFspMarkVolumeDirtyWithRecover,
                                   Packet );
 
 #pragma prefast( suppress:28159, "prefast indicates this is obsolete, but it is ok for fastfat to use it" )
+#pragma warning( suppress:4996 )
             ExQueueWorkItem( &Packet->Item, CriticalWorkQueue );
 
             Status = STATUS_MORE_PROCESSING_REQUIRED;
@@ -2788,9 +2791,9 @@ Routine Description:
         worker item to write out the dirty bit so that the next
         time we run we will do a autochk /r.  This is not forward
         progress guaranteed at the moment.
-        
+
         Clean up the Mdl used for this partial request.
-        
+
     Note that if the Irp is failing, the error code is already where
     we want it.
 
@@ -2815,7 +2818,7 @@ Return Value:
     UNREFERENCED_PARAMETER( DeviceObject );
 
     DebugTrace(+1, Dbg, "FatPagingFileCompletionRoutineCatch, Context = %p\n", Context );
-    
+
     //
     //  Cleanup the existing Mdl, perhaps by returning the reserve.
     //
@@ -2824,7 +2827,7 @@ Return Value:
 
         MmPrepareMdlForReuse( Irp->MdlAddress );
         KeSetEvent( &FatReserveEvent, 0, FALSE );
-    
+
     } else {
 
         IoFreeMdl( Irp->MdlAddress );
@@ -2851,7 +2854,7 @@ Return Value:
     }
 
     return STATUS_MORE_PROCESSING_REQUIRED;
-    
+
 }
 
 
@@ -3104,7 +3107,7 @@ Return Value:
 
 {
     NTSTATUS Status = STATUS_SUCCESS;
-    
+
     PFAT_IO_CONTEXT Context = Contxt;
     BOOLEAN PostRequest = FALSE;
 
@@ -3140,7 +3143,7 @@ Return Value:
             DbgBreakPoint();
         }
 #endif
-    
+
 #ifdef SYSCACHE_COMPILE
         DbgPrint( "FAT SYSCACHE: SingleAsync (IRP %08x) -> %08x\n", Irp, Irp->IoStatus );
 #endif
@@ -3149,8 +3152,8 @@ Return Value:
         // Post STATUS_VERIFY_REQUIRED failures. Only post top level IRPs, because recursive I/Os
         // cannot process volume verification.
         //
-        
-        if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) && 
+
+        if (!FlagOn(Context->IrpContextFlags, IRP_CONTEXT_FLAG_RECURSIVE_CALL) &&
             (Irp->IoStatus.Status == STATUS_VERIFY_REQUIRED)) {
             PostRequest = TRUE;
         }
@@ -3180,13 +3183,13 @@ Return Value:
     //
 
     if (Context->Wait.Async.Resource != NULL) {
-        
+
         ExReleaseResourceForThreadLite( Context->Wait.Async.Resource,
                                     Context->Wait.Async.ResourceThreadId );
     }
-    
+
     if (Context->Wait.Async.Resource2 != NULL) {
-        
+
         ExReleaseResourceForThreadLite( Context->Wait.Async.Resource2,
                                     Context->Wait.Async.ResourceThreadId );
     }
@@ -3208,19 +3211,19 @@ Return Value:
         PIRP_CONTEXT IrpContext = NULL;
 
         try {
-            
+
             IrpContext = FatCreateIrpContext(Irp, TRUE );
-            ClearFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_RECURSIVE_CALL);            
+            ClearFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_RECURSIVE_CALL);
             FatFsdPostRequest( IrpContext, Irp );
             Status = STATUS_MORE_PROCESSING_REQUIRED;
-            
+
         } except( FatExceptionFilter(NULL, GetExceptionInformation()) ) {
 
             //
             // If we failed to post the IRP, we just have to return the failure
             // to the user. :(
             //
-            
+
             NOTHING;
         }
     }
@@ -3328,7 +3331,7 @@ Routine Description:
     This routine conditionally maps the user buffer for the current I/O
     request in the specified mode.  If the buffer is already mapped, it
     just returns its address.
-    
+
     Note that this is the *input/output* buffer.
 
 Arguments:
@@ -3354,7 +3357,7 @@ Return Value:
     if (Irp->MdlAddress == NULL) {
 
         return Irp->UserBuffer;
-    
+
     } else {
 
         PVOID Address = MmGetSystemAddressForMdlSafe( Irp->MdlAddress, NormalPagePriority | MdlMappingNoExecute );
@@ -3382,7 +3385,7 @@ Routine Description:
 
     This routine conditionally buffers the user buffer for the current I/O
     request.  If the buffer is already buffered, it just returns its address.
-    
+
     Note that this is the *input* buffer.
 
 Arguments:
@@ -3390,7 +3393,7 @@ Arguments:
     Irp - Pointer to the Irp for the request.
 
     BufferLength - Length of user buffer.
-    
+
 Return Value:
 
     Buffered address.
@@ -3407,12 +3410,12 @@ Return Value:
     //
     //  Handle the no buffer case.
     //
-    
+
     if (BufferLength == 0) {
 
         return NULL;
     }
-    
+
     //
     //  If there is no system buffer we must have been supplied an Mdl
     //  describing the users input buffer, which we will now snapshot.
@@ -3440,15 +3443,15 @@ Return Value:
                            BufferLength );
 
         } except (EXCEPTION_EXECUTE_HANDLER) {
-              
+
               NTSTATUS Status;
-  
+
               Status = GetExceptionCode();
               FatRaiseStatus( IrpContext,
                               FsRtlIsNtstatusExpected(Status) ? Status : STATUS_INVALID_USER_BUFFER );
         }
     }
-        
+
     return Irp->AssociatedIrp.SystemBuffer;
 }
 
@@ -3521,7 +3524,7 @@ Return Value:
     // We fill in the UserIosb manually below,
     // So passing NULL for the final parameter is ok in this special case.
     //
-#pragma warning(suppress: 6387) 
+#pragma warning(suppress: 6387)
     Irp = IoBuildDeviceIoControlRequest( IOCTL_DISK_MEDIA_REMOVAL,
                                          Vcb->TargetDeviceObject,
                                          &Prevent,
@@ -3560,7 +3563,7 @@ Return Value:
         Status = IoCallDriver( Vcb->TargetDeviceObject, Irp );
 
         if (Status == STATUS_PENDING) {
-            
+
             (VOID) KeWaitForSingleObject( &SyncContext.Event,
                                           Executive,
                                           KernelMode,

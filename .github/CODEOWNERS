@@ -1,0 +1,62 @@
+# GitHub configuration
+/.github/ @microsoft/driver-samples-maintainers
+
+# Code Scanning workflow
+/.github/workflows/Code-Scanning.yml @microsoft/driver-samples-maintainers
+
+# Root files
+/* @microsoft/driver-samples-maintainers
+
+# Audio
+/audio @microsoft/windowsaudio
+
+# Bluetooth
+/bluetooth/ @microsoft/bluetooth
+
+# Camera Platform
+/avstream/ @microsoft/cameraplatdev
+/general/SimpleMediaSource/ @microsoft/cameraplatdev
+
+# Cellular Core
+/network/wwan/ @microsoft/cellcore
+/nfc/ @microsoft/cellcore
+
+# Connection Awareness
+/gnss/ @microsoft/connection-awareness
+/network/radio/ @microsoft/connection-awareness
+
+# Core Networking
+/network/wsk/ @microsoft/corenetworking
+
+# Consumer Storage
+/sd/ @microsoft/consumer-storage
+/smartcrd/ @microsoft/consumer-storage
+
+# Event Tracing for Windows
+/general/perfcounters/ @microsoft/etw
+/general/tracing/ @microsoft/etw
+
+# Filter Manager
+/filesys/miniFilter/ @microsoft/filter-manager
+
+# Indirect Display
+/video/IndirectDisplay/ @microsoft/indirectdisplay-devs
+
+# Kernel Core
+/general/registry/ @microsoft/kernel-core
+
+# Network Security
+/network/trans @microsoft/netsec
+
+# Platform Integrity
+/security/ @microsoft/platform-integrity
+
+# Sensors Platform
+/sensors/ @microsoft/sensors-platform
+
+# Storage
+/storage/ @microsoft/storage-core
+
+# Windows Internet of Things
+/pos/ @microsoft/winiotdev
+/wpd/ @microsoft/winiotdev

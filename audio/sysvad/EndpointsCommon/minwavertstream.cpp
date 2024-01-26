@@ -121,7 +121,8 @@ NTSTATUS CMiniportWaveRTStream::ReadRegistrySettings()
     PAGED_CODE();
 
     NTSTATUS                    ntStatus;
-    UNICODE_STRING              parametersPath;
+    PDRIVER_OBJECT              DriverObject;
+    HANDLE                      DriverKey;
 
     RTL_QUERY_REGISTRY_TABLE    paramTable[] = {
         // QueryRoutine     Flags                                               Name                            EntryContext                            DefaultType                                                     DefaultData                                 DefaultLength
@@ -136,30 +137,37 @@ NTSTATUS CMiniportWaveRTStream::ReadRegistrySettings()
         { NULL,   0,                                                        NULL,                               NULL,                                   0,                                                              NULL,                                       0 }
     };
 
-    RtlInitUnicodeString(&parametersPath, NULL);
+    DriverObject = WdfDriverWdmGetDriverObject(WdfGetDriver());
+    DriverKey = NULL;
+    ntStatus = IoOpenDriverRegistryKey(DriverObject, 
+                                 DriverRegKeyParameters,
+                                 KEY_READ,
+                                 0,
+                                 &DriverKey);
 
-    // The sizeof(WCHAR) is added to the maximum length, for allowing a space for null termination of the string.
-    parametersPath.MaximumLength =
-        g_RegistryPath.Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
-
-    parametersPath.Buffer = (PWCH)ExAllocatePool2(POOL_FLAG_PAGED, parametersPath.MaximumLength, MINWAVERT_POOLTAG);
-    if (parametersPath.Buffer == NULL)
+    if (!NT_SUCCESS(ntStatus))
     {
-        return STATUS_INSUFFICIENT_RESOURCES;
+        return ntStatus;
     }
 
-    RtlAppendUnicodeToString(&parametersPath, g_RegistryPath.Buffer);
-    RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
+    ntStatus = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
+                                  (PCWSTR) DriverKey,
+                                  &paramTable[0],
+                                  NULL,
+                                  NULL);
 
-    ntStatus = RtlQueryRegistryValues(
-        RTL_REGISTRY_ABSOLUTE | RTL_REGISTRY_OPTIONAL,
-        parametersPath.Buffer,
-        &paramTable[0],
-        NULL,
-        NULL
-    );
+    if (!NT_SUCCESS(ntStatus)) 
+    {
+        DPF(D_VERBOSE, ("RtlQueryRegistryValues failed, using default values, 0x%x", ntStatus));
+        //
+        // Don't return error because we will operate with default values.
+        //
+    }
 
-    ExFreePool(parametersPath.Buffer);
+    if (DriverKey)
+    {
+        ZwClose(DriverKey);
+    }
 
     return ntStatus;
 }

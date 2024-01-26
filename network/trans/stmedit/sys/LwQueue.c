@@ -10,6 +10,7 @@ Environment:
 
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include "LwQueue.h"
 
 IO_WORKITEM_ROUTINE     LwWorker;

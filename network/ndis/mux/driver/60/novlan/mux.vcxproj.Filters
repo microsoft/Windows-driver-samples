@@ -37,4 +37,12 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Inf Include="..\muxp.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
+    <Inf Include="..\mux_mp.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
+  </ItemGroup>
 </Project>
