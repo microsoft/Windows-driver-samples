@@ -393,7 +393,7 @@ DiskReadSmartLog(
     logSize = SectorCount * SMART_LOG_SECTOR_SIZE;
     bufferSize = sizeof(SRB_IO_CONTROL) +  max( sizeof(SENDCMDINPARAMS), sizeof(SENDCMDOUTPARAMS) - 1 + logSize );
 
-    srbControl = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srbControl = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        bufferSize,
                                        DISK_TAG_SMART);
 
@@ -444,7 +444,7 @@ DiskWriteSmartLog(
     bufferSize = sizeof(SRB_IO_CONTROL) + sizeof(SENDCMDINPARAMS) - 1 +
                  logSize;
 
-    srbControl = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srbControl = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        bufferSize,
                                        DISK_TAG_SMART);
 
@@ -992,7 +992,7 @@ DiskEnableInfoExceptions(
 
     modeDataSize = MODE_DATA_SIZE;
 
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                          modeDataSize,
                                          DISK_TAG_INFO_EXCEPTION);
 
@@ -1363,7 +1363,7 @@ Return Value:
 
             outBufferSize = sizeof(SRB_IO_CONTROL) + max( sizeof(SENDCMDINPARAMS), sizeof(SENDCMDOUTPARAMS) - 1 + READ_ATTRIBUTE_BUFFER_SIZE );
 
-            outBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
+            outBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                               outBufferSize,
                                               DISK_TAG_SMART);
 
@@ -1453,7 +1453,7 @@ Return Value:
 
             outBufferSize = sizeof(SRB_IO_CONTROL) + max( sizeof(SENDCMDINPARAMS), sizeof(SENDCMDOUTPARAMS) - 1 + READ_THRESHOLD_BUFFER_SIZE );
 
-            outBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
+            outBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                               outBufferSize,
                                               DISK_TAG_SMART);
 
@@ -1588,7 +1588,7 @@ DiskPostReregisterRequest(
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
-    reregRequest = ExAllocatePoolWithTag(NonPagedPoolNx,
+    reregRequest = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                          sizeof(DISKREREGREQUEST),
                                          DISK_TAG_SMART);
     if (reregRequest != NULL)
@@ -1934,7 +1934,7 @@ DiskInfoExceptionCheck(
     PSTOR_ADDR_BTL8 storAddrBtl8 = NULL;
     PSRBEX_DATA_SCSI_CDB16 srbExDataCdb16 = NULL;
 
-    modeData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    modeData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                      MODE_DATA_SIZE,
                                      DISK_TAG_INFO_EXCEPTION);
     if (modeData == NULL)
@@ -1949,7 +1949,7 @@ DiskInfoExceptionCheck(
     } else {
         srbSize = SCSI_REQUEST_BLOCK_SIZE;
     }
-    srb = ExAllocatePoolWithTag(NonPagedPoolNx,
+    srb = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                 srbSize,
                                 DISK_TAG_SRB);
     if (srb == NULL)
@@ -1959,13 +1959,12 @@ DiskInfoExceptionCheck(
                         "buffer\n"));
         return(STATUS_INSUFFICIENT_RESOURCES);
     }
-    RtlZeroMemory(srb, srbSize);
 
     //
     // Sense buffer is in aligned nonpaged pool.
     //
 
-    senseInfoBuffer = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    senseInfoBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                             SENSE_BUFFER_SIZE_EX,
                                             '7CcS');
 

@@ -153,9 +153,9 @@ Return Value:
     // Allocate the neccessary memory for reading the available processors
     //
     Adapter->RSSData.RssProcessorInfo = 
-        (PNDIS_RSS_PROCESSOR_INFO)ExAllocatePoolWithTag(NonPagedPoolNx, 
-                                                        RssInfoSize,
-                                                        'IRMT');
+        (PNDIS_RSS_PROCESSOR_INFO)ExAllocatePool2(POOL_FLAG_NON_PAGED, 
+                                                  RssInfoSize,
+                                                  'IRMT');
     if (Adapter->RSSData.RssProcessorInfo == NULL)
     {
         DEBUGP(MP_ERROR, "%s: Failed to allocate memory for rss information\n", __FUNCTION__);
@@ -383,9 +383,9 @@ Return Value:
 
     Size = RssV2NQEnforcerGetQueueMapSize(RSSV2_MAX_NUMBER_OF_PROCESSORS_IN_RSS_TABLE);
 
-    VPort->QueueMap = (PRSSV2_QUEUE_MAP)ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                              Size,
-                                                              'QNMT');
+    VPort->QueueMap = (PRSSV2_QUEUE_MAP)ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                        Size,
+                                                        'QNMT');
     if (VPort->QueueMap == NULL)
     {
         DEBUGP(MP_TRACE, "Inisufficient memory for QueueMap processor.\n");

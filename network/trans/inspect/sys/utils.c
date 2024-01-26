@@ -13,7 +13,7 @@ Environment:
 
 --*/
 
-
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntddk.h>
 #include <wdf.h>
 
@@ -301,8 +301,6 @@ AllocateAndInitializePendedPacket(
    {
       return NULL;
    }
-
-   RtlZeroMemory(pendedPacket, sizeof(TL_INSPECT_PENDED_PACKET));
 
    pendedPacket->type = packetType;
    pendedPacket->direction = packetDirection;

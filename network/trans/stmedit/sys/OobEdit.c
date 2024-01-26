@@ -13,6 +13,7 @@ Environment:
 
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include "Trace.h"
 #include "StreamEdit.h"
 #include "OobEdit.tmh"
@@ -379,7 +380,7 @@ StreamOobReinjectData(
     do
     {
         DataCopy = ExAllocatePool2(
-            POOL_FLAG_NON_PAGED,
+                        POOL_FLAG_NON_PAGED,
                         Length,
                         STMEDIT_TAG_MDL_DATA
                         );

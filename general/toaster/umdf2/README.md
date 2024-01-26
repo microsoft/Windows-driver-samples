@@ -50,7 +50,7 @@ Before you manually deploy a driver, you must turn on test signing and install a
 
 ### View the root enumerated driver in Device Manager
 
-On the target computer, in a Command Prompt window, enter **devmgmt** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate **Sample WDF Toaster Service + Filter** (for example, this might be under the **Toaster** node).
+On the target computer, in a Command Prompt window, enter **devmgmt.msc** to open Device Manager. In Device Manager, on the **View** menu, choose **Devices by type**. In the device tree, locate **Sample WDF Toaster Service + Filter** (for example, this might be under the **Toaster** node).
 
 In Device Manager, on the **View** menu, choose **Devices by connection**. Locate **Sample WDF Toaster Service + Filter** as a child of the root node of the device tree.
 

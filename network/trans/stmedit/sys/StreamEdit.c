@@ -464,9 +464,7 @@ StreamEditFlowEstablishedClassify(
 
     do
     {
-        StreamFlowContext = ExAllocatePool2(POOL_FLAG_NON_PAGED,
-                                sizeof(STREAM_FLOW_CONTEXT),
-                                STMEDIT_TAG_FLOWCTX);
+        StreamFlowContext = ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(STREAM_FLOW_CONTEXT), STMEDIT_TAG_FLOWCTX);
 
         if (StreamFlowContext == NULL) 
 		{
@@ -477,7 +475,6 @@ StreamEditFlowEstablishedClassify(
 
         // Initialize the flow-context
         //
-        RtlZeroMemory(StreamFlowContext, sizeof(STREAM_FLOW_CONTEXT));
 
         StreamFlowContext->IpProto = InFixedValues->incomingValue[ipProtIndex].value.uint16;
         StreamFlowContext->bFlowActive = TRUE;
@@ -1371,6 +1368,10 @@ DriverEntry(
    DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT,"--> %!FUNC!: DrvObj %p, Regpath %wZ",  DriverObject, RegistryPath);
 
    do {
+
+       // Request NX Non-Paged Pool when available
+       ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
         //
         // Initialize globals and Configuration structures.
         //

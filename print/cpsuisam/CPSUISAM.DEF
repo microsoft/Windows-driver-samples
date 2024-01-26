@@ -1,6 +1,0 @@
-; module-definition file for SurPtrUI -- used by LINK.EXE
-
-NAME         CPSUI       ; application's module name
-
-DESCRIPTION  'Microsoft Windows 2000/Windows XP/Windows Server 2003  Common Property Sheet UI Sample Program'
-

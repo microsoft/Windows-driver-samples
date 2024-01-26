@@ -957,9 +957,9 @@ Return Value:
 
                 InitializeListHead( &transactionContext->DeleteNotifyList );
 
-                transactionContext->Resource = ExAllocatePoolWithTag( NonPagedPool,
-                                                                      sizeof(ERESOURCE),
-                                                                      DF_ERESOURCE_POOL_TAG );
+                transactionContext->Resource = ExAllocatePoolZero( NonPagedPool,
+                                                                   sizeof(ERESOURCE),
+                                                                   DF_ERESOURCE_POOL_TAG );
 
                 if (NULL == transactionContext->Resource) {
                     FltReleaseContext( transactionContext );
@@ -1688,9 +1688,9 @@ Return Value:
 
     String->Length = 0;
 
-    String->Buffer = ExAllocatePoolWithTag( DF_CONTEXT_POOL_TYPE,
-                                            String->MaximumLength,
-                                            DF_STRING_POOL_TAG );
+    String->Buffer = ExAllocatePoolZero( DF_CONTEXT_POOL_TYPE,
+                                         String->MaximumLength,
+                                         DF_STRING_POOL_TAG );
 
     if (NULL == String->Buffer) {
 
@@ -2311,16 +2311,14 @@ Return Value:
 
     ASSERT( NULL != StreamContext );
 
-    deleteNotify = ExAllocatePoolWithTag( DF_CONTEXT_POOL_TYPE,
-                                          sizeof(DF_DELETE_NOTIFY),
-                                          DF_DELETE_NOTIFY_POOL_TAG );
+    deleteNotify = ExAllocatePoolZero( DF_CONTEXT_POOL_TYPE,
+                                       sizeof(DF_DELETE_NOTIFY),
+                                       DF_DELETE_NOTIFY_POOL_TAG );
 
     if (NULL == deleteNotify) {
 
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-
-    RtlZeroMemory( deleteNotify, sizeof(DF_DELETE_NOTIFY) );
 
     FltReferenceContext( StreamContext );
     deleteNotify->StreamContext = StreamContext;

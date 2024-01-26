@@ -201,11 +201,11 @@ public:
 private:
     DWORD                m_dwInPinId;           /* This is the input pin       */
     IMFSampleList        m_sampleList;          /* List storing the samples    */
-    IMFDeviceTransform*  m_pTransform;         /* Weak reference to the the device MFT */
     GUID                 m_streamCategory;
     ULONG                m_cRef;
 protected:
-    ComPtr<Ctee>         m_spTeer;                /*Tee that acts as a passthrough or an XVP  */
+    IMFDeviceTransform*  m_pTransform;          /* Weak reference to the the device MFT */
+    ComPtr<Ctee>         m_spTeer;              /*Tee that acts as a passthrough or an XVP  */
  };
 
 
@@ -326,7 +326,7 @@ public:
     }
 
     STDMETHODIMP PassThrough        ( _In_ IMFSample* );
-    virtual STDMETHODIMP Do         ( _In_ IMFSample* pSample, _Out_ IMFSample ** , _Inout_ bool &newSample) = 0;
+    virtual STDMETHODIMP Do         ( _In_ IMFSample* pSample, _Out_ IMFSample **) = 0;
     STDMETHODIMP SetMediaTypes(_In_ IMFMediaType* pInMediaType, _In_ IMFMediaType* pOutMediaType);
     //
     // Inline functions
@@ -395,8 +395,7 @@ public:
         }
         return hr;
     }
-    virtual ~CVideoProcTee()
-    {}
+    virtual ~CVideoProcTee();
 protected:
     CCritSec m_Lock;
     __inline VOID SetAsyncStatus(_In_ HRESULT hrStatus)
@@ -426,7 +425,7 @@ public:
     virtual ~CXvptee();
     STDMETHOD(StartStreaming)();
     STDMETHOD(StopStreaming)();
-    STDMETHODIMP Do             (   _In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Do             (   _In_ IMFSample* pSample, _Outptr_ IMFSample **);
     STDMETHODIMP Configure      (   _In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform** );
 
 };
@@ -453,7 +452,7 @@ public:
     }
     virtual ~CDecoderTee();
 
-    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **);
     STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
     STDMETHODIMP Invoke(_In_ IMFAsyncResult*);
 protected:
@@ -474,6 +473,7 @@ protected:
     DWORD                m_lNeedInputRequest;
     GUID                 m_streamCategory; // Needed for bind flags
     BOOL                 m_bXvpAdded;
+    ComPtr<CVideoProcTee> m_spXvp;
     DWORD                m_dwMFTInputId;
     DWORD                m_dwMFTOutputId;
     ComPtr<IMFSample>    m_spUnprocessedSample;
@@ -491,7 +491,7 @@ public:
     ~CSampleCopytee();
     STDMETHOD(StartStreaming)();
     STDMETHOD(StopStreaming)();
-    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **, _Inout_ bool &newSample);
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Outptr_ IMFSample **);
     STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
 };
 
@@ -502,7 +502,7 @@ public:
     ~CGrayTee() {
     }
 
-    STDMETHODIMP Do(_In_ IMFSample* pSample, _Out_ IMFSample **, , _Inout_ bool &newSample);
+    STDMETHODIMP Do(_In_ IMFSample* pSample, _Out_ IMFSample **);
     STDMETHODIMP Configure(_In_opt_ IMFMediaType *, _In_opt_ IMFMediaType *, _Outptr_ IMFTransform**);
 private:
     // Function pointer for the function that transforms the image.

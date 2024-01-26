@@ -85,7 +85,7 @@ Abstract:
     CdFreePool( &(F) )
 
 #define CdAllocateFcbNonpaged(IC) \
-    ExAllocatePoolWithTag( CdNonPagedPool, sizeof( FCB_NONPAGED ), TAG_FCB_NONPAGED )
+    ExAllocatePoolZero( CdNonPagedPool, sizeof( FCB_NONPAGED ), TAG_FCB_NONPAGED )
 
 #define CdDeallocateFcbNonpaged(IC,FNP) \
     CdFreePool( &(FNP) )
@@ -311,13 +311,13 @@ Return Value:
 
     InitializeListHead( &Vcb->DirNotifyList );
     FsRtlNotifyInitializeSync( &Vcb->NotifySync );
-    
+
     //
     //  Pick up a VPB right now so we know we can pull this filesystem stack
-    //  off of the storage stack on demand.  This can raise - if it does,  
+    //  off of the storage stack on demand.  This can raise - if it does,
     //  uninitialize the notify structures before returning.
     //
-    
+
     try  {
 
         Vcb->SwapVpb = FsRtlAllocatePoolWithTag( CdNonPagedPool,
@@ -327,7 +327,7 @@ Return Value:
     finally {
 
         if (AbnormalTermination())  {
-        
+
             FsRtlNotifyUninitializeSync( &Vcb->NotifySync );
         }
     }
@@ -337,7 +337,7 @@ Return Value:
     //
 
     RtlZeroMemory( Vcb->SwapVpb, sizeof( VPB ) );
-    
+
     //
     //  Initialize the resource variable for the Vcb and files.
     //
@@ -493,7 +493,7 @@ Return Value:
         //
         //  We no longer accept media where blocksize != sector size.
         //
-        
+
         if (Vcb->BlockSize != SECTOR_SIZE)  {
 
             CdRaiseStatus( IrpContext, STATUS_DISK_CORRUPT_ERROR );
@@ -502,7 +502,7 @@ Return Value:
         Vcb->BlocksPerSector = SECTOR_SIZE / Vcb->BlockSize;
         Vcb->BlockMask = Vcb->BlockSize - 1;
         Vcb->BlockInverseMask = ~Vcb->BlockMask;
-     
+
         Vcb->BlockToSectorShift = 0;
         Vcb->BlockToByteShift = SECTOR_SHIFT;
 
@@ -656,16 +656,16 @@ Return Value:
 
             McbEntry = Vcb->VolumeDasdFcb->Mcb.McbArray;
 
-            McbEntry->FileOffset = 
+            McbEntry->FileOffset =
             McbEntry->DiskOffset = 0;
-            
+
             McbEntry->ByteCount = Vcb->VolumeDasdFcb->AllocationSize.QuadPart;
-            
+
             McbEntry->DataBlockByteCount =
             McbEntry->TotalBlockByteCount = McbEntry->ByteCount;
-            
+
             Vcb->VolumeDasdFcb->Mcb.CurrentEntryCount = 1;
-    
+
             CdUnlockFcb( IrpContext, Vcb->VolumeDasdFcb );
 
             //
@@ -861,7 +861,7 @@ Return Value:
 
             SetFlag( Vcb->VcbState, VCB_STATE_ISO );
         }
-        
+
     } finally {
 
         if (UnlockVcb) { CdUnlockVcb( IrpContext, Vcb ); }
@@ -898,15 +898,15 @@ Return Value:
 
     ASSERT_EXCLUSIVE_CDDATA;
     ASSERT_EXCLUSIVE_VCB( Vcb );
-    
+
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Chuck the backpocket Vpb we kept just in case.
     //
 
     CdFreePool( &Vcb->SwapVpb );
-    
+
     //
     //  If there is a Vpb then we must delete it ourselves.
     //
@@ -918,7 +918,7 @@ Return Value:
     //
 
     if (Vcb->TargetDeviceObject != NULL) {
-    
+
         ObDereferenceObject( Vcb->TargetDeviceObject );
     }
 
@@ -1069,7 +1069,7 @@ Return Value:
 
         default:
 
-#pragma prefast( suppress: __WARNING_USE_OTHER_FUNCTION, "This is a bug." )   
+#pragma prefast( suppress: __WARNING_USE_OTHER_FUNCTION, "This is a bug." )
             CdBugCheck( 0, 0, 0 );
         }
 
@@ -1108,7 +1108,7 @@ Return Value:
         //
 
         ExInitializeFastMutex( &NewFcb->FcbNonpaged->AdvancedFcbHeaderMutex );
-        FsRtlSetupAdvancedHeader( &NewFcb->Header, 
+        FsRtlSetupAdvancedHeader( &NewFcb->Header,
                                   &NewFcb->FcbNonpaged->AdvancedFcbHeaderMutex );
 
         if (NodeTypeCode == CDFS_NTC_FCB_DATA) {
@@ -1424,7 +1424,7 @@ Return Value:
     PAGED_CODE();
 
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Allocate and initialize the structure.
     //
@@ -1476,7 +1476,7 @@ Return Value:
     PAGED_CODE();
 
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     if (Ccb->SearchExpression.FileName.Buffer != NULL) {
 
         CdFreePool( &Ccb->SearchExpression.FileName.Buffer );
@@ -1547,7 +1547,7 @@ Return Value:
     //
 
     if (FileLock == NULL) {
-         
+
         if (RaiseOnError) {
 
             NT_ASSERT( ARGUMENT_PRESENT( IrpContext ));
@@ -1611,11 +1611,11 @@ Return Value:
         }
 
         NT_ASSERT( IrpSp->FileObject != NULL ||
-                
+
                 (IrpSp->MajorFunction == IRP_MJ_FILE_SYSTEM_CONTROL &&
                  IrpSp->MinorFunction == IRP_MN_USER_FS_REQUEST &&
                  IrpSp->Parameters.FileSystemControl.FsControlCode == FSCTL_INVALIDATE_VOLUMES) ||
-                
+
                 (IrpSp->MajorFunction == IRP_MJ_FILE_SYSTEM_CONTROL &&
                  IrpSp->MinorFunction == IRP_MN_MOUNT_VOLUME ) ||
 
@@ -1681,7 +1681,7 @@ Return Value:
     if (IrpSp->DeviceObject != CdData.FileSystemDeviceObject) {
 
         NewIrpContext->Vcb =  &((PVOLUME_DEVICE_OBJECT) IrpSp->DeviceObject)->Vcb;
-    
+
     }
 
     //
@@ -2168,7 +2168,7 @@ Return Value:
     PAGED_CODE();
 
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     Fcb = (PFCB) RtlEnumerateGenericTableWithoutSplaying( &Vcb->FcbTable, RestartKey );
 
     if (Fcb != NULL) {
@@ -2243,7 +2243,7 @@ Return Value:
     //  Zero the command block.  This conveniently corresponds to an
     //  LBA mode READ_TOC request.
     //
-    
+
     RtlZeroMemory( &Command, sizeof( Command));
 
 RetryReadToc:
@@ -2343,7 +2343,7 @@ RetryReadToc:
                 //  Knock 2.5 minutes off the current track to hide the final leadin.
                 //  2.5 min = 150 sec = (x 75) 11250 frames (sectors).
                 //
-                
+
                 SwapCopyUchar4( &Address, &Track->Address);
                 Address -= 11250;
                 SwapCopyUchar4( &Track->Address, &Address);
@@ -2557,9 +2557,9 @@ Return Value:
     PFCB_NONPAGED FcbNonpaged;
 
     PAGED_CODE();
-    
+
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Allocate the non-paged pool and initialize the various
     //  synchronization objects.
@@ -2610,9 +2610,9 @@ Return Value:
 
 {
     PAGED_CODE();
-    
+
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     ExDeleteResourceLite( &FcbNonpaged->FcbResource );
 
     CdDeallocateFcbNonpaged( IrpContext, FcbNonpaged );
@@ -2708,7 +2708,7 @@ Return Value:
 
 {
     PAGED_CODE();
-    
+
     UNREFERENCED_PARAMETER( FcbTable );
 
     return( FsRtlAllocatePoolWithTag( CdPagedPool, ByteSize, TAG_FCB_TABLE ));
@@ -2793,7 +2793,7 @@ Return Value:
     PAGED_CODE();
 
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Check if there are two tracks or fewer.
     //
@@ -2813,10 +2813,10 @@ Return Value:
         //
 
         while (ThisTrack != LastTrack) {
-            
+
             SwapCopyUchar4( &Address, ThisTrack->Address);
             CdLbnToMmSsFf( Address, (PUCHAR)&MsfAddress);
-            
+
             SerialNumber += MsfAddress;
             ThisTrack += 1;
         }

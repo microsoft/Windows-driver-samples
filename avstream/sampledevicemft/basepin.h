@@ -458,10 +458,10 @@ private:
 class CInPin: public CBasePin{
 public:
     CInPin( _In_opt_ IMFAttributes*, _In_ ULONG ulPinId = 0, _In_ CMultipinMft *pParent=NULL);
-    ~CInPin();
+    virtual ~CInPin();
 
     STDMETHOD ( Init )(
-        _In_ IMFTransform * 
+        _In_ IMFDeviceTransform * 
         );
     STDMETHOD_( VOID, ConnectPin)(
         _In_ CBasePin * 
@@ -514,7 +514,7 @@ public:
     STDMETHOD_( VOID, ShutdownPin)();
 
 protected:
-    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
+    ComPtr<IMFDeviceTransform>  m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ComPtr<CBasePin>            m_outpin;            //Only one output pin connected per input pin. There can be multiple pins connected and this could be a list   
     DeviceStreamState           m_preferredStreamState;
@@ -541,7 +541,7 @@ public:
         , _In_     MFSampleAllocatorUsage allocatorUsage = MFSampleAllocatorUsage_DoesNotAllocate
 #endif
     );
-    ~COutPin();
+    virtual ~COutPin();
     STDMETHODIMP FlushQueues();
     STDMETHODIMP AddPin(
         _In_ DWORD pinId
@@ -619,7 +619,7 @@ public:
         Init();
     }
     STDMETHOD_(VOID, ShutdownPin)();
-    ~CAsyncInPin()
+    virtual ~CAsyncInPin()
     {
         FlushQueues();
     }
@@ -638,7 +638,17 @@ class CTranslateOutPin : public COutPin {
         MFVideoFormat_H264,
         MFVideoFormat_MJPG
     };
-    // @@@@README : This is what the compressed media types will be translated into
+
+    // @@@@README 
+    // If you translate to YUY2 in D3D mode it is a suboptimal path, because the 
+    // pipeline i.e. Frameserver will lock the surface into a staging buffer and 
+    // map it to the client process like Teams, Camera App etc.
+    // Ideally when translating to YUY2, don't pass the D3D Manager to the 
+    // Decoder (CDecoderTee) or the Video Processor (CXVPTee). The pipeline will
+    // shove the system buffer back into the DX surface on the client side, if the App
+    // demands DX surfaces. NV12 is sharable from frameserver to clients and hence
+    // the preferred format to decode into.
+    // The below subtype is what the compressed media types will be translated into.
     const GUID translatedGUID = MFVideoFormat_NV12; // Translating to NV12
 public:
     CTranslateOutPin(_In_ ULONG         id = 0,
@@ -663,10 +673,10 @@ public:
         _In_ IMFMediaType *pInMediatype,
         _In_ IMFMediaType* pOutMediaType,
         _In_ DeviceStreamState state);
-
+    virtual ~CTranslateOutPin() {}
 protected:
 
-    map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
+    map<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> m_TranslatedMediaTypes;
 };
 
 

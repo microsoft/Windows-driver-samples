@@ -231,12 +231,12 @@ CdVerifyOrCreateDirStreamFile (
     //
     //  Unsafe test to see if call / lock neccessary.
     //
-    
+
     if (NULL == Fcb->FileObject) {
-        
+
         CdCreateInternalStream( IrpContext,
                                 Fcb->Vcb,
-                                Fcb, 
+                                Fcb,
                                 &Fcb->FileNamePrefix.ExactCaseName.FileName);
     }
 }
@@ -371,8 +371,8 @@ CdHijackIrpAndFlushDevice (
             if (NULL == *(UB))  {                         \
                 CdRaiseStatus( (IC), STATUS_INSUFFICIENT_RESOURCES);            \
             }                                                                   \
-        }                                                                       
-        
+        }
+
 
 #define CdLockUserBuffer(IC,BL,OP) {                        \
     if ((IC)->Irp->MdlAddress == NULL) {                    \
@@ -809,7 +809,7 @@ CdFindPrefix (
 //
 
 typedef enum _TYPE_OF_ACQUIRE {
-    
+
     AcquireExclusive,
     AcquireShared,
     AcquireSharedStarveExclusive
@@ -944,10 +944,10 @@ CdAcquireResource (
 
 #define CdAcquireCacheForRead( IC)                                                      \
     ExAcquireResourceSharedLite( &(IC)->Vcb->SectorCacheResource, TRUE)
-    
+
 #define CdAcquireCacheForUpdate( IC)                                                    \
     ExAcquireResourceExclusiveLite( &(IC)->Vcb->SectorCacheResource, TRUE)
-    
+
 #define CdReleaseCache( IC)                                                             \
     ExReleaseResourceLite( &(IC)->Vcb->SectorCacheResource);
 
@@ -1225,7 +1225,7 @@ CdInitializeStackIrpContext (
 //
 
 #define CdCreateIrpContextLite(IC)  \
-    ExAllocatePoolWithTag( CdNonPagedPool, sizeof( IRP_CONTEXT_LITE ), TAG_IRP_CONTEXT_LITE )
+    ExAllocatePoolZero( CdNonPagedPool, sizeof( IRP_CONTEXT_LITE ), TAG_IRP_CONTEXT_LITE )
 
 #define CdFreeIrpContextLite(ICL)  \
     CdFreePool( &(ICL) )
@@ -1372,7 +1372,7 @@ CdOperationIsDasdOpen (
     )
 {
     PIO_STACK_LOCATION IrpSp = IoGetCurrentIrpStackLocation( IrpContext->Irp);
-    
+
     return ((IrpContext->MajorFunction == IRP_MJ_CREATE) &&
             (IrpSp->FileObject->FileName.Length == 0) &&
             (IrpSp->FileObject->RelatedFileObject == NULL));
@@ -1427,7 +1427,7 @@ CdDismountVcb (
 #define CdUpdateVcbCondition( V, C)      (V)->VcbCondition = (C)
 
 #define CdMarkRealDevForVerify( DO)  SetFlag( (DO)->Flags, DO_VERIFY_VOLUME)
-                                     
+
 #define CdMarkRealDevVerifyOk( DO)   ClearFlag( (DO)->Flags, DO_VERIFY_VOLUME)
 
 
@@ -1577,7 +1577,7 @@ CdOplockComplete (
 
 INLINE
 ULONG
-SectorsFromLlBytes( 
+SectorsFromLlBytes(
     ULONGLONG Bytes
 ) {
 

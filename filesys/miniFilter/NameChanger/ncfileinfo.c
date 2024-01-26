@@ -9,7 +9,7 @@ Module Name:
 Abstract:
 
     Contains routines to process user-initiated query file and set file
-    information requests.  
+    information requests.
 
 Environment:
 
@@ -121,7 +121,7 @@ Return Value:
     //
     //  Find the name in the user buffer.
     //
-    
+
     if (InfoClass == FileAllInformation) {
 
         NameInfo = & ((PFILE_ALL_INFORMATION) UserBuffer)->NameInformation;
@@ -160,7 +160,7 @@ Return Value:
         //  a buffer overflow in the filter even if the file system succeeded.
         //
 
-        if (InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Length > 
+        if (InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Length >
             InstanceContext->Mapping.RealMapping.LongNamePath.VolumelessName.Length) {
 
             NameInfo->FileNameLength += InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Length -
@@ -174,9 +174,9 @@ Return Value:
     }
 
     ReturnedName.Buffer = NameInfo->FileName;
-    ReturnedName.MaximumLength = 
+    ReturnedName.MaximumLength =
     ReturnedName.Length = (USHORT)NameInfo->FileNameLength;
-    
+
     //
     //  Check if the name being returned is within the real mapping.
     //  If not, we have no translation to perform.
@@ -256,7 +256,7 @@ Return Value:
     //
 
     } else {
-        
+
         NameLengthAvailable = NameInfo->FileNameLength;
 
         Status = STATUS_SUCCESS;
@@ -272,9 +272,9 @@ Return Value:
 
         FLT_ASSERT( Remainder.Length > 0 );
 
-        RemainderCopy.Buffer = ExAllocatePoolWithTag( PagedPool,
-                                                      Remainder.Length,
-                                                      NC_TAG );
+        RemainderCopy.Buffer = ExAllocatePoolZero( PagedPool,
+                                                   Remainder.Length,
+                                                   NC_TAG );
 
         if (RemainderCopy.Buffer == NULL) {
 
@@ -294,8 +294,8 @@ Return Value:
     //  Firstly, copy back the name to our mapping.
     //
 
-    RtlCopyMemory( &NameInfo->FileName, 
-                   InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Buffer, 
+    RtlCopyMemory( &NameInfo->FileName,
+                   InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Buffer,
                    min(InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Length,
                        NameLengthAvailable) );
 
@@ -304,7 +304,7 @@ Return Value:
         NameLengthAvailable -= InstanceContext->Mapping.UserMapping.LongNamePath.VolumelessName.Length;
 
     } else {
-        
+
         NameLengthAvailable = 0;
     }
 
@@ -327,7 +327,7 @@ Return Value:
     //
     //  We have finished the query, complete operation.
     //
-    
+
 NcPostQueryNameInformationCleanup:
 
     Data->IoStatus.Status = Status;
@@ -431,12 +431,12 @@ Return Value:
     //  Get the file's name.
     //
 
-    Status = NcGetFileNameInformation( Data, 
+    Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
-                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
+                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo );
 
     if (!NT_SUCCESS( Status )) {
@@ -530,8 +530,8 @@ Return Value:
     //  Copy back the name to our mapping.
     //
 
-    RtlCopyMemory( &NameInfo->FileName, 
-                   FinalComponentToReturn->Buffer, 
+    RtlCopyMemory( &NameInfo->FileName,
+                   FinalComponentToReturn->Buffer,
                    FinalComponentToReturn->Length );
 
     NameInfo->FileNameLength = FinalComponentToReturn->Length;
@@ -539,7 +539,7 @@ Return Value:
     //
     //  We have finished the query, complete operation.
     //
-    
+
     Status = STATUS_SUCCESS;
     ReturnValue = FLT_PREOP_COMPLETE;
 
@@ -686,7 +686,7 @@ Return Value:
 
     if (SizeActuallyReturned <= (ULONG)FIELD_OFFSET( FILE_LINKS_INFORMATION, Entry ) ||
         !NT_SUCCESS( Data->IoStatus.Status )) {
-            
+
         BytesWritten = SizeActuallyReturned;
 
         Status = Data->IoStatus.Status;
@@ -708,13 +708,13 @@ Return Value:
     //
     //  Open the mapping parents and query IDs.
     //
-        
+
     InitializeObjectAttributes( &MappingParentAttributes,
                                 &InstanceContext->Mapping.RealMapping.LongNamePath.ParentPath,
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  Data->Iopb->TargetInstance,           // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -731,7 +731,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  Data->Iopb->TargetFileObject );       // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -763,7 +763,7 @@ Return Value:
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  Data->Iopb->TargetInstance,           // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -780,7 +780,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  Data->Iopb->TargetFileObject );       // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -811,9 +811,9 @@ Return Value:
     //  Take a copy of the results of the call from the filesystem.
     //
 
-    OriginalBuffer = ExAllocatePoolWithTag( PagedPool,
-                                            SizeActuallyReturned,
-                                            NC_TAG );
+    OriginalBuffer = ExAllocatePoolZero( PagedPool,
+                                         SizeActuallyReturned,
+                                         NC_TAG );
 
     if (OriginalBuffer == NULL) {
 
@@ -1028,7 +1028,7 @@ Return Value:
 {
     FLT_PREOP_CALLBACK_STATUS ReturnValue;
     NTSTATUS Status;
-    PFILE_NAME_INFORMATION NameInfo = 
+    PFILE_NAME_INFORMATION NameInfo =
         Data->Iopb->Parameters.SetFileInformation.InfoBuffer;
     PFLT_FILE_NAME_INFORMATION FileInfo = NULL;
     PNC_INSTANCE_CONTEXT InstanceContext = NULL;
@@ -1068,12 +1068,12 @@ Return Value:
     //  Get the file's name.
     //
 
-    Status = NcGetFileNameInformation( Data, 
+    Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
-                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
+                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo );
 
     if (!NT_SUCCESS( Status )) {
@@ -1196,7 +1196,7 @@ NcPreSetDisposition (
 Routine Description:
 
     Fltmgr callback which manages setting the delete disposition on a file.
-    We must disallow setting the delete disposition on an ancestor of either 
+    We must disallow setting the delete disposition on an ancestor of either
     mapping because otherwise we would have to maintain the mapping's
     short/long name pairings.
 
@@ -1265,8 +1265,8 @@ Return Value:
     Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
                                            FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo);
 
@@ -1290,7 +1290,7 @@ Return Value:
                                     &InstanceContext );
 
     if (!NT_SUCCESS( Status )) {
-        
+
         goto NcPreSetDispositionCleanup;
     }
 
@@ -1406,7 +1406,7 @@ Return Value:
 {
     FLT_PREOP_CALLBACK_STATUS ReturnValue;
     NTSTATUS Status;
-    PFILE_LINK_INFORMATION LinkInfo = 
+    PFILE_LINK_INFORMATION LinkInfo =
         Data->Iopb->Parameters.SetFileInformation.InfoBuffer;
     PFILE_LINK_INFORMATION MungedLinkInfo = NULL;
     ULONG MungedLinkInfoSize;
@@ -1537,7 +1537,7 @@ Return Value:
     //
     //  We need to build a new path to link on.
     //
-    
+
     Status = NcConstructPath( &InstanceContext->Mapping.RealMapping,
                               &UserRemainder,
                               TRUE,
@@ -1551,12 +1551,12 @@ Return Value:
 
     //
     //  Create our own link structure.
-    //  
-    
+    //
+
     MungedLinkInfoSize = sizeof(FILE_LINK_INFORMATION) + MungedName.Length - sizeof(WCHAR);
-    MungedLinkInfo = ExAllocatePoolWithTag( PagedPool,
-                                            MungedLinkInfoSize,
-                                            NC_SET_LINK_BUFFER_TAG );
+    MungedLinkInfo = ExAllocatePoolZero( PagedPool,
+                                         MungedLinkInfoSize,
+                                         NC_SET_LINK_BUFFER_TAG );
 
     if (MungedLinkInfo == NULL) {
 
@@ -1574,7 +1574,7 @@ Return Value:
     //
     //  Issue our own request.
     //
-    
+
     Status = FltSetInformationFile( FltObjects->Instance,
                                     FltObjects->FileObject,
                                     MungedLinkInfo,
@@ -1584,7 +1584,7 @@ Return Value:
     //
     //  Because we issued the IO, we will pass complete this ourselves.
     //
-    
+
     ReturnValue = FLT_PREOP_COMPLETE;
 
 NcPreSetLinkInformationCleanup:
@@ -1651,55 +1651,55 @@ Return Value:
     //
     //  Return Values
     //
-    
+
     NTSTATUS Status;
     FLT_PREOP_CALLBACK_STATUS ReturnValue;
 
     //
     //  Contexts
     //
-    
+
     PNC_INSTANCE_CONTEXT InstanceContext = NULL;
-   
+
     //
     //  Data
     //
-    
-    PFILE_RENAME_INFORMATION RenameInfo = 
+
+    PFILE_RENAME_INFORMATION RenameInfo =
         Data->Iopb->Parameters.SetFileInformation.InfoBuffer;
-    
+
     //
     //  FileInformation
     //
-    
+
     PFLT_FILE_NAME_INFORMATION TargetInfo = NULL;
     PFLT_FILE_NAME_INFORMATION SrcInfo = NULL;
-    
+
     //
     //  Target Real Overlap
     //
-    
+
     NC_PATH_OVERLAP TargetRealOverlap;
     UNICODE_STRING TargetRealRemainder;
-    
+
     //
     //  Target User Overlap
     //
-    
+
     NC_PATH_OVERLAP TargetUserOverlap;
     UNICODE_STRING TargetUserRemainder;
 
     //
     //  Src Real Overlap
     //
-    
+
     NC_PATH_OVERLAP SrcRealOverlap;
     NC_PATH_OVERLAP SrcUserOverlap;
-    
+
     //
     //  Munge Data
     //
-    
+
     UNICODE_STRING MungedTargetName = EMPTY_UNICODE_STRING;
     PFILE_RENAME_INFORMATION MungedRenameInfo = NULL;
     ULONG MungedRenameLength;
@@ -1713,7 +1713,7 @@ Return Value:
     ReplaceIfExists = (fileInformationClass == FileRenameInformationEx) ?
         BooleanFlagOn( RenameInfo->Flags, FILE_RENAME_REPLACE_IF_EXISTS ) :
         RenameInfo->ReplaceIfExists;
-        
+
 
     PAGED_CODE();
 
@@ -1725,7 +1725,7 @@ Return Value:
                 (fileInformationClass == FileRenameInformationEx) );
 
     //
-    //  Get Instance Context 
+    //  Get Instance Context
     //
 
     Status = FltGetInstanceContext( FltObjects->Instance,
@@ -1740,12 +1740,12 @@ Return Value:
     //
     //  Find out the src file's name.
     //
-    
+
     Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
                                            FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &SrcInfo);
 
@@ -1766,7 +1766,7 @@ Return Value:
     //
     //  Find the src's overlap with the real and user mappings.
     //
-    
+
     NcComparePath( &SrcInfo->Name,
                    &InstanceContext->Mapping.RealMapping,
                    NULL,
@@ -1785,7 +1785,7 @@ Return Value:
     //  If the src is an ancestor of either the user or real mappings we can
     //  fail the request.
     //
-    
+
     if (SrcUserOverlap.Ancestor || SrcRealOverlap.Ancestor) {
 
         ReturnValue = FLT_PREOP_COMPLETE;
@@ -1796,7 +1796,7 @@ Return Value:
     //
     //  Find out the target file's name.
     //
-    
+
     Status = FltGetDestinationFileNameInformation( FltObjects->Instance,
                                                    FltObjects->FileObject,
                                                    RenameInfo->RootDirectory,
@@ -1816,7 +1816,7 @@ Return Value:
     Status = FltParseFileNameInformation( TargetInfo );
 
     if( !NT_SUCCESS( Status ) ) {
-        
+
         FLT_ASSERT( NT_SUCCESS( Status ) );
 
         ReturnValue = FLT_PREOP_COMPLETE;
@@ -1826,7 +1826,7 @@ Return Value:
     //
     //  Find the target's overlap with the real and user mappings.
     //
-    
+
     NcComparePath( &TargetInfo->Name,
                    &InstanceContext->Mapping.RealMapping,
                    &TargetRealRemainder,
@@ -1850,14 +1850,14 @@ Return Value:
     if (TargetRealOverlap.InMapping) {
 
         Status = STATUS_ACCESS_DENIED;
-        ReturnValue = FLT_PREOP_COMPLETE;    
+        ReturnValue = FLT_PREOP_COMPLETE;
         goto NcPreRenameCleanup;
 
     } else if ((TargetRealOverlap.Ancestor || TargetUserOverlap.Ancestor) &&
                 ReplaceIfExists) {
 
         Status = STATUS_ACCESS_DENIED;
-        ReturnValue = FLT_PREOP_COMPLETE;    
+        ReturnValue = FLT_PREOP_COMPLETE;
         goto NcPreRenameCleanup;
     }
 
@@ -1896,9 +1896,9 @@ Return Value:
                              sizeof(WCHAR) +
                              MungedTargetName.Length;
 
-        MungedRenameInfo = ExAllocatePoolWithTag( PagedPool,
-                                                  MungedRenameLength,
-                                                  NC_RENAME_BUFFER_TAG );
+        MungedRenameInfo = ExAllocatePoolZero( PagedPool,
+                                               MungedRenameLength,
+                                               NC_RENAME_BUFFER_TAG );
 
         if (MungedRenameInfo == NULL) {
 
@@ -1914,8 +1914,8 @@ Return Value:
         MungedRenameInfo->Flags = RenameInfo->Flags;
         MungedRenameInfo->RootDirectory = NULL;
         MungedRenameInfo->FileNameLength = MungedTargetName.Length;
-        RtlCopyMemory( &MungedRenameInfo->FileName, 
-                       MungedTargetName.Buffer, 
+        RtlCopyMemory( &MungedRenameInfo->FileName,
+                       MungedTargetName.Buffer,
                        MungedTargetName.Length );
 
         //
@@ -1941,7 +1941,7 @@ Return Value:
     } else {
 
         //
-        //  The target was outside the mapping. The rename does not have 
+        //  The target was outside the mapping. The rename does not have
         //  to be munged. Pass through.
         //
 

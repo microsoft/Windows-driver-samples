@@ -1,0 +1,66 @@
+name: Build all driver samples
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+jobs:
+  build:
+    name: Build driver samples
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64, arm64]
+    runs-on: windows-2022
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Retrieve and build all available solutions
+        run: |
+          .\Build-AllSamples.ps1 -Verbose
+        env:
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}
+          WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
+
+      - name: Archive build logs and overview build reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: logs
+          path: _logs
+
+  report:
+    name: Generate global report
+    runs-on: windows-2022
+    needs: build
+    if: always()
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Retrieve overview reports
+        uses: actions/download-artifact@v3
+        with:
+          name: logs
+          path: _logs
+
+      - name: Join and generate global reports
+        run: |
+          .\.github\scripts\Join-CsvReports.ps1
+
+      - name: Archive global overview build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs
+          path: _logs/_overview.all.*
