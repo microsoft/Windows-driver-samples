@@ -48,7 +48,7 @@
 
 [DefaultUninstall.nt$ARCH$]
    DelFiles = WFPSamplerCalloutDriver.DriverFiles
-   DelReg   = WFPCalloutClassReg
+   DelReg   = WFPCalloutsClassReg
 
 [DefaultUninstall.nt$ARCH$.Services]
    DelService = %WFPSamplerCalloutDriverServiceName%,0x200                                         ;/// SPSVCINST_STOPSERVICE
@@ -58,20 +58,10 @@
    HKR,,Icon,,-5
    HKR,,SilentInstall,,1
    HKR,,DeviceCharacteristics,0x10001,0x100                                                        ;/// FLG_ADDREG_BINVALUETYPE | FLG_ADDREG_TYPE_MULTI_SZ, FILE_DEVICE_SECURE_OPEN
-   HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)"                                        ;/// Permit Generic All access to SYstem, Built-in Admin, and Local System.
+   HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)"                                        ;/// Permit Generic All access to System, Built-in Admin, and Local System.
 
 [WFPSamplerCalloutDriver.DriverFiles]
    WFPSamplerCalloutDriver.sys,,,0x00000040                                                        ;/// COPYFLG_OVERWRITE_OLDER_ONLY
-
-[WFPSamplerCalloutDriver.NT.CoInstallers]
-   AddReg    = WFPSamplerCalloutDriver.CoInstaller.AddReg
-   CopyFiles = WFPSamplerCalloutDriver.CoInstaller.CopyFiles
-
-[WFPSamplerCalloutDriver.CoInstaller.AddReg]
-   HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
-
-[WFPSamplerCalloutDriver.CoInstaller.CopyFiles]
-   WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
 
 [WFPSamplerCalloutDriver.Service]
    DisplayName    = %WFPSamplerCalloutDriverServiceName%
