@@ -41,7 +41,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        packs: microsoft/windows-drivers-pack-beta
+        packs: microsoft/windows-drivers
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.3.1
 
