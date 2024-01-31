@@ -83,6 +83,28 @@ else {
 }
 
 #
+# InfVerif_AdditionalOptions
+#
+# Samples must build cleanly and even without warnings.
+#
+# An exception is for infverif where specific warnings are acceptable.  Those
+# specific warnings indicates issues intentially present in the samples, that
+# anyone that clones the samples must fix as part of productizing a driver.
+# Those warnings are suppressed with the /samples flag and that flag is 
+# added here, so that full build test in the sample repo can be done without
+# noise.
+#
+# Note: In WDK 22621 a few flags are not under /samples:
+#   /sw1284 /sw1285 /sw1293
+#   /sw2083 (example: filesys.minifilter.avscan)
+#   /sw2086 (example: general.echo.umdf2)
+#
+# Note: In GE WDK: Just one sample remaining:
+#   /sw1402 (biometrics)
+#
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/samples /sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples /sw1402")
+
+#
 # Determine exclusions.  
 #
 # Exclusions are loaded from .\exclusions.csv.
@@ -127,17 +149,18 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Build Environment:    " + $build_environment)
-Write-Output ("Build Number:         " + $build_number)
-Write-Output ("Samples:              " + $sampleSet.Count)
-Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
-Write-Output "Combinations:         $SolutionsTotal"
-Write-Output "LogicalProcessors:    $LogicalProcessors"
-Write-Output "ThrottleFactor:       $ThrottleFactor"
-Write-Output "ThrottleLimit:        $ThrottleLimit"
-Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output ("Build Environment:          " + $build_environment)
+Write-Output ("Build Number:               " + $build_number)
+Write-Output ("Samples:                    " + $sampleSet.Count)
+Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
+Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
+Write-Output "InfVerif_AdditionalOptions: $InfVerif_AdditionalOptions"
+Write-Output "Combinations:               $SolutionsTotal"
+Write-Output "LogicalProcessors:          $LogicalProcessors"
+Write-Output "ThrottleFactor:             $ThrottleFactor"
+Write-Output "ThrottleLimit:              $ThrottleLimit"
+Write-Output "WDS_WipeOutputs:            $env:WDS_WipeOutputs"
+Write-Output ("Disk Remaining (GB):        " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
@@ -161,6 +184,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $exclusionReasons = $using:exclusionReasons
     $Configurations = $using:Configurations
     $Platforms = $using:Platforms
+    $InfVerif_AdditionalOptions = $using:InfVerif_AdditionalOptions
     $Verbose = $using:Verbose
 
     $sampleName = $_.Key
@@ -185,7 +209,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $thisresult = "Excluded"
             }
             else {
-                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -Verbose:$Verbose
+                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -InfVerif_AdditionalOptions $InfVerif_AdditionalOptions -Verbose:$Verbose
                 if ($LASTEXITCODE -eq 0) {
                     $thissucceeded += 1
                     $thisresult = "Succeeded"

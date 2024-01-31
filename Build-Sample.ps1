@@ -17,6 +17,9 @@ Configuration name that will be used to build the solution. Common available val
 .PARAMETER Platform
 Platform to build the solution for (e.g. "x64", "arm64").
 
+.PARAMETER InfVerif_AdditionalOptions
+Additional options for infveri (e.g. "/samples").
+
 .PARAMETER LogFilesDirectoy
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the current working directory.
 
@@ -43,6 +46,7 @@ param(
     [string]$SampleName,
     [string]$Configuration = "Debug",
     [string]$Platform = "x64",
+    [string]$InfVerif_AdditionalOptions = "/samples",
     $LogFilesDirectory = (Get-Location)
 )
 
@@ -139,30 +143,7 @@ $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
 
-#
-# Samples must build cleanly and even without warnings.
-#
-# An exception is for infverifier where a few warnings are acceptable.  Those
-# specific warnings indicates issues intentially present in the samples, that
-# anyone that clones the samples must fix as part of productizing a driver.
-# Those warnings are suppressed with the /samples flag and that flag is 
-# added here, so that full build test in the sample repo can be done without
-# noise.
-#
-# Once you build from command line or in VS IDE those warnings will be visible.
-#
-# Note: We temporarily are also excluding:
-#   Error 1402.
-#   Error 2084.
-# Here are reasons:
-# * Sample biometrics: Error 1402.
-# * Sample wpd.wpdbasichardwaredriver: error 1402.
-# * Sample wpd.wpdhelloworlddriver: error 1402 and 2084.
-# * Sample wpd.wpdmultitransportdriver error 1402 and 2084.
-# * Sample wpd.wpdservicesampledriver error 1402 and 2084.
-# * Sample wpd.wpdwudfsampledriver error 1402 and 2084.
-#
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /sw1402 /sw2084" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
     Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
