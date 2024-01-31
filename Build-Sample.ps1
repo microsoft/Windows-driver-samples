@@ -18,7 +18,7 @@ Configuration name that will be used to build the solution. Common available val
 Platform to build the solution for (e.g. "x64", "arm64").
 
 .PARAMETER InfVerif_AdditionalOptions
-Additional options for infveri (e.g. "/samples").
+Additional options for infverif (e.g. "/samples").
 
 .PARAMETER LogFilesDirectoy
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the current working directory.
