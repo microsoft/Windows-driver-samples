@@ -90,19 +90,14 @@ else {
 # An exception is for infverif where specific warnings are acceptable.  Those
 # specific warnings indicates issues intentially present in the samples, that
 # anyone that clones the samples must fix as part of productizing a driver.
-# Those warnings are suppressed with the /samples flag and that flag is 
-# added here, so that full build test in the sample repo can be done without
-# noise.
+# 
+# In 22621 those warnings are: /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
+# 
+# After 22621 those warnings are put under a common flag: /samples
 #
-# Note: In WDK 22621 a few flags are not under /samples:
-#   /sw1284 /sw1285 /sw1293
-#   /sw2083 (example: filesys.minifilter.avscan)
-#   /sw2086 (example: general.echo.umdf2)
+# Additionally after 22621 we have to temporarily suppress /sw1402 due to one specific sample "biometrics".
 #
-# Note: In GE WDK: Just one sample remaining:
-#   /sw1402 (biometrics)
-#
-$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/samples /sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples /sw1402")
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples /sw1402")
 
 #
 # Determine exclusions.  
