@@ -23,7 +23,7 @@ void* __cdecl operator new(size_t Size, POOL_TYPE PoolType)
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    void* pObject = ExAllocatePool2(PoolType, Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)
@@ -44,7 +44,7 @@ void* __cdecl operator new[](size_t Size, POOL_TYPE PoolType)
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    void* pObject = ExAllocatePool2(PoolType, Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)
