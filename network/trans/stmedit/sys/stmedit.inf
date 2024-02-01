@@ -20,7 +20,6 @@
    StmEdit.sys = 1,,
 
 [DestinationDirs]
-    DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
     StmEdit.DriverFiles = 12                              ; %WinDir%\System32\Drivers
 
 [DefaultInstall.NTAMD64]
@@ -29,14 +28,6 @@
 
 [DefaultInstall.Services]
     AddService = %StmEditServiceName%,,StmEdit.Service
-
-[DefaultUninstall.NTAMD64]
-    DelFiles = StmEdit.DriverFiles
-    LegacyUninstall = 1
-
-[DefaultUninstall.Services]
-    DelService = %StmEditServiceName%,0x200               ; SPSVCINST_STOPSERVICE
-    DelReg     = StmEdit.DelRegistry
 
 [StmEdit.DriverFiles]
     StmEdit.sys,,,0x00000040                              ; COPYFLG_OVERWRITE_OLDER_ONLY
@@ -55,10 +46,6 @@
     HKR,"Parameters","StringToFind",         0x00000000, "rainy"    ; FLG_ADDREG_TYPE_SZ
     HKR,"Parameters","InspectionRemotePort", 0x00010001, 0    	    ; FLG_ADDREG_TYPE_DWORD
     HKR,"Parameters","InspectionLocalPort",  0x00010001, 8888       ; FLG_ADDREG_TYPE_DWORD
-
-
-[StmEdit.DelRegistry]
-    HKR,"Parameters",,,
 
 [Strings]
     Contoso            = "Contoso Ltd."

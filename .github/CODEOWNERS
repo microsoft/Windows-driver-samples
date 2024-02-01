@@ -32,6 +32,10 @@
 /sd/ @microsoft/consumer-storage
 /smartcrd/ @microsoft/consumer-storage
 
+# Device Enumeration and Interconnect
+/gpio @microsoft/device-enumeration-and-interconnect
+/prm @microsoft/device-enumeration-and-interconnect
+
 # Event Tracing for Windows
 /general/perfcounters/ @microsoft/etw
 /general/tracing/ @microsoft/etw
@@ -59,4 +63,3 @@
 
 # Windows Internet of Things
 /pos/ @microsoft/winiotdev
-/wpd/ @microsoft/winiotdev
