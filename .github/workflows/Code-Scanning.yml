@@ -58,9 +58,5 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
     
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: assets-for-download
-        path: "D:\\a\\Windows-driver-samples\\results"
+  
       
