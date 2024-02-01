@@ -112,7 +112,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppWorkItemData == 0)
-inline VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
+VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
 {
 #if DBG
    
