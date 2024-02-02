@@ -45,15 +45,22 @@ finally {
 }
 
 #
-# Determine build environment: 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build environment: 'NuGet', 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 #
 $build_environment=""
 $build_number=0
 #
+# WDK NuGet will require presence of a file 'packages.config'
+#
+if([System.IO.File]::Exists(".\packages.config")) {
+    $build_environment=("NuGet")
+    $build_number=26045
+}
+#
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
 #
-if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
+elseif($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
     $build_environment=("EWDK."+$Matches.branch+"."+$Matches.build+"."+$Matches.qfe)
     $build_number=$Matches.build
 }
