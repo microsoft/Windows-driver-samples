@@ -45,7 +45,7 @@ finally {
 }
 
 #
-# Determine build environment: 'NuGet', 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.  Only used to determine build number.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 #
 $build_environment=""
@@ -53,7 +53,14 @@ $build_number=0
 #
 # WDK NuGet will require presence of a file 'packages.config'
 #
-if([System.IO.File]::Exists(".\packages.config")) {
+#
+# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
+#
+if (-not $env:GITHUB_REPOSITORY -eq '') {
+    $build_environment="GitHub"
+    $build_number=22621
+}
+elseif([System.IO.File]::Exists(".\packages.config")) {
     $build_environment=("NuGet")
     $build_number=26045
 }
@@ -70,13 +77,6 @@ elseif($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
 elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
-}
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-elseif (-not $env:GITHUB_REPOSITORY -eq '') {
-    $build_environment="GitHub"
-    $build_number=22621
 }
 else {
 
