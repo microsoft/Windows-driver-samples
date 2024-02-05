@@ -111,7 +111,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppDPCData == 0)
-inline VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
+VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
 {
 #if DBG
 

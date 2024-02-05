@@ -139,7 +139,9 @@ VOID NTAPI CompleteBasicStreamInjection(_In_ VOID* pContext,
    NT_ASSERT(pContext);
    NT_ASSERT(pNetBufferList);
    NT_ASSERT(NT_SUCCESS(pNetBufferList->Status) ||
-             pNetBufferList->Status == STATUS_CONNECTION_ABORTED);
+             pNetBufferList->Status == STATUS_CONNECTION_ABORTED ||
+             pNetBufferList->Status == STATUS_CONNECTION_RESET ||
+             pNetBufferList->Status == STATUS_INVALID_DEVICE_STATE);
 
    if(pNetBufferList->Status != STATUS_SUCCESS)
       DbgPrintEx(DPFLTR_IHVNETWORK_ID,
