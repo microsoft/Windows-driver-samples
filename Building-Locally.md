@@ -61,9 +61,9 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26045.1000-preview.ge-release-sigma-dev
-Microsoft.Windows.SDK.CPP.x64.10.0.26045.1000-preview.ge-release-sigma-dev
-Microsoft.Windows.WDK.x64.10.0.26045.1000-preview.ge-release-sigma-dev
+Microsoft.Windows.SDK.CPP.10.0.26052.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.x64.10.0.26052.1000-preview.ge-release
+Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release
 ```
 TODO: Make sure this actually matches our EEAP build out of GE_RELEASE.
 
@@ -88,9 +88,9 @@ TODO: Make sure above is "officially supported by DevDiv".
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26045.1000-preview.ge-release-sigma-dev
-Microsoft.Windows.SDK.CPP.x64.10.0.26045.1000-preview.ge-release-sigma-dev
-Microsoft.Windows.WDK.x64.10.0.26045.1000-preview.ge-release-sigma-dev
+Microsoft.Windows.SDK.CPP.10.0.26052.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.x64.10.0.26052.1000-preview.ge-release
+Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release
 ```
 
 
