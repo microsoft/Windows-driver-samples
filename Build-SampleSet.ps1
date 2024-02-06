@@ -51,7 +51,7 @@ finally {
 $build_environment=""
 $build_number=0
 #
-# WDK NuGet will require presence of a file 'packages.config'
+# WDK NuGet will require presence of a folder 'packages'
 #
 #
 # Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
@@ -60,7 +60,10 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
     $build_environment="GitHub"
     $build_number=22621
 }
-elseif([System.IO.File]::Exists(".\packages.config")) {
+#
+# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
+#
+elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
     $build_number=26045
 }
