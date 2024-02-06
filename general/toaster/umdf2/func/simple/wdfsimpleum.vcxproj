@@ -98,7 +98,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
@@ -117,7 +117,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>
@@ -155,7 +155,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..\shared</AdditionalIncludeDirectories>

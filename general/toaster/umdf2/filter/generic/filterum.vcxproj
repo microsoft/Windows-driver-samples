@@ -105,7 +105,7 @@
       </ExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc</AdditionalIncludeDirectories>
@@ -126,7 +126,7 @@
       </ExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc</AdditionalIncludeDirectories>
@@ -147,7 +147,7 @@
       </ExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc</AdditionalIncludeDirectories>
@@ -168,7 +168,7 @@
       </ExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc</AdditionalIncludeDirectories>
