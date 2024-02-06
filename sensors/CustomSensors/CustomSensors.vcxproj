@@ -105,20 +105,20 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib;propsys.lib;$(WDK_UM_LIB_PATH)\sensors\1.1\sensorscxstub.lib;sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>CustomSensors.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -130,20 +130,20 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib;propsys.lib;$(WDK_UM_LIB_PATH)\sensors\1.1\sensorscxstub.lib;sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>CustomSensors.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -155,20 +155,20 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib;propsys.lib;$(WDK_UM_LIB_PATH)\sensors\1.1\sensorscxstub.lib;sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>CustomSensors.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -180,20 +180,20 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </Midl>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;WPP_MACRO_USE_KM_VERSION_FOR_UM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(DDK_INC_PATH)\sensors\1.1;$(SDK_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SDK_INC_PATH);$(WDK_UM_INC_PATH)\sensors\1.1</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\mincore.lib;$(SDK_LIB_PATH)\propsys.lib;$(SDK_LIB_PATH)\sensors\1.1\sensorscxstub.lib;$(SDK_LIB_PATH)\sensorsutils.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mincore.lib;propsys.lib;$(WDK_UM_LIB_PATH)\sensors\1.1\sensorscxstub.lib;sensorsutils.lib</AdditionalDependencies>
       <ModuleDefinitionFile>CustomSensors.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
