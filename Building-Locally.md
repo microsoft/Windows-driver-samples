@@ -25,7 +25,7 @@ If you are planning to use in-market WDK, then you would typically want to use t
 git checkout main
 ```
 
-If you are planning to use a WDK Preview or WDK EEAP release, then you would typicall want to use the 'develop' branch:
+If you are planning to use a WDK Preview or WDK EEAP release, then you would typically want to use the 'develop' branch:
 ```
 git checkout develop
 ```
@@ -33,7 +33,7 @@ git checkout develop
 ## Step 3: Create a "driver build environment"
 
 To build the Windows Driver Samples you need a "driver build environment".  In essence an environment that consist of following prerequisites:
-* Visual Studio Build Tools including, say, cl.exe and link.exe
+* Visual Studio Build Tools including tools such as for example cl.exe and link.exe .
 * The Windows Software Development Kit.
 * The Windows Driver Kit.
 
@@ -43,7 +43,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * Launch a "Developer Command Prompt for VS 2022".
 
 ### Option B: Use an Enterprise WDK
-* You can also use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers that contains all prerequisites in one combined ISO.
+* You can also simply use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers that contains all prerequisites in one combined ISO.
 * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
 * Mount ISO image
 * Open a terminal
@@ -54,7 +54,9 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * This option requires you have access to the WDK NuGet packages (so far only available to EEAP Partners).
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
 * Install the WDK.vsix (that you have access to as part of EEAP program).
-* Unzip the WDK NuGet zip (that you have access to as part of EEAP program) to the root of your git enlistment in a folder that must be named .\packages.  The layout should look exactly as follows:
+* Launch a "Developer Command Prompt for VS 2022".
+* Unzip the WDK NuGet zip (that you have access to as part of EEAP program) to the root of your git enlistment in a folder that must be named .\packages. 
+* When this is done you should have a .\packages folder that looks exactly as follows:
 
 ```
 >cd path\to\your\repos\Windows-driver-samples
@@ -67,30 +69,24 @@ TODO: Make sure this actually matches our EEAP build out of GE_RELEASE.
 
 TODO: Make sure above is "officially supported by DevDiv".
 
-* Launch a "Developer Command Prompt for VS 2022".
 
 ### Option D: Use WDK NuGet Packages from "experimental package feed"
 * This is an 'experimental' option.
 * This option requires you have access to "experimental package feed" MSFTNuget.  TODO:Explain what this is.
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
-* Install the WDK.vsix from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DriverDeveloperKits-WDK.WDKVsix).
+* Install the WDK.vsix from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DriverDeveloperKits-WDK.WDKVsix) .
 * Launch a "Developer Command Prompt for VS 2022".
-* Add feed:
-
-```
->nuget sources Add -Name MSFTNuget -Source https://microsoft.pkgs.visualstudio.com/_packaging/MSFTNuget/nuget/v3/index.json
->nuget sources List
-```
-* Navigate to root of your samples enlistment.
+* Add MSFTNuget feed and restore WDK packages from feed :
 
 ```
 >cd path\to\your\repos\Windows-driver-samples
+>nuget sources Add -Name MSFTNuget -Source https://microsoft.pkgs.visualstudio.com/_packaging/MSFTNuget/nuget/v3/index.json
 >nuget restore -PackagesDirectory .\packages
-
 ```
 
 * When this is done you should have a .\packages folder that looks exactly as follows:
 ```
+>cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
 Microsoft.Windows.SDK.CPP.10.0.26045.1000-preview.ge-release-sigma-dev
 Microsoft.Windows.SDK.CPP.x64.10.0.26045.1000-preview.ge-release-sigma-dev
