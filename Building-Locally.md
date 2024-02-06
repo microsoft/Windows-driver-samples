@@ -12,7 +12,24 @@ For using WDK NuGet feed based build (experimental) additionally:
 winget install --id Microsoft.NuGet --source winget
 ```
 
-## Step 2: Clone Windows Driver Samples and checkout relevant branch
+
+## Step 2: Microsoft .NET Framework 4.7.2 SDK
+
+This step is required specifically to build sample usb\usbview .
+
+### Option A: Install Developer Pack
+
+Install https://aka.ms/msbuild/developerpacks -> .NET Framework -> Supported versions -> .NET Framework 4.7.2 -> Developer Pack -> https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net472-developer-pack-offline-installer -> https://go.microsoft.com/fwlink/?linkid=874338 .  
+
+This will install following Apps:
+* Microsoft .NET Framework 4.7.2 SDK
+* Microsoft .NET Framework 4.7.2 Targeting Pack
+* Microsoft .NET Framework 4.7.2 Targeting Pack (ENU)
+
+### Option B: Install VS Components
+If you install Visual Studio (see later) you may at that point select either additional Workload '.NET desktop development' or simply individual components 'NET Framework 4.7.2 SDK' and '.NET Framework 4.7.2 targeting pack'.
+
+## Step 3: Clone Windows Driver Samples and checkout relevant branch
 
 ```
 cd path\to\your\repos
@@ -30,7 +47,7 @@ If you are planning to use a WDK Preview or WDK EEAP release, then you would typ
 git checkout develop
 ```
 
-## Step 3: Create a "driver build environment"
+## Step 4: Create a "driver build environment"
 
 To build the Windows Driver Samples you need a "driver build environment".  In essence an environment that consist of following prerequisites:
 * Visual Studio Build Tools including tools such as for example cl.exe and link.exe .
@@ -94,7 +111,7 @@ Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release
 ```
 
 
-## Step 4: Check all samples builds with expected results for all flavors
+## Step 5: Check all samples builds with expected results for all flavors
 
 ```
 pwsh
