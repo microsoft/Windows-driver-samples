@@ -89,7 +89,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\vccomsup.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);vccomsup.lib</AdditionalDependencies>
       <AdditionalDependencies>%(AdditionalDependencies);ole32.lib;oleaut32.lib;uuid.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -109,7 +109,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\vccomsup.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);vccomsup.lib</AdditionalDependencies>
       <AdditionalDependencies>%(AdditionalDependencies);ole32.lib;oleaut32.lib;uuid.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -129,7 +129,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\vccomsup.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);vccomsup.lib</AdditionalDependencies>
       <AdditionalDependencies>%(AdditionalDependencies);ole32.lib;oleaut32.lib;uuid.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
@@ -149,7 +149,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\vccomsup.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);vccomsup.lib</AdditionalDependencies>
       <AdditionalDependencies>%(AdditionalDependencies);ole32.lib;oleaut32.lib;uuid.lib;wbemuuid.lib</AdditionalDependencies>
     </Link>
     <ClCompile>

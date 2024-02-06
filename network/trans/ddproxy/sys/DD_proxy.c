@@ -103,8 +103,8 @@ DDProxyFlowEstablishedClassify(
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
    UNREFERENCED_PARAMETER(flowContext);
 
-   flowContextLocal = ExAllocatePoolZero(
-                        NonPagedPool,
+   flowContextLocal = ExAllocatePool2(
+                        POOL_FLAG_NON_PAGED,
                         sizeof(DD_PROXY_FLOW_CONTEXT),
                         DD_PROXY_FLOW_CONTEXT_POOL_TAG
                         );
@@ -333,8 +333,8 @@ DDProxyClassify(
       goto Exit;
    }
 
-   packet = ExAllocatePoolZero(
-                     NonPagedPool,
+   packet = ExAllocatePool2(
+                     POOL_FLAG_NON_PAGED,
                      sizeof(DD_PROXY_PENDED_PACKET),
                      DD_PROXY_PENDED_PACKET_POOL_TAG
                      );
@@ -410,8 +410,8 @@ DDProxyClassify(
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
 
-         packet->controlData = ExAllocatePoolZero(
-                                 NonPagedPool,
+         packet->controlData = ExAllocatePool2(
+                                 POOL_FLAG_NON_PAGED,
                                  inMetaValues->controlDataLength,
                                  DD_PROXY_CONTROL_DATA_POOL_TAG
                                  );

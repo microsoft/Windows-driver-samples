@@ -38,10 +38,10 @@ jobs:
         submodules: 'recursive'
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-
+        packs: microsoft/windows-drivers
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.3.1
 
@@ -54,6 +54,9 @@ jobs:
         WDS_WipeOutputs: ${{ true }}
 
     - name: Perform CodeQL analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+    
+  
+      
