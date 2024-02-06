@@ -235,7 +235,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);inc;$(DDK_INC_PATH)</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;strsafe.lib;user32.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -255,7 +255,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);inc;$(DDK_INC_PATH)</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;strsafe.lib;user32.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -275,7 +275,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);inc;$(DDK_INC_PATH)</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;strsafe.lib;user32.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
@@ -295,7 +295,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);inc;$(DDK_INC_PATH)</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\advapi32.lib;$(SDK_LIB_PATH)\kernel32.lib;$(SDK_LIB_PATH)\ole32.lib;$(SDK_LIB_PATH)\oleaut32.lib;$(SDK_LIB_PATH)\strsafe.lib;$(SDK_LIB_PATH)\user32.lib;$(SDK_LIB_PATH)\uuid.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;strsafe.lib;user32.lib;uuid.lib</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
     <DriverSign>
