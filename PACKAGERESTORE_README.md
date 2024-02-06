@@ -41,16 +41,16 @@ Platforms:                  1 (x64)
 InfVerif_AdditionalOptions: /samples /sw1402
 Combinations:               132
 ...
-Elapsed time:         31 minutes, 35 seconds.
-Disk Remaining (GB):  364.007480621338
+Elapsed time:         7 minutes, 36 seconds.
+Disk Remaining (GB):  360.743003845215
 Samples:              132
 Configurations:       1 (Debug)
 Platforms:            1 (x64)
 Combinations:         132
-Succeeded:            92
+Succeeded:            110
 Excluded:             2
 Unsupported:          1
-Failed:               37
+Failed:               19
 >>>
 
 Let's drive above to 0!!!
