@@ -87,6 +87,7 @@
       <HexdumpOutputFile>.\$(IntDir)\wmisamp.x</HexdumpOutputFile>
       <HtmlOutputDirectory>.\$(IntDir)\htm</HtmlOutputDirectory>
       <HtmlUIOutputDirectory>true</HtmlUIOutputDirectory>
+	  <ToolPath>$(WmimofckToolPath)</ToolPath>
     </Wmimofck>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
