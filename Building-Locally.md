@@ -199,7 +199,7 @@ Follow following steps before running "nuget restore" command:
 
 ```
 Repro steps:
- .\Build-AllSamples
+PS C:\Windows-driver-samples> .\Build-AllSamples
  
 Expected:
 <<<
@@ -211,16 +211,16 @@ Actual:
 PS C:\Windows-driver-samples> .\Build-AllSamples
 Build Environment:          NuGet
 Build Number:               26052
-Samples:                    137
+Samples:                    131
 Configurations:             2 (Debug Release)
 Platforms:                  2 (x64 arm64)
 InfVerif_AdditionalOptions: /samples /sw1402
-Combinations:               548
+Combinations:               524
 LogicalProcessors:          8
 ThrottleFactor:             5
 ThrottleLimit:              40
 WDS_WipeOutputs:
-Disk Remaining (GB):        353.997817993164
+Disk Remaining (GB):        358.611904144287
 
 T: Combinations
 B: Built
@@ -246,61 +246,38 @@ c1xx : fatal  error C1250: Unable to load plug-in 'C:\Windows-driver-samples\pac
 C:\Windows-driver-samples\nfc\NfcCxSample\windows-drivertemplate-nfc\Driver.cpp : error C2220: the following warning is treated as an error [C:\Windows-driver-samples\nfc\NfcCxSample\windows-drivertemplate-nfc\windows-drivertemplate-nfc.vcxproj]
 c1xx : fatal  error C1250: Unable to load plug-in 'C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.arm64.10.0.26052.1000-preview.ge-release\c\bin\10.0.26052.0\x86\drivers.dll'. [C:\Windows-driver-samples\nfc\NfcCxSample\windows-drivertemplate-nfc\windows-drivertemplate-nfc.vcxproj]
 } nfc.nfccxsample Release|arm64
-Build errors in Sample packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x64.sdk.samples.exdi.exdikdsample; Configuration: Debug; Platform: x64 {
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(456,5): error MSB8020: The build tools for Visual Studio 2015 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, please install Visual Studio 2015 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution". [C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x64\sdk\samples\exdi\ExdiKdSample\KdControllerLib\KdControllerLib.vcxproj]
-} packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x64.sdk.samples.exdi.exdikdsample Debug|x64
-Build errors in Sample packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x64.sdk.samples.exdi.exdikdsample; Configuration: Release; Platform: x64 {
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(456,5): error MSB8020: The build tools for Visual Studio 2015 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, please install Visual Studio 2015 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution". [C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x64\sdk\samples\exdi\ExdiKdSample\KdControllerLib\KdControllerLib.vcxproj]
-} packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x64.sdk.samples.exdi.exdikdsample Release|x64
-Build errors in Sample packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x86.sdk.samples.exdi.exdikdsample; Configuration: Debug; Platform: x64 {
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(456,5): error MSB8020: The build tools for Visual Studio 2015 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, please install Visual Studio 2015 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution". [C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x86\sdk\samples\exdi\ExdiKdSample\KdControllerLib\KdControllerLib.vcxproj]
-} packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x86.sdk.samples.exdi.exdikdsample Debug|x64
-Build errors in Sample packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x86.sdk.samples.exdi.exdikdsample; Configuration: Release; Platform: x64 {
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(456,5): error MSB8020: The build tools for Visual Studio 2015 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, please install Visual Studio 2015 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution". [C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x86\sdk\samples\exdi\ExdiKdSample\KdControllerLib\KdControllerLib.vcxproj]
-} packages.microsoft.windows.wdk.arm64.10.0.26052.1000-preview.ge-release.c.debuggers.x86.sdk.samples.exdi.exdikdsample Release|x64
 Build errors in Sample wmi.wmisamp; Configuration: Debug; Platform: x64 {
 C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release\c\build\10.0.26052.0\WindowsDriver.common.targets(707,5): error MSB6006: "mofcomp.exe" exited with code 1. [C:\Windows-driver-samples\wmi\wmisamp\WmiSamp.vcxproj]
 } wmi.wmisamp Debug|x64
 Build errors in Sample wmi.wmisamp; Configuration: Release; Platform: x64 {
 C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release\c\build\10.0.26052.0\WindowsDriver.common.targets(707,5): error MSB6006: "mofcomp.exe" exited with code 1. [C:\Windows-driver-samples\wmi\wmisamp\WmiSamp.vcxproj]
 } wmi.wmisamp Release|x64
-Write-Error: C:\Windows-driver-samples\Build-AllSamples.ps1:68
+Write-Error: C:\Windows-driver-samples\Build-AllSamples.ps1:71
 Line |
-  68 |  .\Build-SampleSet -SampleSet $sampleSet -Configurations $Configuratio …
+  71 |  .\Build-SampleSet -SampleSet $sampleSet -Configurations $Configuratio …
      |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      | Some combinations were built with errors.
 
 Built all combinations.
 
-Elapsed time:         24 minutes, 46 seconds.
-Disk Remaining (GB):  353.001628875732
-Samples:              137
+Elapsed time:         24 minutes, 56 seconds.
+Disk Remaining (GB):  353.651935577393
+Samples:              131
 Configurations:       2 (Debug Release)
 Platforms:            2 (x64 arm64)
-Combinations:         548
+Combinations:         524
 Succeeded:            292
 Excluded:             10
-Unsupported:          238
-Failed:               8
+Unsupported:          218
+Failed:               4
 Log files directory:  C:\Windows-driver-samples\_logs
 Overview report:      C:\Windows-driver-samples\_logs\_overview.htm
 >>>
 ```
 
-So 8 build calls still failing.  Remaining are:
+So 4 build calls still failing.  Remaining are:
 * 2 x nfc.nfccxsample: PREfast ARM64 bug.  This may be fixed on way to GE_RELEASE. Not sure.
 * 2 x wmi.wmisamp: error MSB6006: "mofcomp.exe" exited with code 1.
-* 4 x samples by mistake present in NuGet Package.  See this snippet:
-<<<
-> cd .\packages\
->dir /s /b *.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x64\sdk\samples\exdi\ExdiGdbSrvSample\ExdiGdbSrvSample.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x64\sdk\samples\exdi\ExdiKdSample\ExdiKdSample.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x86\sdk\samples\exdi\ExdiGdbSrvSample\ExdiGdbSrvSample.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\Debuggers\x86\sdk\samples\exdi\ExdiKdSample\ExdiKdSample.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.ARM64.10.0.26052.1000-preview.ge-release\c\tools\10.0.26052.0\ARM64\ACPIGenFx\Samples\Samples.sln
-C:\Windows-driver-samples\packages\Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release\c\tools\10.0.26052.0\x64\ACPIGenFx\Samples\Samples.sln
->>>
 
 2. Let's write a script that updates Directory.Build.props and packages.config.
 
