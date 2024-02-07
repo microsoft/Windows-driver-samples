@@ -90,3 +90,4 @@ void __cdecl operator delete[](void* pObject)
         ExFreePool(pObject);
     }
 }
+
