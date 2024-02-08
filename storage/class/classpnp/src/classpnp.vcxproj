@@ -1,6 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -35,7 +43,23 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
+    <DriverType>ExportDriver</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>True</UseDebugLibraries>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
+    <DriverType>ExportDriver</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
     <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
@@ -66,7 +90,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -95,7 +125,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>classpnp</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <TargetName>classpnp</TargetName>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>classpnp</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <TargetName>classpnp</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,7 +171,69 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
     </Midl>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </Midl>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\..\inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BREAK_ON_LOST_IRPS=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_SECONDS_TO_WAIT_FOR_SYNCHRONOUS_SRB=100</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_USE_DELAYED_RETRY=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFER_SIZE=512</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);CLASS_GLOBAL_BUFFERED_DEBUG_PRINT_BUFFERS=512</PreprocessorDefinitions>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
@@ -247,7 +345,45 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <ModuleDefinitionFile>class.def</ModuleDefinitionFile>
+    </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <ModuleDefinitionFile>class.def</ModuleDefinitionFile>
+    </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PreprocessorDefinitions Condition="!('$(UseDebugLibraries)'=='false')">%(PreprocessorDefinitions);DEBUG_USE_KDPRINT</PreprocessorDefinitions>
       <ExceptionHandling>

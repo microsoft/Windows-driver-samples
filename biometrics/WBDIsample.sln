@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
@@ -27,12 +27,34 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WudfBioUsbSample", "driver\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Debug|ARM64.Build.0 = Debug|ARM64
+		{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}.Debug|ARM64.Build.0 = Debug|ARM64
+		{321860DA-56D9-427A-A5C2-346DFE8FB529}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{321860DA-56D9-427A-A5C2-346DFE8FB529}.Debug|ARM64.Build.0 = Debug|ARM64
+		{22EED378-7FE9-4946-A653-05BB1EE20717}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{22EED378-7FE9-4946-A653-05BB1EE20717}.Debug|ARM64.Build.0 = Debug|ARM64
+		{474A1976-0414-48E7-9F2B-4FDED5BA700C}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{474A1976-0414-48E7-9F2B-4FDED5BA700C}.Debug|ARM64.Build.0 = Debug|ARM64
+		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Release|ARM64.ActiveCfg = Release|ARM64
+		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Release|ARM64.Build.0 = Release|ARM64
+		{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}.Release|ARM64.ActiveCfg = Release|ARM64
+		{339A0554-2E3D-4A12-B45C-8E2D7D59D7C2}.Release|ARM64.Build.0 = Release|ARM64
+		{321860DA-56D9-427A-A5C2-346DFE8FB529}.Release|ARM64.ActiveCfg = Release|ARM64
+		{321860DA-56D9-427A-A5C2-346DFE8FB529}.Release|ARM64.Build.0 = Release|ARM64
+		{22EED378-7FE9-4946-A653-05BB1EE20717}.Release|ARM64.ActiveCfg = Release|ARM64
+		{22EED378-7FE9-4946-A653-05BB1EE20717}.Release|ARM64.Build.0 = Release|ARM64
+		{474A1976-0414-48E7-9F2B-4FDED5BA700C}.Release|ARM64.ActiveCfg = Release|ARM64
+		{474A1976-0414-48E7-9F2B-4FDED5BA700C}.Release|ARM64.Build.0 = Release|ARM64
 		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Debug|Win32.Build.0 = Debug|Win32
 		{93931C7A-00DC-4E0F-8D54-06A960AF23FC}.Release|Win32.ActiveCfg = Release|Win32
