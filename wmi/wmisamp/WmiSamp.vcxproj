@@ -76,10 +76,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
-    <MofComp Include="wmisamp.mof">
-      <WmiSyntaxCheck>true</WmiSyntaxCheck>
-      <CreateBinaryMofFile>.\$(IntDir)\wmisamp.bmf</CreateBinaryMofFile>
-    </MofComp>
     <Wmimofck Include=".\$(IntDir)\wmisamp.bmf">
       <GenerateStructureDefinitionsForMethodParameters>true</GenerateStructureDefinitionsForMethodParameters>
       <HeaderOutputFile>.\$(IntDir)\wmidata.h</HeaderOutputFile>
@@ -87,7 +83,6 @@
       <HexdumpOutputFile>.\$(IntDir)\wmisamp.x</HexdumpOutputFile>
       <HtmlOutputDirectory>.\$(IntDir)\htm</HtmlOutputDirectory>
       <HtmlUIOutputDirectory>true</HtmlUIOutputDirectory>
-	  <ToolPath>$(WmimofckToolPath)</ToolPath>
     </Wmimofck>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +137,17 @@
     <ClCompile Include="WmiHandler.c" />
     <ClCompile Include="WmiSamp.c" />
     <ResourceCompile Include="WmiSamp.rc" />
+    <MofComp Include="wmisamp.mof" />
   </ItemGroup>
+  <Target Name="Custom Build Target 0" BeforeTargets="BeforeClCompile">
+    <ItemGroup>
+       <CustomBuildTarget0Input Include=".\$(IntDir)\wmisamp.mof" />
+    </ItemGroup>
+    <Exec Command="if not exist &quot;%(CustomBuildTarget0Input.Identity)&quot; copy  &quot;.\%(CustomBuildTarget0Input.Filename)%(CustomBuildTarget0Input.Extension)&quot; &quot;%(CustomBuildTarget0Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="mofcomp -Amendment:ms_409 -MFL:$(IntDir)\MFL.MFL -MOF:$(IntDir)\MOF.MOF &quot;%(CustomBuildTarget0Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="&quot;$(WmimofckToolPath)\wmimofck.exe&quot; -y$(IntDir)\MOF.MOF -z$(IntDir)\MFL.MFL $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="mofcomp -B:&quot;.\$(IntDir)\wmisamp.bmf&quot; $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
   <ItemGroup>
     <Inf Exclude="@(Inf)" Include="*.inx" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
