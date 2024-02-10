@@ -13,9 +13,9 @@ The exact version of the WDK.vsix used was 10.0.26045.0 and instantiated 2024/02
 ## How the Samples was Created
 
 After installation of VSIX in Visual Studio the templates can be found under: 
-  C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\mjmwh1sj.nyr\ProjectTemplates\Windows Drivers\
-
-However you cannot just copy and use them as various substituions will have to be done as part of instantiating the template.  As such this copy of the templates is made by manually instantiating each of these templates, then running following to remove .vs folder and *.user files: 
+  C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\mjmwh1sj.nyr\ProjectTemplates\Windows Drivers\ . However you cannot just copy and use them as various substituions will have to be done as part of instantiating the template.  As such this copy of the templates is made by manually instantiating each of these templates.
+  
+  After instantiating them all I ran following to remove .vs folder and *.user files: 
 ```
   for /F %i in ('dir /s /b /A:DH .vs') do rmdir /s /q %i
   del /s *.user
@@ -63,9 +63,9 @@ I tested using:
 * Using both EWDK and WDK NuGet (specifically EWDK ge_release_26052_240202-1419 and NuGet 10.0.26052.1000-preview.ge-release ).
 * Targeting both Configurations 'Debug' and 'Release'
 * Targeting both Platform 'x64' and 'arm64'
-* 8 permutations in total.
-
-Great news: I got identical results for all permutations.
+* So 16 samples and 8 permutations for each sample.  128 build combinations in total.
+* Great news: I got identical results for all permutations. 
+* 7 templates builds and 9 does not build.
 
 How:
 ```
@@ -76,20 +76,20 @@ Results:
 
 ```
 Sample                     Result
-templates.driverpackage    Failed
-templates.emptyapplication Failed
-templates.emptydll         Failed
+templates.driverpackage    Failed     <-- TODO: We should annotate why this template does not build.
+templates.emptyapplication Failed     <-- TODO: We should annotate why this template does not build.
+templates.emptydll         Failed     <-- TODO: We should annotate why this template does not build.
 templates.emptystatic      Succeeded
 templates.kmdf             Succeeded
-templates.kmdfempty        Failed
+templates.kmdfempty        Failed     <-- TODO: We should annotate why this template does not build.
 templates.kmdfusb          Succeeded
-templates.ndisfilter       Failed
+templates.ndisfilter       Failed     <-- TODO: We should annotate why this template does not build.
 templates.umdf2            Succeeded
-templates.umdf2empty       Failed
+templates.umdf2empty       Failed     <-- TODO: We should annotate why this template does not build.
 templates.umdf2usb         Succeeded
-templates.v4printdriver    Failed
-templates.wdmempty         Failed
+templates.v4printdriver    Failed     <-- TODO: We should annotate why this template does not build.
+templates.wdmempty         Failed     <-- TODO: We should annotate why this template does not build.
 templates.winusbapp        Succeeded
 templates.winusbinfpackage Succeeded
-templates.xpsrenderfilter  Failed
+templates.xpsrenderfilter  Failed     <-- TODO: We should annotate why this template does not build.
 ```
