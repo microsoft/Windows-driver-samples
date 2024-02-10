@@ -2,7 +2,7 @@
 
 ## What
 
-The Windows Driver Kit WDK.vsix includes 17 templates to easily get started on building drivers.  Once installed you can instantiate these from within Visual Studio using File -> New -> Project ... -> Type: Driver .
+The Windows Driver Kit WDK.vsix includes 16 templates to easily get started on building drivers.  Once installed you can instantiate these from within Visual Studio using "File -> New -> Project ... -> Type: Driver" .
 
 This folder contains a "snapshot" of these "templates" exported as "samples".  In case you do not have access to the Windows Driver Kit WDK.Vvsix or simply if you prefer the "sample version".
 
@@ -44,7 +44,7 @@ Here are the templates:
   
   Package:
     DriverPackage: Driver Install Package
-    PrinterDriverPackage: Printer Driver Install Package <-- Bug: This is listed but does not show in VS New Project... dialog
+    PrinterDriverPackage: Printer Driver Install Package <-- Bug: This is listed but does not show in VS "File -> New -> Project ..." dialog
     WinUsbInfPackage: WinUSB INF Driver Package
   
   WDF:
@@ -55,15 +55,17 @@ Here are the templates:
 
 ```
 
-So 17 templates above.  Only 16 was instantiated, as I could not find " Package\PrinterDriverPackage"
+So 16 templates above and a 17th one that is included with WDK.vsix, but  I could not find.
 
 ## Do they build?
 
 I tested using:
-* Using EWDK_ge_release_26052_240202-1419
-* Using NuGet 10.0.26052.1000-preview.ge-release
-* Targeting Configurations 'Debug' and 'Release'
-* Targeting Platform 'x64' and 'arm64'
+* Using both EWDK and WDK NuGet (specifically EWDK ge_release_26052_240202-1419 and NuGet 10.0.26052.1000-preview.ge-release ).
+* Targeting both Configurations 'Debug' and 'Release'
+* Targeting both Platform 'x64' and 'arm64'
+* 8 permutations in total.
+
+Great news: I got identical results for all permutations.
 
 How:
 ```
@@ -73,21 +75,21 @@ How:
 Results:
 
 ```
-Sample	                     Result
-templates.driverpackage	     Failed
-templates.emptyapplication	 Failed
-templates.emptydll	         Failed
-templates.emptystatic	     Succeeded
-templates.kmdf	             Succeeded
-templates.kmdfempty	         Failed
-templates.kmdfusb	         Succeeded
-templates.ndisfilter	     Failed
-templates.umdf2	             Succeeded
-templates.umdf2empty	     Failed
-templates.umdf2usb	         Succeeded
-templates.v4printdriver	     Failed
-templates.wdmempty	         Failed
-templates.winusbapp	         Succeeded
-templates.winusbinfpackage	 Succeeded
-templates.xpsrenderfilter    Failed
+Sample                     Result
+templates.driverpackage    Failed
+templates.emptyapplication Failed
+templates.emptydll         Failed
+templates.emptystatic      Succeeded
+templates.kmdf             Succeeded
+templates.kmdfempty        Failed
+templates.kmdfusb          Succeeded
+templates.ndisfilter       Failed
+templates.umdf2            Succeeded
+templates.umdf2empty       Failed
+templates.umdf2usb         Succeeded
+templates.v4printdriver    Failed
+templates.wdmempty         Failed
+templates.winusbapp        Succeeded
+templates.winusbinfpackage Succeeded
+templates.xpsrenderfilter  Failed
 ```
