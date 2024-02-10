@@ -57,58 +57,37 @@ Here are the templates:
 
 So 17 templates above.  Only 16 was instantiated, as I could not find " Package\PrinterDriverPackage"
 
-## Do they compile? - EWDK
+## Do they build?
+
+I tested using:
+* Using EWDK_ge_release_26052_240202-1419
+* Using NuGet 10.0.26052.1000-preview.ge-release
+* Targeting Configurations 'Debug' and 'Release'
+* Targeting Platform 'x64' and 'arm64'
+
+How:
+```
+  .\Build-AllSamples -Samples '^templates.' -Configurations 'Debug' -Platforms 'x64'
+```
+
+Results:
 
 ```
-Using EWDK_ge_release_26052_240202-1419: 
-.\Build-AllSamples -Samples '^templates.' -Configurations 'Debug' -Platforms 'x64'
-.\Build-AllSamples -Samples '^templates.' -Configurations 'Debug' -Platforms 'x64'
-
-```
-
-## Do they compile? - NuGet
-
-Using NuGet 10.0.26052.1000-preview.ge-release
-
-```
-.\Build-AllSamples -Samples '^templates.' -Configurations 'Debug' -Platforms 'x64'
-
-Sample	Debug|x64	Debug|arm64	Release|x64	Release|arm64
-templates.driverpackage	Failed	Failed	Failed	Failed
-templates.emptyapplication	Failed	Failed	Failed	Failed
-templates.emptydll	Failed	Failed	Failed	Failed
-templates.emptystatic	Succeeded	Succeeded	Succeeded	Succeeded
-templates.kmdf	Succeeded	Succeeded	Succeeded	Succeeded
-templates.kmdfempty	Failed	Failed	Failed	Failed
-templates.kmdfusb	Succeeded	Succeeded	Succeeded	Succeeded
-templates.ndisfilter	Failed	Failed	Failed	Failed
-templates.umdf2	Succeeded	Succeeded	Succeeded	Succeeded
-templates.umdf2empty	Failed	Failed	Failed	Failed
-templates.umdf2usb	Succeeded	Succeeded	Succeeded	Succeeded
-templates.v4printdriver	Failed	Failed	Failed	Failed
-templates.wdmempty	Failed	Failed	Failed	Failed
-templates.winusbapp	Succeeded	Succeeded	Succeeded	Succeeded
-templates.winusbinfpackage	Succeeded	Succeeded	Succeeded	Succeeded
-templates.xpsrenderfilter	Failed	Failed	Failed	Failed
-
-
-.\Build-AllSamples -Samples '^templates.' -Configurations 'Debug' -Platforms 'x64'
-
-Sample	Debug|x64
-templates.driverpackage	Failed
-templates.emptyapplication	Failed
-templates.emptydll	Failed
-templates.emptystatic	Succeeded
-templates.kmdf	Succeeded
-templates.kmdfempty	Failed
-templates.kmdfusb	Succeeded
-templates.ndisfilter	Failed
-templates.umdf2	Succeeded
-templates.umdf2empty	Failed
-templates.umdf2usb	Succeeded
-templates.v4printdriver	Failed
-templates.wdmempty	Failed
-templates.winusbapp	Succeeded
-templates.winusbinfpackage	Succeeded
-templates.xpsrenderfilter	Failed
+Sample	                     Result
+templates.driverpackage	     Failed
+templates.emptyapplication	 Failed
+templates.emptydll	         Failed
+templates.emptystatic	     Succeeded
+templates.kmdf	             Succeeded
+templates.kmdfempty	         Failed
+templates.kmdfusb	         Succeeded
+templates.ndisfilter	     Failed
+templates.umdf2	             Succeeded
+templates.umdf2empty	     Failed
+templates.umdf2usb	         Succeeded
+templates.v4printdriver	     Failed
+templates.wdmempty	         Failed
+templates.winusbapp	         Succeeded
+templates.winusbinfpackage	 Succeeded
+templates.xpsrenderfilter    Failed
 ```
