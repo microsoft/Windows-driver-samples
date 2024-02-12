@@ -38,7 +38,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{ED59DFCA-E75B-4DD8-B5C2-6BFF77A225A6}</ProjectGuid>
     <RootNamespace>IddSampleApp</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
