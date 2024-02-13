@@ -77,7 +77,6 @@
   </ImportGroup>
   <ItemGroup Label="WrappedTaskItems">
     <MofComp Include="wmisamp.mof">
-      <WmiSyntaxCheck>true</WmiSyntaxCheck>
       <CreateBinaryMofFile>.\$(IntDir)\wmisamp.bmf</CreateBinaryMofFile>
     </MofComp>
     <Wmimofck Include=".\$(IntDir)\wmisamp.bmf">
