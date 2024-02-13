@@ -132,10 +132,10 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /integritycheck /VERBOSE:LIB</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;oneCoreUap.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib;msvcrt.lib;libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;msvcrt.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
