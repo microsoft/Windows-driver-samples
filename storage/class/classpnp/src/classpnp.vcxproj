@@ -314,7 +314,7 @@
     </ItemGroup>
     <Exec Command="if not exist &quot;%(CustomBuildTarget0Input.Identity)&quot; copy  &quot;.\%(CustomBuildTarget0Input.Filename)%(CustomBuildTarget0Input.Extension)&quot; &quot;%(CustomBuildTarget0Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
     <Exec Command="mofcomp -Amendment:ms_409 -MFL:$(IntDir)\MFL.MFL -MOF:$(IntDir)\MOF.MOF &quot;%(CustomBuildTarget0Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
-    <Exec Command="wmimofck -y$(IntDir)\MOF.MOF -z$(IntDir)\MFL.MFL $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="&quot;$(WmimofckToolPath)\wmimofck.exe&quot; -y$(IntDir)\MOF.MOF -z$(IntDir)\MFL.MFL $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
     <Exec Command="mofcomp -B:&quot;.\$(IntDir)\classlog.bmf&quot; $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
   <ItemGroup>

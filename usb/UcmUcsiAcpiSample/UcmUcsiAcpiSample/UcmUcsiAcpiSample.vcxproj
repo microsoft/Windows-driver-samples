@@ -86,6 +86,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <DisableSpecificWarnings>4100;4189;5208;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(KIT_SHARED_INC_PATH_WDK)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)\UcmUcsi\1.0\UcmUcsiCxStub.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -99,6 +100,7 @@
       <WppEnabled>true</WppEnabled>
       <DisableSpecificWarnings>4100;4189;5208;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(KIT_SHARED_INC_PATH_WDK)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)\UcmUcsi\1.0\UcmUcsiCxStub.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -111,6 +113,7 @@
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <DisableSpecificWarnings>4100;4189;5208;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(KIT_SHARED_INC_PATH_WDK)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)\UcmUcsi\1.0\UcmUcsiCxStub.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -123,6 +126,7 @@
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <DisableSpecificWarnings>4100;4189;5208;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(KIT_SHARED_INC_PATH_WDK)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)\UcmUcsi\1.0\UcmUcsiCxStub.lib;%(AdditionalDependencies)</AdditionalDependencies>

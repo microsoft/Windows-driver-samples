@@ -4199,12 +4199,6 @@ VOID PerformBasicPacketExaminationAtDiscard(_In_ CLASSIFY_DATA* pClassifyData)
             
                break;
             }
-            //case IpDiscardIPSNPIDrop:
-            //{
-            //   pDiscardReason = "IPSNPI Drop";
-            //
-            //   break;
-            //}
          }
 
          break;

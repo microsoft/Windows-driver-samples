@@ -45,15 +45,32 @@ finally {
 }
 
 #
-# Determine build environment: 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.  Only used to determine build number.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 #
 $build_environment=""
 $build_number=0
 #
+# WDK NuGet will require presence of a folder 'packages'
+#
+#
+# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
+#
+if (-not $env:GITHUB_REPOSITORY -eq '') {
+    $build_environment="GitHub"
+    $build_number=22621
+}
+#
+# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
+#
+elseif(Test-Path(".\packages")) {
+    $build_environment=("NuGet")
+    $build_number=26052
+}
+#
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
 #
-if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
+elseif($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
     $build_environment=("EWDK."+$Matches.branch+"."+$Matches.build+"."+$Matches.qfe)
     $build_number=$Matches.build
 }
@@ -63,13 +80,6 @@ if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
 elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
-}
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-elseif (-not $env:GITHUB_REPOSITORY -eq '') {
-    $build_environment="GitHub"
-    $build_number=22621
 }
 else {
 

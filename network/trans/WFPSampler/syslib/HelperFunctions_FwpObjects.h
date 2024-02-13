@@ -548,7 +548,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppIOPacket == 0)
- VOID KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(_Inout_ FWPS_STREAM_CALLOUT_IO_PACKET** ppIOPacket);
+VOID KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(_Inout_ FWPS_STREAM_CALLOUT_IO_PACKET** ppIOPacket);
 
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)

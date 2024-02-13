@@ -136,7 +136,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
@@ -165,7 +165,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
@@ -194,7 +194,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
@@ -223,7 +223,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
