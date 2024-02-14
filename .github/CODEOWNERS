@@ -41,6 +41,9 @@
 # Display Kernel
 /video/ @microsoft/display-kernel-devs
 
+# Windows Driver Kit Templates
+/templates/ @microsoft/driver-samples-maintainers
+
 # Driver Development Supplemental Tools
 /tools/ @microsoft/windows-driver-developers-supplemental-tools-admins
 
