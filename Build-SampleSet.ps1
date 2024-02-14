@@ -105,9 +105,7 @@ else {
 # 
 # After 22621 those warnings are put under a common flag: /samples
 #
-# Additionally after 22621 we have to temporarily suppress /sw1402 due to one specific sample "biometrics".
-#
-$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples /sw1402")
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
 
 #
 # Determine exclusions.  
