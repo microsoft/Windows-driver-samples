@@ -11,5 +11,6 @@ templates\ndisfilter,*,,,Template intentionally not building. See .\templates\RE
 templates\umdf2empty,*,,,Template intentionally not building. See .\templates\README.md for details.
 templates\v4printdriver,*,,,Template intentionally not building. See .\templates\README.md for details.
 templates\wdmempty,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\winusbinfpackage,*,,22621,Only NI: Template intentionally not building. See .\templates\README.md for details.
 templates\xpsrenderfilter,*,,,Template intentionally not building. See .\templates\README.md for details.
 tree,*,,,Missing headers

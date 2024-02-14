@@ -90,6 +90,6 @@ templates.umdf2usb         Succeeded
 templates.v4printdriver    Failed     <-- TODO: We should annotate why this template does not build.
 templates.wdmempty         Failed     <-- TODO: We should annotate why this template does not build.
 templates.winusbapp        Succeeded
-templates.winusbinfpackage Succeeded
+templates.winusbinfpackage GE: Succeeded/NI: Failed <-- TODO: We should annotate why this template builds on GE, but not on NI.
 templates.xpsrenderfilter  Failed     <-- TODO: We should annotate why this template does not build.
 ```
