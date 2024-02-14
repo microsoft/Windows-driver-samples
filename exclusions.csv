@@ -4,4 +4,3 @@ general\dchu\osrfx2_dchu_extension_loose,*|x64,,22621,Only NI: Only x64: Fails t
 general\dchu\osrfx2_dchu_extension_tight,*|x64,,22621,Only NI: Only x64: Fails to build
 prm,*,,22621,Only NI: Not supported on NI.
 tree,*,,,Missing headers
-video\indirectdisplay,*|arm64,,,Only arm64: Warning C4530: C++ exception handler used but unwind semantics are not enabled
