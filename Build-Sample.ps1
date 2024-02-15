@@ -142,7 +142,7 @@ $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.wrn"
 $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
-msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
 if ($env:WDS_WipeOutputs -ne $null)
 {
     Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
