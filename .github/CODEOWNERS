@@ -68,6 +68,7 @@
 
 # Platform Integrity
 /security/ @microsoft/platform-integrity
+/TrEE/ @microsoft/platform-integrity
 
 # Sensors Platform
 /sensors/ @microsoft/sensors-platform

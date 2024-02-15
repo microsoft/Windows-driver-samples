@@ -71,7 +71,7 @@
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprInjectionDataPurge(_Inout_ INJECTION_DATA* pInjectionData)
+VOID KrnlHlprInjectionDataPurge(_Inout_ INJECTION_DATA* pInjectionData)
 {
 #if DBG
    
