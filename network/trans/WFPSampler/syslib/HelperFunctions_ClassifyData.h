@@ -44,7 +44,7 @@ typedef struct CLASSIFY_DATA_
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprClassifyDataReleaseLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyData);
+VOID KrnlHlprClassifyDataReleaseLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyData);
 
 _At_(*ppClassifyData, _Pre_ _Notnull_)
 _At_(*ppClassifyData, _Post_ _Null_ __drv_freesMem(Pool))
@@ -52,7 +52,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppClassifyData == 0)
-inline VOID KrnlHlprClassifyDataDestroyLocalCopy(_Inout_ CLASSIFY_DATA** ppClassifyData);
+VOID KrnlHlprClassifyDataDestroyLocalCopy(_Inout_ CLASSIFY_DATA** ppClassifyData);
 
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)

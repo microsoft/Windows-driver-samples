@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mft0\AvsCameraMft0.vcxproj">
-      <Project>{2C0B129E-88F3-479A-AE5D-65609A88BE66}</Project>
+    <ProjectReference Include="..\DMFT\AvsCameraDMFT.vcxproj">
+      <Project>{e77657cd-a270-49e1-823a-8a14ff8596c8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\sys\AvsCamera.vcxproj">
       <Project>{24D35D6E-BDB0-4949-8A34-7DD25F0E8F68}</Project>

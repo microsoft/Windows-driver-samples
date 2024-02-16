@@ -75,6 +75,15 @@ Return Value:
                 0 // jack capabilities
                 );
         }
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_JACK_DESCRIPTION3)
+        {
+            ntStatus = pMiniport->PropertyHandlerJackDescription3(
+                PropertyRequest,
+                ARRAYSIZE(SpeakerJackDescriptions),
+                SpeakerJackDescriptions,
+                42 // jack config id
+                );
+        }
     }
     else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioResourceManagement))
     {

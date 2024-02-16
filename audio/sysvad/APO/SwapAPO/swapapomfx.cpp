@@ -458,10 +458,38 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
         // that need to run at a real-time priority. The work queue ID is used with the Rtwq APIs.
         hr = apoRtQueueService->GetRealTimeWorkQueue(&m_queueId);
         IF_FAILED_JUMP(hr, Exit);
-       
+
         // Windows should pass a valid collection.
         ATLASSERT(papoSysFxInit3->pDeviceCollection != nullptr);
         IF_TRUE_ACTION_JUMP(papoSysFxInit3->pDeviceCollection == nullptr, hr = E_INVALIDARG, Exit);
+        
+        // Use IMMDevice to activate IAudioSystemEffectsPropertyStore that contains the default, user and
+        // volatile settings.
+        IMMDeviceCollection* deviceCollection = reinterpret_cast<APOInitSystemEffects3*>(pbyData)->pDeviceCollection;
+        UINT32 numDevices;
+        // Get the endpoint on which this APO has been created
+        // (It is the last device in the device collection)
+        hr = deviceCollection->GetCount(&numDevices);
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = numDevices > 0 ? S_OK : E_UNEXPECTED;
+        IF_FAILED_JUMP(hr, Exit);
+
+        hr = deviceCollection->Item(numDevices - 1, &m_audioEndpoint);
+        IF_FAILED_JUMP(hr, Exit);
+
+        wil::unique_prop_variant activationParam;
+        hr = InitPropVariantFromCLSID(SWAP_APO_SFX_CONTEXT, &activationParam);
+        IF_FAILED_JUMP(hr, Exit);
+
+        wil::com_ptr_nothrow<IAudioSystemEffectsPropertyStore> effectsPropertyStore;
+        hr = m_audioEndpoint->Activate(__uuidof(effectsPropertyStore), CLSCTX_ALL, &activationParam, effectsPropertyStore.put_void());
+        IF_FAILED_JUMP(hr, Exit);
+
+        // This is where an APO might want to open the volatile or default property stores as well
+        // Use STGM_READWRITE if IPropertyStore::SetValue is needed.
+        hr = effectsPropertyStore->OpenUserPropertyStore(STGM_READ, m_userStore.put());
+        IF_FAILED_JUMP(hr, Exit);
 
         // Save the processing mode being initialized.
         processingMode = papoSysFxInit3->AudioProcessingMode;
@@ -523,7 +551,8 @@ HRESULT CSwapAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //
@@ -755,7 +784,7 @@ HRESULT CSwapAPOMFX::SetAudioSystemEffectState(GUID effectId, AUDIO_SYSTEMEFFECT
             if (oldState != effectInfo.state)
             {
                 SetEvent(m_hEffectsChangedEvent);
-                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
+                m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"CSwapAPOMFX::SetAudioSystemEffectState - effect: " GUID_FORMAT_STRING L", state: %i", effectInfo.id, effectInfo.state);
             }
 
             m_EffectsLock.Leave();
@@ -772,8 +801,6 @@ HRESULT CSwapAPOMFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO
     *apoNotifications = nullptr;
     *count = 0;
 
-    RETURN_HR_IF_NULL(E_FAIL, m_device);
-
     // Let the OS know what notifications we are interested in by returning an array of
     // APO_NOTIFICATION_DESCRIPTORs.
     constexpr DWORD numDescriptors = 1;
@@ -785,7 +812,7 @@ HRESULT CSwapAPOMFX::GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO
 
     // Our APO wants to get notified when a endpoint property changes on the audio endpoint.
     apoNotificationDescriptors[0].type = APO_NOTIFICATION_TYPE_ENDPOINT_PROPERTY_CHANGE;
-    (void)m_device.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
+    (void)m_audioEndpoint.query_to(&apoNotificationDescriptors[0].audioEndpointPropertyChange.device);
 
     *apoNotifications = apoNotificationDescriptors.release();
     *count = numDescriptors;
@@ -811,7 +838,7 @@ void CSwapAPOMFX::HandleNotification(APO_NOTIFICATION *apoNotification)
                 {PKEY_Endpoint_Enable_Channel_Swap_MFX, &m_fEnableSwapMFX},
             };
 
-            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
+            m_apoLoggingService->ApoLog(APO_LOG_LEVEL_INFO, L"CSwapAPOMFX::HandleNotification - pkey: " GUID_FORMAT_STRING L" %d", GUID_FORMAT_ARGS(apoNotification->audioEndpointPropertyChange.propertyKey.fmtid), apoNotification->audioEndpointPropertyChange.propertyKey.pid);
 
             for (int i = 0; i < ARRAYSIZE(controls); i++)
             {
@@ -847,11 +874,11 @@ HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(IMMDeviceCollection *pDe
     }
 
     // Get the target IMMDevice
-    hr = pDeviceCollection->Item(nSoftwareIoDeviceInCollection, &m_device);
+    hr = pDeviceCollection->Item(nSoftwareIoDeviceInCollection, &m_deviceTopologyMMDevice);
     IF_FAILED_JUMP(hr, Exit);
 
     // Instantiate a device topology instance
-    hr = m_device->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
+    hr = m_deviceTopologyMMDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_ALL, NULL, (void**)&spMyDeviceTopology);
     IF_FAILED_JUMP(hr, Exit);
 
     // retrieve connect instance
@@ -859,7 +886,7 @@ HRESULT CSwapAPOMFX::ProprietaryCommunicationWithDriver(IMMDeviceCollection *pDe
     IF_FAILED_JUMP(hr, Exit);
 
     // activate IKsControl on the IMMDevice
-    hr = m_device->Activate(__uuidof(IKsControl), CLSCTX_INPROC_SERVER, NULL, (void**)&spKsControl);
+    hr = m_deviceTopologyMMDevice->Activate(__uuidof(IKsControl), CLSCTX_INPROC_SERVER, NULL, (void**)&spKsControl);
     IF_FAILED_JUMP(hr, Exit);
 
     // get KS pin id

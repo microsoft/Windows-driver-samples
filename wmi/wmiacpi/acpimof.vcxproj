@@ -29,7 +29,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -37,7 +37,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -45,7 +45,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -53,7 +53,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Windows Driver</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -181,7 +181,7 @@
     </ItemGroup>
     <Exec Command="if not exist &quot;%(CustomBuildTarget1Input.Identity)&quot; copy  &quot;.\%(CustomBuildTarget1Input.Filename)%(CustomBuildTarget1Input.Extension)&quot; &quot;%(CustomBuildTarget1Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
     <Exec Command="mofcomp -Amendment:ms_409 -MFL:$(IntDir)\MFL.MFL -MOF:$(IntDir)\MOF.MOF &quot;%(CustomBuildTarget1Input.Identity)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
-    <Exec Command="wmimofck -y$(IntDir)\MOF.MOF -z$(IntDir)\MFL.MFL $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="&quot;$(WmimofckToolPath)\wmimofck.exe&quot; -y$(IntDir)\MOF.MOF -z$(IntDir)\MFL.MFL $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
     <Exec Command="mofcomp -B:&quot;.\$(IntDir)\acpimof.bmf&quot; $(IntDir)\MOFMFL.MOF" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
   <ItemGroup>

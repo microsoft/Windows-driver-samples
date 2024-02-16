@@ -11,7 +11,7 @@
     ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
     Provider    = %Contoso%
     CatalogFile = StmEdit.cat
-    DriverVer   = 01/01/2015,1.0.09.15
+    DriverVer   = 01/26/2024,1.0.09.24
     PnpLockdown = 1
 
 [SourceDisksNames]
@@ -21,47 +21,14 @@
    StmEdit.sys = 1,,
 
 [DestinationDirs]
-    DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
-    StmEdit.DriverFiles = 12                              ; %WinDir%\System32\Drivers
+    StmEdit.DriverFiles = 13                              ; %WinDir%\System32\Drivers
 
-[DefaultInstall.NT$ARCH$]
+[DefaultInstall.NTAMD64]
     OptionDesc = %StmEditServiceDesc%
     CopyFiles  = StmEdit.DriverFiles
 
-
-[DefaultInstall.NT$ARCH$.Services]
-    AddService = %StmEditServiceName%,,StmEdit.Service
-
-[DefaultUninstall.NT$ARCH$]
-    LegacyUninstall=1
-    DelFiles = StmEdit.DriverFiles
-
-[DefaultUninstall.NT$ARCH$.Services]
-    LegacyUninstall=1
-    DelService = %StmEditServiceName%,0x200               ; SPSVCINST_STOPSERVICE
-    DelReg     = StmEdit.DelRegistry
-
 [StmEdit.DriverFiles]
     StmEdit.sys,,,0x00000040                              ; COPYFLG_OVERWRITE_OLDER_ONLY
-
-[StmEdit.Service]
-    DisplayName   = %StmEditServiceName%
-    Description   = %StmEditServiceDesc%
-    ServiceType   = 1                                     ; SERVICE_KERNEL_DRIVER
-    StartType     = 3                                     ; SERVICE_DEMAND_START
-    ErrorControl  = 1                                     ; SERVICE_ERROR_NORMAL
-    ServiceBinary = %12%\StmEdit.sys                      ; %WinDir%\System32\Drivers\StmEdit.sys
-    AddReg        = StmEdit.AddRegistry
-
-[StmEdit.AddRegistry]
-    HKR,"Parameters","MultipleCallouts",     0x00010001, 1          ; FLG_ADDREG_TYPE_DWORD
-    HKR,"Parameters","StringToFind",         0x00000000, "rainy"    ; FLG_ADDREG_TYPE_SZ
-    HKR,"Parameters","InspectionRemotePort", 0x00010001, 0    	    ; FLG_ADDREG_TYPE_DWORD
-    HKR,"Parameters","InspectionLocalPort",  0x00010001, 8888       ; FLG_ADDREG_TYPE_DWORD
-
-
-[StmEdit.DelRegistry]
-    HKR,"Parameters",,,
 
 [Strings]
     Contoso            = "Contoso Ltd."

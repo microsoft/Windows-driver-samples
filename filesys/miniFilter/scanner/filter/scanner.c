@@ -54,8 +54,31 @@ UNICODE_STRING ScannedExtensionDefault = RTL_CONSTANT_STRING( L"doc" );
 //  Function prototypes
 //
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+ScannerGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+ScannerOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -105,6 +128,8 @@ ScannerpCheckExtension (
 
 #ifdef ALLOC_PRAGMA
     #pragma alloc_text(INIT, DriverEntry)
+    #pragma alloc_text(INIT, ScannerGetIoOpenDriverRegistryKey)
+    #pragma alloc_text(INIT, ScannerOpenServiceParametersKey)
     #pragma alloc_text(INIT, ScannerInitializeScannedExtensions)
     #pragma alloc_text(PAGE, ScannerInstanceSetup)
     #pragma alloc_text(PAGE, ScannerPreCreate)
@@ -242,7 +267,7 @@ Return Value:
     // Obtain the extensions to scan from the registry
     //
 
-    status = ScannerInitializeScannedExtensions( RegistryPath );
+    status = ScannerInitializeScannedExtensions( DriverObject, RegistryPath );
 
     if (!NT_SUCCESS( status )) {
 
@@ -312,8 +337,147 @@ Return Value:
 }
 
 
+PFN_IoOpenDriverRegistryKey
+ScannerGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+ScannerOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = ScannerGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto ScannerOpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+ScannerOpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
 NTSTATUS
 ScannerInitializeScannedExtensions(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -325,6 +489,9 @@ Routine Descrition:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -335,12 +502,10 @@ Return Value:
 --*/
 {
     NTSTATUS status;
-    OBJECT_ATTRIBUTES attributes;
     HANDLE driverRegKey = NULL;
     UNICODE_STRING valueName;
     PKEY_VALUE_PARTIAL_INFORMATION valueBuffer = NULL;
     ULONG valueLength = 0;
-    BOOLEAN closeHandle = FALSE;
     PWCHAR ch;
     SIZE_T length;
     ULONG count;
@@ -352,25 +517,18 @@ Return Value:
     ScannedExtensionCount = 0;
 
     //
-    //  Open the driver registry key.
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
-
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    status = ScannerOpenServiceParametersKey( DriverObject,
+                                              RegistryPath,
+                                              &driverRegKey );
 
     if (!NT_SUCCESS( status )) {
 
+        driverRegKey = NULL;
         goto ScannerInitializeScannedExtensionsCleanup;
     }
-
-    closeHandle = TRUE;
 
     //
     //   Query the length of the reg value
@@ -480,7 +638,7 @@ ScannerInitializeScannedExtensionsCleanup:
         valueBuffer = NULL;
     }
 
-    if (closeHandle) {
+    if (driverRegKey != NULL) {
 
         ZwClose( driverRegKey );
     }
@@ -675,7 +833,7 @@ Return Value
     return STATUS_SUCCESS;
 }
 
-
+
 VOID
 ScannerPortDisconnect(
      _In_opt_ PVOID ConnectionCookie
@@ -717,7 +875,7 @@ Return value
     ScannerData.UserProcess = NULL;
 }
 
-
+
 NTSTATUS
 ScannerUnload (
     _In_ FLT_FILTER_UNLOAD_FLAGS Flags

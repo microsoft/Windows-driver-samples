@@ -511,6 +511,8 @@ Return Value:
 
     UNREFERENCED_PARAMETER(Device);
 
+    PAGED_CODE();
+
     return STATUS_UNSUCCESSFUL;
 }
 

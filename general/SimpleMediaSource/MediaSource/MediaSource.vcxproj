@@ -180,7 +180,7 @@
       <AdditionalIncludeDirectories>..\..\..\wil\include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
     </Link>
@@ -200,7 +200,7 @@
       <AdditionalIncludeDirectories>..\..\..\wil\include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
     </Link>
@@ -220,7 +220,7 @@
       <AdditionalIncludeDirectories>..\..\..\wil\include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -240,7 +240,7 @@
       <AdditionalIncludeDirectories>..\..\..\wil\include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -264,7 +264,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
       <ImageHasSafeExceptionHandlers />
@@ -289,7 +289,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
       <ImageHasSafeExceptionHandlers>
@@ -315,7 +315,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
     </Link>
@@ -339,7 +339,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>mfplat.lib;Mfsensorgroup.lib;%(AdditionalDependencies);OneCoreUAP.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);mfplat.lib;Mfsensorgroup.lib;OneCoreUAP.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)MediaSource\module.def</ModuleDefinitionFile>
     </Link>
