@@ -45,15 +45,32 @@ finally {
 }
 
 #
-# Determine build environment: 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.  Only used to determine build number.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 #
 $build_environment=""
 $build_number=0
 #
+# WDK NuGet will require presence of a folder 'packages'
+#
+#
+# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
+#
+if (-not $env:GITHUB_REPOSITORY -eq '') {
+    $build_environment="GitHub"
+    $build_number=22621
+}
+#
+# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
+#
+elseif(Test-Path(".\packages")) {
+    $build_environment=("NuGet")
+    $build_number=26061
+}
+#
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
 #
-if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
+elseif($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
     $build_environment=("EWDK."+$Matches.branch+"."+$Matches.build+"."+$Matches.qfe)
     $build_number=$Matches.build
 }
@@ -63,13 +80,6 @@ if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
 elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
-}
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-elseif (-not $env:GITHUB_REPOSITORY -eq '') {
-    $build_environment="GitHub"
-    $build_number=22621
 }
 else {
 
@@ -81,6 +91,25 @@ else {
     Write-Error "Could not determine build environment."
     exit 1
 }
+
+#
+# InfVerif_AdditionalOptions
+#
+# Samples must build cleanly and even without warnings.
+#
+# For this branch we handle this with infverif exclusions.
+#
+# In NI WDK the /msft flag excludes expected warnings.
+# This flag not to be used after NI.  Instead use /samples.
+#
+$InfVerif_AdditionalOptions=
+    (
+        $build_number -le 22621 ?
+        "/msft" :
+        "/samples /sw1199 /sw1204 /sw1208 /sw1233 /sw1402 /sw1423 /sw2084"
+    ) +
+    " " +
+    "/sw1203 /sw1205 /sw1296 /sw1324 /sw1420 /sw1421 /sw1422 /sw2083"
 
 #
 # Determine exclusions.  
@@ -127,17 +156,18 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Build Environment:    " + $build_environment)
-Write-Output ("Build Number:         " + $build_number)
-Write-Output ("Samples:              " + $sampleSet.Count)
-Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
-Write-Output "Combinations:         $SolutionsTotal"
-Write-Output "LogicalProcessors:    $LogicalProcessors"
-Write-Output "ThrottleFactor:       $ThrottleFactor"
-Write-Output "ThrottleLimit:        $ThrottleLimit"
-Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output ("Build Environment:          " + $build_environment)
+Write-Output ("Build Number:               " + $build_number)
+Write-Output ("Samples:                    " + $sampleSet.Count)
+Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
+Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
+Write-Output "InfVerif_AdditionalOptions: $InfVerif_AdditionalOptions"
+Write-Output "Combinations:               $SolutionsTotal"
+Write-Output "LogicalProcessors:          $LogicalProcessors"
+Write-Output "ThrottleFactor:             $ThrottleFactor"
+Write-Output "ThrottleLimit:              $ThrottleLimit"
+Write-Output "WDS_WipeOutputs:            $env:WDS_WipeOutputs"
+Write-Output ("Disk Remaining (GB):        " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
@@ -161,6 +191,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $exclusionReasons = $using:exclusionReasons
     $Configurations = $using:Configurations
     $Platforms = $using:Platforms
+    $InfVerif_AdditionalOptions = $using:InfVerif_AdditionalOptions
     $Verbose = $using:Verbose
 
     $sampleName = $_.Key
@@ -185,7 +216,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $thisresult = "Excluded"
             }
             else {
-                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -Verbose:$Verbose
+                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -InfVerif_AdditionalOptions $InfVerif_AdditionalOptions -Verbose:$Verbose
                 if ($LASTEXITCODE -eq 0) {
                     $thissucceeded += 1
                     $thisresult = "Succeeded"
