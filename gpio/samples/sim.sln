@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 14.00
 # Visual Studio 2015
 VisualStudioVersion = 14.0
@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simgpio_i2c", "simgpio_i2c\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|arm = Debug|arm
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
@@ -21,6 +23,22 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{213515FD-98F8-4889-96B5-FA898B4B4936}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{213515FD-98F8-4889-96B5-FA898B4B4936}.Debug|ARM64.Build.0 = Debug|ARM64
+		{22BE34F1-0E41-4A26-B709-6CAB493F6CC7}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{22BE34F1-0E41-4A26-B709-6CAB493F6CC7}.Debug|ARM64.Build.0 = Debug|ARM64
+		{A80FE9DD-C140-40F6-A3F4-55A2A55BFAD4}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{A80FE9DD-C140-40F6-A3F4-55A2A55BFAD4}.Debug|ARM64.Build.0 = Debug|ARM64
+		{380694FF-9A67-4FB0-B108-7696280BD7B6}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{380694FF-9A67-4FB0-B108-7696280BD7B6}.Debug|ARM64.Build.0 = Debug|ARM64
+		{213515FD-98F8-4889-96B5-FA898B4B4936}.Release|ARM64.ActiveCfg = Release|ARM64
+		{213515FD-98F8-4889-96B5-FA898B4B4936}.Release|ARM64.Build.0 = Release|ARM64
+		{22BE34F1-0E41-4A26-B709-6CAB493F6CC7}.Release|ARM64.ActiveCfg = Release|ARM64
+		{22BE34F1-0E41-4A26-B709-6CAB493F6CC7}.Release|ARM64.Build.0 = Release|ARM64
+		{A80FE9DD-C140-40F6-A3F4-55A2A55BFAD4}.Release|ARM64.ActiveCfg = Release|ARM64
+		{A80FE9DD-C140-40F6-A3F4-55A2A55BFAD4}.Release|ARM64.Build.0 = Release|ARM64
+		{380694FF-9A67-4FB0-B108-7696280BD7B6}.Release|ARM64.ActiveCfg = Release|ARM64
+		{380694FF-9A67-4FB0-B108-7696280BD7B6}.Release|ARM64.Build.0 = Release|ARM64
 		{213515FD-98F8-4889-96B5-FA898B4B4936}.Debug|arm.ActiveCfg = Debug|arm
 		{213515FD-98F8-4889-96B5-FA898B4B4936}.Debug|arm.Build.0 = Debug|arm
 		{213515FD-98F8-4889-96B5-FA898B4B4936}.Debug|arm.Deploy.0 = Debug|arm
