@@ -145,7 +145,7 @@ $myexit=0
 # Let us build up to three times (0th, 1st, and 2nd attempt).
 # If we succeed at first, then it is a success.
 # If we fail at first, but succeed at either of next two attempts, then it is a sporadic failure.
-# Finally if we even at third attempt fail, then it is a true failure.
+# If we even at third attempt fail, then it is a true failure.
 #
 for ($i=0; $i -le 2; $i++) {
     $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
