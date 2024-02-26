@@ -134,29 +134,75 @@ foreach ($line in Get-Content -Path $solutionFile)
 if (-not $configurationIsSupported)
 {
     Write-Verbose "[$SampleName] `u{23E9} Skipped. Configuration $Configuration|$Platform not supported."
-    exit 2
+    exit 3
 }
-
-$errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.err"
-$warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.wrn"
-$OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
-msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
-if ($env:WDS_WipeOutputs -ne $null)
-{
-    Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
-    Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
-    Get-ChildItem -path $Directory -Recurse -Include arm64|Remove-Item -Recurse
+
+$myexit=0
+
+#
+# Let us build up to three times (0th, 1st, and 2nd attempt).
+# If we succeed at first, then it is a success.
+# If we fail at first, but succeed at either of next two attempts, then it is a sporadic failure.
+# If we even at third attempt fail, then it is a true failure.
+#
+for ($i=0; $i -le 2; $i++) {
+    $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
+    $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
+    $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
+
+    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+    if ($env:WDS_WipeOutputs -ne $null)
+    {
+        Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
+        Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
+        Get-ChildItem -path $Directory -Recurse -Include arm64|Remove-Item -Recurse
+    }
+    if ($LASTEXITCODE -eq 0)
+    {
+        # We succeeded building. 
+        # If at first attempt, then $myexit=0
+        # If at later attempt, then $myexit=2
+        if ($i -eq 0)
+        {
+            $myexit=0
+        }
+        else
+        {
+            $myexit=2
+        }
+         break;
+    }
+    else
+    {
+        # We failed building. 
+        # Let us sleep for a bit.
+        # Then let the while loop do its thing and re-run.
+        sleep 1
+        if ($Verbose)
+        {
+            Write-Warning "`u{274C} Build failed. Retrying to see if sporadic..."
+        }
+    }
 }
 
-if ($LASTEXITCODE -ne 0)
+if ($myexit -eq 1)
 {
     if ($Verbose)
     {
         Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
     }
     exit 1
+}
+
+if ($myexit -eq 2)
+{
+    if ($Verbose)
+    {
+        Write-Warning "`u{274C} Build sporadically failed. Log available at $errorLogFilePath"
+    }
+    exit 2
 }
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform }"
