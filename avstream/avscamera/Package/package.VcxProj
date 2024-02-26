@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
@@ -8,14 +8,6 @@
     <ProjectConfiguration Include="Release|ARM64">
       <Configuration>Release</Configuration>
       <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -46,14 +38,6 @@
     <ProjectGuid>{9397D285-8C29-4661-A741-F6703E2F5FD6}</ProjectGuid>
     <SampleGuid>{B28A4CED-96FB-4426-8E77-15A9C0BCFDD5}</SampleGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -95,16 +79,6 @@
     <VerifyDrivers />
     <VerifyFlags>133563</VerifyFlags>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
-    </DriverSign>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
-    </DriverSign>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
