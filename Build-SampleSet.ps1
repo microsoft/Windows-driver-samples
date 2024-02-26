@@ -65,7 +65,7 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26061
+    $build_number=26066
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
@@ -149,6 +149,7 @@ $jresult = @{
     SolutionsExcluded    = 0
     SolutionsUnsupported = 0
     SolutionsFailed      = 0
+    SolutionsSporadic    = 0
     Results              = @()
     FailSet              = @()
     lock                 = [System.Threading.Mutex]::new($false)
@@ -178,6 +179,7 @@ Write-Output "S: Built and result was 'Succeeded'"
 Write-Output "E: Built and result was 'Excluded'"
 Write-Output "U: Built and result was 'Unsupported' (Platform and Configuration combination)"
 Write-Output "F: Built and result was 'Failed'"
+Write-Output "O: Built and result was 'Sporadic'"
 Write-Output ""
 Write-Output "Building all combinations..."
 
@@ -204,10 +206,12 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
         foreach ($platform in $Platforms) {
             $thisunsupported = 0
             $thisfailed = 0
+            $thissporadic = 0
             $thisexcluded = 0
             $thissucceeded = 0
             $thisresult = "Not run"
             $thisfailset = @()
+            $thissporadicset = @()
 
             if ($exclusionConfigurations.ContainsKey($sampleName) -and ($exclusionConfigurations[$sampleName].Split(';') | Where-Object { "$configuration|$platform" -like $_ })) {
                 # Verbose
@@ -226,8 +230,13 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                     $thisfailed += 1
                     $thisresult = "Failed"
                 }
+                elseif ($LASTEXITCODE -eq 2) {
+                    $thissporadicset += "$sampleName $configuration|$platform"
+                    $thissporadic += 1
+                    $thisresult = "Sporadic"
+                }
                 else {
-                    # ($LASTEXITCODE -eq 2)
+                    # ($LASTEXITCODE -eq 3)
                     $thisunsupported += 1
                     $thisresult = "Unsupported"
                 }
@@ -241,7 +250,9 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 ($using:jresult).SolutionsExcluded += $thisexcluded
                 ($using:jresult).SolutionsUnsupported += $thisunsupported
                 ($using:jresult).SolutionsFailed += $thisfailed
+                ($using:jresult).SolutionsSporadic += $thissporadic
                 ($using:jresult).FailSet += $thisfailset
+                ($using:jresult).SporadicSet += $thissporadicset
                 $SolutionsTotal = $using:SolutionsTotal
                 $ThrottleLimit = $using:ThrottleLimit
                 $SolutionsBuilt = ($using:jresult).SolutionsBuilt
@@ -250,7 +261,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $SolutionsPending = if ($SolutionsRemaining -ge $ThrottleLimit) { ($SolutionsRemaining - $ThrottleLimit) } else { 0 }
                 $SolutionsBuiltPercent = [Math]::Round(100 * ($SolutionsBuilt / $using:SolutionsTotal))
                 $TBRP = "T:" + ($SolutionsTotal) + "; B:" + (($using:jresult).SolutionsBuilt) + "; R:" + ($SolutionsRunning) + "; P:" + ($SolutionsPending)
-                $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed)
+                $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed) + "; O:" + (($using:jresult).SolutionsSporadic)
                 Write-Progress -Activity "Building combinations" -Status "$SolutionsBuilt of $using:SolutionsTotal combinations built ($SolutionsBuiltPercent%) | $TBRP | $rstr" -PercentComplete $SolutionsBuiltPercent
             }
             finally {
@@ -269,6 +280,8 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
 
 $sw.Stop()
 
+Write-Output ""
+
 if ($jresult.FailSet.Count -gt 0) {
     Write-Output "Some combinations were built with errors:"
     $jresult.FailSet = $jresult.FailSet | Sort-Object
@@ -278,10 +291,27 @@ if ($jresult.FailSet.Count -gt 0) {
         $failConfiguration = $Matches[2]
         $failPlatform = $Matches[3]
         Write-Output "Build errors in Sample $failName; Configuration: $failConfiguration; Platform: $failPlatform {"
-        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.err" | Write-Output
+        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.0.err" | Write-Output
         Write-Output "} $failedSample"
     }
     Write-Error "Some combinations were built with errors."
+    Write-Output ""
+}
+
+if ($jresult.SporadicSet.Count -gt 0) {
+    Write-Output "Some combinations were built with sporadic error:"
+    $jresult.SporadicSet = $jresult.SporadicSet | Sort-Object
+    foreach ($sporadicSample in $jresult.SporadicSet) {
+        $sporadicSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
+        $sporadicName = $Matches[1]
+        $sporadicConfiguration = $Matches[2]
+        $sporadicPlatform = $Matches[3]
+        Write-Output "Build sporadic errors in Sample $sporadicName; Configuration: $sporadicConfiguration; Platform: $sporadicPlatform {"
+        Get-Content "$LogFilesDirectory\$sporadicName.$sporadicConfiguration.$sporadicPlatform.0.err" | Write-Output
+        Write-Output "} $sporadicSample"
+    }
+    Write-Error "Some combinations were built with sporadic errors."
+    Write-Output ""
 }
 
 # Display timer statistics to host
@@ -292,9 +322,9 @@ $SolutionsSucceeded = $jresult.SolutionsSucceeded
 $SolutionsExcluded = $jresult.SolutionsExcluded
 $SolutionsUnsupported = $jresult.SolutionsUnsupported
 $SolutionsFailed = $jresult.SolutionsFailed
+$SolutionsSporadic = $jresult.SolutionsSporadic
 $Results = $jresult.Results
 
-Write-Output ""
 Write-Output "Built all combinations."
 Write-Output ""
 Write-Output "Elapsed time:         $min minutes, $seconds seconds."
@@ -307,6 +337,7 @@ Write-Output "Succeeded:            $SolutionsSucceeded"
 Write-Output "Excluded:             $SolutionsExcluded"
 Write-Output "Unsupported:          $SolutionsUnsupported"
 Write-Output "Failed:               $SolutionsFailed"
+Write-Output "Sporadic:             $SolutionsSporadic"
 Write-Output "Log files directory:  $LogFilesDirectory"
 Write-Output "Overview report:      $reportFilePath"
 Write-Output ""
