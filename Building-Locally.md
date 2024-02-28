@@ -29,6 +29,9 @@ This will install following Apps:
 ### Option B: Install VS Components
 If you install Visual Studio (see later) you may at that point select either additional Workload '.NET desktop development' or simply individual components 'NET Framework 4.7.2 SDK' and '.NET Framework 4.7.2 targeting pack'.
 
+### Option C: Use EWDK
+If you use EWDK, then Microsoft .NET Framework 4.8.1 SDK will be included.  That is sufficient.
+
 ## Step 3: Clone Windows Driver Samples and checkout relevant branch
 
 ```
