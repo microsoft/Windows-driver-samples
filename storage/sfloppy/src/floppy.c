@@ -208,7 +208,7 @@ DRIVE_MEDIA_CONSTANTS DriveMediaConstants[] =
 };
 
 
-#define NUMBER_OF_DRIVE_MEDIA_COMBINATIONS sizeof(DriveMediaConstants)/sizeof(DRIVE_MEDIA_CONSTANTS)
+#define NUMBER_OF_DRIVE_MEDIA_COMBINATIONS (sizeof(DriveMediaConstants)/sizeof(DriveMediaConstants[0]))
 
 //
 // floppy device data
