@@ -13,24 +13,28 @@ winget install --id Microsoft.NuGet --source winget
 ```
 
 
-## Step 2: Microsoft .NET Framework 4.7.2 SDK
+## Step 2: Microsoft .NET Framework 4.7.2 Targeting Pack and Microsoft .NET Framework 4.8.1 SDK
 
 This step is required specifically to build sample usb\usbview .
 
-### Option A: Install Developer Pack
+### Option A: Install VS Components
+If you install Visual Studio (see later) you may at that point select to add both of individual components:
+* .NET Framework 4.7.2 targeting pack
+* .NET Framework 4.8.1 SDK
 
-Install https://aka.ms/msbuild/developerpacks -> .NET Framework -> Supported versions -> .NET Framework 4.7.2 -> Developer Pack -> https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net472-developer-pack-offline-installer -> https://go.microsoft.com/fwlink/?linkid=874338 .  
+### Option B: Install Developer Pack
+
+Install from https://aka.ms/msbuild/developerpacks -> .NET Framework -> Supported versions following both of following packages:
+* .NET Framework 4.7.2 -> Developer Pack 
+* .NET Framework 4.8.1 -> Developer Pack 
 
 This will install following Apps:
 * Microsoft .NET Framework 4.7.2 SDK
 * Microsoft .NET Framework 4.7.2 Targeting Pack
 * Microsoft .NET Framework 4.7.2 Targeting Pack (ENU)
 
-### Option B: Install VS Components
-If you install Visual Studio (see later) you may at that point select either additional Workload '.NET desktop development' or simply individual components 'NET Framework 4.7.2 SDK' and '.NET Framework 4.7.2 targeting pack'.
-
 ### Option C: Use EWDK
-If you use EWDK, then Microsoft .NET Framework 4.8.1 SDK will be included.  That is sufficient.
+If you use EWDK, then all necessary prequisites are included.
 
 ## Step 3: Clone Windows Driver Samples and checkout relevant branch
 
