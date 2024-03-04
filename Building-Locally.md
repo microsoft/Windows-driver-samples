@@ -24,7 +24,7 @@ If you install Visual Studio (see later) you may at that point select to add bot
 
 ### Option B: Install Developer Pack
 
-Install from https://aka.ms/msbuild/developerpacks -> .NET Framework -> Supported versions following both of following packages:
+Install from https://aka.ms/msbuild/developerpacks -> '.NET Framework' -> 'Supported versions' both of following packages:
 * .NET Framework 4.7.2 -> Developer Pack 
 * .NET Framework 4.8.1 -> Developer Pack 
 
@@ -32,6 +32,9 @@ This will install following Apps:
 * Microsoft .NET Framework 4.7.2 SDK
 * Microsoft .NET Framework 4.7.2 Targeting Pack
 * Microsoft .NET Framework 4.7.2 Targeting Pack (ENU)
+* Microsoft .NET Framework 4.8.1 SDK
+* Microsoft .NET Framework 4.8.1 Targeting Pack
+* Microsoft .NET Framework 4.8.1 Targeting Pack (ENU)
 
 ### Option C: Use EWDK
 If you use EWDK, then all necessary prequisites are included.
