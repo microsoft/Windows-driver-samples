@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 1999 - 2002  Microsoft Corporation
+Copyright (c) 1999 - 2023  Microsoft Corporation
 
 Module Name:
 
@@ -19,10 +19,7 @@ Environment:
 --*/
 
 #include <fltKernel.h>
-#include <dontuse.h>
-#include <suppress.h>
-
-#pragma prefast(disable:__WARNING_ENCODE_MEMBER_FUNCTION_POINTER, "Not valid for kernel mode drivers")
+#include <ntstrsafe.h>
 
 //---------------------------------------------------------------------------
 //      Global variables
