@@ -54,7 +54,7 @@ jobs:
     if: always()
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Retrieve overview reports
         uses: actions/download-artifact@v3
