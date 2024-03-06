@@ -164,4 +164,13 @@
     <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <!--
+    <PackageReference Include="Microsoft.Windows.WDK.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    -->
+  </ItemGroup>
 </Project>
