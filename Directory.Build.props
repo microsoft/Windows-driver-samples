@@ -1,0 +1,18 @@
+<Project>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <!--
+    <PackageReference Include="Microsoft.Windows.WDK.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    -->
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <!--
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    -->
+    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26074.1000-preview.ge-release-sigma" />
+  </ItemGroup>
+  <!-- https://github.com/dotnet/NuGet.BuildTasks/issues/154 -->
+  <!-- Enable NuGet TargetMonikers fallback to vcxproj. https://github.com/japj/CppWithNuGetPackageReference/blob/master/Directory.Build.props -->
+  <PropertyGroup>
+    <_NuGetTargetFallbackMoniker>$(_NuGetTargetFallbackMoniker);native,Version=v0.0</_NuGetTargetFallbackMoniker>
+  </PropertyGroup>
+</Project>

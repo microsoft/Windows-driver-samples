@@ -63,7 +63,7 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
 #
 # Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
 #
-elseif(Test-Path(".\packages")) {
+elseif(Test-Path(".\Directory.Build.props")) {
     $build_environment=("NuGet")
     $build_number=26074
 }
