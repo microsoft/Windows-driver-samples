@@ -6,9 +6,16 @@
     <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" Condition="'$(Platform)' == 'ARM64'"/>
     <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26074.1000-preview.ge-release-sigma" />
   </ItemGroup>
+
   <!-- https://github.com/dotnet/NuGet.BuildTasks/issues/154 -->
   <!-- Enable NuGet TargetMonikers fallback to vcxproj. https://github.com/japj/CppWithNuGetPackageReference/blob/master/Directory.Build.props -->
   <PropertyGroup>
     <_NuGetTargetFallbackMoniker>$(_NuGetTargetFallbackMoniker);native,Version=v0.0</_NuGetTargetFallbackMoniker>
   </PropertyGroup>
+
+  <!-- TODO: For msbuild /t:restore: I had to install '.NET SDK' individual component.  See https://developercommunity.visualstudio.com/t/Unable-to-compile-PackageReference-solut/10593889?sort=active&topics=windows+10.0 -->
+
+  <!-- TODO: Sample network\ndis\filter is broken as it reads $(_NT_TARGET_VERSION) but that is not set early enough with PackageReference -->
+
+  <!-- Should this file be renamed to Directory.packages.props ?? -->
 </Project>
