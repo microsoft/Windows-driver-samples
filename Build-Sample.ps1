@@ -147,12 +147,17 @@ $myexit=0
 # If we fail at first, but succeed at either of next two attempts, then it is a sporadic failure.
 # If we even at third attempt fail, then it is a true failure.
 #
+# TODO: Bad things seems to happen if we combine with clean,restore,build.
+$CleanFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.clean"
+$RestoreFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.restore"
+msbuild $solutionFile -clp:Verbosity=m -t:clean -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -noLogo >$CleanFilePath
+msbuild $solutionFile -clp:Verbosity=m -t:restore -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -noLogo >$RestoreFilePath
 for ($i=0; $i -le 2; $i++) {
     $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
     $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
     $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
 
-    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+    msbuild $solutionFile -clp:Verbosity=m -t:build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
     if ($env:WDS_WipeOutputs -ne $null)
     {
         Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
