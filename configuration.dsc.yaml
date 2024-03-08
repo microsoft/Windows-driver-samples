@@ -9,6 +9,7 @@ properties:
       settings:
         id: Microsoft.VisualStudio.2022.Community
         source: winget
+        useLatest: true
     - resource: Microsoft.VisualStudio.DSC/VSComponents
       id: vsComponents
       dependsOn:
@@ -53,6 +54,7 @@ properties:
       settings:
         id: Microsoft.WindowsWDK.10.0.22621
         source: winget
+        useLatest: true
     - resource: PSDscResources/Script
       id: wdkVsix
       dependsOn:

@@ -9,6 +9,7 @@ properties:
       settings:
         id: Microsoft.VisualStudio.2022.Community
         source: winget
+        useLatest: true
     - resource: Microsoft.VisualStudio.DSC/VSComponents
       id: vsComponents
       dependsOn:
