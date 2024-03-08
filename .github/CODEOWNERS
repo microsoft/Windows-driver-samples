@@ -78,3 +78,6 @@
 
 # Windows Internet of Things
 /pos/ @microsoft/winiotdev
+
+# Wi-Fi Core
+/network/wlan/ @microsoft/wi-fi-core
