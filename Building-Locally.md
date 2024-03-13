@@ -12,10 +12,23 @@ For using WDK NuGet feed based build (experimental) additionally:
 winget install --id Microsoft.NuGet --source winget
 ```
 
+## Step 2: Optional: Disable Strong Name Signing
 
-## Step 2: Microsoft .NET Framework 4.7.2 Targeting Pack and Microsoft .NET Framework 4.8.1 SDK
+When: This step is required only if you will be using pre-release versions of the WDK.
 
-This step is required specifically to build sample usb\usbview .
+As per https://learn.microsoft.com/en-us/windows-hardware/drivers/installing-preview-versions-wdk you will need to disable strong 
+
+Run the following commands from an elevated command prompt to disable strong name validation:
+
+```
+reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\StrongName\Verification\*,31bf3856ad364e35 /v TestPublicKey /t REG_SZ /d 00240000048000009400000006020000002400005253413100040000010001003f8c902c8fe7ac83af7401b14c1bd103973b26dfafb2b77eda478a2539b979b56ce47f36336741b4ec52bbc51fecd51ba23810cec47070f3e29a2261a2d1d08e4b2b4b457beaa91460055f78cc89f21cd028377af0cc5e6c04699b6856a1e49d5fad3ef16d3c3d6010f40df0a7d6cc2ee11744b5cfb42e0f19a52b8a29dc31b0 /f
+
+reg add HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\StrongName\Verification\*,31bf3856ad364e35 /v TestPublicKey /t REG_SZ /d 00240000048000009400000006020000002400005253413100040000010001003f8c902c8fe7ac83af7401b14c1bd103973b26dfafb2b77eda478a2539b979b56ce47f36336741b4ec52bbc51fecd51ba23810cec47070f3e29a2261a2d1d08e4b2b4b457beaa91460055f78cc89f21cd028377af0cc5e6c04699b6856a1e49d5fad3ef16d3c3d6010f40df0a7d6cc2ee11744b5cfb42e0f19a52b8a29dc31b0 /f
+```
+
+## Step 3: Optional: Install Microsoft .NET Framework 4.7.2 Targeting Pack and Microsoft .NET Framework 4.8.1 SDK
+
+When: This step is required only to build sample usb\usbview .
 
 ### Option A: Install VS Components
 If you install Visual Studio (see later) you may at that point select to add both of individual components:
@@ -76,38 +89,28 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * Open a terminal
 * `.\LaunchBuildEnv`
 
-### Option C: Use WDK NuGet Packages from EEAP Preview Zip (experimental)
+### Option C: Use WDK NuGet Packages
 * This is an 'experimental' option.
-* This option requires you have access to the WDK NuGet packages (so far only available to EEAP Partners).
+* This option requires you have access to the WDK NuGet EEAP Package (so far only available to EEAP Partners).
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
-* Install the WDK.vsix (that you have access to as part of EEAP program).
+* Install the WDK.vsix from WDK NuGet EEAP Package.  Make sure to use the architecture that matches your host OS architecture.
 * Launch a "Developer Command Prompt for VS 2022".
-* Unzip the WDK NuGet zip (that you have access to as part of EEAP program) to the root of your git enlistment in a folder that must be named .\packages. 
-* When this is done you should have a .\packages folder that looks exactly as follows:
+* Unzip the WDK NuGet zip (that you have access to as part of EEAP program).  This folder should look as follows:
 
 ```
->cd path\to\your\repos\Windows-driver-samples
->dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26052.1000-preview.ge-release
-Microsoft.Windows.SDK.CPP.x64.10.0.26052.1000-preview.ge-release
-Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release
+>dir /b C:\my\local\package
+Microsoft.Windows.SDK.CPP.10.0.26080.1000-preview.ge-release.nupkg
+Microsoft.Windows.SDK.CPP.x64.10.0.26080.1000-preview.ge-release.nupkg
+Microsoft.Windows.SDK.CPP.arm64.10.0.26080.1000-preview.ge-release.nupkg
+Microsoft.Windows.WDK.x64.10.0.26080.1000-preview.ge-release.nupkg
+Microsoft.Windows.WDK.arm64.10.0.26080.1000-preview.ge-release.nupkg
 ```
-TODO: Make sure this actually matches our EEAP build out of GE_RELEASE.
-
-TODO: Make sure above is "officially supported by DevDiv".
-
-
-### Option D: Use WDK NuGet Packages from "experimental package feed"
 * This is an 'experimental' option.
-* This option requires you have access to "experimental package feed" MSFTNuget.  TODO:Explain what this is.
-* See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
-* Install the WDK.vsix from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DriverDeveloperKits-WDK.WDKVsix) .
-* Launch a "Developer Command Prompt for VS 2022".
 * Add MSFTNuget feed and restore WDK packages from feed :
 
 ```
 >cd path\to\your\repos\Windows-driver-samples
->nuget sources Add -Name MSFTNuget -Source https://microsoft.pkgs.visualstudio.com/_packaging/MSFTNuget/nuget/v3/index.json
+>nuget sources add -Name EEAPPackages -Source C:\my\local\package
 >nuget restore -PackagesDirectory .\packages
 ```
 
@@ -115,9 +118,11 @@ TODO: Make sure above is "officially supported by DevDiv".
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26052.1000-preview.ge-release
-Microsoft.Windows.SDK.CPP.x64.10.0.26052.1000-preview.ge-release
-Microsoft.Windows.WDK.x64.10.0.26052.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.10.0.26080.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.x64.10.0.26080.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.arm64.10.0.26080.1000-preview.ge-release
+Microsoft.Windows.WDK.x64.10.0.26080.1000-preview.ge-release
+Microsoft.Windows.WDK.arm64.10.0.26080.1000-preview.ge-release
 ```
 
 
