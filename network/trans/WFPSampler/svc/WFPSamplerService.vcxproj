@@ -29,7 +29,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
@@ -38,7 +38,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
@@ -47,7 +47,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
@@ -56,7 +56,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>True</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
@@ -99,9 +99,6 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SDLCheck>true</SDLCheck>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -114,6 +111,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;oneCoreUap.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;libcmtd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -124,7 +122,6 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -137,6 +134,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;oneCoreUap.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;libcmtd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,8 +145,6 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -161,6 +157,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck /VERBOSE:LIB</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;oneCoreUap.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;msvcrt.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -172,8 +169,6 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc;..\lib;$(SDK_INC_PATH);.\$(IntDir);.\..\lib\$(IntDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <CallingConvention>StdCall</CallingConvention>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE</PreprocessorDefinitions>
@@ -186,6 +181,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck /VERBOSE:LIB</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;setupapi.lib;rpcrt4.lib;rpcns4.lib;fwpuclnt.lib;ws2_32.lib;oneCoreUap.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;msvcrt.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>

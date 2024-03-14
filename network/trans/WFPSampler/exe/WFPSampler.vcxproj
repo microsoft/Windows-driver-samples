@@ -29,20 +29,18 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
-    <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>False</UseDebugLibraries>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
-    <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetVersion>Windows10</TargetVersion>
@@ -51,7 +49,6 @@
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
-    <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <TargetVersion>Windows10</TargetVersion>
@@ -60,7 +57,6 @@
     <DriverType />
     <PlatformToolset>WindowsApplicationForDrivers10.0</PlatformToolset>
     <ConfigurationType>Application</ConfigurationType>
-    <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -110,6 +106,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;fwpuclnt.lib;ws2_32.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -131,6 +128,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;fwpuclnt.lib;ws2_32.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -152,6 +150,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;fwpuclnt.lib;ws2_32.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -173,6 +172,7 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions) /integritycheck</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies);advapi32.lib;comctl32.lib;kernel32.lib;netapi32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;ntdll.lib;kernel32.lib;setupapi.lib;rpcrt4.lib;fwpuclnt.lib;ws2_32.lib;.\..\lib\$(IntDir)\WFPSampler.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

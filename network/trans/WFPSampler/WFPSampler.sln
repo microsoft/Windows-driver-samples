@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34701.34
+# Visual Studio 2013
+VisualStudioVersion = 12.0
 MinimumVisualStudioVersion = 12.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{7DD950F3-D068-438B-808A-EE9BE2D1F34D}"
 EndProject
