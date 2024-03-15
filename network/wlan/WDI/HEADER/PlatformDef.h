@@ -813,12 +813,12 @@ PlatformRequestPreAuthentication(
 
 RT_STATUS
 PlatformReadFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pBufOfLines,
-	IN		s4Byte		nMaxNumLine,
-	IN		s4Byte		nMaxByteCntLine,
-	OUT		ps4Byte		pnNumLines	
+	IN		PVOID				Adapter,
+	IN		UNICODE_STRING		fileName,
+	IN OUT	pu1Byte				pBufOfLines,
+	IN		s4Byte				nMaxNumLine,
+	IN		s4Byte				nMaxByteCntLine,
+	OUT		ps4Byte				pnNumLinesRead
 	);
 
 RT_STATUS

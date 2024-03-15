@@ -207,85 +207,105 @@ ParseFileBufToLines(
 //		which is a 2-dimention array, for example,
 //		u1Byte pBufOfLines[nMaxNumLine][nMaxByteCntLine].
 //
-//	Note:
-//		In NDIS5, the file to open shall be placed at the directory the same as 
-//		driver binary.
-//
 RT_STATUS
 PlatformReadFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pBufOfLines,
-	IN		s4Byte		nMaxNumLine,
-	IN		s4Byte		nMaxByteCntLine,
-	OUT		ps4Byte		pnNumLinesRead
+	IN		PVOID				Adapter,
+	IN		UNICODE_STRING		fileName,
+	IN OUT	pu1Byte				pBufOfLines,
+	IN		s4Byte				nMaxNumLine,
+	IN		s4Byte				nMaxByteCntLine,
+	OUT		ps4Byte				pnNumLinesRead
 	)
 {
-	RT_STATUS				rtStatus = RT_STATUS_FAILURE;
-	NDIS_STRING				NdisStrFileName;
-	NDIS_PHYSICAL_ADDRESS	ndisPhyAddr;
-	NDIS_STATUS				ndisStatus;
-	NDIS_HANDLE				hFileHandle;
-	UINT					ulFileLength;
-	pu1Byte					pMappedFile = NULL;
+	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
+	OBJECT_ATTRIBUTES	objectAttributes;
+	HANDLE				fileHandle;
+	IO_STATUS_BLOCK		iostatBlock;
+	NTSTATUS			ntStatus;
 
-	// Check input parameters.
-	if(szFileName == NULL)
-	{
-		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformReadFile(): szFileName should not be NULL!\n"));
-		return rtStatus;
-	}
+	// Check Input parameters.
 	if(pBufOfLines == NULL)
 	{
 		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformReadFile(): pBufOfLines should not be NULL!\n"));
 		return rtStatus;
 	}
 
-	// Convert szFileName to NDIS_STRING.
-	NdisInitializeString(&NdisStrFileName, (PUCHAR)szFileName);
-	if(NdisStrFileName.Buffer != NULL && NdisStrFileName.Length > 0)
-	{
-		// Open the file specified.
-		ndisPhyAddr.LowPart = ndisPhyAddr.HighPart = -1;
-		NdisOpenFile(&ndisStatus,
-					&hFileHandle,
-					&ulFileLength,
-					&NdisStrFileName,
-					ndisPhyAddr);
-		if(ndisStatus == NDIS_STATUS_SUCCESS)
-		{
-			// Map the file into memory.
-			NdisMapFile(&ndisStatus, (PVOID *)(&pMappedFile), hFileHandle);
-			if(ndisStatus == NDIS_STATUS_SUCCESS)
-			{
-				// Read the file into pBufOfLines.
-				ParseFileBufToLines(Adapter, pMappedFile, ulFileLength, pBufOfLines, nMaxNumLine, nMaxByteCntLine, pnNumLinesRead);
-	
-				// Return Success only when Config Success
-				rtStatus = RT_STATUS_SUCCESS; 
-	
-				// Relase the memory for mapping the file.
-				NdisUnmapFile(hFileHandle);
+	// Initialize the object attributes of the file we want to open
+	InitializeObjectAttributes(
+		&objectAttributes,
+		&fileName,
+		OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+		NULL,	// RootDirectory 
+		NULL	// Default Security
+	);	
+
+	// Open the file using the object attributes to get a Handle
+	ntStatus = ZwOpenFile(
+		&fileHandle,
+		GENERIC_READ, 
+		&objectAttributes,
+		&iostatBlock,
+		0,	// Do not share the file
+		FILE_NON_DIRECTORY_FILE
+	);
+
+	if (NT_SUCCESS(ntStatus)) {
+		FILE_STANDARD_INFORMATION fileInformation = { 0 };
+
+		// Get the file information to know the size we need to alloc
+		ntStatus = ZwQueryInformationFile(
+			fileHandle,
+			&iostatBlock,
+			&fileInformation,
+			sizeof(fileInformation),
+			FileStandardInformation
+		);
+
+		if (NT_SUCCESS(ntStatus)) {
+			u1Byte* buffer = NULL;
+			s4Byte bufferLength = (s4Byte)fileInformation.EndOfFile.QuadPart;
+
+			// Try to allocate space to read the file
+			buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, bufferLength, 'frP');
+			if (buffer) {
+
+				// If alloc was successful, then read the file
+				ntStatus = ZwReadFile(
+					fileHandle,
+					NULL,
+					NULL, 
+					NULL,
+					&iostatBlock,
+					buffer,
+					bufferLength,
+					0,	// No offset
+					NULL
+				);
+
+				if (NT_SUCCESS(ntStatus)) {
+					// Read the buffer into pBufOfLines.
+					ParseFileBufToLines(Adapter, buffer, bufferLength, pBufOfLines, nMaxNumLine, nMaxByteCntLine, pnNumLinesRead);
+					rtStatus = RT_STATUS_SUCCESS;
+				}
+				else {
+					RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to read file, ntStatus: %#X\n", ntStatus));
+				}
+
+				ExFreePool(buffer);
+
 			}
-			else
-			{
-				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to map the file, %s!, ndisStatus: %#X\n", szFileName, ndisStatus));
+			else {
+				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to allocate space for file!\n"));
 			}
-	
-			// Close the file.
-			NdisCloseFile(hFileHandle);
 		}
-		else
-		{
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to open the file, %s!, ndisStatus: %#X\n", szFileName, ndisStatus));
+		else {
+			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to read file attributes!, ntStatus: %#X\n", ntStatus));
 		}
-	
-		// Release the NDIS_STRING allocated via NdisInitializeString().
-		NdisFreeString(NdisStrFileName);
+
+		ZwClose(fileHandle);
 	}
-	else
-	{
-		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): NdisInitializeString() failed! szFileName: %s\n", szFileName));
+	else {
+		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to open the file!, ntStatus: %#X\n", ntStatus));
 	}
 
 	return rtStatus;
