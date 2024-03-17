@@ -202,7 +202,7 @@ Return Value:
     }
 
     Status = GetSimBattStateFromRegistry(Device, RegState);
-    if (!NT_SUCCESS(Status)) {
+    if (NT_SUCCESS(Status)) {
 
         RtlZeroMemory(RegState, sizeof(SIMBATT_STATE));
         WdfWaitLockAcquire(DevExt->StateLock, NULL);
