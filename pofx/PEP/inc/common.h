@@ -35,18 +35,6 @@ Environment:
 #define NTSTRSAFE_LIB
 #include <ntstrsafe.h>
 
-#ifndef MAX_USHORT
-#define MAX_USHORT ((USHORT)-1)
-#endif
-
-#ifndef MAX_ULONG
-#define MAX_ULONG ((ULONG)-1)
-#endif
-
-#ifndef MAX_ULONG64
-#define MAX_ULONG64 ((ULONG64)-1)
-#endif
-
 //
 // Useful macros for setting and checking flags.
 //

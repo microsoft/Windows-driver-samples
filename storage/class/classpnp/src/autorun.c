@@ -203,7 +203,7 @@ ClassSendNotification(
                          &requiredSize);
 
     if (!(NT_SUCCESS(status)) || (requiredSize > 0x0000ffff)) {
-        // MAX_USHORT, max total size for these events!
+        // MAXUSHORT, max total size for these events!
         TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_MCN,
                    "Error sending event: size too large! (%x)\n",
                    requiredSize));
