@@ -313,51 +313,39 @@ PlatformReadFile(
 
 RT_STATUS
 PlatformOpenFile(
-	IN		PVOID				Adapter,
-	IN		ps1Byte				szFileName,
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN		UNICODE_STRING		fileName,
+	IN OUT	HANDLE*				fileHandle
 	)
 {
-	RT_STATUS				rtStatus = RT_STATUS_FAILURE;
-	NDIS_STRING				NdisStrFileName;
-	NDIS_PHYSICAL_ADDRESS	ndisPhyAddr;
-	NDIS_STATUS				ndisStatus;
-	pu1Byte					pMappedFile = NULL;
+	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
+	OBJECT_ATTRIBUTES	objectAttributes;
+	IO_STATUS_BLOCK		iostatBlock;
+	NTSTATUS			ntStatus;
 
-	
-	// Check input parameters.
-	if(szFileName == NULL)
-	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("PlatformOpenFile(): szFileName should not be NULL!\n"));
-		return rtStatus;
-	}
+	// Initialize the object attributes of the file we want to open
+	InitializeObjectAttributes(
+		&objectAttributes,
+		&fileName,
+		OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+		NULL,	// RootDirectory 
+		NULL	// Default Security
+	);
 
-	// Convert szFileName to NDIS_STRING.
-	NdisInitializeString(&NdisStrFileName, (PUCHAR)szFileName);
-	if(NdisStrFileName.Buffer != NULL && NdisStrFileName.Length > 0)
-	{
-		// Open the file specified.
-		ndisPhyAddr.LowPart = ndisPhyAddr.HighPart = -1;
-		NdisOpenFile(&ndisStatus,
-					&(pFileHandler->FileHandler),
-					&(pFileHandler->FileLength),
-					&NdisStrFileName,
-					ndisPhyAddr);
-		
-		NdisFreeString(NdisStrFileName);
-		if(ndisStatus == NDIS_STATUS_SUCCESS)
-		{
-			rtStatus = RT_STATUS_SUCCESS;
-		}
-		else
-		{
-			RT_TRACE(COMP_INIT, DBG_LOUD, ("PlatformOpenFile(): failed to open the file, %s!, ndisStatus: %#X\n", szFileName, ndisStatus));
-		}
-		
+	// Open the file using the object attributes to get a Handle
+	ntStatus = ZwOpenFile(
+		fileHandle,
+		GENERIC_READ,
+		&objectAttributes,
+		&iostatBlock,
+		0,	// Do not share the file
+		FILE_NON_DIRECTORY_FILE
+	);
+
+	if (NT_SUCCESS(ntStatus)) {
+		rtStatus = RT_STATUS_SUCCESS;
 	}
-	else
-	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("PlatformOpenFile(): NdisInitializeString() failed! szFileName: %s\n", szFileName));
+	else {
+		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to open the file!, ntStatus: %#X, fileName: %wZ\n", ntStatus, fileName));
 	}
 
 	return rtStatus;

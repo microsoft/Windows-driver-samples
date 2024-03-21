@@ -823,9 +823,8 @@ PlatformReadFile(
 
 RT_STATUS
 PlatformOpenFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	PRT_FILE_HANDLER		pFileHandler
+	IN		UNICODE_STRING		fileName,
+	IN OUT	HANDLE*				fileHandle
 	);
 
 RT_STATUS
