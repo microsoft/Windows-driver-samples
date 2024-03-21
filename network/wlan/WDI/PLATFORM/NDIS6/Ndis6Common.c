@@ -414,6 +414,8 @@ PlatformMapFile(
 	else {
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to read file attributes!, ntStatus: %#X\n", ntStatus));
 	}
+
+	return rtStatus;
 }
 
 VOID
@@ -453,8 +455,8 @@ PlatformReadAndMapFile(
 	callStatus = PlatformOpenFile(fileName, &fileHandle);
 
 	if (callStatus == RT_STATUS_SUCCESS) {
-		u1Byte* fileBuffer;
-		u4Byte* fileBufferLength;
+		u1Byte* fileBuffer = NULL;
+		u4Byte* fileBufferLength = NULL;
 
 		callStatus = PlatformMapFile(&fileHandle, fileBuffer, fileBufferLength);
 
