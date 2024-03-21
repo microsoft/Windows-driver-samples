@@ -829,7 +829,9 @@ PlatformOpenFile(
 
 RT_STATUS
 PlatformMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE*	fileHandle,
+	OUT		u1Byte* contentBuffer,
+	OUT		s4Byte* contentBufferLength
 	);
 
 VOID

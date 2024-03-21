@@ -353,23 +353,67 @@ PlatformOpenFile(
 
 RT_STATUS
 PlatformMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE*	fileHandle,
+	OUT		u1Byte* contentBuffer,
+	OUT		s4Byte* contentBufferLength
 	)
 {
-	RT_STATUS				rtStatus = RT_STATUS_FAILURE;
-	NDIS_STATUS				ndisStatus;
 
-	
-	// Map the file into memory.
-	NdisMapFile(&ndisStatus, (PVOID *)(&(pFileHandler->MappedFile)), pFileHandler->FileHandler);
-	if(ndisStatus == NDIS_STATUS_SUCCESS) {
-		rtStatus = RT_STATUS_SUCCESS;
+	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
+	OBJECT_ATTRIBUTES	objectAttributes;
+	IO_STATUS_BLOCK		iostatBlock;
+	NTSTATUS			ntStatus;
+
+
+	FILE_STANDARD_INFORMATION fileInformation = { 0 };
+
+	// Get the file information to know the size we need to alloc
+	ntStatus = ZwQueryInformationFile(
+		*fileHandle,
+		&iostatBlock,
+		&fileInformation,
+		sizeof(fileInformation),
+		FileStandardInformation
+	);
+
+	if (NT_SUCCESS(ntStatus)) {
+		u1Byte* buffer = NULL;
+		s4Byte bufferLength = (s4Byte)fileInformation.EndOfFile.QuadPart;
+
+		// Try to allocate space to read the file
+		buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, bufferLength, 'frP');
+		if (buffer) {
+
+			// If alloc was successful, then read the file
+			ntStatus = ZwReadFile(
+				fileHandle,
+				NULL,
+				NULL,
+				NULL,
+				&iostatBlock,
+				buffer,
+				bufferLength,
+				0,	// No offset
+				NULL
+			);
+
+			if (NT_SUCCESS(ntStatus)) {
+				contentBuffer = buffer;
+				*contentBufferLength = bufferLength;
+				rtStatus = RT_STATUS_SUCCESS;
+			}
+			else {
+				ExFreePool(buffer);
+				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to read file, ntStatus: %#X\n", ntStatus));
+			}
+		}
+		else {
+			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to allocate space for file!\n"));
+		}
 	}
 	else {
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("PlatformMapFile(): failed to map the file!, ndisStatus: %#X\n", ndisStatus));
+		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadFile(): failed to read file attributes!, ntStatus: %#X\n", ntStatus));
 	}
-
-	return rtStatus;
 }
 
 VOID
