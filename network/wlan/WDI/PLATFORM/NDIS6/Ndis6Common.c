@@ -210,7 +210,7 @@ ParseFileBufToLines(
 RT_STATUS
 PlatformReadFile(
 	IN		PVOID				Adapter,
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	IN OUT	pu1Byte				pBufOfLines,
 	IN		s4Byte				nMaxNumLine,
 	IN		s4Byte				nMaxByteCntLine,
@@ -233,7 +233,7 @@ PlatformReadFile(
 	// Initialize the object attributes of the file we want to open
 	InitializeObjectAttributes(
 		&objectAttributes,
-		&fileName,
+		fileName,
 		OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
 		NULL,	// RootDirectory 
 		NULL	// Default Security
@@ -313,7 +313,7 @@ PlatformReadFile(
 
 RT_STATUS
 PlatformOpenFile(
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	IN OUT	HANDLE*				fileHandle
 	)
 {
@@ -325,7 +325,7 @@ PlatformOpenFile(
 	// Initialize the object attributes of the file we want to open
 	InitializeObjectAttributes(
 		&objectAttributes,
-		&fileName,
+		fileName,
 		OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
 		NULL,	// RootDirectory 
 		NULL	// Default Security
@@ -441,7 +441,7 @@ PlatformCloseFile(
 //
 RT_STATUS
 PlatformReadAndMapFile(
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	OUT		u1Byte* outFileBuffer,
 	OUT		u4Byte* outFileBufferLength
 )

@@ -814,7 +814,7 @@ PlatformRequestPreAuthentication(
 RT_STATUS
 PlatformReadFile(
 	IN		PVOID				Adapter,
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	IN OUT	pu1Byte				pBufOfLines,
 	IN		s4Byte				nMaxNumLine,
 	IN		s4Byte				nMaxByteCntLine,
@@ -823,7 +823,7 @@ PlatformReadFile(
 
 RT_STATUS
 PlatformOpenFile(
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	IN OUT	HANDLE*				fileHandle
 	);
 
@@ -846,7 +846,7 @@ PlatformCloseFile(
 
 RT_STATUS
 PlatformReadAndMapFile(
-	IN		UNICODE_STRING		fileName,
+	IN		UNICODE_STRING*		fileName,
 	OUT		u1Byte*				outFileBuffer,
 	OUT		u4Byte*				outFileBufferLength
 	);
