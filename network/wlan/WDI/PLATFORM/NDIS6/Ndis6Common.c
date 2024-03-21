@@ -2777,78 +2777,40 @@ N6InitializeNative80211MIBs(
 
 //
 //	Description:
-//		Open the file specifed and copy the file into an array, 
+//		Open the file specifed and copy the file into an byte buffer, 
 //
 RT_STATUS
 PlatformReadAndMapFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pOutFile,
-	IN OUT	pu4Byte		UNALIGNED pFileSize
+	IN		UNICODE_STRING		fileName,
+	OUT		u1Byte*				outFileBuffer,
+	OUT		u4Byte*				outFileBufferLength
 	)
 {
-	RT_STATUS				rtStatus = RT_STATUS_FAILURE;
-	NDIS_STRING				NdisStrFileName;
-	NDIS_PHYSICAL_ADDRESS	ndisPhyAddr;
-	NDIS_STATUS				ndisStatus;
-	NDIS_HANDLE				hFileHandle;
-	UINT					ulFileLength;
-	pu1Byte					pMappedFile = NULL;
+	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
+	HANDLE				fileHandle;
+	RT_STATUS			callStatus;
 
-	// Check input parameters.
-	if(szFileName == NULL)
-	{
-		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformReadAndMapFile(): szFileName should not be NULL!\n"));
-		return rtStatus;
-	}
+	callStatus = PlatformOpenFile(fileName, &fileHandle);
 
+	if (callStatus == RT_STATUS_SUCCESS) {
+		u1Byte* fileBuffer;
+		u4Byte* fileBufferLength;
 
-	// Convert szFileName to NDIS_STRING.
-	NdisInitializeString(&NdisStrFileName, (PUCHAR)szFileName);
-	if(NdisStrFileName.Buffer != NULL && NdisStrFileName.Length > 0)
-	{
-		// Open the file specified.
-		ndisPhyAddr.LowPart = ndisPhyAddr.HighPart = -1;
-		NdisOpenFile(&ndisStatus,
-					&hFileHandle,
-					&ulFileLength,
-					&NdisStrFileName,
-					ndisPhyAddr);
-		if(ndisStatus == NDIS_STATUS_SUCCESS)
-		{
-			// Map the file into memory.
-			NdisMapFile(&ndisStatus, (PVOID *)(&pMappedFile), hFileHandle);
-			if(ndisStatus == NDIS_STATUS_SUCCESS)
-			{
-				// Copy File into array
-				PlatformMoveMemory(pOutFile, pMappedFile, ulFileLength);
-				*pFileSize = ulFileLength;
-	
-				// Return Success only when Config Success
-				rtStatus = RT_STATUS_SUCCESS; 
-	
-				// Relase the memory for mapping the file.
-				NdisUnmapFile(hFileHandle);
-			}
-			else
-			{
-				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to map the file, %s!, ndisStatus: %#X\n", szFileName, ndisStatus));
-			}
-	
-			// Close the file.
-			NdisCloseFile(hFileHandle);
+		callStatus = PlatformMapFile(&fileHandle, fileBuffer, fileBufferLength);
+
+		if (callStatus == RT_STATUS_SUCCESS) {
+			outFileBuffer = fileBuffer;
+			outFileBufferLength = fileBufferLength;
+			rtStatus = RT_STATUS_SUCCESS;
 		}
-		else
-		{
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to open the file, %s!, ndisStatus: %#X\n", szFileName, ndisStatus));
+		else {
+			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to map file!, rtStatus: %#X\n", callStatus));
 		}
-	
-		// Release the NDIS_STRING allocated via NdisInitializeString().
-		NdisFreeString(NdisStrFileName);
+
+		PlatformCloseFile(fileHandle);
 	}
-	else
-	{
-		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): NdisInitializeString() failed! szFileName: %s\n", szFileName));
+	else {
+		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to open the file!, rtStatus: %#X\n", callStatus));
 	}
 
 	return rtStatus;

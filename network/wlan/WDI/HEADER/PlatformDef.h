@@ -846,10 +846,9 @@ PlatformCloseFile(
 
 RT_STATUS
 PlatformReadAndMapFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pOutFile,
-	IN OUT	pu4Byte	UNALIGNED	pFileSize
+	IN		UNICODE_STRING		fileName,
+	OUT		u1Byte*				outFileBuffer,
+	OUT		u4Byte*				outFileBufferLength
 	);
 
 BOOLEAN
