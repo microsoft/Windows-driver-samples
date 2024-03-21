@@ -418,12 +418,13 @@ PlatformMapFile(
 
 VOID
 PlatformUnMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	u1Byte* contentBuffer
 	)
 {
 	// Relase the memory for mapping the file.
-	NdisUnmapFile(pFileHandler->FileHandler);
+	ExFreePool(contentBuffer);
 }
+
 
 VOID
 PlatformCloseFile(

@@ -836,7 +836,7 @@ PlatformMapFile(
 
 VOID
 PlatformUnMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	u1Byte* contentBuffer
 	);
 
 VOID
