@@ -437,6 +437,48 @@ PlatformCloseFile(
 
 //
 //	Description:
+//		Open the file specifed and copy the file into an byte buffer, 
+//
+RT_STATUS
+PlatformReadAndMapFile(
+	IN		UNICODE_STRING		fileName,
+	OUT		u1Byte* outFileBuffer,
+	OUT		u4Byte* outFileBufferLength
+)
+{
+	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
+	HANDLE				fileHandle;
+	RT_STATUS			callStatus;
+
+	callStatus = PlatformOpenFile(fileName, &fileHandle);
+
+	if (callStatus == RT_STATUS_SUCCESS) {
+		u1Byte* fileBuffer;
+		u4Byte* fileBufferLength;
+
+		callStatus = PlatformMapFile(&fileHandle, fileBuffer, fileBufferLength);
+
+		if (callStatus == RT_STATUS_SUCCESS) {
+			outFileBuffer = fileBuffer;
+			outFileBufferLength = fileBufferLength;
+			rtStatus = RT_STATUS_SUCCESS;
+		}
+		else {
+			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to map file!, rtStatus: %#X\n", callStatus));
+		}
+
+		PlatformCloseFile(fileHandle);
+	}
+	else {
+		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to open the file!, rtStatus: %#X\n", callStatus));
+	}
+
+	return rtStatus;
+}
+
+
+//
+//	Description:
 //		Indication for PHY power state changed.
 //	061013, by rcnjko.
 //
@@ -2773,47 +2815,6 @@ N6InitializeNative80211MIBs(
 
 	// PrivacyExemptionList
 	Adapter->pNdisCommon->PrivacyExemptionEntrieNum = 0;	
-}
-
-//
-//	Description:
-//		Open the file specifed and copy the file into an byte buffer, 
-//
-RT_STATUS
-PlatformReadAndMapFile(
-	IN		UNICODE_STRING		fileName,
-	OUT		u1Byte*				outFileBuffer,
-	OUT		u4Byte*				outFileBufferLength
-	)
-{
-	RT_STATUS			rtStatus = RT_STATUS_FAILURE;
-	HANDLE				fileHandle;
-	RT_STATUS			callStatus;
-
-	callStatus = PlatformOpenFile(fileName, &fileHandle);
-
-	if (callStatus == RT_STATUS_SUCCESS) {
-		u1Byte* fileBuffer;
-		u4Byte* fileBufferLength;
-
-		callStatus = PlatformMapFile(&fileHandle, fileBuffer, fileBufferLength);
-
-		if (callStatus == RT_STATUS_SUCCESS) {
-			outFileBuffer = fileBuffer;
-			outFileBufferLength = fileBufferLength;
-			rtStatus = RT_STATUS_SUCCESS;
-		}
-		else {
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to map file!, rtStatus: %#X\n", callStatus));
-		}
-
-		PlatformCloseFile(fileHandle);
-	}
-	else {
-		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("PlatformReadAndMapFile(): failed to open the file!, rtStatus: %#X\n", callStatus));
-	}
-
-	return rtStatus;
 }
 
 
