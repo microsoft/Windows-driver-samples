@@ -428,11 +428,11 @@ PlatformUnMapFile(
 
 VOID
 PlatformCloseFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE* fileHandle
 	)
 {
 	// Relase the memory for mapping the file.
-	NdisCloseFile(pFileHandler->FileHandler);
+	ZwClose(fileHandle);
 }
 
 //

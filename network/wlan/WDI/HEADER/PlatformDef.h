@@ -841,7 +841,7 @@ PlatformUnMapFile(
 
 VOID
 PlatformCloseFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE* fileHandle
 	);
 
 RT_STATUS
