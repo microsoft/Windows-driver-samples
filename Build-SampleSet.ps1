@@ -65,7 +65,7 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26085
+    $build_number=26090
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
@@ -101,11 +101,11 @@ else {
 # specific warnings indicates issues intentially present in the samples, that
 # anyone that clones the samples must fix as part of productizing a driver.
 # 
-# In 22621 those warnings are: /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
+# In 22621 those warnings are: /sw1284 /sw1290 /sw1293 /sw2083 /sw2086
 # 
 # After 22621 those warnings are put under a common flag: /samples
 #
-$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1290 /sw1293 /sw2083 /sw2086" : "/samples")
 
 #
 # Determine exclusions.  
