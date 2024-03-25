@@ -105,7 +105,7 @@ else {
 # 
 # After 22621 those warnings are put under a common flag: /samples
 #
-$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1290 /sw1293 /sw2083 /sw2086" : "/samples")
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
 
 #
 # Determine exclusions.  
