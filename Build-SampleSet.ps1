@@ -101,7 +101,7 @@ else {
 # specific warnings indicates issues intentially present in the samples, that
 # anyone that clones the samples must fix as part of productizing a driver.
 # 
-# In 22621 those warnings are: /sw1284 /sw1290 /sw1293 /sw2083 /sw2086
+# In 22621 those warnings are: /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
 # 
 # After 22621 those warnings are put under a common flag: /samples
 #
