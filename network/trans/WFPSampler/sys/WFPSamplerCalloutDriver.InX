@@ -46,6 +46,14 @@
 [DefaultInstall.nt$ARCH$.Services]
    AddService = %WFPSamplerCalloutDriverServiceName%,,WFPSamplerCalloutDriver.Service
 
+[DefaultUninstall.nt$ARCH$]
+   LegacyUninstall = 1
+   DelFiles = WFPSamplerCalloutDriver.DriverFiles
+   DelReg   = WFPCalloutsClassReg
+
+[DefaultUninstall.nt$ARCH$.Services]
+   DelService = %WFPSamplerCalloutDriverServiceName%,0x200                                         ;/// SPSVCINST_STOPSERVICE
+
 [WFPCalloutsClassReg]
    HKR,,,0
    HKR,,Icon,,
