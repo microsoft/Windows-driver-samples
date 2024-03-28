@@ -37,8 +37,8 @@
    AddReg = WFPCalloutsClassReg
 
 [DestinationDirs]
-   WFPSamplerCalloutDriver.CopyFiles = 13                                                        ;/// %WinDir%\System32\Drivers
-   WFPSamplerCalloutDriver.DelFiles = 13                                                        ;/// %WinDir%\System32\Drivers
+   WFPSamplerCalloutDriver.CopyFiles = 12                                                        ;/// %WinDir%\System32\Drivers
+   WFPSamplerCalloutDriver.DelFiles = 12                                                        ;/// %WinDir%\System32\Drivers
 
 [DefaultInstall.nt$ARCH$]
    OptionDesc = %WFPSamplerCalloutDriverDescription%
@@ -74,7 +74,7 @@
    ServiceType    = 1                                                                              ;/// SERVICE_KERNEL_DRIVER
    StartType      = 0                                                                              ;/// SERVICE_BOOT_START
    ErrorControl   = 1                                                                              ;/// SERVICE_ERROR_NORMAL
-   ServiceBinary  = %13%\WFPSamplerCalloutDriver.sys                                               ;/// %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.sys
+   ServiceBinary  = %12%\WFPSamplerCalloutDriver.sys                                               ;/// %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.sys
    LoadOrderGroup = NDIS                                                                           ;/// Load immediately after TCPIP.sys
    Dependencies   = TCPIP
 
