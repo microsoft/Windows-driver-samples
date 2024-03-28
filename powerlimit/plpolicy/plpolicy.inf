@@ -1,0 +1,82 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    plpolicy.inf
+;
+;Abstract:
+;
+;    INF file for installing simulate power limit policy driver.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderString%
+DriverVer=08/29/2023,1.00.0000
+CatalogFile=plpolicy.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+plpolicy.sys  = 1,,
+
+;*****************************************
+; Thermal Request Proxy Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NTamd64
+%StdMfg%=Standard,NTarm64
+
+[Standard.NTamd64]
+%plpolicy.DeviceDesc%=PLPolicy_Device,ACPI\PLPO0001
+%plpolicy.DeviceDesc%=PLPolicy_Device,root\PLPO0001
+
+[Standard.NTarm64]
+%plpolicy.DeviceDesc%=PLPolicy_Device,ACPI\PLPO0001
+%plpolicy.DeviceDesc%=PLPolicy_Device,root\PLPO0001
+
+[PLPolicy_Device.NT]
+CopyFiles=PLPolicy_Device.NT.Copy
+
+[PLPolicy_Device.NT.HW]
+AddReg=PLPolicy_Device.NT.AddReg
+
+[PLPolicy_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[PLPolicy_Device.NT.Copy]
+plpolicy.sys
+
+;-------------- Service installation
+
+[PLPolicy_Device.NT.Services]
+AddService = plpolicy,%SPSVCINST_ASSOCSERVICE%,PLPolicy_Service_Inst
+
+[PLPolicy_Service_Inst]
+DisplayName    = %plpolicy.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\plpolicy.sys
+LoadOrderGroup = System Reserved
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderString = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+ClassName = "System devices"
+DiskId1 = "Simulate Power Limit Policy Installation Disk #1"
+plpolicy.DeviceDesc = "Simulate Power Limit Policy Device"
+plpolicy.SVCDESC = "Simulate Power Limit Policy Driver"
