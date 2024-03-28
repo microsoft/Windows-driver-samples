@@ -45,10 +45,10 @@ _Dispatch_type_(IRP_MJ_PNP)
 DRIVER_DISPATCH PnpHandler;
 
 //
-// Rendering streams are saved to a file by default. Use the registry value 
-// DoNotCreateDataFiles (DWORD) > 0 to override this default.
+// Rendering streams are not saved to a file by default. Use the registry value 
+// DoNotCreateDataFiles (DWORD) = 0 to override this default.
 //
-DWORD g_DoNotCreateDataFiles = 0;  // default is off.
+DWORD g_DoNotCreateDataFiles = 1;  // default is off.
 DWORD g_DisableToneGenerator = 0;  // default is to generate tones.
 UNICODE_STRING g_RegistryPath;      // This is used to store the registry settings path for the driver
 
@@ -59,6 +59,8 @@ UNICODE_STRING g_RegistryPath;      // This is used to store the registry settin
 #pragma code_seg("PAGE")
 void ReleaseRegistryStringBuffer()
 {
+    PAGED_CODE();
+
     if (g_RegistryPath.Buffer != NULL)
     {
         ExFreePool(g_RegistryPath.Buffer);
@@ -192,7 +194,8 @@ Returns:
 
 {
     NTSTATUS                    ntStatus;
-    UNICODE_STRING              parametersPath;
+    PDRIVER_OBJECT              DriverObject;
+    HANDLE                      DriverKey;
     RTL_QUERY_REGISTRY_TABLE    paramTable[] = {
     // QueryRoutine     Flags                                               Name                     EntryContext             DefaultType                                                    DefaultData              DefaultLength
         { NULL,   RTL_QUERY_REGISTRY_DIRECT | RTL_QUERY_REGISTRY_TYPECHECK, L"DoNotCreateDataFiles", &g_DoNotCreateDataFiles, (REG_DWORD << RTL_QUERY_REGISTRY_TYPECHECK_SHIFT) | REG_DWORD, &g_DoNotCreateDataFiles, sizeof(ULONG)},
@@ -202,29 +205,27 @@ Returns:
 
     DPF(D_TERSE, ("[GetRegistrySettings]"));
 
-    PAGED_CODE(); 
+    PAGED_CODE();
+    UNREFERENCED_PARAMETER(RegistryPath);
 
-    RtlInitUnicodeString(&parametersPath, NULL);
+    DriverObject = WdfDriverWdmGetDriverObject(WdfGetDriver());
+    DriverKey = NULL;
+    ntStatus = IoOpenDriverRegistryKey(DriverObject, 
+                                 DriverRegKeyParameters,
+                                 KEY_READ,
+                                 0,
+                                 &DriverKey);
 
-    parametersPath.MaximumLength =
-        RegistryPath->Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
-
-    parametersPath.Buffer = (PWCH) ExAllocatePool2(POOL_FLAG_PAGED, parametersPath.MaximumLength, MINADAPTER_POOLTAG);
-    if (parametersPath.Buffer == NULL) 
+    if (!NT_SUCCESS(ntStatus))
     {
-        return STATUS_INSUFFICIENT_RESOURCES;
+        return ntStatus;
     }
 
-    RtlAppendUnicodeToString(&parametersPath, RegistryPath->Buffer);
-    RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
-
-    ntStatus = RtlQueryRegistryValues(
-                 RTL_REGISTRY_ABSOLUTE | RTL_REGISTRY_OPTIONAL,
-                 parametersPath.Buffer,
-                 &paramTable[0],
-                 NULL,
-                 NULL
-                );
+    ntStatus = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
+                                  (PCWSTR) DriverKey,
+                                  &paramTable[0],
+                                  NULL,
+                                  NULL);
 
     if (!NT_SUCCESS(ntStatus)) 
     {
@@ -240,10 +241,10 @@ Returns:
     DPF(D_VERBOSE, ("DoNotCreateDataFiles: %u", g_DoNotCreateDataFiles));
     DPF(D_VERBOSE, ("DisableToneGenerator: %u", g_DisableToneGenerator));
 
-    //
-    // Cleanup.
-    //
-    ExFreePool(parametersPath.Buffer);
+    if (DriverKey)
+    {
+        ZwClose(DriverKey);
+    }
 
     return STATUS_SUCCESS;
 }
@@ -292,15 +293,6 @@ Return Value:
         ntStatus,
         DPF(D_ERROR, ("Registry path copy error 0x%x", ntStatus)),
         Done);
-
-    //
-    // Get registry configuration.
-    //
-    ntStatus = GetRegistrySettings(RegistryPathName);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("Registry Configuration error 0x%x", ntStatus)),
-        Done);
     
     WDF_DRIVER_CONFIG_INIT(&config, WDF_NO_EVENT_CALLBACK);
     //
@@ -321,6 +313,15 @@ Return Value:
     IF_FAILED_ACTION_JUMP(
         ntStatus,
         DPF(D_ERROR, ("WdfDriverCreate failed, 0x%x", ntStatus)),
+        Done);
+
+    //
+    // Get registry configuration.
+    //
+    ntStatus = GetRegistrySettings(RegistryPathName);
+    IF_FAILED_ACTION_JUMP(
+        ntStatus,
+        DPF(D_ERROR, ("Registry Configuration error 0x%x", ntStatus)),
         Done);
 
     //

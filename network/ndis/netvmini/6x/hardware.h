@@ -90,7 +90,7 @@ C_ASSERT(sizeof(NIC_FRAME_HEADER) == HW_FRAME_HEADER_SIZE);
 #define NIC_MEDIUM_TYPE                    NdisMedium802_3
 
 // If you have physical hardware on 802.3, use NdisPhysicalMedium802_3.
-#define NIC_PHYSICAL_MEDIUM                NdisPhysicalMediumUnspecified
+#define NIC_PHYSICAL_MEDIUM                NdisPhysicalMedium802_3
 
 
 // Set this value to TRUE if there is a physical adapter.

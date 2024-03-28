@@ -118,8 +118,11 @@ Return Value:
 
 NTSTATUS CMiniportWaveRTStream::ReadRegistrySettings()
 {
+    PAGED_CODE();
+
     NTSTATUS                    ntStatus;
-    UNICODE_STRING              parametersPath;
+    PDRIVER_OBJECT              DriverObject;
+    HANDLE                      DriverKey;
 
     RTL_QUERY_REGISTRY_TABLE    paramTable[] = {
         // QueryRoutine     Flags                                               Name                            EntryContext                            DefaultType                                                     DefaultData                                 DefaultLength
@@ -134,32 +137,37 @@ NTSTATUS CMiniportWaveRTStream::ReadRegistrySettings()
         { NULL,   0,                                                        NULL,                               NULL,                                   0,                                                              NULL,                                       0 }
     };
 
-    RtlInitUnicodeString(&parametersPath, NULL);
+    DriverObject = WdfDriverWdmGetDriverObject(WdfGetDriver());
+    DriverKey = NULL;
+    ntStatus = IoOpenDriverRegistryKey(DriverObject, 
+                                 DriverRegKeyParameters,
+                                 KEY_READ,
+                                 0,
+                                 &DriverKey);
 
-    // The sizeof(WCHAR) is added to the maximum length, for allowing a space for null termination of the string.
-    parametersPath.MaximumLength =
-        g_RegistryPath.Length + sizeof(L"\\Parameters") + sizeof(WCHAR);
-
-    parametersPath.Buffer = (PWCH)ExAllocatePoolWithTag(PagedPool, parametersPath.MaximumLength, MINWAVERT_POOLTAG);
-    if (parametersPath.Buffer == NULL)
+    if (!NT_SUCCESS(ntStatus))
     {
-        return STATUS_INSUFFICIENT_RESOURCES;
+        return ntStatus;
     }
 
-    RtlZeroMemory(parametersPath.Buffer, parametersPath.MaximumLength);
+    ntStatus = RtlQueryRegistryValues(RTL_REGISTRY_HANDLE,
+                                  (PCWSTR) DriverKey,
+                                  &paramTable[0],
+                                  NULL,
+                                  NULL);
 
-    RtlAppendUnicodeToString(&parametersPath, g_RegistryPath.Buffer);
-    RtlAppendUnicodeToString(&parametersPath, L"\\Parameters");
+    if (!NT_SUCCESS(ntStatus)) 
+    {
+        DPF(D_VERBOSE, ("RtlQueryRegistryValues failed, using default values, 0x%x", ntStatus));
+        //
+        // Don't return error because we will operate with default values.
+        //
+    }
 
-    ntStatus = RtlQueryRegistryValues(
-        RTL_REGISTRY_ABSOLUTE | RTL_REGISTRY_OPTIONAL,
-        parametersPath.Buffer,
-        &paramTable[0],
-        NULL,
-        NULL
-    );
-
-    ExFreePool(parametersPath.Buffer);
+    if (DriverKey)
+    {
+        ZwClose(DriverKey);
+    }
 
     return ntStatus;
 }
@@ -294,39 +302,36 @@ Return Value:
     m_bCapture = Capture_;
     m_ulDmaMovementRate = pWfEx->nAvgBytesPerSec;
 
-    m_pDpc = (PRKDPC)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(KDPC), MINWAVERTSTREAM_POOLTAG);
+    m_pDpc = (PRKDPC)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(KDPC), MINWAVERTSTREAM_POOLTAG);
     if (!m_pDpc)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
-    m_pWfExt = (PWAVEFORMATEXTENSIBLE)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(WAVEFORMATEX) + pWfEx->cbSize, MINWAVERTSTREAM_POOLTAG);
+    m_pWfExt = (PWAVEFORMATEXTENSIBLE)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(WAVEFORMATEX) + pWfEx->cbSize, MINWAVERTSTREAM_POOLTAG);
     if (m_pWfExt == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
     RtlCopyMemory(m_pWfExt, pWfEx, sizeof(WAVEFORMATEX) + pWfEx->cbSize);
 
-    m_pbMuted = (PBOOL)ExAllocatePoolWithTag(NonPagedPoolNx, m_pWfExt->Format.nChannels * sizeof(BOOL), MINWAVERTSTREAM_POOLTAG);
+    m_pbMuted = (PBOOL)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_pWfExt->Format.nChannels * sizeof(BOOL), MINWAVERTSTREAM_POOLTAG);
     if (m_pbMuted == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    RtlZeroMemory(m_pbMuted, m_pWfExt->Format.nChannels * sizeof(BOOL));
 
-    m_plVolumeLevel = (PLONG)ExAllocatePoolWithTag(NonPagedPoolNx, m_pWfExt->Format.nChannels * sizeof(LONG), MINWAVERTSTREAM_POOLTAG);
+    m_plVolumeLevel = (PLONG)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_pWfExt->Format.nChannels * sizeof(LONG), MINWAVERTSTREAM_POOLTAG);
     if (m_plVolumeLevel == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    RtlZeroMemory(m_plVolumeLevel, m_pWfExt->Format.nChannels * sizeof(LONG));
 
-    m_plPeakMeter = (PLONG)ExAllocatePoolWithTag(NonPagedPoolNx, m_pWfExt->Format.nChannels * sizeof(LONG), MINWAVERTSTREAM_POOLTAG);
+    m_plPeakMeter = (PLONG)ExAllocatePool2(POOL_FLAG_NON_PAGED, m_pWfExt->Format.nChannels * sizeof(LONG), MINWAVERTSTREAM_POOLTAG);
     if (m_plPeakMeter == NULL)
     {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    RtlZeroMemory(m_plPeakMeter, m_pWfExt->Format.nChannels * sizeof(LONG));
 
     //
     // Allocate stream audio module resources.
@@ -639,8 +644,8 @@ NTSTATUS CMiniportWaveRTStream::RegisterNotificationEvent
 
     PAGED_CODE();
 
-    NotificationListEntry *nleNew = (NotificationListEntry*)ExAllocatePoolWithTag( 
-        NonPagedPoolNx,
+    NotificationListEntry *nleNew = (NotificationListEntry*)ExAllocatePool2( 
+        POOL_FLAG_NON_PAGED,
         sizeof(NotificationListEntry),
         MINWAVERTSTREAM_POOLTAG);
     if (NULL == nleNew)

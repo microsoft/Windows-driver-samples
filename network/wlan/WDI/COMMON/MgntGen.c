@@ -33,7 +33,7 @@ MgntIsRateSupport(
 	OCTET_STRING	osRateSet
 	)
 {
-	u1Byte	i;
+	u2Byte	i;
 	for(i = 0; i < osRateSet.Length; i++)
 	{
 		if((nRate & 0x7f) == (osRateSet.Octet[i] & 0x7f))

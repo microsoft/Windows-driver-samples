@@ -1555,7 +1555,7 @@ VOID KrnlHlprIPHeaderCalculateV4Checksum(_Inout_ NET_BUFFER_LIST* pNetBufferList
 
       pIPv4Header->checksum = 0;
 
-      for(UINT8 i = 0;
+      for(UINT32 i = 0;
           i < words;
           i++)
       {

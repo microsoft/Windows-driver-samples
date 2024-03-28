@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
@@ -7,40 +7,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UcmCxUcsi", "UcmCxUcsi.vcxp
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|ARM = Debug|ARM
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|ARM = Release|ARM
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM.ActiveCfg = Debug|ARM
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM.Build.0 = Debug|ARM
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM.Deploy.0 = Debug|ARM
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM64.Build.0 = Debug|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|ARM64.Deploy.0 = Debug|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x64.ActiveCfg = Debug|x64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x64.Build.0 = Debug|x64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x64.Deploy.0 = Debug|x64
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x86.ActiveCfg = Debug|Win32
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x86.Build.0 = Debug|Win32
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Debug|x86.Deploy.0 = Debug|Win32
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM.ActiveCfg = Release|ARM
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM.Build.0 = Release|ARM
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM.Deploy.0 = Release|ARM
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM64.ActiveCfg = Release|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM64.Build.0 = Release|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|ARM64.Deploy.0 = Release|ARM64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x64.ActiveCfg = Release|x64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x64.Build.0 = Release|x64
 		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x64.Deploy.0 = Release|x64
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x86.ActiveCfg = Release|Win32
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x86.Build.0 = Release|Win32
-		{B19576FD-D35C-475C-BFDB-0E4D1BE3F80F}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

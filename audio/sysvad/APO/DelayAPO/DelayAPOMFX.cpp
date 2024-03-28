@@ -292,7 +292,7 @@ STDMETHODIMP CDelayAPOMFX::LockForProcess(UINT32 u32NumInputConnections,
         //
         // A more typical approach would be to allocate the memory using AERT_Allocate, which locks the memory
         // But for the purposes of this APO, CoTaskMemAlloc suffices, and the risk of glitches is not important
-        m_pf32DelayBuffer.Allocate(GetSamplesPerFrame() * m_nDelayFrames);
+        m_pf32DelayBuffer.Allocate((size_t) GetSamplesPerFrame() * m_nDelayFrames);
         WriteSilence(m_pf32DelayBuffer, m_nDelayFrames, GetSamplesPerFrame());
         if (nullptr == m_pf32DelayBuffer)
         {
@@ -430,7 +430,8 @@ HRESULT CDelayAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //
@@ -863,9 +864,9 @@ HRESULT CDelayAPOMFX::ValidateAndCacheConnectionInfo(UINT32 u32NumInputConnectio
     // Set scalars to decrease volume from 1.0 to 1.0/N where N is the number of channels
     // starting with the first channel.
     f32InverseChannelCount = 1.0f/m_u32SamplesPerFrame;
-    for (UINT16 u16Index=0; u16Index<m_u32SamplesPerFrame; u16Index++)
+    for (UINT32 u32Index=0; u32Index<m_u32SamplesPerFrame; u32Index++)
     {
-        m_pf32Coefficients[u16Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u16Index;
+        m_pf32Coefficients[u32Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u32Index;
     }
 
     

@@ -163,6 +163,12 @@ Return value:
                "RegFltr: Use ed nt!Kd_IHVDRIVER_Mask 8 to enable more detailed printouts\n");
 
     //
+    //  Default to NonPagedPoolNx for non paged pool allocations where supported.
+    //
+
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
+    //
     // Create our device object.
     //
 

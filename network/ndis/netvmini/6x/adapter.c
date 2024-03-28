@@ -427,11 +427,26 @@ Arguments:
         // Set the power management capabilities.  The format used is NDIS
         // version-specific.
         //
-#if (NDIS_SUPPORT_NDIS620)
+#if (NDIS_SUPPORT_NDIS680)
 
         NdisZeroMemory(&PmCapabilities, sizeof(PmCapabilities));
 
-        {C_ASSERT(sizeof(PmCapabilities) >= NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_1);}
+        {C_ASSERT(sizeof(PmCapabilities) >= NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_2); }
+        PmCapabilities.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
+        PmCapabilities.Header.Size = NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_2;
+        PmCapabilities.Header.Revision = NDIS_PM_CAPABILITIES_REVISION_2;
+
+        PmCapabilities.MinMagicPacketWakeUp = NIC_MAGIC_PACKET_WAKEUP;
+        PmCapabilities.MinPatternWakeUp = NIC_PATTERN_WAKEUP;
+        PmCapabilities.MinLinkChangeWakeUp = NIC_LINK_CHANGE_WAKEUP;
+
+        AdapterGeneral.PowerManagementCapabilitiesEx = &PmCapabilities;
+
+#elif (NDIS_SUPPORT_NDIS620)
+
+        NdisZeroMemory(&PmCapabilities, sizeof(PmCapabilities));
+
+        {C_ASSERT(sizeof(PmCapabilities) >= NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_1); }
         PmCapabilities.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
         PmCapabilities.Header.Size = NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_1;
         PmCapabilities.Header.Revision = NDIS_PM_CAPABILITIES_REVISION_1;

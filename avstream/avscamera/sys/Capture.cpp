@@ -2294,6 +2294,7 @@ SetFramingSizes(
     PKSALLOCATOR_FRAMING_EX Framing
 )
 {
+    PAGED_CODE();
     Framing->FramingItem[0].PhysicalRange.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
     Framing->FramingItem[0].PhysicalRange.MaxFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;
     Framing->FramingItem[0].FramingRange.Range.MinFrameSize = m_VideoInfoHeader->bmiHeader.biSizeImage;

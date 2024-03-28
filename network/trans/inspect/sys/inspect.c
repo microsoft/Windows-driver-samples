@@ -22,7 +22,7 @@ Environment:
 
 --*/
 
-
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntddk.h>
 
 #pragma warning(push)

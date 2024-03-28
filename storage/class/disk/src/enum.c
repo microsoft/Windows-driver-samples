@@ -82,8 +82,8 @@ DiskConvertExtendedToLayout(
         return NULL;
     }
 
-    Layout = ExAllocatePoolWithTag (
-                    NonPagedPoolNx,
+    Layout = ExAllocatePool2 (
+                    POOL_FLAG_NON_PAGED,
                     LayoutSize,
                     DISK_TAG_PART_LIST
                     );
@@ -214,8 +214,8 @@ Return Values:
         return NULL;
     }
 
-    layoutEx = ExAllocatePoolWithTag(
-                            NonPagedPoolNx,
+    layoutEx = ExAllocatePool2(
+                            POOL_FLAG_NON_PAGED,
                             size,
                             DISK_TAG_PART_LIST
                             );
@@ -342,13 +342,11 @@ Return Value:
         partitionListSize =
             FIELD_OFFSET(DRIVE_LAYOUT_INFORMATION_EX, PartitionEntry[1]);
 
-        partitionList = ExAllocatePoolWithTag(NonPagedPoolNx,
+        partitionList = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                               partitionListSize,
                                               DISK_TAG_PART_LIST);
 
         if (partitionList != NULL) {
-
-            RtlZeroMemory( partitionList, partitionListSize );
 
             //
             // Set the partition count to one and the status to success

@@ -30,19 +30,13 @@ CBasePin::CBasePin( _In_ ULONG id, _In_ CMultipinMft *parent) :
     , m_setMediaType(nullptr)
     , m_nRefCount(0)
     , m_state(DeviceStreamState_Stop)
-    , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_UNDEFINED)
+    , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_MULTITHREADED)
 {
     
 }
 
 CBasePin::~CBasePin()
 {
-    
-    for ( ULONG ulIndex = 0, ulSize = (ULONG)m_listOfMediaTypes.size(); ulIndex < ulSize; ulIndex++ )
-    {
-        ComPtr<IMFMediaType> spMediaType;
-        spMediaType.Attach(m_listOfMediaTypes[ulIndex]); // Releases the previously stored pointer
-    }
     m_listOfMediaTypes.clear();
     m_spAttributes = nullptr;
 }
@@ -68,7 +62,6 @@ HRESULT CBasePin::AddMediaType( _Inout_ DWORD *pos, _In_ IMFMediaType *pMediaTyp
         m_listOfMediaTypes.push_back(pMediaType);
     });
     DMFTCHECKHR_GOTO(hr, done);
-    pMediaType->AddRef();
     if (pos)
     {
         *pos = (DWORD)(m_listOfMediaTypes.size() - 1);
@@ -89,7 +82,8 @@ HRESULT CBasePin::GetMediaTypeAt( _In_ DWORD pos, _Outptr_result_maybenull_ IMFM
     {
         DMFTCHECKHR_GOTO(MF_E_NO_MORE_TYPES,done);
     }
-    spMediaType = m_listOfMediaTypes[pos];
+    DMFTCHECKHR_GOTO(MFCreateMediaType(spMediaType.GetAddressOf()), done);
+    DMFTCHECKHR_GOTO(m_listOfMediaTypes[pos]->CopyAllItems(spMediaType.Get()), done);
     *ppMediaType = spMediaType.Detach();
 done:
     return hr;
@@ -129,8 +123,10 @@ STDMETHODIMP_(BOOL) CBasePin::IsMediaTypeSupported
         {
             bFound = TRUE;
             if (ppIMFMediaTypeFull) {
-                *ppIMFMediaTypeFull = m_listOfMediaTypes[uIIndex];
-                (*ppIMFMediaTypeFull)->AddRef();
+                ComPtr<IMFMediaType> spMediaType;
+                DMFTCHECKHR_GOTO(MFCreateMediaType(spMediaType.GetAddressOf()), done);
+                DMFTCHECKHR_GOTO(m_listOfMediaTypes[uIIndex]->CopyAllItems(spMediaType.Get()), done);
+                *ppIMFMediaTypeFull = spMediaType.Detach();
             }
             break;
         }
@@ -219,7 +215,7 @@ CInPin::~CInPin()
 }
 
 STDMETHODIMP CInPin::Init( 
-    _In_ IMFTransform* pTransform
+    _In_ IMFDeviceTransform* pTransform
     )
 {
     
@@ -239,7 +235,7 @@ STDMETHODIMP CInPin::Init(
     m_waitInputMediaTypeWaiter = CreateEvent( NULL,
         FALSE,
         FALSE,
-        TEXT("MediaTypeWaiter")
+        nullptr
         );
     DMFTCHECKNULL_GOTO( m_waitInputMediaTypeWaiter, done, E_OUTOFMEMORY );
 
@@ -275,7 +271,7 @@ HRESULT CInPin::GenerateMFMediaTypeListFromDevice(
         ComPtr<IMFMediaType> spMediaType;
         DWORD pos = 0;
 
-        hr = m_spSourceTransform->MFTGetOutputAvailableType(uiStreamId, iMediaType, spMediaType.GetAddressOf());
+        hr = m_spSourceTransform->GetOutputAvailableType(uiStreamId, iMediaType, spMediaType.GetAddressOf());
         if (hr != S_OK)
             break;
      
@@ -509,7 +505,7 @@ STDMETHODIMP COutPin::AddPin(
 
     }
 #if defined MF_DEVICEMFT_ADD_GRAYSCALER_ // Take this out to remove the gray scaler
-    m_queue = new (std::nothrow) CPinQueueWithGrayScale(inputPinId);
+    m_queue = new (std::nothrow) CPinQueueWithGrayScale(inputPinId,Parent());
 #else
     m_queue = new (std::nothrow) CPinQueue(inputPinId,Parent());
 #endif
@@ -813,11 +809,6 @@ STDMETHODIMP CTranslateOutPin::AddMediaType(
     DMFTCHECKHR_GOTO(pMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubType), done);
 
     // @@@@ README the below lines show how to exclude mediatypes which we don't want
-  /*  if ((guidSubType != MFVideoFormat_H264))
-    {
-        hr = S_FALSE;
-        goto done;
-    }*/
 
     if (needTranslation(pMediaType))
     {
@@ -829,9 +820,21 @@ STDMETHODIMP CTranslateOutPin::AddMediaType(
         DMFTCHECKHR_GOTO(MFCalculateImageSize(translatedGUID, uiWidth, uiHeight, &uiImageSize), done);
         DMFTCHECKHR_GOTO(pNewMediaType->SetGUID(MF_MT_SUBTYPE, translatedGUID), done);
         DMFTCHECKHR_GOTO(pNewMediaType->SetUINT32(MF_MT_SAMPLE_SIZE, uiImageSize), done);
+        
+        (void)pNewMediaType->DeleteItem(MF_MT_COMPRESSED);
+        (void)pNewMediaType->DeleteItem(MF_MT_SAMPLE_SIZE);
+        (void)pNewMediaType->DeleteItem(MF_MT_AVG_BITRATE);
+        (void)pNewMediaType->DeleteItem(MF_MT_MPEG2_PROFILE);
+        (void)pNewMediaType->DeleteItem(MF_MT_MPEG2_LEVEL);
+
+        (void)pNewMediaType->DeleteItem(MF_MT_VIDEO_ROTATION);
+        (void)pNewMediaType->DeleteItem(MF_MT_MINIMUM_DISPLAY_APERTURE);
+
+        DMFTCHECKHR_GOTO(pNewMediaType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE), done);
+        DMFTCHECKHR_GOTO(pNewMediaType->SetUINT32(MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_0_255), done);
         hr = ExceptionBoundary([&]()
         {
-            m_TranslatedMediaTypes.insert(std::pair<IMFMediaType*, IMFMediaType*>( pNewMediaType.Get(), pMediaType));
+            m_TranslatedMediaTypes.insert(std::pair<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>>( pNewMediaType.Get(), pMediaType));
         });
         DMFTCHECKHR_GOTO(hr, done);
     }
@@ -858,18 +861,22 @@ STDMETHODIMP_(BOOL) CTranslateOutPin::IsMediaTypeSupported(
 {
     DWORD dwFlags = 0, dwMatchedFlags = (MF_MEDIATYPE_EQUAL_MAJOR_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_TYPES | MF_MEDIATYPE_EQUAL_FORMAT_DATA);
 
-    std::map<IMFMediaType*, IMFMediaType*>::iterator found = std::find_if(m_TranslatedMediaTypes.begin(), m_TranslatedMediaTypes.end(),
-        [&](std::pair<IMFMediaType*, IMFMediaType*> p)
+    auto found = std::find_if(m_TranslatedMediaTypes.begin(), m_TranslatedMediaTypes.end(),
+        [&](std::pair<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> p)
     {
-        return (SUCCEEDED(pMediaType->IsEqual(p.first, &dwFlags))
+        return (SUCCEEDED(pMediaType->IsEqual(p.first.Get(), &dwFlags))
             && ((dwFlags & dwMatchedFlags) == (dwMatchedFlags)));
     });
 
     if (found != m_TranslatedMediaTypes.end())
     {
-        ComPtr<IMFMediaType> spMediaType = (*found).second;
+        ComPtr<IMFMediaType> spMediaType;
         if (ppIMFMediaTypeFull)
         {
+            if (FAILED(MFCreateMediaType(spMediaType.GetAddressOf()))|| FAILED((*found).second->CopyAllItems(spMediaType.Get())))
+            {
+                return false;
+            }
             *ppIMFMediaTypeFull = spMediaType.Detach();
         }
         return true;

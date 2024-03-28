@@ -1,3 +1,0 @@
-LIBRARY		OEMPS
-EXPORTS        DllGetClassObject   PRIVATE
-               DllCanUnloadNow     PRIVATE

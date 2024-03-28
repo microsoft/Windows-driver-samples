@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // Module Name:
 //
@@ -28,9 +28,9 @@ void Test_VerifyPinWaveRTConformance(void)
 
     VERIFY_SUCCEEDED(pHalfApp->m_pAudioDeviceEndpoint->GetRTCaps(&bIsRTCapable));
 
-    // Check for our new requirement - new drivers must be WaveRT. Here we skip the test on AVStream (UAC1/HFP/A2dp)
+    // Check for our new requirement - new PortCls drivers must be WaveRT.
     // For other old drivers that are not WaveRT, may issue Errata to cover the failure.
-    if (!pHalfApp->m_bIsAVStream)
+    if (pHalfApp->m_bIsPortCls)
     {
         VERIFY_IS_TRUE(bIsRTCapable);
     }

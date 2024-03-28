@@ -10,6 +10,7 @@ Environment:
 
 --*/
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include "LwQueue.h"
 
 IO_WORKITEM_ROUTINE     LwWorker;
@@ -36,8 +37,8 @@ LwInitializeQueue(
     KeInitializeSpinLock(&Queue->Lock);
 
     Queue->WorkItem =
-        ExAllocatePoolWithTag(
-        NonPagedPool, IoSizeofWorkItem(), STMEDIT_TAG_LQWI);
+        ExAllocatePool2(
+            POOL_FLAG_NON_PAGED, IoSizeofWorkItem(), STMEDIT_TAG_LQWI);
 
     if (Queue->WorkItem == NULL) 
 	{

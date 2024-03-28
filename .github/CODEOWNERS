@@ -1,0 +1,83 @@
+# GitHub configuration
+/.github/ @microsoft/driver-samples-maintainers
+
+# Code Scanning workflow
+/.github/workflows/Code-Scanning.yml @microsoft/driver-samples-maintainers
+
+# Root files
+/* @microsoft/driver-samples-maintainers
+
+# Audio
+/audio/ @microsoft/windowsaudio
+
+# Bluetooth
+/bluetooth/ @microsoft/bluetooth
+
+# Camera Platform
+/avstream/ @microsoft/cameraplatdev
+/general/SimpleMediaSource/ @microsoft/cameraplatdev
+
+# Cellular Core
+/network/wwan/ @microsoft/cellcore
+/nfc/ @microsoft/cellcore
+
+# Connection Awareness
+/gnss/ @microsoft/connection-awareness
+/network/radio/ @microsoft/connection-awareness
+
+# Core Networking
+/network/wsk/ @microsoft/corenetworking
+
+# Consumer Storage
+/sd/ @microsoft/consumer-storage
+/smartcrd/ @microsoft/consumer-storage
+
+# Device Enumeration and Interconnect
+/gpio/ @microsoft/device-enumeration-and-interconnect
+/pofx/PEP/ @microsoft/device-enumeration-and-interconnect
+/prm/ @microsoft/device-enumeration-and-interconnect
+/wmi/wmiacpi/ @microsoft/device-enumeration-and-interconnect
+
+# Display Kernel
+/video/ @microsoft/display-kernel-devs
+
+# Driver Development Supplemental Tools
+/tools/ @microsoft/windows-driver-developers-supplemental-tools-admins
+
+# Energy Efficiency
+/pofx/WDF/ @microsoft/ee-devs
+/simbatt/ @microsoft/ee-devs
+/thermal/ @microsoft/ee-devs
+
+# Event Tracing for Windows
+/general/perfcounters/ @microsoft/etw
+/general/tracing/ @microsoft/etw
+
+# File Systems
+/filesys/cdfs/ @microsoft/filesystems
+/filesys/fastfat/ @microsoft/filesystems
+
+# Filter Manager
+/filesys/miniFilter/ @microsoft/filter-manager
+
+# Kernel Core
+/general/registry/ @microsoft/kernel-core
+
+# Network Security
+/network/trans/ @microsoft/netsec
+
+# Platform Integrity
+/security/ @microsoft/platform-integrity
+/TrEE/ @microsoft/platform-integrity
+
+# Sensors Platform
+/sensors/ @microsoft/sensors-platform
+
+# Storage
+/storage/ @microsoft/storage-core
+
+# Windows Internet of Things
+/pos/ @microsoft/winiotdev
+
+# Wi-Fi Core
+/network/wlan/ @microsoft/wi-fi-core

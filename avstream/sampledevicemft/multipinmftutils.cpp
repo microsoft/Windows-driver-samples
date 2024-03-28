@@ -1292,7 +1292,10 @@ UpdateAllocatorAttributes(
         level = spDevice->GetFeatureLevel();
         dwBindFlags |= ((level >= D3D_FEATURE_LEVEL_10_0) ? D3D11_BIND_SHADER_RESOURCE : 0);
     }
-
+    else
+    {
+        dwBindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
     DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_BINDFLAGS, dwBindFlags), done);
 
 done:

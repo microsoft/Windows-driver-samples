@@ -24,7 +24,8 @@
    ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
    Provider    = %ProviderString%
    CatalogFile = WFPSamplerCalloutDriver.Cat
-   DriverVer   =
+   DriverVer   = 
+   PnpLockdown = 1
 
 [SourceDisksNames.$ARCH$]
    1 = %WFPSamplerCalloutDriverDiskId%,,,""
@@ -36,8 +37,7 @@
    AddReg = WFPCalloutsClassReg
 
 [DestinationDirs]
-   DefaultDestDir                      = 12                                                        ;/// %WinDir%\System32\Drivers
-   WFPSamplerCalloutDriver.DriverFiles = 12                                                        ;/// %WinDir%\System32\Drivers
+   WFPSamplerCalloutDriver.DriverFiles = 13                                                        ;/// %WinDir%\System32\Drivers
 
 [DefaultInstall.nt$ARCH$]
    OptionDesc = %WFPSamplerCalloutDriverDescription%
@@ -46,32 +46,15 @@
 [DefaultInstall.nt$ARCH$.Services]
    AddService = %WFPSamplerCalloutDriverServiceName%,,WFPSamplerCalloutDriver.Service
 
-[DefaultUninstall.nt$ARCH$]
-   DelFiles = WFPSamplerCalloutDriver.DriverFiles
-   DelReg   = WFPCalloutClassReg
-
-[DefaultUninstall.nt$ARCH$.Services]
-   DelService = %WFPSamplerCalloutDriverServiceName%,0x200                                         ;/// SPSVCINST_STOPSERVICE
-
 [WFPCalloutsClassReg]
-   HKR,,,0,%WFPCalloutsClassName%
-   HKR,,Icon,,-5
-   HKR,,SilentInstall,,1
+   HKR,,,0
+   HKR,,Icon,,
+   HKR,,SilentInstall,,
    HKR,,DeviceCharacteristics,0x10001,0x100                                                        ;/// FLG_ADDREG_BINVALUETYPE | FLG_ADDREG_TYPE_MULTI_SZ, FILE_DEVICE_SECURE_OPEN
-   HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GA;;;LS)"                                        ;/// Permit Generic All access to SYstem, Built-in Admin, and Local System.
+   HKR,,Security,,                                                                                 ;/// Permit Generic All access to SYstem, Built-in Admin, and Local System.
 
 [WFPSamplerCalloutDriver.DriverFiles]
    WFPSamplerCalloutDriver.sys,,,0x00000040                                                        ;/// COPYFLG_OVERWRITE_OLDER_ONLY
-
-[WFPSamplerCalloutDriver.NT.CoInstallers]
-   AddReg    = WFPSamplerCalloutDriver.CoInstaller.AddReg
-   CopyFiles = WFPSamplerCalloutDriver.CoInstaller.CopyFiles
-
-[WFPSamplerCalloutDriver.CoInstaller.AddReg]
-   HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
-
-[WFPSamplerCalloutDriver.CoInstaller.CopyFiles]
-   WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
 
 [WFPSamplerCalloutDriver.Service]
    DisplayName    = %WFPSamplerCalloutDriverServiceName%
@@ -79,7 +62,7 @@
    ServiceType    = 1                                                                              ;/// SERVICE_KERNEL_DRIVER
    StartType      = 0                                                                              ;/// SERVICE_BOOT_START
    ErrorControl   = 1                                                                              ;/// SERVICE_ERROR_NORMAL
-   ServiceBinary  = %12%\WFPSamplerCalloutDriver.sys                                               ;/// %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.sys
+   ServiceBinary  = %13%\WFPSamplerCalloutDriver.sys                                               ;/// %WinDir%\System32\Drivers\WFPSamplerCalloutDriver.sys
    LoadOrderGroup = NDIS                                                                           ;/// Load immediately after TCPIP.sys
    Dependencies   = TCPIP
 

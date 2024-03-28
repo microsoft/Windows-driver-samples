@@ -61,9 +61,6 @@ DEFINE_GUID(GUID_CONTAINERID_INTERNALLY_CONNECTED_DEVICE,
 #endif
 
 #define POOLTAG_UARTHCIBUSSAMPLE  'SBHS'  // 'S'erial 'H'ci 'B'us 'S'ample
-#undef ExAllocatePool
-#define ExAllocatePool(type, size) \
-        ExAllocatePoolWithTag(type, size, POOLTAG_UARTHCIBUSSAMPLE)
 
 //
 // An ID used to uniquely identify Bluetooth function from other function
