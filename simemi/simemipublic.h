@@ -1,0 +1,89 @@
+/*++
+
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Module Name:
+
+    simemipublic.h
+
+Abstract:
+
+    This module contains the declarations of the public interface of the simemi
+    driver.
+
+--*/
+
+#pragma once
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+#include <emi.h>
+
+#define SIM_EMI_DEVICE_NAME L"simemibus"
+#define SIM_EMI_DEVICE_PATH L"\\Device\\" SIM_EMI_DEVICE_NAME
+#define SIM_EMI_DEVICE_ALIAS_PATH L"\\DosDevices\\" SIM_EMI_DEVICE_NAME
+#define SIM_EMI_DEVICE_MAPPED_PATH L"\\\\.\\" SIM_EMI_DEVICE_NAME
+
+//
+// {7af2e4c8-3b33-4118-bb3b-ca967a5140da}
+//
+
+DEFINE_GUID(GUID_DEVICE_SIM_EMI_BUS,
+    0x7af2e4c8, 0x3b33, 0x4118, 0xbb, 0x3b, 0xca, 0x96, 0x7a, 0x51, 0x40, 0xda);
+
+#define IOCTL_EMI_BUS_CREATE_DEVICE      CTL_CODE(FILE_DEVICE_UNKNOWN, 0x600, METHOD_BUFFERED, FILE_WRITE_ACCESS)
+#define IOCTL_EMI_BUS_DELETE_DEVICE      CTL_CODE(FILE_DEVICE_UNKNOWN, 0x601, METHOD_BUFFERED, FILE_WRITE_ACCESS)
+#define IOCTL_EMI_BUS_QUERY_DEVICE_INFO  CTL_CODE(FILE_DEVICE_UNKNOWN, 0x602, METHOD_BUFFERED, FILE_READ_ACCESS)
+#define IOCTL_EMI_BUS_SET_DEVICE_RATE    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x603, METHOD_BUFFERED, FILE_WRITE_ACCESS)
+
+typedef struct _SIM_EMI_BUS_CHANNEL_INFO {
+    ULONGLONG AbsoluteEnergyRate; // Change in AbsoluteEnergy in 100-ns units.
+
+    EMI_MEASUREMENT_UNIT MeasurementUnit;
+
+    USHORT ChannelNameSize;
+    WCHAR ChannelName[ANYSIZE_ARRAY];
+} SIM_EMI_BUS_CHANNEL_INFO, *PSIM_EMI_BUS_CHANNEL_INFO;
+
+#define SIM_EMI_BUS_CHANNEL_INFO_SIZE(_ChannelNameSize) \
+    (FIELD_OFFSET(SIM_EMI_BUS_CHANNEL_INFO, ChannelName) + (_ChannelNameSize))
+
+#define SIM_EMI_BUS_CHANNEL_INFO_NEXT_CHANNEL_INFO(_Channel) \
+    ((PSIM_EMI_BUS_CHANNEL_INFO)((PUCHAR)(_Channel) + \
+        SIM_EMI_BUS_CHANNEL_INFO_SIZE((_Channel)->ChannelNameSize)))
+
+typedef struct _SIM_EMI_BUS_CREATE_DEVICE_INPUT_BUFFER {
+    USHORT EmiVersion;
+    ULONG ChildDeviceHandle;
+
+    USHORT ChannelCount;
+    SIM_EMI_BUS_CHANNEL_INFO ChannelInfo[ANYSIZE_ARRAY];
+} SIM_EMI_BUS_CREATE_DEVICE_INPUT_BUFFER, *PSIM_EMI_BUS_CREATE_DEVICE_INPUT_BUFFER;
+
+typedef struct _SIM_EMI_BUS_DELETE_DEVICE_INPUT_BUFFER {
+    ULONG ChildDeviceHandle;
+} SIM_EMI_BUS_DELETE_DEVICE_INPUT_BUFFER, *PSIM_EMI_BUS_DELETE_DEVICE_INPUT_BUFFER;
+
+typedef struct _SIM_EMI_BUS_QUERY_DEVICE_INFO_INPUT_BUFFER {
+    ULONG ChildDeviceHandle;
+} SIM_EMI_BUS_QUERY_DEVICE_INFO_INPUT_BUFFER, *PSIM_EMI_BUS_QUERY_DEVICE_INFO_INPUT_BUFFER;
+
+typedef struct _SIM_EMI_BUS_QUERY_DEVICE_INFO_OUTPUT_BUFFER {
+    USHORT EmiVersion;
+    USHORT ChannelCount;
+    SIM_EMI_BUS_CHANNEL_INFO ChannelInfo[ANYSIZE_ARRAY];
+} SIM_EMI_BUS_QUERY_DEVICE_INFO_OUTPUT_BUFFER, *PSIM_EMI_BUS_QUERY_DEVICE_INFO_OUTPUT_BUFFER;
+
+typedef struct _SIM_EMI_BUS_SET_DEVICE_RATE_INPUT_BUFFER {
+    USHORT EmiVersion;
+    ULONG ChildDeviceHandle;
+
+    USHORT ChannelCount;
+    ULONG64 AbsoluteEnergyRates[ANYSIZE_ARRAY];
+} SIM_EMI_BUS_SET_DEVICE_RATE_INPUT_BUFFER, *PSIM_EMI_BUS_SET_DEVICE_RATE_INPUT_BUFFER;
+
+#if defined(__cplusplus)
+}
+#endif
