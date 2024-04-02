@@ -46,6 +46,7 @@
 
 # Energy Efficiency
 /pofx/WDF/ @microsoft/ee-devs
+/powerlimit/ @microsoft/ee-devs
 /simbatt/ @microsoft/ee-devs
 /thermal/ @microsoft/ee-devs
 
