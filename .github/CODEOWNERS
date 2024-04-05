@@ -7,6 +7,9 @@
 # Root files
 /* @microsoft/driver-samples-maintainers
 
+# Windows Implementation Library submodule
+/wil/ @microsoft/driver-samples-maintainers
+
 # Audio
 /audio/ @microsoft/windowsaudio
 
@@ -37,6 +40,7 @@
 /pofx/PEP/ @microsoft/device-enumeration-and-interconnect
 /prm/ @microsoft/device-enumeration-and-interconnect
 /wmi/wmiacpi/ @microsoft/device-enumeration-and-interconnect
+/general/SystemDma/ @microsoft/device-enumeration-and-interconnect
 
 # Display Kernel
 /video/ @microsoft/display-kernel-devs
@@ -71,11 +75,29 @@
 /security/ @microsoft/platform-integrity
 /TrEE/ @microsoft/platform-integrity
 
+# Print
+/print/ @microsoft/core-print
+/wia/ @microsoft/core-print
+
 # Sensors Platform
 /sensors/ @microsoft/sensors-platform
 
 # Storage
 /storage/ @microsoft/storage-core
+
+# Windows Driver Framework (WDF) samples
+/general/echo/ @microsoft/coreos-buses-and-wdf
+/general/ioctl/ @microsoft/coreos-buses-and-wdf
+/general/pcidrv/ @microsoft/coreos-buses-and-wdf
+/general/PLX9x5x/ @microsoft/coreos-buses-and-wdf
+/general/toaster/ @microsoft/coreos-buses-and-wdf
+/hid/ @microsoft/coreos-buses-and-wdf
+/input/ @microsoft/coreos-buses-and-wdf
+/pofx/UMDF2/ @microsoft/coreos-buses-and-wdf
+/serial/ @microsoft/coreos-buses-and-wdf
+/spb/ @microsoft/coreos-buses-and-wdf
+/usb/ @microsoft/coreos-buses-and-wdf
+/wmi/wmisamp/ @microsoft/coreos-buses-and-wdf
 
 # Windows Internet of Things
 /pos/ @microsoft/winiotdev
