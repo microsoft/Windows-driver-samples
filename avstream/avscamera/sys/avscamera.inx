@@ -68,6 +68,7 @@ AddReg=AvsCamera.FrontCamera.AddReg
 HKR,,CLSID,,%Proxy.CLSID%
 HKR,,FriendlyName,,%AvsCamera.Front%
 HKR,,CameraPostProcessingPluginCLSID,,%MFT0.CLSID%
+HKR,,EnableImageReplacement,%REG_DWORD%,1
 
 ;
 ;   Profile information for the front camera
@@ -123,6 +124,7 @@ HKR,,FriendlyName,,%AvsCamera.Rear%
 HKR,,CameraPostProcessingPluginCLSID,,%MFT0.CLSID%
 HKR,,CameraImageResource,,%13%\%MFT0.NAME%
 HKR,,CameraImageResourceID,%REG_DWORD%,%ResourceID%
+HKR,,EnableImageReplacement,%REG_DWORD%,1
 
 
 ;
