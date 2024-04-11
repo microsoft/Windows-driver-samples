@@ -7,7 +7,7 @@ winget install --id Microsoft.Powershell --source winget
 winget install --id Git.Git --source winget
 ```
 
-For using WDK NuGet feed based build (experimental) additionally:
+For using WDK NuGet feed based build additionally:
 ```
 winget install --id Microsoft.NuGet --source winget
 ```
@@ -90,7 +90,6 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * `.\LaunchBuildEnv`
 
 ### Option C: Use WDK NuGet Packages
-* This is an 'experimental' option.
 * This option requires you have access to the WDK NuGet EEAP Package (so far only available to EEAP Partners).
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
 * Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10
@@ -105,7 +104,6 @@ Microsoft.Windows.SDK.CPP.arm64.10.0.26090.8-preview.ge-release.nupkg
 Microsoft.Windows.WDK.x64.10.0.26090.8-preview.ge-release.nupkg
 Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release.nupkg
 ```
-* This is an 'experimental' option.
 * Add MSFTNuget feed and restore WDK packages from feed :
 
 ```
