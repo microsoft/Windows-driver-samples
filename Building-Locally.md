@@ -93,7 +93,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * This is an 'experimental' option.
 * This option requires you have access to the WDK NuGet EEAP Package (so far only available to EEAP Partners).
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
-* Install the WDK.vsix from WDK NuGet EEAP Package.  Make sure to use the architecture that matches your host OS architecture.
+* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10
 * Launch a "Developer Command Prompt for VS 2022".
 * Unzip the WDK NuGet zip (that you have access to as part of EEAP program).  This folder should look as follows:
 
