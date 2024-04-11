@@ -99,11 +99,11 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 
 ```
 >dir /b C:\my\local\package
-Microsoft.Windows.SDK.CPP.10.0.26080.1000-preview.ge-release.nupkg
-Microsoft.Windows.SDK.CPP.x64.10.0.26080.1000-preview.ge-release.nupkg
-Microsoft.Windows.SDK.CPP.arm64.10.0.26080.1000-preview.ge-release.nupkg
-Microsoft.Windows.WDK.x64.10.0.26080.1000-preview.ge-release.nupkg
-Microsoft.Windows.WDK.arm64.10.0.26080.1000-preview.ge-release.nupkg
+Microsoft.Windows.SDK.CPP.10.0.26090.8-preview.ge-release.nupkg
+Microsoft.Windows.SDK.CPP.x64.10.0.26090.8-preview.ge-release.nupkg
+Microsoft.Windows.SDK.CPP.arm64.10.0.26090.8-preview.ge-release.nupkg
+Microsoft.Windows.WDK.x64.10.0.26090.8-preview.ge-release.nupkg
+Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release.nupkg
 ```
 * This is an 'experimental' option.
 * Add MSFTNuget feed and restore WDK packages from feed :
@@ -118,11 +118,11 @@ Microsoft.Windows.WDK.arm64.10.0.26080.1000-preview.ge-release.nupkg
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26080.1000-preview.ge-release
-Microsoft.Windows.SDK.CPP.x64.10.0.26080.1000-preview.ge-release
-Microsoft.Windows.SDK.CPP.arm64.10.0.26080.1000-preview.ge-release
-Microsoft.Windows.WDK.x64.10.0.26080.1000-preview.ge-release
-Microsoft.Windows.WDK.arm64.10.0.26080.1000-preview.ge-release
+Microsoft.Windows.SDK.CPP.10.0.26090.8-preview.ge-release
+Microsoft.Windows.SDK.CPP.x64.10.0.26090.8-preview.ge-release
+Microsoft.Windows.SDK.CPP.arm64.10.0.26090.8-preview.ge-release
+Microsoft.Windows.WDK.x64.10.0.26090.8-preview.ge-release
+Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release
 ```
 
 
