@@ -30,14 +30,17 @@ reg add HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\StrongName\Verificatio
 
 When: This step is required only to build sample usb\usbview .
 
-### Option A: Install VS Components
-If you install Visual Studio (see later) you may at that point select to add both of individual components:
+### Option A: Use EWDK
+Easiest: If you use EWDK, then all necessary prequisites are included.
+
+### Option B: Install VS Components
+Almost as easy: If you will install Visual Studio (see later) you may at that point select to add both of following individual components:
 * .NET Framework 4.7.2 targeting pack
 * .NET Framework 4.8.1 SDK
 
-### Option B: Install Developer Pack
+### Option C: Install Developer Pack
 
-Install from https://aka.ms/msbuild/developerpacks -> '.NET Framework' -> 'Supported versions' both of following packages:
+Hardest: Install from https://aka.ms/msbuild/developerpacks -> '.NET Framework' -> 'Supported versions' both of following packages:
 * .NET Framework 4.7.2 -> Developer Pack 
 * .NET Framework 4.8.1 -> Developer Pack 
 
@@ -48,9 +51,6 @@ This will install following Apps:
 * Microsoft .NET Framework 4.8.1 SDK
 * Microsoft .NET Framework 4.8.1 Targeting Pack
 * Microsoft .NET Framework 4.8.1 Targeting Pack (ENU)
-
-### Option C: Use EWDK
-If you use EWDK, then all necessary prequisites are included.
 
 ## Step 3: Clone Windows Driver Samples and checkout relevant branch
 
