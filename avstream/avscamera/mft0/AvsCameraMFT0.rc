@@ -11,3 +11,8 @@
 
 #include "common.ver"
 
+#ifndef ID_OCCLUSION_IMAGE
+#define ID_OCCLUSION_IMAGE             200
+#endif
+
+ID_OCCLUSION_IMAGE     RCDATA     "TestImage.bmp"
