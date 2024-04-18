@@ -12,11 +12,11 @@ For using WDK NuGet feed based build additionally:
 winget install --id Microsoft.NuGet --source winget
 ```
 
-## Step 2: Optional: Disable Strong Name Signing
+## Step 2: Optional: Disable Strong Name Validation
 
 When: This step is required only if you will be using pre-release versions of the WDK.
 
-As per https://learn.microsoft.com/en-us/windows-hardware/drivers/installing-preview-versions-wdk you will need to disable strong 
+As per https://learn.microsoft.com/en-us/windows-hardware/drivers/installing-preview-versions-wdk :
 
 Run the following commands from an elevated command prompt to disable strong name validation:
 
@@ -90,25 +90,14 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * `.\LaunchBuildEnv`
 
 ### Option C: Use WDK NuGet Packages
-* This option requires you have access to the WDK NuGet EEAP Package (so far only available to EEAP Partners).
+* Note: This option is only available in pre-release form.
 * See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
-* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10
+* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10 -> Download
 * Launch a "Developer Command Prompt for VS 2022".
-* Unzip the WDK NuGet zip (that you have access to as part of EEAP program).  This folder should look as follows:
-
-```
->dir /b C:\my\local\package
-Microsoft.Windows.SDK.CPP.10.0.26090.8-preview.ge-release.nupkg
-Microsoft.Windows.SDK.CPP.x64.10.0.26090.8-preview.ge-release.nupkg
-Microsoft.Windows.SDK.CPP.arm64.10.0.26090.8-preview.ge-release.nupkg
-Microsoft.Windows.WDK.x64.10.0.26090.8-preview.ge-release.nupkg
-Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release.nupkg
-```
-* Add MSFTNuget feed and restore WDK packages from feed :
+* Restore WDK packages from feed :
 
 ```
 >cd path\to\your\repos\Windows-driver-samples
->nuget sources add -Name EEAPPackages -Source C:\my\local\package
 >nuget restore -PackagesDirectory .\packages
 ```
 
@@ -116,13 +105,12 @@ Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release.nupkg
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26090.8-preview.ge-release
-Microsoft.Windows.SDK.CPP.x64.10.0.26090.8-preview.ge-release
-Microsoft.Windows.SDK.CPP.arm64.10.0.26090.8-preview.ge-release
-Microsoft.Windows.WDK.x64.10.0.26090.8-preview.ge-release
-Microsoft.Windows.WDK.arm64.10.0.26090.8-preview.ge-release
+Microsoft.Windows.SDK.CPP.10.0.26095.2-preview.ge-release
+Microsoft.Windows.SDK.CPP.x64.10.0.26095.2-preview.ge-release
+Microsoft.Windows.SDK.CPP.arm64.10.0.26095.2-preview.ge-release
+Microsoft.Windows.WDK.x64.10.0.26095.2-preview.ge-release
+Microsoft.Windows.WDK.arm64.10.0.26095.2-preview.ge-release
 ```
-
 
 ## Step 5: Check all samples builds with expected results for all flavors
 
@@ -155,18 +143,19 @@ Get-Help .\Build-AllSamples
 
 Expected output:
 ```
-Build Environment:          EWDK.ge_release.26052.1000
-Build Number:               26052
-Samples:                    131
+PS > .\build-AllSamples.ps1
+Build Environment:          NuGet
+Build Number:               26095
+Samples:                    132
 Configurations:             2 (Debug Release)
 Platforms:                  2 (x64 arm64)
-InfVerif_AdditionalOptions: /samples /sw1402
-Combinations:               524
+InfVerif_AdditionalOptions: /samples
+Combinations:               528
 LogicalProcessors:          12
 ThrottleFactor:             5
 ThrottleLimit:              60
 WDS_WipeOutputs:
-Disk Remaining (GB):        106.204154968262
+Disk Remaining (GB):        ...
 
 T: Combinations
 B: Built
@@ -177,23 +166,25 @@ S: Built and result was 'Succeeded'
 E: Built and result was 'Excluded'
 U: Built and result was 'Unsupported' (Platform and Configuration combination)
 F: Built and result was 'Failed'
+O: Built and result was 'Sporadic'
 
 Building all combinations...
 
 Built all combinations.
 
-Elapsed time:         15 minutes, 23 seconds.
-Disk Remaining (GB):  100.549266815186
-Samples:              131
+Elapsed time:         12 minutes, 42 seconds.
+Disk Remaining (GB):  ...
+Samples:              132
 Configurations:       2 (Debug Release)
 Platforms:            2 (x64 arm64)
-Combinations:         524
-Succeeded:            296
-Excluded:             10
-Unsupported:          218
+Combinations:         528
+Succeeded:            526
+Excluded:             0
+Unsupported:          2
 Failed:               0
-Log files directory:  C:\Users\jakobl\source\repos\Windows-driver-samples\Wds3\_logs
-Overview report:      C:\Users\jakobl\source\repos\Windows-driver-samples\Wds3\_logs\_overview.htm
+Sporadic:             0
+Log files directory:  .\_logs
+Overview report:      .\_overview.htm
 ```
 
 # NuGet - Additional Notes
@@ -205,3 +196,18 @@ Follow following steps before running "nuget restore" command:
 * Open the .\Directory.build.props file and update the version and build of the package with the same values as in previous step.
 * Open .\Build-SampleSet and change the NuGet build number (used by .\exclusions.csv and for determining infverif flags)
 * Now you can run "nuget restore"
+
+To add an alternative online NuGet source:
+nuget sources add -Name "MyNuGetFeed" -Source https://nugetserver.com/_packaging/feedname/nuget/v3/index.json
+
+To add an alternative local NuGet source:
+nuget sources add -Name "MyNuGetFeed" -Source \\path\to\mylocalrepo
+
+To remove an alternative NuGet source:
+nuget sources remove -Name "MyNuGetFeed"
+
+To enumerate NuGet locals:
+nuget locals all -list
+
+To clear NuGet locals:
+nuget locals all -clear
