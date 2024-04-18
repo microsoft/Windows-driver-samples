@@ -191,23 +191,26 @@ Overview report:      .\_overview.htm
 
 To restore a specific version of our WDK NuGet packages:
 
-Follow following steps before running "nuget restore" command:
+Follow these steps before running "nuget restore" command:
 * Open the .\packages.config file and update the full version (including the branch if required) in all three entries.
 * Open the .\Directory.build.props file and update the version and build of the package with the same values as in previous step.
 * Open .\Build-SampleSet and change the NuGet build number (used by .\exclusions.csv and for determining infverif flags)
 * Now you can run "nuget restore"
 
-To add an alternative online NuGet source:
+A few examples of how to interact with nuget:
+```
+# To add an alternative online NuGet source:
 nuget sources add -Name "MyNuGetFeed" -Source https://nugetserver.com/_packaging/feedname/nuget/v3/index.json
 
-To add an alternative local NuGet source:
+# To add an alternative local NuGet source:
 nuget sources add -Name "MyNuGetFeed" -Source \\path\to\mylocalrepo
 
-To remove an alternative NuGet source:
+# To remove an alternative NuGet source:
 nuget sources remove -Name "MyNuGetFeed"
 
-To enumerate NuGet locals:
+# To enumerate NuGet locals:
 nuget locals all -list
 
-To clear NuGet locals:
+# To clear NuGet locals:
 nuget locals all -clear
+```
