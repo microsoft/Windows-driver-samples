@@ -30,13 +30,13 @@ reg add HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\StrongName\Verificatio
 
 When: This step is only required to build sample usb\usbview .
 
-### Option A: Use EWDK
-Easiest: If you use EWDK, then all necessary prequisites are included.
-
-### Option B: Install VS Components
-Almost as easy: If you will install Visual Studio (see later) you may at that point select to add both of following individual components:
+### Option A: Install VS Components
+Easy: If you will install Visual Studio (see later) you may at that point select to add both of following individual components:
 * .NET Framework 4.7.2 targeting pack
 * .NET Framework 4.8.1 SDK
+
+### Option B: Use EWDK
+Easy: If you use EWDK, then all necessary prequisites are included.
 
 ### Option C: Install Developer Pack
 
@@ -79,7 +79,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 
 ### Option A: Use WDK NuGet Packages
 * Note: This option is only available in pre-release form.
-* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete "Step 1".  You do not need to install the SDK or the WDK.
 * Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10 -> Download
 * Launch a "Developer Command Prompt for VS 2022".
 * Restore WDK packages from feed :
@@ -101,7 +101,7 @@ Microsoft.Windows.WDK.arm64.10.0.26095.2-preview.ge-release
 ```
 ### Option B: Use the Windows Driver Kit
 * Here you will install each of above prerequisites one at a time.
-* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions. 
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, SDK, and WDK.
 * Launch a "Developer Command Prompt for VS 2022".
 
 ### Option C: Use an Enterprise WDK
