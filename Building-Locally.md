@@ -14,7 +14,7 @@ winget install --id Microsoft.NuGet --source winget
 
 ## Step 2: Optional: Disable Strong Name Validation
 
-When: This step is required only if you will be using pre-release versions of the WDK.
+When: This step is only required if you will be using pre-release versions of the WDK.
 
 As per https://learn.microsoft.com/en-us/windows-hardware/drivers/installing-preview-versions-wdk :
 
@@ -28,7 +28,7 @@ reg add HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\StrongName\Verificatio
 
 ## Step 3: Optional: Install Microsoft .NET Framework 4.7.2 Targeting Pack and Microsoft .NET Framework 4.8.1 SDK
 
-When: This step is required only to build sample usb\usbview .
+When: This step is only required to build sample usb\usbview .
 
 ### Option A: Use EWDK
 Easiest: If you use EWDK, then all necessary prequisites are included.
@@ -77,21 +77,9 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * The Windows Software Development Kit.
 * The Windows Driver Kit.
 
-### Option A: Use the Windows Driver Kit
-* Here you will install each of above prerequisites one at a time.
-* See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions. 
-* Launch a "Developer Command Prompt for VS 2022".
-
-### Option B: Use an Enterprise WDK
-* You can also simply use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers that contains all prerequisites in one combined ISO.
-* Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
-* Mount ISO image
-* Open a terminal
-* `.\LaunchBuildEnv`
-
-### Option C: Use WDK NuGet Packages
+### Option A: Use WDK NuGet Packages
 * Note: This option is only available in pre-release form.
-* See [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but do not install the WDK or download the EWDK.
 * Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10 -> Download
 * Launch a "Developer Command Prompt for VS 2022".
 * Restore WDK packages from feed :
@@ -111,6 +99,18 @@ Microsoft.Windows.SDK.CPP.arm64.10.0.26095.2-preview.ge-release
 Microsoft.Windows.WDK.x64.10.0.26095.2-preview.ge-release
 Microsoft.Windows.WDK.arm64.10.0.26095.2-preview.ge-release
 ```
+### Option B: Use the Windows Driver Kit
+* Here you will install each of above prerequisites one at a time.
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions. 
+* Launch a "Developer Command Prompt for VS 2022".
+
+### Option C: Use an Enterprise WDK
+* You can also simply use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers that contains all prerequisites in one combined ISO.
+* Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
+* Mount ISO image
+* Open a terminal
+* `.\LaunchBuildEnv`
+
 
 ## Step 5: Check all samples builds with expected results for all flavors
 
