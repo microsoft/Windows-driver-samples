@@ -75,6 +75,10 @@
 /security/ @microsoft/platform-integrity
 /TrEE/ @microsoft/platform-integrity
 
+# PnP
+/general/DCHU/ @microsoft/pnp
+/setup/ @microsoft/pnp
+
 # Print
 /print/ @microsoft/core-print
 /wia/ @microsoft/core-print
