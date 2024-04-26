@@ -71,9 +71,9 @@
 /general/registry/ @microsoft/kernel-core
 
 # Network Driver Platform
-# /network/config/ @microsoft/network-driver-platform
-# /network/modem/ @microsoft/network-driver-platform
-# /network/ndis/ @microsoft/network-driver-platform
+/network/config/ @microsoft/network-driver-platform
+/network/modem/ @microsoft/network-driver-platform
+/network/ndis/ @microsoft/network-driver-platform
 
 # Network Security
 /network/trans/ @microsoft/netsec
