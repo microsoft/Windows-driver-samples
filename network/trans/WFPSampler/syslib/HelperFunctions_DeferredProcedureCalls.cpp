@@ -70,7 +70,7 @@
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPurge(_Inout_ DPC_DATA* pDPCData)
+VOID KrnlHlprDPCDataPurge(_Inout_ DPC_DATA* pDPCData)
 {
 #if DBG
 
@@ -111,7 +111,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppDPCData == 0)
-inline VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
+VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
 {
 #if DBG
 
@@ -155,7 +155,7 @@ inline VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
+VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_ CLASSIFY_DATA* pClassifyData,
                                     _In_opt_ INJECTION_DATA* pInjectionData, /* 0 */
                                     _In_opt_ VOID* pContext)                 /* 0 */
@@ -198,7 +198,7 @@ inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
+VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_ CLASSIFY_DATA* pClassifyData,
                                     _In_ PEND_DATA* pPendData,
                                     _In_opt_ VOID* pContext)           /* 0 */
@@ -243,7 +243,7 @@ inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
+VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_ CLASSIFY_DATA* pClassifyData,
                                     _In_ REDIRECT_DATA* pRedirectData,
                                     _In_opt_ VOID* pContext)           /* 0 */
@@ -287,7 +287,7 @@ inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
+VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_ NOTIFY_DATA* pNotifyData,
                                     _In_opt_ VOID* pContext)       /* 0 */
 {
@@ -328,7 +328,7 @@ inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
+VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_ PEND_DATA* pPendData,
                                     _In_opt_ VOID* pContext)    /* 0 */
 {

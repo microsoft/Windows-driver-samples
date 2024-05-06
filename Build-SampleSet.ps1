@@ -65,7 +65,7 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26066
+    $build_number=26095
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
@@ -97,19 +97,15 @@ else {
 #
 # Samples must build cleanly and even without warnings.
 #
-# For this branch we handle this with infverif exclusions.
+# An exception is for infverif where specific warnings are acceptable.  Those
+# specific warnings indicates issues intentially present in the samples, that
+# anyone that clones the samples must fix as part of productizing a driver.
+# 
+# In 22621 those warnings are: /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
+# 
+# After 22621 those warnings are put under a common flag: /samples
 #
-# In NI WDK the /msft flag excludes expected warnings.
-# This flag not to be used after NI.  Instead use /samples.
-#
-$InfVerif_AdditionalOptions=
-    (
-        $build_number -le 22621 ?
-        "/msft" :
-        "/samples /sw1199 /sw1204 /sw1208 /sw1233 /sw1402 /sw1423 /sw2084"
-    ) +
-    " " +
-    "/sw1203 /sw1205 /sw1296 /sw1324 /sw1420 /sw1421 /sw1422 /sw2083"
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
 
 #
 # Determine exclusions.  

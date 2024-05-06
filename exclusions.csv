@@ -1,12 +1,8 @@
 Path,Configurations,MinBuild,MaxBuild,Reason
-avstream\sampledevicemft,*|x64,26000,,Only GE: Only x64: Fails to build
-general\dchu\osrfx2_dchu_base,*|x64,,,Only x64: Wrong Toolset - needs migration
-general\dchu\osrfx2_dchu_extension_loose,*|x64,,,Only x64: Needs fix for project not found
-general\dchu\osrfx2_dchu_extension_tight,*|x64,,,Only x64: Wrong Toolset - needs migration
-general\filehistory,*|x64,,,Only x64: Deprecated APIs
-general\simplemediasource,Debug|arm64,,,Only Debug|arm64: LNK1181: cannot open input file 'SimpleMediaSource.lib'
-general\winhec 2017 lab\toaster support app,*|x64,,,Only x64: Needs input from end user
-network\trans\stmedit,Debug|x64,,,Only x64: Only Debug: Invalid architecture
-network\trans\wfpsampler,*|x64,,,Only x64: Missing libs
-tree,*|x64,,,Only x64: Missing headers
-video\indirectdisplay,*|arm64,,,Only arm64: Warning C4530: C++ exception handler used but unwind semantics are not enabled
+audio\acx\samples\audiocodec\driver,*,,22621,Only NI: error C1083: Cannot open include file: 'acx.h': No such file or directory
+general\dchu\osrfx2_dchu_extension_loose,*|x64,,22621,Only NI: Only x64: Fails to build
+general\dchu\osrfx2_dchu_extension_tight,*|x64,,22621,Only NI: Only x64: Fails to build
+network\trans\WFPSampler,Debug|ARM64,,22621,Only NI: Only ARM: Fails to build on EWDK 22621 with VS 17.1.5 - CallingConvention=StdCall not supported
+prm,*,,22621,Only NI: Not supported on NI.
+powerlimit\plclient,*,,22621,Only NI: Not supported on NI.
+powerlimit\plpolicy,*,,22621,Only NI: Not supported on NI.

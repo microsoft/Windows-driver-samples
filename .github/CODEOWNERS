@@ -6,3 +6,112 @@
 
 # Root files
 /* @microsoft/driver-samples-maintainers
+
+# Windows Implementation Library submodule
+/wil/ @microsoft/driver-samples-maintainers
+
+# Audio
+/audio/ @microsoft/windowsaudio
+
+# Bluetooth
+/bluetooth/ @microsoft/bluetooth
+
+# Camera Platform
+/avstream/ @microsoft/cameraplatdev
+/general/SimpleMediaSource/ @microsoft/cameraplatdev
+
+# Cellular Core
+/network/wwan/ @microsoft/cellcore
+/nfc/ @microsoft/cellcore
+
+# Connection Awareness
+/gnss/ @microsoft/connection-awareness
+/network/radio/ @microsoft/connection-awareness
+
+# Core Networking
+/network/wsk/ @microsoft/corenetworking
+
+# Consumer Storage
+/sd/ @microsoft/consumer-storage
+/smartcrd/ @microsoft/consumer-storage
+
+# Device Enumeration and Interconnect
+/gpio/ @microsoft/device-enumeration-and-interconnect
+/pofx/PEP/ @microsoft/device-enumeration-and-interconnect
+/prm/ @microsoft/device-enumeration-and-interconnect
+/wmi/wmiacpi/ @microsoft/device-enumeration-and-interconnect
+/general/SystemDma/ @microsoft/device-enumeration-and-interconnect
+
+# Display Kernel
+/video/ @microsoft/display-kernel-devs
+
+# Driver Development Supplemental Tools
+/tools/ @microsoft/windows-driver-developers-supplemental-tools-admins
+
+# Energy Efficiency
+/pofx/WDF/ @microsoft/ee-devs
+/powerlimit/ @microsoft/ee-devs
+/simbatt/ @microsoft/ee-devs
+/thermal/ @microsoft/ee-devs
+
+# Event Tracing for Windows
+/general/perfcounters/ @microsoft/etw
+/general/tracing/ @microsoft/etw
+
+# File Systems
+/filesys/cdfs/ @microsoft/filesystems
+/filesys/fastfat/ @microsoft/filesystems
+
+# Filter Manager
+/filesys/miniFilter/ @microsoft/filter-manager
+
+# Kernel Core
+/general/cancel/ @microsoft/kernel-core
+/general/event/ @microsoft/kernel-core
+/general/registry/ @microsoft/kernel-core
+
+# Network Driver Platform
+/network/config/ @microsoft/network-driver-platform
+/network/modem/ @microsoft/network-driver-platform
+/network/ndis/ @microsoft/network-driver-platform
+
+# Network Security
+/network/trans/ @microsoft/netsec
+
+# Platform Integrity
+/security/ @microsoft/platform-integrity
+/TrEE/ @microsoft/platform-integrity
+
+# PnP
+/general/DCHU/ @microsoft/pnp
+/setup/ @microsoft/pnp
+
+# Print
+/print/ @microsoft/core-print
+/wia/ @microsoft/core-print
+
+# Sensors Platform
+/sensors/ @microsoft/sensors-platform
+
+# Storage
+/storage/ @microsoft/storage-core
+
+# Windows Driver Framework (WDF) samples
+/general/echo/ @microsoft/coreos-buses-and-wdf
+/general/ioctl/ @microsoft/coreos-buses-and-wdf
+/general/pcidrv/ @microsoft/coreos-buses-and-wdf
+/general/PLX9x5x/ @microsoft/coreos-buses-and-wdf
+/general/toaster/ @microsoft/coreos-buses-and-wdf
+/hid/ @microsoft/coreos-buses-and-wdf
+/input/ @microsoft/coreos-buses-and-wdf
+/pofx/UMDF2/ @microsoft/coreos-buses-and-wdf
+/serial/ @microsoft/coreos-buses-and-wdf
+/spb/ @microsoft/coreos-buses-and-wdf
+/usb/ @microsoft/coreos-buses-and-wdf
+/wmi/wmisamp/ @microsoft/coreos-buses-and-wdf
+
+# Windows Internet of Things
+/pos/ @microsoft/winiotdev
+
+# Wi-Fi Core
+/network/wlan/ @microsoft/wi-fi-core

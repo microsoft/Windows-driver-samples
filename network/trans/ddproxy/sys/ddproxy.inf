@@ -21,22 +21,14 @@
    DDProxy.sys = 1,,
 
 [DestinationDirs]
-    DefaultDestDir      = 12                                               ; %WinDir%\System32\Drivers
-    DDProxy.DriverFiles = 12                                               ; %WinDir%\System32\Drivers
+    DDProxy.DriverFiles = 13                                               ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$]
     OptionDesc = %DDProxyServiceDesc%
     CopyFiles  = DDProxy.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.Services]
     AddService = %DDProxyServiceName%,,DDProxy.Service
-
-[DefaultUninstall]
-    DelFiles = DDProxy.DriverFiles
-
-[DefaultUninstall.Services]
-    DelService = %DDProxyServiceName%,0x200                                ; SPSVCINST_STOPSERVICE
-    DelReg     = DDProxy.DelRegistry
 
 [DDProxy.DriverFiles]
     DDProxy.sys,,,0x00000040                                               ; COPYFLG_OVERWRITE_OLDER_ONLY
@@ -47,15 +39,12 @@
     ServiceType   = 1                                                      ; SERVICE_KERNEL_DRIVER
     StartType     = 3                                                      ; SERVICE_DEMAND_START
     ErrorControl  = 1                                                      ; SERVICE_ERROR_NORMAL
-    ServiceBinary = %12%\DDProxy.sys                                       ; %WinDir%\System32\Drivers\DDProxy.sys
+    ServiceBinary = %13%\DDProxy.sys                                       ; %WinDir%\System32\Drivers\DDProxy.sys
     AddReg        = DDProxy.AddRegistry
 
 [DDProxy.AddRegistry]
     HKR,"Parameters","DestinationAddressToIntercept",0x00000000,"10.0.0.1" ; FLG_ADDREG_TYPE_SZ
     HKR,"Parameters","NewDestinationAddress",0x00000000,"10.0.0.2"         ; FLG_ADDREG_TYPE_SZ
-
-[DDProxy.DelRegistry]
-    HKR,"Parameters",,,
 
 [Strings]
     ProviderString     = "TODO-Set-Provider"
