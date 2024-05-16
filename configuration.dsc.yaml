@@ -4,19 +4,18 @@ properties:
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: vsPackage
       directives:
-        description: Install Visual Studio 2022 Community
+        description: Install Visual Studio Community 2022
         allowPrerelease: true
       settings:
         id: Microsoft.VisualStudio.2022.Community
         source: winget
-        useLatest: true
     - resource: Microsoft.VisualStudio.DSC/VSComponents
       id: vsComponents
       dependsOn:
         - vsPackage
       directives:
         description: Install required VS workloads
-        maxVersion: "1.0.21"
+        allowPrerelease: true
       settings:
         productId: Microsoft.VisualStudio.Product.Community
         channelId: VisualStudio.17.Release
@@ -43,7 +42,7 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
-          - Microsoft.VisualStudio.Component.Windows11SDK.22621
+          - Microsoft.VisualStudio.Component.Windows11SDK.26100
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: wdkPackage
       dependsOn:
@@ -52,9 +51,8 @@ properties:
         description: Install Windows Driver Kit
         allowPrerelease: true
       settings:
-        id: Microsoft.WindowsWDK.10.0.22621
+        id: Microsoft.WindowsWDK.10.0.26100
         source: winget
-        useLatest: true
     - resource: PSDscResources/Script
       id: wdkVsix
       dependsOn:
@@ -67,7 +65,7 @@ properties:
           return & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -property installationVersion
         SetScript: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products * -property enginePath | Join-Path -ChildPath 'VSIXInstaller.exe'
-          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.22621.0\WDK.vsix" }
+          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\WDK.vsix" }
         TestScript: |
           $versionString = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -Property installationVersion
           if (-not $versionString) { return $false }
