@@ -42,10 +42,21 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
-          - Microsoft.VisualStudio.Component.Windows11SDK.26100
+   
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: sdkPackage
+      dependsOn:
+        - vsComponents
+      directives:
+        description: Install Windows SDK
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsSDK.10.0.26100
+        source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: wdkPackage
       dependsOn:
+        - sdkPackage
         - vsComponents
       directives:
         description: Install Windows Driver Kit
@@ -65,7 +76,7 @@ properties:
           return & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -property installationVersion
         SetScript: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products * -property enginePath | Join-Path -ChildPath 'VSIXInstaller.exe'
-          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\WDK.vsix" }
+          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\amd64\WDK.vsix" }
         TestScript: |
           $versionString = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -Property installationVersion
           if (-not $versionString) { return $false }
