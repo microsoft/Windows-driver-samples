@@ -52,7 +52,7 @@ This will install following Apps:
 * Microsoft .NET Framework 4.8.1 Targeting Pack
 * Microsoft .NET Framework 4.8.1 Targeting Pack (ENU)
 
-## Step 3: Clone Windows Driver Samples and checkout relevant branch
+## Step 4: Clone Windows Driver Samples and checkout relevant branch
 
 ```
 cd path\to\your\repos
@@ -70,7 +70,7 @@ If you are planning to use a WDK Preview or WDK EEAP release, then you would typ
 git checkout develop
 ```
 
-## Step 4: Create a "driver build environment"
+## Step 5: Create a "driver build environment"
 
 To build the Windows Driver Samples you need a "driver build environment".  In essence an environment that consist of following prerequisites:
 * Visual Studio Build Tools including tools such as for example cl.exe and link.exe .
@@ -112,7 +112,7 @@ Microsoft.Windows.WDK.arm64.10.0.26095.2-preview.ge-release
 * `.\LaunchBuildEnv`
 
 
-## Step 5: Check all samples builds with expected results for all flavors
+## Step 6: Check all samples builds with expected results for all flavors
 
 ```
 pwsh
@@ -187,7 +187,7 @@ Log files directory:  .\_logs
 Overview report:      .\_overview.htm
 ```
 
-# NuGet - Additional Notes
+## 7: NuGet - Additional Notes
 
 To restore a specific version of our WDK NuGet packages:
 

@@ -66,7 +66,14 @@
 /filesys/miniFilter/ @microsoft/filter-manager
 
 # Kernel Core
+/general/cancel/ @microsoft/kernel-core
+/general/event/ @microsoft/kernel-core
 /general/registry/ @microsoft/kernel-core
+
+# Network Driver Platform
+/network/config/ @microsoft/network-driver-platform
+/network/modem/ @microsoft/network-driver-platform
+/network/ndis/ @microsoft/network-driver-platform
 
 # Network Security
 /network/trans/ @microsoft/netsec
@@ -74,6 +81,10 @@
 # Platform Integrity
 /security/ @microsoft/platform-integrity
 /TrEE/ @microsoft/platform-integrity
+
+# PnP
+/general/DCHU/ @microsoft/pnp
+/setup/ @microsoft/pnp
 
 # Print
 /print/ @microsoft/core-print
