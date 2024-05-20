@@ -76,7 +76,8 @@ properties:
           return & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -property installationVersion
         SetScript: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products * -property enginePath | Join-Path -ChildPath 'VSIXInstaller.exe'
-          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\amd64\WDK.vsix" }
+          $arch = $env:PROCESSOR_ARCHITECTURE  
+          if (Test-Path $path) { & $path /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\$arch\WDK.vsix" }
         TestScript: |
           $versionString = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products Microsoft.VisualStudio.Product.Community -requires Microsoft.Windows.DriverKit -Property installationVersion
           if (-not $versionString) { return $false }
