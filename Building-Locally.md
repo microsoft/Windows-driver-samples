@@ -80,7 +80,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 ### Option A: Use WDK NuGet Packages
 * Note: This option is only available in pre-release form.
 * See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete "Step 1".  You do not need to install the SDK or the WDK.
-* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26090.10 -> Download
+* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26100.0 -> Download
 * Launch a "Developer Command Prompt for VS 2022".
 * Restore WDK packages from feed :
 
@@ -93,11 +93,11 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
-Microsoft.Windows.SDK.CPP.10.0.26095.2-preview.ge-release
-Microsoft.Windows.SDK.CPP.x64.10.0.26095.2-preview.ge-release
-Microsoft.Windows.SDK.CPP.arm64.10.0.26095.2-preview.ge-release
-Microsoft.Windows.WDK.x64.10.0.26095.2-preview.ge-release
-Microsoft.Windows.WDK.arm64.10.0.26095.2-preview.ge-release
+Microsoft.Windows.SDK.CPP.10.0.26000.1
+Microsoft.Windows.SDK.CPP.x64.10.0.26000.1
+Microsoft.Windows.SDK.CPP.arm64.10.0.26000.1
+Microsoft.Windows.WDK.x64.10.0.26000.1
+Microsoft.Windows.WDK.arm64.10.0.26000.1
 ```
 ### Option B: Use the Windows Driver Kit
 * Here you will install each of above prerequisites one at a time.
@@ -145,7 +145,7 @@ Expected output:
 ```
 PS > .\build-AllSamples.ps1
 Build Environment:          NuGet
-Build Number:               26095
+Build Number:               26100
 Samples:                    132
 Configurations:             2 (Debug Release)
 Platforms:                  2 (x64 arm64)
