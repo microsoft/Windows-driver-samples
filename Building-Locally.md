@@ -78,7 +78,6 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * The Windows Driver Kit.
 
 ### Option A: Use WDK NuGet Packages
-* Note: This option is only available in pre-release form.
 * See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete "Step 1".  You do not need to install the SDK or the WDK.
 * Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).  Open Visual Studio -> Extensions -> Manage Extensions... -> Online -> Visual Studio Market Place -> Windows Driver Kit -> 10.0.26100.0 -> Download
 * Launch a "Developer Command Prompt for VS 2022".
@@ -106,7 +105,7 @@ Microsoft.Windows.WDK.arm64.10.0.26000.1
 
 ### Option C: Use an Enterprise WDK
 * You can also simply use the Enterprise WDK (EWDK), a standalone, self-contained command-line environment for building drivers that contains all prerequisites in one combined ISO.
-* Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to download the EWDK.
 * Mount ISO image
 * Open a terminal
 * `.\LaunchBuildEnv`
