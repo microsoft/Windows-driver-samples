@@ -65,7 +65,7 @@ if (-not $env:GITHUB_REPOSITORY -eq '') {
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26095
+    $build_number=26100
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
