@@ -42,14 +42,4 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: sdkPackage
-      dependsOn:
-        - vsComponents
-      directives:
-        description: Install Windows SDK
-        allowPrerelease: true
-      settings:
-        id: Microsoft.WindowsSDK.10.0.26100
-        source: winget
   configurationVersion: 0.2.0
