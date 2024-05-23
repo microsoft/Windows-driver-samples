@@ -151,6 +151,7 @@ Return Value
 {
     PSCANNER_NOTIFICATION notification;
     SCANNER_REPLY_MESSAGE replyMessage;
+    PSCANNER_MESSAGE message;
     LPOVERLAPPED pOvlp;
     BOOL result;
     DWORD outSize;
@@ -265,13 +266,12 @@ main (
 {
     DWORD requestCount = SCANNER_DEFAULT_REQUEST_COUNT;
     DWORD threadCount = SCANNER_DEFAULT_THREAD_COUNT;
-    HANDLE threads[SCANNER_MAX_THREAD_COUNT];
+    HANDLE threads[SCANNER_MAX_THREAD_COUNT] = { NULL };
     SCANNER_THREAD_CONTEXT context;
     HANDLE port, completion;
     PSCANNER_MESSAGE messages;
     DWORD threadId;
     HRESULT hr;
-    DWORD i, j;
 
     //
     //  Check how many threads and per thread requests are desired.
@@ -355,7 +355,7 @@ main (
     //  Create specified number of threads.
     //
 
-    for (i = 0; i < threadCount; i++) {
+    for (DWORD i = 0; i < threadCount; i++) {
         
         threads[i] = CreateThread( NULL,
                                    0,
@@ -375,7 +375,7 @@ main (
             goto main_cleanup;
         }
 
-        for (j = 0; j < requestCount; j++) {
+        for (DWORD j = 0; j < requestCount; j++) {
         
             PSCANNER_MESSAGE msg = &(messages[i * requestCount + j]);
 
@@ -397,11 +397,13 @@ main (
     }
 
     hr = S_OK;
-
-    WaitForMultipleObjectsEx( i, threads, TRUE, INFINITE, FALSE );
     
 main_cleanup:
 
+    for (INT i = 0; threads[i] != NULL; ++i) {
+        WaitForSingleObjectEx(threads[i], INFINITE, FALSE);
+    }
+    
     printf( "Scanner:  All done. Result = 0x%08x\n", hr );
 
     CloseHandle( port );
