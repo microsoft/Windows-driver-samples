@@ -42,6 +42,8 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
+          - Microsoft.Net.Component.4.7.2.TargetingPack
+          - Microsoft.Net.Component.4.8.1.SDK
    
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: sdkPackage
