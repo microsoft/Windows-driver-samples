@@ -343,7 +343,7 @@ main (
     //  Allocate messages.
     //
 
-    messages = malloc(sizeof(SCANNER_MESSAGE) * threadCount * requestCount);
+    messages = calloc(threadCount * requestCount, sizeof(SCANNER_MESSAGE));
 
     if (messages == NULL) {
 
