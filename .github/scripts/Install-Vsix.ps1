@@ -36,7 +36,7 @@ if (-not (TestWdkVsix)) {
     Invoke-WebRequest -Uri "$uri" -OutFile wdk.vsix
     "Finished downloading."
     "Starting install process. This will take some time to complete..."
-    Start-Process vsixinstaller -ArgumentList "/f /q .\wdk.vsix" -wait
+    Start-Process vsixinstaller -ArgumentList "/f /q /sp .\wdk.vsix" -wait
     "The install process has finished."
     "Checking the WDK.vsix version installed..."
     if (TestWdkVsix) {
