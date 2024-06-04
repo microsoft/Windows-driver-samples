@@ -9,6 +9,17 @@ param(
 )
 
 $root = Get-Location
+
+# launch developer powershell (if necessary)
+if (-not $env:VSCMD_VER) {
+    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
+    cd $root
+}
+
+# source environment variables
+. .\.github\scripts\Env-Vars.ps1
+
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 
@@ -56,16 +67,16 @@ $build_number=0
 #
 # Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
 #
-if (-not $env:GITHUB_REPOSITORY -eq '') {
+if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
-    $build_number=22621
+    $build_number=$env:SAMPLES_BUILD_NUMBER
 }
 #
 # Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26100
+    $build_number=$env:SAMPLES_BUILD_NUMBER
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
@@ -153,8 +164,12 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
+# set vsix version
+$wdk_vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+
 Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
+Write-Output ("WDK VSIX Version:           " + $wdk_vsix_version)
 Write-Output ("Samples:                    " + $sampleSet.Count)
 Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
