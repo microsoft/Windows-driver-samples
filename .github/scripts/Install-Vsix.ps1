@@ -22,7 +22,7 @@ $uri = $env:SAMPLES_VSIX_URI
 
 function PrintWdkVsix {
     $installed = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
-    "WDK Vsix Version: $isntalled"
+    "WDK Vsix Version: $installed"
 }
 
 function TestWdkVsix {
