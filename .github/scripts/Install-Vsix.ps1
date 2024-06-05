@@ -20,7 +20,7 @@ if (-not $env:VSCMD_VER) {
 }
 
 # source environment variables
-. .\.github\scripts\Env-Vars.ps1
+. .\Env-Vars.ps1
 
 $version = $env:SAMPLES_VSIX_VERSION
 $uri = $env:SAMPLES_VSIX_URI

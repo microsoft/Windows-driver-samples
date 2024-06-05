@@ -18,7 +18,7 @@ if (-not $env:VSCMD_VER) {
 }
 
 # source environment variables
-. .\.github\scripts\Env-Vars.ps1
+. .\Env-Vars.ps1
 
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
