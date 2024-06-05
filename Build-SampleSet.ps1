@@ -164,12 +164,8 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-# set vsix version
-$wdk_vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
-
 Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
-Write-Output ("WDK VSIX Version:           " + $wdk_vsix_version)
 Write-Output ("Samples:                    " + $sampleSet.Count)
 Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")

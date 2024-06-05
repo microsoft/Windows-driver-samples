@@ -38,7 +38,7 @@ jobs:
           submodules: 'recursive'
 
       - name: Install WDK VSIX
-        run: .\.github\scripts\Install-Vsix.ps1
+        run: .\.github\scripts\Install-Vsix.ps1 -optimize:$true
 
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
