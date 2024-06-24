@@ -9,6 +9,17 @@ param(
 )
 
 $root = Get-Location
+
+# launch developer powershell (if necessary)
+if (-not $env:VSCMD_VER) {
+    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
+    cd $root
+}
+
+# source environment variables
+. .\Env-Vars.ps1
+
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 
@@ -51,21 +62,20 @@ finally {
 $build_environment=""
 $build_number=0
 #
-# WDK NuGet will require presence of a folder 'packages'
+# In Github we build using Nuget only and source version from repo .\Env-Vars.ps1.
 #
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-if (-not $env:GITHUB_REPOSITORY -eq '') {
+if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
-    $build_number=22621
+    $build_number=$env:SAMPLES_BUILD_NUMBER
 }
+#
+# WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
 #
 # Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
 #
 elseif(Test-Path(".\packages")) {
     $build_environment=("NuGet")
-    $build_number=26100
+    $build_number=$env:SAMPLES_BUILD_NUMBER
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.

@@ -32,31 +32,31 @@ jobs:
         language: [ 'cpp' ]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        packs: microsoft/windows-drivers
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      - name: Install WDK VSIX
+        run: .\.github\scripts\Install-Vsix.ps1 -optimize:$true
 
-    - name: Retrieve and build all available solutions
-      run: |
-          .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
-      env:
-        WDS_Configuration: Debug
-        WDS_Platform: x64
-        WDS_WipeOutputs: ${{ true }}
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
 
-    - name: Perform CodeQL analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
-    
-  
-      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          packs: microsoft/windows-drivers
+
+      - name: Retrieve and build all available solutions
+        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+        env:
+          WDS_Configuration: Debug
+          WDS_Platform: x64
+          WDS_WipeOutputs: ${{ true }}
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
