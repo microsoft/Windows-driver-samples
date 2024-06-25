@@ -164,12 +164,23 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Build Environment:          " + $build_environment)
-if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) {
-    Write-Output ("Nuget Package Version:      " + $nuget_package_version)
+# Find vsix version either from env variabel or from packages
+$vsix_version = $env:SAMPLES_VSIX_VERSION
+if (-not $vsix_version) {
+    $vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+    if ($vsix_version) {
+        $vsix_version = $vsix_version.split('=')[1]
+    }
+    else {
+        Write-Error "No version for the WDK VSIX could be found. The WDK VSIX is not installed."
+        exit 1
+    }
 }
-Write-Output ("WDK VSIX Version:           " + ($env:SAMPLES_VSIX_VERSION) ? $env:SAMPLES_VSIX_VERSION : (ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name).split('=')[1])
+
+Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
+if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { Write-Output ("Nuget Package Version:      " + $nuget_package_version) }
+Write-Output ("WDK VSIX Version:           " + $vsix_version)
 Write-Output ("Samples:                    " + $sampleSet.Count)
 Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
