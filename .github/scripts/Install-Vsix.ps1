@@ -1,68 +1,38 @@
 <#
 
 .SYNOPSIS
-Checks WDK vsix version and downloads and installs as necessary.
+Download and install the latest WDK VSIX.
 
 #>
 
-[CmdletBinding()]
-param(
-    [bool]$optimize = $false
-)
+# set uri by resolving amd64 vsix
+$uri = "https://marketplace.visualstudio.com$((Invoke-WebRequest -Uri "https://marketplace.visualstudio.com/items?itemName=DriverDeveloperKits-WDK.WDKVsix").Links | Where-Object outerHTML -like '*(amd64)*' | select -expand href)"
 
-$root = Get-Location
+# set download version
+$uri_version = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($uri).Value
 
-# launch developer powershell (if necessary)
-if (-not $env:VSCMD_VER) {
-    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
-    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
-    cd $root
+# set msbuild path
+$msbuild_path = (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\MSBuild\")
+
+# download vsix, expand, and store the downloaded version extracted from the extension manifest
+"Downloading WDK VSIX version: $uri_version..."
+Invoke-WebRequest -Uri "$uri" -OutFile wdk.zip
+"Expanding WDK VSIX archive..."
+Expand-Archive ".\wdk.zip" .\
+"Extracting version from manifest..."
+$downloaded_version = ([xml](Get-Content .\extension.vsixmanifest)).PackageManifest.Metadata.Identity.Version
+"Downloaded WDK VSIX version: $downloaded_version"
+
+# copy msbuild files, extension manifest, and check installed version from the extension manifest
+"Copying WDK extension files to build path..."
+cp (".\`$MSBuild\*", ".\extension.vsixmanifest") "$msbuild_path" -Recurse -Force
+"Extracting version from copied manifest..."
+$installed_version = ([xml](Get-Content ${msbuild_path}\extension.vsixmanifest)).PackageManifest.Metadata.Identity.Version
+"Installed WDK VSIX Version: $installed_version"
+if (-not ("$downloaded_version" -eq "$installed_version")) { 
+    "WDK VSIX installation failed due to version mismatch"
+    exit 1
 }
 
-# source environment variables
-. .\Env-Vars.ps1
-
-$version = $env:SAMPLES_VSIX_VERSION
-$uri = $env:SAMPLES_VSIX_URI
-
-function PrintWdkVsix {
-    $installed = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
-    "WDK Vsix Version: $installed"
-}
-
-function TestWdkVsix {
-    Test-Path "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=$version"
-}
-
-if ($optimize) {
-    "---> Downloading vsix and configuring build environment..."
-    Invoke-WebRequest -Uri "$uri" -OutFile wdk.zip
-    Expand-Archive ".\wdk.zip" .\
-    cp ".\`$MSBuild\*" (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\MSBuild\") -Recurse -Force
-    "<--- Finished"
-}
-else {
-    "Getting installed WDK vsix..."
-    PrintWdkVsix
-    "Checking the WDK.vsix version installed..."
-    if (-not (TestWdkVsix)) {
-        "The correct WDK vsix is not installed."
-        "Will attempt to download and install now..."
-        Invoke-WebRequest -Uri "$uri" -OutFile wdk.vsix
-        "Finished downloading."
-        "Starting install process. This will take some time to complete..."
-        Start-Process vsixinstaller -ArgumentList "/f /q /sp .\wdk.vsix" -wait
-        "The install process has finished."
-        "Checking the WDK.vsix version installed..."
-        if (TestWdkVsix) {
-            PrintWdkVsix
-            "The WDK vsix version is OK"
-        }
-        else {
-            "The WDK vsix install FAILED"
-            Write-Host "`u{274C} wdk vsix install had an issue"
-            Write-Error "the wdk vsix cannot be installed at this time"
-            exit 1
-        }
-    }
-}
+# set github environment variable for vsix version
+"SAMPLES_VSIX_VERSION=$installed_version" | Out-File -FilePath "$env:GITHUB_ENV" -Append
