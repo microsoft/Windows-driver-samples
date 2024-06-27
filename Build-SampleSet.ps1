@@ -55,17 +55,21 @@ finally {
 #
 # Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
+# Determine NuGet package version (if applicable).
+# Determine WDK vsix version.
 #
 $build_environment=""
 $build_number=0
 $nuget_package_version=0
+$vsix_version=""
 #
-# In Github we build using Nuget only and source version from repo .\Env-Vars.ps1.
+# In Github we build using NuGet and get the version from packages and vsix version from env var set from the install vsix step.
 #
 if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
     $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
     $build_number=$nuget_package_version.split('.')[2]
+    $vsix_version = $env:SAMPLES_VSIX_VERSION
 }
 #
 # WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
@@ -102,7 +106,19 @@ else {
     Write-Error "Could not determine build environment."
     exit 1
 }
-
+#
+# Get the vsix version from packages if not set
+if (-not $vsix_version) {
+    $vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+    if ($vsix_version) {
+        $vsix_version = $vsix_version.split('=')[1]
+    }
+    else {
+        Write-Error "No version of the WDK VSIX could be found. The WDK VSIX is not installed."
+        exit 1
+    }
+}
+#
 #
 # InfVerif_AdditionalOptions
 #
@@ -163,19 +179,6 @@ $jresult = @{
 }
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
-
-# Find vsix version either from env variabel or from packages
-$vsix_version = $env:SAMPLES_VSIX_VERSION
-if (-not $vsix_version) {
-    $vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
-    if ($vsix_version) {
-        $vsix_version = $vsix_version.split('=')[1]
-    }
-    else {
-        Write-Error "No version for the WDK VSIX could be found. The WDK VSIX is not installed."
-        exit 1
-    }
-}
 
 Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
