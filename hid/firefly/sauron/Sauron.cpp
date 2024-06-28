@@ -445,7 +445,7 @@ HRESULT CSauron::WzToColor(const WCHAR *pwszColor, COLORREF *pcrColor)
         return E_POINTER;
     }
 
-    if (0 == lstrlenW(pwszColor))
+    if (0 == wcslen(pwszColor))
     {
         //Empty color string passed in
         return E_INVALIDARG;
@@ -457,7 +457,7 @@ HRESULT CSauron::WzToColor(const WCHAR *pwszColor, COLORREF *pcrColor)
         return E_POINTER;
     }
 
-    if (lstrlenW(pwszColor) != 7)
+    if (wcslen(pwszColor) != 7)
     {
         //hex color string is not of the correct length
         return E_INVALIDARG;
@@ -534,5 +534,3 @@ inline DWORD CSauron::SwapBytes(DWORD dwRet)
 {
     return ((dwRet & 0x0000FF00) | ((dwRet & 0x00FF0000) >> 16) | ((dwRet & 0x000000FF) << 16));
 }
-
-

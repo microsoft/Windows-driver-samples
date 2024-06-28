@@ -1,10 +1,10 @@
 <Project>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="10.0.26074.1000-preview.ge-release-sigma" Condition="'$(Platform)' == 'x64'"/>
-    <PackageReference Include="Microsoft.Windows.WDK.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" Condition="'$(Platform)' == 'ARM64'"/>
-    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="10.0.26074.1000-preview.ge-release-sigma" Condition="'$(Platform)' == 'x64'"/>
-    <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26074.1000-preview.ge-release-sigma" Condition="'$(Platform)' == 'ARM64'"/>
-    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26074.1000-preview.ge-release-sigma" />
+    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="10.0.26100.1" Condition="'$(Platform)' == 'x64'"/>
+    <PackageReference Include="Microsoft.Windows.WDK.arm64" Version="10.0.26100.1" Condition="'$(Platform)' == 'ARM64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="10.0.26100.1" Condition="'$(Platform)' == 'x64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26100.1" Condition="'$(Platform)' == 'ARM64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26100.1" />
   </ItemGroup>
 
   <!-- https://github.com/dotnet/NuGet.BuildTasks/issues/154 -->
