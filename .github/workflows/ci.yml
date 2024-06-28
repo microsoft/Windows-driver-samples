@@ -22,12 +22,14 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v2
+      - name: Install WDK VSIX
+        run: .\.github\scripts\Install-Vsix.ps1
+
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
 
       - name: Retrieve and build all available solutions
-        run: |
-          .\Build-AllSamples.ps1 -Verbose
+        run: .\Build-AllSamples.ps1 -Verbose
         env:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
@@ -56,8 +58,7 @@ jobs:
           path: _logs
 
       - name: Join and generate global reports
-        run: |
-          .\.github\scripts\Join-CsvReports.ps1
+        run: .\.github\scripts\Join-CsvReports.ps1
 
       - name: Archive global overview build reports
         uses: actions/upload-artifact@v3
