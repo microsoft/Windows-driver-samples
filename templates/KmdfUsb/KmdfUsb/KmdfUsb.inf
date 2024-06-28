@@ -1,0 +1,70 @@
+;
+; KmdfUsb.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=USBDevice
+ClassGuid={88BAE032-5A81-49f0-BC3D-A4FF138216D6}
+Provider=%ManufacturerName%
+CatalogFile=KmdfUsb.cat
+DriverVer=
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KmdfUsb.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%KmdfUsb.DeviceDesc%=KmdfUsb_Device, USB\VID_vvvv&PID_pppp
+
+[KmdfUsb_Device.NT]
+CopyFiles=File_Copy
+
+[File_Copy]
+KmdfUsb.sys
+
+[KmdfUsb_Device.NT.HW]
+AddReg=KmdfUsb_AddReg
+
+[KmdfUsb_AddReg]
+; By default, USBDevice class uses iProduct descriptor to name the device
+; Uncomment for this device to use %KmdfUsb.DeviceDesc%
+;HKR,,FriendlyName,,%KmdfUsb.DeviceDesc%
+
+;-------------- Service installation
+[KmdfUsb_Device.NT.Services]
+AddService = KmdfUsb,%SPSVCINST_ASSOCSERVICE%, KmdfUsb_Service_Inst
+
+; -------------- KmdfUsb driver install sections
+[KmdfUsb_Service_Inst]
+DisplayName    = %KmdfUsb.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\KmdfUsb.sys
+
+[KmdfUsb_Device.NT.Wdf]
+KmdfService =  KmdfUsb, KmdfUsb_wdfsect
+
+[KmdfUsb_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "KmdfUsb Installation Disk"
+KmdfUsb.DeviceDesc = "KmdfUsb Device"
+KmdfUsb.SVCDESC = "KmdfUsb Service"
