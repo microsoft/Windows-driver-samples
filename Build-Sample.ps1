@@ -138,14 +138,6 @@ if (-not $configurationIsSupported)
 }
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
-<<<<<<< HEAD
-msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
-if ($env:WDS_WipeOutputs -ne $null)
-{
-    Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
-    Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
-    Get-ChildItem -path $Directory -Recurse -Include arm64|Remove-Item -Recurse
-=======
 
 $myexit=0
 
@@ -160,7 +152,7 @@ for ($i=0; $i -le 2; $i++) {
     $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
     $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
 
-    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
     if ($env:WDS_WipeOutputs -ne $null)
     {
         Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
@@ -193,7 +185,6 @@ for ($i=0; $i -le 2; $i++) {
             Write-Warning "`u{274C} Build failed. Retrying to see if sporadic..."
         }
     }
->>>>>>> main
 }
 
 if ($myexit -eq 1)
