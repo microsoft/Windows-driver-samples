@@ -4,19 +4,18 @@ properties:
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: vsPackage
       directives:
-        description: Install Visual Studio Community 2022
+        description: Install Visual Studio 2022 Community
         allowPrerelease: true
       settings:
         id: Microsoft.VisualStudio.2022.Community
         source: winget
+        useLatest: true
     - resource: Microsoft.VisualStudio.DSC/VSComponents
       id: vsComponents
       dependsOn:
         - vsPackage
       directives:
-        description: Install required VS workloads
-        maxVersion: "1.0.15"
-        allowPrerelease: true
+        description: Install required VS workloads and components
       settings:
         productId: Microsoft.VisualStudio.Product.Community
         channelId: VisualStudio.17.Release

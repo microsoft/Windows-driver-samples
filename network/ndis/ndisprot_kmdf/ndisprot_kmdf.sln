@@ -19,8 +19,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
 		Release|ARM64 = Release|ARM64
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -37,26 +35,14 @@ Global
 		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Release|ARM64.Build.0 = Release|ARM64
 		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Release|ARM64.ActiveCfg = Release|ARM64
 		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Release|ARM64.Build.0 = Release|ARM64
-		{346D9284-B69E-40A5-9584-084D7BE578B2}.Debug|Win32.ActiveCfg = Debug|Win32
-		{346D9284-B69E-40A5-9584-084D7BE578B2}.Debug|Win32.Build.0 = Debug|Win32
-		{346D9284-B69E-40A5-9584-084D7BE578B2}.Release|Win32.ActiveCfg = Release|Win32
-		{346D9284-B69E-40A5-9584-084D7BE578B2}.Release|Win32.Build.0 = Release|Win32
 		{346D9284-B69E-40A5-9584-084D7BE578B2}.Debug|x64.ActiveCfg = Debug|x64
 		{346D9284-B69E-40A5-9584-084D7BE578B2}.Debug|x64.Build.0 = Debug|x64
 		{346D9284-B69E-40A5-9584-084D7BE578B2}.Release|x64.ActiveCfg = Release|x64
 		{346D9284-B69E-40A5-9584-084D7BE578B2}.Release|x64.Build.0 = Release|x64
-		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Debug|Win32.Build.0 = Debug|Win32
-		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Release|Win32.ActiveCfg = Release|Win32
-		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Release|Win32.Build.0 = Release|Win32
 		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Debug|x64.ActiveCfg = Debug|x64
 		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Debug|x64.Build.0 = Debug|x64
 		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Release|x64.ActiveCfg = Release|x64
 		{E92C4A1E-396E-4CAF-A5DB-44901F07C515}.Release|x64.Build.0 = Release|x64
-		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Debug|Win32.Build.0 = Debug|Win32
-		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Release|Win32.ActiveCfg = Release|Win32
-		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Release|Win32.Build.0 = Release|Win32
 		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Debug|x64.ActiveCfg = Debug|x64
 		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Debug|x64.Build.0 = Debug|x64
 		{D01AA8E0-4817-4C0F-BDD7-B367F1A4B680}.Release|x64.ActiveCfg = Release|x64

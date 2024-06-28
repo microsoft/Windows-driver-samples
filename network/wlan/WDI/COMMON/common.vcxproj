@@ -21,7 +21,7 @@
   <PropertyGroup Label="PropertySheets">
     <ConversionToolVersion>1.0</ConversionToolVersion>
     <BUILD_ALT_DIR>$(Configuration.Replace(' ',''))</BUILD_ALT_DIR>
-    <IntDir Condition="'$(Platform)'!='Win32'">$(BUILD_ALT_DIR)\$(Platform)\</IntDir>
+    <IntDir>$(BUILD_ALT_DIR)\$(Platform)\</IntDir>
     <OutDir>$(SolutionDir)COMMON\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <ImportGroup Label="PreConfiguration">
@@ -29,10 +29,6 @@
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{956B060D-1055-4584-9CF4-9FE14C428545}</ProjectGuid>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|Win32'">
-    <TargetVersion>Win8</TargetVersion>
-    <UseDebugLibraries>True</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
