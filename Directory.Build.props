@@ -1,7 +1,21 @@
 <Project>
-<Import Project="packages\Microsoft.Windows.WDK.x64.10.0.26100.1\build\native\Microsoft.Windows.WDK.x64.props" Condition="Exists('packages\Microsoft.Windows.WDK.x64.10.0.26100.1\build\native\Microsoft.Windows.WDK.x64.props') and '$(Platform)' == 'x64'"/>
-<Import Project="packages\Microsoft.Windows.WDK.arm64.10.0.26100.1\build\native\Microsoft.Windows.WDK.arm64.props" Condition="Exists('packages\Microsoft.Windows.WDK.arm64.10.0.26100.1\build\native\Microsoft.Windows.WDK.arm64.props') and '$(Platform)' == 'ARM64'"/>
-<Import Project="packages\Microsoft.Windows.SDK.CPP.x64.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.x64.props" Condition="Exists('packages\Microsoft.Windows.SDK.CPP.x64.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.x64.props') and '$(Platform)' == 'x64'"/>
-<Import Project="packages\Microsoft.Windows.SDK.CPP.arm64.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.arm64.props" Condition="Exists('packages\Microsoft.Windows.SDK.CPP.arm64.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.arm64.props') and '$(Platform)' == 'ARM64'"/>
-<Import Project="packages\Microsoft.Windows.SDK.CPP.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.props" Condition="Exists('packages\Microsoft.Windows.SDK.CPP.10.0.26100.1\build\native\Microsoft.Windows.SDK.cpp.props')"/>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="10.0.26100.1" Condition="'$(Platform)' == 'x64'"/>
+    <PackageReference Include="Microsoft.Windows.WDK.arm64" Version="10.0.26100.1" Condition="'$(Platform)' == 'ARM64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="10.0.26100.1" Condition="'$(Platform)' == 'x64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.arm64" Version="10.0.26100.1" Condition="'$(Platform)' == 'ARM64'"/>
+    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="10.0.26100.1" />
+  </ItemGroup>
+
+  <!-- https://github.com/dotnet/NuGet.BuildTasks/issues/154 -->
+  <!-- Enable NuGet TargetMonikers fallback to vcxproj. https://github.com/japj/CppWithNuGetPackageReference/blob/master/Directory.Build.props -->
+  <PropertyGroup>
+    <_NuGetTargetFallbackMoniker>$(_NuGetTargetFallbackMoniker);native,Version=v0.0</_NuGetTargetFallbackMoniker>
+  </PropertyGroup>
+
+  <!-- TODO: For msbuild /t:restore: I had to install '.NET SDK' individual component.  See https://developercommunity.visualstudio.com/t/Unable-to-compile-PackageReference-solut/10593889?sort=active&topics=windows+10.0 -->
+
+  <!-- TODO: Sample network\ndis\filter is broken as it reads $(_NT_TARGET_VERSION) but that is not set early enough with PackageReference -->
+
+  <!-- Should this file be renamed to Directory.packages.props ?? -->
 </Project>

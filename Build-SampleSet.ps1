@@ -74,10 +74,7 @@ if ($env:GITHUB_REPOSITORY) {
 #
 # WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
 #
-# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named '.\packages'. 
-#       Further, we need to test that the directory has been hydrated using '.\packages\*'.
-#
-elseif(Test-Path(".\packages\*")) {
+elseif(Test-Path(".\Directory.Build.props")) {
     $build_environment=("NuGet")
     $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
     $build_number=$nuget_package_version.split('.')[2]
