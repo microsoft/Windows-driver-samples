@@ -2575,6 +2575,8 @@ Return Value:
 --*/
 
 {
+    PAGED_CODE();
+    
     try {
     
         FatSetFileSizeInDirent( IrpContext, Fcb, AlternativeFileSize );
