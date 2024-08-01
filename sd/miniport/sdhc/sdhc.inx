@@ -73,7 +73,7 @@ HKR,,UINumberDescFormat,,%SDHCSlot%
 HKR,,Driver,,"sdhc.sys"
 
 [SDHCServiceReg]
-HKR,,BootFlags,0x00010003,0x00000008
+HKR,Parameters,BootFlags,0x00010003,0x00000008
 HKR,Parameters,SdCmdFlags,1,    05,01, 06,01, 08,11, 09,19, 0A,19, 0D,11, \
                                 10,01, 11,01, 12,01, 17,01, 18,05, 19,05, \
                                 1A,01, 1B,01, 1C,01, \
