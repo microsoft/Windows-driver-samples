@@ -5,7 +5,7 @@ Signature="$Windows NT$"
 Class=SDHost
 ClassGUID={a0a588a4-c46f-4b37-b7ea-c82fe89870c6}
 Provider=%ProviderString%
-DriverVer=04/02/2015,10.0.10053
+DriverVer=04/02/2015,10.0.10053.0
 CatalogFile=sdhc.cat
 PnpLockdown=1
 
@@ -16,9 +16,9 @@ PnpLockdown=1
 sdhc.sys = 1
 
 [Manufacturer]
-%Generic%=Generic,NT$ARCH$
-%TED%=TED,NT$ARCH$
-%VIA%=VIA,NT$ARCH$
+%Generic%=Generic,NT$ARCH$.10.0...25398
+%TED%=TED,NT$ARCH$.10.0...25398
+%VIA%=VIA,NT$ARCH$.10.0...25398
 
 [ControlFlags]
 ExcludeFromSelect=*
@@ -27,7 +27,7 @@ ExcludeFromSelect=*
 ; Generic Device
 ;
 
-[Generic.NT$ARCH$]
+[Generic.NT$ARCH$.10.0...25398]
 %PCI\CC_080500.DeviceDesc%=SDHost, PCI\CC_080500
 %PCI\CC_080501.DeviceDesc%=SDHost, PCI\CC_080501
 %ACPI\PNP0D40.DeviceDesc%=SDHost, ACPI\PNP0D40
@@ -42,10 +42,10 @@ ExcludeFromSelect=*
 ; %<SpecificID...>%
 ;
 
-[TED.NT$ARCH$]
+[TED.NT$ARCH$.10.0...25398]
 %PCI\VEN_1679&DEV_3000.DeviceDesc%=SDHost, PCI\VEN_1679&DEV_3000
 
-[VIA.NT$ARCH$]
+[VIA.NT$ARCH$.10.0...25398]
 %PCI\VEN_1106&DEV_365B.DeviceDesc%=SDHost, PCI\VEN_1106&DEV_365B
 %PCI\VEN_1106&DEV_401B.DeviceDesc%=SDHost, PCI\VEN_1106&DEV_401B
 %PCI\VEN_1106&DEV_95D0.DeviceDesc%=SDHost, PCI\VEN_1106&DEV_95D0
@@ -60,6 +60,7 @@ StartType      = %SERVICE_DEMAND_START%
 ErrorControl   = %SERVICE_ERROR_NORMAL%
 ServiceBinary  = %12%\sdhc.sys
 LoadOrderGroup = System Bus Extender
+BootFlags      = 0x00000008
 AddReg         = SDHCServiceReg
 
 ;
@@ -73,7 +74,6 @@ HKR,,UINumberDescFormat,,%SDHCSlot%
 HKR,,Driver,,"sdhc.sys"
 
 [SDHCServiceReg]
-HKR,,BootFlags,0x00010003,0x00000008
 HKR,Parameters,SdCmdFlags,1,    05,01, 06,01, 08,11, 09,19, 0A,19, 0D,11, \
                                 10,01, 11,01, 12,01, 17,01, 18,05, 19,05, \
                                 1A,01, 1B,01, 1C,01, \
