@@ -62,7 +62,6 @@ DEFINE_GUID(SIMBATT_DEVINTERFACE_GUID,
 #define IOCTL_SIMBATT_SET_UNIQUE_ID                     SIMBATT_IOCTL(0x809)
 #define IOCTL_SIMBATT_GET_MAXCHARGINGCURRENT            SIMBATT_IOCTL(0x810)
 #define SIMBATT_RATE_CALCULATE                          0x7fffffff
-#define MAX_SUPPORTED_SIMBATT_CHILDREN                  20
 
 //------------------------------------------------------------------- Data Types
 
