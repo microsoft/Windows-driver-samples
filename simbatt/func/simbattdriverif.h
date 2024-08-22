@@ -62,33 +62,3 @@ DEFINE_GUID(SIMBATT_DEVINTERFACE_GUID,
 #define IOCTL_SIMBATT_SET_UNIQUE_ID                     SIMBATT_IOCTL(0x809)
 #define IOCTL_SIMBATT_GET_MAXCHARGINGCURRENT            SIMBATT_IOCTL(0x810)
 #define SIMBATT_RATE_CALCULATE                          0x7fffffff
-
-//------------------------------------------------------------------- Data Types
-
-//
-//  Data structure used in PlugIn and UnPlug ioctls
-//
-
-
-typedef struct _BATTBUS_UNPLUG_HARDWARE
-{
-    //
-    // size of this type
-    //
-
-    ULONG Size;
-
-    //
-    // Serial number of the device to be unplugged.
-    //
-
-    ULONG SerialNo;
-
-    //
-    // Must not be referenced used.
-    //
-
-    ULONG Reserved[2];
-
-} BATTBUS_UNPLUG_HARDWARE, *PBATTBUS_UNPLUG_HARDWARE;
-
