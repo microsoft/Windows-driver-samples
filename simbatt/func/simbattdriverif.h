@@ -26,20 +26,6 @@ Abstract:
 //------------------------------------------------------------------ Definitions
 
 //
-// Battery bus driver interface
-//
-
-// {780AC894-01FF-4b5e-B4C8-9C00709200EB}
-DEFINE_GUID(BATTBUS_DEVINTERFACE_GUID,
-    0x780ac894, 0x1ff, 0x4b5e, 0xb4, 0xc8, 0x9c, 0x0, 0x70, 0x92, 0x0, 0xeb);
-
-#define BATTBUS_IOCTL(_index_) \
-    CTL_CODE(FILE_DEVICE_BUS_EXTENDER, _index_, METHOD_BUFFERED, FILE_READ_DATA)
-
-#define IOCTL_BATTBUS_PLUGIN_HARDWARE                   BATTBUS_IOCTL(0x0)
-#define IOCTL_BATTBUS_UNPLUG_HARDWARE                   BATTBUS_IOCTL(0x1)
-
-//
 // Simulated battery ioctl interface
 //
 
