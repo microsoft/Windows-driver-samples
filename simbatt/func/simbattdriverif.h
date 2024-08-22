@@ -69,37 +69,6 @@ DEFINE_GUID(SIMBATT_DEVINTERFACE_GUID,
 //  Data structure used in PlugIn and UnPlug ioctls
 //
 
-typedef struct _BATTBUS_PLUGIN_HARDWARE
-{
-    //
-    // Size of this type.
-    //
-
-    ULONG Size;
-
-    //
-    // Unique serial number of the device to be enumerated.
-    // Enumeration will be failed if another device on the
-    // bus has the same serial number.
-    //
-
-    ULONG SerialNo;
-
-    //
-    // UI number.
-    //
-
-    ULONG UINumber;
-
-    //
-    // Type of device being enumerated
-    //
-    // Reserved value, set to 0.
-    //
-
-    ULONG Type;
-
-} BATTBUS_PLUGIN_HARDWARE, *PBATTBUS_PLUGIN_HARDWARE;
 
 typedef struct _BATTBUS_UNPLUG_HARDWARE
 {
