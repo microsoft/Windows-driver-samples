@@ -69,8 +69,6 @@ DEFINE_GUID(SIMBATT_DEVINTERFACE_GUID,
 //  Data structure used in PlugIn and UnPlug ioctls
 //
 
-#define BATTBUS_TYPE_SIMBATT 0;
-
 typedef struct _BATTBUS_PLUGIN_HARDWARE
 {
     //
