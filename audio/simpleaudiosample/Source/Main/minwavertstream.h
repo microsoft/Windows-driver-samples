@@ -64,7 +64,6 @@ public:
     IMP_IMiniportWaveRTStreamNotification;
     IMP_IMiniportWaveRTInputStream;
     IMP_IMiniportWaveRTOutputStream;
-    IMP_IMiniportWaveRT;
     IMP_IDrmAudioStream;
 
     NTSTATUS                    Init
@@ -130,62 +129,11 @@ protected:
     // Member variable as config params for tone generator
 
 public:
-
-    NTSTATUS GetVolumeChannelCount
-    (
-        _Out_ UINT32* puiChannelCount
-    );
-
-    NTSTATUS GetVolumeSteppings
-    (
-        _Out_writes_bytes_(_ui32DataSize) PKSPROPERTY_STEPPING_LONG _pKsPropStepLong,
-        _In_  UINT32 _ui32DataSize
-    );
-
-    NTSTATUS GetChannelVolume
-    (
-        _In_  UINT32 _uiChannel,
-        _Out_  LONG* _pVolume
-    );
-
-    NTSTATUS SetChannelVolume
-    (
-        _In_  UINT32 _uiChannel,
-        _In_  LONG _Volume
-    );
-
-    NTSTATUS GetMuteChannelCount
-    (
-        _Out_ UINT32* puiChannelCount
-    );
-
-    NTSTATUS GetMuteSteppings
-    (
-        _Out_writes_bytes_(_ui32DataSize)  PKSPROPERTY_STEPPING_LONG _pKsPropStepLong,
-        _In_  UINT32 _ui32DataSize
-    );
-
-    NTSTATUS GetChannelMute
-    (
-        _In_  UINT32 _uiChannel,
-        _Out_  BOOL* _pbMute
-    );
-
-    NTSTATUS SetChannelMute
-    (
-        _In_  UINT32 _uiChannel,
-        _In_  BOOL _bMute
-    );
-
+ 
     //presentation
     NTSTATUS GetPresentationPosition
     (
         _Out_  KSAUDIO_PRESENTATION_POSITION *_pPresentationPosition
-    );
-
-    NTSTATUS SetCurrentWritePosition
-    (
-        _In_  ULONG ulCurrentWritePosition
     );
 
         

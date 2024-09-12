@@ -733,7 +733,7 @@ Return Value:
             {
                 if (ALL_CHANNELS_ID == ulChannel)
                 {
-                    for (ULONG i=0; i<ulChannel; ++i)
+                    for (ULONG i=0; i<MaxChannels; ++i)
                     {
                         AdapterCommon->MixerVolumeWrite
                         (
@@ -840,7 +840,7 @@ Return Value:
             {
                 if (ALL_CHANNELS_ID == ulChannel)
                 {
-                    for (ULONG i=0; i<ulChannel; ++i)
+                    for (ULONG i=0; i<MaxChannels; ++i)
                     {
                         AdapterCommon->MixerMuteWrite
                         (

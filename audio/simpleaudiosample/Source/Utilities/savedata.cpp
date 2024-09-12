@@ -44,9 +44,10 @@ Abstract:
 #define DEFAULT_FRAME_SIZE          PAGE_SIZE * 4 
 #define DEFAULT_BUFFER_SIZE         DEFAULT_FRAME_SIZE * DEFAULT_FRAME_COUNT
 
-#define DEFAULT_FILE_FOLDER1        L"\\DriverData\\Audio_Samples"
-#define DEFAULT_FILE_FOLDER2        L"\\DriverData\\Audio_Samples\\SimpleAudioSample"
-#define DEFAULT_FILE_NAME           L"\\DriverData\\Audio_Samples\\SimpleAudioSample\\STREAM"
+// Files will be found at C:\Windows\Audio_Samples\..
+#define DEFAULT_FILE_FOLDER1        L"\\SystemRoot\\Audio_Samples"
+#define DEFAULT_FILE_FOLDER2        L"\\SystemRoot\\Audio_Samples\\SimpleAudioSample"
+#define DEFAULT_FILE_NAME           L"\\SystemRoot\\Audio_Samples\\SimpleAudioSample\\STREAM"
 #define OFFLOAD_FILE_NAME           L"OFFLOAD"
 #define HOST_FILE_NAME              L"HOST"
 
