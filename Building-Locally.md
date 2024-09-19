@@ -34,6 +34,7 @@ When: This step is only required to build sample usb\usbview .
 Easy: If you will install Visual Studio (see later) you may at that point select to add both of following individual components:
 * .NET Framework 4.7.2 targeting pack
 * .NET Framework 4.8.1 SDK
+* Windows Driver Kit
 
 ### Option B: Use EWDK
 Easy: If you use EWDK, then all necessary prequisites are included.
@@ -79,11 +80,17 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 
 ### Option A: Use WDK NuGet Packages
 * See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete "Step 1".  You do not need to install the SDK or the WDK.
-* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix). 
-    * Open Visual Studio -> Extensions -> Manage Extensions... -> Browse. 
-    * In the search bar type: `Windows Driver Kit`. 
-    * Find the `Microsoft` signed extension. 
-    * Click the Install button.
+
+> Deprecated
+>* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).
+>    * Open Visual Studio -> Extensions -> Manage Extensions... -> Browse. 
+>    * In the search bar type: `Windows Driver Kit`. 
+>    * Find the `Microsoft` signed extension. 
+>    * Click the Install button.
+
+Visual Studio now includes the Windows Driver Kit as an individual component. See [Option A](./Building-Locally.md#option-a-install-vs-components) from above.
+
+* Ensure Windows Driver Kit individual component is installed. See [Install Visual Studio 2022](https://learn.microsoft.com/en-us/windows-hardware/drivers/install-the-wdk-using-nuget#install-visual-studio-2022).
 * Launch a "Developer Command Prompt for VS 2022".
 * Restore WDK packages from feed :
 

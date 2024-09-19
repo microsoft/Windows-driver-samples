@@ -61,7 +61,7 @@ $build_environment=""
 $build_number=0
 $nuget_package_version=0
 #
-# In Github we build using NuGet and get the version from packages and vsix version from env var set from the install vsix step.
+# In Github we build using NuGet.
 #
 if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
