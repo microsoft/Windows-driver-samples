@@ -107,6 +107,7 @@ else {
 #
 # Get the WDK extension version from installed packages
 $wdk_extension_ver = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+$wdk_extension_ver = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($wdk_extension_ver).Value
 if ($wdk_extension_ver) {
     $wdk_extension_ver = $wdk_extension_ver.split('=')[1]
 }
@@ -178,8 +179,10 @@ $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
 Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
-if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { Write-Output ("Nuget Package Version:      " + $nuget_package_version) }
-Write-Output ("WDK Visual Studio Extension Version:      " + $wdk_extension_ver)
+if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { 
+Write-Output ("Nuget Package Version:      " + $nuget_package_version) 
+}
+Write-Output ("WDK Extension Version:      " + $wdk_extension_ver)
 Write-Output ("Samples:                    " + $sampleSet.Count)
 Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
