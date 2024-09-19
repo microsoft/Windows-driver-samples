@@ -61,7 +61,6 @@ finally {
 $build_environment=""
 $build_number=0
 $nuget_package_version=0
-$vsix_version=""
 #
 # In Github we build using NuGet and get the version from packages and vsix version from env var set from the install vsix step.
 #
@@ -69,7 +68,6 @@ if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
     $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
     $build_number=$nuget_package_version.split('.')[2]
-    $vsix_version = $env:SAMPLES_VSIX_VERSION
 }
 #
 # WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
@@ -107,16 +105,14 @@ else {
     exit 1
 }
 #
-# Get the vsix version from packages if not set
-if (-not $vsix_version) {
-    $vsix_version = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
-    if ($vsix_version) {
-        $vsix_version = $vsix_version.split('=')[1]
-    }
-    else {
-        Write-Error "No version of the WDK VSIX could be found. The WDK VSIX is not installed."
-        exit 1
-    }
+# Get the WDK extension version from installed packages
+$wdk_extension_ver = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+if ($wdk_extension_ver) {
+    $wdk_extension_ver = $wdk_extension_ver.split('=')[1]
+}
+else {
+    Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
+    exit 1
 }
 #
 #
@@ -183,7 +179,7 @@ $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 Write-Output ("Build Environment:          " + $build_environment)
 Write-Output ("Build Number:               " + $build_number)
 if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { Write-Output ("Nuget Package Version:      " + $nuget_package_version) }
-Write-Output ("WDK VSIX Version:           " + $vsix_version)
+Write-Output ("WDK Visual Studio Extension Version:      " + $wdk_extension_ver)
 Write-Output ("Samples:                    " + $sampleSet.Count)
 Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")

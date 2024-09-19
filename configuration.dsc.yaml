@@ -42,6 +42,7 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
+          - Component.Microsoft.Windows.DriverKit
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: sdkPackage
       directives:
@@ -62,20 +63,4 @@ properties:
         id: Microsoft.WindowsWDK.10.0.26100
         source: winget
         useLatest: true
-    - resource: PSDscResources/Script
-      id: wdkVsix
-      dependsOn:
-        - wdkPackage
-        - vsComponents
-      directives:
-        description: Install Windows Driver Kit VSIX
-      settings:
-        GetScript: |
-          return & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -version '[17.0,18.0)' -requires Microsoft.Windows.DriverKit -property installationVersion
-        SetScript: |
-          $installerPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -products * -property enginePath | Join-Path -ChildPath 'VSIXInstaller.exe'
-          if (Test-Path $installerPath) { & $installerPath /q "${env:ProgramFiles(x86)}\Windows Kits\10\Vsix\VS2022\10.0.26100.0\${env:PROCESSOR_ARCHITECTURE}\WDK.vsix" }
-        TestScript: |
-          $versionString = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -version '[17.0,18.0)' -requires Microsoft.Windows.DriverKit -property installationVersion
-          return $versionString -match "^17\."
-  configurationVersion: 0.2.0
+  configurationVersion: 0.2.1

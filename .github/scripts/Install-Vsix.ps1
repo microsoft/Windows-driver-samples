@@ -1,7 +1,7 @@
 <#
 
 .SYNOPSIS
-Download and install the latest WDK VSIX.
+DEPRECATED
 
 #>
 

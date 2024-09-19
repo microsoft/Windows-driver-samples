@@ -92,7 +92,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 >nuget restore -PackagesDirectory .\packages
 ```
 
-* When this is done you should have a .\packages folder that looks exactly as follows:
+* When this is done you should have a .\packages folder that looks like example below:
 ```
 >cd path\to\your\repos\Windows-driver-samples
 >dir /b packages
