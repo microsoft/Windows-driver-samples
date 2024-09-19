@@ -180,16 +180,16 @@ if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) {
 Write-Output "WDK Nuget Version:          $nuget_package_version" 
 }
 Write-Output "WDK Extension Version:      $wdk_extension_ver"
-Write-Output ("Samples:                   " + $sampleSet.Count)
-Write-Output ("Configurations:            " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:                 " + $Platforms.Count + " (" + $Platforms + ")")
+Write-Output "Samples:                    $($sampleSet.Count)"
+Write-Output "Configurations:             $($Configurations.Count) ($Configurations)"
+Write-Output "Platforms:                  $($Platforms.Count) ($Platforms)"
 Write-Output "InfVerif_AdditionalOptions: $InfVerif_AdditionalOptions"
 Write-Output "Combinations:               $SolutionsTotal"
 Write-Output "LogicalProcessors:          $LogicalProcessors"
 Write-Output "ThrottleFactor:             $ThrottleFactor"
 Write-Output "ThrottleLimit:              $ThrottleLimit"
 Write-Output "WDS_WipeOutputs:            $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):       " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output "Disk Remaining (GB):        $(((Get-Volume ((Get-Item ".").PSDrive.Name)) | Select -ExpandProperty SizeRemaining) / 1GB)"
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
