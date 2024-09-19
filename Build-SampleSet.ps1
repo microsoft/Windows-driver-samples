@@ -56,7 +56,6 @@ finally {
 # Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
 # Determine NuGet package version (if applicable).
-# Determine WDK vsix version.
 #
 $build_environment=""
 $build_number=0
