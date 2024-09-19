@@ -108,10 +108,7 @@ else {
 # Get the WDK extension version from installed packages
 $wdk_extension_ver = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
 $wdk_extension_ver = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($wdk_extension_ver).Value
-if ($wdk_extension_ver) {
-    $wdk_extension_ver = $wdk_extension_ver.split('=')[1]
-}
-else {
+if (-not $wdk_extension_ver) {
     Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
     exit 1
 }
