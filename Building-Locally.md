@@ -79,14 +79,7 @@ To build the Windows Driver Samples you need a "driver build environment".  In e
 * The Windows Driver Kit.
 
 ### Option A: Use WDK NuGet Packages
-* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete "Step 1".  You do not need to install the SDK or the WDK.
-
-> Deprecated
->* Install the Visual Studio Windows Driver Kit Extension (WDK.vsix).
->    * Open Visual Studio -> Extensions -> Manage Extensions... -> Browse. 
->    * In the search bar type: `Windows Driver Kit`. 
->    * Find the `Microsoft` signed extension. 
->    * Click the Install button.
+* See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for instructions on how to install Visual Studio, but only complete `Step 1`.  You do not need to install the SDK or the WDK.
 
 Visual Studio now includes the Windows Driver Kit as an individual component. See [Option A](./Building-Locally.md#option-a-install-vs-components) from above.
 
