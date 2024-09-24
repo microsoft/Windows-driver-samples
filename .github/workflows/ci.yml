@@ -36,7 +36,7 @@ jobs:
           WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
 
       - name: Archive build logs and overview build reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: logs
