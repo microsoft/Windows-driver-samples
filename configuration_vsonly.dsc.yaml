@@ -42,4 +42,5 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
-  configurationVersion: 0.2.0
+          - Component.Microsoft.Windows.DriverKit
+  configurationVersion: 0.2.1
