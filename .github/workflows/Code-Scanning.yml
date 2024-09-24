@@ -16,6 +16,9 @@ on:
     branches:
       - main
       - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
     
   # Allow manual scheduling
   workflow_dispatch:
