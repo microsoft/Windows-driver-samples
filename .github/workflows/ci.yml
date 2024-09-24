@@ -61,7 +61,7 @@ jobs:
         run: .\.github\scripts\Join-CsvReports.ps1
 
       - name: Archive global overview build reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: logs
           path: _logs/_overview.all.*
