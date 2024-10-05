@@ -330,7 +330,7 @@ typedef struct _USBEXTERNALHUBINFO
 
 
 // HubInfo, HubName may be in USBDEVICEINFOTYPE, so they can be removed
-typedef struct
+typedef struct _USBDEVICEINFO
 {
     USBDEVICEINFOTYPE                      DeviceInfoType;
     PUSB_NODE_INFORMATION                  HubInfo;          // NULL if not a HUB
