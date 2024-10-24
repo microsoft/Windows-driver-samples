@@ -173,7 +173,6 @@ RequestCopyToBuffer(
         return status;
     }
 
-    WdfRequestSetInformation(Request, NumBytesToCopyTo);
     return status;
 }
 

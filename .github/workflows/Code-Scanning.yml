@@ -8,11 +8,17 @@ on:
     branches:
       - main
       - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
   pull_request:
     # The branches below must be a subset of the branches above
     branches:
       - main
       - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
     
   # Allow manual scheduling
   workflow_dispatch:
@@ -36,10 +42,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
-
-      - name: Install WDK VSIX
-        run: .\.github\scripts\Install-Vsix.ps1
-
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
 
@@ -47,8 +49,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          packs: microsoft/windows-drivers
-
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+          packs: +microsoft/windows-drivers@1.2.0-beta
       - name: Retrieve and build all available solutions
         run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
         env:

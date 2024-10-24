@@ -22,9 +22,6 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install WDK VSIX
-        run: .\.github\scripts\Install-Vsix.ps1
-
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
 
@@ -44,10 +41,10 @@ jobs:
           WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
 
       - name: Archive build logs and overview build reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: logs
+          name: logs-${{ matrix.configuration }}-${{ matrix.platform }}
           path: _logs
   
   report:
@@ -60,16 +57,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Retrieve overview reports
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: logs
           path: _logs
+          pattern: logs-*
+          merge-multiple: true
 
       - name: Join and generate global reports
         run: .\.github\scripts\Join-CsvReports.ps1
 
       - name: Archive global overview build reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: logs
           path: _logs/_overview.all.*
