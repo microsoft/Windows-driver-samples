@@ -40,6 +40,6 @@ properties:
 #         - Microsoft.VisualStudio.Component.VC.MFC.ARM64
 #         - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.Net.Component.4.7.2.TargetingPack # WDK WDS Experience: .\Build-AllSamples -Samples 'usb.usbview'
-#         - Microsoft.Net.Component.4.8.1.SDK # WDK WDS Experience: Not needed for: .\Build-AllSamples -Samples 'usb.usbview'
+          - Microsoft.Net.Component.4.8.1.SDK  # WDK WDS Experience (NuGet): .\Build-AllSamples -Samples 'usb.usbview'
           - Component.Microsoft.Windows.DriverKit
   configurationVersion: 0.2.1
