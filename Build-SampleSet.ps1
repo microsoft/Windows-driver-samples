@@ -14,7 +14,7 @@ $root = Get-Location
 if (-not $env:VSCMD_VER) {
     Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
     Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
-    cd $root
+    Set-Location $root
 }
 
 $ThrottleFactor = 5
@@ -97,7 +97,7 @@ else {
 
     # Dump all environment variables so as to help debug error:
     Write-Output "Environment variables {"
-    gci env:* | sort-object name
+    Get-ChildItem env:* | Sort-Object name
     Write-Output "Environment variables }"
 
     Write-Error "Could not determine build environment."
@@ -105,11 +105,17 @@ else {
 }
 #
 # Get the WDK extension version from installed packages
-$wdk_extension_ver = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+$wdk_extension_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select-Object -ExpandProperty Name
 $wdk_extension_ver = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($wdk_extension_ver).Value
 if (-not $wdk_extension_ver) {
-    Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
-    exit 1
+    # Be lenient with EWDK builds that do not include the package information
+    if ($build_environment -match '^EWDK') {
+        $wdk_extension_ver = "(package not found)"
+    }
+    else {
+        Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
+        exit 1
+    }
 }
 #
 #
@@ -348,7 +354,7 @@ $Results = $jresult.Results
 Write-Output "Built all combinations."
 Write-Output ""
 Write-Output "Elapsed time:         $min minutes, $seconds seconds."
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output ("Disk Remaining (GB):  " + (((Get-Volume (Get-Item ".").PSDrive.Name).SizeRemaining / 1GB)))
 Write-Output ("Samples:              " + $sampleSet.Count)
 Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
