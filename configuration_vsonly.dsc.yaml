@@ -43,4 +43,3 @@ properties:
 #         - Microsoft.Net.Component.4.8.1.SDK # WDK WDS Experience: Not needed for: .\Build-AllSamples -Samples 'usb.usbview'
           - Component.Microsoft.Windows.DriverKit
   configurationVersion: 0.2.1
-  
