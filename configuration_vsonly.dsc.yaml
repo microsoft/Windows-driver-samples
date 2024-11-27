@@ -20,26 +20,27 @@ properties:
         channelId: VisualStudio.17.Release
         includeRecommended: false
         components:
-#         - Microsoft.VisualStudio.Component.VC.CoreBuildTools
+          # Microsoft.VisualStudio.Component.VC.CoreBuildTools
           - Microsoft.VisualStudio.Component.VC.CoreIDE # WDK WDS Experience (example): .\Build-AllSamples -Samples '^tools.dv.samples.dv-faildriver-wdm.driver'
-#         - Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core
-#         - Microsoft.VisualStudio.Component.VC.Tools.x86.x64
-#         - Microsoft.VisualStudio.Component.VC.Tools.ARM64
-#         - Microsoft.VisualStudio.Component.VC.Tools.ARM64EC
+          # Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core
+          # Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+          # Microsoft.VisualStudio.Component.VC.Tools.ARM64
+          # Microsoft.VisualStudio.Component.VC.Tools.ARM64EC
           - Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre # WDK WDS Experience (example): .\Build-AllSamples -Samples '^tools.dv.samples.dv-faildriver-wdm.driver'
           - Microsoft.VisualStudio.Component.VC.Runtimes.ARM64.Spectre # WDK WDS Experience (example): .\Build-AllSamples -Samples '^tools.dv.samples.dv-faildriver-wdm.driver'
-#         - Microsoft.VisualStudio.Component.VC.Runtimes.ARM64EC.Spectre
-#         - Microsoft.VisualStudio.Component.VC.Redist.14.Latest
-#         - Microsoft.VisualStudio.Component.VC.ATL
-#         - Microsoft.VisualStudio.Component.VC.ATL.ARM64
+          # Microsoft.VisualStudio.Component.VC.Runtimes.ARM64EC.Spectre
+          # Microsoft.VisualStudio.Component.VC.Redist.14.Latest
+          # Microsoft.VisualStudio.Component.VC.ATL
+          # Microsoft.VisualStudio.Component.VC.ATL.ARM64
           - Microsoft.VisualStudio.Component.VC.ATL.Spectre # WDK WDS Experience: .\Build-AllSamples -Samples 'audio.sysvad|avstream.samplemft0|hid.firefly|network.ndis.mux|network.ndis.ndisprot_kmdf|network.radio.radiomanagersample|nfp.net'
           - Microsoft.VisualStudio.Component.VC.ATL.ARM64.Spectre # WDK WDS Experience: .\Build-AllSamples -Samples 'audio.sysvad|avstream.samplemft0|hid.firefly|network.ndis.mux|network.ndis.ndisprot_kmdf|network.radio.radiomanagersample|nfp.net'
-#         - Microsoft.VisualStudio.Component.VC.ATLMFC
-#         - Microsoft.VisualStudio.Component.VC.ATLMFC.Spectre
-#         - Microsoft.VisualStudio.Component.VC.ASAN
-#         - Microsoft.VisualStudio.Component.NuGet.BuildTools
-#         - Microsoft.VisualStudio.Component.VC.MFC.ARM64
-#         - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
+          # Microsoft.VisualStudio.Component.VC.ATLMFC
+          # Microsoft.VisualStudio.Component.VC.ATLMFC.Spectre
+          # Microsoft.VisualStudio.Component.VC.ASAN
+          # Microsoft.VisualStudio.Component.NuGet.BuildTools
+          # Microsoft.VisualStudio.Component.VC.MFC.ARM64
+          # Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
+          # Microsoft.VisualStudio.Workload.NativeDesktop
           - Microsoft.Net.Component.4.7.2.TargetingPack # WDK WDS Experience: .\Build-AllSamples -Samples 'usb.usbview'
           - Microsoft.Net.Component.4.8.1.SDK # WDK WDS Experience (NuGet): .\Build-AllSamples -Samples 'usb.usbview'
           - Component.Microsoft.Windows.DriverKit
