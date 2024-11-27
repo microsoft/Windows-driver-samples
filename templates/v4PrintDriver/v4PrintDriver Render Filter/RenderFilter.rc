@@ -1,0 +1,20 @@
+//
+// File Name:
+//
+//    RenderFilter.rc
+//
+// Abstract:
+//
+//    Xps Rasterization Service filter resource file.
+//
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "XPS Rendering Filter"
+#define VER_INTERNALNAME_STR            "v4PrintDriver_Render_Filter.dll"
+#define VER_ORIGINALFILENAME_STR        "v4PrintDriver_Render_Filter.dll"
+
+#include "common.ver"
