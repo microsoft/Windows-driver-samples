@@ -22,101 +22,44 @@ Environment:
 --*/
 
 
-#include <DriverSpecs.h>
-_Analysis_mode_(_Analysis_code_type_user_code_)
-
 #include <windows.h>
-#include <strsafe.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strsafe.h>
 #include "public.h"
-
-#include <wdfinstaller.h>
-
-#define ARRAY_SIZE(x)        (sizeof(x) /sizeof(x[0]))
-
-extern
-PCHAR
-GetCoinstallerVersion(
-    VOID
-    ) ;
 
 BOOLEAN
 InstallDriver(
-    IN SC_HANDLE  SchSCManager,
-    IN LPCTSTR    DriverName,
-    IN LPCTSTR    ServiceExe
+    _In_ SC_HANDLE  SchSCManager,
+    _In_ LPCTSTR    DriverName,
+    _In_ LPCTSTR    ServiceExe
     );
 
 
 BOOLEAN
 RemoveDriver(
-    IN SC_HANDLE  SchSCManager,
-    IN LPCTSTR    DriverName
+    _In_ SC_HANDLE  SchSCManager,
+    _In_ LPCTSTR    DriverName
     );
 
 BOOLEAN
 StartDriver(
-    IN SC_HANDLE  SchSCManager,
-    IN LPCTSTR    DriverName
+    _In_ SC_HANDLE  SchSCManager,
+    _In_ LPCTSTR    DriverName
     );
 
 BOOLEAN
 StopDriver(
-    IN SC_HANDLE  SchSCManager,
-    IN LPCTSTR    DriverName
+    _In_ SC_HANDLE  SchSCManager,
+    _In_ LPCTSTR    DriverName
     );
 
-#define SYSTEM32_DRIVERS "\\System32\\Drivers\\"
-#define NONPNP_INF_FILENAME  L"\\nonpnp.inf"
-#define WDF_SECTION_NAME L"nonpnp.NT.Wdf"
-
-//----------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------
-PFN_WDFPREDEVICEINSTALLEX pfnWdfPreDeviceInstallEx;
-PFN_WDFPOSTDEVICEINSTALL   pfnWdfPostDeviceInstall;
-PFN_WDFPREDEVICEREMOVE     pfnWdfPreDeviceRemove;
-PFN_WDFPOSTDEVICEREMOVE   pfnWdfPostDeviceRemove;
-
-//-----------------------------------------------------------------------------
-// 4127 -- Conditional Expression is Constant warning
-//-----------------------------------------------------------------------------
-#define WHILE(a) \
-__pragma(warning(suppress:4127)) while(a)
-
-LONG
-GetPathToInf(
-    _Out_writes_(InfFilePathSize) PWCHAR InfFilePath,
-    IN ULONG InfFilePathSize
-    )
-{
-    LONG    error = ERROR_SUCCESS;
-
-    if (GetCurrentDirectoryW(InfFilePathSize, InfFilePath) == 0) {
-        error =  GetLastError();
-        printf("InstallDriver failed!  Error = %d \n", error);
-        return error;
-    }
-    if (FAILED( StringCchCatW(InfFilePath,
-                              InfFilePathSize,
-                              NONPNP_INF_FILENAME) )) {
-        error = ERROR_BUFFER_OVERFLOW;
-        return error;
-    }
-    return error;
-
-}
-
-//----------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------
 BOOLEAN
 InstallDriver(
-    IN SC_HANDLE  SchSCManager,
-    IN LPCTSTR    DriverName,
-    IN LPCTSTR    ServiceExe
+    _In_ SC_HANDLE  SchSCManager,
+    _In_ LPCTSTR    DriverName,
+    _In_ LPCTSTR    ServiceExe
     )
 /*++
 
@@ -130,10 +73,6 @@ Return Value:
 {
     SC_HANDLE   schService;
     DWORD       err;
-    WCHAR      infPath[MAX_PATH];
-    WDF_COINSTALLER_INSTALL_OPTIONS clientOptions;
-
-    WDF_COINSTALLER_INSTALL_OPTIONS_INIT(&clientOptions);
 
     //
     // NOTE: This creates an entry for a standalone driver. If this
@@ -142,22 +81,6 @@ Return Value:
     //       query the registry for existing driver information
     //       (in order to determine a unique Tag, etc.).
     //
-    //
-    // PRE-INSTALL for WDF support
-    //
-    err = GetPathToInf(infPath, ARRAY_SIZE(infPath) );
-    if (err != ERROR_SUCCESS) {
-        return  FALSE;
-    }
-    err = pfnWdfPreDeviceInstallEx(infPath, WDF_SECTION_NAME, &clientOptions);
-
-    if (err != ERROR_SUCCESS) {
-        if (err == ERROR_SUCCESS_REBOOT_REQUIRED) {
-            printf("System needs to be rebooted, before the driver installation can proceed.\n");
-        }
-        
-        return  FALSE;
-    }
 
     //
     // Create a new a service object.
@@ -205,15 +128,10 @@ Return Value:
     //
     // Close the service object.
     //
-    CloseServiceHandle(schService);
 
-    //
-    // POST-INSTALL for WDF support
-    //
-    err = pfnWdfPostDeviceInstall( infPath, WDF_SECTION_NAME );
+    if (schService) {
 
-    if (err != ERROR_SUCCESS) {
-        return  FALSE;
+        CloseServiceHandle(schService);
     }
 
     //
@@ -226,9 +144,9 @@ Return Value:
 
 BOOLEAN
 ManageDriver(
-    IN LPCTSTR  DriverName,
-    IN LPCTSTR  ServiceName,
-    IN USHORT   Function
+    _In_ LPCTSTR  DriverName,
+    _In_ LPCTSTR  ServiceName,
+    _In_ USHORT   Function
     )
 {
 
@@ -337,7 +255,11 @@ ManageDriver(
     //
     // Close handle to service control manager.
     //
-    CloseServiceHandle(schSCManager);
+
+    if (schSCManager) {
+
+        CloseServiceHandle(schSCManager);
+    }
 
     return rCode;
 
@@ -346,28 +268,12 @@ ManageDriver(
 
 BOOLEAN
 RemoveDriver(
-    IN SC_HANDLE    SchSCManager,
-    IN LPCTSTR      DriverName
+    _In_ SC_HANDLE    SchSCManager,
+    _In_ LPCTSTR      DriverName
     )
 {
     SC_HANDLE   schService;
     BOOLEAN     rCode;
-    DWORD       err;
-    WCHAR      infPath[MAX_PATH];
-
-    err = GetPathToInf(infPath, ARRAY_SIZE(infPath) );
-    if (err != ERROR_SUCCESS) {
-        return  FALSE;
-    }
-
-    //
-    // PRE-REMOVE of WDF support
-    //
-    err = pfnWdfPreDeviceRemove( infPath, WDF_SECTION_NAME );
-
-    if (err != ERROR_SUCCESS) {
-        return  FALSE;
-    }
 
     //
     // Open the handle to the existing service.
@@ -415,15 +321,10 @@ RemoveDriver(
     //
     // Close the service object.
     //
-    CloseServiceHandle(schService);
 
-    //
-    // POST-REMOVE of WDF support
-    //
-    err = pfnWdfPostDeviceRemove(infPath, WDF_SECTION_NAME );
+    if (schService) {
 
-    if (err != ERROR_SUCCESS) {
-        rCode = FALSE;
+        CloseServiceHandle(schService);
     }
 
     return rCode;
@@ -434,59 +335,73 @@ RemoveDriver(
 
 BOOLEAN
 StartDriver(
-    IN SC_HANDLE    SchSCManager,
-    IN LPCTSTR      DriverName
+    _In_ SC_HANDLE    SchSCManager,
+    _In_ LPCTSTR      DriverName
     )
 {
     SC_HANDLE   schService;
     DWORD       err;
-    BOOL        ok;
 
     //
     // Open the handle to the existing service.
     //
+
     schService = OpenService(SchSCManager,
                              DriverName,
                              SERVICE_ALL_ACCESS
                              );
 
     if (schService == NULL) {
+
+        printf("OpenService failed!  Error = %d \n", GetLastError());
+
         //
         // Indicate failure.
         //
-        printf("OpenService failed!  Error = %d\n", GetLastError());
+
         return FALSE;
     }
 
     //
     // Start the execution of the service (i.e. start the driver).
     //
-    ok = StartService( schService, 0, NULL );
 
-    if (!ok) {
+    if (!StartService(schService,     // service identifier
+                      0,              // number of arguments
+                      NULL            // pointer to arguments
+                      )) {
 
         err = GetLastError();
 
         if (err == ERROR_SERVICE_ALREADY_RUNNING) {
+
             //
             // Ignore this error.
             //
+
             return TRUE;
 
         } else {
+
+            printf("StartService failure! Error = %d \n", err );
+
             //
-            // Indicate failure.
-            // Fall through to properly close the service handle.
+            // Indicate failure.  Fall through to properly close the service handle.
             //
-            printf("StartService failure! Error = %d\n", err );
+
             return FALSE;
         }
+
     }
 
     //
     // Close the service object.
     //
-    CloseServiceHandle(schService);
+
+    if (schService) {
+
+        CloseServiceHandle(schService);
+    }
 
     return TRUE;
 
@@ -496,8 +411,8 @@ StartDriver(
 
 BOOLEAN
 StopDriver(
-    IN SC_HANDLE    SchSCManager,
-    IN LPCTSTR      DriverName
+    _In_ SC_HANDLE    SchSCManager,
+    _In_ LPCTSTR      DriverName
     )
 {
     BOOLEAN         rCode = TRUE;
@@ -549,264 +464,87 @@ StopDriver(
     //
     // Close the service object.
     //
-    CloseServiceHandle (schService);
+
+    if (schService) {
+
+        CloseServiceHandle (schService);
+    }
 
     return rCode;
 
 }   //  StopDriver
 
-
-//
-// Caller must free returned pathname string.
-//
-PCHAR
-BuildDriversDirPath(
-    _In_ PSTR DriverName
-    )
-{
-    size_t  remain;
-    size_t  len;
-    PCHAR   dir;
-
-    if (!DriverName || strlen(DriverName) == 0) {
-        return NULL;
-    }
-
-    remain = MAX_PATH;
-
-    //
-    // Allocate string space
-    //
-    dir = (PCHAR) malloc( remain + 1 );
-
-    if (!dir) {
-        return NULL;
-    }
-
-    //
-    // Get the base windows directory path.
-    //
-    len = GetWindowsDirectory( dir, (UINT) remain );
-
-    if (len == 0 ||
-        (remain - len) < sizeof(SYSTEM32_DRIVERS)) {
-        free(dir);
-        return NULL;
-    }
-    remain -= len;
-
-    //
-    // Build dir to have "%windir%\System32\Drivers\<DriverName>".
-    //
-    if (FAILED( StringCchCat(dir, remain, SYSTEM32_DRIVERS) )) {
-        free(dir);
-        return NULL;
-    }
-
-    remain -= sizeof(SYSTEM32_DRIVERS);
-    len    += sizeof(SYSTEM32_DRIVERS);
-    len    += strlen(DriverName);
-
-    if (remain < len) {
-        free(dir);
-        return NULL;
-    }
-
-    if (FAILED( StringCchCat(dir, remain, DriverName) )) {
-        free(dir);
-        return NULL;
-    }
-
-    dir[len] = '\0';  // keeps prefast happy
-
-    return dir;
-}
-
-
 BOOLEAN
 SetupDriverName(
-    _Inout_updates_all_(BufferLength) PCHAR DriverLocation,
+    _Inout_updates_bytes_all_(BufferLength) PCHAR DriverLocation,
     _In_ ULONG BufferLength
     )
 {
     HANDLE fileHandle;
-    DWORD  driverLocLen = 0;
-    BOOL   ok;
-    PCHAR  driversDir;
+    DWORD driverLocLen = 0;
 
     //
-    // Setup path name to driver file.
+    // Get the current directory.
     //
-    driverLocLen =
-        GetCurrentDirectory(BufferLength, DriverLocation);
 
-    if (!driverLocLen) {
+    driverLocLen = GetCurrentDirectory(BufferLength,
+                                       DriverLocation
+                                       );
 
-        printf("GetCurrentDirectory failed!  Error = %d \n",
-               GetLastError());
+    if (driverLocLen == 0) {
+
+        printf("GetCurrentDirectory failed!  Error = %d \n", GetLastError());
 
         return FALSE;
     }
 
-    if (FAILED( StringCchCat(DriverLocation, BufferLength, "\\" DRIVER_NAME ".sys") )) {
+    //
+    // Setup path name to driver file.
+    //
+    if (FAILED( StringCbCat(DriverLocation, BufferLength, "\\"DRIVER_NAME".sys") )) {
         return FALSE;
     }
 
     //
     // Insure driver file is in the specified directory.
     //
-    fileHandle = CreateFile( DriverLocation,
-                             GENERIC_READ,
-                             FILE_SHARE_READ,
-                             NULL,
-                             OPEN_EXISTING,
-                             FILE_ATTRIBUTE_NORMAL,
-                             NULL );
 
-    if (fileHandle == INVALID_HANDLE_VALUE) {
+    if ((fileHandle = CreateFile(DriverLocation,
+                                 GENERIC_READ,
+                                 0,
+                                 NULL,
+                                 OPEN_EXISTING,
+                                 FILE_ATTRIBUTE_NORMAL,
+                                 NULL
+                                 )) == INVALID_HANDLE_VALUE) {
+
+
+        printf("%s.sys is not loaded.\n", DRIVER_NAME);
+
         //
         // Indicate failure.
         //
-        printf("Driver: %s.SYS is not in the %s directory. \n",
-               DRIVER_NAME, DriverLocation );
+
         return FALSE;
     }
-
-    //
-    // Build %windir%\System32\Drivers\<DRIVER_NAME> path.
-    // Copy the driver to %windir%\system32\drivers
-    //
-    driversDir = BuildDriversDirPath( DRIVER_NAME ".sys" );
-
-    if (!driversDir) {
-        printf("BuildDriversDirPath failed!\n");
-        return FALSE;
-    }
-
-    ok = CopyFile( DriverLocation, driversDir, FALSE );
-
-    if(!ok) {
-        printf("CopyFile failed: error(%d) - \"%s\"\n",
-               GetLastError(), driversDir );
-        free(driversDir);
-        return FALSE;
-    }
-
-    if (FAILED( StringCchCopy(DriverLocation, BufferLength, driversDir) )) {
-        free(driversDir);
-        return FALSE;
-    }
-
-    free(driversDir);
 
     //
     // Close open file handle.
     //
+
     if (fileHandle) {
+
         CloseHandle(fileHandle);
     }
 
     //
     // Indicate success.
     //
+
     return TRUE;
+
 
 }   // SetupDriverName
 
 
-HMODULE
-LoadWdfCoInstaller(
-    VOID
-    )
-{
-    HMODULE library = NULL;
-    DWORD   error = ERROR_SUCCESS;
-    CHAR   szCurDir[MAX_PATH];
-    CHAR   tempCoinstallerName[MAX_PATH];
-    PCHAR  coinstallerVersion;
-
-    do {
-
-        if (GetCurrentDirectory(MAX_PATH, szCurDir) == 0) {
-
-            printf("GetCurrentDirectory failed!  Error = %d \n", GetLastError());
-            break;
-        }
-        coinstallerVersion = GetCoinstallerVersion();
-        if (FAILED( StringCchPrintf(tempCoinstallerName,
-                                  MAX_PATH,
-                                  "\\WdfCoInstaller%s.dll",
-                                  coinstallerVersion) )) {
-            break;
-        }
-        if (FAILED( StringCchCat(szCurDir, MAX_PATH, tempCoinstallerName) )) {
-            break;
-        }
-        
-        library = LoadLibrary(szCurDir);
-
-        if (library == NULL) {
-            error = GetLastError();
-            printf("LoadLibrary(%s) failed: %d\n", szCurDir, error);
-            break;
-        }
-
-        pfnWdfPreDeviceInstallEx =
-            (PFN_WDFPREDEVICEINSTALLEX) GetProcAddress( library, "WdfPreDeviceInstallEx" );
-
-        if (pfnWdfPreDeviceInstallEx == NULL) {
-            error = GetLastError();
-            printf("GetProcAddress(\"WdfPreDeviceInstallEx\") failed: %d\n", error);
-            return NULL;
-        }
-
-        pfnWdfPostDeviceInstall =
-            (PFN_WDFPOSTDEVICEINSTALL) GetProcAddress( library, "WdfPostDeviceInstall" );
-
-        if (pfnWdfPostDeviceInstall == NULL) {
-            error = GetLastError();
-            printf("GetProcAddress(\"WdfPostDeviceInstall\") failed: %d\n", error);
-            return NULL;
-        }
-
-        pfnWdfPreDeviceRemove =
-            (PFN_WDFPREDEVICEREMOVE) GetProcAddress( library, "WdfPreDeviceRemove" );
-
-        if (pfnWdfPreDeviceRemove == NULL) {
-            error = GetLastError();
-            printf("GetProcAddress(\"WdfPreDeviceRemove\") failed: %d\n", error);
-            return NULL;
-        }
-
-        pfnWdfPostDeviceRemove =
-            (PFN_WDFPREDEVICEREMOVE) GetProcAddress( library, "WdfPostDeviceRemove" );
-
-        if (pfnWdfPostDeviceRemove == NULL) {
-            error = GetLastError();
-            printf("GetProcAddress(\"WdfPostDeviceRemove\") failed: %d\n", error);
-            return NULL;
-        }
-
-    } WHILE (0);
-
-    if (error != ERROR_SUCCESS) {
-        if (library) {
-            FreeLibrary( library );
-        }
-        library = NULL;
-    }
-
-    return library;
-}
-
-
-VOID
-UnloadWdfCoInstaller(
-    HMODULE Library
-    )
-{
-    if (Library) {
-        FreeLibrary( Library );
-    }
-}
 

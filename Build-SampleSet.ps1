@@ -9,6 +9,14 @@ param(
 )
 
 $root = Get-Location
+
+# launch developer powershell (if necessary to prevent multiple developer sessions)
+if (-not $env:VSCMD_VER) {
+    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
+    cd $root
+}
+
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 
@@ -45,27 +53,31 @@ finally {
 }
 
 #
-# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.  Only used to determine build number.
+# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
+# Determine NuGet package version (if applicable).
 #
 $build_environment=""
 $build_number=0
+$nuget_package_version=0
 #
-# WDK NuGet will require presence of a folder 'packages'
+# In Github we build using NuGet.
 #
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-if (-not $env:GITHUB_REPOSITORY -eq '') {
+if ($env:GITHUB_REPOSITORY) {
     $build_environment="GitHub"
-    $build_number=22621
+    $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
+    $build_number=$nuget_package_version.split('.')[2]
 }
 #
-# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named .\packages.
+# WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
 #
-elseif(Test-Path(".\packages")) {
+# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named '.\packages'. 
+#       Further, we need to test that the directory has been hydrated using '.\packages\*'.
+#
+elseif(Test-Path(".\packages\*")) {
     $build_environment=("NuGet")
-    $build_number=26100
+    $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
+    $build_number=$nuget_package_version.split('.')[2]
 }
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
@@ -91,7 +103,15 @@ else {
     Write-Error "Could not determine build environment."
     exit 1
 }
-
+#
+# Get the WDK extension version from installed packages
+$wdk_extension_ver = ls "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select -ExpandProperty Name
+$wdk_extension_ver = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($wdk_extension_ver).Value
+if (-not $wdk_extension_ver) {
+    Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
+    exit 1
+}
+#
 #
 # InfVerif_AdditionalOptions
 #
@@ -153,18 +173,22 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Build Environment:          " + $build_environment)
-Write-Output ("Build Number:               " + $build_number)
-Write-Output ("Samples:                    " + $sampleSet.Count)
-Write-Output ("Configurations:             " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:                  " + $Platforms.Count + " (" + $Platforms + ")")
+Write-Output "WDK Build Environment:      $build_environment"
+Write-Output "WDK Build Number:           $build_number"
+if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { 
+Write-Output "WDK Nuget Version:          $nuget_package_version" 
+}
+Write-Output "WDK Extension Version:      $wdk_extension_ver"
+Write-Output "Samples:                    $($sampleSet.Count)"
+Write-Output "Configurations:             $($Configurations.Count) ($Configurations)"
+Write-Output "Platforms:                  $($Platforms.Count) ($Platforms)"
 Write-Output "InfVerif_AdditionalOptions: $InfVerif_AdditionalOptions"
 Write-Output "Combinations:               $SolutionsTotal"
 Write-Output "LogicalProcessors:          $LogicalProcessors"
 Write-Output "ThrottleFactor:             $ThrottleFactor"
 Write-Output "ThrottleLimit:              $ThrottleLimit"
 Write-Output "WDS_WipeOutputs:            $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):        " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output "Disk Remaining (GB):        $(((Get-Volume ((Get-Item ".").PSDrive.Name)).SizeRemaining) / 1GB)"
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"

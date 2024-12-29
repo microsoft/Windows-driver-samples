@@ -8,11 +8,17 @@ on:
     branches:
       - main
       - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
   pull_request:
     # The branches below must be a subset of the branches above
     branches:
       - main
       - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
     
   # Allow manual scheduling
   workflow_dispatch:
@@ -32,31 +38,27 @@ jobs:
         language: [ 'cpp' ]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        packs: microsoft/windows-drivers
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+          packs: +microsoft/windows-drivers@1.2.0-beta
+      - name: Retrieve and build all available solutions
+        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+        env:
+          WDS_Configuration: Debug
+          WDS_Platform: x64
+          WDS_WipeOutputs: ${{ true }}
 
-    - name: Retrieve and build all available solutions
-      run: |
-          .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
-      env:
-        WDS_Configuration: Debug
-        WDS_Platform: x64
-        WDS_WipeOutputs: ${{ true }}
-
-    - name: Perform CodeQL analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
-    
-  
-      
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
