@@ -88,6 +88,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
@@ -110,6 +111,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
@@ -132,6 +134,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
@@ -154,6 +157,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);DEBUG_LEVEL=DEBUGLVL_TERSE</PreprocessorDefinitions>
     </ResourceCompile>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(DDK_INC_PATH);..</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
@@ -183,6 +187,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <!--
         Use one of the following pre-processor defines to select the right power management:
                 - _USE_IPortClsRuntimePower
@@ -213,6 +218,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND;_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -235,6 +241,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND;_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
       <ExceptionHandling>
@@ -257,6 +264,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);.\..\EndpointsCommon\$(IntDir)\EndpointsCommon.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_USE_WAVERT_;SYSVAD_BTH_BYPASS;SYSVAD_USB_SIDEBAND;_USE_IPortClsRuntimePower;_NEW_DELETE_OPERATORS_</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\EndpointsCommon;.</AdditionalIncludeDirectories>
       <ExceptionHandling>
