@@ -424,7 +424,7 @@ UINT32 HlprWinSockAcquirePortReservationForSocket(_In_ SOCKET unboundSocket,
    {
       status = WSAGetLastError();
 
-      HlprLogError(L"HlprWinSockAssociatePortReservationWithSocket : WSAIoctl() [status: %#x]",
+      HlprLogError(L"HlprWinSockAcquirePortReservationForSocket : WSAIoctl() [status: %#x]",
                    status);
    }
    else
@@ -937,7 +937,7 @@ UINT32 HlprWinSockReceiveTCPData(_In_ SOCKET receivingSocket,
          pCompletionFn)
          status = NO_ERROR;
       else if(status != WSAEDISCON)
-         HlprLogError(L"HlprWinSockReceiveData : WSARecv() [status: %#x]",
+         HlprLogError(L"HlprWinSockReceiveTCPData : WSARecv() [status: %#x]",
                       status);
    }
 

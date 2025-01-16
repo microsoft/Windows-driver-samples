@@ -891,7 +891,7 @@ VOID ProxyUsingInjectionMethodDeferredProcedureCall(_In_ KDPC* pDPC,
    
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
-              " ---> BasicPacketInjectionDeferredProcedureCall()\n");
+              " ---> ProxyUsingInjectionMethodDeferredProcedureCall()\n");
 
 #endif /// DBG
    
@@ -1580,7 +1580,7 @@ VOID ProxyByALERedirectWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
-              " <--- ProxyUsingInjectionMethodWorkItemRoutine()\n");
+              " <--- ProxyByALERedirectWorkItemRoutine()\n");
 
 #endif /// DBG
    
