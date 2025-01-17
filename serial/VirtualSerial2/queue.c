@@ -801,7 +801,7 @@ QueueProcessSetLineControl(
     NTSTATUS                status;
     PDEVICE_CONTEXT         deviceContext;
     SERIAL_LINE_CONTROL     lineControl = {0};
-    ULONG                   *lineControlRegister;
+    volatile ULONG*         lineControlRegister;
     UCHAR                   lineControlData = 0;
     UCHAR                   lineControlStop = 0;
     UCHAR                   lineControlParity = 0;
