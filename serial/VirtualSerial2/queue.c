@@ -717,7 +717,7 @@ QueueProcessGetLineControl(
     //
     // Take a snapshot of the line control register variable
     //
-    lineControlSnapshot = *lineControlRegister;
+    lineControlSnapshot = ReadNoFence((LONG *)lineControlRegister);
 
     //
     // Decode the word length
@@ -801,7 +801,7 @@ QueueProcessSetLineControl(
     NTSTATUS                status;
     PDEVICE_CONTEXT         deviceContext;
     SERIAL_LINE_CONTROL     lineControl = {0};
-    volatile ULONG*         lineControlRegister;
+    ULONG                   *lineControlRegister;
     UCHAR                   lineControlData = 0;
     UCHAR                   lineControlStop = 0;
     UCHAR                   lineControlParity = 0;
@@ -946,7 +946,7 @@ QueueProcessSetLineControl(
 #endif
         }
 
-        lineControlSnapshot = *lineControlRegister;
+        lineControlSnapshot = ReadNoFence((LONG *)lineControlRegister);
 
         lineControlNew = (lineControlSnapshot & SERIAL_LCR_BREAK) |
                         (lineControlData | lineControlParity | lineControlStop);
