@@ -147,39 +147,42 @@ $myexit=0
 # If we fail at first, but succeed at either of next two attempts, then it is a sporadic failure.
 # If we even at third attempt fail, then it is a true failure.
 #
-for ($i=0; $i -le 2; $i++) {
+for ($i = 0; $i -lt 3; $i++)
+{
+    $binLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.binlog"
     $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
     $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
     $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
 
-    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
-    if ($env:WDS_WipeOutputs -ne $null)
+    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+    if ($null -ne $env:WDS_WipeOutputs)
     {
-        Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
-        Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
-        Get-ChildItem -path $Directory -Recurse -Include arm64|Remove-Item -Recurse
+        Write-Verbose ("WipeOutputs: " + $Directory + " " + (((Get-Volume (Get-Item ".").PSDrive.Name).SizeRemaining / 1GB)))
+        Get-ChildItem -path $Directory -Recurse -Include x64 | Remove-Item -Recurse
+        Get-ChildItem -path $Directory -Recurse -Include arm64 | Remove-Item -Recurse
     }
     if ($LASTEXITCODE -eq 0)
     {
         # We succeeded building. 
-        # If at first attempt, then $myexit=0
-        # If at later attempt, then $myexit=2
+        # If it was at a later attempt, let the caller know with a different exit code.
         if ($i -eq 0)
         {
-            $myexit=0
+            $myexit = 0
         }
         else
         {
-            $myexit=2
+            $myexit = 2
         }
-         break;
+        # Remove binlog on success to save space; keep otherwise to diagnose issues.
+        Remove-Item $binLogFilePath
+        break;
     }
     else
     {
         # We failed building. 
         # Let us sleep for a bit.
         # Then let the while loop do its thing and re-run.
-        sleep 1
+        Start-Sleep 1
         if ($Verbose)
         {
             Write-Warning "`u{274C} Build failed. Retrying to see if sporadic..."
