@@ -1462,7 +1462,7 @@ Return Value:
                     //
                     if( Pin->DeviceState == KSSTATE_STOP )
                     {
-                        if( !CapPin->CaptureBitmapInfoHeader( ) )
+                        if( !NT_SUCCESS(CapPin->CaptureBitmapInfoHeader( )))
                         {
                             Status = STATUS_INSUFFICIENT_RESOURCES;
                         }
