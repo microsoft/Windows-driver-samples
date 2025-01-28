@@ -1,0 +1,219 @@
+*%
+*% This file is a sample GPD demonstrating basic printer features/options
+*%
+*%
+
+*%******************************************************************************
+*%: The following root-level attributes should be modified to suit your printer
+*%******************************************************************************
+*GPDFileName: "v4PrintDriver.GPD"
+*GPDFileVersion: "1.0"
+*GPDSpecVersion: "1.0"
+*Include:      "StdNames.gpd"
+*%**************************************************
+*% V4 GPD-based printer drivers must include msxpsinc.GPD file
+*%**************************************************
+*Include:      "msxpsinc.gpd"
+*ModelName:    "Model name goes here"
+*MasterUnits:  PAIR(1200, 1200)
+*PrinterType:  PAGE
+*MaxCopies:    1
+*Command: CmdSendBlockData { *Cmd : "" }
+
+*PrintSchemaPrivateNamespaceURI: "Your private namespace URI goes here"
+
+
+
+*%******************************************************************************
+*%                             Orientation
+*%******************************************************************************
+*Feature: Orientation
+{
+    *rcNameID: =ORIENTATION_DISPLAY
+    *DefaultOption: PORTRAIT
+
+    *Option: PORTRAIT
+    {
+        *rcNameID: =PORTRAIT_DISPLAY
+    }
+
+    *Option: LANDSCAPE_CC270
+    {
+        *rcNameID: =LANDSCAPE_DISPLAY
+    }
+}
+
+*%******************************************************************************
+*%                             Input Bin
+*% The "InputBin" feature demonstrates an example of how to use
+*% GPD-based constraints
+*% TODO: Add the A4 constraint
+*%
+*% Learn more: Selection Constraints
+*% http://msdn.microsoft.com/en-us/library/ff562063(VS.85).aspx
+*%******************************************************************************
+*Feature: InputBin
+{
+    *rcNameID: =PAPER_SOURCE_DISPLAY
+    *DefaultOption: FORMSOURCE
+
+    *Option: FORMSOURCE
+    {
+        *rcNameID: =AUTO_DISPLAY
+        *Constraints: PaperSize.LETTER
+    }
+    *Option: UPPER
+    {
+        *rcNameID: =UPPER_TRAY_DISPLAY
+    }
+}
+
+*%******************************************************************************
+*%                              Resolution
+*%******************************************************************************
+*Feature: Resolution
+{
+    *rcNameID: =RESOLUTION_DISPLAY
+    *DefaultOption: Option1
+
+    *Option: Option1
+    {
+        *Name: "600 x 600 " =DOTS_PER_INCH
+        *DPI: PAIR(600, 600)
+        *TextDPI: PAIR(600, 600)
+        *SpotDiameter: 100
+    }
+}
+
+*%******************************************************************************
+*%                            Paper Size
+*%******************************************************************************
+*Feature: PaperSize
+{
+    *rcNameID: =PAPER_SIZE_DISPLAY
+    *DefaultOption: LETTER
+
+    *Option: LETTER
+    {
+        *rcNameID: =RCID_DMPAPER_SYSTEM_NAME  *%  1000
+        *switch: Orientation
+        {
+            *case: PORTRAIT
+            {
+                *PrintableArea: PAIR(9000, 12600)
+                *PrintableOrigin: PAIR(200, 200)
+                *CursorOrigin: PAIR(0, 0)
+            }
+            *case: LANDSCAPE_CC270
+            {
+                *PrintableArea: PAIR(9000, 12600)
+                *PrintableOrigin: PAIR(200, 200)
+                *CursorOrigin: PAIR(0, 0)
+            }
+        }
+    }
+
+    *Option: A4
+    {
+        *rcNameID: =RCID_DMPAPER_SYSTEM_NAME  *%  1008
+        *switch: Orientation
+        {
+            *case: PORTRAIT
+            {
+                *PrintableArea: PAIR(9000, 12600)
+                *PrintableOrigin: PAIR(200, 200)
+                *CursorOrigin: PAIR(0, 0)
+            }
+            *case: LANDSCAPE_CC270
+            {
+                *PrintableArea: PAIR(9000, 12600)
+                *PrintableOrigin: PAIR(200, 200)
+                *CursorOrigin: PAIR(0, 0)
+            }
+        }
+    }
+}
+
+
+
+
+*%******************************************************************************************
+*%                   Sample GDL Autoconfiguration feature: Duplex Unit
+*%******************************************************************************************
+*Feature: DuplexUnit
+{
+        *Name: "Optional Duplex Unit"
+        *FeatureType: PRINTER_PROPERTY
+        *DefaultOption: FALSE
+        *Option: FALSE
+        {
+            *Name:  "Not Installed"
+            *DisabledFeatures: LIST(Duplex.VERTICAL, Duplex.HORIZONTAL)
+        }
+        *Option: TRUE
+        {
+            *Name:  "Installed"
+        }
+}
+
+
+
+*%******************************************************************************************
+*%                                      Duplex Type
+*%******************************************************************************************
+*Feature: Duplex
+{
+        *rcNameID: =TWO_SIDED_PRINTING_DISPLAY
+        *DefaultOption: NONE
+        *Option: NONE
+        {
+                *rcNameID: =NONE_DISPLAY
+        }
+        *Option: VERTICAL
+        {
+                *rcNameID: =FLIP_ON_LONG_EDGE_DISPLAY
+        }
+        *Option: HORIZONTAL
+        {
+                *rcNameID: =FLIP_ON_SHORT_EDGE_DISPLAY
+        }
+}
+
+
+*%******************************************************************************************
+*% Example of a IHV private feature. This feature demonstrates usage of the
+*% PrintSchemaKeywordMap keyword to map the GPD custom feature/option to
+*% public Print Schema keywords
+*%
+*% Learn more: New root-level-only GPD attributes for Windows Vista
+*% http://msdn.microsoft.com/en-us/library/ff550564(VS.85).aspx
+*%******************************************************************************************
+*Feature: IHVStapling
+{
+    *Name: "Staple"
+    *DefaultOption: Off
+    *PrintSchemaKeywordMap: "JobStapleAllDocuments"
+
+    *Option: Off
+    {
+        *Name: "Off"
+        *PrintSchemaKeywordMap: "None"
+    }
+
+    *Option: StapleTopLeft
+    {
+        *Name: "Staple Top left"
+        *PrintSchemaKeywordMap: "StapleTopLeft"
+    }
+}
+
+*%******************************************************************************
+*%                         Cursor Commands
+*% The following cursor commands are mandatory
+*%
+*% Learn more: Cursor Commands
+*% http://msdn.microsoft.com/en-us/library/ff547223(VS.85).aspx
+*%******************************************************************************
+*Command: CmdCR { *Cmd : "" }
+*Command: CmdLF { *Cmd : "" }
+*Command: CmdFF { *Cmd : "" }
