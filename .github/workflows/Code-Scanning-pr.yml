@@ -1,10 +1,11 @@
 # This workflow runs the latest CodeQL CLI and checks against CodeQL's Cpp library.
 # This is the source for the GitHub Security Code Scanning job.
 
-name: "CodeQL Analysis"
+name: "CodeQL Analysis PR"
 
 on:
-  push:
+  pull_request:
+    # The branches below must be a subset of the branches above
     branches:
       - main
       - develop
@@ -27,7 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
+        include:
+        - language: c-cpp
+          build-mode: manual
 
     steps:
       - name: Checkout repository
@@ -36,19 +39,25 @@ jobs:
           submodules: 'recursive'
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
+      - name: Get changed files
+        id: get-changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          separator: ","
 
+     
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
           packs: +microsoft/windows-drivers@1.2.0-beta
-      - name: Retrieve and build all available solutions
-        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
-        env:
-          WDS_Configuration: Debug
-          WDS_Platform: x64
-          WDS_WipeOutputs: ${{ true }}
+
+      - if: matrix.build-mode == 'manual'
+        run: |
+          $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
+          .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
