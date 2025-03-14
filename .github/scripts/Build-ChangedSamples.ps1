@@ -25,12 +25,12 @@ foreach ($file in $ChangedFiles) {
     if ($filename -eq "Build-AllSamples.ps1" -or $filename -eq "Build-Sample.ps1" -or $filename -eq "Build-SampleSet.ps1" -or $filename -eq "exclusions.csv" -or $filename -eq "Directory.Build.props" -or $filename -eq "packages.config") {
         $buildAll = $true
     }
-    # if ($dir -like "$root\.github\scripts" -or $dir -like "$root\.github\scripts\*") {
-    #     $buildAll = $true
-    # }
-    # if ($dir -like "$root\.github\workflows" -or $dir -like "$root\.github\workflows\*") {
-    #     $buildAll = $true
-    # } // Testing. Uncomment this when done
+    if ($dir -like "$root\.github\scripts" -or $dir -like "$root\.github\scripts\*") {
+        $buildAll = $true
+    }
+    if ($dir -like "$root\.github\workflows" -or $dir -like "$root\.github\workflows\*") {
+        $buildAll = $true
+    }
     if ($buildAll)
     {
         Write-Verbose "`u{2754} Full build triggered by change in file $file"
