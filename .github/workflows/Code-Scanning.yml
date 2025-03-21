@@ -22,8 +22,8 @@ on:
     
   # Allow manual scheduling
   workflow_dispatch:
-env:
-  WINDOWS-DRIVERS-PACK-VERSION: 1.5.0-beta+5
+
+  
 jobs:
   analyze-push:
     name: Analysis-Push
@@ -52,7 +52,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          packs: +microsoft/windows-drivers@${{ env.WINDOWS-DRIVERS-PACK-VERSION }}
+         
       - name: Retrieve and build all available solutions
         run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
         env:
@@ -98,7 +98,7 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          packs: +microsoft/windows-drivers@${{ env.WINDOWS-DRIVERS-PACK-VERSION }}
+          
       - if: matrix.build-mode == 'manual'
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
