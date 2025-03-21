@@ -97,7 +97,7 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          packs: +microsoft/windows-drivers@1.2.0-beta
+          packs: +microsoft/windows-drivers@1.5.0-beta_5
       - if: matrix.build-mode == 'manual'
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
