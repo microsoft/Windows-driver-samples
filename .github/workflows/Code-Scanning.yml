@@ -24,48 +24,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze-push:
-    name: Analysis-Push
-    if: github.event_name == 'push'
-    runs-on: windows-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'cpp' ]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
-      - name: Install Nuget Packages
-        run: nuget restore .\packages.config -PackagesDirectory .\packages\
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          
-      - name: Retrieve and build all available solutions
-        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
-        env:
-          WDS_Configuration: Debug
-          WDS_Platform: x64
-          WDS_WipeOutputs: ${{ true }}
-
-      - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{matrix.language}}"
-  analyze-pr:
-    name: Analysis-PR
-    if: github.event_name == 'pull_request'
+  analyze:
+    name: Analysis
     runs-on: windows-latest
     permissions:
       actions: read
@@ -97,10 +57,20 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-      - if: matrix.build-mode == 'manual'
+      - if: github.event_name == 'pull_request'
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
           .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
+        env: 
+          WDS_Configuration: Debug
+          WDS_Platform: x64
+          WDS_WipeOutputs: ${{ true }}
+      - if: github.event_name == 'push'
+        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+        env:
+          WDS_Configuration: Debug
+          WDS_Platform: x64
+          WDS_WipeOutputs: ${{ true }}
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
         with:
