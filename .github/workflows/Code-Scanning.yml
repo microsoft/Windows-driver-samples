@@ -22,9 +22,7 @@ on:
     
   # Allow manual scheduling
   workflow_dispatch:
-env:
-  MICROSOFT-CPP-QUERIES-VERSION: 0.0.2
-  
+
 jobs:
   analyze-push:
     name: Analysis-Push
@@ -52,8 +50,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          config-file: +microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          packs: +microsoft/cpp-queries@${{ env.CODEQL_VERSION }}
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
           
       - name: Retrieve and build all available solutions
         run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
@@ -99,8 +96,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          config-file: +microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
-          packs: +microsoft/cpp-queries@${{ env.CODEQL_VERSION }}
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
       - if: matrix.build-mode == 'manual'
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
