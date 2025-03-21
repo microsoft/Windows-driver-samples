@@ -98,7 +98,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+          config-file: +microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
           packs: microsoft/cpp-queries@${{ env.CODEQL_VERSION }}
       - if: matrix.build-mode == 'manual'
         run: |
