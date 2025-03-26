@@ -662,12 +662,12 @@ FillDeviceInfo(
         }
 
         if(FAILED(ULongAdd((HidDevice->Caps).NumberOutputButtonCaps ,
-                                     (valueCaps->Range).UsageMax, &tmpSum))) 
+                                     (buttonCaps->Range).UsageMax, &tmpSum))) 
         {
             goto Done;
         }        
 
-        if((valueCaps->Range).UsageMin == tmpSum)
+        if((buttonCaps->Range).UsageMin == tmpSum)
         {
             goto Done;
         }
