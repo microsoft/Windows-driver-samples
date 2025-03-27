@@ -1,0 +1,79 @@
+//
+// File Name:
+//
+//    Exception.h
+//
+// Abstract:
+//
+//    Exception macro and class declarations.
+//
+
+#pragma once
+//
+// Macro to convert HRESULT into an exception throw
+//
+#ifndef THROW_ON_FAILED_HRESULT
+#define THROW_ON_FAILED_HRESULT(func_)                                              \
+{                                                                                   \
+    HRESULT hr_ = func_;                                                            \
+    if (FAILED(hr_)) { v4PrintDriver_Render_Filter::ThrowHRException(hr_, __FILE__, __LINE__); }   \
+} 
+#endif // THROW_ON_FAILED_HRESULT
+
+#ifndef THROW_LAST_ERROR
+#define THROW_LAST_ERROR()                                      \
+{                                                               \
+        HRESULT errhr_ = HRESULT_FROM_WIN32(::GetLastError());  \
+        THROW_ON_FAILED_HRESULT(errhr_);                        \
+}
+#endif // THROW_LAST_ERROR
+
+//
+// Macro to catch various exceptions, including
+// HRESULT-turned-exceptions.
+//
+// Because we have defined USE_NATIVE_EH=1, the
+// catch(...) block will not catch structural
+// exceptions.
+//
+#ifndef CATCH_VARIOUS
+#define CATCH_VARIOUS(hr_)                  \
+    catch(std::bad_alloc const& )           \
+    {                                       \
+        hr_ = E_OUTOFMEMORY;                \
+    }                                       \
+    catch(v4PrintDriver_Render_Filter::hr_error const& e)  \
+    {                                       \
+        hr_ = e.hr;                         \
+    }                                       \
+    catch(std::exception const& )           \
+    {                                       \
+        hr_ = E_FAIL;                       \
+    }                                       \
+    catch(...)                              \
+    {                                       \
+        hr_ = E_UNEXPECTED;                 \
+    }
+#endif // CATCH_VARIOUS
+
+namespace v4PrintDriver_Render_Filter
+{
+
+//
+// HRESULT exception
+//
+struct hr_error
+{
+    HRESULT hr;
+
+    hr_error(HRESULT hr_in) : hr(hr_in)
+    { }
+};
+
+void ThrowHRException(
+    HRESULT hr,
+    char const *fileName,
+    int lineNum
+    );
+
+} // namespace v4PrintDriver_Render_Filter
