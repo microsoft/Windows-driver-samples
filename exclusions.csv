@@ -6,3 +6,4 @@ network\trans\WFPSampler,Debug|ARM64,,22621,Only NI: Only ARM: Fails to build on
 prm,*,,22621,Only NI: Not supported on NI.
 powerlimit\plclient,*,,22621,Only NI: Not supported on NI.
 powerlimit\plpolicy,*,,22621,Only NI: Not supported on NI.
+network\trans\WFPSampler,Release|x64,26100,26100,Only Ge: Only x64 Release.
