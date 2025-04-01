@@ -15,8 +15,7 @@ properties:
       dependsOn:
         - vsPackage
       directives:
-        description: Install required VS workloads
-        maxVersion: "1.0.21"
+        description: Install required VS workloads and components
       settings:
         productId: Microsoft.VisualStudio.Product.Community
         channelId: VisualStudio.17.Release
@@ -43,4 +42,5 @@ properties:
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64
           - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
           - Microsoft.VisualStudio.Workload.NativeDesktop
-  configurationVersion: 0.2.0
+          - Component.Microsoft.Windows.DriverKit
+  configurationVersion: 0.2.1

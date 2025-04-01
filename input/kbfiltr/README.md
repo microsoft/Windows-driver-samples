@@ -107,4 +107,4 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 To use the test application provided with the sample, it must be copied to the target computer manually. Save the kbftest.exe file from the folder where the build result is placed (for example, exe\\Debug). This file is copied somewhere on the target, possibly where the driver package files are located. The test application is the executed on the target computer in a Command Prompt using **kbftest** as the command.
 
 > [!TIP]
-> Optional information to help a user be more successfulTo avoid DLL dependencies for kbftext.exe, and the need to copy additional files, select the statically linked run-time library when building.
+> To avoid DLL dependencies for kbftext.exe, and the need to copy additional files, select the statically linked run-time library when building.
