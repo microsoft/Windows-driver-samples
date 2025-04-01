@@ -118,6 +118,7 @@ inline VOID KrnlHlprRedirectDataPurge(_Inout_ REDIRECT_DATA* pRedirectData)
 }
 
 /**
+ Dummy change by JakobL
  @kernel_helper_function="KrnlHlprRedirectDataDestroy"
  
    Purpose:  Cleanup and free a REDIRECT_DATA object.                                           <br>
