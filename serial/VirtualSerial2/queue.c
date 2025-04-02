@@ -717,7 +717,7 @@ QueueProcessGetLineControl(
     //
     // Take a snapshot of the line control register variable
     //
-    lineControlSnapshot = *lineControlRegister;
+    lineControlSnapshot = ReadNoFence((LONG *)lineControlRegister);
 
     //
     // Decode the word length
@@ -946,7 +946,7 @@ QueueProcessSetLineControl(
 #endif
         }
 
-        lineControlSnapshot = *lineControlRegister;
+        lineControlSnapshot = ReadNoFence((LONG *)lineControlRegister);
 
         lineControlNew = (lineControlSnapshot & SERIAL_LCR_BREAK) |
                         (lineControlData | lineControlParity | lineControlStop);
