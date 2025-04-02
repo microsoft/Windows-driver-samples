@@ -1055,7 +1055,7 @@ HRESULT CreateDecoderFromLuid( _In_ LUID ullAdapterLuidRunningOn,
     DMFTCHECKHR_GOTO(pOutputType->GetGUID(MF_MT_SUBTYPE, &OutputType.guidSubtype), done);
 
     DMFTCHECKHR_GOTO(MFCreateAttributes(&spAttribs, 1), done);
-    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (byte*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
+    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (BYTE*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
     DMFTCHECKHR_GOTO(MFTEnum2(MFT_CATEGORY_VIDEO_DECODER, dwFlags, &InputType, &OutputType, spAttribs.Get(), &ppActivates, &cMFTActivate), done);
 
     for (DWORD i = 0; i < cMFTActivate; i++)
