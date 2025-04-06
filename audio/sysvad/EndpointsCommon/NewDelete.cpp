@@ -106,6 +106,30 @@ void __cdecl operator delete
 /*****************************************************************************
 * ::delete()
 *****************************************************************************
+* Sized Delete function with alignment.
+*/
+#ifdef __cpp_aligned_new
+void __cdecl operator delete
+(
+    _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
+    _In_ size_t cbSize,
+    _In_ std::align_val_t cbAlign
+)
+{
+    UNREFERENCED_PARAMETER(cbSize);
+    UNREFERENCED_PARAMETER(cbAlign);
+
+    if (pVoid)
+    {
+        ExFreePoolWithTag(pVoid, SYSVAD_POOLTAG);
+    }
+}
+#endif // __cpp_aligned_new
+
+
+/*****************************************************************************
+* ::delete()
+*****************************************************************************
 * Sized Array Delete function.
 */
 void __cdecl operator delete[]
