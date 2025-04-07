@@ -843,6 +843,8 @@ PIRP CsampPeekNextIrp(
     //
 
     if (Irp == NULL) {
+        if (IsListEmpty(listHead) == TRUE)
+            return NULL;
         nextEntry = listHead->Flink;
     } else {
         nextEntry = Irp->Tail.Overlay.ListEntry.Flink;
