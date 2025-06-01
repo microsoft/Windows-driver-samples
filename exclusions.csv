@@ -6,3 +6,14 @@ network\trans\WFPSampler,Debug|ARM64,,22621,Only NI: Only ARM: Fails to build on
 prm,*,,22621,Only NI: Not supported on NI.
 powerlimit\plclient,*,,22621,Only NI: Not supported on NI.
 powerlimit\plpolicy,*,,22621,Only NI: Not supported on NI.
+templates\driverpackage,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\emptyapplication,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\emptydll,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\kmdfempty,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\ndisfilter,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\umdf2empty,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\v4printdriver,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\wdmempty,*,,,Template intentionally not building. See .\templates\README.md for details.
+templates\winusbinfpackage,*,,22621,Only NI: Template intentionally not building. See .\templates\README.md for details.
+templates\xpsrenderfilter,*,,,Template intentionally not building. See .\templates\README.md for details.
+tree,*,,,Missing headers

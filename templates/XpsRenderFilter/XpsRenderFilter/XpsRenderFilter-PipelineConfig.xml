@@ -1,0 +1,10 @@
+
+<Filters>
+   <Filter dll            = "XpsRenderFilter.dll"
+           clsid          = "{8147f1fd-e661-4929-9012-9d405edab478}"
+           name           = "XpsRenderFilter">
+           <Input   guid  = "{b8cf8530-5562-47c4-ab67-b1f69ecf961e}" comment="IID_IXpsDocumentProvider"/>
+           <Output  guid  = "{65bb7f1b-371e-4571-8ac7-912f510c1a38}" comment="IID_IPrintWriteStream"/> 
+   </Filter>
+</Filters>
+

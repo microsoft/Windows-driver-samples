@@ -1,0 +1,15 @@
+;
+;   File Name:
+;
+;      RenderFilter.def
+;
+;   Abstract:
+;
+;      Defines DLL exports for XpsRenderFilter.dll
+;
+
+LIBRARY XpsRenderFilter
+
+EXPORTS
+    DllGetClassObject PRIVATE
+    DllCanUnloadNow PRIVATE

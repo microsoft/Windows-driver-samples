@@ -1,0 +1,10 @@
+
+<Filters>
+   <Filter dll            = "v4PrintDriverRenderFilter.dll"
+           clsid          = "{ac9d373b-610e-4490-8129-aff0ff4e0e53}"
+           name           = "v4PrintDriverRenderFilter">
+           <Input   guid  = "{b8cf8530-5562-47c4-ab67-b1f69ecf961e}" comment="IID_IXpsDocumentProvider"/>
+           <Output  guid  = "{65bb7f1b-371e-4571-8ac7-912f510c1a38}" comment="IID_IPrintWriteStream"/> 
+   </Filter>
+</Filters>
+
