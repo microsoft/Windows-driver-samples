@@ -264,8 +264,8 @@ DisplayASGeneral (
 );
 
 BOOL
-DisplayCSEndpoint (
-    PUSB_AUDIO_ENDPOINT_DESCRIPTOR EndpointDesc
+DisplayAudioStreamingEndpoint (
+    PUSB_AUDIO_AS_ENDPOINT_DESCRIPTOR EndpointDesc
 );
 
 BOOL
@@ -276,6 +276,37 @@ DisplayASFormatType (
 BOOL
 DisplayASFormatSpecific (
     PUSB_AUDIO_COMMON_DESCRIPTOR CommonDesc
+);
+
+BOOL
+DisplayMSInterfaceHeader (
+    PUSB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR HeaderDesc
+);
+
+BOOL
+DisplayMSMIDIInJack (
+    PUSB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR JackDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+);
+
+BOOL
+DisplayMSMIDIOutJack (
+    PUSB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR JackDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+);
+
+BOOL
+DisplayMSElement (
+    PUSB_AUDIO_MS_ELEMENT_DESCRIPTOR ElementDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+);
+
+BOOL
+DisplayMidiStreamingEndpoint(
+    PUSB_AUDIO_MS_ENDPOINT_DESCRIPTOR EndpointDesc
 );
 
 VOID
@@ -311,12 +342,16 @@ DisplayChannelConfig (
 
  bInterfaceSubClass - The SubClass of the Interface containing the descriptor
 
+ info - The device which supplied the descriptor
+
 *****************************************************************************/
 
 BOOL
 DisplayAudioDescriptor (
     PUSB_AUDIO_COMMON_DESCRIPTOR CommonDesc,
-    UCHAR                        bInterfaceSubClass
+    UCHAR                        bInterfaceSubClass,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
 )
 {
     switch (CommonDesc->bDescriptorType)
@@ -374,13 +409,39 @@ DisplayAudioDescriptor (
                     }
                     break;
 
+                case USB_AUDIO_SUBCLASS_MIDISTREAMING:
+                    switch (CommonDesc->bDescriptorSubtype)
+                    {
+                        case USB_AUDIO_CS_INTERFACE_MS_HEADER:
+                            return DisplayMSInterfaceHeader((PUSB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR)CommonDesc);
+
+                        case USB_AUDIO_CS_INTERFACE_MIDI_IN_JACK:
+                            return DisplayMSMIDIInJack((PUSB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR)CommonDesc, StringDescs, LatestDevicePowerState);
+
+                        case USB_AUDIO_CS_INTERFACE_MIDI_OUT_JACK:
+                            return DisplayMSMIDIOutJack((PUSB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR)CommonDesc, StringDescs, LatestDevicePowerState);
+
+                        case USB_AUDIO_CS_INTERFACE_ELEMENT:
+                            return DisplayMSElement((PUSB_AUDIO_MS_ELEMENT_DESCRIPTOR)CommonDesc, StringDescs, LatestDevicePowerState);
+                    default:
+                        break;
+                    }
+                    break;
+
                 default:
                     break;
             }
             break;
 
         case USB_AUDIO_CS_ENDPOINT:
-            return DisplayCSEndpoint((PUSB_AUDIO_ENDPOINT_DESCRIPTOR)CommonDesc);
+            switch (bInterfaceSubClass)
+            {
+            case USB_AUDIO_SUBCLASS_AUDIOSTREAMING:
+                return DisplayAudioStreamingEndpoint((PUSB_AUDIO_AS_ENDPOINT_DESCRIPTOR)CommonDesc);
+
+            case USB_AUDIO_SUBCLASS_MIDISTREAMING:
+                return DisplayMidiStreamingEndpoint((PUSB_AUDIO_MS_ENDPOINT_DESCRIPTOR)CommonDesc);
+            }
 
         default:
             break;
@@ -1025,18 +1086,18 @@ DisplayASGeneral (
 
 /*****************************************************************************
 
- DisplayCSEndpoint()
+ DisplayAudioStreamingEndpoint()
 
 *****************************************************************************/
 
 BOOL
-DisplayCSEndpoint (
-    PUSB_AUDIO_ENDPOINT_DESCRIPTOR EndpointDesc
+DisplayAudioStreamingEndpoint (
+    PUSB_AUDIO_AS_ENDPOINT_DESCRIPTOR EndpointDesc
 )
 {
     PCHAR pStr = NULL;
 
-    if (EndpointDesc->bLength != sizeof(USB_AUDIO_ENDPOINT_DESCRIPTOR))
+    if (EndpointDesc->bLength != sizeof(USB_AUDIO_AS_ENDPOINT_DESCRIPTOR))
     {
         OOPS();
         return FALSE;
@@ -1252,6 +1313,231 @@ DisplayASFormatSpecific (
 
     DisplayBytes((PUCHAR)(CommonDesc + 1),
                  CommonDesc->bLength);
+
+    return TRUE;
+}
+
+BOOL
+DisplayMSInterfaceHeader(
+    PUSB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR HeaderDesc
+)
+{
+    AppendTextBuffer("\r\n          ===>MIDI Streaming Interface Header Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        HeaderDesc->bLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
+        HeaderDesc->bDescriptorType);
+
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (MS_HEADER)\r\n",
+        HeaderDesc->bDescriptorSubtype);
+
+    AppendTextBuffer("bcdMSC:                            0x%04X\r\n",
+        HeaderDesc->bcdMSC);
+
+    AppendTextBuffer("wTotalLength:                      0x%04X\r\n",
+        HeaderDesc->wTotalLength);
+    return TRUE;
+}
+
+PCHAR
+DescribeMidiJackType(
+    UCHAR JackType
+)
+{
+    if (JackType == USB_AUDIO_MS_JACK_TYPE_EMBEDDED)
+    {
+        return "EMBEDDED";
+    }
+    if (JackType == USB_AUDIO_MS_JACK_TYPE_EXTERNAL)
+    {
+        return "EXTERNAL";
+    }
+    return "JACK_TYPE_UNDEFINED";
+}
+
+BOOL
+DisplayMSMIDIInJack(
+    PUSB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR JackDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+)
+{
+    AppendTextBuffer("\r\n          ===>MIDI IN Jack Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        JackDesc->bLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
+        JackDesc->bDescriptorType);
+
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (MIDI_IN_JACK)\r\n",
+        JackDesc->bDescriptorSubtype);
+
+    AppendTextBuffer("bJackType:                         0x%02X (%s)\r\n",
+        JackDesc->bJackType,
+        DescribeMidiJackType(JackDesc->bJackType));
+
+    AppendTextBuffer("bJackID:                           0x%02X\r\n",
+        JackDesc->bJackType);
+
+    if (JackDesc->iJack)
+    {
+        DisplayStringDescriptor(JackDesc->iJack, StringDescs, LatestDevicePowerState);
+    }
+    return TRUE;
+}
+
+BOOL
+DisplayMSMIDIOutJack(
+    PUSB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR JackDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+)
+{
+    UCHAR i, iJack;
+    PUSB_AUDIO_MS_MIDI_OUT_JACK_PIN_DESCRIPTOR PinDesc = (PUSB_AUDIO_MS_MIDI_OUT_JACK_PIN_DESCRIPTOR)(JackDesc + 1);
+
+    AppendTextBuffer("\r\n          ===>MIDI OUT Jack Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        JackDesc->bLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
+        JackDesc->bDescriptorType);
+
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (MIDI_OUT_JACK)\r\n",
+        JackDesc->bDescriptorSubtype);
+
+    AppendTextBuffer("bJackType:                         0x%02X (%s)\r\n",
+        JackDesc->bJackType,
+        DescribeMidiJackType(JackDesc->bJackType));
+
+    AppendTextBuffer("bJackID:                           0x%02X\r\n",
+        JackDesc->bJackID);
+
+    AppendTextBuffer("bNrInputPins:                      0x%02X\r\n",
+        JackDesc->bNrInputPins);
+
+    for (i = 0; i < JackDesc->bNrInputPins; i++)
+    {
+        AppendTextBuffer("baSourceID(%d):                     0x%02X\r\n",
+            i + 1, PinDesc->baSourceID);
+
+        AppendTextBuffer("baSourcePin(%d):                    0x%02X\r\n",
+            i + 1, PinDesc->baSourcePin);
+
+        PinDesc++;
+    }
+
+    iJack = *((UCHAR *)PinDesc);
+
+    if (iJack)
+    {
+        DisplayStringDescriptor(iJack, StringDescs, LatestDevicePowerState);
+    }
+    return TRUE;
+}
+
+BOOL
+DisplayMSElement(
+    PUSB_AUDIO_MS_ELEMENT_DESCRIPTOR ElementDesc,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
+)
+{
+    UCHAR i, iElement;
+    PUSB_AUDIO_MS_ELEMENT_SOURCE_DESCRIPTOR SourceDesc = (PUSB_AUDIO_MS_ELEMENT_SOURCE_DESCRIPTOR)(ElementDesc + 1);
+    PUSB_AUDIO_MS_ELEMENT_FOOTER_DESCRIPTOR FooterDesc;
+
+    AppendTextBuffer("\r\n          ===>MIDI Element Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        ElementDesc->bLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_INTERFACE)\r\n",
+        ElementDesc->bDescriptorType);
+
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (ELEMENT)\r\n",
+        ElementDesc->bDescriptorSubtype);
+
+    AppendTextBuffer("bElementID:                        0x%02X\r\n",
+        ElementDesc->bElementID);
+
+    AppendTextBuffer("bNrInputPins:                      0x%02X\r\n",
+        ElementDesc->bNrInputPins);
+
+    for (i = 0; i < ElementDesc->bNrInputPins; i++)
+    {
+    AppendTextBuffer("baSourceID(%d):                    0x%02X\r\n",
+            i, SourceDesc->baSourceID);
+
+    AppendTextBuffer("baSourcePin(%d):                   0x%02X\r\n",
+            i, SourceDesc->baSourcePin);
+
+        SourceDesc++;
+    }
+
+    FooterDesc = (PUSB_AUDIO_MS_ELEMENT_FOOTER_DESCRIPTOR) SourceDesc;
+
+    AppendTextBuffer("bNrOutputPins:                      0x%02X\r\n",
+        FooterDesc->bNrOutputPins);
+
+    AppendTextBuffer("bInTerminalLink:                      0x%02X\r\n",
+        FooterDesc->bInTerminalLink);
+
+    AppendTextBuffer("bOutTerminalLink:                      0x%02X\r\n",
+        FooterDesc->bOutTerminalLink);
+
+    AppendTextBuffer("bElCapsSize:                      0x%02X\r\n",
+        FooterDesc->bInTerminalLink);
+
+    FooterDesc++;
+    iElement = *((UCHAR*)FooterDesc);
+
+    if (iElement)
+    {
+        DisplayStringDescriptor(iElement, StringDescs, LatestDevicePowerState);
+    }
+    return TRUE;
+}
+
+BOOL
+DisplayMidiStreamingEndpoint(
+    PUSB_AUDIO_MS_ENDPOINT_DESCRIPTOR EndpointDesc
+)
+{
+    UCHAR i, *j;
+    if (EndpointDesc->bLength < sizeof(USB_AUDIO_MS_ENDPOINT_DESCRIPTOR))
+    {
+        OOPS();
+        return FALSE;
+    }
+
+    AppendTextBuffer("\r\n          ===>MIDI Streaming Class Specific Audio Data Endpoint Descriptor<===\r\n");
+
+    AppendTextBuffer("bLength:                           0x%02X\r\n",
+        EndpointDesc->bLength);
+
+    AppendTextBuffer("bDescriptorType:                   0x%02X (CS_ENDPOINT)\r\n",
+        EndpointDesc->bDescriptorType);
+
+    AppendTextBuffer("bDescriptorSubtype:                0x%02X (EP_GENERAL)\r\n",
+        EndpointDesc->bDescriptorSubtype);
+
+    AppendTextBuffer("bNumEmbMIDIJack:                   0x%02X\r\n",
+        EndpointDesc->bNumEmbMIDIJack);
+
+    j = (PUCHAR)(EndpointDesc + 1);
+
+    for (i = 0; i < EndpointDesc->bNumEmbMIDIJack; i++)
+    {
+    AppendTextBuffer("baAssocJackID(%d):                  0x%02X\r\n",
+        i + 1,
+        *(j + i));
+
+    }
 
     return TRUE;
 }
