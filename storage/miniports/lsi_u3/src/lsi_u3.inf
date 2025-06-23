@@ -36,6 +36,7 @@ lsi_u3.sys = 1
 [DestinationDirs]
 DefaultDestDir = 12 ; DIRID_DRIVERS
 
+; Use NT$ARCH$ for platform-specific stamping via Stampinf
 [Manufacturer]
 %LSI%=LSI,NT$ARCH$
 
