@@ -48,7 +48,7 @@ jobs:
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
       - name: Get changed files
         id: get-changed-files
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v41
         with:
           separator: ","
       - name: Initialize CodeQL
