@@ -40,16 +40,7 @@ DefaultDestDir = 12 ; DIRID_DRIVERS
 [Manufacturer]
 %LSI%=LSI,NT$ARCH$
 
-; One of the following sections will be used based on $ARCH$. Template INF.
-[LSI.NTamd64]
-%DevDesc1% = LSI_U3_Inst, PCI\VEN_1000&DEV_0020
-%DevDesc2% = LSI_U3_Inst, PCI\VEN_1000&DEV_0021
-
-[LSI.NTia64]
-%DevDesc1% = LSI_U3_Inst, PCI\VEN_1000&DEV_0020
-%DevDesc2% = LSI_U3_Inst, PCI\VEN_1000&DEV_0021
-
-[LSI.NTarm64]
+[LSI.NT$ARCH$]
 %DevDesc1% = LSI_U3_Inst, PCI\VEN_1000&DEV_0020
 %DevDesc2% = LSI_U3_Inst, PCI\VEN_1000&DEV_0021
 
