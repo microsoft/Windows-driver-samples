@@ -4,5 +4,5 @@ general\dchu\osrfx2_dchu_extension_loose,*|x64,,22621,Only NI: Only x64: Fails t
 general\dchu\osrfx2_dchu_extension_tight,*|x64,,22621,Only NI: Only x64: Fails to build
 network\trans\WFPSampler,Debug|ARM64,,22621,Only NI: Only ARM: Fails to build on EWDK 22621 with VS 17.1.5 - CallingConvention=StdCall not supported
 prm,*,,22621,Only NI: Not supported on NI.
-powerlimit\plclient,*,,22621,Only NI: Not supported on NI.
+powerlimit\plclient,*,,22621,Only NI: Not supported on NI .
 powerlimit\plpolicy,*,,22621,Only NI: Not supported on NI.
