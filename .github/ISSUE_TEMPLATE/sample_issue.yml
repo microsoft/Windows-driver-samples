@@ -3,7 +3,7 @@ description: Report a problem you have with a specific sample.
 title: '[path/to/sample]: '
 body:
 - type: dropdown
-  id: Sample Area
+  id: sample_area
   attributes:
     label: Which is the area where the sample lives?
     description: Select the area where you're experiencing the problem.
