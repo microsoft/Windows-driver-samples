@@ -6,3 +6,8 @@ network\trans\WFPSampler,Debug|ARM64,,22621,Only NI: Only ARM: Fails to build on
 prm,*,,22621,Only NI: Not supported on NI.
 powerlimit\plclient,*,,22621,Only NI: Not supported on NI.
 powerlimit\plpolicy,*,,22621,Only NI: Not supported on NI.
+spb\spbtesttool,*,,26100,"failure introduced in VS17.14, suppressed until fix"
+general\pcidrv,*,,26100,"failure introduced in VS17.14, suppressed until fix"
+serial\serial,*,,26100,"failure introduced in VS17.14, suppressed until fix"
+network\wlan\wdi,*,,26100,"failure introduced in VS17.14, suppressed until fix"
+tools\kasan\samples\kasandemo-wdm,*|x64,,26100,"failure introduced in VS17.14, suppressed until fix"
