@@ -21,7 +21,7 @@ for line in lines:
         elif line:
             path, codeowner = line.split()
             if path in areas:
-                raise ValueError(f"{path} has been found two times inside CODEOWNERS file")
+                raise ValueError(f"Path:{path} has been found two times inside CODEOWNERS file")
             areas[path] = codeowner
 
 # Generate the YAML structure
@@ -34,7 +34,7 @@ yaml_form = {
 
 dropdown = {
     "type": "dropdown",
-    "id": "Sample Area",
+    "id": "sample_area",
     "attributes": {
         "label": "Which is the area where the sample lives?",
         "description": "Select the area where you're experiencing the problem.",
