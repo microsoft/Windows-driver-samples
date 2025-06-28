@@ -2277,7 +2277,7 @@ Return Value:
 
         if ( transactionContext ) {  // case 3
 
-            FltReferenceContext( transactionContext );
+            FltReferenceContext( StreamContext );
 
             AvAcquireResourceExclusive( transactionContext->Resource );
 
