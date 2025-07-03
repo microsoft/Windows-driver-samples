@@ -18,7 +18,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install pyyaml
+        run: pip install pyyaml requests
 
       - name: Extract selected path and tag codeowner
         env:
