@@ -34,7 +34,7 @@ jobs:
           selected_path = None
 
           # Try to extract the selected path from the issue body
-          match = re.search(r'### Which is the area where the sample lives\\?\\n(.+)', issue_body)
+          match = re.search(r'### Which is the area where the sample lives\?\s*\n(.+)', issue_body, re.MULTILINE)
           if match:
               selected_path = match.group(1).strip()
 
