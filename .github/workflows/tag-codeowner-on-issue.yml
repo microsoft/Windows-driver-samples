@@ -46,7 +46,7 @@ jobs:
           with open(".github/CODEOWNERS", "r") as f:
               lines = f.readlines()
 
-          codeowners = {}
+          codeowner = None
           sample_section = False
           for line in lines:
               line = line.strip()
@@ -57,15 +57,16 @@ jobs:
                   if line.startswith("#") or not line:
                       continue
                   path, owner = line.split()
-                  codeowners[path] = owner
+                  if path == selected_path:
+                    codeowner = owner
+                    break
 
-          owner = codeowners.get(selected_path)
-          if not owner:
+          if codeowner is None:
               print(f"No codeowner found for path: {selected_path}")
               exit(0)
 
           # Post a comment tagging the owner
-          comment = f"{owner} can you please take a look at this issue related to `{selected_path}`?"
+          comment = f"{codeowner} can you please take a look at this issue related to `{selected_path}`?"
           issue_number = os.environ['GITHUB_REF'].split('/')[-1]
           repo = os.environ['GITHUB_REPOSITORY']
           token = os.environ['GITHUB_TOKEN']
