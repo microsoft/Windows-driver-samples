@@ -1,8 +1,9 @@
-import re
 import yaml
+import os
 
 # Read the CODEOWNERS file
-with open("../CODEOWNERS", "r") as file:
+codeowners_path = os.path.join(os.path.dirname(__file__), "..", "CODEOWNERS")
+with open(codeowners_path, "r") as file:
     lines = file.readlines()
 
 # Parse the CODEOWNERS file to extract areas and their paths
