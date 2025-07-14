@@ -8,62 +8,62 @@ body:
     label: Which is the area where the sample lives?
     description: Select the area where you're experiencing the problem.
     options:
+    - /TrEE/
     - /audio/
-    - /bluetooth/
     - /avstream/
-    - /general/SimpleMediaSource/
-    - /network/wwan/
-    - /nfc/
-    - /gnss/
-    - /network/radio/
-    - /network/wsk/
-    - /sd/
-    - /smartcrd/
-    - /gpio/
-    - /pofx/PEP/
-    - /prm/
-    - /wmi/wmiacpi/
-    - /general/SystemDma/
-    - /video/
-    - /tools/
-    - /pofx/WDF/
-    - /powerlimit/
-    - /simbatt/
-    - /thermal/
-    - /general/perfcounters/
-    - /general/tracing/
+    - /bluetooth/
     - /filesys/cdfs/
     - /filesys/fastfat/
     - /filesys/miniFilter/
+    - /general/DCHU/
+    - /general/PLX9x5x/
+    - /general/SimpleMediaSource/
+    - /general/SystemDma/
     - /general/cancel/
+    - /general/echo/
     - /general/event/
+    - /general/ioctl/
+    - /general/pcidrv/
+    - /general/perfcounters/
     - /general/registry/
+    - /general/toaster/
+    - /general/tracing/
+    - /gnss/
+    - /gpio/
+    - /hid/
+    - /input/
     - /network/config/
     - /network/modem/
     - /network/ndis/
+    - /network/radio/
     - /network/trans/
-    - /security/
-    - /TrEE/
-    - /general/DCHU/
-    - /setup/
-    - /print/
-    - /wia/
-    - /sensors/
-    - /storage/
-    - /general/echo/
-    - /general/ioctl/
-    - /general/pcidrv/
-    - /general/PLX9x5x/
-    - /general/toaster/
-    - /hid/
-    - /input/
-    - /pofx/UMDF2/
-    - /serial/
-    - /spb/
-    - /usb/
-    - /wmi/wmisamp/
-    - /pos/
     - /network/wlan/
+    - /network/wsk/
+    - /network/wwan/
+    - /nfc/
+    - /pofx/PEP/
+    - /pofx/UMDF2/
+    - /pofx/WDF/
+    - /pos/
+    - /powerlimit/
+    - /print/
+    - /prm/
+    - /sd/
+    - /security/
+    - /sensors/
+    - /serial/
+    - /setup/
+    - /simbatt/
+    - /smartcrd/
+    - /spb/
+    - /storage/
+    - /thermal/
+    - /tools/
+    - /usb/
+    - /video/
+    - /wia/
+    - /wmi/wmiacpi/
+    - /wmi/wmisamp/
   validations:
     required: true
 - type: textarea
