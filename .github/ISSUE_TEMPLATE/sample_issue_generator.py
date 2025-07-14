@@ -67,5 +67,6 @@ yaml_form["body"].append(dropdown)
 yaml_form["body"].append(description_field)
 
 # Write the YAML to a file
-with open("sample_issue.yml", "w") as outfile:
+output_path = os.path.join(os.path.dirname(__file__), "sample_issue.yml")
+with open(output_path, "w") as outfile:
     yaml.dump(yaml_form, outfile, sort_keys=False)
