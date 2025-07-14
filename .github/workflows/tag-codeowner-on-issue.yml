@@ -28,7 +28,6 @@ jobs:
           import os
           import re
           import requests
-          import yaml
 
           issue_body = """${{ github.event.issue.body }}"""
           selected_path = None
@@ -66,7 +65,7 @@ jobs:
               exit(0)
 
           # Post a comment tagging the owner
-          comment = f"{codeowner} can you please take a look at this issue related to `{selected_path}`?"
+          comment = f"{codeowner} can you please take a look at this issue related to {selected_path}?"
           repo = os.environ['GITHUB_REPOSITORY']
           token = os.environ['GITHUB_TOKEN']
 
