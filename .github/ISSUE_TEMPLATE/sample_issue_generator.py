@@ -6,7 +6,7 @@ with open("../CODEOWNERS", "r") as file:
     lines = file.readlines()
 
 # Parse the CODEOWNERS file to extract areas and their paths
-areas = {}
+areas = []
 sample_section_found = False
 
 for line in lines:
@@ -22,7 +22,11 @@ for line in lines:
             path, codeowner = line.split()
             if path in areas:
                 raise ValueError(f"Path:{path} has been found two times inside CODEOWNERS file")
-            areas[path] = codeowner
+            areas.append(path)
+
+
+# Sort the areas in lexicographical order
+areas = sorted(areas)
 
 # Generate the YAML structure
 yaml_form = {
@@ -38,7 +42,7 @@ dropdown = {
     "attributes": {
         "label": "Which is the area where the sample lives?",
         "description": "Select the area where you're experiencing the problem.",
-        "options": [path for path, codeowner in areas.items()]
+        "options": areas
     },
     "validations": {
         "required": True
