@@ -9,7 +9,7 @@ on:
       - 'LICENSE'
   schedule:
     # Runs every Saturday at 00:00 PST (08:00 UTC)
-    - cron: '0 8 * * 0'
+    - cron: '0 8 * * 6'
 jobs:
   build:
     name: Build driver samples
