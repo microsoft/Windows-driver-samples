@@ -104,19 +104,20 @@ else {
     exit 1
 }
 #
-# Get the WDK extension version from installed packages
-$wdk_extension_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" | Select-Object -ExpandProperty Name
-$wdk_extension_ver = ([regex]'(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches($wdk_extension_ver).Value
-if (-not $wdk_extension_ver) {
-    # Be lenient with EWDK builds that do not include the package information
-    if ($build_environment -match '^EWDK') {
-        $wdk_extension_ver = "(package not found)"
-    }
-    else {
+
+# Be lenient with EWDK builds that do not include the package information
+if ($build_environment -match '^EWDK') {
+    $wdk_extension_ver = "(package is not included for EWDK builds)"
+} else {
+    # Get the WDK extension version from installed packages
+    $wdk_extension_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
+    if (-not $wdk_extension_ver) {
         Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
         exit 1
     }
+    $wdk_extension_ver = [regex]::Match($wdk_extension_ver.Name, '(\d+\.){3}\d+').Value
 }
+
 #
 #
 # InfVerif_AdditionalOptions
