@@ -7,6 +7,9 @@ on:
     paths-ignore:
       - '**.md'
       - 'LICENSE'
+    schedule:
+      # Runs every Tuesday at 00:00 PST (08:00 UTC)
+      - cron: '0 8 * * 2'
 jobs:
   build:
     name: Build driver samples
