@@ -1,4 +1,4 @@
-name: Generate Sample Issue Template
+name: Check Sample Issue Template
 
 on:
   push:
