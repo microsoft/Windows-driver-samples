@@ -1,0 +1,51 @@
+name: Check Sample Issue Template
+
+on:
+  push:
+    paths:
+      - '.github/CODEOWNERS'
+  pull_request:
+    paths:
+      - '.github/CODEOWNERS'
+
+
+jobs:
+  generate-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run the generator script
+        run: python .github/ISSUE_TEMPLATE/sample_issue_generator.py
+
+      - name: Check for discrepancies
+        run: |
+          if git diff --quiet .github/ISSUE_TEMPLATE/sample_issue.yml; then
+            echo "✅ No discrepancies found. The sample issue template is up to date."
+          else
+            echo "❌ Discrepancy detected!"
+            echo "The CODEOWNERS file was modified, but the sample issue template is not up to date."
+            echo ""
+            echo "Please regenerate the sample issue template by running:"
+            echo "  python .github/ISSUE_TEMPLATE/sample_issue_generator.py"
+            echo ""
+            echo "Or manually update it."
+            echo ""
+            echo "Then commit both files together:"
+            echo "  git add .github/CODEOWNERS .github/ISSUE_TEMPLATE/sample_issue.yml"
+            echo "  git commit -m 'Update CODEOWNERS and regenerate sample issue template'"
+            echo ""
+            echo "Differences found:"
+            git diff .github/ISSUE_TEMPLATE/sample_issue.yml
+            exit 1
+          fi
