@@ -89,12 +89,14 @@ Return Value:
         //
         RtlInitUnicodeString(&ntDeviceName, NT_DEVICE_NAME);
 
-        status = IoCreateDevice (pDriverObject,
+        status = IoCreateDeviceSecure (pDriverObject,
                                  0,
                                  &ntDeviceName,
                                  FILE_DEVICE_NETWORK,
                                  FILE_DEVICE_SECURE_OPEN,
                                  FALSE,
+                                 &SDDL_DEVOBJ_SYS_ALL_ADM_ALL,
+                                 NULL,
                                  &deviceObject);
     
         if (!NT_SUCCESS (status))
