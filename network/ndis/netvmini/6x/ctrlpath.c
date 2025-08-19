@@ -625,7 +625,7 @@ Return Value:
                 Statistics->Header.Size = NDIS_SIZEOF_STATISTICS_INFO_REVISION_1;
                 Statistics->Header.Revision = NDIS_STATISTICS_INFO_REVISION_1;
 
-                Statistics->SupportedStatistics = NIC_SUPPORTED_STATISTICS;
+                Statistics->SupportedStatistics = NIC_SUPPORTED_STATISTICS_FLAGS;
 
                 /* Bytes in */
                 Statistics->ifHCInOctets =
