@@ -4428,7 +4428,8 @@ IsUVCDevice (
 
     // walk through all the descriptors looking for the VIDEO_CONTROL_HEADER_UNIT
     while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
-        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
+        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd &&
+        commonDesc->bLength > 0)
     {
         if ((commonDesc->bDescriptorType == CS_INTERFACE) &&
             (commonDesc->bLength > sizeof(VIDEO_CONTROL_HEADER_UNIT)))
@@ -4490,7 +4491,8 @@ IsIADDevice (
 
     // return total number of IAD descriptors in this device configuration
     while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
-        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
+        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd &&
+        commonDesc->bLength > 0)
     {
         if (commonDesc->bDescriptorType == USB_IAD_DESCRIPTOR_TYPE)
         {
