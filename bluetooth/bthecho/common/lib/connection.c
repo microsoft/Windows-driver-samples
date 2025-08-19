@@ -1160,10 +1160,11 @@ Arguments:
     WDF_OBJECT_ATTRIBUTES attributes;
     WDFMEMORY memoryArg1    = NULL;
 
-    if (BrbSize <= 0) 
+    if (Brb == NULL || BrbSize != Brb->BrbHeader.Length) 
     {        
         TraceEvents(TRACE_LEVEL_ERROR, DBG_UTIL, 
-            "BrbSize has an invalid value: %I64d\n",
+            "Invalid Brb value. Brb:0x%p, BrbSize:%zu\n",
+            Brb,
             BrbSize
             );
 
