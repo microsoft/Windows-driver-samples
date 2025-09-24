@@ -7,6 +7,10 @@
 #include "mftpeventgenerator.h"
 #include "basepin.h"
 
+#include <wil/com.h>
+#include <wil/resource.h>
+#include <optional>
+
 //
 // The Below GUID is needed to transfer photoconfirmation sample successfully in the pipeline
 // It is used to propagate the mediatype of the sample to the pipeline which will consume the sample
@@ -18,6 +22,8 @@ DEFINE_GUID(MFSourceReader_SampleAttribute_MediaType_priv,
 
 
 interface IDirect3DDeviceManager9;
+
+constexpr int kMAX_WAIT_TIME_DRIVER_PROFILE_KSEVENT = 3000;// ms, amount of time to wait for the profile DDI KsEvent sent to the driver
 
 //
 // Forward declarations
@@ -275,9 +281,18 @@ protected:
         _In_opt_ IMFMediaType *pMediaType,
         _In_ DeviceStreamState newState
         );
+
     HRESULT BridgeInputPinOutputPin(
         _In_ CInPin* pInPin,
         _In_ COutPin* pOutPin);
+
+    HRESULT ProfilePropertyHandler(
+        _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
+        _In_       ULONG       ulPropertyLength,
+        _Inout_updates_to_(ulDataLength, *pulBytesReturned) LPVOID pPropertyData,
+        _In_       ULONG       ulDataLength,
+        _Inout_    PULONG      pulBytesReturned);
+
     //
     //Inline functions
     //
@@ -320,8 +335,14 @@ private:
     UINT32                       m_punValue;
     ComPtr<IKsControl>           m_spIkscontrol;
     ComPtr<IMFAttributes>        m_spAttributes;
+
     map<int, int>                m_outputPinMap;                      // How output pins are connected to input pins i-><0..outpins>
     PWCHAR                       m_SymbolicLink;
+    wil::unique_event_nothrow    m_hSelectedProfileKSEvent;
+    wil::unique_event_nothrow    m_hSelectedProfileKSEventSentToDriver;
+    std::optional<bool>          m_isProfileDDISupportedInBaseDriver;
+    SENSORPROFILEID              m_selectedProfileId;
+
 };
 
 
