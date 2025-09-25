@@ -6,9 +6,6 @@
 #include "common.h"
 #include "mftpeventgenerator.h"
 #include "basepin.h"
-
-#include <wil/com.h>
-#include <wil/resource.h>
 #include <optional>
 
 //
@@ -338,8 +335,8 @@ private:
 
     map<int, int>                m_outputPinMap;                      // How output pins are connected to input pins i-><0..outpins>
     PWCHAR                       m_SymbolicLink;
-    wil::unique_event_nothrow    m_hSelectedProfileKSEvent;
-    wil::unique_event_nothrow    m_hSelectedProfileKSEventSentToDriver;
+    HANDLE                       m_hSelectedProfileKSEvent;
+    HANDLE                       m_hSelectedProfileKSEventSentToDriver;
     std::optional<bool>          m_isProfileDDISupportedInBaseDriver;
     SENSORPROFILEID              m_selectedProfileId;
 
