@@ -103,19 +103,20 @@ else {
     Write-Error "Could not determine build environment."
     exit 1
 }
-#
 
-# Be lenient with EWDK builds that do not include the package information
+# Determine WDK Visual Studio Component version
+#
+# Be lenient with EWDK builds that do not include the component information
 if ($build_environment -match '^EWDK') {
-    $wdk_extension_ver = "(package is not included for EWDK builds)"
+    $wdk_vs_component_ver = "(WDK Visual Studio Component Version is not included for EWDK builds)"
 } else {
     # Get the WDK extension version from installed packages
-    $wdk_extension_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
-    if (-not $wdk_extension_ver) {
-        Write-Error "No version of the WDK Visual Studio Extension could be found. The WDK Extension is not installed."
+    $wdk_vs_component_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
+    if (-not $wdk_vs_component_ver) {
+        Write-Error "WDK Visual Studio Component version not found. Please ensure the WDK Component is installed."
         exit 1
     }
-    $wdk_extension_ver = [regex]::Match($wdk_extension_ver.Name, '(\d+\.){3}\d+').Value
+    $wdk_vs_component_ver = [regex]::Match($wdk_vs_component_ver.Name, '(\d+\.){3}\d+').Value
 }
 
 #
@@ -180,22 +181,22 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output "WDK Build Environment:      $build_environment"
-Write-Output "WDK Build Number:           $build_number"
+Write-Output "WDK Build Environment:               $build_environment"
+Write-Output "WDK Build Number:                    $build_number"
 if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { 
-Write-Output "WDK Nuget Version:          $nuget_package_version" 
+Write-Output "WDK Nuget Version:                   $nuget_package_version" 
 }
-Write-Output "WDK Extension Version:      $wdk_extension_ver"
-Write-Output "Samples:                    $($sampleSet.Count)"
-Write-Output "Configurations:             $($Configurations.Count) ($Configurations)"
-Write-Output "Platforms:                  $($Platforms.Count) ($Platforms)"
-Write-Output "InfVerif_AdditionalOptions: $InfVerif_AdditionalOptions"
-Write-Output "Combinations:               $SolutionsTotal"
-Write-Output "LogicalProcessors:          $LogicalProcessors"
-Write-Output "ThrottleFactor:             $ThrottleFactor"
-Write-Output "ThrottleLimit:              $ThrottleLimit"
-Write-Output "WDS_WipeOutputs:            $env:WDS_WipeOutputs"
-Write-Output "Disk Remaining (GB):        $(((Get-Volume ((Get-Item ".").PSDrive.Name)).SizeRemaining) / 1GB)"
+Write-Output "WDK Visual Studio Component Version: $wdk_vs_component_ver"
+Write-Output "Samples:                             $($sampleSet.Count)"
+Write-Output "Configurations:                      $($Configurations.Count) ($Configurations)"
+Write-Output "Platforms:                           $($Platforms.Count) ($Platforms)"
+Write-Output "InfVerif_AdditionalOptions:          $InfVerif_AdditionalOptions"
+Write-Output "Combinations:                        $SolutionsTotal"
+Write-Output "LogicalProcessors:                   $LogicalProcessors"
+Write-Output "ThrottleFactor:                      $ThrottleFactor"
+Write-Output "ThrottleLimit:                       $ThrottleLimit"
+Write-Output "WDS_WipeOutputs:                     $env:WDS_WipeOutputs"
+Write-Output "Disk Remaining (GB):                 $(((Get-Volume ((Get-Item ".").PSDrive.Name)).SizeRemaining) / 1GB)"
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
