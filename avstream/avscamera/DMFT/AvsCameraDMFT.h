@@ -7,7 +7,9 @@
 #include "mftpeventgenerator.h"
 #include "basepin.h"
 #include <optional>
-
+#include <memory>
+//#include <wil/com.h>
+#include <wil/resource.h>
 //
 // The Below GUID is needed to transfer photoconfirmation sample successfully in the pipeline
 // It is used to propagate the mediatype of the sample to the pipeline which will consume the sample
@@ -21,6 +23,7 @@ DEFINE_GUID(MFSourceReader_SampleAttribute_MediaType_priv,
 interface IDirect3DDeviceManager9;
 
 constexpr int kMAX_WAIT_TIME_DRIVER_PROFILE_KSEVENT = 3000;// ms, amount of time to wait for the profile DDI KsEvent sent to the driver
+
 
 //
 // Forward declarations
@@ -314,6 +317,7 @@ protected:
         return (InterlockedCompareExchange((LONG*)&m_StreamingState, DeviceStreamState_Run, DeviceStreamState_Run) == DeviceStreamState_Run);
     }
 
+
 private:
     ULONG                        m_InputPinCount;
     ULONG                        m_OutputPinCount;
@@ -335,8 +339,8 @@ private:
 
     map<int, int>                m_outputPinMap;                      // How output pins are connected to input pins i-><0..outpins>
     PWCHAR                       m_SymbolicLink;
-    HANDLE                       m_hSelectedProfileKSEvent;
-    HANDLE                       m_hSelectedProfileKSEventSentToDriver;
+    wil::unique_event_nothrow    m_hSelectedProfileKSEvent;
+    wil::unique_event_nothrow    m_hSelectedProfileKSEventSentToDriver;
     std::optional<bool>          m_isProfileDDISupportedInBaseDriver;
     SENSORPROFILEID              m_selectedProfileId;
 
@@ -348,5 +352,4 @@ inline HRESULT MFT_CreateInstance(REFIID riid, void **ppv)
 {
     return CMultipinMft::CreateInstance(riid, ppv);
 }
-
 
