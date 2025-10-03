@@ -1,0 +1,79 @@
+name: Tag Codeowner on Sample Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  tag-codeowner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install pyyaml requests
+
+      - name: Extract selected path and tag codeowner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<EOF
+          import os
+          import re
+          import requests
+
+          issue_body = """${{ github.event.issue.body }}"""
+          selected_path = None
+
+          # Try to extract the selected path from the issue body
+          match = re.search(r'### Which is the area where the sample lives\?\s*\n(.+)', issue_body, re.MULTILINE)
+          if match:
+              selected_path = match.group(1).strip()
+
+          if not selected_path:
+              print("No sample path found in issue body.")
+              exit(0)
+
+          # Read CODEOWNERS
+          with open(".github/CODEOWNERS", "r") as f:
+              lines = f.readlines()
+
+          codeowner = None
+          sample_section = False
+          for line in lines:
+              line = line.strip()
+              if line.startswith("# Samples"):
+                  sample_section = True
+                  continue
+              if sample_section:
+                  if line.startswith("#") or not line:
+                      continue
+                  path, owner = line.split()
+                  if path == selected_path:
+                      codeowner = owner
+                      break
+
+          if codeowner is None:
+              print(f"No codeowner found for path: {selected_path}")
+              exit(0)
+
+          # Post a comment tagging the owner
+          comment = f"{codeowner} can you please take a look at this issue related to {selected_path}?"
+          repo = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GITHUB_TOKEN']
+
+          url = f"https://api.github.com/repos/{repo}/issues/${{ github.event.issue.number }}/comments"
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github.v3+json"
+          }
+          response = requests.post(url, headers=headers, json={"body": comment})
+          print("Comment posted:", response.status_code, response.text)
+          EOF
