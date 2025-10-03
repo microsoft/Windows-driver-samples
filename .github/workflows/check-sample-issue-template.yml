@@ -1,12 +1,11 @@
 name: Check Sample Issue Template
 
 on:
-  push:
-    paths:
-      - '.github/CODEOWNERS'
   pull_request:
     paths:
       - '.github/CODEOWNERS'
+      - '.github/ISSUE_TEMPLATE/sample_issue.yml'
+      - '.github/ISSUE_TEMPLATE/sample_issue_generator.py'
 
 
 jobs:
