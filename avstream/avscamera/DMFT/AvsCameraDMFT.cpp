@@ -29,7 +29,9 @@ CMultipinMft::CMultipinMft()
     m_hSelectedProfileKSEvent { nullptr },
     m_hSelectedProfileKSEventSentToDriver { nullptr },
     m_isProfileDDISupportedInBaseDriver{},
-    m_selectedProfileId { KSCAMERAPROFILE_Legacy, 0, 0 }
+    m_selectedProfileId { KSCAMERAPROFILE_Legacy, 0, 0 },
+    m_profileCallback {this, &CMultipinMft::ProfileAsyncResultCallback },
+    m_profileAsyncResult {nullptr}
 {
     HRESULT hr = S_OK;
     ComPtr<IMFAttributes> pAttributes = nullptr;
@@ -647,26 +649,6 @@ IFACEMETHODIMP  CMultipinMft::ProcessInput(
     {
         goto done;
     }
-    if (pSample != nullptr && m_selectedProfileId.Type != KSCAMERAPROFILE_FaceAuth_Mode)
-    {
-        IMFMediaBuffer* pMediaBuff{ nullptr };
-        hr = pSample->ConvertToContiguousBuffer(&pMediaBuff);
-        if (SUCCEEDED(hr))
-        {
-            DWORD bufferSize = 0;
-            BYTE* pBuffer = nullptr;
-            hr = pMediaBuff->Lock(&pBuffer, nullptr, &bufferSize);
-            if (SUCCEEDED(hr))
-            {
-                // Process the buffer here
-                //int start = bufferSize / 2;
-                //memset(pBuffer+start, 0xAB, bufferSize - start); // Example processing: flip 2nd half of image buffer into 0xAB
-                memset(pBuffer, 0xAB, bufferSize); // Example processing: flip 2nd half of image buffer into 0xAB
-                hr = pMediaBuff->Unlock();
-				pMediaBuff->Release();
-            }
-        }
-    }
     if (m_selectedProfileId.Type == KSCAMERAPROFILE_FaceAuth_Mode)
     {
         // DMFT might switch to different behavior when profile, KSCAMERAPROFILE_FaceAuth_Mode is selected.  
@@ -1022,22 +1004,15 @@ IFACEMETHODIMP CMultipinMft::KsProperty(
     if it needs to be propogated to the driver or not
     --*/
 {
-    CAutoLock Lock(m_critSec);
     HRESULT hr = S_OK;
-
-    /// PDMFT only cares about ExtendedCameraControls, all others 
-    /// are just blindly forwarded to the upstream DMFTs. 
-    if (!IsEqualCLSID(pProperty->Set, KSPROPERTYSETID_ExtendedCameraControl))
-    {
-        DMFTCHECKHR_GOTO(m_spIkscontrol->KsProperty(pProperty, ulPropertyLength, pvPropertyData, 
-            ulDataLength, pulBytesReturned), done);
-        goto done;
-    }
-    
     if (pProperty->Set == KSPROPERTYSETID_ExtendedCameraControl && pProperty->Id == KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE)
     {
         DMFTCHECKHR_GOTO(ProfilePropertyHandler(pProperty, ulPropertyLength, pvPropertyData, ulDataLength, pulBytesReturned), done);
-        goto done;
+    }
+    else
+    {
+        DMFTCHECKHR_GOTO(m_spIkscontrol->KsProperty(pProperty, ulPropertyLength, pvPropertyData,
+            ulDataLength, pulBytesReturned), done);
     }
 done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
@@ -1104,19 +1079,20 @@ IFACEMETHODIMP CMultipinMft::KsEvent(
             FALSE,
             DUPLICATE_SAME_ACCESS) == false)
         {
-            return E_INVALIDARG;
+            hr = E_INVALIDARG;
+            DMFTCHECKHR_GOTO(hr, done);
         }
         if (m_isProfileDDISupportedInBaseDriver.value_or(true))
         {
-            RETURN_IF_FAILED(m_hSelectedProfileKSEventSentToDriver.create());
+            hr = m_hSelectedProfileKSEventSentToDriver.create();
+            DMFTCHECKHR_GOTO(hr, done);
             KSEVENTDATA driverEventData = {};
             driverEventData.NotificationType = KSEVENTF_EVENT_HANDLE;
             driverEventData.EventHandle.Event = m_hSelectedProfileKSEventSentToDriver.get();
             DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Handling profile set KsEvent, created profile KsEvent handle for driver: %p", m_hSelectedProfileKSEventSentToDriver.get());
-
             // defer to source device
-            hr = m_spIkscontrol->KsEvent(pEvent, ulEventLength, (void*)(&driverEventData), ulDataLength, pBytesReturned);
-            if (FAILED(hr))
+            HRESULT hr2 = m_spIkscontrol->KsEvent(pEvent, ulEventLength, (void*)(&driverEventData), ulDataLength, pBytesReturned);
+            if (FAILED(hr2))
             {
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Failed to send profile KsEvent handle to driver: %p | hr=0x%08x", m_hSelectedProfileKSEventSentToDriver.get(), hr);
                 m_hSelectedProfileKSEventSentToDriver.reset();
@@ -1134,7 +1110,7 @@ IFACEMETHODIMP CMultipinMft::KsEvent(
 		DMFTCHECKHR_GOTO(hr, done);
     }
 done:
-    return S_OK;
+    return hr;
 }
 
 //
@@ -1387,25 +1363,23 @@ Implements the KsProperty KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE handler.
 HRESULT CMultipinMft::ProfilePropertyHandler(
     _In_reads_bytes_(ulPropertyLength) PKSPROPERTY pProperty,
     _In_       ULONG       ulPropertyLength,
-    _In_       LPVOID      pPropertyData,
+    _Inout_updates_to_(ulDataLength, *pulBytesReturned) LPVOID pPropertyData,
     _In_       ULONG       ulDataLength,
-    _Inout_    PULONG      pulBytesReturned)
+    _Inout_    PULONG      pulBytesReturned) try
 {
-
     UNREFERENCED_PARAMETER(ulPropertyLength);
     HRESULT hr = S_OK;
-
+    CAutoLock Lock(m_critSec);
     if (pProperty->Flags & KSPROPERTY_TYPE_SET)
     {
         DMFTCHECKNULL_GOTO(pulBytesReturned, done, E_POINTER);
         *pulBytesReturned = sizeof(KSCAMERA_EXTENDEDPROP_HEADER_BUFFERED) + sizeof(KSCAMERA_EXTENDEDPROP_PROFILE);
         if (ulDataLength < *pulBytesReturned)
         {
-            return HRESULT_FROM_WIN32(ERROR_MORE_DATA);
+            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
         }
         if (pPropertyData)
         {
-
             PBYTE pPayload = (PBYTE)pPropertyData;
             PKSCAMERA_EXTENDEDPROP_HEADER pExtendedHeader = &((PKSCAMERA_EXTENDEDPROP_HEADER_BUFFERED)pPayload)->header;
             KSCAMERA_EXTENDEDPROP_PROFILE* pProfile = (PKSCAMERA_EXTENDEDPROP_PROFILE)(pExtendedHeader + 1);
@@ -1419,24 +1393,36 @@ HRESULT CMultipinMft::ProfilePropertyHandler(
                 DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_WARNING, "The caller incorrectly sets GUID_NULL, default back to legacy.");
                 m_selectedProfileId = { KSCAMERAPROFILE_Legacy, 0, 0 };
             }
-
-            // signal we are done
-            if (m_hSelectedProfileKSEvent != nullptr)
+            // if we should relay this SET call down to base driver
+            if (m_isProfileDDISupportedInBaseDriver.value_or(true))
             {
-                if (m_hSelectedProfileKSEventSentToDriver != nullptr)
+                hr = m_spIkscontrol->KsProperty(pProperty, ulPropertyLength, pPropertyData, ulDataLength, pulBytesReturned);
+                // if base camera does not support the provided profile, set the base camera ksevent right away in case it did accept it so that we don't await it later on
+                if (FAILED(hr))
                 {
-                    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Waiting for driver profile KsEvent handle: %p", m_hSelectedProfileKSEventSentToDriver.get());
-                    if (!m_hSelectedProfileKSEventSentToDriver.wait(kMAX_WAIT_TIME_DRIVER_PROFILE_KSEVENT))
+                    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_WARNING, "Failed Profile DDI SET, base camera hr=0x%08x", hr);
+                    if (m_hSelectedProfileKSEventSentToDriver != nullptr)
                     {
-                        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_ERROR,
-                            "Waiting for driver profile KsEvent handle: %p timed out after %i ms, failing",
-                            m_hSelectedProfileKSEventSentToDriver.get(),
-                            kMAX_WAIT_TIME_DRIVER_PROFILE_KSEVENT);
-                        m_hSelectedProfileKSEvent.SetEvent();
-                        return HRESULT_FROM_WIN32(ERROR_TIMEOUT);
+                        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Completing driver profile KsEvent handle: %p", m_hSelectedProfileKSEventSentToDriver.get());
+                        m_hSelectedProfileKSEventSentToDriver.SetEvent();
+                        m_hSelectedProfileKSEventSentToDriver.reset();
                     }
-                    m_hSelectedProfileKSEventSentToDriver.reset();
                 }
+            }
+            // signal we are done
+            // Queue an MF work item which will get invoked when the  event is fired
+            DMFTCHECKNULL_GOTO(m_hSelectedProfileKSEvent, done, E_POINTER);
+            if (m_hSelectedProfileKSEventSentToDriver != nullptr)
+            {
+                m_profileAsyncResult.Reset();
+                DMFTCHECKHR_GOTO(MFCreateAsyncResult(nullptr, &m_profileCallback, nullptr, &m_profileAsyncResult), done);
+                //KSCAMERAPROFILE is not cancelable. Not need to track MFWORKITEM_KEY
+                DMFTCHECKHR_GOTO(MFPutWaitingWorkItem(m_hSelectedProfileKSEventSentToDriver.get(), 0, m_profileAsyncResult.Get(), nullptr), done);
+            }
+            else
+            {
+                // if the profile set event was not sent to the driver, we can set our event right away
+                DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "Completing profile KsEvent handle: %p", m_hSelectedProfileKSEvent.get());
                 m_hSelectedProfileKSEvent.SetEvent();
                 m_hSelectedProfileKSEvent.reset();
             }
@@ -1448,7 +1434,7 @@ HRESULT CMultipinMft::ProfilePropertyHandler(
         *pulBytesReturned = sizeof(KSCAMERA_EXTENDEDPROP_HEADER_BUFFERED) + sizeof(KSCAMERA_EXTENDEDPROP_PROFILE);
         if (ulDataLength < *pulBytesReturned)
         {
-            return HRESULT_FROM_WIN32(ERROR_MORE_DATA);
+            DMFTCHECKHR_GOTO(HRESULT_FROM_WIN32(ERROR_MORE_DATA), done);
         }
         if (pPropertyData)
         {
@@ -1471,7 +1457,7 @@ HRESULT CMultipinMft::ProfilePropertyHandler(
 done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
-} 
+} CATCH_RETURN()
 
 
 //
@@ -1490,3 +1476,21 @@ done:
     DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! exiting %x = %!HRESULT!", hr, hr);
     return hr;
 }
+
+HRESULT CMultipinMft::ProfileAsyncResultCallback(_In_ IMFAsyncResult* pResult)
+{
+    HRESULT hr = S_OK;
+    if (FAILED(pResult->GetStatus()))
+    {
+        DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_ERROR,
+            "Waiting for driver profile KsEvent handle: %p timed out, failing",
+            m_hSelectedProfileKSEventSentToDriver.get());
+        m_hSelectedProfileKSEvent.SetEvent();
+		m_hSelectedProfileKSEvent.reset();
+        hr = HRESULT_FROM_WIN32(ERROR_TIMEOUT);
+    }
+    m_hSelectedProfileKSEventSentToDriver.reset();
+    return hr;
+}
+
+

@@ -8,7 +8,7 @@
 #include "basepin.h"
 #include <optional>
 #include <memory>
-//#include <wil/com.h>
+#include <wil/com.h>
 #include <wil/resource.h>
 //
 // The Below GUID is needed to transfer photoconfirmation sample successfully in the pipeline
@@ -19,17 +19,73 @@
 DEFINE_GUID(MFSourceReader_SampleAttribute_MediaType_priv,
     0x0ea5c1e8, 0x9845, 0x41e0, 0xa2, 0x43, 0x72, 0x32, 0x07, 0xfc, 0x78, 0x1f);
 
-
 interface IDirect3DDeviceManager9;
-
-constexpr int kMAX_WAIT_TIME_DRIVER_PROFILE_KSEVENT = 3000;// ms, amount of time to wait for the profile DDI KsEvent sent to the driver
-
 
 //
 // Forward declarations
 //
 class CMFAttributes;
 class CPinCreationFactory;
+
+// T: Type of the parent object
+template<class T>
+class MFAsyncCallback : public IMFAsyncCallback {
+public:
+    typedef HRESULT(T::* InvokeFn)(IMFAsyncResult* pAsyncResult);
+
+    MFAsyncCallback(T* pParent, InvokeFn fn) :
+        m_pParent(pParent),
+        m_pInvokeFn(fn)
+    {
+    }
+    // IUnknown methods
+    STDMETHODIMP QueryInterface(REFIID iid, void** ppv) override {
+        if (!ppv) return E_POINTER;
+        if (iid == __uuidof(IUnknown))
+        {
+            *ppv = static_cast<IUnknown*>(static_cast<IMFAsyncCallback*>(this));
+        }
+        else if (iid == __uuidof(IMFAsyncCallback))
+        {
+            *ppv = static_cast<IMFAsyncCallback*>(this);
+        }
+        else
+        {
+            *ppv = NULL;
+            return E_NOINTERFACE;
+        }
+        AddRef();
+        return S_OK;
+    }
+
+    STDMETHODIMP_(ULONG) AddRef() override {
+        return InterlockedIncrement(&m_refCount);
+    }
+
+    STDMETHODIMP_(ULONG) Release() override {
+        ULONG count = InterlockedDecrement(&m_refCount);
+        if (count == 0) delete this;
+        return count;
+    }
+
+    // IMFAsyncCallback methods
+    STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue) override {
+        if (pdwFlags) *pdwFlags = 0;
+        if (pdwQueue) *pdwQueue = MFASYNC_CALLBACK_QUEUE_STANDARD;
+        return S_OK;
+    }
+
+    STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult) override {
+        UNREFERENCED_PARAMETER(pAsyncResult);
+        return (m_pParent->*m_pInvokeFn)(pAsyncResult);
+    }
+
+private:
+    LONG m_refCount = 1;
+    T* m_pParent;
+    InvokeFn m_pInvokeFn;
+};
+
 //
 // CMultipinMft class:
 // Implements a device proxy MFT.
@@ -259,6 +315,8 @@ public:
         _In_ UINT32
         );
 
+    HRESULT ProfileAsyncResultCallback(_In_ IMFAsyncResult* pResult);
+
 protected:
 
     //
@@ -317,7 +375,6 @@ protected:
         return (InterlockedCompareExchange((LONG*)&m_StreamingState, DeviceStreamState_Run, DeviceStreamState_Run) == DeviceStreamState_Run);
     }
 
-
 private:
     ULONG                        m_InputPinCount;
     ULONG                        m_OutputPinCount;
@@ -343,7 +400,8 @@ private:
     wil::unique_event_nothrow    m_hSelectedProfileKSEventSentToDriver;
     std::optional<bool>          m_isProfileDDISupportedInBaseDriver;
     SENSORPROFILEID              m_selectedProfileId;
-
+    MFAsyncCallback<CMultipinMft>m_profileCallback;
+    ComPtr<IMFAsyncResult>       m_profileAsyncResult;
 };
 
 
