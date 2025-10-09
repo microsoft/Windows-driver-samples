@@ -26,20 +26,6 @@ Abstract:
 //------------------------------------------------------------------ Definitions
 
 //
-// Battery bus driver interface
-//
-
-// {780AC894-01FF-4b5e-B4C8-9C00709200EB}
-DEFINE_GUID(BATTBUS_DEVINTERFACE_GUID,
-    0x780ac894, 0x1ff, 0x4b5e, 0xb4, 0xc8, 0x9c, 0x0, 0x70, 0x92, 0x0, 0xeb);
-
-#define BATTBUS_IOCTL(_index_) \
-    CTL_CODE(FILE_DEVICE_BUS_EXTENDER, _index_, METHOD_BUFFERED, FILE_READ_DATA)
-
-#define IOCTL_BATTBUS_PLUGIN_HARDWARE                   BATTBUS_IOCTL(0x0)
-#define IOCTL_BATTBUS_UNPLUG_HARDWARE                   BATTBUS_IOCTL(0x1)
-
-//
 // Simulated battery ioctl interface
 //
 
@@ -62,67 +48,3 @@ DEFINE_GUID(SIMBATT_DEVINTERFACE_GUID,
 #define IOCTL_SIMBATT_SET_UNIQUE_ID                     SIMBATT_IOCTL(0x809)
 #define IOCTL_SIMBATT_GET_MAXCHARGINGCURRENT            SIMBATT_IOCTL(0x810)
 #define SIMBATT_RATE_CALCULATE                          0x7fffffff
-#define MAX_SUPPORTED_SIMBATT_CHILDREN                  20
-
-//------------------------------------------------------------------- Data Types
-
-//
-//  Data structure used in PlugIn and UnPlug ioctls
-//
-
-#define BATTBUS_TYPE_SIMBATT 0;
-
-typedef struct _BATTBUS_PLUGIN_HARDWARE
-{
-    //
-    // Size of this type.
-    //
-
-    ULONG Size;
-
-    //
-    // Unique serial number of the device to be enumerated.
-    // Enumeration will be failed if another device on the
-    // bus has the same serial number.
-    //
-
-    ULONG SerialNo;
-
-    //
-    // UI number.
-    //
-
-    ULONG UINumber;
-
-    //
-    // Type of device being enumerated
-    //
-    // Reserved value, set to 0.
-    //
-
-    ULONG Type;
-
-} BATTBUS_PLUGIN_HARDWARE, *PBATTBUS_PLUGIN_HARDWARE;
-
-typedef struct _BATTBUS_UNPLUG_HARDWARE
-{
-    //
-    // size of this type
-    //
-
-    ULONG Size;
-
-    //
-    // Serial number of the device to be unplugged.
-    //
-
-    ULONG SerialNo;
-
-    //
-    // Must not be referenced used.
-    //
-
-    ULONG Reserved[2];
-
-} BATTBUS_UNPLUG_HARDWARE, *PBATTBUS_UNPLUG_HARDWARE;
-
