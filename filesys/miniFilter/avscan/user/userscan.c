@@ -169,7 +169,7 @@ Return Value:
     }
     
     //
-    //  Create the abort listening thead.
+    //  Create the abort listening thread.
     //  This thread is particularly listening the abortion event.
     //
     
