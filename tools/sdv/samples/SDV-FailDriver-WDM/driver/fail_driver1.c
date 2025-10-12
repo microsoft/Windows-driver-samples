@@ -34,6 +34,21 @@ Environment:
 #pragma alloc_text (PAGE, DriverUnload)
 #endif
 
+// CodeQL Injected Defect #1:
+int foo1(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
+// CodeQL Injected Defect #2:
+int foo2(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
+// CodeQL Injected Defect #3:
+int foo3(int n1, unsigned short delta) {
+    return n1 + delta < n1; // BAD
+}
+
 NTSTATUS
 DriverEntry(
     _In_ PDRIVER_OBJECT  DriverObject,
