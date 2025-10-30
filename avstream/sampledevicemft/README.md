@@ -32,6 +32,6 @@ This sample is designed to be used with a specific camera. To run the sample, yo
 
 ### Samples
 
-[Device app for camera sample](http://go.microsoft.com/fwlink/p/?linkid=249442)
+[Device app for camera sample](https://go.microsoft.com/fwlink/p/?linkid=249442)
 
-[Camera Capture UI sample](http://go.microsoft.com/fwlink/p/?linkid=249441%20)
+[Camera Capture UI sample](https://go.microsoft.com/fwlink/p/?linkid=249441%20)

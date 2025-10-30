@@ -401,12 +401,14 @@ Return Value:
     //  Send it off.....
     //
 
-#pragma prefast(suppress:28155, "the function prototype is correct")
+#pragma prefast(suppress: 28155, "the function prototype is correct")
+#pragma warning(suppress: 4996)
     ExInitializeWorkItem( &IrpContext->WorkQueueItem,
                           CdFspDispatch,
                           IrpContext );
 
 #pragma prefast(suppress: 28159, "prefast believes this routine is obsolete, but it is ok for CDFS to continue using it")
+#pragma warning(suppress: 4996)
     ExQueueWorkItem( &IrpContext->WorkQueueItem, CriticalWorkQueue );
 
     return;

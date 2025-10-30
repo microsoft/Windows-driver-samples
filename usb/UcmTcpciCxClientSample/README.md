@@ -132,7 +132,7 @@ Once the Raspberry Pi has rebooted, your driver will load on the newly enumerate
 
 #### USB Type-C Connection Exerciser
 
-The [MCCI Model 3101 Type-C Connection Exerciser](http://www.mcci.com/mcci-v5/devtools/exerciser-type-c.html) is a tool designed by Microsoft and manufactured by MCCI.
+The [MCCI Model 3101 Type-C Connection Exerciser](https://www.mcci.com/mcci-v5/devtools/exerciser-type-c.html) is a tool designed by Microsoft and manufactured by MCCI.
 
 The tools and instructions for deploying testing with this device are available at [Testing USB hardware, drivers, and apps in Windows](https://docs.microsoft.com/windows-hardware/drivers/usbcon/usb-driver-testing-guide).
 

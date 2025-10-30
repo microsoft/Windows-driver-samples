@@ -1,6 +1,0 @@
-; exports.def : Declares the module parameters.
-
-LIBRARY      "FakeModem.DLL"
-
-EXPORTS
-    DllGetClassObject   PRIVATE

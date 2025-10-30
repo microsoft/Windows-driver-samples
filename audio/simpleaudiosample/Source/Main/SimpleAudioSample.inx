@@ -1,0 +1,202 @@
+[Version]
+Signature   = "$Windows NT$"
+Class       = MEDIA
+Provider    = %ProviderName%
+ClassGUID   = {4d36e96c-e325-11ce-bfc1-08002be10318}
+DriverVer   = 02/22/2016, 1.0.0.1
+CatalogFile = SimpleAudioSample.cat
+PnpLockDown = 1
+
+[SourceDisksNames]
+222="SIMPLEAUDIOSAMPLE Driver Disk","",222
+
+[SourceDisksFiles]
+simpleaudiosample.sys=222
+
+[SignatureAttributes]
+simpleaudiosample.sys=SignatureAttributes.DRM
+
+[SignatureAttributes.DRM]
+DRMLevel=1300
+
+[SignatureAttributes.PETrust]
+PETrust=true
+
+[Manufacturer]
+%MfgName%=SIMPLEAUDIOSAMPLE,NT$ARCH$.10.0...22000
+
+[SIMPLEAUDIOSAMPLE.NT$ARCH$.10.0...22000]
+%SIMPLEAUDIOSAMPLE_SA.DeviceDesc%=SIMPLEAUDIOSAMPLE_SA, ROOT\SimpleAudioSample
+
+[DestinationDirs]
+SIMPLEAUDIOSAMPLE_SA.CopyList=13 ; 13=Package's DriverStore directory
+
+;======================================================
+; SIMPLEAUDIOSAMPLE_SA
+;======================================================
+[SIMPLEAUDIOSAMPLE_SA.CopyList]
+simpleaudiosample.sys
+
+[SIMPLEAUDIOSAMPLE_SA.AddReg]
+HKR,,AssociatedFilters,,"wdmaud,swmidi,redbook"
+HKR,,Driver,,simpleaudiosample.sys
+
+;
+; For demo only, please review these power management settings for your architecture. 
+;
+HKR,PowerSettings,SingleComponentMultiFxStates,3,1,0,0,0  ; Turn on multi Fx support.
+HKR,PowerSettings,ConservationIdleTime,3,3,0,0,0          ; 3 seconds for idle power management when on battery
+HKR,PowerSettings,PerformanceIdleTime,3,3,0,0,0           ; 3 seconds for idle power management when on AC power
+HKR,PowerSettings,IdlePowerState,3,3,0,0,0                ; go to D3 for idle power management
+
+HKR,Drivers,SubClasses,,"wave,midi,mixer"
+
+HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
+
+HKR,Drivers\wave\wdmaud.drv,Description,,%SIMPLEAUDIOSAMPLE_SA.DeviceDesc%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%SIMPLEAUDIOSAMPLE_SA.DeviceDesc%
+
+;======================================================
+; capture interfaces: mic array (internal: front)
+;======================================================
+[SIMPLEAUDIOSAMPLE.I.WaveMicArray1]
+AddReg=SIMPLEAUDIOSAMPLE.I.WaveMicArray1.AddReg
+[SIMPLEAUDIOSAMPLE.I.WaveMicArray1.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SIMPLEAUDIOSAMPLE.WaveMicArray1.szPname%
+
+[SIMPLEAUDIOSAMPLE.I.TopologyMicArray1]
+AddReg=SIMPLEAUDIOSAMPLE.I.TopologyMicArray1.AddReg
+
+[SIMPLEAUDIOSAMPLE.I.TopologyMicArray1.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SIMPLEAUDIOSAMPLE.TopologyMicArray1.szPname%
+
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;======================================================
+; render interfaces: speaker (internal)
+;======================================================
+[SIMPLEAUDIOSAMPLE.I.WaveSpeaker]
+AddReg=SIMPLEAUDIOSAMPLE.I.WaveSpeaker.AddReg
+
+[SIMPLEAUDIOSAMPLE.I.WaveSpeaker.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SIMPLEAUDIOSAMPLE.WaveSpeaker.szPname%
+
+[SIMPLEAUDIOSAMPLE.I.TopologySpeaker]
+AddReg=SIMPLEAUDIOSAMPLE.I.TopologySpeaker.AddReg
+
+[SIMPLEAUDIOSAMPLE.I.TopologySpeaker.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SIMPLEAUDIOSAMPLE.TopologySpeaker.szPname%
+
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;======================================================
+; SIMPLEAUDIOSAMPLE_SA
+;======================================================
+[SIMPLEAUDIOSAMPLE_SA.NT]
+Include=ks.inf,wdmaudio.inf
+Needs=KS.Registration, WDMAUDIO.Registration
+CopyFiles=SIMPLEAUDIOSAMPLE_SA.CopyList
+AddReg=SIMPLEAUDIOSAMPLE_SA.AddReg
+
+[SIMPLEAUDIOSAMPLE_SA.NT.Interfaces]
+;
+; Interfaces for speaker (internal) render endpoint.
+;
+AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_WaveSpeaker%, SIMPLEAUDIOSAMPLE.I.WaveSpeaker
+AddInterface=%KSCATEGORY_RENDER%, %KSNAME_WaveSpeaker%, SIMPLEAUDIOSAMPLE.I.WaveSpeaker
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveSpeaker%, SIMPLEAUDIOSAMPLE.I.WaveSpeaker
+AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_TopologySpeaker%, SIMPLEAUDIOSAMPLE.I.TopologySpeaker
+AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologySpeaker%, SIMPLEAUDIOSAMPLE.I.TopologySpeaker
+
+;
+; Interfaces for microphone array 1 (internal: front) capture endpoint.
+;
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_WaveMicArray1%, SIMPLEAUDIOSAMPLE.I.WaveMicArray1
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveMicArray1%, SIMPLEAUDIOSAMPLE.I.WaveMicArray1
+AddInterface=%KSCATEGORY_CAPTURE%,  %KSNAME_WaveMicArray1%, SIMPLEAUDIOSAMPLE.I.WaveMicArray1
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_TopologyMicArray1%, SIMPLEAUDIOSAMPLE.I.TopologyMicArray1
+AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologyMicArray1%, SIMPLEAUDIOSAMPLE.I.TopologyMicArray1
+
+[SIMPLEAUDIOSAMPLE_SA.NT.Services]
+AddService=SimpleAudioSample,0x00000002,SimpleAudioSample_Service_Inst
+
+[SimpleAudioSample_Service_Inst]
+DisplayName=%SimpleAudioSample.SvcDesc%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%13%\simpleaudiosample.sys
+
+[SIMPLEAUDIOSAMPLE_SA.NT.HW]
+AddReg = AUDIOHW.AddReg
+
+[AUDIOHW.AddReg]
+; FILE_DEVICE_SOUND
+HKR,,DeviceType,0x10001,0x0000001D
+; SDDL_DEVOBJ_SYS_ALL_ADM_RWX_WORLD_RWX_RES_RWX
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GRGWGX;;;WD)(A;;GRGWGX;;;RC)"
+
+
+;======================================================
+; WDF
+;======================================================
+[SIMPLEAUDIOSAMPLE_SA.NT.Wdf]
+KmdfService = SimpleAudioSample, SIMPLEAUDIOSAMPLE_SA_WdfSect
+[SIMPLEAUDIOSAMPLE_SA_WdfSect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;======================================================
+; COMMON
+;======================================================
+[Strings]
+
+;Non-localizable
+
+KSNAME_WaveSpeaker="WaveSpeaker"
+KSNAME_TopologySpeaker="TopologySpeaker"
+
+KSNAME_WaveMicArray1="WaveMicArray1"
+KSNAME_TopologyMicArray1="TopologyMicArray1"
+
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO="{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER="{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_REALTIME ="{EB115FFC-10C8-4964-831D-6DCB02E6F23F}"
+KSCATEGORY_TOPOLOGY = "{DDA54A40-1E4C-11D1-A050-405705C10000}"
+
+KSNODETYPE_ANY   = "{00000000-0000-0000-0000-000000000000}"
+
+PKEY_AudioEndpoint_Association               = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},2"
+PKEY_AudioEndpoint_Supports_EventDriven_Mode = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},7"
+
+;Localizable
+
+ProviderName = "TODO-Set-Provider"
+MfgName      = "TODO-Set-Manufacturer"
+MsCopyRight  = "TODO-Set-Copyright"
+
+SIMPLEAUDIOSAMPLE_SA.DeviceDesc="Virtual Audio Device (WDM) - Simple Audio Sample"
+SimpleAudioSample.SvcDesc="Virtual Audio Device (WDM) - Simple Audio Sample Driver"
+
+;; friendly names
+SIMPLEAUDIOSAMPLE.WaveSpeaker.szPname="Simple Audio Sample Wave Speaker"
+SIMPLEAUDIOSAMPLE.TopologySpeaker.szPname="Simple Audio Sample Topology Speaker"
+
+SIMPLEAUDIOSAMPLE.WaveMicArray1.szPname="Simple Audio Sample Wave Microphone Array - Front"
+SIMPLEAUDIOSAMPLE.TopologyMicArray1.szPname="Simple Audio Sample Topology Microphone Array - Front"
+
+MicArray1CustomName= "Internal Microphone Array - Front"
+

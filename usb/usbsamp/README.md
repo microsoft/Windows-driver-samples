@@ -24,7 +24,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 The sample driver can be loaded as the function driver for any of these devices:
 
-- OSR FX2 learning kit. You can get the kit from [OSR Online](http://www.osronline.com/). For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf)
+- OSR FX2 learning kit. You can get the kit from [OSR Online](https://www.osronline.com/). For more information, see the specification for the [OSR USB FX-2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf)
 - [MUTT devices](https://docs.microsoft.com/windows-hardware/drivers/usbcon/microsoft-usb-test-tool--mutt--devices). To order those devices, see [How to get MUTT devices](https://docs.microsoft.com/windows-hardware/drivers/usbcon/microsoft-usb-test-tool--mutt--devices#how-to-get-mutt-devices).
 - Intel 82930 USB test board.
 

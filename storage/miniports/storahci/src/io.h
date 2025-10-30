@@ -122,4 +122,3 @@ HW_DPC_ROUTINE AhciPortSrbCompletionDpcRoutine;
 
 HW_DPC_ROUTINE AhciPortBusChangeDpcRoutine;
 
-

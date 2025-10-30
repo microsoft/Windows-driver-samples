@@ -8,33 +8,75 @@
 Signature 	= "$Windows NT$"
 Class 		= Net
 ClassGUID 	= {4d36e972-e325-11ce-bfc1-08002be10318}
+CatalogFile = muxmp.cat
 Provider 	= %ProviderString%
 DriverVer	=10/01/2002,6.0.5019.0
+PnpLockdown = 1
 
 [ControlFlags]
-ExcludeFromSelect = MS_MUXMP	
+ExcludeFromSelect = MS_MUXMP
 
+
+; Note: The OS build number 25341 is used here to match the OS build number used in muxp.inf.
+; This is done to ensure that the muxmp.inf and this INF install using the same DIRID for consistency.
+; See note in muxp.inf for details on why that build number is used.
 [Manufacturer]
-%ManufacturerName% = Standard,NTx86,NTia64,NTamd64
+%ManufacturerName% = Standard,NT$ARCH$,NT$ARCH$.10.0...25341
 
-[Standard.NTx86]
+[Standard.NT$ARCH$.10.0...25341]
 %MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
 
-[Standard.NTia64]
-%MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
-
-[Standard.NTamd64]
-%MUXMP_Desc% = MUXMP.ndi, MS_MUXMP
+[Standard.NT$ARCH$]
+%MUXMP_Desc% = MUXMP_NC.ndi, MS_MUXMP
 
 [MUXMP.ndi]
 AddReg  = MUXMP.ndi.AddReg
 Characteristics = 0xA1 ;NCF_NOT_USER_REMOVABLE | NCF_VIRTUAL | NCF_HAS_UI
+CopyFiles       = MUXMP.CopyFiles
 *IfType         = 6             ; IF_TYPE_ETHERNET_CSMACD 
 *MediaType      = 0             ; NdisMedium802_3 
 *PhysicalMediaType = 0          ; NdisPhysicalMediumUnspecified 
 
+[MUXMP_NC.ndi]
+AddReg  = MUXMP_NC.ndi.AddReg
+Characteristics = 0xA1 ;NCF_NOT_USER_REMOVABLE | NCF_VIRTUAL | NCF_HAS_UI
+CopyFiles       = MUXMP_NC.CopyFiles
+*IfType         = 6             ; IF_TYPE_ETHERNET_CSMACD 
+*MediaType      = 0             ; NdisMedium802_3 
+*PhysicalMediaType = 0          ; NdisPhysicalMediumUnspecified 
+
+[SourceDisksNames]
+1=%DiskDescription%,"",,
+
+[SourceDisksFiles]
+mux.sys     = 1
+
+[DestinationDirs]
+DefaultDestDir     = 13
+MUXMP.CopyFiles    = 13
+MUXMP_NC.CopyFiles = 12
+
+[MUXMP.CopyFiles]
+mux.sys,,,2
+
+[MUXMP_NC.CopyFiles]
+mux.sys,,,2
 
 [MUXMP.ndi.AddReg]
+HKR, Ndi, Service,  0,  MUXMP
+HKR, Ndi, HelpText, 0,  "%MUXMP_HELP%"
+HKR, Ndi\Interfaces,    UpperRange, 0,  "ndis5"
+HKR, Ndi\Interfaces,    LowerRange, 0,  "ethernet"
+
+HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
+HKR, Ndi\params\VlanID,     default,         0, "0"
+HKR, Ndi\params\VlanID,     type,            0, "long"
+HKR, Ndi\params\VlanID,     min,             0, "0"
+HKR, Ndi\params\VlanID,     max,             0, "4095"
+HKR, Ndi\params\VlanID,     step,            0, "1"
+HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
+
+[MUXMP_NC.ndi.AddReg]
 HKR, Ndi, Service,  0,  MUXMP
 HKR, Ndi, HelpText, 0,  "%MUXMP_HELP%"
 HKR, Ndi\Interfaces,    UpperRange, 0,  "ndis5"
@@ -51,7 +93,18 @@ HKR, Ndi\params\VlanID,     ParamDesc,       0, %VlanID%
 [MUXMP.ndi.Services]
 AddService = MUXMP, 2, MUXMP.AddService
 
+[MUXMP_NC.ndi.Services]
+AddService = MUXMP_NC, 2, MUXMP_NC.AddService
+
 [MUXMP.AddService]
+DisplayName     = %MUXMP_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %13%\mux.sys
+Description     = %MUXMP_Desc%
+
+[MUXMP_NC.AddService]
 DisplayName     = %MUXMP_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
@@ -59,12 +112,11 @@ ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
 ServiceBinary   = %12%\mux.sys
 Description     = %MUXMP_Desc%
 
-
 [Strings]
 ProviderString = "TODO-Set-Provider"
 ManufacturerName="TODO-Set-Manufacturer"
 MUXMP_Desc = "Sample MUX-IM Virtual Miniport Driver"
 MUXMP_HELP = "Sample MUX-IM Virtual Miniport Instance"
 VlanID = "VLAN ID"
-
+DiskDescription = "Microsoft MUX Sample Driver Disk"
 

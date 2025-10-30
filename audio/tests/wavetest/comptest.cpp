@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // Module Name:
 //
@@ -17,8 +17,8 @@
 #include "tests.h"
 
 // ------------------------------------------------------------------------------
-// Test_VerifyPinSupportsPullMode: Test the requirement that WaveRT drivers must support pull mode audio streaming technology.
-void Test_VerifyPinSupportsPullMode(void)
+// Test_VerifyPinSupportsPullMode: Test the requirement that new drivers must be WaveRT and WaveRT drivers must support event driven audio streaming technology.
+void Test_VerifyPinWaveRTConformance(void)
 {
     CHalfApp*                       pHalfApp = g_pWaveTest->m_pHalf;
     BOOL                            bIsRTCapable = false;
@@ -28,7 +28,14 @@ void Test_VerifyPinSupportsPullMode(void)
 
     VERIFY_SUCCEEDED(pHalfApp->m_pAudioDeviceEndpoint->GetRTCaps(&bIsRTCapable));
 
-    // Only require pull mode for WaveRT drivers
+    // Check for our new requirement - new PortCls drivers must be WaveRT.
+    // For other old drivers that are not WaveRT, may issue Errata to cover the failure.
+    if (pHalfApp->m_bIsPortCls)
+    {
+        VERIFY_IS_TRUE(bIsRTCapable);
+    }
+
+    // Only require event driven for WaveRT drivers
     if (bIsRTCapable)
     {
         VERIFY_SUCCEEDED(pHalfApp->m_pAudioDeviceEndpoint->GetEventDrivenCapable(&bIsEventCapable));

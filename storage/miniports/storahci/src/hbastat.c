@@ -1,4 +1,4 @@
-/*++
+ï»¿/*++
 
 Copyright (C) Microsoft Corporation, 2009
 
@@ -12,7 +12,7 @@ Abstract:
 
 Notes:
 
-Revision History:
+Revision History: 
 
 --*/
 
@@ -92,11 +92,11 @@ Return value:
     }
 
 //10.4.3    HBA Reset
-  //If the HBA becomes unusable for multiple ports, and a software reset or port reset does not correct the problem, software may reset the entire HBA by setting GHC.HR to ‘1’.  When software sets the GHC.HR bit to ‘1’, the HBA shall perform an internal reset action.
+  //If the HBA becomes unusable for multiple ports, and a software reset or port reset does not correct the problem, software may reset the entire HBA by setting GHC.HR to â€˜1â€™.  When software sets the GHC.HR bit to â€˜1â€™, the HBA shall perform an internal reset action.
     ghc.HR = 1;
     StorPortWriteRegisterUlong(AdapterExtension, &abar->GHC.AsUlong, ghc.AsUlong);
 
-  //The bit shall be cleared to ‘0’ by the HBA when the reset is complete.  A software write of ‘0’ to GHC.HR shall have no effect.  To perform the HBA reset, software sets GHC.HR to ‘1’ and may poll until this bit is read to be ‘0’, at which point software knows that the HBA reset has completed.
+  //The bit shall be cleared to â€˜0â€™ by the HBA when the reset is complete.  A software write of â€˜0â€™ to GHC.HR shall have no effect.  To perform the HBA reset, software sets GHC.HR to â€˜1â€™ and may poll until this bit is read to be â€˜0â€™, at which point software knows that the HBA reset has completed.
     ghc.AsUlong = StorPortReadRegisterUlong(AdapterExtension, &abar->GHC.AsUlong);
     //5.2.2.1    H:Init
     //5.2.2.2    H:WaitForAhciEnable
@@ -105,13 +105,13 @@ Return value:
         ghc.AsUlong = StorPortReadRegisterUlong(AdapterExtension, &abar->GHC.AsUlong);
     }
 
-    //If the HBA has not cleared GHC.HR to ‘0’ within 1 second of software setting GHC.HR to ‘1’, the HBA is in a hung or locked state.
+    //If the HBA has not cleared GHC.HR to â€˜0â€™ within 1 second of software setting GHC.HR to â€˜1â€™, the HBA is in a hung or locked state.
     if(i == 50) {
         AdapterExtension->ErrorFlags = (1 << 29);
         return FALSE;
     }
 
-    //When GHC.HR is set to ‘1’, GHC.AE, GHC.IE, the IS register, and all port register fields (except PxFB/PxFBU/PxCLB/PxCLBU) that are not HwInit in the HBA’s register memory space are reset.  The HBA’s configuration space and all other global registers/bits are not affected by setting GHC.HR to ‘1’.  Any HwInit bits in the port specific registers are not affected by setting GHC.HR to ‘1’.  The port specific registers PxFB, PxFBU, PxCLB, and PxCLBU are not affected by setting GHC.HR to ‘1’.  If the HBA supports staggered spin-up, the PxCMD.SUD bit will be reset to ‘0’; software is responsible for setting the PxCMD.SUD and PxSCTL.DET fields appropriately such that communication can be established on the Serial ATA link.  If the HBA does not support staggered spin-up, the HBA reset shall cause a COMRESET to be sent on the port
+    //When GHC.HR is set to â€˜1â€™, GHC.AE, GHC.IE, the IS register, and all port register fields (except PxFB/PxFBU/PxCLB/PxCLBU) that are not HwInit in the HBAâ€™s register memory space are reset.  The HBAâ€™s configuration space and all other global registers/bits are not affected by setting GHC.HR to â€˜1â€™.  Any HwInit bits in the port specific registers are not affected by setting GHC.HR to â€˜1â€™.  The port specific registers PxFB, PxFBU, PxCLB, and PxCLBU are not affected by setting GHC.HR to â€˜1â€™.  If the HBA supports staggered spin-up, the PxCMD.SUD bit will be reset to â€˜0â€™; software is responsible for setting the PxCMD.SUD and PxSCTL.DET fields appropriately such that communication can be established on the Serial ATA link.  If the HBA does not support staggered spin-up, the HBA reset shall cause a COMRESET to be sent on the port
 
     return TRUE;
 }
@@ -124,10 +124,10 @@ AhciCOMRESET(
     )
 /*
 PHY Reset:COMRESET
-    SCTL.DET Controls the HBA’s device detection and interface initialization.
+    SCTL.DET Controls the HBAâ€™s device detection and interface initialization.
     DET=1 Performs interface communication initialization sequence to establish communication. This is functionally equivalent to a hard reset and results in the interface being reset and communications reinitialized.  While this field is 1h, COMRESET is transmitted on the interface.
     Software should leave the DET field set to 1h for a minimum of 1 millisecond to ensure that a COMRESET is sent on the interface.
-    since we are in 5.3.2.3    P:NotRunning and PxCMD.SUD = ‘0’ does this still take us to P:StartComm?
+    since we are in 5.3.2.3    P:NotRunning and PxCMD.SUD = â€˜0â€™ does this still take us to P:StartComm?
 Called By:
     AhciPortReset,AhciNonQueuedErrorRecovery,P_Running_WaitWhileDET1,AhciHwControlIdeStart
 It assumes:
@@ -191,7 +191,7 @@ Return Values:
     StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &Px->SCTL.AsUlong, sctl.AsUlong);
 
   //2.2 Wait for DET to be set
-    // AHCI 10.4.2 After clearing PxSCTL.DET to 0h, software should wait for communication to be re-established as indicated by bit 0 of PxSSTS.DET being set to ‘1’.
+    // AHCI 10.4.2 After clearing PxSCTL.DET to 0h, software should wait for communication to be re-established as indicated by bit 0 of PxSSTS.DET being set to â€˜1â€™.
     // typically, it will be done in 10ms. max wait 30ms to be safe
     StorPortStallExecution(50);
     ssts.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &Px->SSTS.AsUlong);
@@ -279,8 +279,8 @@ Return value:
   //1.1 Clear CMD.ST
     cmd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &Px->CMD.AsUlong);
     //AHCI 10.3.2 on FRE it says:
-    //Software shall not clear this [FRE] bit while PxCMD.ST remains set to ‘1’."
-    //System software places a port into the idle state by clearing PxCMD.ST and waiting for PxCMD.CR to return ‘0’ when read.
+    //Software shall not clear this [FRE] bit while PxCMD.ST remains set to â€˜1â€™."
+    //System software places a port into the idle state by clearing PxCMD.ST and waiting for PxCMD.CR to return â€˜0â€™ when read.
     cmd.ST = 0;
     StorPortWriteRegisterUlong(adapterExtension, &Px->CMD.AsUlong, cmd.AsUlong);
 
@@ -304,7 +304,7 @@ Return value:
 
         tfd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->TFD.AsUlong);
         if (tfd.STS.BSY) {
-          // AHCI 3.3.7 Command List Override (CLO):  Setting this bit to ‘1’ causes PxTFD.STS.BSY and PxTFD.STS.DRQ to be cleared to ‘0’.
+          // AHCI 3.3.7 Command List Override (CLO):  Setting this bit to â€˜1â€™ causes PxTFD.STS.BSY and PxTFD.STS.DRQ to be cleared to â€˜0â€™.
           // This allows a software reset to be transmitted to the device regardless of whether the BSY and DRQ bits are still set in the PxTFD.STS register.
 
           // Do this to make sure the port can stop
@@ -323,9 +323,9 @@ Return value:
         StorPortStallExecution(5000);  //5 milliseconds
     }
 
-    //AHCI 10.4.2 If PxCMD.CR or PxCMD.FR do not clear to ‘0’ correctly, then software may attempt a port reset or a full HBA reset to recover.
+    //AHCI 10.4.2 If PxCMD.CR or PxCMD.FR do not clear to â€˜0â€™ correctly, then software may attempt a port reset or a full HBA reset to recover.
     if (i == 101) {
-        RecordExecutionHistory(ChannelExtension, 0x10350011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to ‘0’ correctly
+        RecordExecutionHistory(ChannelExtension, 0x10350011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to â€˜0â€™ correctly
         return FALSE;
     }
 
@@ -339,17 +339,17 @@ Return value:
         StorPortStallExecution(50);  //50 microseconds
     }
 
-    //If CI does not clear to ‘0’ correctly abort the stop
+    //If CI does not clear to â€˜0â€™ correctly abort the stop
     if (i == 101) {
-        RecordExecutionHistory(ChannelExtension, 0x10360011); // P_NotRunning, CI does not clear to ‘0’
+        RecordExecutionHistory(ChannelExtension, 0x10360011); // P_NotRunning, CI does not clear to â€˜0â€™
         return FALSE;
     }
 
   //2.1 Clear CMD.FRE
     cmd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &Px->CMD.AsUlong);
     if( (cmd.FRE | cmd.FR) != 0 ) {
-        //If PxCMD.FRE is set to ‘1’, software should clear it to ‘0’ and wait at least 500 milliseconds for PxCMD.FR to return ‘0’ when read.
-        //AHCI 10.3.2 Software shall not clear this bit while PxCMD.ST or PxCMD.CR is set to ‘1’.
+        //If PxCMD.FRE is set to â€˜1â€™, software should clear it to â€˜0â€™ and wait at least 500 milliseconds for PxCMD.FR to return â€˜0â€™ when read.
+        //AHCI 10.3.2 Software shall not clear this bit while PxCMD.ST or PxCMD.CR is set to â€˜1â€™.
         cmd.FRE = 0;
         StorPortWriteRegisterUlong(adapterExtension, &Px->CMD.AsUlong, cmd.AsUlong);
 
@@ -371,18 +371,18 @@ Return value:
             StorPortStallExecution(5000);    //  5 milliseconds
         }
 
-        if ( i == 101 ) {  //If PxCMD.CR or PxCMD.FR do not clear to ‘0’ correctly, then software may attempt a port reset or a full HBA reset to recover.
+        if ( i == 101 ) {  //If PxCMD.CR or PxCMD.FR do not clear to â€˜0â€™ correctly, then software may attempt a port reset or a full HBA reset to recover.
             if (supportsCLO) {
-                RecordExecutionHistory(ChannelExtension, 0x10380011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to ‘0’, CLO enabled
+                RecordExecutionHistory(ChannelExtension, 0x10380011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to â€˜0â€™, CLO enabled
             } else {
-                RecordExecutionHistory(ChannelExtension, 0x10370011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to ‘0’, CLO not enabled
+                RecordExecutionHistory(ChannelExtension, 0x10370011); // P_NotRunning, PxCMD.CR or PxCMD.FR do not clear to â€˜0â€™, CLO not enabled
             }
             return FALSE;
         }
     }
 
   //2.2 wait for CLO to clear
-    // AHCI 3.3.7 Software must wait for CLO to be cleared to ‘0’ before setting PxCMD.ST to ‘1’.
+    // AHCI 3.3.7 Software must wait for CLO to be cleared to â€˜0â€™ before setting PxCMD.ST to â€˜1â€™.
     // register bit CLO might be set in this function, and it should have been cleared before function exit.
     if ( supportsCLO && (cmd.CLO == 0) ) {
         for (i = 1; i < 101; i++) {
@@ -394,7 +394,7 @@ Return value:
         }
 
         if ( i == 101 ) {
-            RecordExecutionHistory(ChannelExtension, 0x10390011); // P_NotRunning, PxCMD.CLO not clear to ‘0’, CLO enabled
+            RecordExecutionHistory(ChannelExtension, 0x10390011); // P_NotRunning, PxCMD.CLO not clear to â€˜0â€™, CLO enabled
             return FALSE;
         }
     }
@@ -464,6 +464,14 @@ RunNextPort(
     } else {
         //starting all ports process is completed.
         adapterExtension->InRunningPortsProcess = FALSE;
+
+        //
+        // Note: If we are at DIRQL when get here, it implies previous port start finishes quickly since no
+        //       timer scheduled during port start. Then there is no need to log the port start time.
+        //
+        if (!AtDIRQL) {
+            AhciPortStartTelemetry(adapterExtension);
+        }
     }
 
     return;
@@ -588,7 +596,7 @@ It performs:
     1.2 Next, is the port somehow already running?
     1.3 Make sure the device knows it is supposed to be spun up
     1.4 Check to make sure that FR and CR are both 0.  Attempt to bring the controller into a consistent state by stopping the controller.
-    1.5 CMD.ST has to be set, when that happens check to see that PxSSTS.DET is not ‘4h’
+    1.5 CMD.ST has to be set, when that happens check to see that PxSSTS.DET is not â€˜4hâ€™
 
     2.1 Dispatch to the current state (states are responsible for selecting the next state)
 
@@ -633,7 +641,6 @@ Return Values:
         return TRUE;
     }
 
-
   //1.3 Make sure the device knows it is supposed to be spun up
     cmd.SUD = 1;
     StorPortWriteRegisterUlong(adapterExtension, &px->CMD.AsUlong, cmd.AsUlong);
@@ -662,7 +669,7 @@ Return Values:
         }
     }
 
-  //1.5 CMD.ST has to be set, when that happens check to see that PxSSTS.DET is not ‘4h’
+  //1.5 CMD.ST has to be set, when that happens check to see that PxSSTS.DET is not â€˜4hâ€™
     ssts.AsUlong = StorPortReadRegisterUlong(adapterExtension, &px->SSTS.AsUlong);
     if( ssts.DET == 0x4) {
         P_Running_StartFailed(ChannelExtension, TimerCallbackProcess);
@@ -1088,10 +1095,10 @@ Affected Variables/Registers:
 
 */
 {
-    AHCI_COMMAND            cmd;
-    AHCI_TASK_FILE_DATA     tfd;
-    AHCI_SERIAL_ATA_ERROR   serr;
-    USHORT                  totalstarttime;
+    AHCI_COMMAND cmd;
+    AHCI_TASK_FILE_DATA tfd;
+    AHCI_SERIAL_ATA_ERROR serr;
+    USHORT totalstarttime;
 
     PAHCI_ADAPTER_EXTENSION adapterExtension = ChannelExtension->AdapterExtension;
 
@@ -1099,7 +1106,7 @@ WaitOnBSYDRQ_Start:
     RecordExecutionHistory(ChannelExtension, 0x0000001a);//P_Running_WaitOnBSYDRQ
     tfd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->TFD.AsUlong);
 
-  //1.1 Enable BSY and DRQ to go to 0
+    //1.1 Enable BSY and DRQ to go to 0
     if ( (tfd.STS.BSY) || (tfd.STS.DRQ) ) {
         //When [serr.DIAG.X is] set to one this bit indicates a COMINIT signal was received.  This bit is reflected in the P0IS.PCS bit.
         //to allow the TFD to be updated serr.DIAG.X must be cleared.
@@ -1107,10 +1114,10 @@ WaitOnBSYDRQ_Start:
         serr.DIAG.X = 1;
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->SERR.AsUlong, serr.AsUlong);
     }
-  //3.1 Set ST to 1
+    //3.1 Set ST to 1
     if ( ( tfd.STS.BSY == 0) && ( tfd.STS.DRQ == 0) ) {
-        STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
-        BOOLEAN             needSpinLock;
+        STOR_LOCK_HANDLE lockhandle = { InterruptLock, 0 };
+        BOOLEAN needSpinLock;
 
         if ( TimerCallbackProcess && (ChannelExtension->StartState.DirectStartInProcess == 1) ) {
             //This is timer callback and a direct port start process has been started separately, bail out this one.
@@ -1124,11 +1131,11 @@ WaitOnBSYDRQ_Start:
             AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
         }
 
-      //3.2 Enable Interrupts on the channel (AHCI 1.1 Section 10.1.2 - 7)
+        //3.2 Enable Interrupts on the channel (AHCI 1.1 Section 10.1.2 - 7)
         PortClearPendingInterrupt(ChannelExtension);
         Set_PxIE(ChannelExtension, &ChannelExtension->Px->IE);
 
-      //We made it!  Set ST and start the IO we have collected!
+        //We made it!  Set ST and start the IO we have collected!
         cmd.AsUlong = StorPortReadRegisterUlong(adapterExtension, &ChannelExtension->Px->CMD.AsUlong);
         cmd.ST = 1;
         StorPortWriteRegisterUlong(adapterExtension, &ChannelExtension->Px->CMD.AsUlong, cmd.AsUlong);
@@ -1138,7 +1145,19 @@ WaitOnBSYDRQ_Start:
 
         StorPortDebugPrint(3, "StorAHCI - LPM: Port %02d - Port Started\n", ChannelExtension->PortNumber);
 
-      //Start requests on this Port
+        //
+        // Note: If ChannelStateBSYDRQCount is larger than 50, which implies the other counts are
+        // all cleared to 0 according to port start state machine implementation. But typically
+        // WaitOnBSYDRQ is always the most significant time consuming phase of port start, so the
+        // total port start time here is still able to reflect the rough port start status.
+        //
+        ChannelExtension->TotalPortStartTime = (ULONG)(ChannelExtension->StartState.ChannelStateDETCount +
+                                                       ChannelExtension->StartState.ChannelStateDET1Count +
+                                                       ChannelExtension->StartState.ChannelStateDET3Count +
+                                                       ChannelExtension->StartState.ChannelStateFRECount +
+                                                       (ChannelExtension->StartState.ChannelStateBSYDRQCount * 2)) * 10;
+
+        //Start requests on this Port
         ActivateQueue(ChannelExtension, TRUE);
 
         ChannelExtension->StartState.DirectStartInProcess = 0;
@@ -1149,15 +1168,19 @@ WaitOnBSYDRQ_Start:
             AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
         }
 
+        if (ChannelExtension->StateFlags.NeedQDR) {
+            StorPortIssueDpc(ChannelExtension->AdapterExtension, &(ChannelExtension->BusChangeDpc), ChannelExtension, NULL);
+            ChannelExtension->StateFlags.NeedQDR = FALSE;
+        }
+
         RunNextPort(ChannelExtension, (!TimerCallbackProcess && ChannelExtension->StartState.AtDIRQL));
 
         return;
 
     } else {
-      //2.3 After waiting for the remainder of the 60 second maximum Channel Start time for BSY and DRQ to clear, give up
-      //Some big HDDs takes close to 20 second to spin up
+        //2.3 After waiting for the remainder of the 60 second maximum Channel Start time for BSY and DRQ to clear, give up
+        //Some big HDDs takes close to 20 second to spin up
         ULONG portStartTimeoutIn10MS = (AHCI_PORT_START_TIMEOUT_IN_SECONDS * 100);
-
 
         // calculate the total time in unit of 10 ms.
         totalstarttime = ChannelExtension->StartState.ChannelStateDETCount  +
@@ -1170,7 +1193,7 @@ WaitOnBSYDRQ_Start:
             P_Running_StartFailed(ChannelExtension, TimerCallbackProcess);
             RecordExecutionHistory(ChannelExtension, 0x00ff001a);//P_Running_WaitOnBSYDRQ timed out
            return;
-      //2.2 After a total amount of 1 second working on the start COMRESET
+        //2.2 After a total amount of 1 second working on the start COMRESET
         } else if ( ChannelExtension->StartState.ChannelStateBSYDRQCount == 50 ){
             //Stop FRE,FR in preparation for RESET
             if ( !P_NotRunning(ChannelExtension, ChannelExtension->Px) ){
@@ -1196,7 +1219,7 @@ WaitOnBSYDRQ_Start:
             RecordExecutionHistory(ChannelExtension, 0x00fd001a);//P_Running_WaitOnBSYDRQ crossing 1 second.  COMRESET done, going to WaitOnDET3
             P_Running_WaitOnDET3(ChannelExtension, TimerCallbackProcess);
             return;
-      //2.1 Wait for the rest of the 4 seconds for BSY and DRQ to clear
+        //2.1 Wait for the rest of the 4 seconds for BSY and DRQ to clear
         } else {
             ChannelExtension->StartState.ChannelStateBSYDRQCount++;
             RecordExecutionHistory(ChannelExtension, 0x0008001a);//P_Running_WaitOnBSYDRQ still waiting
@@ -1244,8 +1267,21 @@ Affected Variables/Registers:
     none
 */
 {
-    STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
-    BOOLEAN             needSpinLock;
+    STOR_LOCK_HANDLE lockhandle = { InterruptLock, 0 };
+    BOOLEAN needSpinLock;
+
+    ++(ChannelExtension->TotalCountRunningStartFailed);
+    //
+    // Note: If ChannelStateBSYDRQCount is larger than 50, which implies the other counts are
+    // all cleared to 0 according to port start state machine implementation. But typically
+    // WaitOnBSYDRQ is always the most significant time consuming phase of port start, so the
+    // total port start time here is still able to reflect the rough port start status.
+    //
+    ChannelExtension->TotalPortStartTime = (ULONG)(ChannelExtension->StartState.ChannelStateDETCount +
+                                                   ChannelExtension->StartState.ChannelStateDET1Count +
+                                                   ChannelExtension->StartState.ChannelStateDET3Count +
+                                                   ChannelExtension->StartState.ChannelStateFRECount +
+                                                   (ChannelExtension->StartState.ChannelStateBSYDRQCount * 2)) * 10;
 
     if ( TimerCallbackProcess && (ChannelExtension->StartState.DirectStartInProcess == 1) ) {
         //This is timer callback and a direct port start process has been started separately, bail out this one.
@@ -1259,7 +1295,7 @@ Affected Variables/Registers:
         AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
     }
 
-  //1.1 update state machines
+    //1.1 update state machines
     ChannelExtension->StartState.ChannelNextStartState = StartFailed;
     ChannelExtension->StateFlags.IgnoreHotplugInterrupt = FALSE;
     ChannelExtension->StateFlags.D3ColdEnabled = FALSE;     //this flag may be set to "TRUE" for last connected device, clear it when no device connected.
@@ -1281,7 +1317,7 @@ Affected Variables/Registers:
     AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
     AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
 
-  //1.2 clear out the programmed slots
+    //1.2 clear out the programmed slots
     ChannelExtension->SlotManager.CommandsToComplete = GetOccupiedSlots(ChannelExtension);
     ChannelExtension->SlotManager.CommandsIssued = 0;
     ChannelExtension->SlotManager.NCQueueSliceIssued = 0;
@@ -1292,11 +1328,11 @@ Affected Variables/Registers:
     ChannelExtension->SlotManager.SingleIoSlice = 0;
     ChannelExtension->SlotManager.HighPriorityAttribute = 0;
 
-  //1.3 Enable Interrupts on the Channel (AHCI 1.1 Section 10.1.2 - 7)
+    //1.3 Enable Interrupts on the Channel (AHCI 1.1 Section 10.1.2 - 7)
     PortClearPendingInterrupt(ChannelExtension);
     Set_PxIE(ChannelExtension, &ChannelExtension->Px->IE);
 
-  //2.1 Call AhciPortFailAllIos to complete all outstanding commands now that ChannelNextStartState is StartFailed
+    //2.1 Call AhciPortFailAllIos to complete all outstanding commands now that ChannelNextStartState is StartFailed
     AhciPortFailAllIos(ChannelExtension, SRB_STATUS_NO_DEVICE, TRUE);
 
     ChannelExtension->StartState.DirectStartInProcess = 0;
@@ -1320,11 +1356,11 @@ AHCI 1.1 Section 6.2.2.1
 "The flow for system software to recover from an error when non-queued commands are issued is as follows:
     Reads PxCI to see which commands are still outstanding
     Reads PxCMD.CCS to determine the slot that the HBA was processing when the error occurred
-    Clears PxCMD.ST to ‘0’ to reset the PxCI register, waits for PxCMD.CR to clear to ‘0’
+    Clears PxCMD.ST to â€˜0â€™ to reset the PxCI register, waits for PxCMD.CR to clear to â€˜0â€™
     Clears any error bits in PxSERR to enable capturing new errors.
     Clears status bits in PxIS as appropriate
-    If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to ‘1’, issue a COMRESET to the device to put it in an idle state
-    Sets PxCMD.ST to ‘1’ to enable issuing new commands
+    If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to â€˜1â€™, issue a COMRESET to the device to put it in an idle state
+    Sets PxCMD.ST to â€˜1â€™ to enable issuing new commands
 
 It assumes:
     Called asynchronously
@@ -1343,10 +1379,10 @@ It performs:
     1.1 Initialize
     1.2 Reads PxCI to see which commands are still outstanding
     1.3 Reads PxCMD.CCS to determine the slot that the HBA was processing when the error occurred
-    1.4.1 Clears PxCMD.ST to ‘0’ to reset the PxCI register, waits for PxCMD.CR to clear to ‘0’
+    1.4.1 Clears PxCMD.ST to â€˜0â€™ to reset the PxCI register, waits for PxCMD.CR to clear to â€˜0â€™
      1.5 Clears any error bits in PxSERR to enable capturing new errors.
      1.6 Clears status bits in PxIS as appropriate
-    1.4.2 If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to ‘1’, issue a COMRESET to the device to put it in an idle state
+    1.4.2 If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to â€˜1â€™, issue a COMRESET to the device to put it in an idle state
     1.4.3 If a COMRESET was issued, restore Preserved Settings
     1.4.4 Start the channel
 
@@ -1374,6 +1410,16 @@ Affected Variables/Registers:
   //1.1 Initialize variables
     RecordExecutionHistory(ChannelExtension, 0x00000013);//AhciNonQueuedErrorRecovery
 
+    ++(ChannelExtension->TotalCountNonQueuedErrorRecovery);
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdNonqueuedErrorRecovery,
+                                       "AhciNonQueuedErrorRecovery",
+                                       0,
+                                       NULL,
+                                       0
+                                       );
+
     senseSrb = NULL;
     performedCOMRESET = FALSE;
 
@@ -1383,7 +1429,7 @@ Affected Variables/Registers:
   //1.3 Reads PxCMD.CCS to determine the slot that the HBA was processing when the error occurred
     cmd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CMD.AsUlong);
 
-  //1.4 Clears PxCMD.ST to ‘0’ to reset the PxCI register, waits for PxCMD.CR to clear to ‘0’
+  //1.4 Clears PxCMD.ST to â€˜0â€™ to reset the PxCI register, waits for PxCMD.CR to clear to â€˜0â€™
     if ( !P_NotRunning(ChannelExtension, ChannelExtension->Px) ){ //This clears PxCI
         RecordExecutionHistory(ChannelExtension, 0x10160013);//AhciNonQueuedErrorRecovery, Port Stop Failed
         AhciPortReset(ChannelExtension, FALSE);
@@ -1434,6 +1480,10 @@ Affected Variables/Registers:
 
     // Keep in mind although Px.CMD.ST was just shut off, we are working with the previous snapshot of ST.
     if (cmd.ST == 1) {
+
+        ULONG storStatus = STOR_STATUS_NOT_IMPLEMENTED;
+        STOR_REQUEST_INFO requestInfo = {0};
+
         srbExtension = GetSrbExtension(ChannelExtension->Slot[failingCommand].Srb);
         // Remove the errant command from the Commands Issued.
         ci &= ~(1 << failingCommand);
@@ -1448,7 +1498,16 @@ Affected Variables/Registers:
         // Fill in the status of the command
         srbExtension->AtaStatus = ChannelExtension->TaskFileData.STS.AsUchar;
         srbExtension->AtaError = ChannelExtension->TaskFileData.ERR;
-        ChannelExtension->Slot[failingCommand].Srb->SrbStatus = SRB_STATUS_ERROR;
+
+        // Check whether the failed command is paging IO, if so, return busy status to indicate storport to retry it.
+        storStatus = StorPortGetRequestInfo(ChannelExtension, (PSCSI_REQUEST_BLOCK)ChannelExtension->Slot[failingCommand].Srb, &requestInfo);
+        if ((storStatus == STOR_STATUS_SUCCESS) && 
+            (requestInfo.Flags & REQUEST_INFO_PAGING_IO_FLAG)) {
+            ChannelExtension->Slot[failingCommand].Srb->SrbStatus = SRB_STATUS_BUSY;
+        } else {
+            ChannelExtension->Slot[failingCommand].Srb->SrbStatus = SRB_STATUS_ERROR;
+        }
+
         // Handle Request Sense if needed
         if ( NeedRequestSense(ChannelExtension->Slot[failingCommand].Srb) ) {
             // This is for ATAPI device only
@@ -1476,7 +1535,7 @@ Affected Variables/Registers:
     //1.6 Clears status bits in PxIS as appropriate
         //Handled in the Interrupt routine
 
-    //1.4.2 If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to ‘1’, issue a COMRESET to the device to put it in an idle state
+    //1.4.2 If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to â€˜1â€™, issue a COMRESET to the device to put it in an idle state
     tfd.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->TFD.AsUlong);
 
     if(tfd.STS.BSY || tfd.STS.DRQ) {
@@ -1527,11 +1586,21 @@ NcqErrorRecoveryCompletion (
 */
 {
     PAHCI_SRB_EXTENSION srbExtension = GetSrbExtension(Srb);
-    ULONG               issuedCommands = (ULONG)(ULONG_PTR)srbExtension->CompletionContext;
-    STOR_LOCK_HANDLE    lockhandle = {InterruptLock, 0};
-    BOOLEAN             fallBacktoReset = FALSE;
+    ULONG issuedCommands = (ULONG)(ULONG_PTR)srbExtension->CompletionContext;
+    STOR_LOCK_HANDLE lockhandle = {InterruptLock, 0};
+    BOOLEAN fallBacktoReset = FALSE;
 
     RecordExecutionHistory(ChannelExtension, 0x0000001b);   //Enter NcqErrorRecoveryCompletion
+
+    ++(ChannelExtension->TotalCountNCQErrorRecoveryComplete);
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdNCQErrorRecoveryComplete,
+                                       "NcqErrorRecoveryCompletion",
+                                       0,
+                                       NULL,
+                                       0
+                                       );
 
     //
     // In case of reset happened when Read Log command was executing, all requests have been returned back to port driver.
@@ -1553,9 +1622,9 @@ NcqErrorRecoveryCompletion (
         // Other commands will be put back into NCQ slices and will be issued again to adapter.
         //
         PGP_LOG_NCQ_COMMAND_ERROR ncqErrorLog = (PGP_LOG_NCQ_COMMAND_ERROR)ChannelExtension->DeviceExtension->ReadLogExtPageData;
-        UCHAR                     failingCommand;
-        PSTORAGE_REQUEST_BLOCK    failingSrb = NULL;
-        PAHCI_SRB_EXTENSION       failingSrbExtension = NULL;
+        UCHAR failingCommand;
+        PSTORAGE_REQUEST_BLOCK failingSrb = NULL;
+        PAHCI_SRB_EXTENSION failingSrbExtension = NULL;
 
         NT_ASSERT(ncqErrorLog->NonQueuedCmd == 0);
         NT_ASSERT(ncqErrorLog->NcqTag != 0);
@@ -1569,71 +1638,89 @@ NcqErrorRecoveryCompletion (
         if (((1 << failingCommand) & issuedCommands) != 0) {
 
             failingSrb = ChannelExtension->Slot[failingCommand].Srb;
-            NT_ASSERT(failingSrb != NULL);
-
-            failingSrbExtension = GetSrbExtension(failingSrb);
 
             //
-            // Record error and status
-            // 
-            failingSrbExtension->AtaStatus = ncqErrorLog->Status;
-            failingSrbExtension->AtaError = ncqErrorLog->Error;
-
-            if( IsReturnResults(failingSrbExtension->Flags) ) {
-                SetReturnRegisterValues(ChannelExtension, failingSrb, NULL);
-            }
-
+            // If the surprise remove happens just after the NCQ error handling, then
+            // there is chance that the failingSrb is NULL here.
             //
-            // Get Sense Data from log, or from translation.
-            //
-            if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaFeaturesSupported.NCQAutosense == 1) &&
-                (ncqErrorLog->SenseKey != SCSI_SENSE_NO_SENSE)) {
+            if (failingSrb != NULL) {
+                failingSrbExtension = GetSrbExtension(failingSrb);
 
-                StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Error Log read successfully. Sense Data returned: %02X/%02X/%02X\n", 
-                                       ChannelExtension->PortNumber, ncqErrorLog->SenseKey, ncqErrorLog->ASC, ncqErrorLog->ASCQ);
+                //
+                // Record error and status
+                // 
+                failingSrbExtension->AtaStatus = ncqErrorLog->Status;
+                failingSrbExtension->AtaError = ncqErrorLog->Error;
 
-                AhciSetSenseData(failingSrb, SRB_STATUS_ERROR, ncqErrorLog->SenseKey, ncqErrorLog->ASC, ncqErrorLog->ASCQ);
+                if( IsReturnResults(failingSrbExtension->Flags) ) {
+                    SetReturnRegisterValues(ChannelExtension, failingSrb, NULL);
+                }
+
+                //
+                // Get Sense Data from log, or from translation.
+                //
+                if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaFeaturesSupported.NCQAutosense == 1) &&
+                    (ncqErrorLog->SenseKey != SCSI_SENSE_NO_SENSE)) {
+
+                    StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Error Log read successfully. Sense Data returned: %02X/%02X/%02X\n", 
+                                           ChannelExtension->PortNumber, ncqErrorLog->SenseKey, ncqErrorLog->ASC, ncqErrorLog->ASCQ);
+
+                    AhciSetSenseData(failingSrb, SRB_STATUS_ERROR, ncqErrorLog->SenseKey, ncqErrorLog->ASC, ncqErrorLog->ASCQ);
+                } else {
+                    //
+                    // Set SrbStatus indicates it's an error condition.
+                    // Sense data will be translated from Error register in ReleaseSlottedCommand()
+                    //
+                    StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Error Log read successfully. No Sense Data returned\n", ChannelExtension->PortNumber);
+
+                    failingSrb->SrbStatus = SRB_STATUS_ERROR;
+                    AtaMapError(ChannelExtension, failingSrb, ChannelExtension->Slot[failingCommand].StateFlags.FUA);
+                }
+
+                //
+                // Inform ReleaseSlottedCommand() function that sense data has been set.
+                //
+                SETMASK(failingSrbExtension->Flags, ATA_FLAGS_SENSEDATA_SET);
+
+                //
+                // Acquire spinlock before touching Slots.
+                //
+                AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+
+                //
+                // Remove the failing command from NCQ Slice.
+                // Put back other previous outstanding commands.
+                //
+                ChannelExtension->SlotManager.NCQueueSlice &= ~(1 << failingCommand);
+
+                //
+                // Clear the NCQ Error Recovery state flag, so that queue will be resumed in ReleaseSlottedCommand().
+                //
+                ChannelExtension->StateFlags.NcqErrorRecoveryInProcess = 0;
+
+                //
+                // Complete the failing command.
+                //
+                ChannelExtension->SlotManager.CommandsToComplete |= (1 << failingCommand);
+                ReleaseSlottedCommand(ChannelExtension, (UCHAR)failingCommand, TRUE);
+
+                ActivateQueue(ChannelExtension, TRUE);
+
+                AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+
             } else {
                 //
-                // Set SrbStatus indicates it's an error condition.
-                // Sense data will be translated from Error register in ReleaseSlottedCommand()
+                // If failingSrb is NULL, clear the NCQ Error Recovery state flag.
                 //
-                StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Error Log read successfully. No Sense Data returned\n", ChannelExtension->PortNumber);
+                ChannelExtension->StateFlags.NcqErrorRecoveryInProcess = 0;
 
-                failingSrb->SrbStatus = SRB_STATUS_ERROR;
-                AtaMapError(ChannelExtension, failingSrb, ChannelExtension->Slot[failingCommand].StateFlags.FUA);
+                StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Error Log read successfully, but the failing srb is NULL!\n", ChannelExtension->PortNumber);
+
+                //
+                // Capture the scenarios that failing srb is NULL, need investigate cases other than surprise remove.
+                //
+                NT_ASSERT(failingSrb != NULL);
             }
-
-            //
-            // Inform ReleaseSlottedCommand() function that sense data has been set.
-            //
-            SETMASK(failingSrbExtension->Flags, ATA_FLAGS_SENSEDATA_SET);
-
-            //
-            // Acquire spinlock before touching Slots.
-            //
-            AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
-
-            //
-            // Remove the failing command from NCQ Slice.
-            // Put back other previous outstanding commands.
-            //
-            ChannelExtension->SlotManager.NCQueueSlice &= ~(1 << failingCommand);
-
-            //
-            // Clear the NCQ Error Recovery state flag, so that queue will be resumed in ReleaseSlottedCommand().
-            //
-            ChannelExtension->StateFlags.NcqErrorRecoveryInProcess = 0;
-
-            //
-            // Complete the failing command.
-            //
-            ChannelExtension->SlotManager.CommandsToComplete |= (1 << failingCommand);
-            ReleaseSlottedCommand(ChannelExtension, (UCHAR)failingCommand, TRUE);
-
-            ActivateQueue(ChannelExtension, TRUE);
-
-            AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
 
         } else {
             StorPortDebugPrint(3, "StorAHCI - Port %02d - NCQ Error Recovery: NCQ Tag doesn't belong to issued commands.\n", ChannelExtension->PortNumber);
@@ -1695,13 +1782,13 @@ AHCI 1.1 Section 6.2.2.2 Native Command Queuing Error Recovery
     The flow for system software to recover from an error when native command queuing commands are
     issued is as follows:
 
-    • Reads PxSACT to see which commands have not yet completed
-    • Clears PxCMD.ST to ‘0’ to reset the PxCI and PxSACT registers, waits for PxCMD.CR to clear to ‘0’
-    • Clears any error bits in PxSERR to enable capturing new errors.
-    • Clears status bits in PxIS as appropriate
-    • If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to ‘1’, issue a COMRESET to the device to put it in an idle state
-    • Sets PxCMD.ST to ‘1’ to enable issuing new commands
-    • Issue READ LOG EXT to determine the cause of the error condition if software did not have to perform a reset (COMRESET or software reset) as part of the error recovery
+    â€¢ Reads PxSACT to see which commands have not yet completed
+    â€¢ Clears PxCMD.ST to â€˜0â€™ to reset the PxCI and PxSACT registers, waits for PxCMD.CR to clear to â€˜0â€™
+    â€¢ Clears any error bits in PxSERR to enable capturing new errors.
+    â€¢ Clears status bits in PxIS as appropriate
+    â€¢ If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to â€˜1â€™, issue a COMRESET to the device to put it in an idle state
+    â€¢ Sets PxCMD.ST to â€˜1â€™ to enable issuing new commands
+    â€¢ Issue READ LOG EXT to determine the cause of the error condition if software did not have to perform a reset (COMRESET or software reset) as part of the error recovery
 
     Software then either completes commands that did not finish with error to higher level software, or reissues
     them to the device.
@@ -1733,6 +1820,15 @@ Called by:
     //
     RecordExecutionHistory(ChannelExtension, 0x00000014);   //AhciNcqErrorRecovery
 
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdNCQErrorRecovery,
+                                       "AhciNcqErrorRecovery Enter",
+                                       0,
+                                       NULL,
+                                       0
+                                       );
+
     //
     // Reads PxSACT and PxCI to see which commands are still outstanding
     //
@@ -1742,7 +1838,7 @@ Called by:
 #endif
 
     //
-    // Clears PxCMD.ST to ‘0’, waits for PxCMD.CR to clear to ‘0’
+    // Clears PxCMD.ST to â€˜0â€™, waits for PxCMD.CR to clear to â€˜0â€™
     // If it doesn't succeed, issue COMRESET to recover.
     //
     if ( !P_NotRunning(ChannelExtension, ChannelExtension->Px) ) {
@@ -1761,7 +1857,7 @@ Called by:
 
     if (needCOMRESET == FALSE) {
         //
-        // If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to ‘1’, issue a COMRESET to the device to put it in an idle state
+        // If PxTFD.STS.BSY or PxTFD.STS.DRQ is set to â€˜1â€™, issue a COMRESET to the device to put it in an idle state
         // ChannelExtension->TaskFileData has been read from register in ISR.
         //
         if ((ChannelExtension->TaskFileData.STS.BSY != 0) || (ChannelExtension->TaskFileData.STS.DRQ != 0)) {
@@ -1863,6 +1959,15 @@ Called by:
 
     RecordExecutionHistory(ChannelExtension, 0x10000014);   //Exit AhciNcqErrorRecovery
 
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdNCQErrorRecovery,
+                                       "AhciNcqErrorRecovery Exit",
+                                       0,
+                                       NULL,
+                                       0
+                                       );
+
     return;
 }
 
@@ -1886,6 +1991,44 @@ Return Values:
     None
 */
 {
+    ++(ChannelExtension->TotalCountPortErrorRecovery);
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdPortErrorRecovery,
+                                       "AhciPortErrorRecovery",
+                                       0,
+                                       NULL,
+                                       0
+                                       );
+
+    // Log the StateFlags
+    StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                             (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                             StorportEtwEventOperational,
+                             AhciEtwEventHandleInterrupt,
+                             L"AhciPortErrorRecovery",
+                             STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                             StorportEtwLevelError,
+                             StorportEtwEventOpcodeInfo,
+                             NULL,
+                             L"StateFlags",
+                             *(ULONGLONG *)&(ChannelExtension->StateFlags),
+                             L"PortErrRecovery",
+                             ChannelExtension->TotalCountPortErrorRecovery,
+                             L"StartState",
+                             *(ULONGLONG *)&(ChannelExtension->StartState),
+                             L"PortReset",
+                             ChannelExtension->TotalCountPortReset,
+                             L"RunningStrtFail",
+                             ChannelExtension->TotalCountRunningStartFailed,
+                             L"NonQ'dErrRecov",
+                             ChannelExtension->TotalCountNonQueuedErrorRecovery,
+                             L"NCQError|NCQErrorComplete",
+                             (((ULONGLONG)ChannelExtension->TotalCountNCQError << 32) |
+                             ((ULONGLONG)ChannelExtension->TotalCountNCQErrorRecoveryComplete)),
+                             L"BusChange",
+                             ChannelExtension->TotalCountBusChange);
+
     if (ChannelExtension->StateFlags.CallAhciReportBusChange == 1) {
         // Handle AHCI 6.2.2.3 Recovery of Unsolicited COMINIT and hot plug
         // AhciPortBusChangeDpcRoutine() will issue RESET, ignore other error recovery marks.
@@ -1893,6 +2036,11 @@ Return Values:
         ChannelExtension->StateFlags.CallAhciNonQueuedErrorRecovery = 0;
         ChannelExtension->StateFlags.CallAhciReset = 0;
         ChannelExtension->StateFlags.CallAhciNcqErrorRecovery = 0;
+
+        ++(ChannelExtension->TotalCountBusChange);
+        if (ChannelExtension->TotalCountBusChange >= AHCI_BUS_CHANGE_COUNT_WARNING_THRESHOLD) {
+            AhciPortMarkDeviceFailed(ChannelExtension, AhciDeviceFailureTooManyBusChange, 0, TRUE);
+        }
 
         if (!IsDumpMode(ChannelExtension->AdapterExtension)) {
             StorPortIssueDpc(ChannelExtension->AdapterExtension, &ChannelExtension->BusChangeDpc, ChannelExtension, NULL);
@@ -1909,6 +2057,11 @@ Return Values:
         ChannelExtension->StateFlags.CallAhciNonQueuedErrorRecovery = 0;
         ChannelExtension->StateFlags.CallAhciReset = 0;
         ChannelExtension->StateFlags.CallAhciNcqErrorRecovery = 0;
+
+        ++(ChannelExtension->TotalCountNCQError);
+        if (ChannelExtension->TotalCountNCQError >= AHCI_NCQ_ERROR_COUNT_WARNING_THRESHOLD) {
+            AhciPortMarkDeviceFailed(ChannelExtension, AhciDeviceFailureTooManyNCQError, 0, TRUE);
+        }
 
         if (SupportsEnhancedNcqErrorRecovery(ChannelExtension)) {
             AhciNcqErrorRecovery(ChannelExtension);
@@ -1932,6 +2085,10 @@ Return Values:
         // Handle AHCI 6.2.2.1 Non-Queued Error Recovery
         ChannelExtension->StateFlags.CallAhciNonQueuedErrorRecovery = 0;
 
+        if (ChannelExtension->TotalCountNonQueuedErrorRecovery >= AHCI_NON_QUEUED_ERROR_COUNT_WARNING_THRESHOLD) {
+            AhciPortMarkDeviceFailed(ChannelExtension, AhciDeviceFailureTooManyNonQueuedError, 0, TRUE);
+        }
+
         AhciNonQueuedErrorRecovery(ChannelExtension);
     }
 
@@ -1939,16 +2096,16 @@ Return Values:
 }
 
 BOOLEAN
-AhciPortReset (
+AhciPortReset(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
     _In_ BOOLEAN CompleteAllRequests
     )
 /*++
-AhciPortReset can be called even if the miniport driver is not ready for another request.
-The miniport driver should complete all pending requests and must reset the given channel.
+    AhciPortReset can be called even if the miniport driver is not ready for another request.
+    The miniport driver should complete all pending requests and must reset the given channel.
 
 It assumes:
-    nothing
+    DIRQL
 
 Called by:
 
@@ -1970,16 +2127,106 @@ Return Values:
     If the reset failed the routine must return FALSE.
 --*/
 {
-    ULONG commandsToCompleteCount;
+    ULONG commandsToCompleteCount = 0;
+    BOOLEAN isPortStartInProgress = FALSE;
+    BOOLEAN isCompletionDPCQueued = FALSE;
+    BOOLEAN isCompletionDPCInterrupted = FALSE;
 
-  //1.1 Initialize Variables
-    RecordExecutionHistory(ChannelExtension, 0x00000050);//AhciPortReset
+    //1.1 Initialize Variables
+    ++(ChannelExtension->TotalCountPortReset);
 
-  //2.1 Stop the channel
+    if ((CompleteAllRequests) &&
+        (ChannelExtension->StartState.ChannelNextStartState != StartComplete)) {
+
+        NT_ASSERT(FALSE);
+
+        isPortStartInProgress = TRUE;
+        RecordExecutionHistory(ChannelExtension, 0x10040050); //AhciPortReset, Port Start still in progress, device probably hang
+
+    } else {
+        RecordExecutionHistory(ChannelExtension, 0x00000050); //AhciPortReset
+    }
+
+    AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdPortReset,
+                                       (isPortStartInProgress ? "PortStartTakeTooLong" : "AhciPortReset"),
+                                       (isPortStartInProgress ? AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING : 0),
+                                       NULL,
+                                       0
+                                       );
+
+    if (ChannelExtension->CompletionQueue.LastTimeStampAddQueue.QuadPart > ChannelExtension->LastTimeStampDpcStart.QuadPart) {
+        isCompletionDPCQueued = TRUE;
+    }
+
+    if (ChannelExtension->LastTimeStampDpcStart.QuadPart > ChannelExtension->LastTimeStampDpcCompletion.QuadPart) {
+        isCompletionDPCInterrupted = TRUE;
+    }
+
+    if (isCompletionDPCQueued || isCompletionDPCInterrupted) {
+
+        LARGE_INTEGER currentTimeStamp;
+        StorPortQuerySystemTime(&currentTimeStamp);
+        ULONGLONG duration = 0;
+
+        NT_ASSERT(FALSE);
+
+        if (isCompletionDPCQueued && isCompletionDPCInterrupted) {
+            if (ChannelExtension->LastTimeStampDpcStart.QuadPart < ChannelExtension->CompletionQueue.LastTimeStampRemoveQueue.QuadPart) {
+                duration = (ULONGLONG)(currentTimeStamp.QuadPart - ChannelExtension->CompletionQueue.LastTimeStampRemoveQueue.QuadPart);
+            } else {
+                duration = (ULONGLONG)(currentTimeStamp.QuadPart - ChannelExtension->LastTimeStampDpcStart.QuadPart);
+            }
+        } else if (isCompletionDPCQueued) {
+            duration = (ULONGLONG)(currentTimeStamp.QuadPart - ChannelExtension->CompletionQueue.LastTimeStampAddQueue.QuadPart);
+        } else if (isCompletionDPCInterrupted) {
+            duration = (ULONGLONG)(currentTimeStamp.QuadPart - ChannelExtension->LastTimeStampDpcStart.QuadPart);
+        }
+
+        RecordExecutionHistory(ChannelExtension, 0x10050050); //AhciPortReset, DPC queued or interrupted
+
+        AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                           (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                           AhciTelemetryEventIdPortReset,
+                                           "DPC queued or interrupted",
+                                           AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING,
+                                           "Duration(in 100ns)",
+                                           duration
+                                           );
+    }
+
+    StorPortEtwChannelEvent8(ChannelExtension->AdapterExtension,
+                             (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                             StorportEtwEventOperational,
+                             AhciEtwEventPortReset,
+                             L"Port reset",
+                             STORPORT_ETW_EVENT_KEYWORD_COMMAND_TRACE,
+                             StorportEtwLevelInformational,
+                             StorportEtwEventOpcodeInfo,
+                             NULL,
+                             L"PortReset",
+                             ChannelExtension->TotalCountPortReset,
+                             L"RunningStrtFail",
+                             ChannelExtension->TotalCountRunningStartFailed,
+                             L"PortErrRecovery",
+                             ChannelExtension->TotalCountPortErrorRecovery,
+                             L"NonQ'dErrRecov",
+                             ChannelExtension->TotalCountNonQueuedErrorRecovery,
+                             L"NCQErrRecovery",
+                             ChannelExtension->TotalCountNCQError,
+                             L"NCQErrRecovCmpl",
+                             ChannelExtension->TotalCountNCQErrorRecoveryComplete,
+                             L"SurpriseRemove",
+                             ChannelExtension->TotalCountSurpriseRemove,
+                             L"StateFlags",
+                             *(ULONGLONG *)&(ChannelExtension->StateFlags));
+
+    //2.1 Stop the channel
     P_NotRunning(ChannelExtension, ChannelExtension->Px);
 
-  //2.2 Perform the COMRESET
-    // AHCI 10.1.2 - 3: If PxCMD.CR or PxCMD.FR do not clear to ‘0’ correctly, then software may attempt a port reset or a full HBA reset to recover.
+    //2.2 Perform the COMRESET
+    // AHCI 10.1.2 - 3: If PxCMD.CR or PxCMD.FR do not clear to '0' correctly, then software may attempt a port reset or a full HBA reset to recover.
     AhciCOMRESET(ChannelExtension, ChannelExtension->Px);
 
     //
@@ -1990,14 +2237,89 @@ Return Values:
         ChannelExtension->StateFlags.QueuePaused = 0;
     }
 
-  //2.3 If either Init Command or PreservedSettings Command is being processed, reset the command index to start from the first one again.
-  //    The process will be continued by the Srb's completion routine.
+    if ((CompleteAllRequests) &&
+        (ChannelExtension->StateFlags.QueuePaused == 1) &&
+        (ChannelExtension->SlotManager.CommandsIssued == 0)) {
+
+        //
+        // This should never happen. Resetting state.
+        //
+
+        NT_ASSERT(FALSE);
+
+        ChannelExtension->StateFlags.QueuePaused = 0;
+
+        RecordExecutionHistory(ChannelExtension, 0x10010050); //AhciPortReset, Unpausing queue
+        AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                           (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                           AhciTelemetryEventIdPortReset,
+                                           "Unpausing queue",
+                                           AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING,
+                                           NULL,
+                                           0
+                                           );
+    }
+
+    //2.3 If either Init Command or PreservedSettings Command is being processed, reset the command index to start from the first one again.
+    //    The process will be continued by the Srb's completion routine.
     if (ChannelExtension->StateFlags.ReservedSlotInUse == 1) {
         ChannelExtension->DeviceInitCommands.CommandToSend = 0;
         ChannelExtension->PersistentSettings.SlotsToSend = ChannelExtension->PersistentSettings.Slots;
     }
 
-  //3.1 Complete all issued commands
+    if ((CompleteAllRequests) &&
+        (ChannelExtension->StateFlags.ReservedSlotInUse == 1) &&
+        (ChannelExtension->SlotManager.SingleIoSliceIssued == 0) &&
+        ((ChannelExtension->SlotManager.SingleIoSlice & 0x1) == 0)) {
+
+        NT_ASSERT(FALSE);
+
+        //
+        // This could happen if init/preserved setting command completed by device, but the completion DPC is queued(or interrupted) for long time.
+        // If there is other scenario, it is needed to further triage.
+        //
+        // Note: Force clear ReservedSlotInUse flag only if corresponding registry key is set.
+        //       Otherwise, there maybe add queue issue. E.g. Buggy device repeatedly generate bus change interrupt,
+        //       which could result in add queue bugcheck eventually.
+        //
+
+        if (!(isCompletionDPCQueued || isCompletionDPCInterrupted)) {
+            RecordExecutionHistory(ChannelExtension, 0x10020050); //AhciPortReset, ReservedSlotInUse flag maybe stuck
+            //
+            // There maybe possibility that init/restore preserved settings command stuck in device and never complete.
+            //
+            AhciPortMarkDeviceFailed(ChannelExtension, AhciDeviceFailureDeviceStuck, 0, TRUE);
+        } else {
+            RecordExecutionHistory(ChannelExtension, 0x10060050); //AhciPortReset, ReservedSlotInUse flag outstanding
+        }
+
+    }
+
+    if (((ChannelExtension->SlotManager.SingleIoSliceIssued & 0x1) != 0) &&
+        (ChannelExtension->Slot[0].Srb != NULL) &&
+        ((PSTORAGE_REQUEST_BLOCK)&ChannelExtension->Local.Srb == ChannelExtension->Slot[0].Srb)) {
+
+        if ((ChannelExtension->Local.SrbExtension != NULL) &&
+            ((ChannelExtension->Local.SrbExtension->CompletionRoutine == IssuePreservedSettingCommands) ||
+             (ChannelExtension->Local.SrbExtension->CompletionRoutine == IssueInitCommands))) {
+
+            BOOLEAN isInitCommand = (ChannelExtension->Local.SrbExtension->CompletionRoutine == IssueInitCommands) ? (TRUE) : (FALSE);
+
+            NT_ASSERT(FALSE);
+
+            RecordExecutionHistory(ChannelExtension, 0x10030050); //AhciPortReset, Init/Preserved Setting command timeout
+            AhciTelemetryLogResetErrorRecovery(ChannelExtension,
+                                               (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                               AhciTelemetryEventIdPortReset,
+                                               "Slot 0 command timeout",
+                                               AHCI_TELEMETRY_FLAG_NOT_SUPPRESS_LOGGING,
+                                               (isInitCommand ? "Init Command" : "Preserved Setting Command"),
+                                               0
+                                               );
+        }
+    }
+
+    //3.1 Complete all issued commands
     ChannelExtension->SlotManager.CommandsToComplete = ChannelExtension->SlotManager.CommandsIssued;
     ChannelExtension->SlotManager.CommandsIssued = 0;
     ChannelExtension->SlotManager.NCQueueSliceIssued = 0;
@@ -2030,17 +2352,17 @@ Return Values:
         AhciCompleteIssuedSRBs(ChannelExtension, completeStatus, TRUE); //AhciPortReset is under Interrupt spinlock
     }
 
-  //3.2 Complete all other commands miniport own for this device, when it's necessary or when the Reset is requested by Storport
+    //3.2 Complete all other commands miniport own for this device, when it's necessary or when the Reset is requested by Storport
     if (CompleteAllRequests) {
         AhciPortFailAllIos(ChannelExtension, SRB_STATUS_BUS_RESET, TRUE);
     }
 
-  //4.1 Restore device configuration
+    //4.1 Restore device configuration
     if (ChannelExtension->StateFlags.ReservedSlotInUse == 0) {
         RestorePreservedSettings(ChannelExtension, TRUE);
     }
 
-  //2.3 Start the channel
+    //2.3 Start the channel
     P_Running_StartAttempt(ChannelExtension, TRUE); //AhciPortReset is under Interrupt spinlock
 
     // record that the channel is reset.
@@ -2057,4 +2379,3 @@ Return Values:
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-

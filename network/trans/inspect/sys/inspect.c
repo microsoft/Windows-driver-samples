@@ -22,7 +22,7 @@ Environment:
 
 --*/
 
-
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntddk.h>
 
 #pragma warning(push)
@@ -1278,7 +1278,7 @@ TLInspectWorker(
                                 listEntry
                                 );
 
-            NT_ASSERT((packet->direction == FWP_DIRECTION_INBOUND) ||
+            NT_ASSERT((packet->direction != FWP_DIRECTION_INBOUND) ||
                       (packet->authConnectDecision == 0));
         
             if (packet->authConnectDecision == 0)

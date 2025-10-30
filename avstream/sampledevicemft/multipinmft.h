@@ -48,6 +48,9 @@ class CMultipinMft :
     , public IMFGetService
 #endif
     , public CDMFTModuleLifeTimeManager
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    , public IMFSampleAllocatorControl
+#endif
 {
     friend class CPinCreationFactory;
 public:
@@ -275,7 +278,22 @@ public:
     }
 
 #endif
-    
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    //
+    // IMFSampleAllocatorControl Inferface function declarations
+    //
+
+    STDMETHOD(SetDefaultAllocator)(
+        _In_ DWORD dwOutputStreamID,
+        _In_ IUnknown *pAllocator
+    );
+
+    STDMETHOD(GetAllocatorUsage)(
+        _In_ DWORD dwOutputStreamID,
+        _Out_  DWORD* pdwInputStreamID,
+        _Out_ MFSampleAllocatorUsage* peUsage
+    );
+#endif
     static STDMETHODIMP CreateInstance(
         REFIID iid, void **ppMFT);
  
@@ -359,7 +377,7 @@ protected:
     //Inline functions
     //
 
-    __inline IMFTransform* Parent()
+    __inline IMFDeviceTransform* Parent()
     {
         return m_spSourceTransform.Get();
     }
@@ -388,7 +406,7 @@ private:
     long                         m_nRefCount;                 // Reference count
     CCritSec                     m_critSec;                   // Control lock.. taken only durign state change operations   
     ComPtr <IUnknown>            m_spDeviceManagerUnk;        // D3D Manager set, when MFT_MESSAGE_SET_D3D_MANAGER is called through ProcessMessage
-    ComPtr<IMFTransform>         m_spSourceTransform;         // The sources transform. This is the pipeline DevProxy
+    ComPtr<IMFDeviceTransform>   m_spSourceTransform;         // The sources transform. This is the pipeline DevProxy
     MFSHUTDOWN_STATUS            m_eShutdownStatus;
     DWORD                        m_dwWorkQueueId;
     LONG                         m_lWorkQueuePriority;

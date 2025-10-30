@@ -12,9 +12,9 @@ products:
 
 The kmdf\_fx2 sample is a Kernel-Mode Driver Framework (KMDF) driver for the OSR USB-FX2 device. It includes a test app and sample device metadata.
 
-In the Windows Driver Kit (WDK), the osrusbfx2 sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The sample was written for the [OSR USB-FX2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf).
+In the Windows Driver Kit (WDK), the osrusbfx2 sample demonstrates how to perform bulk and interrupt data transfers to an USB device. The sample was written for the [OSR USB-FX2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf).
 
-The driver and sample device metadata also works with the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample.
+The driver and sample device metadata also works with the [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample.
 
 ## Universal Windows Driver Compliant
 
@@ -108,11 +108,11 @@ This directory contains a test application that can be used to drive the KMDF dr
 
 ### usb\\kmdf\_fx2\\deviceMetadata
 
-This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample.
+This directory contains the device metadata package for the sample. You must copy the device metadata to the system before installing the device. For information on how to update and deploy device metadata, see the [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample.
 
 ## Testing the driver
 
-You can use the  [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample as a testing method.
+You can use the  [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample as a testing method.
 
 The sample also includes a test application, osrusbfx2.exe, that you can use to test the device. This console application enumerates the interface registered by the driver and opens the device to send read, write, or IOCTL requests based on the command line options.
 

@@ -60,8 +60,6 @@ VOID NTAPI CompleteFastStreamInjection(_In_ VOID* pContext,
    UNREFERENCED_PARAMETER(pContext);
    UNREFERENCED_PARAMETER(dispatchLevel);
 
-   NT_ASSERT(NT_SUCCESS(pNetBufferList->Status));
-
    FwpsFreeCloneNetBufferList(pNetBufferList,
                               0);
 

@@ -18,6 +18,7 @@ ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider="Sample Provider"
 DriverVer=12/12/2017,10.0.0.1
 CatalogFile=Defect_Toastmon.cat
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12
@@ -26,14 +27,7 @@ DefaultDestDir = 12
 ; ================= Device Install section =====================
 
 [Manufacturer]
-%ManufacturerString%=Sample_Manufacturer,NTx86, NTamd64, NTARM, NTARM64
-
-; For XP and later
-[Sample_Manufacturer.NTx86]
-%Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
-
-[Sample_Manufacturer.NTARM]
-%Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
+%ManufacturerString%=Sample_Manufacturer, NTamd64, NTARM64
 
 [Sample_Manufacturer.NTARM64]
 %Defect_ToastMon.DRVDESC%=Defect_ToastMon_Inst,root\defect_toastmon
@@ -57,24 +51,12 @@ StartType      = 1                  ; SERVICE_SYSTEM_START
 ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\defect_toastmon.sys                            
 
-[DeviceInstall32]
-AddDevice=ROOT\Samples\0001,,ToastMonbuggy
-
-[ToastMonBuggy]
-HardwareIds=root\defect_toastmon
-
 ; ================= Source Media Section =====================
 
 [SourceDisksFiles]
 defect_toastmon.sys=1
 
-[SourceDisksNames.x86]
-1 = %DISK_NAME%,,,
-
 [SourceDisksNames.amd64]
-1 = %DISK_NAME%,,,
-
-[SourceDisksNames.ARM]
 1 = %DISK_NAME%,,,
 
 [SourceDisksNames.ARM64]

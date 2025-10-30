@@ -127,6 +127,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // CMiniportWaveRT
 //   
+#pragma code_seg()
 class CMiniportWaveRT : 
     public IMiniportWaveRT,
     public IMiniportAudioEngineNode,
@@ -454,6 +455,12 @@ public:
         _In_ PPCPROPERTY_REQUEST PropertyRequest
     );
 #endif  // SYSVAD_USB_SIDEBAND
+#ifdef SYSVAD_A2DP_SIDEBAND
+    NTSTATUS PropertyHandler_A2dpHpAudioEffectsDiscoveryEffectsList  
+    (
+        _In_ PPCPROPERTY_REQUEST PropertyRequest
+    );
+#endif  // SYSVAD_A2DP_SIDEBAND
 
     //---------------------------------------------------------------------------------------------------------
     // volume

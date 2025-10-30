@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
@@ -13,24 +13,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fakemodem2um", "FakeModem\f
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|Win32.ActiveCfg = Debug|Win32
-		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|Win32.Build.0 = Debug|Win32
-		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|Win32.ActiveCfg = Release|Win32
-		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|Win32.Build.0 = Release|Win32
+		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|ARM64.Build.0 = Debug|ARM64
+		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|ARM64.Build.0 = Debug|ARM64
+		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|ARM64.ActiveCfg = Release|ARM64
+		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|ARM64.Build.0 = Release|ARM64
+		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Release|ARM64.ActiveCfg = Release|ARM64
+		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Release|ARM64.Build.0 = Release|ARM64
 		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|x64.ActiveCfg = Debug|x64
 		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Debug|x64.Build.0 = Debug|x64
 		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|x64.ActiveCfg = Release|x64
 		{65A037CB-9245-442A-A791-5CFC34E97BF7}.Release|x64.Build.0 = Release|x64
-		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|Win32.Build.0 = Debug|Win32
-		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Release|Win32.ActiveCfg = Release|Win32
-		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Release|Win32.Build.0 = Release|Win32
 		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|x64.ActiveCfg = Debug|x64
 		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Debug|x64.Build.0 = Debug|x64
 		{CD78D78F-B132-4E6F-A11F-B62185A6152A}.Release|x64.ActiveCfg = Release|x64

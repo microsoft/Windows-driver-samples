@@ -8,18 +8,12 @@ Class       = NetService
 ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
 Provider    = %ProviderString%
 CatalogFile = mspassthroughext.cat
-DriverVer   = 08/29/2011,1.0
+DriverVer   = 08/29/2011,1.0.0.0
+PnpLockdown = 1
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86,NTia64,NTamd64
-
-[Standard.NTx86]
-%MSPassthroughExt_Desc%=Install, MS_passthroughext
-
-[Standard.NTia64]
-%MSPassthroughExt_Desc%=Install, MS_passthroughext
-
-[Standard.NTamd64]
+%ManufacturerName%=Standard,NT$ARCH$.10.0...16299
+[Standard.NT$ARCH$.10.0...16299]
 %MSPassthroughExt_Desc%=Install, MS_passthroughext
 
 ;-------------------------------------------------------------------------
@@ -38,8 +32,8 @@ Copyfiles = MSPassthroughExt.copyfiles.sys
 MSPassthroughExt.sys=1
 
 [DestinationDirs]
-DefaultDestDir=12
-MSPassthroughExt.copyfiles.sys=12
+DefaultDestDir=13
+MSPassthroughExt.copyfiles.sys=13
 
 [MSPassthroughExt.copyfiles.sys]
 MSPassthroughExt.sys,,,2
@@ -71,7 +65,7 @@ DisplayName     = %MSPassthroughExt_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 1 ;SERVICE_SYSTEM_START
 ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
-ServiceBinary   = %12%\MSPassthroughExt.sys
+ServiceBinary   = %13%\MSPassthroughExt.sys
 LoadOrderGroup  = NDIS
 Description     = %MSPassthroughExt_Desc%
 

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
+      <UniqueIdentifier>{5f4ff11d-7a0b-4f75-9d79-744ae028cc53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{bd103b81-05b2-440e-84e7-0723d7fe4109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
+      <UniqueIdentifier>{a57b6b78-38ae-4348-ade3-0200e81a3dd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDL Files">
+      <Extensions>idl</Extensions>
+      <UniqueIdentifier>{c6318700-1bce-4812-92f1-160881e4c976}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AecApo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AecApo.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AecApoDll.cpp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="AecApoMfx.cpp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="AecApoDll.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="AecApo.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AecApoDll.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AecApoDll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AecApoMFX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AecApoDll.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="AecApoDll.idl">
+      <Filter>IDL Files</Filter>
+    </Midl>
+  </ItemGroup>
+</Project>

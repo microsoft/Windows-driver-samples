@@ -114,4 +114,4 @@ Customer should validate their driver after customizing it.
 
 [Windows Driver Kit documentation](https://docs.microsoft.com/windows-hardware/drivers)
 
-[NMEA format documentation](http://navspark.mybigcommerce.com/content/NMEA_Format_v0.1.pdf)
+[NMEA format documentation](https://navspark.mybigcommerce.com/content/NMEA_Format_v0.1.pdf)

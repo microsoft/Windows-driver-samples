@@ -355,11 +355,14 @@ Return Value:
     //  Send it off.....
     //
 
+#pragma prefast( suppress: 28155, "the function prototype is correct" )
+#pragma warning( suppress:4996 )
     ExInitializeWorkItem( &IrpContext->WorkQueueItem,
                           FatFspDispatch,
                           IrpContext );
 
 #pragma prefast( suppress:28159, "prefast indicates this is an obsolete API but it is ok for fastfat to keep using it." )
+#pragma warning( suppress:4996 )
     ExQueueWorkItem( &IrpContext->WorkQueueItem, CriticalWorkQueue );
 
     return;

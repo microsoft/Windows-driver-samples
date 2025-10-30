@@ -16,6 +16,10 @@
 #include <commonmacros.h>
 #include <devicetopology.h>
 
+#include <audioengineextensionapo.h>
+
+#include <wil\com.h>
+
 _Analysis_mode_(_Analysis_code_type_user_driver_)
 
 #pragma AVRT_VTABLES_BEGIN
@@ -25,7 +29,8 @@ class CKWSApoEFX :
     public CComCoClass<CKWSApoEFX, &CLSID_KWSApoEFX>,
     public CBaseAudioProcessingObject,
     public IMMNotificationClient,
-    public IAudioSystemEffects2,
+    public IAudioSystemEffects3,
+    public IAudioProcessingObjectNotifications,
     public IKWSApoEFX
 {
 public:
@@ -43,6 +48,8 @@ BEGIN_COM_MAP(CKWSApoEFX)
     COM_INTERFACE_ENTRY(IKWSApoEFX)
     COM_INTERFACE_ENTRY(IAudioSystemEffects)
     COM_INTERFACE_ENTRY(IAudioSystemEffects2)
+    COM_INTERFACE_ENTRY(IAudioSystemEffects3)
+    COM_INTERFACE_ENTRY(IAudioProcessingObjectNotifications)
     COM_INTERFACE_ENTRY(IMMNotificationClient)
     COM_INTERFACE_ENTRY(IAudioProcessingObjectRT)
     COM_INTERFACE_ENTRY(IAudioProcessingObject)
@@ -103,11 +110,32 @@ public:
         return S_OK; 
     }
 
+    // IAudioSystemEffects3
+    STDMETHOD(GetControllableSystemEffectsList)(_Outptr_result_buffer_maybenull_(*numEffects) AUDIO_SYSTEMEFFECT** effects, _Out_ UINT* numEffects, _In_opt_ HANDLE event) override;
+    STDMETHODIMP SetAudioSystemEffectState(GUID, AUDIO_SYSTEMEFFECT_STATE) override {return S_OK;}
+
+    // IAudioProcessingObjectNotifications
+    STDMETHODIMP GetApoNotificationRegistrationInfo(_Out_writes_(*count) APO_NOTIFICATION_DESCRIPTOR** apoNotifications, _Out_ DWORD* count) override
+    {
+        UNREFERENCED_PARAMETER(apoNotifications);
+        UNREFERENCED_PARAMETER(count);
+        return S_OK; 
+    }
+
+    STDMETHODIMP_(void) HandleNotification(_In_ APO_NOTIFICATION* apoNotification) override
+    {
+        UNREFERENCED_PARAMETER(apoNotification);
+    }
+
 public:
     CComPtr<IPropertyStore>                 m_spAPOSystemEffectsProperties;
     CComPtr<IMMDeviceEnumerator>            m_spEnumerator;
     static const CRegAPOProperties<1>       sm_RegProperties;   // registration properties
     INTERLEAVED_AUDIO_FORMAT_INFORMATION    m_FormatInfo;
+
+private:
+    BOOL                                    m_bRegisteredEndpointNotificationCallback = FALSE;
+    wil::com_ptr_nothrow<IAudioProcessingObjectLoggingService> m_apoLoggingService;
 };
 #pragma AVRT_VTABLES_END
 

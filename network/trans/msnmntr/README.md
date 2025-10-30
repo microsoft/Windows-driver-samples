@@ -80,7 +80,7 @@ For more information on creating a Windows Filtering Platform Callout Driver, se
 
 ## Using MSBuild
 
-As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, msnmntr.sln. Use the [MSBuild](http://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
+As an alternative to building the WFP MSN Messenger Monitor Sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, msnmntr.sln. Use the [MSBuild](https://go.microsoft.com/fwlink/p/?linkID=262804) command to build the solution. Here are some examples:
 
 `msbuild /p:configuration="Debug" /p:platform="x64" msnmntr.sln`
 

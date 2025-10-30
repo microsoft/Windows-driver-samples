@@ -10,7 +10,7 @@ products:
 
 # Driver package installation toolkit for universal drivers
 
-This sample illustrates the DCHU principles of universal driver design.  The sample uses the [OSR FX2 learning kit](http://osrfx2.sourceforge.net/).  For a detailed code walkthrough, see [Universal Driver Scenarios](https://docs.microsoft.com/windows-hardware/drivers/develop/universal-driver-scenarios).
+This sample illustrates the DCHU principles of universal driver design.  The sample uses the [OSR FX2 learning kit](https://osrfx2.sourceforge.net/).  For a detailed code walkthrough, see [Universal Driver Scenarios](https://docs.microsoft.com/windows-hardware/drivers/develop/universal-driver-scenarios).
 
 There are three Visual Studio solutions in this sample.  Each one represents a single submission on the [Windows Hardware Dev Center dashboard](https://developer.microsoft.com/windows/hardware/dashboard-sign-in).  The solutions are split into the following subdirectories:
 

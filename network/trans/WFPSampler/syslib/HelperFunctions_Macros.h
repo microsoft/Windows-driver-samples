@@ -155,7 +155,7 @@ extern "C"
 /**
  @macro="HLPR_DELETE"
  
-   Purpose:  Free memory allocated with ExAllocatePoolWithTag and set the pointer to 0.         <br>
+   Purpose:  Free memory allocated with ExAllocatePoolZero and set the pointer to 0.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
                                                                                                 <br>
@@ -172,7 +172,7 @@ extern "C"
 /**
  @macro="HLPR_DELETE_ARRAY"
  
-   Purpose:  Free memory allocated with ExAllocatePoolWithTag and set the pointer to 0.         <br>
+   Purpose:  Free memory allocated with ExAllocatePoolZero and set the pointer to 0.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
                                                                                                 <br>
@@ -184,7 +184,7 @@ extern "C"
 /**
  @macro="HLPR_NEW"
  
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolWithTag and initialize it's 
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE.           <br>
@@ -196,9 +196,9 @@ extern "C"
        pPtr == 0;                                           \
       )                                                     \
    {                                                        \
-      pPtr = (object*)ExAllocatePoolWithTag(NonPagedPoolNx, \
-                                            sizeof(object), \
-                                            tag);           \
+      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                         sizeof(object),    \
+                                         tag);              \
       if(pPtr)                                              \
          RtlSecureZeroMemory(pPtr,                          \
                              sizeof(object));               \
@@ -207,7 +207,7 @@ extern "C"
 /**
  @macro="HLPR_NEW_ARRAY"
  
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolWithTag and initialize it's 
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -226,9 +226,9 @@ extern "C"
                       &SAFE_SIZE) == STATUS_SUCCESS &&         \
          SAFE_SIZE >= (sizeof(object) * count))                \
       {                                                        \
-         pPtr = (object*)ExAllocatePoolWithTag(NonPagedPoolNx, \
-                                               SAFE_SIZE,      \
-                                               tag);           \
+         pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                            SAFE_SIZE,         \
+                                            tag);              \
          if(pPtr)                                              \
             RtlZeroMemory(pPtr,                                \
                           SAFE_SIZE);                          \
@@ -243,7 +243,7 @@ extern "C"
 /**
  @macro="HLPR_NEW_CASTED_ARRAY"
  
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolWithTag and initialize it's 
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -262,9 +262,9 @@ extern "C"
                       &SAFE_SIZE) == STATUS_SUCCESS &&             \
          SAFE_SIZE >= (sizeof(object) * count))                    \
       {                                                            \
-         pPtr = (CAST_TYPE*)ExAllocatePoolWithTag(NonPagedPoolNx,  \
-                                                  SAFE_SIZE,       \
-                                                  tag);            \
+         pPtr = (CAST_TYPE*)ExAllocatePoolZero(NonPagedPoolNx,     \
+                                               SAFE_SIZE,          \
+                                               tag);               \
          if(pPtr)                                                  \
             RtlZeroMemory(pPtr,                                    \
                           SAFE_SIZE);                              \
@@ -279,7 +279,7 @@ extern "C"
 /**
  @macro="HLPR_NEW"
  
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolWithTag and leave it's 
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and leave it's 
              contents as is.                                                                    <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE.           <br>
@@ -291,9 +291,9 @@ extern "C"
        pPtr == 0;                                           \
       )                                                     \
    {                                                        \
-      pPtr = (object*)ExAllocatePoolWithTag(NonPagedPoolNx, \
-                                            sizeof(object), \
-                                            tag);           \
+      pPtr = (object*)ExAllocatePoolZero(NonPagedPoolNx,    \
+                                         sizeof(object),    \
+                                         tag);              \
    }
 
 /**

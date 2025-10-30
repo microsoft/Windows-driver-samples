@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
@@ -13,24 +13,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avscan", "user\avscan.vcxpr
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|Win32.Build.0 = Debug|Win32
-		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|Win32.ActiveCfg = Release|Win32
-		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|Win32.Build.0 = Release|Win32
+		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|ARM64.Build.0 = Debug|ARM64
+		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|ARM64.Build.0 = Debug|ARM64
+		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|ARM64.ActiveCfg = Release|ARM64
+		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|ARM64.Build.0 = Release|ARM64
+		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Release|ARM64.ActiveCfg = Release|ARM64
+		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Release|ARM64.Build.0 = Release|ARM64
 		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|x64.ActiveCfg = Debug|x64
 		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Debug|x64.Build.0 = Debug|x64
 		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|x64.ActiveCfg = Release|x64
 		{F8973BDD-E1CC-4FD5-B7E7-745274B005C4}.Release|x64.Build.0 = Release|x64
-		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|Win32.Build.0 = Debug|Win32
-		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Release|Win32.ActiveCfg = Release|Win32
-		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Release|Win32.Build.0 = Release|Win32
 		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|x64.ActiveCfg = Debug|x64
 		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Debug|x64.Build.0 = Debug|x64
 		{5E40E4EF-AC99-48D8-8297-037C80560B7D}.Release|x64.ActiveCfg = Release|x64

@@ -57,6 +57,8 @@ Routine Description:
 {
     ULONG i;
 
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
     UNREFERENCED_PARAMETER (UniRegistryPath);
 
     Serenum_KdPrint_Def (SER_DBG_SS_TRACE, ("Driver Entry\n"));

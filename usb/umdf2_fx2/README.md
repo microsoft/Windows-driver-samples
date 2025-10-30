@@ -12,7 +12,7 @@ products:
 
 The umdf2\_fx2 sample is a User-Mode Driver Framework (UMDF) version 2 driver for the OSR USB-FX2 device.
 
- For more information, see the specification for the [OSR USB FX-2 Learning Kit](http://www.osronline.com/hardware/OSRFX2_32.pdf). The driver and sample device metadata also work with the [Custom driver access](https://code.msdn.microsoft.com/windowsapps/Custom-device-access-sample-43bde679) sample.
+ For more information, see the specification for the [OSR USB FX-2 Learning Kit](https://www.osronline.com/hardware/OSRFX2_32.pdf). The driver and sample device metadata also work with the [Custom driver access](https://go.microsoft.com/fwlink/p/?linkid=2114373) sample.
 
 ## Related technologies
 

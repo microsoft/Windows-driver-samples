@@ -331,6 +331,15 @@ Return Value:
     }
     m_TorchMode.Flags = KSCAMERA_EXTENDEDPROP_VIDEOTORCH_OFF;
     m_TorchMode = 50UL;
+    m_IRTorch.Flags = KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON;
+    m_IRTorch.Capability = 
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_OFF | 
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON  |
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALTERNATING_FRAME_ILLUMINATION;
+    m_IRTorch = 100UL;
+    m_IRTorch.Min() = 20;
+    m_IRTorch.Max() = 100;
+    m_IRTorch.Step() = 5;
 
     m_OptimizationHint.Flags = KSCAMERA_EXTENDEDPROP_OPTIMIZATION_PHOTO;
 
@@ -470,6 +479,14 @@ Return Value:
         KSPROPERTY_CAMERACONTROL_FLAGS_MANUAL | KSPROPERTY_CAMERACONTROL_FLAGS_AUTO;
     m_PowerLineFreq.Value = POWERLINEFREQ_DEFAULT;
     m_PowerLineFreq.Flags = KSPROPERTY_CAMERACONTROL_FLAGS_MANUAL;
+
+    //  Set up our relative panel.
+    m_RelativePanel.Capability =
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_ON |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_DYNAMIC;
+    m_RelativePanel.Flags = KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF;
+    m_RelativePanel = (ULONG)AcpiPldPanelUnknown;
 
     m_IsoResult         = STATUS_SUCCESS;
     m_EvCompResult      = STATUS_SUCCESS;
@@ -1791,6 +1808,40 @@ SetOpticalImageStabilization(
     return STATUS_SUCCESS;
 }
 
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CSensorSimulation::
+GetRelativePanel(
+    _Inout_    CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    *pProperty = m_RelativePanel;
+    pProperty->Flags = m_RelativePanel.Flags;
+    pProperty->Capability = KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_ON |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_DYNAMIC;
+
+    return STATUS_SUCCESS;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CSensorSimulation::
+SetRelativePanel(
+    _In_    CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    m_RelativePanel = *pProperty;
+    m_RelativePanel.Flags = pProperty->Flags;
+    return STATUS_SUCCESS;
+}
+
 //  Get KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING.
 NTSTATUS
 CSensorSimulation::
@@ -3021,6 +3072,37 @@ SetTorchMode(
     KScopedMutex    lock( m_SensorMutex );
 
     m_TorchMode = *pTorchMode;
+    return STATUS_SUCCESS;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CSensorSimulation::
+GetIRTorch(
+    _Inout_ CExtendedVidProcSetting *pTorch
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    *pTorch = m_IRTorch;
+    return STATUS_SUCCESS;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CSensorSimulation::
+SetIRTorch(
+    _In_    CExtendedVidProcSetting *pTorch
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    //  Only overwrite the IR Torch Flags and value.
+    m_IRTorch.Flags = pTorch->Flags;
+    m_IRTorch = pTorch->GetULONG();
+
     return STATUS_SUCCESS;
 }
 

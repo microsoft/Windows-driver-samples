@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft. All rights reserved.
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // File Name:
 //
@@ -14,6 +14,7 @@
 #include "PreComp.h"
 #include "WaveTestTaef.h"
 #include "tests.h"
+#include <TestResourceHelper.h>
 
 using namespace WEX::Common;
 using namespace WEX::Logging;
@@ -127,6 +128,12 @@ bool WDMAudio::WaveTest::TestCaseCleanUp()
 }
 
 // -------------------------------------------------------------------------------
+void WDMAudio::WaveTestPreTest::TAEF_VerifyAllEndpointsPluggedIn()
+{
+    VerifyAllEndpointsPluggedIn();
+}
+
+// -------------------------------------------------------------------------------
 void WDMAudio::WaveTest::TAEF_StreamStateControl()
 {
     RUN_TEST_CASE(Test_StreamStateControl)
@@ -164,7 +171,7 @@ void WDMAudio::WaveTest::TAEF_StreamMultipleModes()
     RUN_TEST_CASE(Test_StreamMultipleModes)
 }
 
-void WDMAudio::WaveTest::TAEF_VerifyPinSupportsPullMode()
+void WDMAudio::WaveTest::TAEF_VerifyPinWaveRTConformance()
 {
-    RUN_TEST_CASE(Test_VerifyPinSupportsPullMode)
+    RUN_TEST_CASE(Test_VerifyPinWaveRTConformance)
 }
