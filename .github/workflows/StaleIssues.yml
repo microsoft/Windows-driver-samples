@@ -17,7 +17,5 @@ jobs:
           stale-issue-label: "stale"
           stale-issue-message: "This issue has been inactive for a year. It will be closed in 31 days if no further activity occurs. If you believe this issue is still relevant, please comment to keep it open."
           close-issue-message: "Closing due to prolonged inactivity."
-          remove-stale-when-updated: true
-          dry-run: true   # This prevents any real changes
           operations-per-run: 400
-          repo-token: ${{ secrets.PAT_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
