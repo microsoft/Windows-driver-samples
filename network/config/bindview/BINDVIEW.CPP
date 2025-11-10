@@ -2,6 +2,7 @@
 //
 //  Microsoft Windows
 //  Copyright (C) Microsoft Corporation, 2001.
+//  SPDX-License-Identifier: MS-PL
 //
 //  File:       B I N D V I E W . C P P
 //

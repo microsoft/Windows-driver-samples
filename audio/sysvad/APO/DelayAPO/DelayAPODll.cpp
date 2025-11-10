@@ -1,5 +1,6 @@
 //
 // DelayAPODll.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// DelayAPODll.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Author:
 //

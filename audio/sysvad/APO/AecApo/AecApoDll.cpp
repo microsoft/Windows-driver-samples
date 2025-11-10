@@ -1,5 +1,6 @@
 //
 // AecApoDll.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// AecApoDll.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Author:
 //

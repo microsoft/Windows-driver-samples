@@ -3,6 +3,7 @@
 *  (C) COPYRIGHT MICROSOFT CORPORATION, 1998
 *
 *  Copyright (c) 2003 Microsoft Corporation.  All Rights Reserved.
+*  SPDX-License-Identifier: MS-PL
 *
 *  DESCRIPTION: Simple string classes
 *

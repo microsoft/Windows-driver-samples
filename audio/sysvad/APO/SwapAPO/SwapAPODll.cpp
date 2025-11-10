@@ -1,5 +1,6 @@
 //
 // SwapAPODll.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// SwapAPODll.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Author:
 //

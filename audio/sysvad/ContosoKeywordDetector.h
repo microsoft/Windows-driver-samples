@@ -1,5 +1,6 @@
 /*
     Copyright (c) Microsoft Corporation All Rights Reserved
+    SPDX-License-Identifier: MS-PL
 
     Contoso voice activation driver definitions
 

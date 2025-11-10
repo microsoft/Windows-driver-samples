@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MS-PL
 // 
 // Module Name: NetNfpControl.cpp
 // Abstract: Windows Near-field Proximity Test tool. Designed for simulating proximity hardware.

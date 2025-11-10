@@ -2,6 +2,7 @@
 //
 //  Microsoft Windows
 //  Copyright (C) Microsoft Corporation, 1992-2001.
+//  SPDX-License-Identifier: MS-PL
 //
 //  File:       N O T I F Y . C P P
 //

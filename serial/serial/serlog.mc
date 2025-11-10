@@ -1,6 +1,7 @@
 ;/*++ BUILD Version: 0001    // Increment this if a change has global effects
 ;
 ;Copyright (c) 1992, 1993  Microsoft Corporation
+;SPDX-License-Identifier: MS-PL
 ;
 ;Module Name:
 ;

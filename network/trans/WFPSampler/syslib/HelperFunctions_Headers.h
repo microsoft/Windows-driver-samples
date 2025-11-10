@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //   Copyright (c) 2014 Microsoft Corporation.  All Rights Reserved.
+//   SPDX-License-Identifier: MS-PL
 //
 //   Module Name:
 //      HelperFunctions_Headers.h

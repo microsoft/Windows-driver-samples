@@ -2,6 +2,7 @@
 * Module Name: kbd106.h
 *
 * Copyright (c) 1985-2000, Microsoft Corporation
+* SPDX-License-Identifier: MS-PL
 *
 * Various defines for use by keyboard input code.
 *

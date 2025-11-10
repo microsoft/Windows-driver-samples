@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone='yes'?>
 
 <WindowsPerformanceRecorder Version="1.0" Author="Location Dev" Team="Location Dev" Comments="ETW profiles" Company="Microsoft Corporation" Copyright="Microsoft Corporation">
+<WindowsPerformanceRecorder Version="1.0" Author="Location Dev" Team="Location Dev" Comments="ETW profiles" Company="Microsoft Corporation" SPDX-License-Identifier: MS-PL
   <Profiles>
     <!-- Event Collectors -->
     <EventCollector Id="EventCollector_SampleGNSS" Name="SampleGNSS Category Event Collector" Private="false" ProcessPrivate="false" Secure="false" Realtime="false">

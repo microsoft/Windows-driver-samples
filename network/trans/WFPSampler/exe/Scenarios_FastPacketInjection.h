@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //   Copyright (c) 2012 Microsoft Corporation.  All Rights Reserved.
+//   SPDX-License-Identifier: MS-PL
 //
 //   Module Name:
 //      Scenarios_FastPacketInjection.h

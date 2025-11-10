@@ -3,6 +3,7 @@
     AVStream Filter-Centric Sample
 
     Copyright (c) 1999 - 2001, Microsoft Corporation
+    SPDX-License-Identifier: MS-PL
 
     File:
 

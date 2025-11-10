@@ -1,5 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
+// SPDX-License-Identifier: MS-PL
 //
 
 #include <ndis.h>

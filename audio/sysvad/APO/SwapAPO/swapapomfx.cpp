@@ -1,5 +1,6 @@
 //
 // SwapAPOMFX.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// SwapAPOMFX.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Description:
 //
