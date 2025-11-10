@@ -1,4 +1,5 @@
 //Copyright (C) Microsoft Corporation, All Rights Reserved
+//SPDX-License-Identifier: MS-PL
 //
 //Abstract:
 //    This module contains the type definitions for the activity sample driver hardware simulator.

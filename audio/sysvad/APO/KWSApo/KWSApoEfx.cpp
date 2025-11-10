@@ -1,5 +1,6 @@
 //
 // KWSApoEFX.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// KWSApoEFX.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Description:
 //

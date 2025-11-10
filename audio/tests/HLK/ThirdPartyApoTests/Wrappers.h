@@ -1,5 +1,6 @@
 //
 // Wrappers.h -- Copyright (c) Microsoft Corporation
+// Wrappers.h -- SPDX-License-Identifier: MS-PL
 //
 // Author: zaneh
 //

@@ -1,6 +1,7 @@
 /*****************************************************************/
 /**         Microsoft Windows                                   **/
 /**     Copyright (C) Microsoft Corp., 1996-2000                **/
+/**     SPDX-License-Identifier: MS-PL
 /*****************************************************************/
 
 #include <windows.h>

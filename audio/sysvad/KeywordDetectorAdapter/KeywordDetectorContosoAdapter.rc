@@ -1,5 +1,6 @@
 #if 0
 Copyright (c) Microsoft Corporation. All Rights Reserved
+SPDX-License-Identifier: MS-PL
 #endif
 
 #include "winres.h"

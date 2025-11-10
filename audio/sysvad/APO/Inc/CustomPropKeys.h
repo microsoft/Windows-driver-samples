@@ -1,5 +1,6 @@
 // Microsoft Windows
 // Copyright (C) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MS-PL
 //
 #pragma once
 

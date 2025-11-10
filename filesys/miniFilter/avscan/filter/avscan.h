@@ -1,6 +1,7 @@
 /*++
 
 Copyright (c) 1989-2011  Microsoft Corporation
+SPDX-License-Identifier: MS-PL
 
 Module Name:
 

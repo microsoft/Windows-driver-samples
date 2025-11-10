@@ -3,6 +3,7 @@
     A/V Stream Camera Sample
 
     Copyright (c) 2013, Microsoft Corporation.
+    SPDX-License-Identifier: MS-PL
 
     File:
 
