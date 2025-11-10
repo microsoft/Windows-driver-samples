@@ -1,0 +1,62 @@
+;
+; wificxsampleclientkm.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = wificxsampleclientkm.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+wificxsampleclientkm.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%wificxsampleclientkm.DeviceDesc% = wificxsampleclientkm_Device, Root\wificxsampleclientkm ; TODO: edit hw-id
+
+[wificxsampleclientkm_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+wificxsampleclientkm.sys
+
+;-------------- Service installation
+[wificxsampleclientkm_Device.NT.Services]
+AddService = wificxsampleclientkm,%SPSVCINST_ASSOCSERVICE%, wificxsampleclientkm_Service_Inst
+
+; -------------- wificxsampleclientkm driver install sections
+[wificxsampleclientkm_Service_Inst]
+DisplayName    = %wificxsampleclientkm.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\wificxsampleclientkm.sys
+
+[wificxsampleclientkm_Device.NT.Wdf]
+KmdfService = wificxsampleclientkm, wificxsampleclientkm_wdfsect
+
+[wificxsampleclientkm_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "wificxsampleclientkm Installation Disk"
+wificxsampleclientkm.DeviceDesc = "wificxsampleclientkm Device"
+wificxsampleclientkm.SVCDESC = "wificxsampleclientkm Service"

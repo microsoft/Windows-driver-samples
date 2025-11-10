@@ -1,0 +1,11 @@
+// Copyright (C) Microsoft Corporation. All rights reserved.
+#pragma once
+
+EVT_WDF_DEVICE_PREPARE_HARDWARE EvtDevicePrepareHardware;
+EVT_WDF_DEVICE_RELEASE_HARDWARE EvtDeviceReleaseHardware;
+EVT_WDF_DEVICE_SURPRISE_REMOVAL EvtDeviceSurpriseRemoval;
+
+EVT_WIFI_DEVICE_CREATE_ADAPTER EvtWifiDeviceCreateAdapter;
+EVT_WIFI_DEVICE_CREATE_WIFIDIRECTDEVICE EvtWifiDeviceCreateWifiDirectDevice;
+EVT_WIFI_DEVICE_SEND_COMMAND EvtWifiDeviceSendCommand;
+EVT_WDF_OBJECT_CONTEXT_CLEANUP EvtAdapterCleanup;
