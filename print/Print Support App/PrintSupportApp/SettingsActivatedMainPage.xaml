@@ -1,0 +1,27 @@
+<Page
+    x:Class="PrintSupportApp.SettingsActivatedMainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <muxc:NavigationView
+        x:Name="NavigationViewControl"
+        IsBackButtonVisible="Collapsed"
+        IsSettingsVisible="False"
+        ItemInvoked="NavViewItemInvoked"
+        Loaded="NavViewLoaded"
+        PaneDisplayMode="Top">
+        <muxc:NavigationView.MenuItems>
+            <muxc:NavigationViewItem x:Name="PrintTicketManipulationExampleNavigationItem" Content="Print Ticket Manipulation Example" Tag="PrintTicketManipulationExample">
+                <muxc:NavigationViewItem.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8C8;" />
+                </muxc:NavigationViewItem.Icon>
+            </muxc:NavigationViewItem>
+        </muxc:NavigationView.MenuItems>
+        <Frame x:Name="contentFrame" />
+    </muxc:NavigationView>
+</Page>
