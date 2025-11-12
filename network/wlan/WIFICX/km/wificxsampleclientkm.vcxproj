@@ -127,6 +127,9 @@
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -138,6 +141,10 @@
     </DriverSign>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WppEnabled>true</WppEnabled>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -149,6 +156,10 @@
     </DriverSign>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WppEnabled>true</WppEnabled>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -160,6 +171,10 @@
     </DriverSign>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WppEnabled>true</WppEnabled>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -177,13 +192,19 @@
     <ClCompile Include="..\drivercode\device.cpp" />
     <ClCompile Include="..\drivercode\driver.cpp" />
     <ClCompile Include="..\drivercode\memorymanagement.cpp" />
+    <ClCompile Include="..\drivercode\wifihal.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\drivercode\adapter.h" />
+    <ClInclude Include="..\drivercode\device.h" />
+    <ClInclude Include="..\drivercode\driver.h" />
+    <ClInclude Include="..\drivercode\sharedtypes.h" />
     <ClInclude Include="..\drivercode\umkmfusion.h" />
+    <ClInclude Include="..\drivercode\wifihaltestdata.h" />
     <ClInclude Include="..\drivercode\wifirequest.h" />
-    <ClInclude Include="..\drivercode\testdata.h" />
     <ClInclude Include="..\drivercode\precomp.h" />
     <ClInclude Include="..\drivercode\trace.h" />
+    <ClInclude Include="..\drivercode\wifihal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

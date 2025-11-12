@@ -5,15 +5,15 @@
 #ifndef TRACE_H
 #define TRACE_H
 
-//extern "C"
-//{
-//#include <WppRecorder.h>
-//}
 #define WPP_USE_TRACE_LEVELS
 
 // 21BA7B61-05F8-41F1-9048-C09493DCFE38
 #define WPP_CONTROL_GUIDS \
     WPP_DEFINE_CONTROL_GUID(WdiLibraryCtlGuid, (21BA7B61, 05F8, 41F1, 9048, C09493DCFE38), WPP_DEFINE_BIT(DUMMY))
+
+//#define WPP_LEVEL_EXP_ENABLED(LEVEL, EXP) WPP_LEVEL_ENABLED(LEVEL)
+//#define WPP_LEVEL_EXP_LOGGER(LEVEL, EXP) WPP_LEVEL_LOGGER(LEVEL)
+
 
 #define WPP_RECORDER_LEVEL_FLAGS_ARGS(lvl, flags) WPP_CONTROL(WPP_BIT_##flags).AutoLogContext, lvl, WPP_BIT_##flags
 #define WPP_RECORDER_LEVEL_FLAGS_FILTER(lvl, flags) \
@@ -35,7 +35,6 @@
 #define WFCTrace(Format, ...)
 #define WFCError(Format, ...)
 #define WFCInfo(Format, ...)
-
 
 // begin_wpp config
 // USEPREFIX (TraceEntry, "%!STDPREFIX!");
@@ -66,62 +65,6 @@
 // end_wpp
 //
 
-//
-// C++ with Activity ID function entry/exit commands
-//
-// begin_wpp config
-//
-// USEPREFIX (TraceActEntry, "%!STDPREFIX! [O:%p][A:%x]", this, this->get_ActivityId());
-// FUNC TraceActEntry{LEVEL=TRACE_LEVEL_VERBOSE}(...);
-// USESUFFIX (TraceActEntry, "--> %!FUNC!");
-//
-// USEPREFIX (TraceActExit, "%!STDPREFIX! [O:%p][A:%x]", this, this->get_ActivityId());
-// FUNC TraceActExit{LEVEL=TRACE_LEVEL_VERBOSE}(EXP);
-// USESUFFIX (TraceActExit, "<-- %!FUNC!: 0x%x", EXP);
-//
-// end_wpp
-//
-
-//
-// C++ with Activity ID trace commands
-//
-// begin_wpp config
-//
-// USEPREFIX (WFCActError, "%!STDPREFIX! [O:%p][A:%x][ERROR]", this, this->get_ActivityId());
-// FUNC WFCActError{LEVEL=TRACE_LEVEL_ERROR}(MSG, ...);
-//
-// USEPREFIX (WFCActErrorStatus, "%!STDPREFIX! [O:%p][A:%x][ERROR=%x]", this, this->get_ActivityId(), status);
-// FUNC WFCActErrorStatus{LEVEL=TRACE_LEVEL_ERROR}(MSG, ...);
-//
-// USEPREFIX (WFCActInfo, "%!STDPREFIX! [O:%p][A:%x][INFO]", this, this->get_ActivityId());
-// FUNC WFCActInfo{LEVEL=TRACE_LEVEL_INFORMATION}(MSG, ...);
-//
-// USEPREFIX (WFCActTrace, "%!STDPREFIX! [O:%p][A:%x][TRACE]", this, this->get_ActivityId());
-// FUNC WFCActTrace{LEVEL=TRACE_LEVEL_VERBOSE}(MSG, ...);
-//
-// end_wpp
-//
-
-//
-// C++ with Port ID trace commands
-//
-// begin_wpp config
-//
-// USEPREFIX (WFCPortError, "%!STDPREFIX! [O:%p][P:%x][ERROR]", this, this->GetPortId());
-// FUNC WFCPortError{LEVEL=TRACE_LEVEL_ERROR}(MSG, ...);
-//
-// USEPREFIX (WFCPortErrorStatus, "%!STDPREFIX! [O:%p][P:%x][ERROR=%x]", this, this->GetPortId(), status);
-// FUNC WFCPortErrorStatus{LEVEL=TRACE_LEVEL_ERROR}(MSG, ...);
-//
-// USEPREFIX (WFCPortInfo, "%!STDPREFIX! [O:%p][P:%x][INFO]", this, this->GetPortId());
-// FUNC WFCPortInfo{LEVEL=TRACE_LEVEL_INFORMATION}(MSG, ...);
-//
-// USEPREFIX (WFCPortTrace, "%!STDPREFIX! [O:%p][P:%x][TRACE]", this, this->GetPortId());
-// FUNC WFCPortTrace{LEVEL=TRACE_LEVEL_VERBOSE}(MSG, ...);
-//
-// end_wpp
-//
-
 #define MACRO_START \
     do \
     {
@@ -130,12 +73,12 @@
     while (0)
 
 //
-// WPP Macros: WX_RETURN_IF_NOT_NT_SUCCESS_MSG
+// WPP Macros: WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG
 //
 // begin_wpp config
-// FUNC WX_RETURN_IF_NOT_NT_SUCCESS_MSG{COMPNAME=DUMMY,LEVEL=TRACE_LEVEL_ERROR}(NTEXPR,MSG,...);
-// USEPREFIX (WX_RETURN_IF_NOT_NT_SUCCESS_MSG, "%!STDPREFIX! !! WifiCx - %!FUNC!: ");
-// USESUFFIX (WX_RETURN_IF_NOT_NT_SUCCESS_MSG, " [status=%!STATUS!]", nt__wpp);
+// FUNC WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG{COMPNAME=DUMMY,LEVEL=TRACE_LEVEL_ERROR}(NTEXPR,MSG,...);
+// USEPREFIX (WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG, "%!STDPREFIX! !! WifiIhv - %!FUNC!: ");
+// USESUFFIX (WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG, " [status=%!STATUS!]", nt__wpp);
 // end_wpp
 
 #define WPP_COMPNAME_LEVEL_NTEXPR_PRE(comp, level, ntexpr) \
@@ -155,7 +98,7 @@
 //
 // begin_wpp config
 // FUNC WX_RETURN_INSUFFICIENT_RESOURCES_IF_NULL_MSG{COMPNAME=DUMMY,LEVEL=TRACE_LEVEL_ERROR}(PTR2,MSG,...);
-// USEPREFIX (WX_RETURN_INSUFFICIENT_RESOURCES_IF_NULL_MSG, "%!STDPREFIX! !! WifiCx - %!FUNC!: ");
+// USEPREFIX (WX_RETURN_INSUFFICIENT_RESOURCES_IF_NULL_MSG, "%!STDPREFIX! !! WifiIhv - %!FUNC!: ");
 // USESUFFIX (WX_RETURN_INSUFFICIENT_RESOURCES_IF_NULL_MSG, "%!s! is null", #PTR2);
 // end_wpp
 
@@ -175,7 +118,7 @@
 //
 // begin_wpp config
 // FUNC WX_RETURN_IF_NULL_MSG{COMPNAME=DUMMY,LEVEL=TRACE_LEVEL_ERROR}(PTR3,MSG,...);
-// USEPREFIX (WX_RETURN_IF_NULL_MSG, "%!STDPREFIX! !! WifiCx - %!FUNC!: ");
+// USEPREFIX (WX_RETURN_IF_NULL_MSG, "%!STDPREFIX! !! WifiIhv - %!FUNC!: ");
 // USESUFFIX (WX_RETURN_IF_NULL_MSG, "%!s! is null", #PTR3);
 // end_wpp
 
@@ -233,14 +176,7 @@ __inline ByteArray log_lenstr(ULONG len, const void* buf)
 //
 // DEFINE_CPLX_TYPE(MACADDR, WPP_LOGMACADDR, DOT11_MAC_ADDRESS, ItemMACAddr,"s", _MAC_, 0);
 //
-// CUSTOM_TYPE(WFC_RX_PEER_STATE, ItemEnum(_WFC_RX_PEER_STATE));
-//
 // CUSTOM_TYPE(MESSAGE_ID, ItemEnum(WDI_TLV::ENUMS::MESSAGE_ID));
-// CUSTOM_TYPE(WFC_PORT_PROPERTY_NAME, ItemEnum(WFC_PORT_PROPERTY_NAME));
-// CUSTOM_TYPE(DisconnectInDxReason, ItemEnum(CSetPowerJob::DisconnectInDxReason));
-// CUSTOM_TYPE(WFC_JOB_TYPE, ItemEnum(_WFC_JOB_TYPE));
-// CUSTOM_TYPE(ConfigurableActionFrameWakePatterns, ItemEnum(ConfigurableActionFrameWakePatterns));
-// CUSTOM_TYPE(WFC_PORT_TYPE, ItemEnum(_WFC_PORT_TYPE));
 // end_wpp
 //
 

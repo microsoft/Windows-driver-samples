@@ -1,35 +1,34 @@
-/*++
-
-Copyright (c) Microsoft Corporation.  All rights reserved.
-
-    Microsoft Confidential
-
-    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
-    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
-    PURPOSE.
-
-Module Name:
-
-    new.cpp
-
-Abstract:
-
-    Test only stub WDI driver (C++ portions)
-
-Environment:
-
-    Kernel mode
-
-Author:
-
-
---*/
+// Copyright (C) Microsoft Corporation. All rights reserved.
 #include "precomp.h"
 
 #ifndef _KERNEL_MODE
 #include <intrin.h> // for _ReturnAddress for user mode
 #endif // UM
+
+typedef struct _PLACEMENT_NEW_ALLOCATION_CONTEXT
+{
+    size_t cbMaxSize;
+    _Field_size_bytes_(cbMaxSize) void* pbBuffer;
+} PLACEMENT_NEW_ALLOCATION_CONTEXT, * PPLACEMENT_NEW_ALLOCATION_CONTEXT;
+typedef const PLACEMENT_NEW_ALLOCATION_CONTEXT* PCPLACEMENT_NEW_ALLOCATION_CONTEXT;
+
+// for FreeWdfMemoryBuffer to correct get
+// the handle to free the memory
+struct WIFI_IHV_MEMORY_HEADER
+{
+    size_t HeaderSize;
+    WDFMEMORY WdfMemoryHandle;
+};
+
+// for tracking memory leaks
+struct WIFI_IHV_MEMORY_CONTEXT
+{
+    size_t ContextSize;
+    void* pvCaller;
+};
+
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WIFI_IHV_MEMORY_CONTEXT, GetWificxIhvMemoryContextFromHandle);
+
 
 void* AllocateWdfMemoryBuffer(size_t Size, _In_ void* CallerForMemoryLeakTracking)
 {

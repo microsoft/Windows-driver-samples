@@ -1,6 +1,3 @@
-//-------------------------------------------------------------------------------
-// Net Adapter source file
-//
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #include "precomp.h"
@@ -49,21 +46,16 @@ void EvtDeviceSurpriseRemoval(WDFDEVICE device)
 
 static NTSTATUS WifiInitAdapterContext(_In_ WDFDEVICE Device, _In_ NETADAPTER NetAdapter)
 {
-    PWIFI_DEVICE_CONTEXT deviceContext = WifiGetDeviceContext(Device);
-    PWIFI_NETADAPTER_CONTEXT netAdapterContext = WifiGetNetAdapterContext(NetAdapter);
+    PWIFI_IHV_DEVICE_CONTEXT deviceContext = WifiGetIhvDeviceContext(Device);
+    PWIFI_IHV_NETADAPTER_CONTEXT netAdapterContext = WifiGetIhvNetAdapterContext(NetAdapter);
     NTSTATUS status = STATUS_SUCCESS;
-
-    deviceContext->LastConnectEntryId = 0; // Disconnected State
-    deviceContext->LastConnectTransactionId = 0;
-    deviceContext->CurrentRadioState = TRUE;
     if (deviceContext->primaryStaAdapter == WDF_NO_HANDLE)
     {
         deviceContext->primaryStaAdapter = NetAdapter;
     }
 
-    InitializeListHead(&netAdapterContext->ReceiveList);
     netAdapterContext->WifiDeviceContext = deviceContext;
-    netAdapterContext->NetAdapter = NetAdapter;
+
     return status;
 }
 
@@ -78,7 +70,7 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
 
     WDF_OBJECT_ATTRIBUTES adapterAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT(&adapterAttributes);
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WIFI_NETADAPTER_CONTEXT);
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WIFI_IHV_NETADAPTER_CONTEXT);
     adapterAttributes.EvtCleanupCallback = EvtAdapterCleanup;
 
     NETADAPTER netAdapter;

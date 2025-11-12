@@ -1,45 +1,11 @@
-/*++
-
-Copyright (c) Microsoft Corporation.  All rights reserved.
-
-    Microsoft Confidential
-
-    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
-    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
-    PURPOSE.
-
-Module Name:
-
-    TestData.h
-
-Abstract:
-
-    Test only Network data
-
-Environment:
-
-    Kernel mode
-
-Author:
-
-
---*/
-
+// Copyright (C) Microsoft Corporation. All rights reserved.
 #pragma once
 
 #define TESTMP_BAND_IHV 0x00000010
 
-typedef struct
-{
-    UINT32 BandId;
-    WDI_MAC_ADDRESS* pMacAddress;
-    PUCHAR pTlvBssEntry;
-    UINT32 TlvBssEntrySize;
-    PUCHAR pTlvAssociationResult;
-    UINT32 TlvAssociationResultSize;
+// clang-format on
 
-} WdiTestConnectEntry, *PWdiTestConnectEntry;
+#define ConnectEntryId_MAX ARRAYSIZE(g_ConnectEntries)
 
 //
 //===============================================================================
@@ -7434,6 +7400,891 @@ UCHAR s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz[] =
 };
 
 //===============================================================================
+// Data throughput test networks
 //===============================================================================
+//
+
+__declspec(selectany) WDI_MAC_ADDRESS s_Connect_Addr_43_Speed_01_WiFi7_Open_Link_1 = {0x22, 0x22, 0x22, 0x22, 0x00, 0x01};
+__declspec(selectany) WDI_MAC_ADDRESS s_Connect_Addr_44_Speed_02_WiFi7_Open_Link_1 = {0x22, 0x22, 0x22, 0x22, 0x00, 0x02};
+__declspec(selectany) UCHAR  s_TLV_BSS_Entry_43_WiFi7_Open_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xca, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x22, 0x22, 0x22, 0X22, 0x00, 0x01,                                     // AP Link 1 address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x97, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x01, 0x00, // Capability
+            0x00, 0x0e, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link2 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x37, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 3 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x9d, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+__declspec(selectany) UCHAR s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xb3, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,                                 // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_CIPHER_ALGO_NONE = 0
+            0x00, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x75, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0xff, 0x3d,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                                                                        // Multi-Link Control =  [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                    0x80, 0x01,                                         // [EML=1 + Medium=0 + BSS=0 + LinkID=0] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=1]
+                    0x0b,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Local STA MLD Mac address (required for Basic)
+                                                                            // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                            0x81, 0x00, 0x00,                               // [ EML Capabilities (3 octets) ]
+                            0x02, 0x00,                                     // [ MLD Capabilities (2 octets) - (2 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x32, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0010] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : Local Link 1 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 2
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length = 21
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Local Sta Link 2 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 3
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x97, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x01, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01,
+                    0x06, // DSS Parameters
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01,
+                    0x00, // ERP
+                0x2F, 0x01,
+                    0x00, // Reserved
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09,
+                    0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+
+__declspec(selectany) UCHAR  s_TLV_BSS_Entry_44_WiFi7_Open_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xca, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,                                     // AP Link 1 address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x97, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x01, 0x00, // Capability
+            0x00, 0x0e, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link2 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x37, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 3 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x9d, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+__declspec(selectany) UCHAR s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xb3, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,                                 // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_CIPHER_ALGO_NONE = 0
+            0x00, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x75, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0xff, 0x3d,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                                                                        // Multi-Link Control =  [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                    0x80, 0x01,                                         // [EML=1 + Medium=0 + BSS=0 + LinkID=0] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=1]
+                    0x0b,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Local STA MLD Mac address (required for Basic)
+                                                                            // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                            0x81, 0x00, 0x00,                               // [ EML Capabilities (3 octets) ]
+                            0x02, 0x00,                                     // [ MLD Capabilities (2 octets) - (2 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x32, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0010] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : Local Link 1 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 2
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length = 21
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Local Sta Link 2 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 3
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x97, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x01, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01,
+                    0x06, // DSS Parameters
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01,
+                    0x00, // ERP
+                0x2F, 0x01,
+                    0x00, // Reserved
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09,
+                    0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+//===============================================================================
+//===============================================================================
+
+typedef struct
+{
+    UINT32 BandId;
+    WDI_MAC_ADDRESS* pMacAddress;
+    PUCHAR pTlvBssEntry;
+    UINT32 TlvBssEntrySize;
+    PUCHAR pTlvAssociationResult;
+    UINT32 TlvAssociationResultSize;
+
+} WdiTestConnectEntry, * PWdiTestConnectEntry;
+
+WdiTestConnectEntry g_ConnectEntries[] =
+{
+    // 0
+    {                                               // 0th Entry is disconnected state
+        0,
+        nullptr,
+        nullptr, 0,
+        nullptr, 0,
+    },
+
+    // 1 - WFC_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr,
+        s_TLV_BSS_Entry_1, sizeof(s_TLV_BSS_Entry_1),
+        s_TLV_SuccessOpenAssociationResult, sizeof(s_TLV_SuccessOpenAssociationResult),
+    },
+
+    // 2 - WFC_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_2_Open,
+        s_TLV_BSS_Entry_2_Open, sizeof(s_TLV_BSS_Entry_2_Open),
+        s_TLV_Success_AssociationResult_2_Open, sizeof(s_TLV_Success_AssociationResult_2_Open),
+    },
+
+    // 3 - WDI__WEP
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_3_WEP,
+        s_TLV_BSS_Entry_3_WEP, sizeof(s_TLV_BSS_Entry_3_WEP),
+        s_TLV_Success_AssociationResult_3_WEP, sizeof(s_TLV_Success_AssociationResult_3_WEP),
+    },
+
+    // 4 - WDI_SECURE
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_4_RSNA_CCMP,
+        s_TLV_BSS_Entry_4_RSNA_CCMP, sizeof(s_TLV_BSS_Entry_4_RSNA_CCMP),
+        s_TLV_Success_AssociationResult_4_RSNA_CCMP, sizeof(s_TLV_Success_AssociationResult_4_RSNA_CCMP),
+    },
+
+    // 5 - WDI__IHV
+    {
+        TESTMP_BAND_IHV,
+        &s_Connect_Addr_5_IHV,
+        s_TLV_BSS_Entry_5_IHV, sizeof(s_TLV_BSS_Entry_5_IHV),
+        s_TLV_Success_AssociationResult_5_IHV, sizeof(s_TLV_Success_AssociationResult_5_IHV),
+    },
+
+    // 6 - WDI__FT
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_6_FT_CCMP,
+        s_TLV_BSS_Entry_6_FT_CCMP, sizeof(s_TLV_BSS_Entry_6_FT_CCMP),
+        s_TLV_Success_AssociationResult_6_FT_CCMP, sizeof(s_TLV_Success_AssociationResult_6_FT_CCMP),
+    },
+
+    // 7 - WDI__FTPSK
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_7_FT_PSK_CCMP,
+        s_TLV_BSS_Entry_7_FT_PSK_CCMP, sizeof(s_TLV_BSS_Entry_7_FT_PSK_CCMP),
+        s_TLV_Success_AssociationResult_7_FT_PSK_CCMP, sizeof(s_TLV_Success_AssociationResult_7_FT_PSK_CCMP),
+    },
+
+    // 8 -
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_8_Hidden,
+        s_TLV_BSS_Entry_Beacon_8_Hidden, sizeof(s_TLV_BSS_Entry_Beacon_8_Hidden),
+        s_TLV_Success_AssociationResult_8_Hidden, sizeof(s_TLV_Success_AssociationResult_8_Hidden),
+    },
+
+    // 9 - WDI_adPSK
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_9_11ad_PSK,
+        s_TLV_BSS_Entry_9_11ad_ProbeResponse_PSK, sizeof(s_TLV_BSS_Entry_9_11ad_ProbeResponse_PSK),
+        s_TLV_Success_AssociationResult_9_11ad_PSK, sizeof(s_TLV_Success_AssociationResult_9_11ad_PSK),
+    },
+
+    // 10 - WDI_ad_1x
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_10_11ad_1x,
+        s_TLV_BSS_Entry_10_11ad_ProbeResponse_1x, sizeof(s_TLV_BSS_Entry_10_11ad_ProbeResponse_1x),
+        s_TLV_Success_AssociationResult_10_11ad_1x, sizeof(s_TLV_Success_AssociationResult_10_11ad_1x),
+    },
+
+    // 11 - WDI_ad_ON
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_11_11ad_Open,
+        s_TLV_BSS_Entry_11_11ad_ProbeResponse_Open, sizeof(s_TLV_BSS_Entry_11_11ad_ProbeResponse_Open),
+        s_TLV_Success_AssociationResult_11_11ad_Open, sizeof(s_TLV_Success_AssociationResult_11_11ad_Open),
+    },
+
+    // 12 - WDI_OPEN_11ax.2.4
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_12_11ax_24_Open,
+        s_TLV_BSS_Entry_12_11ax_24_Open, sizeof(s_TLV_BSS_Entry_12_11ax_24_Open),
+        s_TLV_Success_AssociationResult_12_11ax_24_Open, sizeof(s_TLV_Success_AssociationResult_12_11ax_24_Open),
+    },
+
+    // 13 - WDI_OPEN_11ax.5
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_13_11ax_5_Open,
+        s_TLV_BSS_Entry_13_11ax_5_Open, sizeof(s_TLV_BSS_Entry_13_11ax_5_Open),
+        s_TLV_Success_AssociationResult_13_11ax_5_Open, sizeof(s_TLV_Success_AssociationResult_13_11ax_5_Open),
+    },
+
+    // 14 - WDI_WPA3-SAE
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_14_WPA3_SAE_CCMP,
+        s_TLV_BSS_Entry_14_WPA3_SAE_CCMP, sizeof(s_TLV_BSS_Entry_14_WPA3_SAE_CCMP),
+        s_TLV_Success_AssociationResult_14_WPA3_SAE_CCMP, sizeof(s_TLV_Success_AssociationResult_14_WPA3_SAE_CCMP),
+    },
+
+    // 15 - WDI_SHA256
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_15_WPA2PSK_SHA256,
+        s_TLV_BSS_Entry_15_WPA2PSK_SHA256, sizeof(s_TLV_BSS_Entry_15_WPA2PSK_SHA256),
+        s_TLV_Success_AssociationResult_15_WPA2PSK_SHA256, sizeof(s_TLV_Success_AssociationResult_15_WPA2PSK_SHA256),
+    },
+
+    // 16 - WDI_WPA3-SUITE_B
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_16_WPA3_SUITEB,
+        s_TLV_BSS_Entry_16_WPA3_SUITEB, sizeof(s_TLV_BSS_Entry_16_WPA3_SUITEB),
+        s_TLV_Success_AssociationResult_16_WPA3_SUITEB, sizeof(s_TLV_Success_AssociationResult_16_WPA3_SUITEB),
+    },
+
+    // 17 - 6E__1
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_17_6G_S1_2_4_Ghz,
+        s_TLV_BSS_Entry_17_6G_S1_2_4_Ghz, sizeof(s_TLV_BSS_Entry_17_6G_S1_2_4_Ghz),
+        s_TLV_Success_AssociationResult_17_6G_S1_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_17_6G_S1_2_4_Ghz),
+    },
+
+    // 18 - 6E__1
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_18_6G_S1_5_Ghz,
+        s_TLV_BSS_Entry_18_6G_S1_5_Ghz, sizeof(s_TLV_BSS_Entry_18_6G_S1_5_Ghz),
+        s_TLV_Success_AssociationResult_18_6G_S1_5_Ghz, sizeof(s_TLV_Success_AssociationResult_18_6G_S1_5_Ghz),
+    },
+
+    // 19 - 6E__1
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_19_6G_S1a_6_Ghz,
+        s_TLV_BSS_Entry_19_6G_S1a_6_Ghz, sizeof(s_TLV_BSS_Entry_19_6G_S1a_6_Ghz),
+        s_TLV_Success_AssociationResult_19_6G_S1a_6_Ghz, sizeof(s_TLV_Success_AssociationResult_19_6G_S1a_6_Ghz),
+    },
+
+    // 20 - 6E__1
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_20_6G_S1b_6_Ghz,
+        s_TLV_BSS_Entry_20_6G_S1b_6_Ghz, sizeof(s_TLV_BSS_Entry_20_6G_S1b_6_Ghz),
+        s_TLV_Success_AssociationResult_20_6G_S1b_6_Ghz, sizeof(s_TLV_Success_AssociationResult_20_6G_S1b_6_Ghz),
+    },
+
+    // 21 - 6E__2
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_21_6G_S2_2_4_Ghz,
+        s_TLV_BSS_Entry_21_6G_S2_2_4_Ghz, sizeof(s_TLV_BSS_Entry_21_6G_S2_2_4_Ghz),
+        s_TLV_Success_AssociationResult_21_6G_S2_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_21_6G_S2_2_4_Ghz),
+    },
+
+    // 22 - 6E__2
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_22_6G_S2_5_Ghz,
+        s_TLV_BSS_Entry_22_6G_S2_5_Ghz, sizeof(s_TLV_BSS_Entry_22_6G_S2_5_Ghz),
+        s_TLV_Success_AssociationResult_22_6G_S2_5_Ghz, sizeof(s_TLV_Success_AssociationResult_22_6G_S2_5_Ghz),
+    },
+
+    // 23 - 6E__2
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_23_6G_S2_6_Ghz,
+        s_TLV_BSS_Entry_23_6G_S2_6_Ghz, sizeof(s_TLV_BSS_Entry_23_6G_S2_6_Ghz),
+        s_TLV_Success_AssociationResult_23_6G_S2_6_Ghz, sizeof(s_TLV_Success_AssociationResult_23_6G_S2_6_Ghz),
+    },
+
+    // 24 - 6E__3
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_24_6G_S3_2_4_Ghz,
+        s_TLV_BSS_Entry_24_6G_S3_2_4_Ghz, sizeof(s_TLV_BSS_Entry_24_6G_S3_2_4_Ghz),
+        s_TLV_Success_AssociationResult_24_6G_S3_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_24_6G_S3_2_4_Ghz),
+    },
+
+    // 25 - 6E__4
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_25_6G_S4_6_Ghz,
+        s_TLV_BSS_Entry_25_6G_S4_6_Ghz, sizeof(s_TLV_BSS_Entry_25_6G_S4_6_Ghz),
+        s_TLV_Success_AssociationResult_25_6G_S4_6_Ghz, sizeof(s_TLV_Success_AssociationResult_25_6G_S4_6_Ghz),
+    },
+
+    // 26 - WDI_OWE_RNR
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_26_OWE_With_RNR,
+        s_TLV_BSS_Entry_26_OWE_With_RNR, sizeof(s_TLV_BSS_Entry_26_OWE_With_RNR),
+        s_TLV_Failure_AssociationResult_26_OWE_With_RNR, sizeof(s_TLV_Failure_AssociationResult_26_OWE_With_RNR)
+    },
+    // 27 - <WDI_OWE_TM_OPEN>
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_27_OWE_TM_OWE,
+        s_TLV_BSS_Entry_27_OWE_TM_OWE, sizeof(s_TLV_BSS_Entry_27_OWE_TM_OWE),
+        s_TLV_Failure_AssociationResult_27_OWE_TM_OWE, sizeof(s_TLV_Failure_AssociationResult_27_OWE_TM_OWE)
+    },
+    // 28 - WDI_OWE_TM_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_28_OWE_TM_Open,
+        s_TLV_BSS_Entry_28_OWE_TM_Open_Beacon, sizeof(s_TLV_BSS_Entry_28_OWE_TM_Open_Beacon),
+        s_TLV_Failure_AssociationResult_28_OWE_TM_Open, sizeof(s_TLV_Failure_AssociationResult_28_OWE_TM_Open)
+    },
+
+    // 29 is only MLD address for Wi-Fi 7
+    // 30 - Wi-Fi 7 - Mixed
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_30_WiFi7_Mixed_Link_1,
+        s_TLV_BSS_Entry_30_WiFi7_Mixed_Link_1, sizeof(s_TLV_BSS_Entry_30_WiFi7_Mixed_Link_1),
+        s_TLV_Success_AssociationResult_30_WiFi7_Mixed_Link_1, sizeof(s_TLV_Success_AssociationResult_30_WiFi7_Mixed_Link_1),
+    },
+    // 34 - Wi-Fi 7 - Open
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_34_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_34_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_34_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_34_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_34_WiFi7_Open_Link_1),
+    },
+    // 38 - Wi-Fi 7 - Only
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_38_WiFi7_Only_Link_1,
+        s_TLV_BSS_Entry_38_WiFi7_Only_Link_1, sizeof(s_TLV_BSS_Entry_38_WiFi7_Only_Link_1),
+        s_TLV_Success_AssociationResult_38_WiFi7_Only_Link_1, sizeof(s_TLV_Success_AssociationResult_38_WiFi7_Only_Link_1),
+    },
+
+    // 41 - Dual-Sta
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_41_DualSta_5Ghz,
+        s_TLV_BSS_Entry_41_DualSta_5Ghz, sizeof(s_TLV_BSS_Entry_41_DualSta_5Ghz),
+        s_TLV_SuccessOpenAssociationResult_41_DualSta_5Ghz, sizeof(s_TLV_SuccessOpenAssociationResult_41_DualSta_5Ghz),
+    },
+
+    // 42 - Dual-Sta
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_42_DualSta_6Ghz,
+        s_TLV_BSS_Entry_42_DualSta_6Ghz, sizeof(s_TLV_BSS_Entry_42_DualSta_6Ghz),
+        s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz, sizeof(s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz),
+    },
+
+    // 43 - Speed Test(01)
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_43_Speed_01_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_43_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_43_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1),
+    },
+
+    // 44 - Speed Test(02)
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_44_Speed_02_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_44_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_44_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1),
+    },
+};
 
 // clang-format on

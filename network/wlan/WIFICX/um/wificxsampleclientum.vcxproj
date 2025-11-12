@@ -128,9 +128,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -141,9 +145,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -154,9 +162,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -167,9 +179,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -181,10 +197,12 @@
   <ItemGroup>
     <ClInclude Include="..\drivercode\adapter.h" />
     <ClInclude Include="..\drivercode\device.h" />
+    <ClInclude Include="..\drivercode\driver.h" />
     <ClInclude Include="..\drivercode\precomp.h" />
-    <ClInclude Include="..\drivercode\SharedTypes.h" />
-    <ClInclude Include="..\drivercode\testdata.h" />
+    <ClInclude Include="..\drivercode\sharedtypes.h" />
+    <ClInclude Include="..\drivercode\wifihaltestdata.h" />
     <ClInclude Include="..\drivercode\trace.h" />
+    <ClInclude Include="..\drivercode\wifihal.h" />
     <ClInclude Include="..\drivercode\wifirequest.h" />
     <ClInclude Include="..\drivercode\umkmfusion.h" />
   </ItemGroup>
@@ -193,6 +211,7 @@
     <ClCompile Include="..\drivercode\device.cpp" />
     <ClCompile Include="..\drivercode\driver.cpp" />
     <ClCompile Include="..\drivercode\memorymanagement.cpp" />
+    <ClCompile Include="..\drivercode\wifihal.cpp" />
     <ClCompile Include="..\drivercode\wifirequest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

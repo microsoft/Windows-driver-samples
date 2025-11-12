@@ -24,6 +24,13 @@ namespace Wifi
         return SUCCEEDED(hr) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
     }
 
+    _inline
+    NTSTATUS ConvertNDISSTATUSoNTSTATUS(NDIS_STATUS ndisStatus) {
+        
+        return ndisStatus > 0 ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+    }
+
+
     _Must_inspect_result_
     _inline
     NTSTATUS SizeTAddSafe(_In_ size_t Augend, _In_ size_t Addend, _Out_ _Deref_out_range_(== , Augend + Addend) size_t* pResult) 
