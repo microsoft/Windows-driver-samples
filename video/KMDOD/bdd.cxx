@@ -54,7 +54,15 @@ NTSTATUS BASIC_DISPLAY_DRIVER::StartDevice(_In_  DXGK_START_INFO*   pDxgkStartIn
     BDD_ASSERT(pNumberOfChildren != NULL);
 
     RtlCopyMemory(&m_StartInfo, pDxgkStartInfo, sizeof(m_StartInfo));
-    RtlCopyMemory(&m_DxgkInterface, pDxgkInterface, sizeof(m_DxgkInterface));
+    // Real size of the DXGKRNL_INTERFACE structure is provided in its Size field, thus, copying
+    // sizeof(DXGKRNL_INTERFACE) might result in an access violation.
+    if (pDxgkInterface->Size > sizeof(m_DxgkInterface))
+    {
+        BDD_LOG_ASSERTION1("KMDOD: Provided interface cannot be used by KMOD (version %u)\n", pDxgkInterface->Version);
+        return STATUS_NOT_SUPPORTED;
+    }
+
+    RtlCopyMemory(&m_DxgkInterface, pDxgkInterface, pDxgkInterface->Size);
     RtlZeroMemory(m_CurrentModes, sizeof(m_CurrentModes));
     m_CurrentModes[0].DispInfo.TargetId = D3DDDI_ID_UNINITIALIZED;
 
