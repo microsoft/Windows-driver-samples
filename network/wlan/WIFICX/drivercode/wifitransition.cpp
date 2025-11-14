@@ -32,6 +32,113 @@ NTSTATUS ParseTlvCommon(TransitionContext& ctx,
     return Wifi::ConvertNDISSTATUSToNTSTATUS(ndisStatus);
 }
 
+
+// Primary traits template (specialize per MessageId)
+template<UINT16 MsgId>
+struct TransitionTraits;
+
+// --- Generic pure-type traits template (add before existing specializations) ---
+// WIFIREQUEST always needs M3 notification, so TPreM3Fn is mandatory.
+// and WIFICX expectes the M3 then M4 order, so we always execute M3 then M4.
+// using template parameters to configure parsing, cleanup, M3/M4 steps.
+// to make sure that all transitions have consistent implementations.
+template<
+    UINT16 TMsgId,
+    typename TParam,
+    UINT16 TCompleteIndication,
+    bool TDumpTlvStream,
+    NDIS_STATUS (*TParseFn)(ULONG, const UINT8*, PCTLV_CONTEXT, TParam*),
+    void (*TCleanupFn)(TParam*),
+    NTSTATUS (WifiHAL::*TPreM3Fn)(),                                                                   // mandatory pre-M3 hook
+    NTSTATUS (WifiHAL::*THalM3Fn)(const TParam&, const PWDI_MESSAGE_HEADER, UINT BytesWriten),         // optional HAL M3 (may be nullptr)
+    NTSTATUS (WifiHAL::*TPreM4Fn)(),                                                                   // optional pre-M4 hook (may be nullptr)
+    NTSTATUS (WifiHAL::*THalM4Fn)(const PWDI_MESSAGE_HEADER)                                           // optional HAL M4 (may be nullptr)
+>
+struct GenericTransitionTraits
+{
+    using ParamType = TParam;
+    enum : UINT16 { CompleteIndication = TCompleteIndication };
+
+    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
+    {
+        if (ctx.InLen < sizeof(WDI_MESSAGE_HEADER))
+        {
+            return STATUS_INVALID_PARAMETER;
+        }
+
+        auto* tlvBytes = static_cast<UCHAR*>(ctx.RawBuffer) + sizeof(WDI_MESSAGE_HEADER);
+        auto tlvLen = static_cast<ULONG>(ctx.InLen - sizeof(WDI_MESSAGE_HEADER));
+
+        if (TDumpTlvStream)
+        {
+            DumpMessageTlvByteStream(
+                TMsgId,
+                TRUE,
+                ctx.DevCtx->TlvContext.PeerVersion,
+                tlvLen,
+                tlvBytes,
+                0,
+                nullptr);
+        }
+
+        auto ndisStatus = TParseFn(tlvLen, tlvBytes, &ctx.DevCtx->TlvContext, &p);
+        return Wifi::ConvertNDISSTATUSToNTSTATUS(ndisStatus);
+    }
+
+    void Cleanup(ParamType& p) { TCleanupFn(&p); }
+
+    // Make static so pointer matches ExecuteSteps expected callable type (no implicit this)
+    static NTSTATUS StepM3(TransitionContext& c, ParamType& p, UINT& bytesWritten)
+    {
+        bytesWritten = sizeof(WDI_MESSAGE_HEADER);
+        ASSERT(TPreM3Fn);
+
+        if (TPreM3Fn)
+        {
+            // Call member function pointer on WifiHAL instance
+            NTSTATUS preStatus = (c.DevCtx->wifiHAL->*TPreM3Fn)();
+            if (!NT_SUCCESS(preStatus))
+            {
+                return preStatus;
+            }
+        }
+
+        if (THalM3Fn)
+        {
+            // Pass required third argument (BytesWriten) to HAL M3 function
+            return (c.DevCtx->wifiHAL->*THalM3Fn)(p, c.Header, bytesWritten);
+        }
+
+        return STATUS_SUCCESS;
+    }
+
+    static NTSTATUS StepM4(TransitionContext& c, ParamType&)
+    {
+        if (TPreM4Fn)
+        {
+            NTSTATUS preStatus = (c.DevCtx->wifiHAL->*TPreM4Fn)();
+            if (!NT_SUCCESS(preStatus))
+            {
+                return preStatus;
+            }
+        }
+
+        if (THalM4Fn)
+        {
+            return (c.DevCtx->wifiHAL->*THalM4Fn)(c.Header);
+        }
+
+        return (TPreM4Fn == nullptr && THalM4Fn == nullptr) ? STATUS_PENDING : STATUS_SUCCESS;
+    }
+
+    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
+    {
+        return ExecuteSteps(ctx, p, &GenericTransitionTraits::StepM3, &GenericTransitionTraits::StepM4);
+    }
+
+    bool ShouldSendComplete(NTSTATUS s) const { return s != STATUS_PENDING; }
+};
+
 // Execute two step callables.
 // StepM3Fn signature: NTSTATUS (TransitionContext&, Param&, UINT& bytesWritten)
 // StepM4Fn signature: NTSTATUS (TransitionContext&, Param&)
@@ -51,236 +158,6 @@ NTSTATUS ExecuteSteps(TransitionContext& ctx, Param& p, StepM3Fn stepM3, StepM4F
     }
     return stepM4(ctx, p);
 }
-// Primary traits template (specialize per MessageId)
-template<UINT16 MsgId>
-struct TransitionTraits;
-
-// -------- WDI_TASK_SET_RADIO_STATE --------
-template<>
-struct TransitionTraits<WDI_TASK_SET_RADIO_STATE>
-{
-    using ParamType = WDI_SET_RADIO_STATE_PARAMETERS;
-    enum : UINT16 { CompleteIndication = WDI_INDICATION_SET_RADIO_STATE_COMPLETE };
-
-    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
-    {
-        return ParseTlvCommon(ctx,
-            WDI_TASK_SET_RADIO_STATE,
-            [](ULONG len, UINT8* bytes, PCTLV_CONTEXT tlvCtx, ParamType* out)
-            {
-                return ParseWdiTaskSetRadioState(len, bytes, tlvCtx, out);
-            },
-            p,
-            true);
-    }
-    void Cleanup(ParamType& p) { CleanupParsedWdiTaskSetRadioState(&p); }
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // STEPM3
-            [](TransitionContext&, ParamType&, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return STATUS_SUCCESS;
-            },
-            // STEPM4
-            [](TransitionContext& c, ParamType& par)
-            {
-                return c.DevCtx->wifiHAL->WifiIhvSetRadioState(par, c.Header);
-            }
-        );
-    }
-    bool ShouldSendComplete(NTSTATUS) const { return true; }
-};
-
-// -------- WDI_TASK_SCAN --------
-template<>
-struct TransitionTraits<WDI_TASK_SCAN>
-{
-    using ParamType = WDI_SCAN_PARAMETERS;
-    enum : UINT16 { CompleteIndication = WDI_INDICATION_SCAN_COMPLETE };
-
-    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
-    {
-        return ParseTlvCommon(ctx,
-            WDI_TASK_SCAN,
-            [](ULONG len, UINT8* bytes, PCTLV_CONTEXT tlvCtx, ParamType* out)
-            {
-                return ParseWdiTaskScan(len, bytes, tlvCtx, out);
-            },
-            p,
-            true);
-    }
-    void Cleanup(ParamType& p) { CleanupParsedWdiTaskScan(&p); }
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // STEPM3
-            [](TransitionContext&, ParamType&, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return STATUS_SUCCESS;
-            },
-            // STEPM4
-            [](TransitionContext& c, ParamType& par)
-            {
-                return c.DevCtx->wifiHAL->WifiIhvScan(par, c.Header);
-            }
-        );
-    }
-    bool ShouldSendComplete(NTSTATUS) const { return true; }
-};
-
-// -------- WDI_TASK_DOT11_RESET --------
-template<>
-struct TransitionTraits<WDI_TASK_DOT11_RESET>
-{
-    using ParamType = WDI_TASK_DOT11_RESET_PARAMETERS;
-    enum : UINT16 { CompleteIndication = WDI_INDICATION_DOT11_RESET_COMPLETE };
-
-    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
-    {
-        return ParseTlvCommon(ctx,
-            WDI_TASK_DOT11_RESET,
-            [](ULONG len, UINT8* bytes, PCTLV_CONTEXT tlvCtx, ParamType* out)
-            {
-                return ParseWdiTaskDot11Reset(len, bytes, tlvCtx, out);
-            },
-            p,
-            false);
-    }
-    void Cleanup(ParamType& p) { CleanupParsedWdiTaskDot11Reset(&p); }
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // STEPM3
-            [](TransitionContext&, ParamType&, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return STATUS_SUCCESS;
-            },
-            // STEPM4
-            [](TransitionContext& c, ParamType& par)
-            {
-                return c.DevCtx->wifiHAL->WifiIhvReset(par, c.Header);
-            });
-    }
-    bool ShouldSendComplete(NTSTATUS) const { return true; }
-};
-
-// -------- WDI_TASK_CONNECT --------
-template<>
-struct TransitionTraits<WDI_TASK_CONNECT>
-{
-    using ParamType = WDI_TASK_CONNECT_PARAMETERS;
-    enum : UINT16 { CompleteIndication = WDI_INDICATION_CONNECT_COMPLETE };
-
-    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
-    {
-        return ParseTlvCommon(ctx,
-            WDI_TASK_CONNECT,
-            [](ULONG len, UINT8* bytes, PCTLV_CONTEXT tlvCtx, ParamType* out)
-            {
-                return ParseWdiTaskConnect(len, bytes, tlvCtx, out);
-            },
-            p,
-            true);
-    }
-    void Cleanup(ParamType& p) { CleanupParsedWdiTaskConnect(&p); }
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // STEPM3
-            [](TransitionContext&, ParamType&, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return STATUS_SUCCESS;
-            },
-            // STEPM4
-            [](TransitionContext& c, ParamType& par)
-            {
-                return c.DevCtx->wifiHAL->WifiIhvConnect(par, c.Header);
-            });
-    }
-    bool ShouldSendComplete(NTSTATUS s) const { return s != STATUS_PENDING; }
-};
-
-// -------- WDI_TASK_DISCONNECT --------
-template<>
-struct TransitionTraits<WDI_TASK_DISCONNECT>
-{
-    struct ParamType {};
-    enum : UINT16 { CompleteIndication = WDI_INDICATION_DISCONNECT_COMPLETE };
-
-    NTSTATUS Parse(TransitionContext&, ParamType&) { return STATUS_SUCCESS; }
-    void Cleanup(ParamType&) {}
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // STEPM3
-            [](TransitionContext&, ParamType&, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return STATUS_SUCCESS;
-            },
-            // STEPM4
-            [](TransitionContext& c, ParamType&)
-            {
-                c.DevCtx->wifiHAL->WifiIhvPerformDisassociation(c.Header, WDI_ASSOC_STATUS_DISASSOCIATED_BY_HOST);
-                return STATUS_SUCCESS;
-            });
-    }
-    bool ShouldSendComplete(NTSTATUS) const { return true; }
-};
-
-// -------- WDI_SET_SAE_AUTH_PARAMS --------
-template<>
-struct TransitionTraits<WDI_SET_SAE_AUTH_PARAMS>
-{
-    using ParamType = WDI_SET_SAE_AUTH_PARAMS_COMMAND;
-    enum : UINT16 { CompleteIndication = 0 };
-
-    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
-    {
-        return ParseTlvCommon(ctx,
-            WDI_SET_SAE_AUTH_PARAMS,
-            [](ULONG len, UINT8* bytes, PCTLV_CONTEXT tlvCtx, ParamType* out)
-            {
-                return ParseWdiSetSaeAuthParams(len, bytes, tlvCtx, out);
-            },
-            p,
-            /*dumpStream*/ false);
-    }
-
-    void Cleanup(ParamType& p)
-    {
-        CleanupParsedWdiSetSaeAuthParams(&p);
-    }
-
-    NTSTATUS Handle(TransitionContext& ctx, ParamType& p)
-    {
-        return ExecuteSteps(ctx, p,
-            // Step M3: invoke HAL handler, report bytes written (just header)
-            [](TransitionContext& c, ParamType& par, UINT& bytesWritten)
-            {
-                bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-                return c.DevCtx->wifiHAL->WifiIhvSetSaeAuthParams(par, c.Header);
-            },
-            // Step M4: no-op (no completion indication for this OID)
-            [](TransitionContext&, ParamType&) { return STATUS_SUCCESS; });
-    }
-
-    bool ShouldSendComplete(NTSTATUS) const
-    {
-        // Do not send M4 indication for WDI_SET_SAE_AUTH_PARAMS (original code omitted it).
-        return false;
-    }
-};
 
 // -------- Generic runner (compile-time) --------
 template<UINT16 MsgId>
@@ -313,6 +190,126 @@ NTSTATUS RunTransition(TransitionContext& ctx)
     return m4Status;
 }
 
+//// -------- SCENARIO: [Connect with a SAE WI-FI7 network --------
+///     Demo: Handle WDI_TASK_CONNECT + WDI_SET_SAE_AUTH_PARAMS then WDI_TASK_DISCONNECT
+///     Scope:
+///            -WifiRequest WDI_TASK_CONNECT & WDI_TASK_DISCONNECT are both WIFICX task commands, which is a two step M3/M4 transition
+///            -The direct WifiRequest WDI_SET_SAE_AUTH_PARAMS, which is a single step transition but
+///             is logically part of the connect scenario. since WDI_SET_SAE_AUTH_PARAMS is WIFICX property command,
+///             it only has M3 step, no M4 step.
+///            - The WifiCx unsolicited indication e.g. WDI_INDICATION_SAE_AUTH_PARAMS_NEEDED is sent from the HAL during the connect process,
+///     Notes:
+///            - M3 and M4 status mainly used for WifiCx to track progress of the transition. e.g. the hung detection and trigger recovery.
+///            - The actual scenario result is reported through unsolicited indication.
+/// 
+
+// -------- WDI_TASK_CONNECT --------
+template<>
+struct TransitionTraits<WDI_TASK_CONNECT>
+    : GenericTransitionTraits <
+    WDI_TASK_CONNECT,
+    WDI_TASK_CONNECT_PARAMETERS,
+    WDI_INDICATION_CONNECT_COMPLETE,
+    true, // dump TLV stream? (was true in original)
+    ParseWdiTaskConnect,
+    CleanupParsedWdiTaskConnect,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvConnect, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr
+    >
+{
+};
+
+// --- WDI_SET_SAE_AUTH_PARAMS ---
+template<>
+struct TransitionTraits<WDI_SET_SAE_AUTH_PARAMS>
+    : GenericTransitionTraits<
+        WDI_SET_SAE_AUTH_PARAMS,
+        WDI_SET_SAE_AUTH_PARAMS_COMMAND,
+        WDI_INDICATION_CONNECT_COMPLETE,
+        false, // dump TLV stream? (was false in original)
+        ParseWdiSetSaeAuthParams,
+        CleanupParsedWdiSetSaeAuthParams,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvSetSaeAuthParams, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr// HAL M4
+    >
+{};
+
+// -------- WDI_TASK_DISCONNECT --------
+template<>
+struct TransitionTraits<WDI_TASK_DISCONNECT>
+    : GenericTransitionTraits<
+    WDI_TASK_DISCONNECT,
+    WDI_TASK_DISCONNECT_PARAMETERS,
+    WDI_INDICATION_DISCONNECT_COMPLETE,
+    false, // dump TLV stream? (was false in original)
+    ParseWdiTaskDisconnect,
+    CleanupParsedWdiTaskDisconnect,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvDisconnect, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr // HAL M4
+    >
+{
+};
+/// ----- End of scenario [Connect with a SAE WI-FI7 network]-----
+
+// -------- WDI_TASK_DOT11_RESET --------
+template<>
+struct TransitionTraits<WDI_TASK_DOT11_RESET>
+    : GenericTransitionTraits <
+    WDI_TASK_DOT11_RESET,
+    WDI_TASK_DOT11_RESET_PARAMETERS,
+    WDI_INDICATION_DOT11_RESET_COMPLETE,
+    false, // dump TLV stream? (was false in original)
+    ParseWdiTaskDot11Reset,
+    CleanupParsedWdiTaskDot11Reset,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvReset, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr  // HAL M4
+    >
+{
+};
+
+// -------- WDI_TASK_SCAN --------
+template<>
+struct TransitionTraits<WDI_TASK_SCAN>
+    : GenericTransitionTraits <
+    WDI_TASK_SCAN,
+    WDI_SCAN_PARAMETERS,
+    WDI_INDICATION_SCAN_COMPLETE,
+    true, // dump TLV stream? (was true in original)
+    ParseWdiTaskScan,
+    CleanupParsedWdiTaskScan,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvScan, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr  // HAL M4
+    >
+{
+};
+
+// -------- WDI_TASK_SET_RADIO_STATE --------
+template<>
+struct TransitionTraits<WDI_TASK_SET_RADIO_STATE>
+    : GenericTransitionTraits <
+    WDI_TASK_SET_RADIO_STATE,
+    WDI_SET_RADIO_STATE_PARAMETERS,
+    WDI_INDICATION_SET_RADIO_STATE_COMPLETE,
+    true, // dump TLV stream? (was true in original)
+    ParseWdiTaskSetRadioState,
+    CleanupParsedWdiTaskSetRadioState,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-M3
+    &WifiHAL::WifiIhvSetRadioState, // HAL M3
+    &WifiHAL::WifiIhvGetPendingTransitionStatus, // pre-M4
+    nullptr  // HAL M4
+    >
+{
+};
 
 // Runtime dispatcher switches on MessageId and invokes the matching compile-time runner.
 NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)

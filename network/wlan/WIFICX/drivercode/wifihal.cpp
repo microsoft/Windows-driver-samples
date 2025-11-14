@@ -6,6 +6,24 @@
 #include "WifiHal.h"
 #include "WifiHal.tmh"
 
+WifiHAL::WifiHAL(WDFDEVICE Device)
+{
+    m_Device = Device;
+    m_TlvContext = &WifiGetIhvDeviceContext(Device)->TlvContext;
+}
+
+NTSTATUS WifiHAL::WifiIhvIsDeviceReadyForRequest()
+{
+    return ((m_Device != WDF_NO_HANDLE) // Make sure device is initialized (since this is hardware abstraction layer, IHV can replace with firmware state)
+        && (WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter != WDF_NO_HANDLE) // In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
+        && (m_CurrentRadioState == TRUE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY); // Device is ready only if radio is ON (this may be replaced by other state in IHV implementation)
+}
+
+NTSTATUS WifiHAL::WifiIhvGetPendingTransitionStatus()
+{
+    return m_LastConnectTransactionId ==0 ? STATUS_SUCCESS : STATUS_PENDING;
+}
+
 NTSTATUS WifiHAL::WifiIhvSetDeviceCapabilities()
 {
     WIFI_DEVICE_CAPABILITIES deviceCaps = {};
@@ -432,7 +450,7 @@ NTSTATUS WifiHAL::WifiIhvSetDeviceCapabilities()
     return STATUS_SUCCESS;
 }
 
-NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParameters, const PWDI_MESSAGE_HEADER)
+NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParameters, const PWDI_MESSAGE_HEADER, UINT)
 {
     if (0 == ResetParameters.Optional.ResetMACAddress_IsPresent)
     {
@@ -458,7 +476,7 @@ NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParam
 }
 
 _Use_decl_annotations_
-NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, const PWDI_MESSAGE_HEADER pWdiHeader)
+NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     if (RadioState.SoftwareRadioState != m_CurrentRadioState)
     {
@@ -483,7 +501,7 @@ NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& Rad
 }
 
 _Use_decl_annotations_
-NTSTATUS WifiHAL::WifiIhvScan(WDI_SCAN_PARAMETERS& ScanParameters, const PWDI_MESSAGE_HEADER pWdiHeader)
+NTSTATUS WifiHAL::WifiIhvScan(const WDI_SCAN_PARAMETERS& ScanParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     for (UINT8 connectEntry = 1; connectEntry < ConnectEntryId_MAX; connectEntry++)
     {
@@ -530,7 +548,7 @@ NTSTATUS WifiHAL::WifiIhvScan(WDI_SCAN_PARAMETERS& ScanParameters, const PWDI_ME
     return STATUS_SUCCESS;
 }
 
-NTSTATUS WifiHAL::WifiIhvConnect(WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader)
+NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     NT_ASSERT(m_LastConnectEntryId == 0);
     if (m_LastConnectEntryId != 0) // Not Disconnected State
@@ -550,7 +568,11 @@ NTSTATUS WifiHAL::WifiIhvConnect(WDI_TASK_CONNECT_PARAMETERS& ConnectParameters,
     //
     if (WDI_AUTH_ALGO_WPA3_SAE == m_LastAuthAlgo)
     {
-        return STATUS_PENDING;
+        m_LastConnectTransactionId = pWdiHeader->TransactionId;
+    }
+    else 
+    {
+        m_LastConnectTransactionId = 0;
     }
     return STATUS_SUCCESS;
 }
@@ -618,9 +640,9 @@ NTSTATUS WifiHAL::WifiIhvSendLinkStateIndication(_In_ PWDI_MESSAGE_HEADER pWdiHe
 
 _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvPerformAssociation(
-    struct ArrayOfElements<WDI_CONNECT_BSS_ENTRY_CONTAINER>* pPreferredBSSEntryList,
-    struct ArrayOfElements<WDI_AUTH_ALGORITHM>* pAuthenticationAlgorithms,
-    PWDI_MESSAGE_HEADER pWdiHeader)
+    const struct ArrayOfElements<WDI_CONNECT_BSS_ENTRY_CONTAINER>* pPreferredBSSEntryList,
+    const struct ArrayOfElements<WDI_AUTH_ALGORITHM>* pAuthenticationAlgorithms,
+    const PWDI_MESSAGE_HEADER pWdiHeader)
 {
 
     ULONG bssIndex = 0;
@@ -740,7 +762,7 @@ NTSTATUS WifiHAL::WifiIhvPerformAssociation(
     return ntStatus;
 }
 
-NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, const PWDI_MESSAGE_HEADER pWdiHeader)
+NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     //Since this is DIRECT OID, need to check the m_LastConnectTransactionId match
     if (pWdiHeader->TransactionId != m_LastConnectTransactionId) 
@@ -837,8 +859,9 @@ NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND&
         WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(WifiIhvSendLinkStateIndication(pWdiHeader, 1),
             "Failed WifiIhvSendLinkStateIndication");
 
-        WifiIhvSendM4IndicationToOs(
-            m_Device, WDI_INDICATION_CONNECT_COMPLETE, pWdiHeader, STATUS_SUCCESS);
+        // Complete the transaction to let the M4 hanlder WifiIhvGetPendingTransitionStatus know that association is complete
+        m_LastConnectTransactionId = 0;
+
 #ifdef WIFI_IHV_HANDSHAKE
         //
         // Receive M1 frame of 4-way handshake
@@ -850,6 +873,7 @@ NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND&
         //
         RecieveDatapathFrame(0x33, sizeof(pucM3SaeFrame), pucM3SaeFrame);
 #endif
+        return STATUS_SUCCESS;
     }
 
     RtlCopyMemory(SAEAuthParamsNeeded.BssId.Address, &g_ConnectEntries[m_LastConnectEntryId].pMacAddress, sizeof(DOT11_MAC_ADDRESS));
@@ -871,7 +895,7 @@ NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND&
 }
 
 _Use_decl_annotations_
-void WifiHAL::WifiIhvPerformDisassociation(_In_ PWDI_MESSAGE_HEADER pWdiHeader, _In_ WDI_ASSOC_STATUS DisassocStatus)
+NTSTATUS WifiHAL::WifiIhvDisconnect(const WDI_TASK_DISCONNECT_PARAMETERS&, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     UCHAR s_TLV_Disassociation[] =
     {
@@ -888,6 +912,7 @@ void WifiHAL::WifiIhvPerformDisassociation(_In_ PWDI_MESSAGE_HEADER pWdiHeader, 
 
             0x00
     };
+    WDI_ASSOC_STATUS DisassocStatus = WDI_ASSOC_STATUS_DISASSOCIATED_BY_HOST;
 
     RtlCopyMemory(&s_TLV_Disassociation[4], &m_ConnectedPeer, sizeof(DOT11_MAC_ADDRESS));
     RtlCopyMemory(&s_TLV_Disassociation[10], &DisassocStatus, sizeof(ULONG));
@@ -900,10 +925,6 @@ void WifiHAL::WifiIhvPerformDisassociation(_In_ PWDI_MESSAGE_HEADER pWdiHeader, 
 #ifdef WIFI_IHV_NETV
     DeleteDatapathPeer(0x33);
 #endif
-}
 
-WifiHAL::WifiHAL(WDFDEVICE Device)
-{
-    m_Device = Device;
-    m_TlvContext = &WifiGetIhvDeviceContext(Device)->TlvContext;
+    return STATUS_SUCCESS;
 }
