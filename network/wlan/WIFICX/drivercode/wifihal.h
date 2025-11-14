@@ -5,17 +5,21 @@
 class WifiHAL
 {
 public:
-    NTSTATUS WifiIhvSetDeviceCapabilities(_In_ WDFDEVICE Device);
-    NTSTATUS WifiIhvReset(_In_ WDFDEVICE Device,_In_ const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ PCTLV_CONTEXT Context);
-    NTSTATUS WifiIhvSetRadioState(_In_ WDFDEVICE Device, _In_ const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ PCTLV_CONTEXT Context);
-    NTSTATUS WifiIhvScan(_In_ WDFDEVICE Device, _In_ WDI_SCAN_PARAMETERS& ScanParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ PCTLV_CONTEXT Context);
-    NTSTATUS WifiIhvConnect(_In_ WDFDEVICE Device, _In_ WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ PCTLV_CONTEXT Context);
-    NTSTATUS WifiIhvPerformAssociation(_In_ WDFDEVICE Device, _In_ struct ArrayOfElements<WDI_CONNECT_BSS_ENTRY_CONTAINER>* pPreferredBSSEntryList, _In_ struct ArrayOfElements<WDI_AUTH_ALGORITHM>* pAuthenticationAlgorithms, _In_ PWDI_MESSAGE_HEADER pWdiHeader);
-    NTSTATUS WifiIhvSetSaeAuthParams(_In_ WDFDEVICE Device, _In_ const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ PCTLV_CONTEXT Context);
-    void WifiIhvPerformDisassociation(_In_ WDFDEVICE Device, _In_ PWDI_MESSAGE_HEADER pWdiHeader, _In_ WDI_ASSOC_STATUS DisassocStatus);
+    WifiHAL(_In_ WDFDEVICE Device);
+    NTSTATUS WifiIhvSetDeviceCapabilities();
+    NTSTATUS WifiIhvReset(_In_ const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
+    NTSTATUS WifiIhvSetRadioState(_In_ const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
+    NTSTATUS WifiIhvScan(_In_ WDI_SCAN_PARAMETERS& ScanParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
+    NTSTATUS WifiIhvConnect(_In_ WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
+    NTSTATUS WifiIhvPerformAssociation(_In_ struct ArrayOfElements<WDI_CONNECT_BSS_ENTRY_CONTAINER>* pPreferredBSSEntryList, _In_ struct ArrayOfElements<WDI_AUTH_ALGORITHM>* pAuthenticationAlgorithms, _In_ PWDI_MESSAGE_HEADER pWdiHeader);
+    NTSTATUS WifiIhvSetSaeAuthParams(_In_ const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
+    void WifiIhvPerformDisassociation(_In_ PWDI_MESSAGE_HEADER pWdiHeader, _In_ WDI_ASSOC_STATUS DisassocStatus);
 private:
-    NTSTATUS WifiIhvSendLinkStateIndication(_In_ WDFDEVICE Device, _In_ PWDI_MESSAGE_HEADER pWdiHeader, ULONG numLinks);
-
+    NTSTATUS WifiIhvSendLinkStateIndication(_In_ PWDI_MESSAGE_HEADER pWdiHeader, ULONG numLinks);
+    
+    WDFDEVICE m_Device{};
+    PCTLV_CONTEXT m_TlvContext{};
+    
     UCHAR m_CurrentRadioState{};
     UINT32 m_LastConnectEntryId{};
     UINT32 m_LastConnectTransactionId{};

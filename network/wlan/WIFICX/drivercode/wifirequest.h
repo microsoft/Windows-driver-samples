@@ -7,10 +7,20 @@ EVT_WIFI_DEVICE_SEND_COMMAND EvtWifiDeviceSendCommand;
 static NTSTATUS ProcessWifiRequest(
     _In_ WDFDEVICE Device, _In_ UINT16 MessageId, _In_ void* Buffer, _In_ UINT InBufferLen, _In_ UINT OutBufferLen, _In_ UINT* pBytesWritten);
 
-void WifiIhvSendIndicationToOs(
+void WifiIhvSendUnsolicitedIndicationToOs(
     _In_ WDFDEVICE Device,
     _In_ PWDI_MESSAGE_HEADER pWdiHeader,
     _In_ UINT16 MessageId,
-    _In_ UINT32 TransactionId,
     _In_opt_bytecount_(TlvDataSize) PUCHAR pTlvData,
     _In_ UINT32 TlvDataSize);
+
+void WifiIhvNotifyM3Completion(
+    _In_ WIFIREQUEST Request,
+    _In_ NTSTATUS WifiRequestM3Status,
+    _In_ UINT BytesWritten);
+
+void WifiIhvSendM4IndicationToOs(
+    _In_ WDFDEVICE Device,
+    _In_ UINT16 WifiRequestMessageId,
+    _In_ const PWDI_MESSAGE_HEADER pOriginalWdiHeader,
+    _In_ NTSTATUS WifiRequestM4Status);

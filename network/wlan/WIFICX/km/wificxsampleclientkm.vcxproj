@@ -193,6 +193,7 @@
     <ClCompile Include="..\drivercode\driver.cpp" />
     <ClCompile Include="..\drivercode\memorymanagement.cpp" />
     <ClCompile Include="..\drivercode\wifihal.cpp" />
+    <ClCompile Include="..\drivercode\wifitransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\drivercode\adapter.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\drivercode\precomp.h" />
     <ClInclude Include="..\drivercode\trace.h" />
     <ClInclude Include="..\drivercode\wifihal.h" />
+    <ClInclude Include="..\drivercode\wifitransition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

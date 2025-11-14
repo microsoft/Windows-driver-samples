@@ -19,17 +19,23 @@ namespace Wifi
         }
 
         // Trace the HRESULT value for diagnostics
-
-
         return SUCCEEDED(hr) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
     }
 
-    _inline
-    NTSTATUS ConvertNDISSTATUSoNTSTATUS(NDIS_STATUS ndisStatus) {
-        
-        return ndisStatus > 0 ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+    __inline
+    NTSTATUS ConvertNDISSTATUSToNTSTATUS(NDIS_STATUS ndisStatus)
+    {
+        // NDIS_STATUS_SUCCESS is 0x00000000
+        // Any non-success NDIS status should map to STATUS_UNSUCCESSFUL
+        return (ndisStatus == NDIS_STATUS_SUCCESS) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
     }
 
+    __inline
+    NDIS_STATUS ConvertNTSTATUSToNDISSTATUS(NTSTATUS ntStatus)
+    {
+        // Use NT_SUCCESS macro to check NTSTATUS
+        return NT_SUCCESS(ntStatus) ? NDIS_STATUS_SUCCESS : NDIS_STATUS_FAILURE;
+    }
 
     _Must_inspect_result_
     _inline

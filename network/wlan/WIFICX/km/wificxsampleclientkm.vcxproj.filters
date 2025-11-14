@@ -17,15 +17,6 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Source Files\controlpath">
-      <UniqueIdentifier>{eed063b0-f52a-4d8e-b03f-1f616b73061c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\datapath">
-      <UniqueIdentifier>{56f07a12-b9fb-4ff6-a9b5-e4af54eed417}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\firmware">
-      <UniqueIdentifier>{58bc1adc-c940-478a-898b-59d217c27f36}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="wificxsampleclientkm.inf">
@@ -33,51 +24,60 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\adapter.cpp">
+    <ClCompile Include="..\drivercode\adapter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\device.cpp">
+    <ClCompile Include="..\drivercode\wifirequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\driver.cpp">
+    <ClCompile Include="..\drivercode\device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\new.cpp">
+    <ClCompile Include="..\drivercode\driver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\power.cpp">
+    <ClCompile Include="..\drivercode\memorymanagement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\controlpath\wifirequest.cpp">
-      <Filter>Source Files\controlpath</Filter>
+    <ClCompile Include="..\drivercode\wifihal.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\datapath\rxqueue.cpp">
-      <Filter>Source Files\datapath</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\datapath\txqueue.cpp">
-      <Filter>Source Files\datapath</Filter>
+    <ClCompile Include="..\drivercode\wifitransition.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\datapath\netringiterator.h">
+    <ClInclude Include="..\drivercode\adapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\datapath\rxqueue.h">
+    <ClInclude Include="..\drivercode\device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\datapath\txqueue.h">
+    <ClInclude Include="..\drivercode\driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\firmware\testdata.h">
+    <ClInclude Include="..\drivercode\sharedtypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\controlpath\wifirequest.h">
+    <ClInclude Include="..\drivercode\umkmfusion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\precomp.h">
+    <ClInclude Include="..\drivercode\wifihaltestdata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\trace.h">
+    <ClInclude Include="..\drivercode\wifirequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\drivercode\precomp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\drivercode\trace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\drivercode\wifihal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\drivercode\wifitransition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

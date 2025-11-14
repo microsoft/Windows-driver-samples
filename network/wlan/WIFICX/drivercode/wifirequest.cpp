@@ -1,31 +1,43 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #include "precomp.h"
-#include "wifiHAL.h"
+#include "wifitransition.h"
 #include "wifirequest.h"
 #include "wifirequest.tmh"
 
 _Use_decl_annotations_
 void EvtWifiDeviceSendCommand(WDFDEVICE Device, WIFIREQUEST SendRequest)
 {
-    NTSTATUS Status = STATUS_SUCCESS;
     UINT InBufferLen = 0;
     UINT OutBufferLen = 0;
-    UINT BytesWritten = 0;
     void* Buffer = WifiRequestGetInOutBuffer(SendRequest, &InBufferLen, &OutBufferLen);
     UINT16 MessageId = WifiRequestGetMessageId(SendRequest);
 
-    Status = ProcessWifiRequest(Device, MessageId, Buffer, InBufferLen, OutBufferLen, &BytesWritten);
+    TransitionContext tctx{
+        Device,
+        WifiGetIhvDeviceContext(Device),
+        SendRequest,
+        static_cast<PWDI_MESSAGE_HEADER>(Buffer),
+        Buffer,
+        InBufferLen,
+        OutBufferLen
+    };
 
-    if (Status != STATUS_PENDING)
+    if(!NT_SUCCESS(RunTransitionByMessage(tctx, MessageId)))
     {
-        WifiRequestComplete(SendRequest, Status, BytesWritten);
+        WFCError("RunTransitionByMessage failed for MessageId: 0x%04X", MessageId);
+        return;
     }
-    return;
 }
 
-_Use_decl_annotations_
-void WifiIhvSendIndicationToOs(WDFDEVICE Device, PWDI_MESSAGE_HEADER pWdiHeader, UINT16 MessageId, UINT32 TransactionId, PUCHAR pTlvData, UINT32 TlvDataSize)
+void WifiIhvSendIndicationToOs(
+    _In_ WDFDEVICE Device, 
+    _In_ const PWDI_MESSAGE_HEADER pOriginalWdiHeader, 
+    _In_ UINT16 WifiRequestMessageId, 
+    _In_ UINT32 WifiRequestTransactionId, 
+    _In_ NTSTATUS WifiRquestM4Status,
+    _In_ PUCHAR pTlvData, 
+    _In_ UINT32 TlvDataSize)
 {
     WDFMEMORY data = WDF_NO_HANDLE;
     PUCHAR pIndicationBuffer = nullptr;
@@ -45,8 +57,9 @@ void WifiIhvSendIndicationToOs(WDFDEVICE Device, PWDI_MESSAGE_HEADER pWdiHeader,
     RtlZeroMemory(pIndicationBuffer, indicationSize);
     pIndicationHeader = reinterpret_cast<PWDI_MESSAGE_HEADER>(pIndicationBuffer);
 
-    RtlCopyMemory(pIndicationHeader, pWdiHeader, sizeof(WDI_MESSAGE_HEADER));
-    pIndicationHeader->TransactionId = TransactionId;
+    RtlCopyMemory(pIndicationHeader, pOriginalWdiHeader, sizeof(WDI_MESSAGE_HEADER));
+    pIndicationHeader->TransactionId = WifiRequestTransactionId;
+    pIndicationHeader->Status = Wifi::ConvertNDISSTATUSToNTSTATUS(WifiRquestM4Status);
 
     if (TlvDataSize > 0)
     {
@@ -54,193 +67,31 @@ void WifiIhvSendIndicationToOs(WDFDEVICE Device, PWDI_MESSAGE_HEADER pWdiHeader,
     }
 
     // Send the indication up to WifiCx
-    WifiDeviceReceiveIndication(Device, MessageId, data);
+    WifiDeviceReceiveIndication(Device, WifiRequestMessageId, data);
 
     // Don't need to keep this around
     WdfObjectDelete(data);
 }
 
 _Use_decl_annotations_
-static NTSTATUS ProcessWifiRequest(WDFDEVICE Device, UINT16 MessageId, void* Buffer, UINT InBufferLen, UINT OutBufferLen, UINT* pBytesWritten)
+void WifiIhvSendUnsolicitedIndicationToOs(WDFDEVICE Device, PWDI_MESSAGE_HEADER pWdiHeader, UINT16 MessageId, PUCHAR pTlvData, UINT32 TlvDataSize)
 {
-    NTSTATUS ntStatus = STATUS_SUCCESS;
-    PWIFI_IHV_DEVICE_CONTEXT deviceContext = WifiGetIhvDeviceContext(Device);
-    PWDI_MESSAGE_HEADER pWdiHeader = static_cast<PWDI_MESSAGE_HEADER>(Buffer);
-    UINT BytesWritten = sizeof(WDI_MESSAGE_HEADER);
-
-    if (InBufferLen < sizeof(WDI_MESSAGE_HEADER))
+    WifiIhvSendIndicationToOs(Device, pWdiHeader, MessageId, 0, STATUS_SUCCESS, pTlvData, TlvDataSize); //TransactionId required to be 0 for unsolicited indications.
+}
+_Use_decl_annotations_
+void WifiIhvNotifyM3Completion(WIFIREQUEST Request, NTSTATUS WifiRequestM3Status, UINT BytesWritten)
+{
+    if(!NT_SUCCESS(WifiRequestM3Status))
     {
-        return STATUS_INVALID_PARAMETER;
-    }
+        WFCError("WifiRequest M3 failed: %!STATUS!, BytesWritten: %d\n", WifiRequestM3Status, BytesWritten);
+    }   
+    // Report the M3 status back to OS
+    // OS expects M3 before the M4
+    WifiRequestComplete(Request, WifiRequestM3Status, BytesWritten);
+}
 
-    if (OutBufferLen < sizeof(WDI_MESSAGE_HEADER))
-    {
-        return STATUS_INVALID_PARAMETER;
-    }
-
-    auto const buffer = static_cast<UCHAR*>(Buffer);
-
-    // Check for integer overflow
-    if (!(buffer + InBufferLen > buffer))
-    {
-        return STATUS_INVALID_PARAMETER;
-    }
-
-    switch (MessageId)
-    {
-    case WDI_TASK_SET_RADIO_STATE:
-    {
-        WDI_SET_RADIO_STATE_PARAMETERS RadioStateParams = {};
-        ULONG TLVStreamLength = static_cast<ULONG>(InBufferLen - sizeof(WDI_MESSAGE_HEADER));
-        auto TLVByteStream = buffer +sizeof(WDI_MESSAGE_HEADER);
-
-        DumpMessageTlvByteStream(
-            WDI_TASK_SET_RADIO_STATE, TRUE, deviceContext->TlvContext.PeerVersion, TLVStreamLength, TLVByteStream, 0, nullptr);
-
-        WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-            Wifi::ConvertNDISSTATUSoNTSTATUS(
-                ParseWdiTaskSetRadioState(
-                    TLVStreamLength,
-                    TLVByteStream,
-                    &deviceContext->TlvContext,
-                    &RadioStateParams)),
-            "Set Radio State parsing failed");
-
-        // No WX_RETURN here since we need to cleanup.
-        ntStatus = deviceContext->wifiHAL->WifiIhvSetRadioState(
-            Device, RadioStateParams, pWdiHeader, &deviceContext->TlvContext);
-        if(!NT_SUCCESS(ntStatus)) 
-        {
-            WFCError("WifiIhvSetRadioState failed: %!STATUS!\n", ntStatus);
-        }
-
-        CleanupParsedWdiTaskSetRadioState(&RadioStateParams);
-    }
-    break;
-    case WDI_TASK_SCAN:
-    {
-        ULONG scanDataLength = static_cast<ULONG>(InBufferLen - sizeof(WDI_MESSAGE_HEADER));
-        auto pScanData = buffer + sizeof(WDI_MESSAGE_HEADER);
-
-        WDI_SCAN_PARAMETERS scanParams = {};
-
-        WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-            Wifi::ConvertNDISSTATUSoNTSTATUS(
-                ParseWdiTaskScan(
-                    scanDataLength,
-                    pScanData,
-                    &deviceContext->TlvContext, 
-                    &scanParams)),
-                "Scan parameters parsing failed");
-
-        // No WX_RETURN here since we need to cleanup.
-        ntStatus = deviceContext->wifiHAL->WifiIhvScan(
-            Device, scanParams, pWdiHeader, &deviceContext->TlvContext);
-        if (!NT_SUCCESS(ntStatus))
-        {
-            WFCError("WifiIhvSetRadioState failed: %!STATUS!\n", ntStatus);
-        }
-
-        CleanupParsedWdiTaskScan(&scanParams);
-    }
-    break;
-
-    case WDI_TASK_DOT11_RESET:
-    {
-        WDI_TASK_DOT11_RESET_PARAMETERS resetParameters;
-
-        ULONG resetDataLength = static_cast<ULONG>(InBufferLen - sizeof(WDI_MESSAGE_HEADER));
-        auto pResetData = buffer + sizeof(WDI_MESSAGE_HEADER);
-
-        WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-            Wifi::ConvertNDISSTATUSoNTSTATUS(ParseWdiTaskDot11Reset(resetDataLength, pResetData, &deviceContext->TlvContext, &resetParameters)),
-                "DOT11 Reset parameters parsing failed");
-
-        // No WX_RETURN here since we need to cleanup.
-        ntStatus = deviceContext->wifiHAL->WifiIhvReset(
-            Device, resetParameters, pWdiHeader, &deviceContext->TlvContext);
-        if (!NT_SUCCESS(ntStatus))
-        {
-            WFCError("WifiIhvReset failed: %!STATUS!\n", ntStatus);
-        }
-
-        CleanupParsedWdiTaskDot11Reset(&resetParameters);
-    }
-    break;
-
-    case WDI_TASK_CONNECT:
-    {
-        ULONG connectDataLength = static_cast<ULONG>(InBufferLen - sizeof(WDI_MESSAGE_HEADER));
-        auto pConnectData = buffer + sizeof(WDI_MESSAGE_HEADER);
-
-        DumpMessageTlvByteStream(WDI_TASK_CONNECT, TRUE, deviceContext->TlvContext.PeerVersion, connectDataLength, pConnectData, 0, nullptr);
-
-        WDI_TASK_CONNECT_PARAMETERS connectParams{};
-
-
-        // We search for the BSSID pattern to figure out what AP we are trying to connect to
-        WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-            Wifi::ConvertNDISSTATUSoNTSTATUS(ParseWdiTaskConnect(connectDataLength, pConnectData, &deviceContext->TlvContext, &connectParams)),
-                "Connect parameters parsing failed");
-        
-        // No WX_RETURN here since we need to cleanup.
-        ntStatus = deviceContext->wifiHAL->WifiIhvConnect(
-            Device, connectParams, pWdiHeader, &deviceContext->TlvContext);
-        if (!NT_SUCCESS(ntStatus))
-        {
-            WFCError("WifiIhvConnect failed: %!STATUS!\n", ntStatus);
-        }
-
-        CleanupParsedWdiTaskConnect(&connectParams);
-    }
-    break;
-
-    case WDI_TASK_DISCONNECT:
-    {
-        deviceContext->wifiHAL->WifiIhvPerformDisassociation(Device, pWdiHeader, WDI_ASSOC_STATUS_DISASSOCIATED_BY_HOST);
-    }
-    break;
-
-    case WDI_SET_PRIVACY_EXEMPTION_LIST:
-    case WDI_SET_DEFAULT_KEY_ID:
-    case WDI_SET_ADD_CIPHER_KEYS:
-    case WDI_SET_DELETE_CIPHER_KEYS:
-    case WDI_SET_RECEIVE_PACKET_FILTER:
-    case WDI_SET_CONNECTION_QUALITY:
-    case WDI_SET_ADAPTER_CONFIGURATION:
-        // Doing Nothing special
-        break;
-
-    case WDI_SET_SAE_AUTH_PARAMS:
-    {
-        WDI_SET_SAE_AUTH_PARAMS_COMMAND setSAEAuthParams;
-        
-        WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-            Wifi::ConvertNDISSTATUSoNTSTATUS(ParseWdiSetSaeAuthParams(
-            InBufferLen - sizeof(WDI_MESSAGE_HEADER), (PUINT8)buffer + sizeof(WDI_MESSAGE_HEADER), &deviceContext->TlvContext, &setSAEAuthParams)),
-            "Failed to parse WDI_SET_SAE_AUTH_PARAMS");
-
-        // No WX_RETURN here since we need to cleanup.
-        ntStatus = deviceContext->wifiHAL->WifiIhvSetSaeAuthParams(
-            Device, setSAEAuthParams, pWdiHeader, &deviceContext->TlvContext);
-        if (!NT_SUCCESS(ntStatus))
-        {
-            WFCError("WifiIhvSetSaeAuthParams failed: %!STATUS!\n", ntStatus);
-        }
-
-        CleanupParsedWdiSetSaeAuthParams(&setSAEAuthParams);
-    }
-    break;
-
-    default:
-        ntStatus = STATUS_NOT_SUPPORTED;
-        break;
-    }
-
-    // Set the output length
-    if (pBytesWritten)
-    {
-        *pBytesWritten = BytesWritten;
-    }
-    return ntStatus;
+_Use_decl_annotations_
+void WifiIhvSendM4IndicationToOs(WDFDEVICE Device, UINT16 WifiRequestMessageId, const PWDI_MESSAGE_HEADER pWdiHeader, NTSTATUS WifiRequestM4Status)
+{
+    WifiIhvSendIndicationToOs(Device, pWdiHeader, WifiRequestMessageId, pWdiHeader->TransactionId, WifiRequestM4Status, nullptr, 0);
 }

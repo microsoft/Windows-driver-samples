@@ -54,6 +54,9 @@
     <ClInclude Include="..\drivercode\wifihal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\drivercode\wifitransition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\drivercode\adapter.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\drivercode\wifihal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\drivercode\wifitransition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
