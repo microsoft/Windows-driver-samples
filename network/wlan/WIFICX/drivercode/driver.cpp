@@ -65,7 +65,7 @@ Return Value:
         return status;
     }
 
-    //TraceExit(status);
+    TraceExit(status);
 
     return status;
 }

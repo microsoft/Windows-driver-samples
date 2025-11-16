@@ -11,25 +11,18 @@ NTSTATUS EvtDevicePrepareHardware(WDFDEVICE device, WDFCMRESLIST resourcesRaw, W
 {
     UNREFERENCED_PARAMETER(resourcesRaw);
     UNREFERENCED_PARAMETER(resourcesTranslated);
-    UNREFERENCED_PARAMETER(device);
-    NTSTATUS status = STATUS_SUCCESS;
 
-    //status = WifiCxTestSetDeviceCapabilities(device);
-
-    if (!NT_SUCCESS(status))
-    {
-        WFCError("%!FUNC!: WifiCxTestSetDeviceCapabilities failed with %!STATUS!", status);
-        return status;
-    }
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        WifiHAL::_Create(device),
+        "WifiHAL::_Create failed");
 
     WFCInfo("Device=0x%p", device);
-    return status;
+    return STATUS_SUCCESS;
 }
 
 _Use_decl_annotations_
 NTSTATUS EvtDeviceReleaseHardware(WDFDEVICE device, WDFCMRESLIST resourcesTranslated)
 {
-    UNREFERENCED_PARAMETER(device);
     UNREFERENCED_PARAMETER(resourcesTranslated);
 
     WFCInfo("Device=0x%p", device);
@@ -40,24 +33,9 @@ NTSTATUS EvtDeviceReleaseHardware(WDFDEVICE device, WDFCMRESLIST resourcesTransl
 _Use_decl_annotations_
 void EvtDeviceSurpriseRemoval(WDFDEVICE device)
 {
-    UNREFERENCED_PARAMETER(device);
     WFCInfo("Device=0x%p is surprise removed", device);
 }
 
-static NTSTATUS WifiInitAdapterContext(_In_ WDFDEVICE Device, _In_ NETADAPTER NetAdapter)
-{
-    PWIFI_IHV_DEVICE_CONTEXT deviceContext = WifiGetIhvDeviceContext(Device);
-    PWIFI_IHV_NETADAPTER_CONTEXT netAdapterContext = WifiGetIhvNetAdapterContext(NetAdapter);
-    NTSTATUS status = STATUS_SUCCESS;
-    if (deviceContext->primaryStaAdapter == WDF_NO_HANDLE)
-    {
-        deviceContext->primaryStaAdapter = NetAdapter;
-    }
-
-    netAdapterContext->WifiDeviceContext = deviceContext;
-
-    return status;
-}
 
 _Use_decl_annotations_
 NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterInit)
@@ -73,39 +51,20 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WIFI_IHV_NETADAPTER_CONTEXT);
     adapterAttributes.EvtCleanupCallback = EvtAdapterCleanup;
 
-    NETADAPTER netAdapter;
-    NTSTATUS ntStatus = NetAdapterCreate(AdapterInit, &adapterAttributes, &netAdapter);
-    if (!NT_SUCCESS(ntStatus))
-    {
-        WFCError("%!FUNC!: NetAdapterCreate failed, status=0x%x", ntStatus);
-        return ntStatus;
-    }
+    NETADAPTER netAdapter{};
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        NetAdapterCreate(AdapterInit, &adapterAttributes, &netAdapter), "Failed to create NetAdapter");
 
-    ntStatus = WifiAdapterInitialize(netAdapter);
-    ASSERT(NT_SUCCESS(ntStatus));
-    if (!NT_SUCCESS(ntStatus))
-    {
-        WFCError("%!FUNC!: WifiAdapterInitialize failed with %!STATUS!", ntStatus);
-        return ntStatus;
-    }
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        WifiAdapterInitialize(netAdapter), "Failed to initialize WifiAdapter");
 
-    ntStatus = WifiInitAdapterContext(Device, netAdapter);
-    ASSERT(NT_SUCCESS(ntStatus));
-    if (!NT_SUCCESS(ntStatus))
-    {
-        WFCError("%!FUNC!: WifiInitAdapterContext failed with %!STATUS!", ntStatus);
-        return ntStatus;
-    }
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        WifiIhvInitAdapterContext(Device, netAdapter), "Failed to initialize WifiAdapterContext");
+    
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        WifiIhvAdapterStart(netAdapter), "Failed to start WifiIhvAdapter");
 
-    ntStatus = WifiCxTestAdapterStart(netAdapter);
-    ASSERT(NT_SUCCESS(ntStatus));
-    if (!NT_SUCCESS(ntStatus))
-    {
-        WFCError("%!FUNC!: WifiCxTestAdapterStart failed with %!STATUS!", ntStatus);
-        return ntStatus;
-    }
-
-    return ntStatus;
+    return STATUS_SUCCESS;
 }
 
 _Use_decl_annotations_

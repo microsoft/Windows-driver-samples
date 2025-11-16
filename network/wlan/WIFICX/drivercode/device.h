@@ -18,10 +18,7 @@ typedef struct _WIFI_IHV_DEVICE_CONTEXT
     //
     void* WdfTriageInfoPtr;
     WDFDEVICE WdfDevice;
-    WDI_GET_ADAPTER_CAPABILITIES_PARAMETERS AdapterCapabilities;
     TLV_CONTEXT TlvContext;
-    UINT32 LastConnectTransactionId;
-    WDI_AUTH_ALGORITHM LastAuthAlgo;
     NETADAPTER primaryStaAdapter;
     WifiHAL* wifiHAL;
 } WIFI_IHV_DEVICE_CONTEXT, * PWIFI_IHV_DEVICE_CONTEXT;

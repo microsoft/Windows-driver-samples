@@ -7,7 +7,23 @@
 #include "adapter.tmh"
 
 _Use_decl_annotations_
-NTSTATUS WifiCxTestAdapterStart(NETADAPTER netAdapter)
+NTSTATUS WifiIhvInitAdapterContext(_In_ WDFDEVICE Device, _In_ NETADAPTER NetAdapter)
+{
+    PWIFI_IHV_DEVICE_CONTEXT deviceContext = WifiGetIhvDeviceContext(Device);
+    PWIFI_IHV_NETADAPTER_CONTEXT netAdapterContext = WifiGetIhvNetAdapterContext(NetAdapter);
+
+    if (deviceContext->primaryStaAdapter == WDF_NO_HANDLE)
+    {
+        deviceContext->primaryStaAdapter = NetAdapter;
+    }
+
+    netAdapterContext->WifiDeviceContext = deviceContext;
+
+    return STATUS_SUCCESS;
+}
+
+_Use_decl_annotations_
+NTSTATUS WifiIhvAdapterStart(NETADAPTER netAdapter)
 {
     TraceEntry();
 

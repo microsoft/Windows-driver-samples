@@ -4,9 +4,6 @@
 
 EVT_WIFI_DEVICE_SEND_COMMAND EvtWifiDeviceSendCommand;
 
-static NTSTATUS ProcessWifiRequest(
-    _In_ WDFDEVICE Device, _In_ UINT16 MessageId, _In_ void* Buffer, _In_ UINT InBufferLen, _In_ UINT OutBufferLen, _In_ UINT* pBytesWritten);
-
 void WifiIhvSendUnsolicitedIndicationToOs(
     _In_ WDFDEVICE Device,
     _In_ PWDI_MESSAGE_HEADER pWdiHeader,

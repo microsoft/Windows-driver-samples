@@ -5,7 +5,27 @@
 class WifiHAL
 {
 public:
-    WifiHAL(_In_ WDFDEVICE Device);
+    static NTSTATUS _Create(_In_ WDFDEVICE Device);
+    static void _OnCleanup(_In_ WDFOBJECT Object);
+
+    // Default ctor so context memory can be zeroed by WDF without placement new
+    WifiHAL() = default;
+
+    // Initialization routine replacing the previous parameterized ctor usage
+    void Initialize(_In_ WDFDEVICE Device, _In_ PCTLV_CONTEXT TlvContext)
+    {
+        m_Device = Device;
+        m_TlvContext = TlvContext;
+        m_CurrentRadioState = 0;
+        m_LastConnectEntryId = 0;
+        m_LastConnectTransactionId = 0;
+        m_LastAuthAlgo = WDI_AUTH_ALGO_UNKNOWN;
+        RtlZeroMemory(&m_ConnectedPeer, sizeof(m_ConnectedPeer));
+        // Initialize link addresses and supported bands (previously in-class const init)
+        m_LocalLinkAddresses[0] = {0x11, 0x01, 0x02, 0x03, 0x04, 0x21};
+        m_LocalLinkAddresses[1] = {0x11, 0x01, 0x02, 0x03, 0x04, 0x22};
+        m_SupportedBands = (WDI_BAND_ID_2400 | WDI_BAND_ID_5000 | WDI_BAND_ID_6000);
+    }
 
     // Wifi request M3 working condition verification function
     NTSTATUS WifiIhvIsDeviceReadyForRequest();
@@ -34,10 +54,8 @@ private:
     WDI_AUTH_ALGORITHM m_LastAuthAlgo{};
     DOT11_MAC_ADDRESS m_ConnectedPeer{};
 
-    const WDI_MAC_ADDRESS m_LocalLinkAddresses[2] = {
-        {0x11, 0x01, 0x02, 0x03, 0x04, 0x21},
-        {0x11, 0x01, 0x02, 0x03, 0x04, 0x22},
-    };
-
-    const ULONG m_SupportedBands = (WDI_BAND_ID_2400 | WDI_BAND_ID_5000 | WDI_BAND_ID_6000);
+    // Removed const so we can initialize without running a constructor via placement new
+    WDI_MAC_ADDRESS m_LocalLinkAddresses[2];
+    ULONG m_SupportedBands;
 };
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WifiHAL, GetWifiHalFromHandle);

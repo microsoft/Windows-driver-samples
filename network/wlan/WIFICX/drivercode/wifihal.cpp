@@ -6,10 +6,35 @@
 #include "WifiHal.h"
 #include "WifiHal.tmh"
 
-WifiHAL::WifiHAL(WDFDEVICE Device)
+_Use_decl_annotations_
+NTSTATUS WifiHAL::_Create(WDFDEVICE Device)
 {
-    m_Device = Device;
-    m_TlvContext = &WifiGetIhvDeviceContext(Device)->TlvContext;
+    // Download firmware, initialize hardware, etc.
+
+    // Create WifiHAL object and associate it with Device context after FW ready
+    WDF_OBJECT_ATTRIBUTES attributes;
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, WifiHAL);
+    attributes.EvtCleanupCallback = WifiHAL::_OnCleanup;
+    attributes.ParentObject = Device;
+
+    void* memory = nullptr;
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        WdfObjectAllocateContext(Device, &attributes, &memory), "Failed to allocate WifiHAL context. Device=%p", Device);
+
+    // Obtain the context and initialize it
+    auto* wifiHal = reinterpret_cast<WifiHAL*>(memory);
+    wifiHal->Initialize(Device, &WifiGetIhvDeviceContext(Device)->TlvContext);
+
+    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
+        wifiHal->WifiIhvSetDeviceCapabilities(),
+        "Failed to set device capabilities. Device=%p", Device);
+
+    return STATUS_SUCCESS;
+}
+
+void WifiHAL::_OnCleanup(WDFOBJECT Object)
+{
+    UNREFERENCED_PARAMETER(Object);
 }
 
 NTSTATUS WifiHAL::WifiIhvIsDeviceReadyForRequest()
