@@ -10,9 +10,10 @@ Files:
 * WDKBatchBuild.ps1 <-- Main script. Change bottom part to refine functionality.
 * WDKBatchBuild_Internal.ps1. Auxillary function.
 
-Tricks:
+Nifty Tricks:
 * Nifty lazy ISO file copy.  Only copies if necessary.
 * Nifty lazy ISO extraction.  Caches EWDKs.  Only extracts what is necessary.
+* Nifty NTFS Junction mount of each EWDK to same junction location, so that the EWDK Root is identical for each build.  This eliminates any output changes due to EWDK root.
 * Nifty trick to invoke build environment and build:
   * Does following N times:
     * Starts out in main PowerShell script
@@ -30,3 +31,6 @@ Assumptions:
   * Input ISOs in D:\wds\ISOs
   * Temporary EWDKs extracted to D:\wds\EWDKs
   * Output runs in D:\wds\Runs
+
+Issues:
+* I suspect that occasionally among other the MSVC toolset's mspdbsrv does not terminate after runs.  Leaving active processes.  It seems this - much to my surprise - does not prevent removing the NTFS Junction (where as a recursive delete may fail).  Report if you see this sort of issue please.
