@@ -1,9 +1,6 @@
 name: Close inactive issues
 on:
   workflow_dispatch:
-  schedule:
-    # Runs every Monday at 06:00 PST (14:00 UTC)
-    - cron: '0 14 * * 1'
 jobs:
   close-issues:
     runs-on: ubuntu-latest
@@ -13,9 +10,7 @@ jobs:
       - uses: actions/stale@v10
         with:
           days-before-issue-stale: 365
-          days-before-issue-close: 31
           stale-issue-label: "stale"
           stale-issue-message: "This issue has been inactive for a year. It will be closed in 31 days if no further activity occurs. If you believe this issue is still relevant, please comment to keep it open."
-          close-issue-message: "Closing due to prolonged inactivity."
           operations-per-run: 400
           repo-token: ${{ secrets.GITHUB_TOKEN }}
