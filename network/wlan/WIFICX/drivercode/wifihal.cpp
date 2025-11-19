@@ -15,7 +15,6 @@ NTSTATUS WifiHAL::_Create(WDFDEVICE Device)
     WDF_OBJECT_ATTRIBUTES attributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, WifiHAL);
     attributes.EvtCleanupCallback = WifiHAL::_OnCleanup;
-    attributes.ParentObject = Device;
 
     void* memory = nullptr;
     WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
@@ -32,6 +31,7 @@ NTSTATUS WifiHAL::_Create(WDFDEVICE Device)
     return STATUS_SUCCESS;
 }
 
+_Use_decl_annotations_
 void WifiHAL::_OnCleanup(WDFOBJECT Object)
 {
     UNREFERENCED_PARAMETER(Object);
@@ -56,7 +56,7 @@ NTSTATUS WifiHAL::WifiIhvSetDeviceCapabilities()
 
     deviceCaps.HardwareRadioState = TRUE;
     deviceCaps.SoftwareRadioState = TRUE;
-    deviceCaps.FirmwareVersion[MAX_FIRMWARE_VERSION_LENGTH];
+    RtlCopyMemory(deviceCaps.FirmwareVersion, "1.0.0", sizeof("1.0.0"));
     deviceCaps.ActionFramesSupported = TRUE;
     deviceCaps.NumRxStreams = 1;
     deviceCaps.NumTxStreams = 1;
@@ -475,6 +475,7 @@ NTSTATUS WifiHAL::WifiIhvSetDeviceCapabilities()
     return STATUS_SUCCESS;
 }
 
+_Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParameters, const PWDI_MESSAGE_HEADER, UINT)
 {
     if (0 == ResetParameters.Optional.ResetMACAddress_IsPresent)
@@ -573,6 +574,7 @@ NTSTATUS WifiHAL::WifiIhvScan(const WDI_SCAN_PARAMETERS& ScanParameters, const P
     return STATUS_SUCCESS;
 }
 
+_Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     NT_ASSERT(m_LastConnectEntryId == 0);
@@ -787,6 +789,7 @@ NTSTATUS WifiHAL::WifiIhvPerformAssociation(
     return ntStatus;
 }
 
+_Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvSetSaeAuthParams(const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     //Since this is DIRECT OID, need to check the m_LastConnectTransactionId match

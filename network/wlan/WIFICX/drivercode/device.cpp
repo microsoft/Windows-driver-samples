@@ -31,13 +31,6 @@ NTSTATUS EvtDeviceReleaseHardware(WDFDEVICE device, WDFCMRESLIST resourcesTransl
 }
 
 _Use_decl_annotations_
-void EvtDeviceSurpriseRemoval(WDFDEVICE device)
-{
-    WFCInfo("Device=0x%p is surprise removed", device);
-}
-
-
-_Use_decl_annotations_
 NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterInit)
 {
 
@@ -65,6 +58,15 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
         WifiIhvAdapterStart(netAdapter), "Failed to start WifiIhvAdapter");
 
     return STATUS_SUCCESS;
+}
+
+_Use_decl_annotations_
+NTSTATUS EvtWifiDeviceCreateWifiDirectDevice(WDFDEVICE, WIFIDIRECT_DEVICE_INIT*)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+    TraceEntry();
+    TraceExit(status);
+    return status;
 }
 
 _Use_decl_annotations_

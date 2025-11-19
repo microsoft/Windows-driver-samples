@@ -1,11 +1,11 @@
-;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
 ; wificxsampleclientkm.inf
 ;
 
 [Version]
 Signature   = "$WINDOWS NT$"
-Class       = System ; TODO: specify appropriate Class
-ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Class       = NET
+ClassGuid   = {4d36e972-e325-11ce-bfc1-08002be10318}
 Provider    = %ManufacturerName%
 CatalogFile = wificxsampleclientkm.cat
 DriverVer   = ; TODO: set DriverVer in stampinf property pages
@@ -28,16 +28,25 @@ wificxsampleclientkm.sys = 1,,
 %ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
 
 [Standard.NT$ARCH$.10.0...16299]
-%wificxsampleclientkm.DeviceDesc% = wificxsampleclientkm_Device, Root\wificxsampleclientkm ; TODO: edit hw-id
+%wificxsampleclientkm.DeviceDesc% = wificxsampleclientkm_Device.ndi, Root\wificxsampleclientkm
 
-[wificxsampleclientkm_Device.NT]
+;
+; Normal device - Networking Section
+;
+[wificxsampleclientkm_Device.ndi.NT]
 CopyFiles = File_Copy
+Characteristics = 0x84      ; NCF_HAS_UI, NCF_PHYSICAL
+BusType         = 0         ; Internal
+AddReg          = wificxsampleclientkm.reg
+*IfType         = 71        ; IF_TYPE_IEEE80211
+*MediaType      = 16        ; NdisMediumNative802_11
+*PhysicalMediaType = 9      ; NdisPhysicalMediumNative802_11
 
 [File_Copy]
 wificxsampleclientkm.sys
 
 ;-------------- Service installation
-[wificxsampleclientkm_Device.NT.Services]
+[wificxsampleclientkm_Device.ndi.NT.Services]
 AddService = wificxsampleclientkm,%SPSVCINST_ASSOCSERVICE%, wificxsampleclientkm_Service_Inst
 
 ; -------------- wificxsampleclientkm driver install sections
@@ -48,15 +57,30 @@ StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %13%\wificxsampleclientkm.sys
 
-[wificxsampleclientkm_Device.NT.Wdf]
+[wificxsampleclientkm_Device.ndi.NT.Wdf]
 KmdfService = wificxsampleclientkm, wificxsampleclientkm_wdfsect
 
 [wificxsampleclientkm_wdfsect]
 KmdfLibraryVersion = $KMDFVERSION$
 
+
+[wificxsampleclientkm.reg]
+HKR, Ndi,             Service,    0, "wificxsampleclientkm"
+HKR, Ndi\Interfaces,  UpperRange, 0, "ndis5"
+HKR, Ndi\Interfaces,  LowerRange, 0, "wlan,ethernet"
+; standard INF keywords for NetAdapter drivers
+; using AddReg directive so they will work when this INF being Includes/Needs
+
+HKR, NetworkInterface, *IfConnectorPresent, 0x00010001, 1
+HKR, NetworkInterface, *ConnectionType, 0x00010001, 1     
+HKR, NetworkInterface, *DirectionType, 0x00010001, 0      
+HKR, NetworkInterface, *AccessType, 0x00010001, 2         
+HKR, NetworkInterface, *HardwareLoopback, 0x00010001, 0   
+HKR, , NumberOfNetworkInterfaces, 0x00010001, 11
+
 [Strings]
 SPSVCINST_ASSOCSERVICE = 0x00000002
-ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
-DiskName = "wificxsampleclientkm Installation Disk"
-wificxsampleclientkm.DeviceDesc = "wificxsampleclientkm Device"
-wificxsampleclientkm.SVCDESC = "wificxsampleclientkm Service"
+ManufacturerName = "WDK Sample"
+DiskName = "Wificxsampleclientkm Installation Disk"
+wificxsampleclientkm.DeviceDesc = "Wificxsampleclientkm Device"
+wificxsampleclientkm.SVCDESC = "Wificxsampleclientkm Service"

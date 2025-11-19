@@ -156,7 +156,7 @@ Return Value:
         WDI_VERSION_LATEST,         // The "WDI" version supported by this Ihv driver
         EvtWifiDeviceSendCommand,   // The Wdi command and task, now called "wifirequest".
         EvtWifiDeviceCreateAdapter, // The Wdi "ports", now support by the netadapter instances.
-        nullptr);                   // [Scope: No WiFi Direct support in this sample]
+        EvtWifiDeviceCreateWifiDirectDevice); // [Scope: No WiFi Direct support in this sample]
 
     // Initialize the WifiCx device with the configuration above to let OS side ready.
     status = WifiDeviceInitialize(wdfIhvDevice, &wifiDeviceConfig);

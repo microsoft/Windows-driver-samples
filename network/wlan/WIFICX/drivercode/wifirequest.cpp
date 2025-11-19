@@ -36,7 +36,7 @@ void WifiIhvSendIndicationToOs(
     _In_ UINT16 WifiRequestMessageId, 
     _In_ UINT32 WifiRequestTransactionId, 
     _In_ NTSTATUS WifiRquestM4Status,
-    _In_ PUCHAR pTlvData, 
+    _In_opt_bytecount_(TlvDataSize) PUCHAR pTlvData,
     _In_ UINT32 TlvDataSize)
 {
     WDFMEMORY data = WDF_NO_HANDLE;
@@ -56,12 +56,13 @@ void WifiIhvSendIndicationToOs(
 
     RtlZeroMemory(pIndicationBuffer, indicationSize);
     pIndicationHeader = reinterpret_cast<PWDI_MESSAGE_HEADER>(pIndicationBuffer);
-
-    RtlCopyMemory(pIndicationHeader, pOriginalWdiHeader, sizeof(WDI_MESSAGE_HEADER));
-    pIndicationHeader->TransactionId = WifiRequestTransactionId;
+    pIndicationHeader->PortId = pOriginalWdiHeader->PortId;
+    pIndicationHeader->Reserved = pOriginalWdiHeader->Reserved;
     pIndicationHeader->Status = Wifi::ConvertNDISSTATUSToNTSTATUS(WifiRquestM4Status);
+    pIndicationHeader->TransactionId = WifiRequestTransactionId;
+    pIndicationHeader->IhvSpecificId = pOriginalWdiHeader->IhvSpecificId;
 
-    if (TlvDataSize > 0)
+    if (TlvDataSize > 0 && pTlvData != nullptr)
     {
         RtlCopyMemory(pIndicationBuffer + sizeof(WDI_MESSAGE_HEADER), pTlvData, TlvDataSize);
     }
