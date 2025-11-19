@@ -2,6 +2,7 @@
 //
 //  Microsoft Windows
 //  Copyright (C) Microsoft Corporation, 2001.
+//  SPDX-License-Identifier: MS-PL
 //
 //  File:       C O M P O N E N T . C P P
 //

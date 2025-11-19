@@ -1,5 +1,6 @@
 //
 // stdafx.h -- Copyright (c) Microsoft Corporation
+// stdafx.h -- SPDX-License-Identifier: MS-PL
 //
 // Author: zaneh
 //

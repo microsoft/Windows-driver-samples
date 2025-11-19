@@ -1,6 +1,7 @@
 /**************************************************************************
 *
 *  Copyright © Microsoft Corporation
+*  SPDX-License-Identifier: MS-PL
 *
 *  File Title:  FileConv.h
 *

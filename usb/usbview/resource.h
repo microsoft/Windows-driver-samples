@@ -1,5 +1,6 @@
 /*++
 Copyright (c) 1998-2008 Microsoft Corporation, All Rights Reserved.
+SPDX-License-Identifier: MS-PL
 --*/
 
 #define IDD_MAINDIALOG                  101

@@ -1,4 +1,5 @@
 // Copyright (C) Microsoft Corporation, All Rights Reserved.
+// SPDX-License-Identifier: MS-PL
 //
 // Abstract:
 //     This module contains the implementation of entry and exit point of activity sample driver.

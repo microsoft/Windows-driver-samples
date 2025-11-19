@@ -1,5 +1,6 @@
 //
 // Copyright (C) Microsoft Corporation 2005
+// SPDX-License-Identifier: MS-PL
 // IHV UI Extension sample
 //
 

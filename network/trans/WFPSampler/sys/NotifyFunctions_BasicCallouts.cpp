@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //   Copyright (c) 2012 Microsoft Corporation.  All Rights Reserved.
+//   SPDX-License-Identifier: MS-PL
 //
 //   Module Name:
 //      NotifyFunctions_BasicCallouts.cpp

@@ -1,4 +1,5 @@
 // AudioMediaType.cpp -- Copyright (c) 2003 Microsoft Corporation
+// AudioMediaType.cpp -- SPDX-License-Identifier: MS-PL
 //
 //
 // Description:

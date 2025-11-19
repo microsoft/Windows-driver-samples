@@ -2,6 +2,7 @@
 * NewDelete.cpp -  CPP placement new and delete operators implementation
 *****************************************************************************
 * Copyright (c) Microsoft Corporation All Rights Reserved
+* SPDX-License-Identifier: MS-PL
 *
 * Module Name:
 *
