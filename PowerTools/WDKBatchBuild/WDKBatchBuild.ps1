@@ -175,12 +175,12 @@ function WithEWDK {
 
     if (Test-Path -LiteralPath "D:\wds\EWDK") {
         Write-Host "Removing old junction D:\wds\EWDK {"
-        # Remove-Item -Recurse -Force -ErrorAction Stop -LiteralPath "EWDK" 
+        # Remove-Item -Recurse -Force -ErrorAction Stop -LiteralPath "D:\wds\EWDK" 
         Remove-Item -LiteralPath "D:\wds\EWDK" -ErrorAction Stop
         Write-Host "Removing old junction D:\wds\EWDK }"
     }
     New-Item -ItemType Junction -Path "D:\wds\EWDK" -Target "D:\wds\EWDKs\$EWDK"
-    #robocopy /mir /nfl /ndl "D:\wds\EWDKs\$EWDK" "EWDK"
+    #robocopy /mir /nfl /ndl "D:\wds\EWDKs\$EWDK" "D:\wds\EWDK"
 
     $CmdScriptPath = "D:\wds\EWDK\BuildEnv\SetupBuildEnv.cmd"
 
@@ -215,29 +215,18 @@ $ErrorActionPreference = 'Stop'
 
 cd D:\wds\wds1
 
-Write-Host "Copy-IfMissingSizeTime {"
-# OneNote:
-# https://microsoft.sharepoint.com/teams/SiGMaDPLAT/_layouts/Doc.aspx?sourcedoc={89648DE7-78BA-4E7E-9F70-9257502ED5BD}&wd=target%28Kit%20Version%20Decoder.one%7C48377E65-EE15-4113-94CE-FF331734A26F%2FWDK%20Releases%20%28with%20matching%20SDK%20%26VS%5C%29%7C9663D5A2-0317-49F6-B2F5-DA60F3362227%2F%29&wdpartid={659AAA9F-4377-41A0-85B4-83A40DA14DB6}{1}&wdsectionfileid={90CB00ED-46C6-40E7-82C3-06E920FF4CA7}
-# onenote:https://microsoft.sharepoint.com/teams/SiGMaDPLAT/Shared%20Documents/Teams/DPLAT/DDX/Notebooks/PM%20Work%20Area/Kit%20Version%20Decoder.one#WDK%20Releases%20(with%20matching%20SDK%20VS)&section-id={48377E65-EE15-4113-94CE-FF331734A26F}&page-id={9663D5A2-0317-49F6-B2F5-DA60F3362227}&end
-
-#Copy-IfMissingSizeTime -Source '\\winbuilds\release\vb_release_svc_prod1\19041.685.201201-2105\amd64fre\iso\iso_EWDK\EWDK_vb_release_svc_prod1_19041_201201-2105.iso' -Destination 'D:\wds\ISOs\EWDK_19041.685.201201-2105.iso'
-#Copy-IfMissingSizeTime -Source '\\winbuilds\release\vb_release_svc_im\19041.5738.250408-1639\amd64fre\iso\iso_EWDK\EWDK_vb_release_svc_im_19041_250408-1639.iso' -Destination 'D:\wds\ISOs\EWDK_19041.5738.250408-1639.iso'
-#Copy-IfMissingSizeTime -Source '\\winbuilds\release\ge_release\26100.1.240331-1435\amd64fre\iso\iso_EWDK\EWDK_ge_release_26100_240331-1435.iso' -Destination 'D:\wds\ISOs\EWDK_26100.1.240331-1435.iso'
-#Copy-IfMissingSizeTime -Source '\\ntdev\Release\ge_release_svc_prod3\26100.6725.250925-1604\amd64fre\iso\iso_EWDK\EWDK_ge_release_svc_prod3_26100_250925-1604.iso' -Destination 'D:\wds\ISOs\EWDK_26100.6725.250925-1604.iso'
-Write-Host "Copy-IfMissingSizeTime }"
-
 Write-Host "Copy-IsoContent {"
-#Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.685.201201-2105.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.685.201201-2105'
-#Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.685.201201-2105.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.685.201201-2105-copy'
-#Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.5738.250408-1639.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.5738.250408-1639'
-#Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_26100.1.240331-1435.iso' -Destination 'D:\wds\EWDKs\EWDK_26100.1.240331-1435'
-#Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_26100.6725.250925-1604.iso' -Destination 'D:\wds\EWDKs\EWDK_26100.6725.250925-1604'
+Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.685.201201-2105.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.685.201201-2105'
+Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.685.201201-2105.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.685.201201-2105-copy'
+Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_19041.5738.250408-1639.iso' -Destination 'D:\wds\EWDKs\EWDK_19041.5738.250408-1639'
+Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_26100.1.240331-1435.iso' -Destination 'D:\wds\EWDKs\EWDK_26100.1.240331-1435'
+Copy-IsoContent -IsoPath 'D:\wds\ISOs\EWDK_26100.6725.250925-1604.iso' -Destination 'D:\wds\EWDKs\EWDK_26100.6725.250925-1604'
 Write-Host "Copy-IsoContent }"
 
 Write-Host "Build {"
-#WithEWDK 'EWDK_19041.685.201201-2105'
-#WithEWDK 'EWDK_19041.685.201201-2105-copy'
-#WithEWDK 'EWDK_19041.5738.250408-1639'
-#WithEWDK 'EWDK_26100.1.240331-1435'
+WithEWDK 'EWDK_19041.685.201201-2105'
+WithEWDK 'EWDK_19041.685.201201-2105-copy'
+WithEWDK 'EWDK_19041.5738.250408-1639'
+WithEWDK 'EWDK_26100.1.240331-1435'
 WithEWDK 'EWDK_26100.6725.250925-1604'
 Write-Host "Build }"
