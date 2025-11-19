@@ -187,7 +187,7 @@ function WithEWDK {
     $pwshArgs = @(
             '-NoLogo','-NoProfile',
             '-ExecutionPolicy','Bypass',
-            '-File', 'D:\wds\wds1\PowerTools\WDKBatchBuild\BuildRec.ps1',
+            '-File', 'D:\wds\wds1\PowerTools\WDKBatchBuild\WDKBatchBuild_Internal.ps1',
             '-Phase','AfterCmd'
         ) -join ' '
 
