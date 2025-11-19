@@ -187,7 +187,7 @@ function WithEWDK {
     $pwshArgs = @(
             '-NoLogo','-NoProfile',
             '-ExecutionPolicy','Bypass',
-            '-File', 'BuildRec.ps1',
+            '-File', 'D:\wds\wds1\PowerTools\WDKBatchBuild\BuildRec.ps1',
             '-Phase','AfterCmd'
         ) -join ' '
 
@@ -196,7 +196,7 @@ function WithEWDK {
     Write-Host "& $env:ComSpec /s /c $cmdPayload"
     & $env:ComSpec /s /c $cmdPayload
 
-    robocopy /mir /nfl /ndl "wds1" "D:\wds\Runs\$EWDK"
+    robocopy /mir /nfl /ndl "." "D:\wds\Runs\$EWDK"
 
     git clean -xdf
     git status --ignored
@@ -239,5 +239,5 @@ Write-Host "Build {"
 #WithEWDK 'EWDK_19041.685.201201-2105-copy'
 #WithEWDK 'EWDK_19041.5738.250408-1639'
 #WithEWDK 'EWDK_26100.1.240331-1435'
-#WithEWDK 'EWDK_26100.6725.250925-1604'
+WithEWDK 'EWDK_26100.6725.250925-1604'
 Write-Host "Build }"
