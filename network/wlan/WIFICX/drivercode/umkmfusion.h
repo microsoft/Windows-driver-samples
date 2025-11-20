@@ -23,18 +23,47 @@ namespace Wifi
     }
 
     __inline
-    NTSTATUS ConvertNDISSTATUSToNTSTATUS(NDIS_STATUS ndisStatus)
+    NTSTATUS ConvertNDISSTATUSToNTSTATUS(NDIS_STATUS NdisStatus)
     {
-        // NDIS_STATUS_SUCCESS is 0x00000000
-        // Any non-success NDIS status should map to STATUS_UNSUCCESSFUL
-        return (ndisStatus == NDIS_STATUS_SUCCESS) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+        if (NT_SUCCESS(NdisStatus) && NdisStatus != NDIS_STATUS_SUCCESS && NdisStatus != NDIS_STATUS_PENDING &&
+            NdisStatus != NDIS_STATUS_INDICATION_REQUIRED)
+        {
+            // Case where an NDIS error is incorrectly mapped as a success by NT_SUCCESS macro
+            return STATUS_UNSUCCESSFUL;
+        }
+        else
+        {
+            switch (NdisStatus)
+            {
+            case NDIS_STATUS_BUFFER_TOO_SHORT:
+                return STATUS_BUFFER_TOO_SMALL;
+                break;
+            default:
+                return (NTSTATUS)NdisStatus;
+                break;
+            }
+        }
     }
 
     __inline
-    NDIS_STATUS ConvertNTSTATUSToNDISSTATUS(NTSTATUS ntStatus)
+    NDIS_STATUS ConvertNTSTATUSToNDISSTATUS(NTSTATUS NtStatus)
     {
-        // Use NT_SUCCESS macro to check NTSTATUS
-        return NT_SUCCESS(ntStatus) ? NDIS_STATUS_SUCCESS : NDIS_STATUS_FAILURE;
+        if (NT_SUCCESS(NtStatus) && NtStatus != STATUS_PENDING && NtStatus != STATUS_NDIS_INDICATION_REQUIRED)
+        {
+            return NDIS_STATUS_SUCCESS;
+        }
+        else
+        {
+            switch (NtStatus)
+            {
+            case STATUS_BUFFER_TOO_SMALL:
+                return NDIS_STATUS_BUFFER_TOO_SHORT;
+                break;
+            default:
+                return (NDIS_STATUS)NtStatus;
+                break;
+            }
+        }
     }
 
     _Must_inspect_result_

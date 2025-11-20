@@ -82,5 +82,5 @@ HKR, , NumberOfNetworkInterfaces, 0x00010001, 11
 SPSVCINST_ASSOCSERVICE = 0x00000002
 ManufacturerName = "WDK Sample"
 DiskName = "Wificxsampleclientkm Installation Disk"
-wificxsampleclientkm.DeviceDesc = "Wificxsampleclientkm Device"
+wificxsampleclientkm.DeviceDesc = "[KMDF]Wificx Sample Client Device"
 wificxsampleclientkm.SVCDESC = "Wificxsampleclientkm Service"

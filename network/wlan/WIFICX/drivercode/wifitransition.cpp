@@ -96,7 +96,7 @@ struct GenericTransitionTraits
         if (TPreM3Fn)
         {
             // Call member function pointer on WifiHAL instance
-            NTSTATUS preStatus = (c.DevCtx->wifiHAL->*TPreM3Fn)();
+            NTSTATUS preStatus = (GetWifiHalFromHandle(c.DevCtx->WdfDevice)->*TPreM3Fn)();
             if (!NT_SUCCESS(preStatus))
             {
                 return preStatus;
@@ -106,7 +106,7 @@ struct GenericTransitionTraits
         if (THalM3Fn)
         {
             // Pass required third argument (BytesWriten) to HAL M3 function
-            return (c.DevCtx->wifiHAL->*THalM3Fn)(p, c.Header, bytesWritten);
+            return (GetWifiHalFromHandle(c.DevCtx->WdfDevice)->*THalM3Fn)(p, c.Header, bytesWritten);
         }
 
         return STATUS_SUCCESS;
@@ -116,7 +116,7 @@ struct GenericTransitionTraits
     {
         if (TPreM4Fn)
         {
-            NTSTATUS preStatus = (c.DevCtx->wifiHAL->*TPreM4Fn)();
+            NTSTATUS preStatus = (GetWifiHalFromHandle(c.DevCtx->WdfDevice)->*TPreM4Fn)();
             if (!NT_SUCCESS(preStatus))
             {
                 return preStatus;
@@ -125,7 +125,7 @@ struct GenericTransitionTraits
 
         if (THalM4Fn)
         {
-            return (c.DevCtx->wifiHAL->*THalM4Fn)(c.Header);
+            return (GetWifiHalFromHandle(c.DevCtx->WdfDevice)->*THalM4Fn)(c.Header);
         }
 
         return (TPreM4Fn == nullptr && THalM4Fn == nullptr) ? STATUS_PENDING : STATUS_SUCCESS;

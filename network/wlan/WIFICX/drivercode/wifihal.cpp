@@ -39,9 +39,20 @@ void WifiHAL::_OnCleanup(WDFOBJECT Object)
 
 NTSTATUS WifiHAL::WifiIhvIsDeviceReadyForRequest()
 {
-    return ((m_Device != WDF_NO_HANDLE) // Make sure device is initialized (since this is hardware abstraction layer, IHV can replace with firmware state)
+    NTSTATUS status = 
+         ((m_Device != WDF_NO_HANDLE) // Make sure device is initialized (since this is hardware abstraction layer, IHV can replace with firmware state)
         && (WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter != WDF_NO_HANDLE) // In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
         && (m_CurrentRadioState == TRUE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY); // Device is ready only if radio is ON (this may be replaced by other state in IHV implementation)
+
+    if(NT_SUCCESS(status) == FALSE)
+    {
+        WFCError(
+            "Device not ready for request. Device=%p, primaryStaAdapter=%p, CurrentRadioState=%u",
+            m_Device,
+            (m_Device != WDF_NO_HANDLE) ? WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter : WDF_NO_HANDLE,
+            m_CurrentRadioState);
+    }
+    return status;
 }
 
 NTSTATUS WifiHAL::WifiIhvGetPendingTransitionStatus()
@@ -504,6 +515,7 @@ NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParam
 _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
+    WFCInfo("Setting OS requested Radio State: SoftwareRadioState=%u\n", RadioState.SoftwareRadioState);
     if (RadioState.SoftwareRadioState != m_CurrentRadioState)
     {
         // Change the radio state
@@ -518,6 +530,7 @@ NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& Rad
         RadioStatusParams.RadioState.SoftwareState = m_CurrentRadioState;
         if (GenerateWdiIndicationRadioStatus(&RadioStatusParams, 0, m_TlvContext, &cbOutput, &pOutput) == NDIS_STATUS_SUCCESS)
         {
+            WFCInfo("Indicate OS with Radio State: SoftwareRadioState=%u\n", m_CurrentRadioState);
             WifiIhvSendUnsolicitedIndicationToOs(m_Device, pWdiHeader, WDI_INDICATION_RADIO_STATUS, pOutput, cbOutput);
             FreeGenerated(pOutput);
         }

@@ -27,20 +27,24 @@ NTSTATUS WifiIhvAdapterStart(NETADAPTER netAdapter)
 {
     TraceEntry();
 
-    ULONG64 maxXmitLinkSpeed = WIFI_MEDIA_MAX_SPEED;
-    ULONG64 maxRcvLinkSpeed = WIFI_MEDIA_MAX_SPEED;
-
-    NET_ADAPTER_LINK_LAYER_CAPABILITIES linkLayerCapabilities;
-    NET_ADAPTER_LINK_LAYER_CAPABILITIES_INIT(&linkLayerCapabilities, maxXmitLinkSpeed, maxRcvLinkSpeed);
-
-    NetAdapterSetLinkLayerCapabilities(netAdapter, &linkLayerCapabilities);
-
-    NetAdapterSetLinkLayerMtuSize(netAdapter, WIFI_MAX_PACKET_SIZE);
-
     static WDI_MAC_ADDRESS STAAddress = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
     NET_ADAPTER_LINK_LAYER_ADDRESS permanentLinkLayerAddress;
     NET_ADAPTER_LINK_LAYER_ADDRESS_INIT(&permanentLinkLayerAddress, sizeof(WDI_MAC_ADDRESS), STAAddress.Address);
+    NetAdapterSetCurrentLinkLayerAddress(netAdapter, &permanentLinkLayerAddress);
     NetAdapterSetPermanentLinkLayerAddress(netAdapter, &permanentLinkLayerAddress);
+    
+    // Sample Phase 1 has no datapath support, so setting those values to the default one.
+    NET_ADAPTER_TX_CAPABILITIES txCaps;
+    NET_ADAPTER_RX_CAPABILITIES rxCaps;
+    NET_ADAPTER_LINK_LAYER_CAPABILITIES linkLayerCaps;
+
+    NET_ADAPTER_TX_CAPABILITIES_INIT(&txCaps, 1);
+    NET_ADAPTER_RX_CAPABILITIES_INIT_SYSTEM_MANAGED(&rxCaps, 1514, 1);
+    NET_ADAPTER_LINK_LAYER_CAPABILITIES_INIT(&linkLayerCaps, 0, 0);
+
+    NetAdapterSetLinkLayerMtuSize(netAdapter, 1500);
+    NetAdapterSetLinkLayerCapabilities(netAdapter, &linkLayerCaps);
+    NetAdapterSetDataPathCapabilities(netAdapter, &txCaps, &rxCaps);
 
     WIFI_ADAPTER_WAKE_CAPABILITIES wakeCap{};
     WIFI_ADAPTER_WAKE_CAPABILITIES_INIT(&wakeCap);
