@@ -467,21 +467,23 @@ DumpValueInfo(
 BOOL
 CLM_AttachConsole()
 {
-    HANDLE  stdOut = INVALID_HANDLE_VALUE;
-    int     osfStdOut = -1;
     FILE    *cStdOut = NULL;
 
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
-        stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+#if _MSC_VER >= 1700
+        freopen_s(&cStdOut, "CON", "w", stdout);
+#else
+        HANDLE stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
         if (INVALID_HANDLE_VALUE != stdOut)
         {
-            osfStdOut = _open_osfhandle((intptr_t)stdOut, _O_TEXT);
+            int osfStdOut = _open_osfhandle((intptr_t)stdOut, _O_TEXT);
             if (-1 != osfStdOut)
             {
                 cStdOut = _fdopen(osfStdOut, "w");
             }
         }
+#endif
     }
 
     if (NULL == cStdOut)
