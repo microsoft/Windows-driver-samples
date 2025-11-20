@@ -112,6 +112,7 @@ Return Value:
     // the framework driver object is deleted during driver unload.
     //
     WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+    
     attributes.EvtCleanupCallback = SerialEvtDriverContextCleanup;
 
     WDF_DRIVER_CONFIG_INIT(&config, SerialEvtDeviceAdd);
