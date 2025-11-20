@@ -1,7 +1,8 @@
+// Copyright (C) Microsoft Corporation. All rights reserved.
 #pragma once
 #include "precomp.h"
 #include "wifiHAL.h"
-#include "wifirequest.h" // WifiIhvSendM4IndicationToOs, DumpMessageTlvByteStream, Wifi::ConvertNDISSTATUSToNTSTATUS
+#include "wifirequest.h"
 
 // Generic execution context passed between steps and parse/handle
 struct TransitionContext

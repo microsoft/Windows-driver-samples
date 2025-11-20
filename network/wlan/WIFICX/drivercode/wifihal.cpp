@@ -37,20 +37,33 @@ void WifiHAL::_OnCleanup(WDFOBJECT Object)
     UNREFERENCED_PARAMETER(Object);
 }
 
+_Use_decl_annotations_
+void WifiHAL::Initialize(WDFDEVICE Device, PCTLV_CONTEXT TlvContext)
+{
+    m_Device = Device;
+    m_TlvContext = TlvContext;
+    m_CurrentRadioState = 1; // On by default
+    m_LastConnectEntryId = 0;
+    m_LastConnectTransactionId = 0;
+    m_LastAuthAlgo = WDI_AUTH_ALGO_UNKNOWN;
+    RtlZeroMemory(&m_ConnectedPeer, sizeof(m_ConnectedPeer));
+    // Initialize link addresses and supported bands (previously in-class const init)
+    m_LocalLinkAddresses[0] = { 0x11, 0x01, 0x02, 0x03, 0x04, 0x21 };
+    m_LocalLinkAddresses[1] = { 0x11, 0x01, 0x02, 0x03, 0x04, 0x22 };
+    m_SupportedBands = (WDI_BAND_ID_2400 | WDI_BAND_ID_5000 | WDI_BAND_ID_6000);
+}
+
 NTSTATUS WifiHAL::WifiIhvIsDeviceReadyForRequest()
 {
     NTSTATUS status = 
          ((m_Device != WDF_NO_HANDLE) // Make sure device is initialized (since this is hardware abstraction layer, IHV can replace with firmware state)
-        && (WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter != WDF_NO_HANDLE) // In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
-        && (m_CurrentRadioState == TRUE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY); // Device is ready only if radio is ON (this may be replaced by other state in IHV implementation)
-
+        && (WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter != WDF_NO_HANDLE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY);// In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
     if(NT_SUCCESS(status) == FALSE)
     {
         WFCError(
-            "Device not ready for request. Device=%p, primaryStaAdapter=%p, CurrentRadioState=%u",
+            "Device not ready for request. Device=%p, primaryStaAdapter=%p",
             m_Device,
-            (m_Device != WDF_NO_HANDLE) ? WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter : WDF_NO_HANDLE,
-            m_CurrentRadioState);
+            (m_Device != WDF_NO_HANDLE) ? WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter : WDF_NO_HANDLE);
     }
     return status;
 }

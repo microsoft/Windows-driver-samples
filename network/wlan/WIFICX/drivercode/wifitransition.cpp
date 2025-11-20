@@ -1,3 +1,5 @@
+// Copyright (C) Microsoft Corporation. All rights reserved.
+
 #include "wifitransition.h"
 
 // Common TLV parsing helper: computes TLV span, optional dump, calls a parser, converts status.
