@@ -59,7 +59,7 @@
     <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
     <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
@@ -72,7 +72,7 @@
     <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
     <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
@@ -85,7 +85,7 @@
     <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
     <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
@@ -98,7 +98,7 @@
     <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
     <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
@@ -113,15 +113,19 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>
