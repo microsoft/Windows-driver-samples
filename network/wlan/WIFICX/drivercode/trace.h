@@ -141,7 +141,7 @@ typedef struct _ByteArray
 
 __inline ByteArray log_lenstr(ULONG len, const void* buf)
 {
-    ByteArray xs = {0};
+    ByteArray xs{};
     xs.usLength = (USHORT)len;
     xs.pvBuffer = buf;
     return xs;

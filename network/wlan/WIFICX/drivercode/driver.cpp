@@ -5,7 +5,6 @@
 #include "driver.h"
 #include "driver.tmh"
 
-extern "C"
 NTSTATUS DriverEntry(
     _In_ PDRIVER_OBJECT driverObject, 
     _In_ PUNICODE_STRING registryPath)
