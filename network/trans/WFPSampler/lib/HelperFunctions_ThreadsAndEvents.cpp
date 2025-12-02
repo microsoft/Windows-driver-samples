@@ -378,7 +378,8 @@ UINT32 HlprThreadWaitForEvent(_In_ HANDLE eventHandle,
          {
             status = WAIT_TIMEOUT;
 
-            HlprLogInfo(L"HlprThreadWaitForEvent() [status: %#x]");
+            HlprLogInfo(L"HlprThreadWaitForEvent() [status: %#x]", 
+                        status);
 
             break;
          }

@@ -8,20 +8,22 @@
 Signature   = "$Windows NT$"
 Class       = NetTrans
 ClassGUID   = {4D36E975-E325-11CE-BFC1-08002BE10318}
+CatalogFile = muxp.cat
 Provider    = %ProviderString%
 DriverVer   =10/01/2002,6.0.5019.0
+PnpLockdown = 1
 
+; Note: Starting with OS build version 25341 there is an update to the Network Installation UI
+; that allows for driver packages with notify objects to properly install into the Driver store directory.
+; All builds above 25341 can and should install drivers with a notify object using DIRID 13.
 [Manufacturer]
-%ManufacturerName% = Standard,NTx86,NTia64,NTamd64
+%ManufacturerName% = Standard,NT$ARCH$,NT$ARCH$.10.0...25341
 
-[Standard.NTx86]
+[Standard.NT$ARCH$.10.0...25341]
 %MUXP_Desc% = MUXP.ndi, MS_MUXP
 
-[Standard.NTia64]
-%MUXP_Desc% = MUXP.ndi, MS_MUXP
-
-[Standard.NTamd64]
-%MUXP_Desc% = MUXP.ndi, MS_MUXP
+[Standard.NT$ARCH$]
+%MUXP_Desc% = MUXP_NC.ndi, MS_MUXP
 
 ; Note:
 ; 1. The NCF_* flags are defined in netcfgx.h
@@ -34,6 +36,12 @@ Characteristics = 0x80 ; NCF_HAS_UI
 copyfiles       = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
 CopyInf	        = mux_mp.inf
 
+[MUXP_NC.ndi]
+AddReg          = MUXP_NC.ndi.AddReg
+Characteristics = 0x80 ; NCF_HAS_UI
+copyfiles       = MUXP_NC.CopyFiles.DLL, MUXP_NC.CopyFiles.sys
+CopyInf	        = mux_mp.inf
+
 [SourceDisksNames]
 1=%DiskDescription%,"",,
 
@@ -41,18 +49,24 @@ CopyInf	        = mux_mp.inf
 mux.sys     = 1
 mux.dll     = 1
 
-
 [DestinationDirs]
-DefaultDestDir      = 12
-MUXP.CopyFiles.DLL  = 11   ; %windir%\System32
-MUXP.CopyFiles.Sys  = 12   ; %windir%\System32\drivers
+DefaultDestDir      = 13
+MUXP.CopyFiles.DLL  = 13
+MUXP.CopyFiles.Sys  = 13
+MUXP_NC.CopyFiles.DLL  = 11
+MUXP_NC.CopyFiles.Sys  = 12
 
 [MUXP.CopyFiles.Sys]
+mux.sys,,,2
+
+[MUXP_NC.CopyFiles.Sys]
 mux.sys,,,2
 
 [MUXP.CopyFiles.DLL]
 mux.dll,,,2
 
+[MUXP_NC.CopyFiles.DLL]
+mux.dll,,,2
 
 ;-----------------------------------------------------------------------
 ;  Install parameters
@@ -66,11 +80,29 @@ HKR, Ndi,            Service,       0,          "MUXP"
 HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
 HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
 
+[MUXP_NC.ndi.AddReg]
+HKR, Ndi,            ClsID,         0, {ee6cd6fc-a32b-4a26-8a1c-dbc97988ad7a}
+HKR, Ndi,            ComponentDll,   , mux.dll
+HKR, Ndi,            HelpText,      0,          "%MUXP_HELP%"
+HKR, Ndi,            Service,       0,          "MUXP"
+HKR, Ndi\Interfaces, UpperRange,    0,          "noupper"
+HKR, Ndi\Interfaces, LowerRange,    0,          "ndis5"
 
 [MUXP.ndi.Services]
 AddService = MUXP, , MUXP.AddService, MUXP.AddEventLog
 
+[MUXP_NC.ndi.Services]
+AddService = MUXP_NC, , MUXP_NC.AddService, MUXP.AddEventLog
+
 [MUXP.AddService]
+DisplayName     = %MUXP_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 3 ;SERVICE_DEMAND_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %13%\mux.sys
+Description     = %MUXP_Desc%
+
+[MUXP_NC.AddService]
 DisplayName     = %MUXP_Desc%
 ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
 StartType       = 3 ;SERVICE_DEMAND_START
@@ -84,12 +116,6 @@ AddReg = MUXP.AddEventLog.AddReg
 [MUXP.AddEventLog.AddReg]
 HKR, , EventMessageFile, 0x20000, "%%SystemRoot%%\System32\netevent.dll"
 HKR, , TypesSupported,   0x10001, 7
-
-[MUXP.ndi.Remove.Services]
-DelService = MUXP
-
-[MUXP.ndi.Remove]
-DelFiles = MUXP.CopyFiles.DLL, MUXP.CopyFiles.sys
 
 [Strings]
 ProviderString = "TODO-Set-Provider"

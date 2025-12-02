@@ -392,7 +392,7 @@ FmCreateDosDevicesSymbolicLink(
     symbolicLink.Length=0;
     symbolicLink.MaximumLength = sizeof(OBJECT_DIRECTORY) + comPort.MaximumLength;
 
-    symbolicLink.Buffer = ExAllocatePoolWithTag(PagedPool,
+    symbolicLink.Buffer = ExAllocatePool2(POOL_FLAG_PAGED,
                                                 symbolicLink.MaximumLength + sizeof(WCHAR),
                                                 'wkaF');
 
@@ -400,7 +400,6 @@ FmCreateDosDevicesSymbolicLink(
         status = STATUS_INSUFFICIENT_RESOURCES;
         goto Error;
     }
-    RtlZeroMemory(symbolicLink.Buffer, symbolicLink.MaximumLength);
     RtlAppendUnicodeToString(&symbolicLink, OBJECT_DIRECTORY);
     RtlAppendUnicodeStringToString(&symbolicLink, &comPort);
     //

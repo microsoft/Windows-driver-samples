@@ -36,6 +36,7 @@ const ULONG UCSI_DSM_FUNCTION_SUPPORTED_FUNCTIONS_INDEX = 0x0;
 const ULONG UCSI_DSM_FUNCTION_SEND_DATA_INDEX = 0x1;
 const ULONG UCSI_DSM_FUNCTION_RECEIVE_DATA_INDEX = 0x2;
 const ULONG UCSI_DSM_FUNCTION_USB_DEVICE_CONTROLLER_STATUS_INDEX = 0x3;
+const ULONG UCSI_DSM_FUNCTION_DISABLE_DATA_ROLE_CORRECTION_POLICY = 0x4;
 
 //
 // There is no formal requirement of timeout for _DMS method. 3 second timeout
@@ -110,7 +111,8 @@ Acpi::PrepareHardware(
     m_UcsiDataBlock = (PUCSI_DATA_BLOCK) mappedMemory;
     m_MappedMemoryLength = Config->DataBlockLength;
 
-    version = m_UcsiDataBlock->UcsiVersion;
+    version.AsUInt16 = READ_REGISTER_USHORT(reinterpret_cast<volatile USHORT*> (&m_UcsiDataBlock->UcsiVersion));
+
     TRACE_INFO(TRACE_FLAG_PPM, "[Device: 0x%p] UCSI version Major: %hx Minor: %hx SubMinor: %hx",
         m_OwningDevice, version.MajorVersion, version.MinorVersion, version.SubMinorVersion);
 
@@ -462,6 +464,7 @@ Acpi::CheckIfUsbDeviceControllerIsEnabled(
 {
     NTSTATUS status;
     PACPI_EVAL_OUTPUT_BUFFER output;
+    UCHAR supportFunctions;
 
     PAGED_CODE();
 
@@ -492,7 +495,64 @@ Acpi::CheckIfUsbDeviceControllerIsEnabled(
         goto Exit;
     }
 
-    if (!TEST_BIT(output->Argument[0].Data[0], UCSI_DSM_FUNCTION_USB_DEVICE_CONTROLLER_STATUS_INDEX))
+    supportFunctions = output->Argument[0].Data[0];
+
+    //
+    // Free the buffer since we will reuse "output" to evaluate other UCSI DSM functions.
+    //
+
+    delete[] output;
+    output = nullptr;
+
+
+    //
+    // First, check if the platform disables the OS policy of data role correction.
+    // If it's disabled, report UsbDeviceControllerEnabled==true to UcmUcsiCx, so that
+    // it will not initiate DR_SWAP when being UFP.
+    //
+
+    if (TEST_BIT(supportFunctions, UCSI_DSM_FUNCTION_DISABLE_DATA_ROLE_CORRECTION_POLICY))
+    {
+        status = EvaluateUcsiDsm(UCSI_DSM_FUNCTION_DISABLE_DATA_ROLE_CORRECTION_POLICY, &output);
+        if (!NT_SUCCESS(status))
+        {
+            TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] _DSM query for UCSI_DSM_FUNCTION_DISABLE_DATA_ROLE_CORRECTION_POLICY failed - %!STATUS!", m_OwningDevice, status);
+            goto Exit;
+        }
+
+        if (output->Count != 1)
+        {
+            status = STATUS_ACPI_INVALID_DATA;
+            TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] _DSM query for UCSI_DSM_FUNCTION_DISABLE_DATA_ROLE_CORRECTION_POLICY returned unexpected number of arguments %lu", m_OwningDevice, output->Count);
+            goto Exit;
+        }
+
+        NT_ASSERT_ASSUME(output->Length == sizeof(ACPI_EVAL_OUTPUT_BUFFER));
+
+        if (output->Argument[0].Argument)
+        {
+            status = STATUS_SUCCESS;
+            IsUsbDeviceControllerEnabled = true;
+            TRACE_INFO(TRACE_FLAG_ACPI, "[Device: 0x%p] Data role correction policy disabled.", m_OwningDevice);
+            goto Exit;
+        }
+
+        //
+        // Free the buffer since we may reuse "output" to evaluate another UCSI DSM function.
+        //
+
+        delete[] output;
+        output = nullptr;
+    }
+
+    //
+    // The platform hasn't disabled the OS policy for data role correction. Now, check
+    // if the platform has a USB device controller, and return the corresponding 
+    // UsbDeviceControllerEnabled value for UcmUcsiCx to switch on/off the OS policy 
+    // for data role correction.
+    //
+
+    if (!TEST_BIT(supportFunctions, UCSI_DSM_FUNCTION_USB_DEVICE_CONTROLLER_STATUS_INDEX))
     {
         //
         // The function to query whether the device controller is enabled is not supported. Assume
@@ -506,9 +566,6 @@ Acpi::CheckIfUsbDeviceControllerIsEnabled(
         IsUsbDeviceControllerEnabled = true;
         goto Exit;
     }
-
-    delete[] output;
-    output = nullptr;
 
     status = EvaluateUcsiDsm(UCSI_DSM_FUNCTION_USB_DEVICE_CONTROLLER_STATUS_INDEX, &output);
     if (!NT_SUCCESS(status))
@@ -637,8 +694,6 @@ Acpi::EvaluateUcsiDsm(
         goto Exit;
     }
 
-    RtlZeroMemory(outputBuffer, outputBufferSize);
-
     WDF_MEMORY_DESCRIPTOR_INIT_HANDLE(&inputMemDesc, inputMemory, NULL);
     WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&outputMemDesc, outputBuffer, (ULONG) outputBufferSize);
 
@@ -704,7 +759,18 @@ Acpi::SendData(
 
     TRACE_FUNC_ENTRY(TRACE_FLAG_ACPI);
 
-    m_UcsiDataBlock->Control = DataBlock->Control;
+#if defined (_WIN64)
+
+    WRITE_REGISTER_ULONG64(reinterpret_cast<volatile ULONG64*> (&m_UcsiDataBlock->Control),
+        DataBlock->Control.AsUInt64);
+
+#else
+
+    WRITE_REGISTER_BUFFER_ULONG(reinterpret_cast<volatile ULONG*> (&m_UcsiDataBlock->Control),
+        reinterpret_cast<PULONG> (&DataBlock->Control),
+        sizeof(m_UcsiDataBlock->Control) / sizeof(ULONG));
+
+#endif
 
     status = EvaluateUcsiDsm(UCSI_DSM_FUNCTION_SEND_DATA_INDEX,
                                   nullptr);
@@ -741,7 +807,7 @@ Acpi::ReceiveData (
     // Right now there is no use case of copying the whole block. Just copying
     // CCI as of now since all the caller would want to know is whether the last
     // command has been completed.
-    DataBlockOut->CCI = m_UcsiDataBlock->CCI;
+    DataBlockOut->CCI.AsUInt32 = READ_REGISTER_ULONG(reinterpret_cast<volatile ULONG*> (&m_UcsiDataBlock->CCI));
 
 Exit:
 

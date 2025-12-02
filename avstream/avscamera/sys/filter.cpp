@@ -64,6 +64,7 @@ Return Value:
     m_pCaptureDevice(NULL),
     m_pPerFrameSettings(nullptr),
     m_pinArray(nullptr),
+    m_pMinimumRequestedFrames(nullptr),
     m_PhotoModeNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE ),
     m_PhotoMaxFrameRateNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE) ,
     m_FocusNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_FOCUSMODE ),
@@ -141,10 +142,12 @@ Return Value:
     IFFAILED_EXIT( m_Sensor->AddFilter(m_pKSFilter) );
 
     IFNULL_EXIT(m_pinArray = new (PagedPool, 'sniP') CCapturePin *[m_Sensor->GetPinCount()]);
+    IFNULL_EXIT(m_pMinimumRequestedFrames = new (PagedPool, 'sniP') ULONG[m_Sensor->GetPinCount()]);
 
     for( ULONG i=0; i<m_Sensor->GetPinCount(); i++ )
     {
         m_pinArray[i] = nullptr;
+        m_pMinimumRequestedFrames[i] = IMAGE_CAPTURE_PIN_MINIMUM_FRAMES;
     }
 
 done:
@@ -209,6 +212,7 @@ CCaptureFilter::~CCaptureFilter()
     //  may need to have some things reset.
     m_Sensor->Reset();
 
+    delete [] m_pMinimumRequestedFrames;
     delete [] m_pinArray;
 
     DBG_LEAVE("(%S)", Name);
@@ -352,6 +356,11 @@ Return Value:
 
     //  Take out a weak reference to the pin object.
     m_pinArray[Id] = pPin;
+    if (m_pinArray[Id] != nullptr)
+    {
+        m_pinArray[Id]->SetDesiredFrames(m_pMinimumRequestedFrames[Id]);
+        (void)m_pinArray[Id]->UpdateAllocatorFraming();
+    }
 }
 
 CCapturePin *
@@ -391,7 +400,8 @@ Return Value:
 NTSTATUS
 CCaptureFilter::
 UpdateAllocatorFraming( 
-    _In_    ULONG PinId
+    _In_    ULONG PinId,
+    _In_    ULONG DesiredFrames
 )
 /*++
 
@@ -412,14 +422,19 @@ Return Value:
 {
     PAGED_CODE();
 
-    NTSTATUS    Status = STATUS_INVALID_PARAMETER;
+    NTSTATUS    Status = STATUS_SUCCESS;
 
     //  Acquire the lock and update the Pin's allocator framing.
     LockFilter Lock(m_pKSFilter);
     
     if( m_pinArray[PinId] )
     {
+        m_pinArray[PinId]->SetDesiredFrames(DesiredFrames);
         Status = m_pinArray[PinId]->UpdateAllocatorFraming();
+    }
+    else
+    {
+        m_pMinimumRequestedFrames[PinId] = DesiredFrames;
     }
 
     DBG_LEAVE("()=0x%08X",Status);
@@ -636,6 +651,7 @@ SetPhotoMode(
     PAGED_CODE();
 
     NTSTATUS    Status = STATUS_INVALID_PARAMETER;
+    ULONG   TotalFrames = IMAGE_CAPTURE_PIN_MINIMUM_FRAMES;
 
     DBG_ENTER( "()" );
 
@@ -645,10 +661,6 @@ SetPhotoMode(
     {
         CExtendedPhotoMode  Caps(*pMode);
         Status = m_Sensor->GetPhotoMode( &Caps );
-        CCapturePin *pPin = getPin(pMode->PinId);
-
-        //  Should always be valid.
-        NT_ASSERT(pPin);
 
         if( NT_SUCCESS(Status) )
         {
@@ -686,7 +698,7 @@ SetPhotoMode(
 
                     //  Assume the normal photo sequence case.
                     //  For normal photo sequence, we provide history frames +1 or at least a minimum of 3 frames.
-                    ULONG   TotalFrames = pMode->RequestedHistoryFrames() + 1;
+                    TotalFrames = pMode->RequestedHistoryFrames() + 1;
 
                     //  Modify TotalFrames for the VPS case.
                     //  For VPS, we need LoopCount * FrameCount; but limit by the minimum(3) and maximum (20) frames.
@@ -708,14 +720,12 @@ SetPhotoMode(
                     DBG_TRACE( "Advertising Framing requirement: %d", TotalFrames );
 
 
-                    pPin->SetDesiredFrames(TotalFrames);
                     Status = STATUS_SUCCESS;
                     break;
                 }
                 case KSCAMERA_EXTENDEDPROP_PHOTOMODE_NORMAL:
                 {
                     //  Set it back to the minimum number of frames.
-                    pPin->SetDesiredFrames(IMAGE_CAPTURE_PIN_MINIMUM_FRAMES);
                     Status = STATUS_SUCCESS;
                     break;
                 }
@@ -724,7 +734,7 @@ SetPhotoMode(
                 //  Update allocator framing.
                 if( NT_SUCCESS( Status ) )
                 {
-                    Status = UpdateAllocatorFraming( pMode->PinId );
+                    Status = UpdateAllocatorFraming( pMode->PinId, TotalFrames );
                 }
 
                 //  Update the sensor object...
@@ -1118,13 +1128,13 @@ GetTorchMode(
 
     NTSTATUS    Status = STATUS_INVALID_PARAMETER;
 
-    if( pTorchMode->isValid() &&
-            pTorchMode->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE )
+    if (pTorchMode->isValid() &&
+        pTorchMode->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE)
     {
-        Status = m_Sensor->GetTorchMode( pTorchMode );
+        Status = m_Sensor->GetTorchMode(pTorchMode);
     }
     DBG_LEAVE("(PinId=%d, Flags=0x%016llX, Cap=0x%016llX)=0x%08X",
-              pTorchMode->PinId, pTorchMode->Flags, pTorchMode->Capability, Status );
+        pTorchMode->PinId, pTorchMode->Flags, pTorchMode->Capability, Status);
     return Status;
 }
 
@@ -1139,34 +1149,101 @@ SetTorchMode(
 
     NTSTATUS    Status = STATUS_INVALID_PARAMETER;
 
-    if( !(pTorchMode->Capability & KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL) &&
-            pTorchMode->isValid() &&
-            pTorchMode->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE &&
-            pTorchMode->m_Value.Value.ul <= 100 )
+    if (!(pTorchMode->Capability & KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL) &&
+        pTorchMode->isValid() &&
+        pTorchMode->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE &&
+        pTorchMode->m_Value.Value.ul <= 100)
     {
         CExtendedProperty   Caps(*pTorchMode);
         Status = m_Sensor->GetTorchMode(&Caps);
 
-        if( NT_SUCCESS(Status) )
+        if (NT_SUCCESS(Status))
         {
             //  Assume an invalid parameter.
             Status = STATUS_INVALID_PARAMETER;
 
-            if( pTorchMode->Flags == (pTorchMode->Flags & Caps.Capability) )
+            if (pTorchMode->Flags == (pTorchMode->Flags & Caps.Capability))
             {
-                switch( pTorchMode->Flags )
+                switch (pTorchMode->Flags)
                 {
                 case KSCAMERA_EXTENDEDPROP_VIDEOTORCH_OFF:
                 case KSCAMERA_EXTENDEDPROP_VIDEOTORCH_ON:
                 case KSCAMERA_EXTENDEDPROP_VIDEOTORCH_ON_ADJUSTABLEPOWER:
-                    Status = m_Sensor->SetTorchMode( pTorchMode );
+                    Status = m_Sensor->SetTorchMode(pTorchMode);
                     break;
                 }
             }
         }
     }
     DBG_LEAVE("(PinId=%d, Flags=0x%016llX, Cap=0x%016llX)=0x%08X",
-              pTorchMode->PinId, pTorchMode->Flags, pTorchMode->Capability, Status );
+        pTorchMode->PinId, pTorchMode->Flags, pTorchMode->Capability, Status);
+    return Status;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CCaptureFilter::
+GetIRTorch(
+    _Inout_ CExtendedVidProcSetting  *pTorch
+)
+{
+    PAGED_CODE();
+
+    NTSTATUS    Status = STATUS_INVALID_PARAMETER;
+
+    if (pTorch->isValid() &&
+        pTorch->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE)
+    {
+        Status = m_Sensor->GetIRTorch(pTorch);
+    }
+    DBG_LEAVE("(PinId=%d, Flags=0x%016llX, Cap=0x%016llX)=0x%08X",
+        pTorch->PinId, pTorch->Flags, pTorch->Capability, Status);
+    return Status;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CCaptureFilter::
+SetIRTorch(
+    _In_    CExtendedVidProcSetting  *pTorch
+)
+{
+    PAGED_CODE();
+
+    NTSTATUS    Status = STATUS_INVALID_PARAMETER;
+
+    if (!(pTorch->Capability & KSCAMERA_EXTENDEDPROP_CAPS_ASYNCCONTROL) &&
+        pTorch->isValid() &&
+        pTorch->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE)
+    {
+        CExtendedVidProcSetting Caps(*pTorch);
+        Status = m_Sensor->GetIRTorch(&Caps);
+
+        if (NT_SUCCESS(Status))
+        {
+            Status = Caps.BoundsCheck(pTorch->GetULONG());
+
+            if (NT_SUCCESS(Status))
+            {
+                //  Assume an invalid parameter.
+                Status = STATUS_INVALID_PARAMETER;
+
+                if (pTorch->Flags == (pTorch->Flags & Caps.Capability))
+                {
+                    switch (pTorch->Flags)
+                    {
+                    case KSCAMERA_EXTENDEDPROP_IRTORCHMODE_OFF:
+                    case KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON:
+                    case KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALTERNATING_FRAME_ILLUMINATION:
+                        Status = m_Sensor->SetIRTorch(pTorch);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    DBG_LEAVE("(PinId=%d, Flags=0x%016llX, Cap=0x%016llX)=0x%08X",
+        pTorch->PinId, pTorch->Flags, pTorch->Capability, Status);
     return Status;
 }
 
@@ -3490,6 +3567,66 @@ SetOpticalImageStabilization(
     }
     DBG_TRACE("pOIS = %p, PinId = %u, Flags = %llu, Version = %u",
               pOIS, pOIS->PinId, pOIS->Flags, pOIS->Version);
+
+    return Status;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CCaptureFilter::
+GetRelativePanel(
+    _Inout_ CExtendedProperty   *pRelativePanel
+)
+{
+    PAGED_CODE();
+    NTSTATUS Status = STATUS_INVALID_PARAMETER;
+
+    if (pRelativePanel->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE &&
+        pRelativePanel->isValid())
+    {
+        //Get the current state
+        Status = m_Sensor->GetRelativePanel(pRelativePanel);
+    }
+
+    DBG_TRACE("pRelativePanel = %p, PinId = %u, Flags = %llu, Version = %u",
+        pRelativePanel, pRelativePanel->PinId, pRelativePanel->Flags, pRelativePanel->Version);
+
+    return Status;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CCaptureFilter::
+SetRelativePanel(
+    _In_    CExtendedProperty   *pRelativePanel
+)
+{
+    PAGED_CODE();
+
+    NTSTATUS Status = STATUS_INVALID_PARAMETER;
+
+    // Call must be Filter and flags must be supported and version must be 1
+    if (pRelativePanel->PinId == KSCAMERA_EXTENDEDPROP_FILTERSCOPE &&
+        pRelativePanel->isValid() &&
+        (KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_ON == pRelativePanel->Flags ||
+            KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF == pRelativePanel->Flags))
+    {
+        CExtendedProperty   Caps(*pRelativePanel);
+        Status = m_Sensor->GetRelativePanel(&Caps);
+
+        if (NT_SUCCESS(Status))
+        {
+            //  Assume an invalid parameter.
+            Status = STATUS_INVALID_PARAMETER;
+
+            if (pRelativePanel->Flags == (pRelativePanel->Flags & Caps.Capability))
+            {
+                Status = m_Sensor->SetRelativePanel(pRelativePanel);
+            }
+        }
+    }
+    DBG_TRACE("pOIS = %p, PinId = %u, Flags = %llu, Version = %u",
+        pRelativePanel, pRelativePanel->PinId, pRelativePanel->Flags, pRelativePanel->Version);
 
     return Status;
 }

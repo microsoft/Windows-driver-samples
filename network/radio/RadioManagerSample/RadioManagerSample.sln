@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
@@ -7,16 +7,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleRM", "cpp\SampleRM.vc
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|Win32.Build.0 = Debug|Win32
-		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Release|Win32.ActiveCfg = Release|Win32
-		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Release|Win32.Build.0 = Release|Win32
+		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|ARM64.Build.0 = Debug|ARM64
+		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Release|ARM64.ActiveCfg = Release|ARM64
+		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Release|ARM64.Build.0 = Release|ARM64
 		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|x64.ActiveCfg = Debug|x64
 		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Debug|x64.Build.0 = Debug|x64
 		{1138E033-EEBF-4BA3-B74F-D51443EF5EE0}.Release|x64.ActiveCfg = Release|x64

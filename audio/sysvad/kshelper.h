@@ -111,6 +111,8 @@ typedef struct
     PCPFNPROPERTY_HANDLER   GetHandler;         // Property get handler (NULL if GET not supported)
     PCPFNPROPERTY_HANDLER   SetHandler;         // Property set handler (NULL if SET not supported)
     PCPFNPROPERTY_HANDLER   SupportHandler;     // Property support handler (NULL for common handler)
+    VOID                    *ContextData;        // Optional context information for the handler, NULL for unused
+    ULONG                   ContextDataSize;     // Size of the data held at ContextData, 0 for unused
 } SYSVADPROPERTY_ITEM;
 
 // The following macros facilitate adding property handlers to a class, allowing

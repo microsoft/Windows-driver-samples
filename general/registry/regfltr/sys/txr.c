@@ -61,21 +61,20 @@ Return Value:
     //
     // Create the registry callback context and the transaction callback context.
     //
-    
+
     CallbackCtx = CreateCallbackContext(CALLBACK_MODE_TRANSACTION_ENLIST,
                                          CALLBACK_ALTITUDE);
     if (CallbackCtx == NULL) {
         goto Exit;
     }
 
-    RMCallbackCtx = (PRMCALLBACK_CONTEXT) ExAllocatePoolWithTag (
-                        PagedPool, 
-                        sizeof(RMCALLBACK_CONTEXT), 
+    RMCallbackCtx = (PRMCALLBACK_CONTEXT) ExAllocatePoolZero (
+                        PagedPool,
+                        sizeof(RMCALLBACK_CONTEXT),
                         REGFLTR_CONTEXT_POOL_TAG);
     if (RMCallbackCtx == NULL) {
         goto Exit;
     }
-    RtlZeroMemory(RMCallbackCtx, sizeof(RMCALLBACK_CONTEXT));
     CallbackCtx->RMCallbackCtx = RMCallbackCtx;
 
     //

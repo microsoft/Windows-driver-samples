@@ -121,7 +121,7 @@ typedef struct _CSQ_GLOBAL_DATA {
     PWSTR PathBuffer;
 
     LONGLONG TimeDelay;
-    
+
 } CSQ_GLOBAL_DATA;
 
 
@@ -185,8 +185,31 @@ InstanceTeardownComplete (
     _In_ FLT_INSTANCE_TEARDOWN_FLAGS Flags
     );
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+GetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+OpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 NTSTATUS
 SetConfiguration (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -269,6 +292,8 @@ PreReadEmptyQueueAndComplete(
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)
+#pragma alloc_text(INIT, GetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, OpenServiceParametersKey)
 #pragma alloc_text(INIT, SetConfiguration)
 #pragma alloc_text(PAGE, Unload)
 #pragma alloc_text(PAGE, FreeGlobals)
@@ -362,7 +387,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     //
@@ -380,8 +405,8 @@ Return Value:
     //
     //  Initialize the configuration to default values
     //
-    
-    Globals.DebugLevel = CSQ_TRACE_ERROR;        
+
+    Globals.DebugLevel = CSQ_TRACE_ERROR;
 
     Globals.TimeDelay = CSQ_DEFAULT_TIME_DELAY;
 
@@ -394,10 +419,10 @@ Return Value:
     //  Modify the configuration based on values in the registry
     //
 
-    Status = SetConfiguration( RegistryPath );
+    Status = SetConfiguration( DriverObject, RegistryPath );
 
     if (!NT_SUCCESS( Status )) {
-        
+
         goto DriverEntryCleanup;
     }
 
@@ -449,18 +474,156 @@ Return Value:
 DriverEntryCleanup:
 
     if (!NT_SUCCESS( Status )) {
-        
+
         FreeGlobals();
     }
-    
+
     return Status;
 }
 
+PFN_IoOpenDriverRegistryKey
+GetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+OpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS Status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible.
+    //
+
+    pIoOpenDriverRegistryKey = GetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API.
+        //
+
+        Status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key.
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        Status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path.
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        Status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( Status )) {
+
+            goto OpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller.
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+OpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return Status;
+
+}
 
 NTSTATUS
 SetConfiguration (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
-    ) 
+    )
 /*++
 
 Routine Description:
@@ -469,6 +632,9 @@ Routine Description:
     queue delay based on values in the registry.
 
 Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
 
     RegistryPath - The path key passed to the driver during DriverEntry.
 
@@ -480,10 +646,8 @@ Return Value:
 --*/
 {
     NTSTATUS Status;
-    OBJECT_ATTRIBUTES Attributes;
     HANDLE DriverRegKey = NULL;
     UNICODE_STRING ValueName;
-    BOOLEAN CloseHandle = FALSE;
     UCHAR Buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + CSQ_MAX_PATH_LENGTH  * sizeof(WCHAR)];
     PKEY_VALUE_PARTIAL_INFORMATION Value = (PKEY_VALUE_PARTIAL_INFORMATION)Buffer;
     ULONG ValueLength = sizeof(Buffer);
@@ -491,50 +655,41 @@ Return Value:
     ULONG Length;
 
     //
-    //  Open the driver registry key.
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &Attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
-
-    Status = ZwOpenKey( &DriverRegKey,
-                        KEY_READ,
-                        &Attributes );
+    Status = OpenServiceParametersKey( DriverObject,
+                                       RegistryPath,
+                                       &DriverRegKey );
 
     if (!NT_SUCCESS( Status )) {
 
+        DriverRegKey = NULL;
         goto SetConfigurationCleanup;
     }
 
-    CloseHandle = TRUE;
-    
     //
-    //  Query the debug level
+    //  Query the debug level.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DEBUG_LEVEL );
-    
+
     Status = ZwQueryValueKey( DriverRegKey,
                               &ValueName,
                               KeyValuePartialInformation,
                               Value,
                               ValueLength,
                               &ResultLength );
-    
+
     if (NT_SUCCESS( Status )) {
 
         Globals.DebugLevel = *(PULONG)(Value->Data);
     }
 
-    
     //
-    //  Query the queue time delay
+    //  Query the queue time delay.
     //
 
- 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_DELAY );
 
     Status = ZwQueryValueKey( DriverRegKey,
@@ -551,13 +706,13 @@ Return Value:
             Status = STATUS_INVALID_PARAMETER;
             goto SetConfigurationCleanup;
         }
-        
+
         Globals.TimeDelay = (LONGLONG)(*(PULONG)(Value->Data));
-        
+
     }
-  
+
     //
-    // Query the mapping path
+    //  Query the mapping path.
     //
 
     RtlInitUnicodeString( &ValueName, CSQ_KEY_NAME_PATH );
@@ -594,17 +749,17 @@ Return Value:
         //  Allocate enough space for an extra character in case a trailing '\'
         //  is missing and needs to be added.
         //
-        
+
         Length = Value->DataLength + sizeof(WCHAR),
 
-        Globals.PathBuffer = ExAllocatePoolWithTag( NonPagedPool, Length, CSQ_STRING_TAG );
-        
+        Globals.PathBuffer = ExAllocatePoolZero( NonPagedPool, Length, CSQ_STRING_TAG );
+
         if (Globals.PathBuffer == NULL) {
 
             Status = STATUS_INSUFFICIENT_RESOURCES;
-            goto SetConfigurationCleanup;            
+            goto SetConfigurationCleanup;
         }
-                        
+
         RtlCopyMemory( Globals.PathBuffer, Value->Data, Value->DataLength );
 
         Globals.PathBuffer[Length / sizeof(WCHAR) - 1] = L'\0';
@@ -612,9 +767,9 @@ Return Value:
         //
         //  Add a trailing '\' if one is missing.
         //
-        
+
         if (Globals.PathBuffer[Length/sizeof(WCHAR) - 3] != L'\\') {
-           
+
             Globals.PathBuffer[Length/sizeof(WCHAR) - 2] = L'\\';
 
         }
@@ -627,12 +782,12 @@ Return Value:
     //  Ignore errors when looking for values in the registry.
     //  Default values will be used.
     //
-    
+
     Status = STATUS_SUCCESS;
-    
+
 SetConfigurationCleanup:
 
-    if (CloseHandle) {
+    if (DriverRegKey != NULL) {
 
         ZwClose( DriverRegKey );
     }
@@ -667,7 +822,7 @@ Return Value:
     ExDeleteNPagedLookasideList( &Globals.QueueContextLookaside );
 
     if (Globals.PathBuffer != NULL) {
-        
+
         ExFreePoolWithTag( Globals.PathBuffer, CSQ_STRING_TAG );
         Globals.PathBuffer = NULL;
     }
@@ -709,7 +864,7 @@ Return Value:
     FltUnregisterFilter( Globals.FilterHandle );
 
     FreeGlobals();
-    
+
     return STATUS_SUCCESS;
 }
 
@@ -1512,11 +1667,11 @@ Return Value:
 
     if (!RtlPrefixUnicodeString( &Globals.MappingPath, &NameInfo->ParentDir, TRUE )) {
 
-        goto PreReadCleanup;                
+        goto PreReadCleanup;
     }
 
     //
-    //  Since Fast I/O operations cannot be queued, we could return 
+    //  Since Fast I/O operations cannot be queued, we could return
     //  FLT_PREOP_SUCCESS_NO_CALLBACK at this point. In this sample,
     //  we disallow Fast I/O for this magic file in order to force an IRP
     //  to be sent to us again. The purpose of doing that is to demonstrate
@@ -1581,7 +1736,7 @@ Return Value:
         //  In general, we can create a worker thread here as long as we can
         //  correctly handle the insert/remove race conditions b/w multi threads.
         //  In this sample, the worker thread creation is done in CsqInsertIo.
-        //  This is a simpler solution because CsqInsertIo is atomic with 
+        //  This is a simpler solution because CsqInsertIo is atomic with
         //  respect to other CsqXxxIo callback routines.
         //
 
@@ -1707,32 +1862,32 @@ Return Value:
             //
             //  Check to see if we need to lock the user buffer.
             //
-            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't 
+            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't
             //  have to lock the buffer because its already a system buffer.
             //
-            //  If the MdlAddress is NULL and the buffer is a user buffer, 
+            //  If the MdlAddress is NULL and the buffer is a user buffer,
             //  then we have to construct one in order to look at the buffer.
             //
             //  If the length of the buffer is zero there is nothing to read,
             //  so we cannot construct a MDL.
             //
 
-            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) && 
+            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) &&
                 Data->Iopb->Parameters.Read.MdlAddress == NULL &&
                 Data->Iopb->Parameters.Read.Length > 0) {
 
                 Status = FltLockUserBuffer( Data );
 
                 if (!NT_SUCCESS( Status )) {
-                    
+
                     //
                     //  If could not lock the user buffer we cannot
-                    //  allow the IO to go below us. Because we are 
+                    //  allow the IO to go below us. Because we are
                     //  in a different VA space and the buffer is a
-                    //  user mode address, we will either fault or 
+                    //  user mode address, we will either fault or
                     //  corrpt data
                     //
-                   
+
                     DebugTrace( CSQ_TRACE_PRE_READ | CSQ_TRACE_ERROR,
                                 ("[Csq]: Failed to lock user buffer (Status = 0x%x)\n",
                                 Status) );
@@ -1779,10 +1934,10 @@ Return Value:
             //
 
             if (InterlockedDecrement( &InstCtx->WorkerThreadFlag ) == 0) {
-                
+
                 break;
             }
-            
+
         }
     }
 
@@ -1902,17 +2057,17 @@ Return Value:
             //
             //  Check to see if we need to lock the user buffer.
             //
-            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't 
+            //  If the FLTFL_CALLBACK_DATA_SYSTEM_BUFFER flag is set we don't
             //  have to lock the buffer because its already a system buffer.
             //
-            //  If the MdlAddress is NULL and the buffer is a user buffer, 
+            //  If the MdlAddress is NULL and the buffer is a user buffer,
             //  then we have to construct one in order to look at the buffer.
             //
             //  If the length of the buffer is zero there is nothing to read,
             //  so we cannot construct a MDL.
             //
 
-            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) && 
+            if (!FlagOn(Data->Flags, FLTFL_CALLBACK_DATA_SYSTEM_BUFFER) &&
                 Data->Iopb->Parameters.Read.MdlAddress == NULL &&
                 Data->Iopb->Parameters.Read.Length > 0) {
 
@@ -1922,12 +2077,12 @@ Return Value:
 
                     //
                     //  If could not lock the user buffer we cannot
-                    //  allow the IO to go below us. Because we are 
+                    //  allow the IO to go below us. Because we are
                     //  in a different VA space and the buffer is a
-                    //  user mode address, we will either fault or 
+                    //  user mode address, we will either fault or
                     //  corrpt data
                     //
-                   
+
                     callbackStatus = FLT_PREOP_COMPLETE;
                     Data->IoStatus.Status = Status;
                 }

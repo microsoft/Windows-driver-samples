@@ -32,13 +32,15 @@ extern "C"
    DRIVER_INITIALIZE DriverEntry;
 };
 
-PDEVICE_OBJECT         g_pWDMDevice            = 0;
-NDIS_POOL_DATA*        g_pNDISPoolData         = 0;
-BOOLEAN                g_calloutsRegistered    = FALSE;
-HANDLE                 g_bfeSubscriptionHandle = 0;
-SERIALIZATION_LIST     g_bsiSerializationList  = {0};
-WFPSAMPLER_DEVICE_DATA g_WFPSamplerDeviceData  = {0};
-DEVICE_EXTENSION       g_deviceExtension       = {0};
+PDEVICE_OBJECT         g_pWDMDevice                 = 0;
+PIO_WORKITEM           g_pPowerStateEnterIOWorkItem = 0;
+PIO_WORKITEM           g_pPowerStateExitIOWorkItem  = 0;
+NDIS_POOL_DATA*        g_pNDISPoolData              = 0;
+BOOLEAN                g_calloutsRegistered         = FALSE;
+HANDLE                 g_bfeSubscriptionHandle      = 0;
+SERIALIZATION_LIST     g_bsiSerializationList       = {0};
+WFPSAMPLER_DEVICE_DATA g_WFPSamplerDeviceData       = {0};
+DEVICE_EXTENSION       g_deviceExtension            = {0};
 KSPIN_LOCK             g_bpeSpinLock;
 WDFDRIVER              g_WDFDriver;
 WDFDEVICE              g_WDFDevice;
@@ -403,6 +405,14 @@ NTSTATUS PrvDriverDeviceAdd(_In_ WDFDRIVER* pWDFDriver)
 
    g_pWDMDevice = WdfDeviceWdmGetDeviceObject(g_WDFDevice);
    HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS(g_pWDMDevice,
+                                         status);
+
+   g_pPowerStateEnterIOWorkItem = IoAllocateWorkItem(g_pWDMDevice);
+   HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS(g_pPowerStateEnterIOWorkItem,
+                                         status);
+
+   g_pPowerStateExitIOWorkItem = IoAllocateWorkItem(g_pWDMDevice);
+   HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS(g_pPowerStateExitIOWorkItem,
                                          status);
 
    status = RegisterPowerStateChangeCallback(&g_deviceExtension);

@@ -16,6 +16,7 @@ Environment:
 #ifndef _STREAM_EDIT_H
 #define _STREAM_EDIT_H
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <ntifs.h>
 #include <wdf.h>
 

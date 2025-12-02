@@ -1,0 +1,68 @@
+name: Build all driver samples
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  schedule:
+    # Runs every Saturday at 00:00 PST (08:00 UTC)
+    - cron: '0 8 * * 6'
+jobs:
+  build:
+    name: Build driver samples
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64, arm64]
+    runs-on: windows-2022
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
+      - name: Retrieve and build all available solutions
+        run: .\Build-AllSamples.ps1 -Verbose
+        env:
+          WDS_Configuration: ${{ matrix.configuration }}
+          WDS_Platform: ${{ matrix.platform }}
+          WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
+
+      - name: Archive build logs and overview build reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ matrix.configuration }}-${{ matrix.platform }}
+          path: _logs
+
+  report:
+    name: Generate global report
+    runs-on: windows-2022
+    needs: build
+    if: always()
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Retrieve overview reports
+        uses: actions/download-artifact@v4
+        with:
+          path: _logs
+          pattern: logs-*
+          merge-multiple: true
+
+      - name: Join and generate global reports
+        run: .\.github\scripts\Join-CsvReports.ps1
+
+      - name: Archive global overview build reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: _logs/_overview.all.*

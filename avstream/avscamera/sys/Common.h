@@ -23,6 +23,11 @@
 
 #define _NO_SYS_GUID_OPERATOR_EQ_
 
+#ifdef NTDDI_VERSION
+#undef NTDDI_VERSION
+#endif //NTDDI_VERSION
+#define NTDDI_VERSION NTDDI_WIN10_VB
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -190,8 +195,8 @@ void __cdecl operator delete[]
 // The number of ranges supported on the capture pin.
 //
 #define IMAGE_CAPTURE_PIN_DATA_RANGE_COUNT 2
-#define VIDEO_CAPTURE_PIN_DATA_RANGE_COUNT 30
-#define VIDEO_PREVIEW_PIN_DATA_RANGE_COUNT 15
+#define VIDEO_CAPTURE_PIN_DATA_RANGE_COUNT 32
+#define VIDEO_PREVIEW_PIN_DATA_RANGE_COUNT 16
 
 //
 // CAPTURE_FILTER_CATEGORIES_COUNT:

@@ -24,11 +24,12 @@ Class = SoftwareComponent
 ClassGuid = {5c4c3332-344d-483c-8739-259e934c9cc8}
 Provider = %ManufacturerName%
 CatalogFile = osrfx2_DCHU_component.cat
+PnpLockdown = 1
 
 [Manufacturer]
-%ManufacturerName% = OsrFx2Component, NT$ARCH$
+%ManufacturerName% = OsrFx2Component, NT$ARCH$.10.0...16299
 
-[OsrFx2Component.NT$ARCH$]
+[OsrFx2Component.NT$ARCH$.10.0...16299]
 %DeviceName% = OsrFx2Component_Install, SWC\VID_045e&PID_94ab
 
 [SourceDisksFiles]

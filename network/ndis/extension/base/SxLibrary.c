@@ -333,9 +333,9 @@ SxLibIssueOidRequest(
     // Dynamically allocate filter request so that we can handle asynchronous
     // completion.
     //
-    oidRequest = (PSX_OID_REQUEST)ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                        sizeof(SX_OID_REQUEST),
-                                                        SxExtAllocationTag);
+    oidRequest = (PSX_OID_REQUEST)ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                  sizeof(SX_OID_REQUEST),
+                                                  SxExtAllocationTag);
     if (oidRequest == NULL)
     {
         goto Cleanup;
@@ -469,9 +469,9 @@ SxLibGetPortArrayUnsafe(
         if (BytesNeeded != 0)
         {
             arrayLength = BytesNeeded;
-            portArray = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                             arrayLength,
-                                             SxExtAllocationTag);
+            portArray = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                        arrayLength,
+                                        SxExtAllocationTag);
             
             if (portArray == NULL)
             {
@@ -529,9 +529,9 @@ SxLibGetNicArrayUnsafe(
         if (BytesNeeded != 0)
         {
             arrayLength = BytesNeeded;
-            nicArray = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                             arrayLength,
-                                             SxExtAllocationTag);
+            nicArray = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                       arrayLength,
+                                       SxExtAllocationTag);
             
             if (nicArray == NULL)
             {
@@ -602,9 +602,9 @@ SxLibGetSwitchPropertyUnsafe(
         ASSERT(PropertyType != NdisSwitchPropertyTypeCustom);
     }
     
-    outputBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         outputBufferLength,
-                                         SxExtAllocationTag);
+    outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                   outputBufferLength,
+                                   SxExtAllocationTag);
                                          
     if (outputBuffer == NULL)
     {
@@ -619,9 +619,9 @@ SxLibGetSwitchPropertyUnsafe(
             ExFreePoolWithTag(outputBuffer, SxExtAllocationTag);
 
             outputBufferLength = (USHORT)bytesNeeded;
-            outputBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                 outputBufferLength,
-                                                 SxExtAllocationTag);
+            outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                           outputBufferLength,
+                                           SxExtAllocationTag);
             
             if (outputBuffer == NULL)
             {
@@ -698,9 +698,9 @@ SxLibGetPortPropertyUnsafe(
         ASSERT(PropertyType != NdisSwitchPortPropertyTypeCustom);
     }
     
-    outputBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         outputBufferLength,
-                                         SxExtAllocationTag);
+    outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                   outputBufferLength,
+                                   SxExtAllocationTag);
                                          
     if (outputBuffer == NULL)
     {
@@ -715,9 +715,9 @@ SxLibGetPortPropertyUnsafe(
             ExFreePoolWithTag(outputBuffer, SxExtAllocationTag);
 
             outputBufferLength = (USHORT)bytesNeeded;
-            outputBuffer = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                 outputBufferLength,
-                                                 SxExtAllocationTag);
+            outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                           outputBufferLength,
+                                           SxExtAllocationTag);
             
             if (outputBuffer == NULL)
             {

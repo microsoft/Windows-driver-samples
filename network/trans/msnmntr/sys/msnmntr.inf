@@ -12,6 +12,7 @@
     Provider    = %ProviderString%
     CatalogFile = MSNMntr.cat
     DriverVer   = 11/24/2014,14.24.55.836
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %MSNMntrDisk%,,,""
@@ -20,21 +21,14 @@
    MSNMntr.sys = 1,,
 
 [DestinationDirs]
-    DefaultDestDir      = 12                              ; %WinDir%\System32\Drivers
     MSNMntr.DriverFiles = 12                              ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$]
     OptionDesc = %MSNMntrServiceDesc%
     CopyFiles  = MSNMntr.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.Services]
     AddService = %MSNMntrServiceName%,,MSNMntr.Service
-
-[DefaultUninstall]
-    DelFiles = MSNMntr.DriverFiles
-
-[DefaultUninstall.Services]
-    DelService = %MSNMntrServiceName%,0x200               ; SPSVCINST_STOPSERVICE
 
 [MSNMntr.DriverFiles]
     MSNMntr.sys,,,0x00000040                              ; COPYFLG_OVERWRITE_OLDER_ONLY

@@ -331,6 +331,15 @@ Return Value:
     }
     m_TorchMode.Flags = KSCAMERA_EXTENDEDPROP_VIDEOTORCH_OFF;
     m_TorchMode = 50UL;
+    m_IRTorch.Flags = KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON;
+    m_IRTorch.Capability = 
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_OFF | 
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALWAYS_ON  |
+        KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALTERNATING_FRAME_ILLUMINATION;
+    m_IRTorch = 100UL;
+    m_IRTorch.Min() = 20;
+    m_IRTorch.Max() = 100;
+    m_IRTorch.Step() = 5;
 
     m_OptimizationHint.Flags = KSCAMERA_EXTENDEDPROP_OPTIMIZATION_PHOTO;
 
@@ -471,6 +480,14 @@ Return Value:
     m_PowerLineFreq.Value = POWERLINEFREQ_DEFAULT;
     m_PowerLineFreq.Flags = KSPROPERTY_CAMERACONTROL_FLAGS_MANUAL;
 
+    //  Set up our relative panel.
+    m_RelativePanel.Capability =
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_ON |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_DYNAMIC;
+    m_RelativePanel.Flags = KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF;
+    m_RelativePanel = (ULONG)AcpiPldPanelUnknown;
+
     m_IsoResult         = STATUS_SUCCESS;
     m_EvCompResult      = STATUS_SUCCESS;
     m_WhiteBalanceResult= STATUS_SUCCESS;
@@ -490,6 +507,38 @@ Return Value:
     }
 
     DBG_LEAVE("()");
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS
+CSensorSimulation::
+CreateHardwareSimulation(
+    _In_ LONG pinID,
+    _In_ const KSPIN_DESCRIPTOR_EX *pinDescriptors,
+    _Out_ CHardwareSimulation** pSim
+)
+{
+    PAGED_CODE();
+    //  Video pin type
+    if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PIN_CATEGORY_CAPTURE))
+    {
+        *pSim = new (NonPagedPoolNx, 'ediV') CVideoHardwareSimulation(this, pinID);
+        m_VideoMask |= 1 << pinID;
+    }
+    else if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PIN_CATEGORY_PREVIEW))
+    {
+        *pSim = new (NonPagedPoolNx, 'verP') CPreviewHardwareSimulation(this, pinID);
+        m_PreviewMask |= 1 << pinID;      // must set to enable photo confirmation...
+    }
+    else if (IsEqualGUID(*pinDescriptors[pinID].PinDescriptor.Category, PINNAME_IMAGE))
+    {
+        *pSim = new (NonPagedPoolNx, 'litS') CImageHardwareSimulation(this, pinID);
+        m_StillMask |= 1 << pinID;
+    }
+    else {
+        return STATUS_NOT_FOUND;
+    }
+
     return STATUS_SUCCESS;
 }
 
@@ -531,26 +580,11 @@ Return Value:
     {
         const KSPIN_DESCRIPTOR_EX *PinDescriptors = m_Descriptors->PinDescriptors;
         CHardwareSimulation *pSim=nullptr;
-
         NT_ASSERT( m_Descriptors->PinDescriptorSize == sizeof( *PinDescriptors ) );
 
-        //  Video pin type
-        if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PIN_CATEGORY_CAPTURE ) )
-        {
-            pSim = new (NonPagedPoolNx, 'ediV') CVideoHardwareSimulation( this, PinIndex );
-            m_VideoMask |= 1<<PinIndex;
-        }
-        else if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PIN_CATEGORY_PREVIEW ) )
-        {
-            pSim = new (NonPagedPoolNx, 'verP') CPreviewHardwareSimulation( this, PinIndex );
-            m_PreviewMask |= 1<<PinIndex;      // must set to enable photo confirmation...
-        }
-        else if( IsEqualGUID( *PinDescriptors[PinIndex].PinDescriptor.Category, PINNAME_IMAGE ) )
-        {
-            pSim = new (NonPagedPoolNx, 'litS') CImageHardwareSimulation( this, PinIndex );
-            m_StillMask |= 1<<PinIndex;
-        }
-        else
+        NTSTATUS localStatus = CreateHardwareSimulation(PinIndex, PinDescriptors, &pSim);
+        
+        if (localStatus == STATUS_NOT_FOUND)
         {
             // We don't know this pin type, so skip it.
             m_HardwareSimulation[PinIndex] = nullptr;
@@ -1771,6 +1805,40 @@ SetOpticalImageStabilization(
     KScopedMutex    lock(m_SensorMutex);
 
     m_OpticalImageStabilization = pProperty->Flags;
+    return STATUS_SUCCESS;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CSensorSimulation::
+GetRelativePanel(
+    _Inout_    CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    *pProperty = m_RelativePanel;
+    pProperty->Flags = m_RelativePanel.Flags;
+    pProperty->Capability = KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_ON |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_OFF |
+        KSCAMERA_EXTENDEDPROP_RELATIVEPANELOPTIMIZATION_DYNAMIC;
+
+    return STATUS_SUCCESS;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANEL.
+NTSTATUS
+CSensorSimulation::
+SetRelativePanel(
+    _In_    CExtendedProperty *pProperty
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    m_RelativePanel = *pProperty;
+    m_RelativePanel.Flags = pProperty->Flags;
     return STATUS_SUCCESS;
 }
 
@@ -3004,6 +3072,37 @@ SetTorchMode(
     KScopedMutex    lock( m_SensorMutex );
 
     m_TorchMode = *pTorchMode;
+    return STATUS_SUCCESS;
+}
+
+//  Get KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CSensorSimulation::
+GetIRTorch(
+    _Inout_ CExtendedVidProcSetting *pTorch
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    *pTorch = m_IRTorch;
+    return STATUS_SUCCESS;
+}
+
+//  Set KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE
+NTSTATUS
+CSensorSimulation::
+SetIRTorch(
+    _In_    CExtendedVidProcSetting *pTorch
+)
+{
+    PAGED_CODE();
+    KScopedMutex    lock(m_SensorMutex);
+
+    //  Only overwrite the IR Torch Flags and value.
+    m_IRTorch.Flags = pTorch->Flags;
+    m_IRTorch = pTorch->GetULONG();
+
     return STATUS_SUCCESS;
 }
 

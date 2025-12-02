@@ -1,0 +1,64 @@
+/*++
+
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+    THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+    KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+    PURPOSE.
+
+Module Name:
+
+    prmfuncsample.h
+
+Environment:
+
+    Kernel mode
+
+--*/
+
+#if !defined(_PRMFUNCTEST_H_)
+#define _PRMFUNCTEST_H_
+
+#include <ntddk.h>
+#include <wdf.h>
+
+#define NTSTRSAFE_LIB
+#include <ntstrsafe.h>
+#include <initguid.h>
+#include "prminterface.h"
+
+#define PRMFUNCTEST_POOL_TAG (ULONG) 'fmrP'
+
+DRIVER_INITIALIZE DriverEntry;
+
+EVT_WDF_DRIVER_DEVICE_ADD PrmFuncTestEvtDeviceAdd;
+EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL PrmFuncTestEvtIoDeviceControl;
+EVT_WDF_DEVICE_FILE_CREATE PrmFuncTestEvtDeviceFileCreate;
+
+DEFINE_GUID(GUID_DEVINTERFACE_PRMFUNCTEST, 
+        0x9f87349b, 0x4429, 0x4e4c, 0xb1, 0xf4, 0x30, 0x74, 0x99, 0x97, 0x0a, 0x1b);
+
+#define PRMFUNCTEST_IOCTL(_index_) \
+    CTL_CODE (FILE_DEVICE_UNKNOWN, _index_, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+#define IOCTL_PRMFUNCTEST_DIRECT_CALL_TEST          PRMFUNCTEST_IOCTL(0xF00)
+#define PRM_PARAMETER_BUFFER_SIZE 308
+
+typedef struct _PRM_TEST_PARAMETERS {
+    GUID Guid;
+    UCHAR ParameterBuffer[PRM_PARAMETER_BUFFER_SIZE];
+} PRM_TEST_PARAMETERS, *PPRM_TEST_PARAMETERS;
+
+typedef struct _PRM_DIRECT_CALL_PARAMETERS {
+    GUID Guid;
+    UCHAR ParameterBuffer[PRM_PARAMETER_BUFFER_SIZE];
+} PRM_DIRECT_CALL_PARAMETERS, *PPRM_DIRECT_CALL_PARAMETERS;
+
+typedef struct _PRM_TEST_RESULT {
+    NTSTATUS Status;
+    ULONG64 EfiStatus;
+    UCHAR Buffer[PRM_PARAMETER_BUFFER_SIZE];
+} PRM_TEST_RESULT, *PPRM_TEST_RESULT;
+
+#endif

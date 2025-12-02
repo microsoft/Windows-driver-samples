@@ -63,11 +63,6 @@ Revision History:
 
 #define SERENUM_POOL_TAG (ULONG)'mneS'
 
-/*#undef ExAllocatePool
-#define ExAllocatePool(type, size) \
-   ExAllocatePoolWithTag(type, size, SERENUM_POOL_TAG)*/
-
-
 #pragma warning(error:4100)   // Unreferenced formal parameter
 #pragma warning(error:4705)   // Statement has no effect
 // disable warnings
@@ -135,6 +130,8 @@ Revision History:
 #if !defined(MIN)
 #define MIN(_A_,_B_) (((_A_) < (_B_)) ? (_A_) : (_B_))
 #endif
+
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 
 //
 // A common header for the device extensions of the PDOs and FDO

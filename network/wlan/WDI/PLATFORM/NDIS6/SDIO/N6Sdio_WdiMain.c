@@ -590,7 +590,7 @@ n6sdioWdi_FillPhyInfoAttr(
 	)
 {
 	PRT_NDIS6_COMMON	pNdisCommon = pAdapter->pNdisCommon;
-	u1Byte				count = 0;
+	ULONG				count = 0;
 
 	static WDI_DATA_RATE_LIST DataRateListHrDsss[] = {
 		{ WDI_DATA_RATE_RX_RATE | WDI_DATA_RATE_TX_RATE, 2 },
@@ -3127,7 +3127,7 @@ N6SdioWdi_PnPSetPower(
 		{
 			if( pNLOInfo->NumDot11OffloadNetwork != 0 && Adapter->bInHctTest)
 			{
-				u1Byte i = 0;
+				ULONG i = 0;
 				BOOLEAN bTargetInNLO = FALSE;
 				
 				if(Adapter->MgntInfo.bMediaConnect || pNdisCommon->bDissociateBeforeSleep)

@@ -578,7 +578,7 @@ CgQueryTransactionOutcome(
 
 Routine Description:
 
-    This is a helper function that qeury the KTM that how trasnaction was ended.
+    This is a helper function that query the KTM how transaction was ended.
     
 Arguments:
 

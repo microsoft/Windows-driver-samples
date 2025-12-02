@@ -271,9 +271,9 @@ BthHfpDevice::Init
     //
     m_SymbolicLinkName.MaximumLength = SymbolicLinkName->MaximumLength;
     m_SymbolicLinkName.Length = SymbolicLinkName->Length;
-    m_SymbolicLinkName.Buffer = (PWSTR) ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                              SymbolicLinkName->MaximumLength,
-                                                              MINADAPTER_POOLTAG);
+    m_SymbolicLinkName.Buffer = (PWSTR) ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                        SymbolicLinkName->MaximumLength,
+                                                        MINADAPTER_POOLTAG);
     if (m_SymbolicLinkName.Buffer == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -281,7 +281,7 @@ BthHfpDevice::Init
 
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("Init: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("Init: ExAllocatePool2 failed, out of memory")),
         Done);
 
     RtlCopyUnicodeString(&m_SymbolicLinkName, SymbolicLinkName);
@@ -1235,6 +1235,8 @@ BthHfpDevice::GetFormatsAndModes
     _In_        eDeviceType             deviceType
 )
 {
+    PAGED_CODE();
+
     PPIN_DEVICE_FORMATS_AND_MODES pFormatsAndModes = NULL;
     ULONG endpointIndex = 0;
 
@@ -1270,11 +1272,11 @@ BthHfpDevice::GetFormatsAndModes
 }
 
 //=============================================================================
-#pragma code_seg("PAGE")
+#pragma code_seg()
+_IRQL_requires_max_(DISPATCH_LEVEL)
 BOOL
 BthHfpDevice::IsNRECSupported()
 {
-    PAGED_CODE();
     DPF_ENTER(("[BthHfpDevice::IsNRECSupported]"));
 
     return m_Descriptor->SupportsNREC;
@@ -1853,14 +1855,14 @@ Bypass descriptor.
     //
     // Allocate memory needed to hold the info.
     //
-    descriptor = (PBTHHFP_DESCRIPTOR2)ExAllocatePoolWithTag(NonPagedPoolNx, length, MINADAPTER_POOLTAG);
+    descriptor = (PBTHHFP_DESCRIPTOR2)ExAllocatePool2(POOL_FLAG_NON_PAGED, length, MINADAPTER_POOLTAG);
     if (descriptor == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("GetBthHfpDescriptor: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("GetBthHfpDescriptor: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -1991,14 +1993,14 @@ Bypass volume values.
     //
     // Allocate memory.
     //
-    propValues = (PKSPROPERTY_VALUES)ExAllocatePoolWithTag(NonPagedPoolNx, Length, MINADAPTER_POOLTAG);
+    propValues = (PKSPROPERTY_VALUES)ExAllocatePool2(POOL_FLAG_NON_PAGED, Length, MINADAPTER_POOLTAG);
     if (propValues == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("GetBthHfpVolumePropertyValues: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("GetBthHfpVolumePropertyValues: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -3028,10 +3030,10 @@ BthHfpDevice::CreateCustomEndpointMinipair
     //
     cTopoPins = pBaseMinipair->TopoDescriptor->PinCount;
     cProperties = pBaseMinipair->TopoInterfacePropertyCount + 1;
-    pProperties = (SYSVAD_DEVPROPERTY*)ExAllocatePoolWithTag(NonPagedPoolNx, cProperties * sizeof(SYSVAD_DEVPROPERTY), SYSVAD_POOLTAG);
-    pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(ENDPOINT_MINIPAIR), SYSVAD_POOLTAG);
-    pNewTopoFilterDesc = (PCFILTER_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(PCFILTER_DESCRIPTOR), SYSVAD_POOLTAG);
-    pNewTopoPins = (PCPIN_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, cTopoPins * sizeof(PCPIN_DESCRIPTOR), SYSVAD_POOLTAG);
+    pProperties = (SYSVAD_DEVPROPERTY*)ExAllocatePool2(POOL_FLAG_NON_PAGED, cProperties * sizeof(SYSVAD_DEVPROPERTY), SYSVAD_POOLTAG);
+    pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ENDPOINT_MINIPAIR), SYSVAD_POOLTAG);
+    pNewTopoFilterDesc = (PCFILTER_DESCRIPTOR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PCFILTER_DESCRIPTOR), SYSVAD_POOLTAG);
+    pNewTopoPins = (PCPIN_DESCRIPTOR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, cTopoPins * sizeof(PCPIN_DESCRIPTOR), SYSVAD_POOLTAG);
 
     if ((pProperties != NULL) && (pNewMinipair != NULL) && (pNewTopoFilterDesc != NULL) && (pNewTopoPins != NULL))
     {

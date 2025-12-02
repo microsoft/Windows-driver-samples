@@ -328,7 +328,7 @@ DiskSaveGeometryDetectInfo(
 
     RtlInitUnicodeString(&unicodeString, L"Configuration Data");
 
-    keyData = ExAllocatePoolWithTag(PagedPool,
+    keyData = ExAllocatePool2(POOL_FLAG_PAGED,
                                     VALUE_BUFFER_SIZE,
                                     DISK_TAG_UPDATE_GEOM);
 
@@ -395,7 +395,7 @@ DiskSaveGeometryDetectInfo(
     //
 
     length = sizeof(DISK_DETECT_INFO) * numberOfDrives;
-    DetectInfoList = ExAllocatePoolWithTag(PagedPool,
+    DetectInfoList = ExAllocatePool2(POOL_FLAG_PAGED,
                                            length,
                                            DISK_TAG_UPDATE_GEOM);
 
@@ -409,8 +409,6 @@ DiskSaveGeometryDetectInfo(
     }
 
     DetectInfoCount = numberOfDrives;
-
-    RtlZeroMemory(DetectInfoList, length);
 
     //
     // Copy the information out of the key data and into the list we've
@@ -660,7 +658,7 @@ Return Value:
 
     RtlInitUnicodeString(&unicodeString, L"Identifier");
 
-    keyData = ExAllocatePoolWithTag(PagedPool,
+    keyData = ExAllocatePool2(POOL_FLAG_PAGED,
                                     VALUE_BUFFER_SIZE,
                                     DISK_TAG_UPDATE_GEOM);
 
@@ -1140,7 +1138,7 @@ Routine Description:
 
     PAGED_CODE();
 
-    readBuffer = ExAllocatePoolWithTag(NonPagedPoolNx, FdoExtension->DiskGeometry.BytesPerSector, DISK_TAG_UPDATE_GEOM);
+    readBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, FdoExtension->DiskGeometry.BytesPerSector, DISK_TAG_UPDATE_GEOM);
 
     if (readBuffer)
     {

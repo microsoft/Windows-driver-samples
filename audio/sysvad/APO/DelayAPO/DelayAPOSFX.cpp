@@ -241,7 +241,7 @@ STDMETHODIMP CDelayAPOSFX::LockForProcess(UINT32 u32NumInputConnections,
         //
         // A more typical approach would be to allocate the memory using AERT_Allocate, which locks the memory
         // But for the purposes of this APO, CoTaskMemAlloc suffices, and the risk of glitches is not important
-        m_pf32DelayBuffer.Allocate(GetSamplesPerFrame() * m_nDelayFrames);
+        m_pf32DelayBuffer.Allocate((size_t) GetSamplesPerFrame() * m_nDelayFrames);
                 
         WriteSilence(m_pf32DelayBuffer, m_nDelayFrames, GetSamplesPerFrame());
         if (nullptr == m_pf32DelayBuffer)
@@ -388,7 +388,8 @@ HRESULT CDelayAPOSFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //

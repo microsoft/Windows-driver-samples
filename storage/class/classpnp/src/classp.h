@@ -26,6 +26,7 @@ Revision History:
 --*/
 
 #define RTL_USE_AVL_TABLES 0
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 
 #include <stddef.h>
 #include <stdarg.h>

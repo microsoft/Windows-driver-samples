@@ -12,38 +12,81 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.0
 CatalogFile = nullfilter.cat
+PnpLockdown = 1
 
+[SourceDisksFiles]
+nullfilter.sys = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
 
 [DestinationDirs]
-DefaultDestDir          = 12
-NullFilter.DriverFiles  = 12            ;%windir%\system32\drivers
+NullFilterDownlevel.CopyDriverFiles  = 12            ;%windir%\system32\drivers
+NullFilterDownlevel.DelDriverFiles   = 12            ;%windir%\system32\drivers
+NullFilter.DriverFiles               = 13            ;driver store
 
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$.10.0...25952]
 OptionDesc  = %ServiceDescription%
 CopyFiles   = NullFilter.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.10.0...25952.Services]
 AddService  = %ServiceName%,,NullFilter.Service
 
-;;
-;; Default uninstall sections
-;;
-
-[DefaultUninstall]
-DelFiles   = NullFilter.DriverFiles
-
-[DefaultUninstall.Services]
-DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
-
 ;
-; Services Section
+; Support sections
 ;
 
 [NullFilter.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %13%\%DriverName%.sys    ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                        ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                        ;SERVICE_DEMAND_START
+ErrorControl     = 1                        ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = NullFilter.AddRegistry
+
+[NullFilter.AddRegistry]
+HKR,"Parameters","SupportedFeatures",0x00010001,0x3
+HKR,"Parameters\Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+
+[NullFilter.DriverFiles]
+%DriverName%.sys
+
+;;
+;; Downlevel default install sections
+;;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc  = %ServiceDescription%
+CopyFiles   = NullFilterDownlevel.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService  = %ServiceName%,,NullFilterDownlevel.Service
+
+;;
+;; Downlevel default uninstall sections
+;;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = NullFilterDownlevel.DelDriverFiles
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService      = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Downlevel support sections
+;
+
+[NullFilterDownlevel.Service]
 DisplayName      = %ServiceName%
 Description      = %ServiceDescription%
 ServiceBinary    = %12%\%DriverName%.sys    ;%windir%\system32\drivers\
@@ -52,30 +95,19 @@ ServiceType      = 2                        ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                        ;SERVICE_DEMAND_START
 ErrorControl     = 1                        ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Activity Monitor"
-AddReg           = NullFilter.AddRegistry
+AddReg           = NullFilterDownlevel.AddRegistry
 
-;
-; Registry Modifications
-;
-
-[NullFilter.AddRegistry]
+[NullFilterDownlevel.AddRegistry]
 HKR,,"SupportedFeatures",0x00010001,0x3
 HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
 HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
 HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
 
-;
-; Copy Files
-;
-
-[NullFilter.DriverFiles]
+[NullFilterDownlevel.CopyDriverFiles]
 %DriverName%.sys
 
-[SourceDisksFiles]
-nullfilter.sys = 1,,
-
-[SourceDisksNames]
-1 = %DiskId1%,,,
+[NullFilterDownlevel.DelDriverFiles]
+%DriverName%.sys
 
 ;;
 ;; String Section

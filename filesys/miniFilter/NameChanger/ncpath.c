@@ -30,7 +30,7 @@ Arguments:
 
     Mapping - The mapping path we are comparing against.
 
-    Remainder - If the string matches the mapping, then Remainder will be 
+    Remainder - If the string matches the mapping, then Remainder will be
                 the portion of the name after the mapping to the end of the
                 string.
 
@@ -170,7 +170,7 @@ Return Value:
 
                 //
                 //  If the paths we are comparing against have
-                //  both ether run out or hit the end of their 
+                //  both ether run out or hit the end of their
                 //  respective components, then we need to break.
                 //
 
@@ -237,7 +237,7 @@ Return Value:
             }
 
             //
-            //  Loop if there is still chance of match 
+            //  Loop if there is still chance of match
             //
 
         } while(LongMatch || ShortMatch);//  end of character scan.
@@ -245,7 +245,7 @@ Return Value:
         //
         //  We scanned until we had 2 mismatches or we ran off the end of the name,
         //  or we ran off the end of the long and short names.
-        //  We should scan everyone forward until they are all off the end of their 
+        //  We should scan everyone forward until they are all off the end of their
         //  buffer, or it the end of their component.
         //
 
@@ -288,9 +288,9 @@ Return Value:
             //
 
             LongMatch = FALSE;
-            LongIndex++;        
+            LongIndex++;
         }
-            
+
         while( ShortIndex < ShortLength && ShortBuff[ShortIndex] != '\\' ) {
 
             //
@@ -298,7 +298,7 @@ Return Value:
             //  So it cannot be a match.
             //  Scan forward until we find the end.
             //
-            
+
             ShortMatch = FALSE;
             ShortIndex++;
         }
@@ -336,7 +336,7 @@ Return Value:
         }
 
         //
-        //  Keep looping if name's last component matched either 
+        //  Keep looping if name's last component matched either
         //  the long or short's component and name and the mapping
         //  have more components.
         //
@@ -505,9 +505,9 @@ Return Value:
     //  Allocate space for combined name.
     //
 
-    NameBuffer = ExAllocatePoolWithTag( PagedPool,
-                                        NameLength,
-                                        NC_GENERATE_NAME_TAG );
+    NameBuffer = ExAllocatePoolZero( PagedPool,
+                                     NameLength,
+                                     NC_GENERATE_NAME_TAG );
 
     if (NameBuffer == NULL) {
 
@@ -516,7 +516,7 @@ Return Value:
     }
 
     //
-    //  Zero out destination 
+    //  Zero out destination
     //
 
     NewName->Buffer = NameBuffer;
@@ -623,18 +623,18 @@ NcParseFinalComponent(
         return STATUS_INVALID_PARAMETER;
     }
 
-    ParentStringBuffer = ExAllocatePoolWithTag( NonPagedPool,
-                                                ParentLength,
-                                                NC_TAG );
+    ParentStringBuffer = ExAllocatePoolZero( NonPagedPool,
+                                             ParentLength,
+                                             NC_TAG );
 
     if (ParentStringBuffer == NULL) {
         Status = STATUS_INSUFFICIENT_RESOURCES;
         goto NcParseFinalComponentCleanup;
     }
 
-    FinalStringBuffer = ExAllocatePoolWithTag( NonPagedPool,
-                                               FinalComponentLength,
-                                               NC_TAG );
+    FinalStringBuffer = ExAllocatePoolZero( NonPagedPool,
+                                            FinalComponentLength,
+                                            NC_TAG );
 
     if (FinalStringBuffer == NULL) {
         Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -644,7 +644,7 @@ NcParseFinalComponent(
     RtlCopyMemory( ParentStringBuffer, EntirePath->Buffer, ParentLength );
 
     ParentPath->Buffer = ParentStringBuffer;
-    ParentPath->MaximumLength = 
+    ParentPath->MaximumLength =
     ParentPath->Length = ParentLength;
 
     RtlCopyMemory( FinalStringBuffer, &EntirePath->Buffer[Index + 1], FinalComponentLength );

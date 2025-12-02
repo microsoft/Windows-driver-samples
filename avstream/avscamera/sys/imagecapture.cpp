@@ -121,9 +121,11 @@ Close(
 {
     PAGED_CODE();
 
+    //  Reset the image sim's counts and queues.
     Reset();
 
-    return STATUS_SUCCESS;
+    //  Call the base Close operation.
+    return CCapturePin::Close(Irp);
 }
 
 // ImageCapturePinDispatch:

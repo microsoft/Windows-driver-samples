@@ -88,9 +88,9 @@ Return Value:
 
     NT_ASSERT(WorkType != PEP_NOTIFICATION_CLASS_NONE);
 
-    WorkRequest = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                        sizeof(PEP_WORK_CONTEXT),
-                                        PEP_POOL_TAG);
+    WorkRequest = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                  sizeof(PEP_WORK_CONTEXT),
+                                  PEP_POOL_TAG);
 
     if (WorkRequest == NULL) {
         Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -107,9 +107,9 @@ Return Value:
 
         NT_ASSERT(WorkContextSize != 0);
 
-        LocalWorkContext = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                 WorkContextSize,
-                                                 PEP_POOL_TAG);
+        LocalWorkContext = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                           WorkContextSize,
+                                           PEP_POOL_TAG);
 
         if (LocalWorkContext == NULL) {
             Status = STATUS_INSUFFICIENT_RESOURCES;

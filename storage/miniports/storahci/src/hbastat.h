@@ -107,4 +107,3 @@ AhciPortErrorRecovery(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     );
 
-

@@ -1,15 +1,15 @@
-<!---
-    name: Barcode Scanner Driver Sample
-    platform: UMDF2
-    language: cpp
-    category: POS
-    description: This UDMF version 2 sample serves as a template for creating a new Barcode Scanner driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620201
---->
+---
+page_type: sample
+description: "This UDMF version 2 sample serves as a template for creating a new Barcode Scanner driver."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
+# Barcode Scanner Driver Sample
 
-Barcode Scanner Driver Sample
-====================================
 This sample serves as a template for creating a new Barcode Scanner driver.  
 
 This sample uses UMDF 2.0 and enables basic functionality such as claiming and enabling the device for exclusive access.  

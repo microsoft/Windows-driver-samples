@@ -493,7 +493,8 @@ CheckRateSet(
 	POCTET_STRING	pSuppRateSet
 	)
 {
-	u1Byte	index0 = 0, index1=0, index2=0;
+	u2Byte	index0 = 0;
+	u1Byte	index1=0, index2=0;
 	u1Byte	AvailRateTable[] = {0x2, 0x4, 0xb, 0x16, 0xc, 0x12, 0x18, 0x24, 0x30, 0x48, 0x60, 0x6c};
 
 	// Trace each rate in the SuppRateSet.
@@ -1907,7 +1908,7 @@ GetValueFromBeaconOrProbeRsp(
 	if(RSNIE.Length != 0)
 	{
 		u1Byte	*pCurr;
-		u1Byte	count;
+		u2Byte	count;
 		u4Byte	Readlength =0;
 		
 		pCurr = RSNIE.Octet;
@@ -3765,7 +3766,7 @@ IncludedInSupportedRates(
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	POCTET_STRING	pSupRateSet = &(pMgntInfo->SupportedRates);
 	u1Byte			RateMask = 0x7F;
-	u1Byte			idx;
+	u2Byte			idx;
 	BOOLEAN			Found = FALSE;
 	u1Byte			NaiveTxRate = TxRate&RateMask;
 
@@ -9107,7 +9108,7 @@ MgntLinkRequest(
 	HAL_HiddenSSIDHandleBeforeScan(Adapter);
 
 	// TODO: In order to stable/optimize scan result, we might actually need to save the result for a certain time
-	// TODO: We will leave this as it is at this time since we want to see the ture RF performance
+	// TODO: We will leave this as it is at this time since we want to see the true RF performance
 	// Clear content of bssDesc[] before scanning.
 	if(!CustomScan_InProgress(GET_CUSTOM_SCAN_INFO(Adapter)))
 	{// customized scan shall not have effect on normal scan, here it should not clear the scan list, 2011.01.11, haich
@@ -9233,7 +9234,7 @@ MgntLinkStatusUpdateRxCounts(
 {
 	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;
 	u2Byte 			SlotIndex;
-	u1Byte			i;
+	u2Byte			i;
 
 	*TotalRxBcnNum = 0;
 	*TotalRxDataNum = 0;

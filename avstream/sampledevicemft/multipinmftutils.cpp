@@ -1055,7 +1055,7 @@ HRESULT CreateDecoderFromLuid( _In_ LUID ullAdapterLuidRunningOn,
     DMFTCHECKHR_GOTO(pOutputType->GetGUID(MF_MT_SUBTYPE, &OutputType.guidSubtype), done);
 
     DMFTCHECKHR_GOTO(MFCreateAttributes(&spAttribs, 1), done);
-    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (byte*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
+    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (BYTE*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
     DMFTCHECKHR_GOTO(MFTEnum2(MFT_CATEGORY_VIDEO_DECODER, dwFlags, &InputType, &OutputType, spAttribs.Get(), &ppActivates, &cMFTActivate), done);
 
     for (DWORD i = 0; i < cMFTActivate; i++)
@@ -1292,7 +1292,10 @@ UpdateAllocatorAttributes(
         level = spDevice->GetFeatureLevel();
         dwBindFlags |= ((level >= D3D_FEATURE_LEVEL_10_0) ? D3D11_BIND_SHADER_RESOURCE : 0);
     }
-
+    else
+    {
+        dwBindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
     DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_BINDFLAGS, dwBindFlags), done);
 
 done:
@@ -1301,6 +1304,83 @@ done:
 
 const UINT32 ALLOCATOR_MIN_SAMPLES = 10;
 const UINT32 ALLOCATOR_MAX_SAMPLES = 50;
+
+HRESULT ConfigureAllocator(
+    _In_ IMFMediaType* pOutputMediaType,
+    _In_ GUID streamCategory,
+    _In_ IUnknown* pDeviceManagerUnk,
+    _In_ BOOL &bDxAllocator,
+    _In_ IMFVideoSampleAllocator* pAllocator)
+{
+    HRESULT hr = S_OK;
+    wil::com_ptr_nothrow<IMFVideoSampleAllocatorEx> spPrivateAllocator;
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    wil::com_ptr_nothrow<IMFVideoCaptureSampleAllocator> spDefaultAllocator;
+#endif
+    wil::com_ptr_nothrow<IMFAttributes> spAllocatorAttributes;
+    GUID guidMajorType = GUID_NULL;
+    GUID guidSubtype = GUID_NULL;
+    BOOL fDXAllocator = FALSE;
+
+    RETURN_HR_IF_NULL(E_INVALIDARG, pAllocator );
+    RETURN_HR_IF_NULL(E_INVALIDARG, pOutputMediaType );
+
+    RETURN_IF_FAILED(pOutputMediaType->GetMajorType(&guidMajorType));
+
+    if (!IsEqualGUID(guidMajorType, MFMediaType_Video))
+    {
+        RETURN_HR(MF_E_INVALIDMEDIATYPE);
+    }
+
+    RETURN_IF_FAILED(pOutputMediaType->GetGUID(MF_MT_SUBTYPE, &guidSubtype));
+    //
+    // Set Attributes on the allocator we need. First get the Bind Flags.
+    //
+    RETURN_IF_FAILED(MFCreateAttributes(&spAllocatorAttributes, 8));
+    RETURN_IF_FAILED(spAllocatorAttributes->SetUINT32(MF_SA_BUFFERS_PER_SAMPLE, 1));
+
+    if (pDeviceManagerUnk != nullptr)
+    {
+        if (SUCCEEDED(UpdateAllocatorAttributes(spAllocatorAttributes.get(), streamCategory, guidSubtype, (IMFDXGIDeviceManager*)pDeviceManagerUnk)))
+        {
+            fDXAllocator = TRUE;
+        }
+    }
+
+    if (fDXAllocator)
+    {
+        RETURN_IF_FAILED(pAllocator->SetDirectXManager(pDeviceManagerUnk));
+    }
+
+    if (SUCCEEDED(pAllocator->QueryInterface(IID_PPV_ARGS(&spPrivateAllocator))))
+    {
+        RETURN_IF_FAILED(spPrivateAllocator->InitializeSampleAllocatorEx(
+            ALLOCATOR_MIN_SAMPLES, 
+            ALLOCATOR_MAX_SAMPLES, 
+            spAllocatorAttributes.get(), 
+            pOutputMediaType));
+    }
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    else if (SUCCEEDED(pAllocator->QueryInterface(IID_PPV_ARGS(&spDefaultAllocator))))
+    {
+        RETURN_IF_FAILED(spDefaultAllocator->InitializeCaptureSampleAllocator(
+            0, /*use sample size by MediaType*/
+            0, /*metadata size*/
+            0, /*default alignment*/
+            ALLOCATOR_MIN_SAMPLES,
+            spAllocatorAttributes.get(),
+            pOutputMediaType));
+    }
+#endif
+    else
+    {
+        hr = E_INVALIDARG;
+    }
+
+    bDxAllocator = fDXAllocator;
+
+    return hr;
+}
 //
 //@@@@ README: Creating an Allocator.. Please don't allocate samples individually using MFCreateSample as that can lead to fragmentation and is
 // extremely inefficent. Instead create an Allocator which will create a fixed number of samples which are recycled when the pipeline returns back
@@ -1337,7 +1417,7 @@ HRESULT CreateAllocator( _In_ IMFMediaType* pOutputMediaType,
     DMFTCHECKHR_GOTO(MFCreateAttributes(&spAllocatorAttributes, 8), done);
     DMFTCHECKHR_GOTO(spAllocatorAttributes->SetUINT32(MF_SA_BUFFERS_PER_SAMPLE, 1), done);
 
-     if (pDeviceManagerUnk != nullptr)
+    if (pDeviceManagerUnk != nullptr)
     {
          if (SUCCEEDED(UpdateAllocatorAttributes(spAllocatorAttributes.Get(), streamCategory,guidSubtype, (IMFDXGIDeviceManager*)pDeviceManagerUnk)))
          {
@@ -1349,6 +1429,7 @@ HRESULT CreateAllocator( _In_ IMFMediaType* pOutputMediaType,
     {
         DMFTCHECKHR_GOTO(spVideoSampleAllocator->SetDirectXManager(pDeviceManagerUnk), done);
     }
+
     DMFTCHECKHR_GOTO(spVideoSampleAllocator->InitializeSampleAllocatorEx(ALLOCATOR_MIN_SAMPLES, ALLOCATOR_MAX_SAMPLES, spAllocatorAttributes.Get(), pOutputMediaType), done);
     
     *ppAllocator = spVideoSampleAllocator.Detach();
@@ -1487,15 +1568,15 @@ done:
 HRESULT MergeSampleAttributes( _In_ IMFSample* pInSample, _Inout_ IMFSample* pOutSample)
 {
     HRESULT hr = S_OK;
-    DMFTCHECKNULL_GOTO(pInSample, done, E_INVALIDARG);
-    DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
     UINT32 cAttributes = 0;
     GUID guidAttribute;
     PROPVARIANT varAttribute;
     PROPVARIANT varAttributeExists;
-
     PropVariantInit(&varAttribute);
     PropVariantInit(&varAttributeExists);
+
+    DMFTCHECKNULL_GOTO(pInSample, done, E_INVALIDARG);
+    DMFTCHECKNULL_GOTO(pOutSample, done, E_INVALIDARG);
 
     DMFTCHECKHR_GOTO(pInSample->GetCount(&cAttributes), done);
     for (UINT32 i = 0; i < cAttributes; i++)

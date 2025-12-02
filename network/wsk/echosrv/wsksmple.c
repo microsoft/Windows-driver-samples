@@ -38,6 +38,8 @@ Revision History:
 #pragma warning(disable:4201) // nameless struct/union
 #pragma warning(disable:4214) // bit field types other than int
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
+
 #include <ntddk.h>
 #include <wsk.h>
 
@@ -317,6 +319,8 @@ DriverEntry(
     UNREFERENCED_PARAMETER(RegistryPath);
 
     PAGED_CODE();
+
+    ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
     
     // Allocate a socket context that will be used for queueing an operation
     // to setup a listening socket that will accept incoming connections
@@ -486,14 +490,12 @@ WskSampleAllocateSocketContext(
     // use multiple work queues (say a work queue per processor), a given
     // socket will/must always use the same work queue.
 
-    socketContext = ExAllocatePoolWithTag(
-        NonPagedPool, sizeof(*socketContext), WSKSAMPLE_SOCKET_POOL_TAG);
+    socketContext = ExAllocatePoolZero(
+        NonPagedPoolNx, sizeof(*socketContext), WSKSAMPLE_SOCKET_POOL_TAG);
 
     if(socketContext != NULL) {
 
         ULONG i;
-
-        RtlZeroMemory(socketContext, sizeof(WSKSAMPLE_SOCKET_CONTEXT));
 
         socketContext->WorkQueue = WorkQueue;
 
@@ -507,8 +509,8 @@ WskSampleAllocateSocketContext(
             }
 
             if(BufferLength > 0) {
-                socketContext->OpContext[i].DataBuffer = ExAllocatePoolWithTag(
-                    NonPagedPool, BufferLength, WSKSAMPLE_BUFFER_POOL_TAG);
+                socketContext->OpContext[i].DataBuffer = ExAllocatePoolUninitialized(
+                    NonPagedPoolNx, BufferLength, WSKSAMPLE_BUFFER_POOL_TAG);
                 if(socketContext->OpContext[i].DataBuffer == NULL) {
                     goto failure;
                 }

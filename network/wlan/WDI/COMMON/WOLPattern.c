@@ -264,7 +264,7 @@ ResetWoLPara(
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pPmWOLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte	i;
+	int	i;
 
 	PlatformZeroMemory(pPmWOLPatternInfo, 
 		sizeof(RT_PM_WOL_PATTERN_INFO)*(MAX_SUPPORT_WOL_PATTERN_NUM(Adapter)));
@@ -289,7 +289,7 @@ ConstructUserDefinedWakeUpPattern(
 	OCTET_STRING	AuthChallengetext;
 	u1Byte		AuthMaskBuf;
 	u1Byte		AuthMaskBufLen;
-	u1Byte		Index;
+	int		Index;
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
 	pu1Byte 		AuthBuf;
@@ -349,7 +349,7 @@ ConstructUserDefinedWakeUpPattern(
 			AuthMaskBufLen,
 			AuthBuf,
 			AuthBufLen,
-			Index,
+			(u1Byte)Index,
 			TRUE);
 
 		pPSC->WoLPatternNum++;
@@ -404,7 +404,7 @@ RemoveUserDefinedWoLPattern(
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte		Index;
+	int		Index;
 
 	for(Index=0; Index<MAX_SUPPORT_WOL_PATTERN_NUM(Adapter); Index++)
 	{
@@ -444,7 +444,8 @@ AddWoLPatternEntry(
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte	i, j;
+	u4Byte	i;
+	u1Byte	j;
 
 	// Reset the entry.
 	PlatformZeroMemory(&(pWoLPatternInfo[Index].FwPattern),sizeof(H2C_WOL_PATTERN_MATCH_INFO));
@@ -490,7 +491,7 @@ GetWoLPatternMatchOffloadEntries(
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte	i=0;
+	int	i=0;
 	u1Byte	MinNum = 0xFF, NextMinNum=0xFF;
 	u1Byte	NumOfSelected=0;
 
@@ -650,7 +651,8 @@ WoL_IsMagicPacket(
 {
 	OCTET_STRING	frame = {NULL, 0};
 	pu1Byte 			pHeader;
-	u1Byte			offset=0, i, j;
+	u1Byte			offset = 0;
+	u2Byte			i, j;
 	u2Byte			PayloadLen;
 	BOOLEAN			bMatchPacket=FALSE;
 	
@@ -765,7 +767,8 @@ WoL_IsPatternMatchPacket(
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	u1Byte			Index, i, j;
+	int				Index;
+	u1Byte			i, j;
 	BOOLEAN			bMatchPacket=TRUE;
 	u1Byte			offset = 0;
 	pu1Byte			pDot3Packet;

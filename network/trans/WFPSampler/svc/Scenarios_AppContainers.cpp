@@ -585,7 +585,7 @@ UINT32 PrvScenarioAppContainerRegister()
 {
    UINT32 status = NO_ERROR;
 
-   status = NetworkIsolationRegisterForAppContainerChanges(0,
+   status = NetworkIsolationRegisterForAppContainerChanges(INET_FIREWALL_AC_NONE,
                                                            PrvScenarioAppContainerActOnChange,
                                                            0,
                                                            &registrationHandle);

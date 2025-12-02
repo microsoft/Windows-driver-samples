@@ -106,13 +106,11 @@ Return Value:
 
         if (Fcb->ShortNamePrefix == NULL) {
 
-            Fcb->ShortNamePrefix = ExAllocatePoolWithTag( CdPagedPool,
-                                                          sizeof( PREFIX_ENTRY ),
-                                                          TAG_PREFIX_ENTRY );
+            Fcb->ShortNamePrefix = ExAllocatePoolZero( CdPagedPool,
+                                                       sizeof( PREFIX_ENTRY ),
+                                                       TAG_PREFIX_ENTRY );
 
             if (Fcb->ShortNamePrefix == NULL) { return; }
-
-            RtlZeroMemory( Fcb->ShortNamePrefix, sizeof( PREFIX_ENTRY ));
         }
 
         PrefixEntry = Fcb->ShortNamePrefix;
@@ -151,9 +149,9 @@ Return Value:
 
         if (Name->FileName.Length > BYTE_COUNT_EMBEDDED_NAME) {
 
-            NameBuffer = ExAllocatePoolWithTag( CdPagedPool,
-                                                Name->FileName.Length * 2,
-                                                TAG_PREFIX_NAME );
+            NameBuffer = ExAllocatePoolZero( CdPagedPool,
+                                             Name->FileName.Length * 2,
+                                             TAG_PREFIX_NAME );
 
             //
             //  Exit if no name buffer.
@@ -228,9 +226,9 @@ Return Value:
 
 {
     PAGED_CODE();
-    
+
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Start with the short name prefix entry.
     //

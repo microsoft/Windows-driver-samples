@@ -238,9 +238,9 @@ SxNdisAttach(
     }
 
     switchObjectSize = sizeof(SX_SWITCH_OBJECT);
-    switchObject = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         switchObjectSize,
-                                         SxExtAllocationTag);
+    switchObject = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                   switchObjectSize,
+                                   SxExtAllocationTag);
 
     if (switchObject == NULL)
     {
@@ -1256,8 +1256,8 @@ SxpNdisProcessMethodOid(
                 ASSERT(Switch->OldNicRequest == NULL);
                 Switch->OldNicRequest = nicOidRequest;
                 
-                newNicOidRequest = (PNDIS_SWITCH_NIC_OID_REQUEST)ExAllocatePoolWithTag(
-                                                                    NonPagedPoolNx,
+                newNicOidRequest = (PNDIS_SWITCH_NIC_OID_REQUEST)ExAllocatePool2(
+                                                                    POOL_FLAG_NON_PAGED,
                                                                     sizeof(NDIS_SWITCH_NIC_OID_REQUEST),
                                                                     SxExtAllocationTag);
                                                                     

@@ -372,9 +372,9 @@ MgntQuery_TxTime(
 	)
 {
 	u2Byte	ThisFrameTime;
-	u1Byte	AckRate	= 0, CtsRate 	= 0;
-	u2Byte	AckTime= 0,	RtsTime	= 0, CtsTime	= 0;
-	u1Byte	FragIndex = 0;
+	u1Byte	AckRate = 0, CtsRate = 0;
+	u2Byte	AckTime = 0, RtsTime = 0, CtsTime = 0;
+	u2Byte	FragIndex = 0;
 
 	if(pTcb->bTxCalculatedSwDur == FALSE)
 		return;
@@ -1250,7 +1250,8 @@ FillFrameField(
 	u2Byte		SeqNum
 	)
 {
-	u1Byte 	FragIndex, BufferIndex;
+	u2Byte 	FragIndex;
+	u1Byte	BufferIndex;
 	pu1Byte	pFrame = GET_FRAME_OF_FIRST_FRAG(Adapter, pTcb);
 	u1Byte	HwDescOffset =0;
 

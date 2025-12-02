@@ -330,16 +330,21 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
     WCHAR                   szMiniportGuid[MAX_PATH+1];
     LPWSTR                  lpDevice;
     LONG                    lResult = 0;
-
+    int                     numChars;
     TraceMsg( L"-->CMuxVirtualMiniport::ApplyRegistryChanges.\n" );
 
     switch( eApplyAction ) {
 
         case eActAdd:         // Virtual miniport added.
 
-            StringFromGUID2( m_guidAdapter,
+            numChars = StringFromGUID2( m_guidAdapter,
                              szAdapterGuid,
                              MAX_PATH+1 );
+
+            if (numChars == 0) {
+
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+            }
 
             StringCchPrintfW ( szAdapterGuidKey,
                 celems(szAdapterGuidKey),
@@ -361,9 +366,16 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
             if ( lResult == ERROR_SUCCESS ) {
 
-                StringFromGUID2( m_guidMiniport,
+                numChars = StringFromGUID2( m_guidMiniport,
                                  szMiniportGuid,
                                  MAX_PATH+1 );
+
+                if (numChars == 0) {
+
+                    RegCloseKey(hkeyAdapterGuid);
+
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+                }
 
                 lpDevice = AddDevicePrefix( szMiniportGuid );
 
@@ -411,9 +423,14 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
         case eActRemove:                  // Virtual miniport removed.
 
-            StringFromGUID2( m_guidAdapter,
+            numChars = StringFromGUID2( m_guidAdapter,
                              szAdapterGuid,
                              MAX_PATH+1 );
+
+            if (numChars == 0) {
+
+                return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+            }
 
             StringCchPrintfW( szAdapterGuidKey,
                 celems(szAdapterGuidKey),
@@ -434,9 +451,16 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 
             if ( lResult == ERROR_SUCCESS ) {
 
-                StringFromGUID2( m_guidMiniport,
+                numChars = StringFromGUID2( m_guidMiniport,
                                  szMiniportGuid,
                                  MAX_PATH+1 );
+
+                if (numChars == 0) {
+
+                    RegCloseKey(hkeyAdapterGuid);
+
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+                }
 
                 lpDevice = AddDevicePrefix( szMiniportGuid );
                 TraceMsg( L"   Deleting %s at %s.\n",

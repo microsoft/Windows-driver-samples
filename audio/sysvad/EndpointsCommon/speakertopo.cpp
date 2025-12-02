@@ -22,7 +22,6 @@ Abstract:
 
 
 #pragma code_seg("PAGE")
-
 //=============================================================================
 NTSTATUS
 PropertyHandler_SpeakerTopoFilter
@@ -51,7 +50,7 @@ Return Value:
 
     DPF_ENTER(("[PropertyHandler_SpeakerTopoFilter]"));
 
-    // PropertryRequest structure is filled by portcls. 
+    // PropertyRequest structure is filled by portcls. 
     // MajorTarget is a pointer to miniport object for miniports.
     //
     NTSTATUS            ntStatus = STATUS_INVALID_DEVICE_REQUEST;
@@ -75,6 +74,33 @@ Return Value:
                 SpeakerJackDescriptions,
                 0 // jack capabilities
                 );
+        }
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_JACK_DESCRIPTION3)
+        {
+            ntStatus = pMiniport->PropertyHandlerJackDescription3(
+                PropertyRequest,
+                ARRAYSIZE(SpeakerJackDescriptions),
+                SpeakerJackDescriptions,
+                42 // jack config id
+                );
+        }
+    }
+    else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioResourceManagement))
+    {
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIORESOURCEMANAGEMENT_RESOURCEGROUP)
+        {
+            ntStatus = pMiniport->PropertyHandlerAudioResourceGroup(PropertyRequest);
+        }
+    }
+    else if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_AudioPosture))
+    {
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_AUDIOPOSTURE_ORIENTATION)
+        {
+            ntStatus = pMiniport->PropertyHandlerAudioPostureOrientation(
+                PropertyRequest,
+                ARRAYSIZE(SpeakerAudioPostureInfoPointers),
+                SpeakerAudioPostureInfoPointers
+            );
         }
     }
 

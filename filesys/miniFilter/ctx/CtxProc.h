@@ -134,7 +134,7 @@ CtxUpdateNameInStreamHandleContext (
 //
 
 _At_(String->Length, _Out_range_(==, 0))
-_At_(String->MaximumLength, _In_) 
+_At_(String->MaximumLength, _In_)
 _At_(String->Buffer, _Pre_maybenull_ _Post_notnull_ _Post_writable_byte_size_(String->MaximumLength))
 NTSTATUS
 CtxAllocateUnicodeString (
@@ -161,9 +161,9 @@ CtxAllocateResource (
     )
 {
 
-    return ExAllocatePoolWithTag( NonPagedPool,
-                                  sizeof( ERESOURCE ),
-                                  CTX_RESOURCE_TAG );
+    return ExAllocatePoolZero( NonPagedPool,
+                               sizeof( ERESOURCE ),
+                               CTX_RESOURCE_TAG );
 }
 
 FORCEINLINE
@@ -215,7 +215,7 @@ _Releases_lock_(_Global_critical_region_)
 _Requires_lock_held_(_Global_critical_region_)
 _IRQL_requires_max_(APC_LEVEL)
 CtxReleaseResource (
-    _Inout_ _Requires_lock_held_(*_Curr_) _Releases_lock_(*_Curr_) 
+    _Inout_ _Requires_lock_held_(*_Curr_) _Releases_lock_(*_Curr_)
     PERESOURCE Resource
     )
 {

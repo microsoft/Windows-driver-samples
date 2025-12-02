@@ -693,7 +693,7 @@ N6CQuery_DOT11_PMKID_LIST(
 {
 	PMGNT_INFO					pMgntInfo = &(Adapter->MgntInfo);
 	PRT_SECURITY_T				pSecInfo = &(pMgntInfo->SecurityInfo);
-	u1Byte						idx;
+	u4Byte						idx;
 
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("==> N6CQuery_DOT11_PMKID_LIST()\n") );
 
@@ -1736,7 +1736,7 @@ N6CQuery_DOT11_SUPPORTED_PHY_TYPES(
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PDOT11_SUPPORTED_PHY_TYPES	pDot11SupportedPhyTypes = (PDOT11_SUPPORTED_PHY_TYPES)InformationBuffer;
 	ULONG	uNumMaxEntries = 0;
-	USHORT	Index;
+	ULONG	Index;
 
 	//
 	// <RJ_NW_TODO> Reivse PHY related in N6usbInitializeNative80211MIBs().

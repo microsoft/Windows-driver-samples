@@ -918,7 +918,8 @@ DFS_StaConstructAssociateReq(
 	PRT_CHANNEL_LIST		pChannelList;
 	OCTET_STRING			SupportChannelIE;
 	u1Byte					SupportChannelConnent[48];
-	u1Byte					i=0,j=0;
+	u2Byte					i=0;
+	u2Byte					j=0;
 
 	if (Adapter->DFSSupport == FALSE)
 		return;
@@ -943,7 +944,7 @@ DFS_StaConstructAssociateReq(
 		for(i = 0; i < pChannelList->ChannelLen; i ++)
 			RT_TRACE(COMP_SCAN, DBG_LOUD, (" %d ", pChannelList->ChnlListEntry[i].ChannelNum));
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("\n"));
-		for(i=0;i < pChannelList->ChannelLen*2;i++)
+		for(i=0;i < (u2Byte)(pChannelList->ChannelLen*2);i++)
 		{
 			if(i%2 == 0)
 				SupportChannelConnent[i] = pChannelList->ChnlListEntry[i/2].ChannelNum;

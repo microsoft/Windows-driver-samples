@@ -178,8 +178,6 @@ UsbHsDevice::Init
     m_MicVolumePropValues           = NULL;
     m_SpeakerMutePropValues         = NULL;
     m_MicMutePropValues             = NULL;
-    m_ulSpeakerMutePropValuesSize   = 0;
-    m_ulMicMutePropValuesSize       = 0;
 
     // Notification updates. 
     m_SpeakerVolumeLevel            = 0;
@@ -300,9 +298,9 @@ UsbHsDevice::Init
     //
     m_SymbolicLinkName.MaximumLength = SymbolicLinkName->MaximumLength;
     m_SymbolicLinkName.Length = SymbolicLinkName->Length;
-    m_SymbolicLinkName.Buffer = (PWSTR) ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                              SymbolicLinkName->MaximumLength,
-                                                              MINADAPTER_POOLTAG);
+    m_SymbolicLinkName.Buffer = (PWSTR) ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                        SymbolicLinkName->MaximumLength,
+                                                        MINADAPTER_POOLTAG);
     if (m_SymbolicLinkName.Buffer == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -310,7 +308,7 @@ UsbHsDevice::Init
 
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     RtlCopyUnicodeString(&m_SymbolicLinkName, SymbolicLinkName);
@@ -659,14 +657,12 @@ Return Value:
     {
         ExFreePoolWithTag(m_SpeakerMutePropValues, USBSIDEBANDTEST_POOLTAG06);
         m_SpeakerMutePropValues = NULL;
-        m_ulSpeakerMutePropValuesSize = 0;
     }
 
     if (m_MicMutePropValues != NULL)
     {
         ExFreePoolWithTag(m_MicMutePropValues, USBSIDEBANDTEST_POOLTAG06);
         m_MicMutePropValues = NULL;
-        m_ulMicMutePropValuesSize = 0;
     }
 
     //
@@ -1031,12 +1027,12 @@ UsbHsDevice::GetMuteSettings
 
     if (deviceType == eUsbHsSpeakerDevice)
     {
-        *Size = m_ulSpeakerMutePropValuesSize;
+        *Size = m_pSpeakerDescriptor->MutePropertyValuesSize;
         return m_SpeakerMutePropValues;
     }
     else if (deviceType == eUsbHsMicDevice)
     {
-        *Size = m_ulMicMutePropValuesSize;
+        *Size = m_pMicDescriptor->MutePropertyValuesSize;
         return m_MicMutePropValues;
     }
 
@@ -1695,17 +1691,19 @@ UsbHsDevice::GetFormatsAndModes
     _In_        eDeviceType             deviceType
 )
 {
+    PAGED_CODE();
+
     UNREFERENCED_PARAMETER(deviceType);
     PPIN_DEVICE_FORMATS_AND_MODES pFormatsAndModes = NULL;
     return pFormatsAndModes;
 }
 
 //=============================================================================
-#pragma code_seg("PAGE")
+#pragma code_seg()
+_IRQL_requires_max_(DISPATCH_LEVEL)
 BOOL
 UsbHsDevice::IsNRECSupported()
 {
-    PAGED_CODE();
     DPF_ENTER(("[%!FUNC!]"));
 
     return FALSE;
@@ -2281,14 +2279,14 @@ Routine Description:
     //
     // Allocate memory needed to hold the info.
     //
-    descriptor  = (PSIDEBANDAUDIO_DEVICE_DESCRIPTOR) ExAllocatePoolWithTag(NonPagedPoolNx, length, MINADAPTER_POOLTAG);
+    descriptor  = (PSIDEBANDAUDIO_DEVICE_DESCRIPTOR) ExAllocatePool2(POOL_FLAG_NON_PAGED, length, MINADAPTER_POOLTAG);
     if (descriptor == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -2346,7 +2344,7 @@ NTSTATUS
 UsbHsDevice::GetUsbHsEndpointDescriptor
 (
     _In_    ULONG                               EpIndex,
-    _Out_ PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR *EpDescriptor
+    _Out_   PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2 *EpDescriptor
 )
 /*++
 
@@ -2361,7 +2359,7 @@ Routine Description:
 
     NTSTATUS                                ntStatus    = STATUS_SUCCESS;
     WDFREQUEST                              req         = NULL;
-    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR   descriptor  = NULL;
+    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     descriptor  = NULL;
     ULONG                                   length      = 0;
     ULONG_PTR                               information = 0;
     WDF_REQUEST_REUSE_PARAMS                reuseParams;   
@@ -2388,7 +2386,7 @@ Routine Description:
     //
     ntStatus = SendIoCtrlSynchronously(
         req,
-        IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR,
+        IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR2,
         sizeof(EpIndex),
         NULL,
         &EpIndex);
@@ -2419,14 +2417,14 @@ Routine Description:
     //
     // Allocate memory needed to hold the info.
     //
-    descriptor  = (PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR) ExAllocatePoolWithTag(NonPagedPoolNx, length, MINADAPTER_POOLTAG);
+    descriptor = (PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2) ExAllocatePool2(POOL_FLAG_NON_PAGED, length, MINADAPTER_POOLTAG);
     if (descriptor == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -2449,7 +2447,7 @@ Routine Description:
 
     ntStatus = SendIoCtrlSynchronously(
         req,
-        IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR,
+        IOCTL_SBAUD_GET_ENDPOINT_DESCRIPTOR2,
         sizeof(EpIndex),
         length,
         descriptor);
@@ -2493,6 +2491,8 @@ UsbHsDevice::VerifyEndpointFormatCompatibility
     _Out_   PULONG                              pHardwareFormatIndex
 )
 {
+    PAGED_CODE();
+
     NTSTATUS status = STATUS_NOT_SUPPORTED;
     ULONG iHardwareFormats = 0;
     ULONG iEpDataFormats = 0;
@@ -2535,12 +2535,14 @@ UsbHsDevice::VerifyEndpointFormatCompatibility
     return status;
 }
 
-
+#pragma code_seg("PAGE")
 NTSTATUS UsbHsDevice::FreeTransportResources
 (
     _In_    PUSBHSDEVICE_EP_TRANSPORT_RESOURCES     pTransportResources
 )
 {
+    PAGED_CODE();
+
     SAFE_DELETE_PTR_WITH_TAG(pTransportResources->pUsbInterfaceDescriptor, USBSIDEBANDTEST_POOLTAG07);
     SAFE_DELETE_PTR_WITH_TAG(pTransportResources->pUsbEndpointDescriptor, USBSIDEBANDTEST_POOLTAG08);
     SAFE_DELETE_PTR_WITH_TAG(pTransportResources->pUsbOffloadInformation, USBSIDEBANDTEST_POOLTAG09);
@@ -2556,10 +2558,11 @@ NTSTATUS UsbHsDevice::FreeTransportResources
 #pragma code_seg("PAGE")
 NTSTATUS UsbHsDevice::GetSiop
 (
-    _In_    ULONG                                   EpIndex,
-    _In_    ULONG                                   SiopTypeId,
-    _In_    ULONG                                   PoolTag,
-    _Out_   PBYTE                                   *ppOutputBuffer
+    _In_        const GUID  *ParamSet,
+    _In_        ULONG       SiopTypeId,
+    _In_        ULONG       EpIndex,
+    _In_        ULONG       PoolTag,
+    _Outptr_    PBYTE       *ppOutputBuffer
 )
 {
     PAGED_CODE();
@@ -2591,7 +2594,7 @@ NTSTATUS UsbHsDevice::GetSiop
         Done);
 
     siop.EpIndex = EpIndex;
-    siop.RequestedSiop.ParamSet = SIDEBANDAUDIO_PARAMS_SET_USBAUDIO;
+    siop.RequestedSiop.ParamSet = *ParamSet;
     siop.RequestedSiop.TypeId = SiopTypeId;
     siop.RequestedSiop.Size = 0;
 
@@ -2632,14 +2635,14 @@ NTSTATUS UsbHsDevice::GetSiop
     //
     // Allocate memory needed to hold the info.
     //
-    pOutput = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, length, PoolTag);
+    pOutput = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, length, PoolTag);
     if (pOutput == NULL)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         status,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -2701,7 +2704,7 @@ NTSTATUS
 UsbHsDevice::GetTransportResources
 (
     _In_    ULONG                                   EpIndex,
-    _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      pEndpointDescriptor,
+    _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     pEndpointDescriptor,
     _Out_   PUSBHSDEVICE_EP_TRANSPORT_RESOURCES     pTransportResources
 )
 {
@@ -2711,7 +2714,7 @@ UsbHsDevice::GetTransportResources
     NTSTATUS status = STATUS_SUCCESS;
 
     // SIOP_TYPE_USBAUD_USBD_INTERFACE_DESCRIPTOR
-    status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_USBD_INTERFACE_DESCRIPTOR, USBSIDEBANDTEST_POOLTAG07, (PBYTE *)&pTransportResources->pUsbInterfaceDescriptor);
+    status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_USBD_INTERFACE_DESCRIPTOR, EpIndex, USBSIDEBANDTEST_POOLTAG07, (PBYTE *)&pTransportResources->pUsbInterfaceDescriptor);
     if (!NT_SUCCESS(status))
     {
         DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_USBD_INTERFACE_DESCRIPTOR) failed, 0x%x", status));
@@ -2719,7 +2722,7 @@ UsbHsDevice::GetTransportResources
     }
 
     // SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_DESCRIPTOR
-    status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_DESCRIPTOR, USBSIDEBANDTEST_POOLTAG08, (PBYTE *)&pTransportResources->pUsbEndpointDescriptor);
+    status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_DESCRIPTOR, EpIndex, USBSIDEBANDTEST_POOLTAG08, (PBYTE *)&pTransportResources->pUsbEndpointDescriptor);
     if (!NT_SUCCESS(status))
     {
         DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_DESCRIPTOR) failed, 0x%x", status));
@@ -2727,7 +2730,7 @@ UsbHsDevice::GetTransportResources
     }
 
     // SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION
-    status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION, USBSIDEBANDTEST_POOLTAG09, (PBYTE *)&pTransportResources->pUsbOffloadInformation);
+    status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION, EpIndex, USBSIDEBANDTEST_POOLTAG09, (PBYTE *)&pTransportResources->pUsbOffloadInformation);
     if (!NT_SUCCESS(status))
     {
         DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION) failed, 0x%x", status));
@@ -2735,7 +2738,7 @@ UsbHsDevice::GetTransportResources
     }
 
     // SIOP_TYPE_USBAUD_EP_USBAUDIO_TRANSPORT_RESOURCES
-    status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_EP_USBAUDIO_TRANSPORT_RESOURCES, USBSIDEBANDTEST_POOLTAG010, (PBYTE *)&pTransportResources->pUsbAudioTransportResources);
+    status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_EP_USBAUDIO_TRANSPORT_RESOURCES, EpIndex, USBSIDEBANDTEST_POOLTAG010, (PBYTE *)&pTransportResources->pUsbAudioTransportResources);
     if (!NT_SUCCESS(status))
     {
         DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_EP_USBAUDIO_TRANSPORT_RESOURCES) failed, 0x%x", status));
@@ -2745,7 +2748,7 @@ UsbHsDevice::GetTransportResources
     if (pEndpointDescriptor->Capabilities.Feedback)
     {
         // SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_DESCRIPTOR
-        status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_DESCRIPTOR, USBSIDEBANDTEST_POOLTAG011, (PBYTE *)&pTransportResources->pSyncUsbEndpointDescriptor);
+        status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_DESCRIPTOR, EpIndex, USBSIDEBANDTEST_POOLTAG011, (PBYTE *)&pTransportResources->pSyncUsbEndpointDescriptor);
         if (!NT_SUCCESS(status))
         {
             DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_DESCRIPTOR) failed, 0x%x", status));
@@ -2753,7 +2756,7 @@ UsbHsDevice::GetTransportResources
         }
 
         // SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION
-        status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION, USBSIDEBANDTEST_POOLTAG012, (PBYTE *)&pTransportResources->pSyncUsbOffloadInformation);
+        status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION, EpIndex, USBSIDEBANDTEST_POOLTAG012, (PBYTE *)&pTransportResources->pSyncUsbOffloadInformation);
         if (!NT_SUCCESS(status))
         {
             DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_FB_EP_USBD_ENDPOINT_OFFLOAD_INFORMATION) failed, 0x%x", status));
@@ -2761,7 +2764,7 @@ UsbHsDevice::GetTransportResources
         }
 
         // SIOP_TYPE_USBAUD_FB_EP_USBAUDIO_TRANSPORT_RESOURCES
-        status = GetSiop(EpIndex, SIOP_TYPE_USBAUD_FB_EP_USBAUDIO_TRANSPORT_RESOURCES, USBSIDEBANDTEST_POOLTAG013, (PBYTE *)&pTransportResources->pSyncUsbAudioTransportResources);
+        status = GetSiop(&SIDEBANDAUDIO_PARAMS_SET_USBAUDIO, SIOP_TYPE_USBAUD_FB_EP_USBAUDIO_TRANSPORT_RESOURCES, EpIndex, USBSIDEBANDTEST_POOLTAG013, (PBYTE *)&pTransportResources->pSyncUsbAudioTransportResources);
         if (!NT_SUCCESS(status))
         {
             DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_FB_EP_USBAUDIO_TRANSPORT_RESOURCES) failed, 0x%x", status));
@@ -2782,7 +2785,7 @@ Done:
 NTSTATUS
 UsbHsDevice::SetTransportResources
 (
-    _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR      pEndpointDescriptor,
+    _In_    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2     pEndpointDescriptor,
     _In_    ULONG                                   EpIndex
 )
 {
@@ -2931,14 +2934,14 @@ Routine Description:
     //
     // Allocate memory needed to hold the info.
     //
-    formats  = (PSIDEBANDAUDIO_SUPPORTED_FORMATS) ExAllocatePoolWithTag(NonPagedPoolNx, length, USBSIDEBANDTEST_POOLTAG03);
+    formats  = (PSIDEBANDAUDIO_SUPPORTED_FORMATS) ExAllocatePool2(POOL_FLAG_NON_PAGED, length, USBSIDEBANDTEST_POOLTAG03);
     if (formats == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
@@ -3001,7 +3004,7 @@ UsbHsDevice::GetUsbHsVolumePropertyValues
 (
     _In_  ULONG                     EpIndex,
     _In_  ULONG                     Length,
-    _Out_ PKSPROPERTY_DESCRIPTION   *PropValues
+    _Out_ PKSPROPERTY_DESCRIPTION*  PropValues
 )
 /*++
 
@@ -3014,28 +3017,28 @@ Routine Description:
     PAGED_CODE();
     DPF_ENTER(("[%!FUNC!]"));
 
-    NTSTATUS                    ntStatus    = STATUS_SUCCESS;
-    PKSPROPERTY_DESCRIPTION     propValues  = NULL;
+    NTSTATUS                    ntStatus = STATUS_SUCCESS;
+    PKSPROPERTY_DESCRIPTION     propValues = NULL;
 
     *PropValues = NULL;
 
     //
     // Allocate memory.
     //
-    propValues  = (PKSPROPERTY_DESCRIPTION) ExAllocatePoolWithTag(NonPagedPoolNx, Length, USBSIDEBANDTEST_POOLTAG02);
+    propValues  = (PKSPROPERTY_DESCRIPTION) ExAllocatePool2(POOL_FLAG_NON_PAGED, Length, USBSIDEBANDTEST_POOLTAG02);
     if (propValues == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
     // Send EpIndex in same buffer as input param
     //
-    *((ULONG *)propValues) = EpIndex;
+    *((ULONG*)propValues) = EpIndex;
 
     //
     // Get the USB Headset volume property values.
@@ -3043,8 +3046,8 @@ Routine Description:
     ntStatus = SendIoCtrlSynchronously(
         NULL,
         IOCTL_SBAUD_GET_VOLUMEPROPERTYVALUES,
-        sizeof(EpIndex), 
-        Length, 
+        sizeof(EpIndex),
+        Length,
         propValues);
 
     IF_FAILED_ACTION_JUMP(
@@ -3064,7 +3067,7 @@ Done:
         if (propValues != NULL)
         {
             ExFreePoolWithTag(propValues, MINADAPTER_POOLTAG);
-        }   
+        }
     }
 
     return ntStatus;
@@ -3343,8 +3346,8 @@ NTSTATUS
 UsbHsDevice::GetUsbHsMutePropertyValues
 (
     _In_  ULONG                     EpIndex,
-    _In_  PULONG                    pLength,
-    _Out_ PKSPROPERTY_DESCRIPTION   *PropValues
+    _In_  ULONG                     Length,
+    _Out_ PKSPROPERTY_DESCRIPTION* PropValues
 )
 /*++
 
@@ -3357,99 +3360,37 @@ Routine Description:
     PAGED_CODE();
     DPF_ENTER(("[%!FUNC!]"));
 
-    NTSTATUS                                ntStatus    = STATUS_SUCCESS;
-    WDFREQUEST                              req         = NULL;
-    ULONG                                   length      = 0;
-    ULONG_PTR                               information = 0;
-    WDF_REQUEST_REUSE_PARAMS                reuseParams;   
-    WDF_OBJECT_ATTRIBUTES                   attributes;
-    PKSPROPERTY_DESCRIPTION                 propValues  = NULL;
+    NTSTATUS                    ntStatus = STATUS_SUCCESS;
+    PKSPROPERTY_DESCRIPTION     propValues = NULL;
 
     *PropValues = NULL;
 
     //
-    // Allocate and format a WDF request.
+    // Allocate memory.
     //
-    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-    attributes.ParentObject = m_Adapter->GetWdfDevice();
-    ntStatus = WdfRequestCreate(
-        &attributes,
-        m_WdfIoTarget,
-        &req);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: WdfRequestCreate failed, 0x%x", ntStatus)),
-        Done);
-
-    //
-    // Get the size of the buffer.
-    //
-    ntStatus = SendIoCtrlSynchronously(
-        req,
-        IOCTL_SBAUD_GET_MUTEPROPERTYVALUES,
-        sizeof(EpIndex),
-        0,
-        &EpIndex);
-
-    if (ntStatus != STATUS_BUFFER_TOO_SMALL)
-    {
-        if (NT_SUCCESS(ntStatus))
-        {
-            ntStatus = STATUS_INVALID_DEVICE_STATE;
-        }
-
-        DPF(D_ERROR, ("%!FUNC!: SendIoCtrlSynchronously(IOCTL_SBAUD_GET_MUTEPROPERTYVALUES): failed, 0x%x", ntStatus));
-        goto Done;
-    }
-
-    ntStatus = STATUS_SUCCESS;
-
-    information = WdfRequestGetInformation(req);
-    if (information == 0 || information > ULONG_MAX)
-    {
-        ntStatus = STATUS_INVALID_DEVICE_STATE;        
-        DPF(D_ERROR, ("%!FUNC!: IOCTL_SBAUD_GET_MUTEPROPERTYVALUES buffer too big (%Id): 0x%x", information, ntStatus));
-        goto Done;
-    }
-
-    length = (ULONG)information;
-
-    //
-    // Allocate memory needed to hold the info.
-    //
-    propValues = (PKSPROPERTY_DESCRIPTION) ExAllocatePoolWithTag(NonPagedPoolNx, length, USBSIDEBANDTEST_POOLTAG06);
+    propValues = (PKSPROPERTY_DESCRIPTION) ExAllocatePool2(POOL_FLAG_NON_PAGED, Length, USBSIDEBANDTEST_POOLTAG06);
     if (propValues == NULL)
     {
         ntStatus = STATUS_INSUFFICIENT_RESOURCES;
     }
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: ExAllocatePoolWithTag failed, out of memory")),
+        DPF(D_ERROR, ("%!FUNC!: ExAllocatePool2 failed, out of memory")),
         Done);
 
     //
-    // Get the USB Headset Mute Property Values.
+    // Send EpIndex in same buffer as input param
     //
-    WDF_REQUEST_REUSE_PARAMS_INIT(
-        &reuseParams,   
-        WDF_REQUEST_REUSE_NO_FLAGS,
-        STATUS_SUCCESS);
+    *((ULONG*)propValues) = EpIndex;
 
-    ntStatus = WdfRequestReuse(req, &reuseParams);
-    IF_FAILED_ACTION_JUMP(
-        ntStatus,
-        DPF(D_ERROR, ("%!FUNC!: WdfRequestReuse failed, 0x%x", ntStatus)),
-        Done);
-
-    // Same buffer used for input and output
-    // Cast into ULONG to provide EpIndex
-    *((ULONG *)propValues) = EpIndex;
-
+    //
+    // Get the USB Headset mute property values.
+    //
     ntStatus = SendIoCtrlSynchronously(
-        req,
+        NULL,
         IOCTL_SBAUD_GET_MUTEPROPERTYVALUES,
         sizeof(EpIndex),
-        length,
+        Length,
         propValues);
     IF_FAILED_ACTION_JUMP(
         ntStatus,
@@ -3460,7 +3401,6 @@ Routine Description:
     // All done.
     //
     *PropValues = propValues;
-    *pLength = length;
     ntStatus = STATUS_SUCCESS;
 
 Done:
@@ -3469,13 +3409,7 @@ Done:
         if (propValues != NULL)
         {
             ExFreePoolWithTag(propValues, USBSIDEBANDTEST_POOLTAG06);
-        }   
-    }
-
-    if (req != NULL)
-    {
-        WdfObjectDelete(req);
-        req = NULL;
+        }
     }
 
     return ntStatus;
@@ -4157,7 +4091,7 @@ UsbHsDevice::SetUsbHsStreamOpen
 (
     ULONG EpIndex,
     PKSDATAFORMAT_WAVEFORMATEXTENSIBLE pStreamFormat,
-    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR pEndpointDescriptor
+    PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2 pEndpointDescriptor
 )
 /*++
 
@@ -4169,7 +4103,7 @@ Routine Description:
 --*/
 {
     PAGED_CODE();
-    DPF_ENTER(("[UsbHsDevice::SetA2dpHpStreamOpen]"));
+    DPF_ENTER(("[UsbHsDevice::SetUsbHsStreamOpen]"));
 
     NTSTATUS        ntStatus = STATUS_SUCCESS;
     UNREFERENCED_PARAMETER(pEndpointDescriptor);
@@ -4189,13 +4123,13 @@ Routine Description:
     if (ntStatus == STATUS_DEVICE_BUSY)
     {
         // The stream channel is already open.
-        DPF(D_VERBOSE, ("SetA2dpHpStreamOpen: the stream channel is already open"));
+        DPF(D_VERBOSE, ("SetUsbHsStreamOpen: the stream channel is already open"));
         ntStatus = STATUS_SUCCESS;
     }
 
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("SetA2dpHpStreamOpen: SendIoCtrlSynchronously(IOCTL_SBAUD_STREAM_OPEN) failed, 0x%x", ntStatus)),
+        DPF(D_ERROR, ("SetUsbHsStreamOpen: SendIoCtrlSynchronously(IOCTL_SBAUD_STREAM_OPEN) failed, 0x%x", ntStatus)),
         Done);
 
     //
@@ -4225,7 +4159,7 @@ Routine Description:
 --*/
 {
     PAGED_CODE();
-    DPF_ENTER(("[UsbHsDevice::SetA2dpHpStreamStart]"));
+    DPF_ENTER(("[UsbHsDevice::SetUsbHsStreamStart]"));
 
     NTSTATUS        ntStatus = STATUS_SUCCESS;
 
@@ -4239,13 +4173,13 @@ Routine Description:
     if (ntStatus == STATUS_DEVICE_BUSY)
     {
         // The stream channel is already Start.
-        DPF(D_VERBOSE, ("SetA2dpHpStreamStart: the stream channel is already Start"));
+        DPF(D_VERBOSE, ("SetUsbHsStreamStart: the stream channel is already Start"));
         ntStatus = STATUS_SUCCESS;
     }
 
     IF_FAILED_ACTION_JUMP(
         ntStatus,
-        DPF(D_ERROR, ("SetA2dpHpStreamStart: SendIoCtrlSynchronously(IOCTL_SBAUD_STREAM_START) failed, 0x%x", ntStatus)),
+        DPF(D_ERROR, ("SetUsbHsStreamStart: SendIoCtrlSynchronously(IOCTL_SBAUD_STREAM_START) failed, 0x%x", ntStatus)),
         Done);
 
     //
@@ -4370,9 +4304,24 @@ Routine Description:
         DPF(D_ERROR, ("%!FUNC!: GetUsbHsDescriptor: failed to retrieve USB Headset Descriptor, 0x%x", ntStatus)),
         Done);
 
+    // SIDEBANDAUDIO_PARAMS_SET_USB_CONTROLLER
+    PBOOL pbIsBehindHub = NULL;
+    ntStatus = GetSiop(
+        &SIDEBANDAUDIO_PARAMS_SET_USB_CONTROLLER,
+        SIOP_TYPE_USBAUD_CONTROLLER_CONFIG_INFO_DEVICE_BEHIND_HUB,
+        (ULONG)-1,
+        USBSIDEBANDTEST_POOLTAG016,
+        (PBYTE *)&pbIsBehindHub);
+    if (!NT_SUCCESS(ntStatus))
+    {
+        DPF(D_ERROR, ("%!FUNC!: GetSiop(SIOP_TYPE_USBAUD_CONTROLLER_CONFIG_INFO_DEVICE_BEHIND_HUB) failed, %!STATUS!", ntStatus));
+        goto Done;
+    }
+    SAFE_DELETE_PTR_WITH_TAG(pbIsBehindHub, USBSIDEBANDTEST_POOLTAG016);
+
     for (ULONG i = 0; i < m_Descriptor->NumberOfEndpoints; i++)
     {
-        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR ed;
+        PSIDEBANDAUDIO_ENDPOINT_DESCRIPTOR2 ed;
         ntStatus = GetUsbHsEndpointDescriptor(i, &ed);
         IF_FAILED_ACTION_JUMP(
             ntStatus,
@@ -4441,13 +4390,12 @@ Routine Description:
         if (m_pSpeakerDescriptor->Capabilities.Mute)
         {
             PKSPROPERTY_DESCRIPTION     mutePropValues = NULL;
-            ULONG                       ulMutePropValuesSize = 0;
             LONG                        mute = 0;
 
             // Mute settings.
             ntStatus = GetUsbHsMutePropertyValues(
                 m_SpeakerEpIndex,
-                &ulMutePropValuesSize,
+                m_pSpeakerDescriptor->MutePropertyValuesSize,
                 &mutePropValues);
 
             IF_FAILED_ACTION_JUMP(
@@ -4456,7 +4404,6 @@ Routine Description:
                 Done);
 
             m_SpeakerMutePropValues         = mutePropValues;
-            m_ulSpeakerMutePropValuesSize   = ulMutePropValuesSize;
 
             // Speaker mute.
             ntStatus = GetUsbHsSpeakerMute(0, &mute);
@@ -4581,13 +4528,12 @@ Routine Description:
         if (m_pMicDescriptor->Capabilities.Mute)
         {
             PKSPROPERTY_DESCRIPTION     mutePropValues = NULL;
-            ULONG                       ulMutePropValuesSize = 0;
             LONG                        mute = 0;
 
             // Mute settings.
             ntStatus = GetUsbHsMutePropertyValues(
                 m_MicEpIndex,
-                &ulMutePropValuesSize,
+                m_pMicDescriptor->MutePropertyValuesSize,
                 &mutePropValues);
 
             IF_FAILED_ACTION_JUMP(
@@ -4596,7 +4542,6 @@ Routine Description:
                 Done);
 
             m_MicMutePropValues         = mutePropValues;
-            m_ulMicMutePropValuesSize   = ulMutePropValuesSize;
 
             // Mic mute.
             ntStatus = GetUsbHsMicMute(0, &mute);
@@ -4746,10 +4691,10 @@ UsbHsDevice::CreateCustomEndpointMinipair
     //
     cTopoPins = pBaseMinipair->TopoDescriptor->PinCount;
     cProperties = pBaseMinipair->TopoInterfacePropertyCount + 1;
-    pProperties = (SYSVAD_DEVPROPERTY*)ExAllocatePoolWithTag(NonPagedPoolNx, cProperties * sizeof(SYSVAD_DEVPROPERTY), SYSVAD_POOLTAG);
-    pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(ENDPOINT_MINIPAIR), SYSVAD_POOLTAG);
-    pNewTopoFilterDesc = (PCFILTER_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(PCFILTER_DESCRIPTOR), SYSVAD_POOLTAG);
-    pNewTopoPins = (PCPIN_DESCRIPTOR*)ExAllocatePoolWithTag(NonPagedPoolNx, cTopoPins * sizeof(PCPIN_DESCRIPTOR), SYSVAD_POOLTAG);
+    pProperties = (SYSVAD_DEVPROPERTY*)ExAllocatePool2(POOL_FLAG_NON_PAGED, cProperties * sizeof(SYSVAD_DEVPROPERTY), SYSVAD_POOLTAG);
+    pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(ENDPOINT_MINIPAIR), SYSVAD_POOLTAG);
+    pNewTopoFilterDesc = (PCFILTER_DESCRIPTOR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(PCFILTER_DESCRIPTOR), SYSVAD_POOLTAG);
+    pNewTopoPins = (PCPIN_DESCRIPTOR*)ExAllocatePool2(POOL_FLAG_NON_PAGED, cTopoPins * sizeof(PCPIN_DESCRIPTOR), SYSVAD_POOLTAG);
 
     if ((pProperties != NULL) && (pNewMinipair != NULL) && (pNewTopoFilterDesc != NULL) && (pNewTopoPins != NULL))
     {

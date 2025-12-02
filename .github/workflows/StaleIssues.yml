@@ -1,0 +1,16 @@
+name: Close inactive issues
+on:
+  workflow_dispatch:
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/stale@v10
+        with:
+          days-before-issue-stale: 365
+          stale-issue-label: "stale"
+          stale-issue-message: "This issue has been inactive for a year. It will be closed in 31 days if no further activity occurs. If you believe this issue is still relevant, please comment to keep it open."
+          operations-per-run: 400
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

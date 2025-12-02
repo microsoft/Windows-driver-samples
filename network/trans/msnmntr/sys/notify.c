@@ -270,9 +270,9 @@ NTSTATUS MonitorNfNotifyMessage(
    if(streamLength == 0)
       return status;
 
-   stream =  ExAllocatePoolWithTag(NonPagedPool,
-                                   streamLength,
-                                   TAG_NAME_NOTIFY);
+   stream = ExAllocatePoolZero(NonPagedPool,
+                               streamLength,
+                               TAG_NAME_NOTIFY);
    if (!stream)
       return STATUS_INSUFFICIENT_RESOURCES;
 

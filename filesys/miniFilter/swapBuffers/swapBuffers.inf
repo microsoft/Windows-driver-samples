@@ -12,38 +12,82 @@ ClassGuid   = {a0a701c0-a511-42ff-aa6c-06dc0395576f}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.3
 CatalogFile = swapbuffers.cat
+PnpLockdown = 1
 
+[SourceDisksFiles]
+swapbuffers.sys = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
 
 [DestinationDirs]
-DefaultDestDir          = 12
-MiniFilter.DriverFiles  = 12            ;%windir%\system32\drivers
+MiniFilterDownlevel.CopyDriverFiles  = 12            ;%windir%\system32\drivers
+MiniFilterDownlevel.DelDriverFiles   = 12            ;%windir%\system32\drivers
+MiniFilter.DriverFiles               = 13            ;driver store
 
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$.10.0...25952]
 OptionDesc          = %ServiceDescription%
 CopyFiles           = MiniFilter.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.10.0...25952.Services]
 AddService          = %ServiceName%,,MiniFilter.Service
 
-;;
-;; Default uninstall sections
-;;
-
-[DefaultUninstall]
-DelFiles   = MiniFilter.DriverFiles
-
-[DefaultUninstall.Services]
-DelService = SwapBuffers,0x200      ;Ensure service is stopped before deleting
-
 ;
-; Services Section
+; Support sections
 ;
 
 [MiniFilter.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %13%\%DriverName%.sys        ;driver store
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+;StartType        = 0                           ;SERVICE_BOOT_START
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Encryption"
+AddReg           = MiniFilter.AddRegistry
+
+[MiniFilter.AddRegistry]
+HKR,"Parameters","SupportedFeatures",0x00010001,0x3
+HKR,"Parameters\Instances","DefaultInstance",0x00000000,%Instance1.Name%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+
+[MiniFilter.DriverFiles]
+%DriverName%.sys
+
+;;
+;; Downlevel default install sections
+;;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = MiniFilterDownlevel.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService          = %ServiceName%,,MiniFilterDownlevel.Service
+
+;;
+;; Downlevel default uninstall sections
+;;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = MiniFilterDownlevel.DelDriverFiles
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService      = SwapBuffers,0x200      ;Ensure service is stopped before deleting
+
+;
+; Downlevel support sections
+;
+
+[MiniFilterDownlevel.Service]
 DisplayName      = %ServiceName%
 Description      = %ServiceDescription%
 ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
@@ -53,30 +97,20 @@ ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                            ;SERVICE_DEMAND_START
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Encryption"
-AddReg           = MiniFilter.AddRegistry
+AddReg           = MiniFilterDownlevel.AddRegistry
 
-;
-; Registry Modifications
-;
-
-[MiniFilter.AddRegistry]
+[MiniFilterDownlevel.AddRegistry]
 HKR,,"SupportedFeatures",0x00010001,0x3
 HKR,"Instances","DefaultInstance",0x00000000,%Instance1.Name%
 HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
 HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
 
-;
-; Copy Files
-;
-
-[MiniFilter.DriverFiles]
+[MiniFilterDownlevel.CopyDriverFiles]
 %DriverName%.sys
 
-[SourceDisksFiles]
-swapbuffers.sys = 1,,
+[MiniFilterDownlevel.DelDriverFiles]
+%DriverName%.sys
 
-[SourceDisksNames]
-1 = %DiskId1%,,,
 
 ;;
 ;; String Section

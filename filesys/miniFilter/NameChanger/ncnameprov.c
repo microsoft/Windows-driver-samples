@@ -44,26 +44,26 @@ NcGenerateFileName (
     //
     //  Contexts
     //
-    
+
     PNC_INSTANCE_CONTEXT InstanceContext = NULL;
 
     //
     //  Overlap
     //
-    
+
     NC_PATH_OVERLAP RealOverlap;
     UNICODE_STRING RealRemainder = EMPTY_UNICODE_STRING;
 
     //
     //  Temp storage
     //
-    
+
     UNICODE_STRING MungedName = EMPTY_UNICODE_STRING;
-    
+
     //
     //  Temp pointer
     //
-    
+
     PUNICODE_STRING Name = NULL; // Pointer to the name we are going to use.
 
     PAGED_CODE();
@@ -86,7 +86,7 @@ NcGenerateFileName (
     RealOverlap.EntireFlags = 0;
 
     //
-    //  To prevent infinite recursion, calls to FltGetFileNameInformation 
+    //  To prevent infinite recursion, calls to FltGetFileNameInformation
     //  from generate file name callbacks should not target current provider.
     //
 
@@ -96,7 +96,7 @@ NcGenerateFileName (
     //  Fetch the instance context.
     //
 
-    Status = FltGetInstanceContext( Instance, &InstanceContext );   
+    Status = FltGetInstanceContext( Instance, &InstanceContext );
 
     if (!NT_SUCCESS( Status )) {
 
@@ -135,12 +135,12 @@ NcGenerateFileName (
     //  Issues With Pre-open path:
     //
     //  1) Poison name cache below name provider:
-    //    If a filter above a name provider calls FltGetFileNameInformation on a 
-    //    file object in his precreate callback, fltmgr will call the name 
+    //    If a filter above a name provider calls FltGetFileNameInformation on a
+    //    file object in his precreate callback, fltmgr will call the name
     //    provider's generate name callback before the name provider's pre create
     //    callback is invoked. Name providers by their nature change names in their
-    //    pre-create. Because the name provider has not had the opportunity to 
-    //    modify the name yet, we need to make sure that fltmgr does not cache the name we 
+    //    pre-create. Because the name provider has not had the opportunity to
+    //    modify the name yet, we need to make sure that fltmgr does not cache the name we
     //    return below us, so we set the FLT_FILE_NAME_DO_NOT_CACHE flag.
     //    //TODO: TRY TO GET ACROSS THAT THIS IS A NAME CHANGER PROBLEM, NOT ALL NAME PROVIDERS NEED TO.
     //
@@ -153,7 +153,7 @@ NcGenerateFileName (
 
             //
             //  NT supports case sensitive and non-case sensitive naming in file systems.
-            //  This is handled on a per-open basis. Weather an open is case senstive is 
+            //  This is handled on a per-open basis. Weather an open is case senstive is
             //  determined by the FO_OPENED_CASE_SENSITIVE flag on the file object.
             //  In pre-create the SL_CASE_SENSITIVE flag on the create IRP specifies the mode.
             //
@@ -270,7 +270,7 @@ NcGenerateFileName (
             Status = NcGetFileNameInformation( Data,
                                                FileObject,
                                                Instance,
-                                               FLT_FILE_NAME_SHORT | 
+                                               FLT_FILE_NAME_SHORT |
                                                    NameQueryMethod |
                                                    NameFlags,
                                                &ShortInfo );
@@ -395,7 +395,7 @@ NcNormalizeNameComponentEx (
                    &Remainder,
                    IgnoreCase,
                    TRUE,
-                   &ParentOverlap ); 
+                   &ParentOverlap );
 
     //
     //  We need to figure out which path we are going to open.
@@ -404,13 +404,13 @@ NcNormalizeNameComponentEx (
     if (ParentOverlap.InMapping) {
 
         //
-        //  The parent is in the mapping, so it has to be 
+        //  The parent is in the mapping, so it has to be
         //  munged in order to be opened.
         //
 
         MungedBufferLength = Remainder.Length + InstanceContext->Mapping.RealMapping.LongNamePath.FullPath.Length;
-        
-        MungedBuffer = ExAllocatePoolWithTag( PagedPool, MungedBufferLength, NC_NORMALIZE_NAME_TAG );
+
+        MungedBuffer = ExAllocatePoolZero( PagedPool, MungedBufferLength, NC_NORMALIZE_NAME_TAG );
 
         if (MungedBuffer == NULL) {
 
@@ -428,7 +428,7 @@ NcNormalizeNameComponentEx (
 
         RtlCopyUnicodeString( &MungedParentPath,
                               &InstanceContext->Mapping.RealMapping.LongNamePath.FullPath );
-        
+
         RtlAppendUnicodeStringToString( &MungedParentPath,
                                         &Remainder);
 
@@ -436,7 +436,7 @@ NcNormalizeNameComponentEx (
 
         //
         //  The parent is the parent of the user mapping.
-        //  That means we need to see if the final component is 
+        //  That means we need to see if the final component is
         //  the mapping path itself.
         //
 
@@ -468,10 +468,10 @@ NcNormalizeNameComponentEx (
     } else { //ParentOverlap is not within or parent of mapping.
 
         MungedParentPath = *ParentDirectory;
-    } 
+    }
 
     //
-    //  We should open MungedParentPath and enumerate it. 
+    //  We should open MungedParentPath and enumerate it.
     //
 
     InitializeObjectAttributes( &ParentAttributes,
@@ -496,7 +496,7 @@ NcNormalizeNameComponentEx (
                                  0,
                                  IO_IGNORE_SHARE_ACCESS_CHECK,
                                  FileObject );
-   
+
     if (!NT_SUCCESS( Status )) {
 
         goto NcNormalizeNameComponentExCleanup;
@@ -542,10 +542,10 @@ NcNormalizeNameComponentEx (
         RtlCopyMemory( ExpandComponentName->FileName,
                        InstanceContext->Mapping.UserMapping.LongNamePath.FinalComponentName.Buffer,
                        InstanceContext->Mapping.UserMapping.LongNamePath.FinalComponentName.Length );
-        
+
     }
 
-    //TODO THIS NEEDS TO 
+    //TODO THIS NEEDS TO
 
 NcNormalizeNameComponentExCleanup:
 

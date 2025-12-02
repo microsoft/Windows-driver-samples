@@ -52,11 +52,6 @@ Environment:
 
 #define DISPATCH_LATENCY_IN_MS 10
 
-
-#undef ExAllocatePool
-#define ExAllocatePool(type, size) \
-    ExAllocatePoolWithTag(type, size, POOL_TAG);
-
 #if DBG
 
 #define UsbSamp_DbgPrint(level, _x_) \

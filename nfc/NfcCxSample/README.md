@@ -1,16 +1,11 @@
 ---
-topic: sample
-name: NFC CX client driver sample
-description: Sample code for creating a NFC driver using the NFC Class Extension.
-generateZip: true
-author: windows-driver-content
+page_type: sample
+description: "Sample code for creating a NFC driver using the NFC Class Extension."
 languages:
 - cpp
 products:
 - windows
-technologies:
-- WDF
-- UMDF2
+- windows-wdk
 ---
 
 # NFC CX client driver sample
@@ -33,7 +28,7 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 ### WDK
 
-- [NfcCx.h](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/nfccx/) - The NFC CX's client driver API. (This file is included in the WDK.)
+- [NfcCx.h](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/nfccx/) - The NFC CX's client driver API. This file is included in the WDK.
 
 ### Project
 

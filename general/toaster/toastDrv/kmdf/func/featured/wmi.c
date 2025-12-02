@@ -446,11 +446,9 @@ ToasterFireArrivalEvent(
     //
     // Allocate memory for the WNODE from NonPagedPoolNx
     //
-    wnode = ExAllocatePoolWithTag(NonPagedPoolNx, size, TOASTER_POOL_TAG);
+    wnode = ExAllocatePool2(POOL_FLAG_NON_PAGED, size, TOASTER_POOL_TAG);
 
     if (NULL != wnode) {
-        RtlZeroMemory(wnode, size);
-
         wnode->WnodeHeader.BufferSize = size;
         wnode->WnodeHeader.ProviderId =
                             IoWMIDeviceObjectToProviderId(

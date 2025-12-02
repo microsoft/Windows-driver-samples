@@ -77,6 +77,9 @@ typedef struct DEVICE_EXTENSION_
 
 extern PDEVICE_OBJECT g_pWDMDevice;
 
+extern PIO_WORKITEM g_pPowerStateEnterIOWorkItem;
+extern PIO_WORKITEM g_pPowerStateExitIOWorkItem;
+
 extern WDFDRIVER g_WDFDriver;
 extern WDFDEVICE g_WDFDevice;
 

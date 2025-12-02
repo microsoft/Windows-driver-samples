@@ -19,10 +19,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="simgpio_i2c.c">
+    <ClCompile Include="simgpio_i2c.c; spb_i2c.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="spb_i2c.c">
+    <ClCompile Include="simgpio_i2c.c; spb_i2c.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,5 +35,13 @@
     <ResourceCompile Include="simgpio_i2c.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

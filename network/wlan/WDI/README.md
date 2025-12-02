@@ -1,10 +1,13 @@
-<!---
-    name: WDI samples
-    platform: KMDF
-    language: cpp
-    category: Network
-    description: WDI samples
-    samplefwlink: https://go.microsoft.com/fwlink/p/?linkid=869056
---->
+---
+page_type: sample
+description: "Demonstrates use of the WLAN WDI."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
 # WDI samples
+
+This sample demonstrates use of the WLAN WDI.

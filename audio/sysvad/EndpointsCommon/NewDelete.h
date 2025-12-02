@@ -10,10 +10,6 @@ Abstract:
 
 Declaration of placement new and delete operators.
 
-//@@BEGIN_DDKSPLIT
-Revision History:
-
-//@@END_DDKSPLIT
 
 --*/
 #pragma once
@@ -32,12 +28,9 @@ Revision History:
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
+    size_t      iSize,
+    POOL_FLAGS  poolFlags,
+    ULONG       tag
 );
 
 
@@ -48,11 +41,8 @@ PVOID operator new
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType
+    size_t      iSize,
+    POOL_FLAGS  poolFlags
 );
 
 
@@ -78,6 +68,21 @@ void __cdecl operator delete
     _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
     _In_ size_t cbSize
 );
+
+
+/*****************************************************************************
+* ::delete()
+*****************************************************************************
+* Sized Delete function with alignment.
+*/
+#ifdef __cpp_aligned_new
+void __cdecl operator delete
+(
+    _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
+    _In_ size_t cbSize,
+    _In_ std::align_val_t cbAlign
+);
+#endif // __cpp_aligned_new
 
 
 /*****************************************************************************
@@ -114,3 +119,4 @@ void __cdecl operator delete[]
 );
 
 #endif//_NEW_DELETE_OPERATORS_
+

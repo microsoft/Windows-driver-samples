@@ -38,5 +38,9 @@ public:
     EmitMetadata(
         _Inout_ PKSSTREAM_HEADER    pStreamHeader
     );
+
+private:
+    BOOLEAN m_Illuminated;
+
 };
 

@@ -1,0 +1,39 @@
+//
+// AecAPODll.idl -- Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Author:
+//
+// Description:
+//
+// AecAPODll.idl : Definition of COM interfaces and coclasses for the DLL.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "audioenginebaseapo.idl";
+
+//-------------------------------------------------------------------------
+// AecApoDlllib
+//
+[
+    uuid(6D07D481-D230-493D-A521-3FBBB4619E2E),
+    version(1.0)
+]
+library AecApoDlllib
+{
+    importlib("stdole2.tlb");
+
+    // for Aec APO - MFX
+    [
+        uuid(325B7F6F-ED6C-40CE-814C-00D91FED053F)
+    ]
+    coclass AecApoMFX
+    {
+        [default] interface IAudioProcessingObject;
+        interface IAudioProcessingObjectRT;
+        interface IAudioProcessingObjectConfiguration;
+        interface IAudioSystemEffects;
+        // KK add to this
+    };
+
+
+}

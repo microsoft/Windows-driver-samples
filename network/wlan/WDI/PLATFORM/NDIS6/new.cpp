@@ -39,15 +39,10 @@ void* __cdecl operator new(
 
 --*/
 {
-    PVOID pData = ExAllocatePoolWithTag(  NonPagedPoolNx, Size, POOL_TAG );
+    PVOID pData = ExAllocatePool2(  POOL_FLAG_NON_PAGED, Size, POOL_TAG );
 
     UNREFERENCED_PARAMETER( AllocationContext );
     NT_ASSERT( AllocationContext == 0 );
-
-    if ( pData != NULL )
-    {
-        RtlZeroMemory( pData, Size );
-    }
 
     return pData;
 } 

@@ -1,4 +1,4 @@
-/*++
+ï»¿/*++
 
 Copyright (C) Microsoft Corporation, 2009
 
@@ -19,7 +19,7 @@ Revision History:
 
 #pragma warning(push)
 #pragma warning(disable:26015) //26015: "Potential overflow using expression 'outParams->DriverStatus.bDriverError'. Buffer access is apparently unbounded by the buffer size.
-                               //Output buffer cannot be checked for size.  ATAport provides this validation check as the input buffer size and output buffer size are 2 of the 4 parameters passed in on the SMART IRP.  Storport doesn’t do this and the miniport doesn’t get the IRP so it cannot do this for itself.  This is just the condition of a legacy IOCTL.
+                               //Output buffer cannot be checked for size.  ATAport provides this validation check as the input buffer size and output buffer size are 2 of the 4 parameters passed in on the SMART IRP.  Storport doesnâ€™t do this and the miniport doesnâ€™t get the IRP so it cannot do this for itself.  This is just the condition of a legacy IOCTL.
                                 //26015: "Potential overflow using expression 'nRB->NRBStatus' Buffer access is apparently unbounded by the buffer size.
                                 //The same is true for the NVCache IOCTL.  Instead of the output buffer, this time it is the NVCache_Request_Block.
 #pragma warning(disable:4214) // bit field types other than int
@@ -79,13 +79,13 @@ It performs:
     3.1 Enable the AHCI interface
         AHCI 1.1 Section 10.1.2 - 5.
         "For each implemented port, system software shall allocate memory for and program:
-            •    PxCLB and PxCLBU (if CAP.S64A is set to ‘1’)
-            •    PxFB and PxFBU (if CAP.S64A is set to ‘1’)
-            It is good practice for system software to ‘zero-out’ the memory allocated and referenced by PxCLB and PxFB.  After setting PxFB and PxFBU to the physical address of the FIS receive area, system software shall set PxCMD.FRE to ‘1’."
+            â€¢    PxCLB and PxCLBU (if CAP.S64A is set to â€˜1â€™)
+            â€¢    PxFB and PxFBU (if CAP.S64A is set to â€˜1â€™)
+            It is good practice for system software to â€˜zero-outâ€™ the memory allocated and referenced by PxCLB and PxFB.  After setting PxFB and PxFBU to the physical address of the FIS receive area, system software shall set PxCMD.FRE to â€˜1â€™."
     3.2 Enable Interrupts on the Channel
         AHCI 1.1 Section 10.1.2 - 7.
-        "Determine which events should cause an interrupt, and set each implemented port’s PxIE register with the appropriate enables."
-        Note: Due to the multi-tiered nature of the AHCI HBA’s interrupt architecture, system software must always ensure that the PxIS (clear this first) and IS.IPS (clear this second) registers are cleared to ‘0’ before programming the PxIE and GHC.IE registers. This will prevent any residual bits set in these registers from causing an interrupt to be asserted.
+        "Determine which events should cause an interrupt, and set each implemented portâ€™s PxIE register with the appropriate enables."
+        Note: Due to the multi-tiered nature of the AHCI HBAâ€™s interrupt architecture, system software must always ensure that the PxIS (clear this first) and IS.IPS (clear this second) registers are cleared to â€˜0â€™ before programming the PxIE and GHC.IE registers. This will prevent any residual bits set in these registers from causing an interrupt to be asserted.
 
     4.1 Allocate memory for the CommandList, the Receive FIS buffer and SRB Extension
         Now is the time to allocate memory that will be used for controller and per request structures.
@@ -193,7 +193,6 @@ NOTE: as this routine is invoked from FindAdapter where the adapter might not be
     ChannelExtension->DeviceExtension[0].IdentifyDataPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->DeviceExtension[0].IdentifyDeviceData, &mappedLength);
     ChannelExtension->DeviceExtension[0].InquiryDataPhysicalAddress = StorPortGetPhysicalAddress(adapterExtension, NULL, (PVOID)ChannelExtension->DeviceExtension[0].InquiryData, &mappedLength);
 
-
   //4.8 Setup STOR_ADDRESS for the device. StorAHCI uses Bus/Target/Lun addressing model, thus uses STOR_ADDRESS_TYPE_BTL8.
   //        Port - not need to be set by miniport, Storport has this knowledge. miniport can get the value by calling StorPortGetSystemPortNumber().
   //        Path - StorAHCI reports (highest implemented port number + 1) as bus number, thus "port number" will be "Path" value.
@@ -261,11 +260,11 @@ Affected Variables/Registers:
     GHC.AE, GHC.IE
 Return Values:
     TRUE always.
---*/                                    //Used to enable the AHCI interface
+--*/
 {
-    ULONG   i;
+    ULONG i;
     AHCI_Global_HBA_CONTROL ghc;
-    PAHCI_MEMORY_REGISTERS  abar = (PAHCI_MEMORY_REGISTERS)AdapterExtension->ABAR_Address;
+    PAHCI_MEMORY_REGISTERS abar = (PAHCI_MEMORY_REGISTERS)AdapterExtension->ABAR_Address;
 
     AdapterExtension->StateFlags.PowerDown = 0;
 
@@ -286,9 +285,9 @@ Return Values:
     // Power up all ports that don't have a device present.
     // There is protection method in AhciPortPowerUp() to only allow it run once.
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
-        if ( (AdapterExtension->PortExtension[i] != NULL) &&
-             (AdapterExtension->PortExtension[i]->StateFlags.PowerDown == TRUE) &&
-             (AdapterExtension->PortExtension[i]->DeviceExtension[0].DeviceParameters.AtaDeviceType == DeviceNotExist)) {
+        if ((AdapterExtension->PortExtension[i] != NULL) &&
+            (AdapterExtension->PortExtension[i]->StateFlags.PowerDown == TRUE) &&
+            (AdapterExtension->PortExtension[i]->DeviceExtension[0].DeviceParameters.AtaDeviceType == DeviceNotExist)) {
             AhciPortPowerUp(AdapterExtension->PortExtension[i]);
         }
     }
@@ -310,22 +309,22 @@ Called by:
 It performs:
     1. Clear GHC.IE
     AHCI 1.1 Section 8.3.3
-    "Software must disable interrupts (GHC.IE must be cleared to ‘0’) prior to requesting a transition of the HBA to the D3 state.  This precaution by software avoids an interrupt storm if an interrupt occurs during the transition to the D3 state."
+    "Software must disable interrupts (GHC.IE must be cleared to â€˜0â€™) prior to requesting a transition of the HBA to the D3 state.  This precaution by software avoids an interrupt storm if an interrupt occurs during the transition to the D3 state."
 Affected Variables/Registers:
     GHC.IE
 Return Values:
     TRUE always.
 --*/
 {
-    ULONG   i;
+    ULONG i;
     AHCI_Global_HBA_CONTROL ghc;
-    PAHCI_MEMORY_REGISTERS  abar = (PAHCI_MEMORY_REGISTERS)AdapterExtension->ABAR_Address;
+    PAHCI_MEMORY_REGISTERS abar = (PAHCI_MEMORY_REGISTERS)AdapterExtension->ABAR_Address;
 
     // Power down all ports that don't have a device present.
     for (i = 0; i <= AdapterExtension->HighestPort; i++) {
-        if ( (AdapterExtension->PortExtension[i] != NULL) &&
-             (AdapterExtension->PortExtension[i]->StateFlags.PowerDown == FALSE) &&
-             (AdapterExtension->PortExtension[i]->DeviceExtension[0].DeviceParameters.AtaDeviceType == DeviceNotExist)) {
+        if ((AdapterExtension->PortExtension[i] != NULL) &&
+            (AdapterExtension->PortExtension[i]->StateFlags.PowerDown == FALSE) &&
+            (AdapterExtension->PortExtension[i]->DeviceExtension[0].DeviceParameters.AtaDeviceType == DeviceNotExist)) {
             AhciPortPowerDown(AdapterExtension->PortExtension[i]);
         }
     }
@@ -382,13 +381,14 @@ Return Values:
     if (LogExecuteFullDetail(ChannelExtension->AdapterExtension->LogFlags)) {
         RecordExecutionHistory(ChannelExtension, 0x00000025);//AhciPortStop
     }
-  //1. Stop the channel
+
+    //1. Stop the channel
     if ( !P_NotRunning(ChannelExtension, ChannelExtension->Px) ) {
         // don't need RESET, the port will be tried to start when processing start device request
         RecordExecutionHistory(ChannelExtension, 0xff08);   //AhciPortStop Failed
     }
 
-  //2. Disable Interrupt and disconnect with Port resources
+    //2. Disable Interrupt and disconnect with Port resources
 
     StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->IE.AsUlong, 0);    //disabling interrupts
     PortClearPendingInterrupt(ChannelExtension);
@@ -432,19 +432,25 @@ Return Values:
 --*/
 
     AHCI_LPM_POWER_SETTINGS userLpmSettings;
-    BOOLEAN                 portPowerDown;
+    BOOLEAN portPowerDown;
+    AHCI_INTERRUPT_STATUS pxis = { 0 };
 
     RecordExecutionHistory(ChannelExtension, 0x00000026);//Enter AhciPortPowerUp
 
-  //1.0 Reinitialize the StateFlags. e.g. ChannelExtension->StateFlags.PowerDown = FALSE;
+    ++(ChannelExtension->TotalCountPowerUp);
+
+    pxis.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->IS.AsUlong);
+
+    // 1.0 Reinitialize the StateFlags. e.g. ChannelExtension->StateFlags.PowerDown = FALSE;
     portPowerDown = InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 12);    //StateFlags.PownDown field is at bit 12
 
     if (portPowerDown == FALSE) {
+
         RecordExecutionHistory(ChannelExtension, 0x00010026);//AhciPortPowerUp: port already powered up.
         return;
     }
 
-  //1.1 Reload the CLB,CBU,FLB,FBU
+    // 1.1 Reload the CLB,CBU,FLB,FBU
     StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CLB.AsUlong, ChannelExtension->CommandListPhysicalAddress.LowPart);
     if (ChannelExtension->AdapterExtension->CAP.S64A) { //If the controller supports 64 bits, write high part
         StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->CLBU, ChannelExtension->CommandListPhysicalAddress.HighPart);
@@ -454,25 +460,45 @@ Return Values:
         StorPortWriteRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->FBU, ChannelExtension->ReceivedFisPhysicalAddress.HighPart);
     }
 
-
     //
     // If D3 Cold is enabled and we are being powered up from D3, we need to be
     // a bit heavy-handed with powering up the port due to loss of context.
     //
     if (ChannelExtension->DevicePowerState == StorPowerDeviceD3 && IsPortD3ColdEnabled(ChannelExtension)) {
-        
+
+        STOR_LOCK_HANDLE lockhandle = { InterruptLock, 0 };
+        BOOLEAN powerUpInitializationInProgress = 0;
+
         // 1.4.1 Re-issue init commands (this will also restore preserved settings).
         AhciPortIssueInitCommands(ChannelExtension);
-        
+
+        // Set PowerUpInitializationInProgress flag, which will be cleared when preserved settings command done.
+        powerUpInitializationInProgress = InterlockedBitTestAndSet((LONG*)&ChannelExtension->StateFlags, 22); //PowerUpInitializationInProgress field is at bit 22
+
+        if (powerUpInitializationInProgress == 1) {
+
+            // PowerUpInitializationInProgress flag was not cleared properly, which is not expected to happen, but not a fatal issue.
+            RecordExecutionHistory(ChannelExtension, 0x10020026); // AhciPortPowerUp: PowerUpInitializationInProgress flag was not cleared properly.
+        }
+
         // 1.4.2 Restore LPM settings
         userLpmSettings.AsUlong = ChannelExtension->LastUserLpmPowerSetting;
         AhciLpmSettingsModes(ChannelExtension, userLpmSettings);    //ignore the returned value, IO will be restarted anyway.
 
-
         // 1.5 Start the channel by issuing a reset to restore PHY communication.
+        AhciInterruptSpinlockAcquire(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
         AhciPortReset(ChannelExtension, FALSE);
-    
+        AhciInterruptSpinlockRelease(ChannelExtension->AdapterExtension, ChannelExtension->PortNumber, &lockhandle);
+
     } else {
+
+        //
+        // If there is change in Current Connect Status(PCS:1), then QDR is needed.
+        //
+        if ((pxis.PCS == 1) &&
+            (ChannelExtension->StartState.ChannelNextStartState == StartFailed)) {
+            ChannelExtension->StateFlags.NeedQDR = TRUE;
+        }
 
         // 1.4.1 Restore Preserved Settings
         if (NeedToSetTransferMode(ChannelExtension)) {
@@ -484,6 +510,7 @@ Return Values:
     }
 
     RecordExecutionHistory(ChannelExtension, 0x10000026);//Exit AhciPortPowerUp
+
     return;
 }
 
@@ -514,6 +541,8 @@ Return Values:
 --*/
     ChannelExtension->StateFlags.PowerDown = TRUE;
 
+    ++(ChannelExtension->TotalCountPowerDown);
+
     //
     // Cancel the StartPortTimer since we're going into a lower power state.
     //
@@ -528,6 +557,7 @@ Return Values:
             // the link will be inactive, ignore the hot plug noise.
             ChannelExtension->StateFlags.IgnoreHotplugInterrupt = TRUE;
         }
+
     }
 
     RecordExecutionHistory(ChannelExtension, 0x10000027);//Exit AhciPortPowerDown
@@ -563,7 +593,6 @@ ReportLunsComplete(
          (Srb->SrbStatus != SRB_STATUS_NO_DEVICE) ) {
         return;
     }
-
 
     Srb->SrbStatus = SRB_STATUS_SUCCESS;
     SrbSetScsiStatus(Srb, SCSISTAT_GOOD);
@@ -609,24 +638,181 @@ ReportLunsComplete(
     return;
 }
 
+__inline
 VOID
-InitQueryLogPages (
+GetLogInfoRegValueName(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _Out_writes_(ValueNameLength) PCHAR ValueName,
+    _In_ ULONG ValueNameLength
+    )
+/*++
+
+Routine Description:
+
+    This function append Port Number to "LogPageInfo" as name of registry value.
+    This is a work around as StorAHCI doesn't have access to RtlStringCbPrintfA().
+
+Arguments:
+
+    ChannelExtension - Pointer to the device extension for channel.
+
+    ValueName - Registry name to be written.
+
+    ValueNameLength - Registry name length.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    NT_ASSERT(ChannelExtension->PortNumber <= 255);
+    
+    if (ValueNameLength >= 14) {
+
+        ULONG portNumber = ChannelExtension->PortNumber;
+        ULONG remainder = 0; 
+        
+        StorPortCopyMemory(ValueName, "LogPageInfo", 12);
+        ValueName[13] = '\0';
+        
+        remainder = portNumber % 16;  // use HEX value, base is 16.
+        ValueName[12] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
+        
+        portNumber /= 16;
+        remainder = portNumber % 16;
+        ValueName[11] = (CHAR)((remainder < 10) ? (remainder + '0') : (remainder - 10 + 'A'));
+    }
+    
+    return;
+}
+
+_Function_class_(HW_WORKITEM)
+VOID
+AhciRegistryWriteWorker(
+    _In_ PAHCI_ADAPTER_EXTENSION AdapterExtension,
+    _In_ PVOID Context,
+    _In_ PVOID WorkItem
+    )
+/*++
+
+Routine Description:
+
+    This function runs in the context of a work item.  It performs writting registry with data
+    from Log Pages that needs to be cached.
+
+Arguments:
+
+    AdapterExtension - Pointer to the device extension for adapter.
+
+    Context - The AHCI_CHANNEL_EXTENSION we specified when we queued this work item.
+
+    WorkItem - The work item object.
+
+Return Value:
+
+    None.
+
+--*/
+{
+    PAHCI_CHANNEL_EXTENSION channelExtension = (PAHCI_CHANNEL_EXTENSION)Context;
+    ULONG storStatus;
+    CHAR valueName[16] = { 0 };
+    AHCI_DEVICE_LOG_PAGE_INFO logPageInfo = { 0 };
+
+    NT_ASSERT(Context != NULL);
+    NT_ASSERT(WorkItem != NULL);
+
+    GetLogInfoRegValueName(channelExtension, valueName, sizeof(valueName));
+ 
+    StorPortCopyMemory((PVOID)&logPageInfo.QueryLogPages, &channelExtension->DeviceExtension[0].QueryLogPages, sizeof(ATA_GPL_PAGES_TO_QUERY));
+    StorPortCopyMemory((PVOID)&logPageInfo.SupportedGPLPages, &channelExtension->DeviceExtension[0].SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
+    StorPortCopyMemory((PVOID)&logPageInfo.SupportedCommands, &channelExtension->DeviceExtension[0].SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
+    StorPortCopyMemory((PVOID)&logPageInfo.FirmwareUpdate, &channelExtension->DeviceExtension[0].FirmwareUpdate, sizeof(DOWNLOAD_MICROCODE_CAPABILITIES));
+
+    storStatus = StorPortRegistryWriteAdapterKey(AdapterExtension,
+                                                 (PUCHAR)"StorAHCI",
+                                                 (PUCHAR)valueName,
+                                                 MINIPORT_REG_BINARY,
+                                                 &logPageInfo,
+                                                 sizeof(AHCI_DEVICE_LOG_PAGE_INFO));
+
+    if (storStatus == STOR_STATUS_SUCCESS) {
+        channelExtension->DeviceExtension[0].UpdateCachedLogPageInfo = FALSE;
+    } else {
+        NT_ASSERT(FALSE);
+    }
+
+    //
+    // Call the callback routine if there is one.
+    //
+
+    if (WorkItem != NULL) {
+        StorPortFreeWorker(AdapterExtension, WorkItem);
+    }
+
+    return;
+}
+
+VOID
+PreserveLogPageInformation(
     _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
     )
 /*++
+
+    This routine allocates a work item and schedule it for saving information retrieved from Log Pages.
+
+Parameters:
+
+    ChannelExtension - port and device that log pages are retrieved from.
+
+Return Values:
+
+    None
+
+--*/
+{
+    ULONG storStatus;
+    PVOID workItem = NULL;
+
+    storStatus = StorPortInitializeWorker(ChannelExtension->AdapterExtension, &workItem);
+
+    if (storStatus == STOR_STATUS_SUCCESS) {
+        storStatus = StorPortQueueWorkItem(ChannelExtension->AdapterExtension, AhciRegistryWriteWorker, workItem, ChannelExtension);
+    }
+
+    NT_ASSERT(storStatus == STOR_STATUS_SUCCESS);
+
+    if ((storStatus != STOR_STATUS_SUCCESS) && (workItem != NULL)) {
+        // Free the work item as it cannot be scheduled to run.
+        StorPortFreeWorker(ChannelExtension->AdapterExtension, workItem);
+    }
+
+    return;
+}
+
+VOID
+InitQueryLogPages(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+    )
+/*++
+
     Initialize Log Pages to Read.
 
     Note that this functions should only be called after Identify Device Data is retrieved.
 
 Parameters:
-    ChannelExtension    - port that log-pages-to-query should be inited.
+
+    ChannelExtension - port that log-pages-to-query should be inited.
 
 Return Values:
+
     None
 
 --*/
 {
     PUSHORT index = &ChannelExtension->DeviceExtension->QueryLogPages.TotalPageCount;
+
     //
     // Log Page only applies to ATA device; General Purpose Logging feature should be supported; 
     // 48bit command should be supported as READ LOG EXT is a 48bit command.
@@ -637,7 +823,7 @@ Return Values:
 
     AhciZeroMemory((PCHAR)&ChannelExtension->DeviceExtension->QueryLogPages, sizeof(ATA_GPL_PAGES_TO_QUERY));
 
-    // read Log Directory
+    // Read Log Directory
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_DIRECTORY_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = 0;
@@ -645,7 +831,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Device Statistics log - supported page
+    // Read Device Statistics log - supported page
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_DEVICE_STATISTICS_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_SUPPORTED_PAGES;
@@ -653,7 +839,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Device Statistics log - general page
+    // Read Device Statistics log - general page
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_DEVICE_STATISTICS_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_DEVICE_STATISTICS_GENERAL_PAGE;
@@ -661,7 +847,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Identify Device Data log - supported page
+    // Read Identify Device Data log - supported page
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_SUPPORTED_PAGES;
@@ -669,7 +855,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Identify Device Data log - Supported Capabilities page
+    // Read Identify Device Data log - Supported Capabilities page
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE;
@@ -677,7 +863,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Identify Device Data log - SATA page
+    // Read Identify Device Data log - SATA page
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SATA_PAGE;
@@ -685,7 +871,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read Saved Device Internal log
+    // Read Saved Device Internal log
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].LogAddress = IDE_GP_LOG_SAVED_DEVICE_INTERNAL_STATUS;
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].PageNumber = 0;
@@ -693,7 +879,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read NCQ non-Data log
+    // Read NCQ non-Data log
     if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NCQ == 1) &&
         (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NcqQueueMgmt == 1)) {
         ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
@@ -706,7 +892,7 @@ Return Values:
     ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].FeatureField = 0;
     *index = *index + 1;
 
-    // read NCQ Send Receive log
+    // Read NCQ Send Receive log
     if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NCQ == 1) &&
         (ChannelExtension->DeviceExtension->IdentifyDeviceData->SerialAtaCapabilities.NcqReceiveSend == 1)) {
         ChannelExtension->DeviceExtension->QueryLogPages.LogPage[*index].Query = TRUE;
@@ -788,17 +974,19 @@ Return Values:
 
     Srb->SrbStatus = SRB_STATUS_PENDING;
     srbExtension->DataBuffer = DataBuffer;
+    if ( PhysicalAddress ) {
+        srbExtension->DataBufferPhysicalAddress.QuadPart = PhysicalAddress->QuadPart;
+    }
 
     //setup SGL
     if ( PhysicalAddress ) {
         srbExtension->LocalSgl.NumberOfElements = 1;
         srbExtension->LocalSgl.List[0].PhysicalAddress.LowPart = PhysicalAddress->LowPart;
         srbExtension->LocalSgl.List[0].PhysicalAddress.HighPart = PhysicalAddress->HighPart;
-        srbExtension->LocalSgl.List[0].Length = ATA_BLOCK_SIZE * BlockCount;
+        srbExtension->LocalSgl.List[0].Length = ATA_BLOCK_SIZE * (ULONG)BlockCount;
         srbExtension->Sgl = &srbExtension->LocalSgl;
-        srbExtension->DataTransferLength = ATA_BLOCK_SIZE * BlockCount;
+        srbExtension->DataTransferLength = ATA_BLOCK_SIZE * (ULONG)BlockCount;
     }
-
 
     return;
 }
@@ -845,15 +1033,15 @@ ReadQueryLogPage (
 )
 {
     IssueReadLogExtCommand( ChannelExtension,
-                            Srb,
-                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].LogAddress,
-                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].PageNumber,
-                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].BlockCount,
-                            ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].FeatureField,
-                            &ChannelExtension->DeviceExtension->ReadLogExtPageDataPhysicalAddress,
-                            (PVOID)ChannelExtension->DeviceExtension->ReadLogExtPageData,
-                            LogPageDiscoveryCompletion
-                            );
+                           Srb,
+                           ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].LogAddress,
+                           ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].PageNumber,
+                           ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].BlockCount,
+                           ChannelExtension->DeviceExtension->QueryLogPages.LogPage[Index].FeatureField,
+                           &ChannelExtension->DeviceExtension->ReadLogExtPageDataPhysicalAddress,
+                           (PVOID)ChannelExtension->DeviceExtension->ReadLogExtPageData,
+                           LogPageDiscoveryCompletion
+    );
 }
 
 
@@ -893,6 +1081,168 @@ Return Values:
     return;
 }
 
+VOID
+UpdateDownloadMicrocodeSupport(
+    _Inout_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PIDENTIFY_DEVICE_DATA_LOG_PAGE_SUPPORTED_CAPABILITIES Capabilities
+)
+/*++
+
+Routine Description:
+
+    Takes the given Supported Capabilities log page and updates the firmware
+    update (download microcode) support information that is cached in the given
+    Channel Extension.
+
+Arguments:
+
+    Channel Extension
+    Supported Capabilities
+
+--*/
+{
+    NT_ASSERT(Capabilities->Header.RevisionNumber == IDE_GP_LOG_VERSION);
+    NT_ASSERT(Capabilities->Header.PageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE);
+
+    //
+    // Set it to unsupported by default.
+    //
+    ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported = 0;
+
+    //
+    // If the Download Microcode capabilites are valid then fill in our cached copy.
+    //
+    if (Capabilities->DownloadMicrocodeCapabilities.Valid == 1) {
+
+        if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.DownloadMicrocodeDmaSupported == 1) ||
+            (ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetSupport.DownloadMicrocode == 1)) {
+
+            ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported = (Capabilities->DownloadMicrocodeCapabilities.DmOffsetsDeferredSupported == 1);
+
+            if (ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported) {
+
+                if ((Capabilities->DownloadMicrocodeCapabilities.DmMinTransferSize > 0) &&
+                    (Capabilities->DownloadMicrocodeCapabilities.DmMinTransferSize < 0xFFFF)) {
+                    ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = (USHORT)min(Capabilities->DownloadMicrocodeCapabilities.DmMinTransferSize, AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE);
+                } else {
+                    ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = 1;
+                }
+
+                if ((Capabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize > 0) &&
+                    (Capabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize < 0xFFFF)) {
+                    ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = (USHORT)min(Capabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize, AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE);
+                } else {
+                    ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = AHCI_MAX_TRANSFER_LENGTH_DEFAULT / ATA_BLOCK_SIZE;
+                }
+            }
+        }
+    }
+}
+
+VOID
+GetDownloadMicrocodeSupportCompletion(
+    _Inout_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK  Srb
+)
+/*++
+
+Routine Description:
+
+    Called when the Supported Capabilities log page has been obtained from the
+    device.  The log page is parsed for the Download Microcode support and the
+    cached copy of this data is updated in the ChannelExtension.
+
+Arguments:
+
+    Channel Extension
+    SRB
+
+--*/
+{
+    PAHCI_SRB_EXTENSION         srbExtension;
+
+    srbExtension = GetSrbExtension(Srb);
+
+    //
+    // If the request succeeded then update the cached copy of the Download
+    // Microcode support information.
+    //
+    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+        UpdateDownloadMicrocodeSupport(ChannelExtension, srbExtension->DataBuffer);
+    }
+
+    AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, srbExtension->DataBuffer, srbExtension->DataBufferPhysicalAddress);
+
+    //
+    // The SRB will be completed after this completion routine returns so
+    // there's no need to do it here.
+    //
+}
+
+ULONG
+GetDownloadMicrocodeSupport(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension,
+    _In_ PSTORAGE_REQUEST_BLOCK Srb
+)
+/*++
+Routine Description:
+
+    Queries the Download Microcode support from the Identify Log Page and
+    updates our cached copy of it.
+
+Arguments:
+    ChannelExtension
+    SRB
+
+Return Value:
+
+    Status code.
+
+--*/
+{
+    ULONG                   status = STOR_STATUS_SUCCESS;
+    PVOID                   buffer = NULL;
+    STOR_PHYSICAL_ADDRESS   bufferPhysicalAddress = { 0 };
+
+    //
+    // Fail the request if it's not supported by device.
+    //
+    if (IsDeviceGeneralPurposeLoggingSupported(ChannelExtension) == FALSE) {
+        Srb->SrbStatus = SRB_STATUS_INVALID_REQUEST;
+        return STOR_STATUS_INVALID_PARAMETER;
+    }
+
+    //
+    // Allocate DMA buffer to the log page.
+    //
+    status = AhciAllocateDmaBuffer((PVOID)ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, (PVOID*)&buffer, &bufferPhysicalAddress);
+
+    if ((status != STOR_STATUS_SUCCESS) || (buffer == NULL)) {
+        if (buffer != NULL) {
+            AhciFreeDmaBuffer((PVOID)ChannelExtension->AdapterExtension, IDE_GP_LOG_SECTOR_SIZE, buffer, bufferPhysicalAddress);
+        }
+        Srb->SrbStatus = SRB_STATUS_ERROR;
+        return STOR_STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    AhciZeroMemory((PCHAR)buffer, IDE_GP_LOG_SECTOR_SIZE);
+
+    //
+    // Issue the command.  The completion routine will update the cached
+    // firmware update information with the info from the log page.
+    // The completion routine will also free the DMA buffer.
+    //
+    IssueReadLogExtCommand(ChannelExtension,
+                           Srb,
+                           IDE_GP_LOG_IDENTIFY_DEVICE_DATA_ADDRESS,
+                           IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE,
+                           1,
+                           0,      // feature field
+                           &bufferPhysicalAddress,
+                           buffer,
+                           GetDownloadMicrocodeSupportCompletion);
+    return status;
+}
 
 VOID
 LogPageDiscoveryCompletion (
@@ -902,7 +1252,6 @@ LogPageDiscoveryCompletion (
 /*
     This process is to discover all needed information from general log pages.
     The process is initiated by reading log directory when Identify Device command completes.
-
 
 */
 {
@@ -956,7 +1305,6 @@ LogPageDiscoveryCompletion (
             }
 
             ChannelExtension->DeviceExtension->SupportedGPLPages.SinglePage.HybridInfo = (ChannelExtension->DeviceExtension->ReadLogExtPageData[IDE_GP_LOG_HYBRID_INFO_ADDRESS] > 0) ? 1 : 0;
-
 
         } else {
             // Log Directory can be optional. Preset supportive info, they will be updated if the actual command fails later.
@@ -1070,31 +1418,10 @@ LogPageDiscoveryCompletion (
 
             // The value of revision number word shall be 0001h.
             if ((supportedCapabilities->Header.RevisionNumber == IDE_GP_LOG_VERSION) &&
-                (supportedCapabilities->Header.PageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE) &&
-                (supportedCapabilities->DownloadMicrocodeCapabilities.Valid == 1)) {
+                (supportedCapabilities->Header.PageNumber == IDE_GP_LOG_IDENTIFY_DEVICE_DATA_SUPPORTED_CAPABILITIES_PAGE)) {
 
-                if ((ChannelExtension->DeviceExtension->IdentifyDeviceData->AdditionalSupported.DownloadMicrocodeDmaSupported == 1) ||
-                    (ChannelExtension->DeviceExtension->IdentifyDeviceData->CommandSetSupport.DownloadMicrocode == 1)) {
-
-                    ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported = (supportedCapabilities->DownloadMicrocodeCapabilities.DmOffsetsDeferredSupported == 1);
-
-                    if (ChannelExtension->DeviceExtension->FirmwareUpdate.DmOffsetsDeferredSupported) {
-
-                        if ((supportedCapabilities->DownloadMicrocodeCapabilities.DmMinTransferSize > 0) &&
-                            (supportedCapabilities->DownloadMicrocodeCapabilities.DmMinTransferSize < 0xFFFF)) {
-                            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = (USHORT)min(supportedCapabilities->DownloadMicrocodeCapabilities.DmMinTransferSize, AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE);
-                        } else {
-                            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMinTransferBlocks = 1;
-                        }
-
-                        if ((supportedCapabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize > 0) &&
-                            (supportedCapabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize < 0xFFFF)) {
-                            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = (USHORT)min(supportedCapabilities->DownloadMicrocodeCapabilities.DmMaxTransferSize, AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE);
-                        } else {
-                            ChannelExtension->DeviceExtension->FirmwareUpdate.DmMaxTransferBlocks = AHCI_MAX_TRANSFER_LENGTH / ATA_BLOCK_SIZE;
-                        }
-                    }
-                }
+                UpdateDownloadMicrocodeSupport(ChannelExtension, supportedCapabilities);
+                
             }
 
         } else {
@@ -1105,6 +1432,7 @@ LogPageDiscoveryCompletion (
         // the issued command was for getting SATA log page of identify device data log
 
         if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+
         } else {
             ChannelExtension->DeviceExtension->SupportedGPLPages.IdentifyDeviceData.SATA = 0;
         }
@@ -1153,10 +1481,57 @@ LogPageDiscoveryCompletion (
     if (nextPageIndex != ATA_GPL_PAGES_INVALID_INDEX) {
         ReadQueryLogPage(ChannelExtension, Srb, nextPageIndex);
     } else {
+
         ReportLunsComplete(ChannelExtension, Srb);
+
+        // Use a work itme to preserve information from Log Pages into registry.
+        PreserveLogPageInformation(ChannelExtension);
     }
 
     return;
+}
+
+
+VOID
+UpdateDeviceType(
+    _In_ PAHCI_CHANNEL_EXTENSION ChannelExtension
+    )
+/*++
+
+Routine Description:
+
+    Update device type information after device enumeration.
+
+    Assumption - PxSIG is ready to be accessed.
+
+Arguments:
+
+    ChannelExtension
+
+Return Value:
+
+    None.
+
+--*/
+{
+    PATA_DEVICE_PARAMETERS deviceParameters = &ChannelExtension->DeviceExtension->DeviceParameters;
+
+    // There is chance that during device enumeration, port is not started yet and signature register is 0xffffffff,
+    // which will result in the AtaDeviceType is set to DeviceUnknown.
+    // Update it here if above situation is true.
+    if (IsUnknownDevice(deviceParameters)) {
+
+        ULONG sig = 0;
+        sig = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SIG.AsUlong);
+
+        if (sig == ATA_DEVICE_SIGNATURE_ATA) {
+            ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAta;
+        } else if (sig == ATA_DEVICE_SIGNATURE_ATAPI) {
+            ChannelExtension->DeviceExtension[0].DeviceParameters.AtaDeviceType = DeviceIsAtapi;
+        } else {
+            NT_ASSERT(FALSE);
+        }
+    }
 }
 
 
@@ -1175,18 +1550,16 @@ AhciPortIdentifyDevice(
         return;
     }
 
-    if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
-        if (srbExtension->TaskFile.Current.bCommandReg == IDE_COMMAND_ATAPI_IDENTIFY) {
-            ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType = DeviceIsAtapi;
-        } else {
-            ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType = DeviceIsAta;
-        }
-    } else if (Srb->SrbStatus == SRB_STATUS_NO_DEVICE) {
+    if (Srb->SrbStatus == SRB_STATUS_NO_DEVICE) {
         // command failed consider as no device
         ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType = DeviceNotExist;
     }
 
     if (Srb->SrbStatus == SRB_STATUS_SUCCESS) {
+
+        // Update device ata type if it isn't initialized correctly.
+        UpdateDeviceType(ChannelExtension);
+
         //Re-initialize device specific information to avoid the values being reused after device switched.
         ChannelExtension->StateFlags.NCQ_Activated = 0;
         ChannelExtension->StateFlags.NCQ_Succeeded = 0;
@@ -1201,7 +1574,6 @@ AhciPortIdentifyDevice(
         // identify completes, digest identify data / inquiry data
         UpdateDeviceParameters(ChannelExtension);
 
-
         //
         // Cache if PUIS is enabled or not.  We'll look at this later when
         // powering up the port to determine if we need to send the spin up
@@ -1212,34 +1584,85 @@ AhciPortIdentifyDevice(
         // Initialize port properties
         ChannelExtension->PortProperties = 0;
 
+        if (ChannelExtension->StateFlags.IdentifyDeviceSuccess == 0) {
+            ChannelExtension->StateFlags.IdentifyDeviceSuccess = 1;
+        }
+
         if (IsExternalPort(ChannelExtension)) {
             SETMASK(ChannelExtension->PortProperties, PORT_PROPERTIES_EXTERNAL_PORT);
         }
     }
 
     // Identify Device can only be triggered from REPORT LUNS command or
-    //    INQUIRY command (for disk in dump environment)
+    // INQUIRY command (for disk in dump environment)
     if ((cdb != NULL) && (cdb->CDB10.OperationCode == SCSIOP_REPORT_LUNS)) {
 
-        if ( (Srb->SrbStatus == SRB_STATUS_SUCCESS) &&
-             IsDeviceGeneralPurposeLoggingSupported(ChannelExtension) ) {
+        BOOLEAN cachedLogPageInfoUsable = FALSE;
 
-            // READ LOG EXT command is supported.
-            USHORT index;
+        if ((Srb->SrbStatus == SRB_STATUS_SUCCESS) &&
+            IsDeviceGeneralPurposeLoggingSupported(ChannelExtension)) {
 
-            InitQueryLogPages(ChannelExtension);
+            ULONG storStatus;
 
-            index = GetNextQueryLogPageIndex(ChannelExtension);
+            //
+            // Check to determine whether use cached device settings.
+            //
+            storStatus = StorPortIsDeviceOperationAllowed(ChannelExtension->AdapterExtension,
+                                                          NULL,
+                                                          &STORPORT_DEVICEOPERATION_CACHED_SETTINGS_INIT_GUID,
+                                                          (PULONG)(&cachedLogPageInfoUsable));
 
-            NT_ASSERT(index == 0);
+            cachedLogPageInfoUsable = (cachedLogPageInfoUsable && (ChannelExtension->DeviceExtension[0].UpdateCachedLogPageInfo == FALSE));
+            
+            if (cachedLogPageInfoUsable) {
+                // In case this is not a newly plugged in device and it's allowed to use cached Log Page Information.
+                CHAR valueName[16] = { 0 };
+                AHCI_DEVICE_LOG_PAGE_INFO logPageInfo = { 0 };
+                PVOID dataBuffer = &logPageInfo;
+                ULONG dataLength = sizeof(AHCI_DEVICE_LOG_PAGE_INFO);
 
-            if (index != ATA_GPL_PAGES_INVALID_INDEX) {
-                //First page should be log directory. Read it to get pages supported by device.
-                ReadQueryLogPage(ChannelExtension, Srb, index);
-            } else {
-                ReportLunsComplete(ChannelExtension, Srb);
+                GetLogInfoRegValueName(ChannelExtension, valueName, sizeof(valueName));
+
+                storStatus = StorPortRegistryReadAdapterKey(ChannelExtension->AdapterExtension,
+                                                            (PUCHAR)"StorAHCI",
+                                                            (PUCHAR)valueName,
+                                                            MINIPORT_REG_BINARY,
+                                                            &dataBuffer,
+                                                            &dataLength);
+
+                if ((storStatus == STOR_STATUS_SUCCESS) && (dataLength == sizeof(AHCI_DEVICE_LOG_PAGE_INFO))) {
+
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].QueryLogPages, &logPageInfo.QueryLogPages, sizeof(ATA_GPL_PAGES_TO_QUERY));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedGPLPages, &logPageInfo.SupportedGPLPages, sizeof(ATA_SUPPORTED_GPL_PAGES));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].SupportedCommands, &logPageInfo.SupportedCommands, sizeof(ATA_COMMAND_SUPPORTED));
+                    StorPortCopyMemory((PVOID)&ChannelExtension->DeviceExtension[0].FirmwareUpdate, &logPageInfo.FirmwareUpdate, sizeof(DOWNLOAD_MICROCODE_CAPABILITIES));
+
+                    ReportLunsComplete(ChannelExtension, Srb);
+                } else {
+                    cachedLogPageInfoUsable = FALSE;
+                }
             }
 
+            //
+            // Start log page discovery process if decide not use cached log page data.
+            //
+            if (!cachedLogPageInfoUsable) {
+
+                USHORT index;
+
+                InitQueryLogPages(ChannelExtension);
+
+                index = GetNextQueryLogPageIndex(ChannelExtension);
+
+                NT_ASSERT(index == 0);
+
+                if (index != ATA_GPL_PAGES_INVALID_INDEX) {
+                    // First page should be log directory. Read it to get pages supported by device.
+                    ReadQueryLogPage(ChannelExtension, Srb, index);
+                } else {
+                    ReportLunsComplete(ChannelExtension, Srb);
+                }
+            }
         } else {
             ReportLunsComplete(ChannelExtension, Srb);
         }
@@ -1267,7 +1690,28 @@ AhciPortIdentifyDevice(
         } else {
             InquiryComplete(ChannelExtension, Srb);
         }
+    } else if ((ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData == 1) &&
+               (cdb != NULL) && (cdb->CDB10.OperationCode == SCSIOP_INQUIRY)) {
+
+        //
+        // We are refreshing Identify information because of a firmware update.
+        // The firmware update support information is contained in the Supported
+        // Capabilities log page so we need to make sure we query that page as well.
+        // 
+        ChannelExtension->DeviceExtension->DeviceParameters.StateFlags.NeedUpdateIdentifyDeviceData = 0;
+
+        //
+        // Finish processing the Inquiry command before re-using the SRB to get
+        // the Supported Capabilities log page.
+        //        
+        InquiryComplete(ChannelExtension, Srb);
+              
+        if (IsDeviceGeneralPurposeLoggingSupported(ChannelExtension)) {
+            GetDownloadMicrocodeSupport(ChannelExtension, Srb);
+        }
+
     }
+
     return;
 }
 
@@ -1317,7 +1761,7 @@ AhciPortNVCacheCompletion(
         //
         // Free the buffer allocated as mode sense info buffer , holding task file
         //
-        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, srbExtension->ResultBufferLength, TaskFile);
+        AhciFreeDmaBuffer(ChannelExtension->AdapterExtension, srbExtension->ResultBufferLength, TaskFile, srbExtension->ResultBufferPhysicalAddress);
 
     } else {
         // in case TaskFile is not returned in SenseInfoBuffer, use cached ATA Status and Error register values.
@@ -1408,7 +1852,7 @@ Affected Variables/Registers:
     srb->SrbExtension = (PVOID)ChannelExtension->Local.SrbExtension;
     srb->TimeOutValue = 1;      //as it's sent by miniport, no one monitors the timeout value.
 
-  // Fills in the local SRB with the SetFeatures command
+    // Fills in the local SRB with the SetFeatures command
     srbExtension = ChannelExtension->Local.SrbExtension;
     AhciZeroMemory((PCHAR)srbExtension, sizeof(AHCI_SRB_EXTENSION));
 
@@ -1448,21 +1892,25 @@ Affected Variables/Registers:
     none
 --*/
 {
-    UCHAR           i;
-    ULONG           allocated;
-    ATA_TASK_FILE   taskFile = {0};
+    UCHAR i;
+    ULONG allocated;
+    ATA_TASK_FILE taskFile = {0};
 
     UNREFERENCED_PARAMETER(Srb);
 
-  //1 Verify local SRB is not in use
+    RecordExecutionHistory(ChannelExtension, 0x00000043); // IssuePreservedSettingCommands
+
+    //1 Verify local SRB is not in use
     allocated = GetOccupiedSlots(ChannelExtension);
 
     if ((allocated & (1 << 0)) > 0) {
+
         // Already restoring preserved Settings
+        RecordExecutionHistory(ChannelExtension, 0x10010043); // IssuePreservedSettingCommands Slot 0 in use
         return;
     }
 
-  //2 find the next command to send
+    //2 find the next command to send
     for (i = 0; i < MAX_SETTINGS_PRESERVED; i++) {
         if ( (ChannelExtension->PersistentSettings.SlotsToSend & (1 << i)) > 0 ) {
             ChannelExtension->PersistentSettings.SlotsToSend &= ~(1 << i);
@@ -1470,20 +1918,23 @@ Affected Variables/Registers:
         }
     }
 
-    //perhaps there is none.  Done.
+    // Perhaps there is none.  Done.
     if ( i >= MAX_SETTINGS_PRESERVED) {
-      // release active reference for process of restore preserved settings
+        // Release active reference for process of restore preserved settings
         if (ChannelExtension->StateFlags.RestorePreservedSettingsActiveReferenced == 1) {
             PortReleaseActiveReference(ChannelExtension, NULL);
             ChannelExtension->StateFlags.RestorePreservedSettingsActiveReferenced = 0;
         }
 
-        InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 3);    //ReservedSlotInUse field is at bit 3
+        RecordExecutionHistory(ChannelExtension, 0x10020043); // IssuePreservedSettingCommands done and clear flag
+
+        InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 3); //ReservedSlotInUse field is at bit 3
+        InterlockedBitTestAndReset((LONG*)&ChannelExtension->StateFlags, 22); //PowerUpInitializationInProgress field is at bit 22
 
         return;
     }
 
-  //3 Otherwise use the LocalSRB to send the command. When it is done, call this routine again
+    //3 Otherwise use the LocalSRB to send the command. When it is done, call this routine again
     taskFile.Current.bFeaturesReg = ChannelExtension->PersistentSettings.CommandParams[i].Features;
     taskFile.Current.bSectorCountReg = ChannelExtension->PersistentSettings.CommandParams[i].SectorCount;
     taskFile.Current.bDriveHeadReg = 0xA0;
@@ -1521,22 +1972,29 @@ Affected Variables/Registers:
 
     UNREFERENCED_PARAMETER(Srb);
 
-  // Verify local SRB is not in use
+    RecordExecutionHistory(ChannelExtension, 0x00000044); // IssueInitCommands
+
+    // Verify local SRB is not in use
     allocated = GetOccupiedSlots(ChannelExtension);
 
     if ((allocated & (1 << 0)) > 0) {
+
         // Already restoring preserved Settings
+        RecordExecutionHistory(ChannelExtension, 0x10010044); // IssueInitCommands slot 0 in use
         return;
     }
 
-  // if all Init commands have been sent, send Preserved Setting Commands
+    // if all Init commands have been sent, send Preserved Setting Commands
     if (ChannelExtension->DeviceInitCommands.CommandToSend >= ChannelExtension->DeviceInitCommands.ValidCommandCount) {
+
+        RecordExecutionHistory(ChannelExtension, 0x10020044); // IssueInitCommands init commands done, send Preserved Setting Commands
+
         ChannelExtension->PersistentSettings.SlotsToSend = ChannelExtension->PersistentSettings.Slots;
         IssuePreservedSettingCommands(ChannelExtension, NULL);
         return;
     }
 
-  // find the next command to send
+    // find the next command to send
     taskFile = ChannelExtension->DeviceInitCommands.CommandTaskFile + ChannelExtension->DeviceInitCommands.CommandToSend;
     taskFile->Current.bDriveHeadReg = 0xA0;
 
@@ -1824,7 +2282,6 @@ SetAllowedLpmStates(
         lpm = 0x03;
     }
 
-
     //Set PxSCTL.IPM to 3h to restrict slumber and partial interface power management state transitions.
     sctl.AsUlong = StorPortReadRegisterUlong(ChannelExtension->AdapterExtension, &ChannelExtension->Px->SCTL.AsUlong);
     sctl.IPM = lpm;
@@ -1846,13 +2303,15 @@ Return Value:
 */
 {
     AHCI_COMMAND cmd;
-    BOOLEAN      needStartIo = FALSE;
+    BOOLEAN needStartIo = FALSE;
+    UCHAR sctlIpm = 0;
+
+    RecordExecutionHistory(ChannelExtension, 0x00000047); // AhciLpmSettingsModes
 
     //Make sure the configuration supports LPM, otherwise, don't touch anything.
     if (NoLpmSupport(ChannelExtension) || !IsLPMCapablePort(ChannelExtension)) {
         return needStartIo;
     }
-
 
     ChannelExtension->LastUserLpmPowerSetting = (UCHAR)LpmMode.AsUlong;
 
@@ -1869,7 +2328,7 @@ Return Value:
         }
 
         //Set PxSCTL.IPM to 3h to restrict slumber and partial interface power management state transitions.
-        SetAllowedLpmStates(ChannelExtension);
+        sctlIpm = SetAllowedLpmStates(ChannelExtension);
 
         // Disable DIPM
         if (IsDeviceSupportsDIPM(ChannelExtension->DeviceExtension[0].IdentifyDeviceData)) {
@@ -1890,7 +2349,7 @@ Return Value:
         // link power management is allowed.
 
         //Set PxSCTL.IPM for LPM allowed states.
-        UCHAR sctlIpm = SetAllowedLpmStates(ChannelExtension);
+        sctlIpm = SetAllowedLpmStates(ChannelExtension);
 
         // Setting HIPM if it's enabled.
         if ( (LpmMode.HipmEnabled > 0) &&
@@ -1954,6 +2413,18 @@ Return Value:
 
     }
 
+    ++(ChannelExtension->TotalCountPowerSettingNotification);
+    AhciTelemetryLogPowerSettingChange(ChannelExtension,
+                                       (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                       AhciTelemetryEventIdLpmSettingsModes,
+                                       "AhciLpmSettingsModes",
+                                       0,
+                                       sctlIpm,
+                                       LpmMode.AsUlong
+                                       );
+
+    RecordExecutionHistory(ChannelExtension, 0x10000047); // AhciLpmSettingsModes Exit
+
     return needStartIo;
 }
 
@@ -1963,7 +2434,7 @@ AhciPortPowerSettingNotification(
     IN PAHCI_CHANNEL_EXTENSION ChannelExtension,
     IN PSTOR_POWER_SETTING_INFO PowerInfo
     )
-{
+{                
     // do nothing if there is no device connected
     if ( (ChannelExtension->StartState.ChannelNextStartState == StartFailed) ||
          (ChannelExtension->DeviceExtension->DeviceParameters.AtaDeviceType == DeviceNotExist) ) {
@@ -1991,10 +2462,22 @@ AhciPortPowerSettingNotification(
         ULONG interval = (ULONG)*((PULONG)PowerInfo->Value);
 
         if (interval <= 300000) {
+            UCHAR sctlIpm = 0;
+
             ChannelExtension->AutoPartialToSlumberInterval = interval;
 
             //Set PxSCTL.IPM register for LPM allowed states.
-            SetAllowedLpmStates(ChannelExtension);
+            sctlIpm = SetAllowedLpmStates(ChannelExtension);
+
+            ++(ChannelExtension->TotalCountPowerSettingNotification);
+            AhciTelemetryLogPowerSettingChange(ChannelExtension,
+                                               (PSTOR_ADDRESS)&(ChannelExtension->DeviceExtension->DeviceAddress),
+                                               AhciTelemetryEventIdLpmAdaptiveSetting,
+                                               "LpmAdaptiveSetting",
+                                               0,
+                                               sctlIpm,
+                                               ChannelExtension->AutoPartialToSlumberInterval
+                                               );
         }
 
     } else if (IsLpmModeSetting(PowerInfo)) {
@@ -2184,7 +2667,6 @@ AhciPortGetInitCommands(
     // send SECURE_FREEZE_LOCK by default
     BOOLEAN                  sendSecureFreezeLock = TRUE;
 
-
     // clear Init Commands area. need to do this for device removed previously (StorAHCI only knows about adapter removal, not device removal)
     ChannelExtension->DeviceInitCommands.CommandCount = 0;
     ChannelExtension->DeviceInitCommands.ValidCommandCount = 0;
@@ -2257,7 +2739,6 @@ AhciPortGetInitCommands(
     }
 
     // Get Init Command count for devices
-
 
     //
     // calculate possible command count for memory allocation
@@ -2529,6 +3010,7 @@ AhciAdapterEvaluateDSMMethod(
             AdapterExtension->StateFlags.SupportsAcpiDSM = TRUE;
         }
 
+
     }
 
 Exit:
@@ -2638,5 +3120,4 @@ Exit:
 
 
 #pragma warning(pop) // un-sets any local warning changes
-
 

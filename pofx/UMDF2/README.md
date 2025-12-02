@@ -1,29 +1,28 @@
-<!---
-    name: Power Framework (PoFx) Sample (UMDF Version 2)
-    platform: UMDF2
-    language: cpp
-    category: Power
-    description: Demonstrates how a UMDF version 2 driver can implement F-state-based power management.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617936
---->
+---
+page_type: sample
+description: "Demonstrates how a UMDF version 2 driver can implement F-state-based power management."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
-
-Power Framework (PoFx) Sample (UMDF Version 2)
-==============================================
+# Power Framework (PoFx) Sample (UMDF Version 2)
 
 This solution demonstrates how a User-Mode Driver Framework (UMDF) version 2 driver can implement F-state-based power management. The SingleComp project demonstrates how a UMDF version 2 driver can implement F-state-based power management for a device that has only a single component.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Related technologies
---------------------
-For related information, see the [KMDF Power Framework (PoFx) Sample](http://go.microsoft.com/fwlink/p/?LinkId=617937).
+## Related technologies
 
-[User-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff560456)
+[KMDF Power Framework (PoFx) Sample](https://docs.microsoft.com/samples/microsoft/windows-driver-samples/kmdf-power-framework-pofx-sample/).
 
-Run the sample
---------------
+[User-Mode Driver Framework](https://docs.microsoft.com/windows-hardware/drivers/wdf/getting-started-with-umdf-version-2)
+
+## Run the sample
 
 The computer where you install the driver is called the *target computer* or the *test computer*. Typically this is a separate computer from where you develop and build the driver package. The computer where you develop and build the driver is called the *host computer*.
 
@@ -31,20 +30,27 @@ The process of moving the driver package to the target computer and installing t
 
 ### Automatic deployment (root enumerated)
 
-Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Configuring a Computer for Driver Deployment, Testing, and Debugging](http://msdn.microsoft.com/en-us/library/windows/hardware/).
+Before you automatically deploy a driver, you must provision the target computer. For instructions, see [Provision a computer for driver deployment and testing](https://docs.microsoft.com/windows-hardware/drivers/gettingstarted/provision-a-target-computer-wdk-8-1).
 
-1.  On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
-2.  Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter **root\\SingleComponentSingleState** for the hardware ID. Click **OK**.
-3.  On the **Build** menu, choose **Build Solution**.
+After you have provisioned the target computer, continue with these steps:
+
+1. On the host computer, in Visual Studio, in Solution Explorer, right click **package** (lower case), and choose **Properties**. Navigate to **Configuration Properties \> Driver Install \> Deployment**.
+
+1. Check **Enable deployment**, and check **Remove previous driver versions before deployment**. For **Target Computer Name**, select the name of a target computer that you provisioned previously. Select **Hardware ID Driver Update**, and enter **root\\SingleComponentSingleState** for the hardware ID. Click **OK**.
+
+1. On the **Build** menu, choose **Build Solution**.
 
 ### Manual deployment (root enumerated)
 
-Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544707) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](http://msdn.microsoft.com/en-us/library/windows/hardware/dn265571).
+Before you manually deploy a driver, you must turn on test signing and install a certificate on the target computer. You also need to copy the [DevCon](https://docs.microsoft.com/windows-hardware/drivers/devtest/devcon) tool to the target computer. For instructions, see [Preparing a Computer for Manual Driver Deployment](https://docs.microsoft.com/windows-hardware/drivers/develop/preparing-a-computer-for-manual-driver-deployment).
 
-1.  Copy all of the files in your driver package to a folder on the target computer (for example, c:\\PoFx).
-2.  On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
+After you have prepared the target computer for manual deployment, continue with these steps:
 
-    **devcon install SingleComponentSingleStateUm.inf root\\SingleComponentSingleState**
+1. Copy all of the files in your driver package to a folder on the target computer (for example, c:\\PoFx).
+
+1. On the target computer, open a Command Prompt window as Administrator. Navigate to your driver package folder, and enter the following command:
+
+    `devcon install SingleComponentSingleStateUm.inf root\\SingleComponentSingleState`
 
 ### View the root enumerated driver in Device Manager
 
@@ -52,12 +58,10 @@ On the target computer, in a Command Prompt window, enter **devmgmt** to open De
 
 In Device Manager, on the **View** menu, choose **Devices by connection**. Locate **UMDF 2.0 Single Component Single State Device** as a child of the root node of the device tree.
 
-Build the sample using MSBuild
-------------------------------
+## Build the sample using MSBuild
 
 As an alternative to building the driver sample in Visual Studio, you can build it in a Visual Studio Command Prompt window. In Visual Studio, on the **Tools** menu, choose **Visual Studio Command Prompt**. In the Visual Studio Command Prompt window, navigate to the folder that has the solution file, PoFx.sln. Use the MSBuild command to build the solution. Here is an example:
 
-**msbuild /p:configuration="Release" /p:platform="Win32" PoFx.sln**
+`msbuild /p:configuration="Release" /p:platform="Win32" PoFx.sln`
 
-For more information about using MSBuild to build a driver package, see [Building a Driver](http://msdn.microsoft.com/en-us/library/windows/hardware/ff554644).
-
+For more information about using [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild?view=vs-2019) to build a driver package, see [Building a Driver with Visual Studio and the WDK](https://docs.microsoft.com/windows-hardware/drivers/develop/building-a-driver).

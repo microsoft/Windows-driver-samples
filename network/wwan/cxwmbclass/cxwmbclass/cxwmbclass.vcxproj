@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{11CC63F7-F6D0-4CED-99BA-C5FDAE88D29C}</ProjectGuid>
+    <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration>Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <RootNamespace>cxwmbclass</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <DisableSpecificWarnings>4748;%(DisableSpecificWarnings);4101;4189;4100;4267</DisableSpecificWarnings>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\x64\ndis.lib;$(WindowsDDK_LibraryPath)\x64\netio.lib;$(WindowsDDK_LibraryPath)\x64\usbd.lib;$(WindowsDDK_LibraryPath)\x64\usbdex.lib;$(WindowsDDK_LibraryPath)\x64\wdmguid.lib;$(WindowsDDK_LibraryPath)\x64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\x64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\x64\ndis.lib;$(WindowsDDK_LibraryPath)\x64\netio.lib;$(WindowsDDK_LibraryPath)\x64\usbd.lib;$(WindowsDDK_LibraryPath)\x64\usbdex.lib;$(WindowsDDK_LibraryPath)\x64\wdmguid.lib;$(WindowsDDK_LibraryPath)\x64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\x64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\arm64\ndis.lib;$(WindowsDDK_LibraryPath)\arm64\netio.lib;$(WindowsDDK_LibraryPath)\arm64\usbd.lib;$(WindowsDDK_LibraryPath)\arm64\usbdex.lib;$(WindowsDDK_LibraryPath)\arm64\wdmguid.lib;$(WindowsDDK_LibraryPath)\arm64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\arm64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WindowsDDK_LibraryPath)\arm64\ndis.lib;$(WindowsDDK_LibraryPath)\arm64\netio.lib;$(WindowsDDK_LibraryPath)\arm64\usbd.lib;$(WindowsDDK_LibraryPath)\arm64\usbdex.lib;$(WindowsDDK_LibraryPath)\arm64\wdmguid.lib;$(WindowsDDK_LibraryPath)\arm64\netcx\kmdf\adapter\2.3\netadaptercxstub.lib;$(WindowsDDK_LibraryPath)\arm64\mbbcx\1.0\mbbcxstub.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Inf Include="cxwmbclass.inf" />
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToPackage Include="$(TargetPath)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\adapter.cpp" />
+    <ClCompile Include="..\businit.cpp" />
+    <ClCompile Include="..\datapipe.cpp" />
+    <ClCompile Include="..\device.cpp" />
+    <ClCompile Include="..\driver.cpp" />
+    <ClCompile Include="..\power.cpp" />
+    <ClCompile Include="..\rxqueue.cpp" />
+    <ClCompile Include="..\txqueue.cpp" />
+    <ClCompile Include="..\util.cpp" />
+    <ClCompile Include="..\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\adapter.h" />
+    <ClInclude Include="..\inc\align.h" />
+    <ClInclude Include="..\inc\BusInterface.h" />
+    <ClInclude Include="..\inc\data.h" />
+    <ClInclude Include="..\inc\device.h" />
+    <ClInclude Include="..\inc\mbbmessages.h" />
+    <ClInclude Include="..\inc\mbbncm.h" />
+    <ClInclude Include="..\inc\power.h" />
+    <ClInclude Include="..\inc\precomp.h" />
+    <ClInclude Include="..\inc\rxqueue.h" />
+    <ClInclude Include="..\inc\txqueue.h" />
+    <ClInclude Include="..\inc\usbbus.h" />
+    <ClInclude Include="..\inc\util.h" />
+    <ClInclude Include="..\inc\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\cxwmbclass.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

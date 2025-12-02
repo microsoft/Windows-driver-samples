@@ -12,6 +12,7 @@
     Provider    = %ProviderString%
     CatalogFile = Inspect.cat
     DriverVer   = 11/24/2014,14.24.55.836
+    PnpLockdown = 1
 
 [SourceDisksNames]
    1 = %InspectDisk%,,,""
@@ -20,22 +21,14 @@
    Inspect.sys = 1,,
 
 [DestinationDirs]
-    DefaultDestDir      = 12                                               ; %WinDir%\System32\Drivers
     Inspect.DriverFiles = 12                                               ; %WinDir%\System32\Drivers
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$]
     OptionDesc = %InspectServiceDesc%
     CopyFiles  = Inspect.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.Services]
     AddService = %InspectServiceName%,,Inspect.Service
-
-[DefaultUninstall]
-    DelFiles = Inspect.DriverFiles
-
-[DefaultUninstall.Services]
-    DelService = %InspectServiceName%,0x200                                ; SPSVCINST_STOPSERVICE
-    DelReg     = Inspect.DelRegistry
 
 [Inspect.DriverFiles]
     Inspect.sys,,,0x00000040                                               ; COPYFLG_OVERWRITE_OLDER_ONLY
@@ -52,9 +45,6 @@
 [Inspect.AddRegistry]
     HKR,"Parameters","BlockTraffic",0x00010001,"0"                         ; FLG_ADDREG_TYPE_DWORD
     HKR,"Parameters","RemoteAddressToInspect",0x00000000,"10.0.0.1"        ; FLG_ADDREG_TYPE_SZ
-
-[Inspect.DelRegistry]
-    HKR,"Parameters",,,
 
 [Strings]
     ProviderString     = "TODO-Set-Provider"

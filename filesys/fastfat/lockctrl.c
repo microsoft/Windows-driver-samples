@@ -666,7 +666,7 @@ Return Value:
     }
 
     //
-    //  Acquire exclusive access to the Fcb and enqueue the Irp if we didn't
+    //  Acquire shared access to the Fcb and enqueue the Irp if we didn't
     //  get access
     //
 

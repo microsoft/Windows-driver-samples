@@ -54,16 +54,6 @@ ManageDriver(
     IN USHORT   Function
     );
 
-HMODULE
-LoadWdfCoInstaller(
-    VOID
-    );
-
-VOID
-UnloadWdfCoInstaller(
-    HMODULE Library
-    );
-
 BOOLEAN
 SetupDriverName(
     _Inout_updates_all_(BufferLength) PCHAR DriverLocation,
@@ -80,14 +70,7 @@ DoIoctls(
     HANDLE hDevice
     );
 
-// for example, WDF 1.9 is "01009". the size 6 includes the ending NULL marker
-//
-#define MAX_VERSION_SIZE 6
-
-CHAR G_coInstallerVersion[MAX_VERSION_SIZE] = {0};
 BOOLEAN  G_fLoop = FALSE;
-BOOL G_versionSpecified = FALSE;
-
 
 
 //-----------------------------------------------------------------------------
@@ -98,29 +81,8 @@ __pragma(warning(disable: 4127)) while(constant); __pragma(warning(default: 4127
 
 
 #define USAGE  \
-"Usage: nonpnpapp <-V version> <-l> \n" \
-       " -V version  {if no version is specified the version specified in the build environment will be used.}\n" \
-       "    The version is the version of the KMDF coinstaller to use \n"  \
-       "    The format of version  is MMmmm where MM -- major #, mmm - serial# \n" \
+"Usage: nonpnpapp <-l> \n" \
        " -l  { option to continuously read & write to the file} \n"
-
-BOOL
-ValidateCoinstallerVersion(
-    _In_ PSTR Version
-    )
-{   BOOL ok = FALSE;
-    INT i;
-
-    for(i= 0; i<MAX_VERSION_SIZE ;i++){
-        if( ! IsCharAlphaNumericA(Version[i])) {
-            break;
-        }
-    }
-    if (i == (MAX_VERSION_SIZE -sizeof(CHAR))) {
-        ok = TRUE;
-    }
-    return ok;
-}
 
 LONG
 Parse(
@@ -143,42 +105,12 @@ Return Value:
 --*/
 {
     int i;
-    BOOL ok;
     LONG error = ERROR_SUCCESS;
 
     for (i=0; i<argc; i++) {
         if (argv[i][0] == '-' ||
             argv[i][0] == '/') {
             switch(argv[i][1]) {
-            case 'V':
-            case 'v':
-                if (( (i+1 < argc ) &&
-                      ( argv[i+1][0] != '-' && argv[i+1][0] != '/'))) {
-                    //
-                    // use version in commandline
-                    //
-                    i++;
-                    ok = ValidateCoinstallerVersion(argv[i]);
-                    if (!ok) {
-                        printf("Not a valid format for coinstaller version\n"
-                               "It should be characters between A-Z, a-z , 0-9\n"
-                               "The version format is MMmmm where MM -- major #, mmm - serial#");
-                        error = ERROR_INVALID_PARAMETER;
-                        break;
-                    }
-                    if (FAILED( StringCchCopy(G_coInstallerVersion,
-                                              MAX_VERSION_SIZE,
-                                              argv[i]) )) {
-                        break;
-                    }
-                    G_versionSpecified = TRUE;
-
-                }
-                else{
-                    printf(USAGE);
-                    error = ERROR_INVALID_PARAMETER;
-                }
-                break;
             case 'l':
             case 'L':
                 G_fLoop = TRUE;
@@ -193,24 +125,6 @@ Return Value:
     return error;
 }
 
-PCHAR
-GetCoinstallerVersion(
-    VOID
-    )
-{
-    if (!G_versionSpecified &&
-        FAILED( StringCchPrintf(G_coInstallerVersion,
-                                MAX_VERSION_SIZE,
-                                "%02d%03d",    // for example, "01009"
-                                KMDF_VERSION_MAJOR,
-                                KMDF_VERSION_MINOR)))
-    {
-        printf("StringCchCopy failed with error \n");
-    }
-
-    return (PCHAR)&G_coInstallerVersion;
-}
-
 VOID __cdecl
 main(
     _In_ ULONG argc,
@@ -221,9 +135,7 @@ main(
     DWORD    errNum = 0;
     CHAR     driverLocation [MAX_PATH];
     BOOL     ok;
-    HMODULE  library = NULL;
     LONG     error;
-    PCHAR    coinstallerVersion;
 
     //
     // Parse command line args
@@ -234,19 +146,6 @@ main(
         if (error != ERROR_SUCCESS) {
             return;
         }
-    }
-
-    if (!G_versionSpecified ) {
-        coinstallerVersion = GetCoinstallerVersion();
-
-        //
-        // if no version is specified or an invalid one is specified use default version
-        //
-        printf("No version specified. Using default version:%s\n",
-               coinstallerVersion);
-
-    } else {
-        coinstallerVersion = (PCHAR)&G_coInstallerVersion;
     }
 
     //
@@ -270,17 +169,6 @@ main(
             printf("CreateFile failed!  ERROR_FILE_NOT_FOUND = %d\n",
                    errNum);
             return ;
-        }
-
-        //
-        // Load WdfCoInstaller.dll.
-        //
-        library = LoadWdfCoInstaller();
-
-        if (library == NULL) {
-            printf("The WdfCoInstaller%s.dll library needs to be "
-                   "in same directory as nonpnpapp.exe\n", coinstallerVersion);
-            return;
         }
 
         //
@@ -351,12 +239,6 @@ main(
                   driverLocation,
                   DRIVER_FUNC_REMOVE );
 
-    //
-    // Unload WdfCoInstaller.dll
-    //
-    if ( library ) {
-        UnloadWdfCoInstaller( library );
-    }
     return;
 }
 

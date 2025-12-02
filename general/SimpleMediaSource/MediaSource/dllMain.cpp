@@ -1,35 +1,68 @@
-/// <copyright file="dllmain.cpp" company="Microsoft">
-///    Copyright (c) Microsoft Corporation. All rights reserved.
-/// </copyright>
+//
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//
+
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "stdafx.h"
+#include "pch.h"
 
-#include <wrl\module.h>
+HINSTANCE   g_hInst;
 
-#if !defined(__WRL_CLASSIC_COM__)
-STDAPI DllGetActivationFactory(_In_ HSTRING activatibleClassId, _COM_Outptr_ IActivationFactory** factory)
-{
-    return Module<InProc>::GetModule().GetActivationFactory(activatibleClassId, factory);
-}
-#endif
-
-#if !defined(__WRL_WINRT_STRICT__)
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, _COM_Outptr_ void** ppv)
 {
-    return Module<InProc>::GetModule().GetClassObject(rclsid, riid, ppv);
+    try
+    {
+        *ppv = nullptr;
+
+        if (rclsid == __uuidof(winrt::WindowsSample::implementation::SimpleMediaSourceActivate))
+        {
+            return winrt::make_self<SimpleMediaSourceActivateFactory>()->QueryInterface(riid, ppv);
+        }
+
+#ifdef _WRL_MODULE_H_
+        return ::Microsoft::WRL::Module<::Microsoft::WRL::InProc>::GetModule().GetClassObject(rclsid, riid, ppv);
+#else
+        return winrt::hresult_class_not_available().to_abi();
+#endif
+    }
+    catch (...)
+    {
+        return winrt::to_hresult();
+    }
 }
+
+bool __stdcall winrt_can_unload_now() noexcept
+{
+    if (winrt::get_module_lock())
+    {
+        return false;
+    }
+
+    winrt::clear_factory_cache();
+    return true;
+}
+
+int32_t __stdcall WINRT_CanUnloadNow() noexcept
+{
+#ifdef _WRL_MODULE_H_
+    if (!::Microsoft::WRL::Module<::Microsoft::WRL::InProc>::GetModule().Terminate())
+    {
+        return 1;
+    }
 #endif
 
-STDAPI DllCanUnloadNow()
-{
-    return Module<InProc>::GetModule().Terminate() ? S_OK : S_FALSE;
+    return winrt_can_unload_now() ? 0 : 1;
 }
 
 STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void*)
 {
-    if (reason == DLL_PROCESS_ATTACH)
+    switch (reason)
     {
-        DisableThreadLibraryCalls(hinst);
+    case DLL_PROCESS_ATTACH:
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+        break;
+    case DLL_PROCESS_DETACH:
+        g_hInst = hinst;
     }
     return TRUE;
 }

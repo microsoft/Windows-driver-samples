@@ -59,7 +59,7 @@
 
 //
 //  Typedefs for dynamically imported routines
-//  
+//
 
 typedef
 NTSTATUS
@@ -277,27 +277,27 @@ typedef struct _NC_DIR_NOT_IO_CACHE {
     //  Stores the state of the cache.
     //  If the pointer is NULL, there is nothing in cache.
     //
-    
+
     NC_CACHE_ENTRY Cache;
 
     //
     //  If ReadyToIssue is TRUE, then its safe to fire off the request.
     //
-    
+
     BOOLEAN ReadyToIssue;
 
     //
     //  Io is a pointer to the callback data.
     //  When ReadyToUse new io can be issued.
     //
-    
+
     PFLT_CALLBACK_DATA Io;
 
     //
     //  SystemBuffer is a pointer to a system buffer which will
     //  be used to issue the IO.
     //
-    
+
     char * SystemBuffer;
     ULONG SystemBufferLength;
 
@@ -479,7 +479,7 @@ extern NC_GLOBAL_DATA NcGlobalData;
 
 //
 //  Function declarations
-//  
+//
 
 //
 //  The following functions exist in nchelper.c
@@ -487,18 +487,18 @@ extern NC_GLOBAL_DATA NcGlobalData;
 
 _When_(Data == NULL, _Pre_satisfies_(FileObject != NULL && Instance != NULL))
 _When_(FileObject == NULL || Instance == NULL, _Pre_satisfies_(Data != NULL))
-NTSTATUS 
+NTSTATUS
 NcGetFileNameInformation(
     _In_opt_ PFLT_CALLBACK_DATA Data,
     _In_opt_ PFILE_OBJECT FileObject,
     _In_opt_ PFLT_INSTANCE Instance,
     _In_ FLT_FILE_NAME_OPTIONS NameOptions,
-    _Outptr_ PFLT_FILE_NAME_INFORMATION *FileNameInformation 
+    _Outptr_ PFLT_FILE_NAME_INFORMATION *FileNameInformation
     );
 
 NTSTATUS
 NcAllocateEResource(
-    _Out_ PERESOURCE * OutputLock 
+    _Out_ PERESOURCE * OutputLock
     );
 
 VOID
@@ -600,8 +600,9 @@ NcBuildMapping (
 //  The following functions exist in ncinit.c
 //
 
-NTSTATUS 
+NTSTATUS
 NcInitializeMapping(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -642,7 +643,7 @@ NcParseFinalComponent (
 //
 
 NTSTATUS
-NcStreamHandleContextAllocAndAttach( 
+NcStreamHandleContextAllocAndAttach(
     _In_ PFLT_FILTER Filter,
     _In_ PFLT_INSTANCE Instance,
     _In_ PFILE_OBJECT FileObject,
@@ -709,7 +710,7 @@ NcDetermineStructureOffsets (
     _In_ FILE_INFORMATION_CLASS Information
     );
 
-VOID 
+VOID
 NcCalculateDirectoryNotificationOffsets (
     PDIRECTORY_CONTROL_OFFSETS Offsets
     );
@@ -762,7 +763,7 @@ NcSetNextEntryOffset (
     _In_ CONST PDIRECTORY_CONTROL_OFFSETS Offsets,
     _In_ BOOLEAN ForceLast);
 
-VOID 
+VOID
 NcSetFileName (
     _In_ PVOID Entry,
     _In_ PWSTR NewName,
@@ -771,7 +772,7 @@ NcSetFileName (
     _In_ BOOLEAN ForceLast
     );
 
-VOID 
+VOID
 NcSetShortName (
     _In_ PVOID Entry,
     _In_ PWSTR NewShortName,
@@ -800,7 +801,7 @@ NcEnumerateDirectorySetupInjection (
     );
 
 VOID
-NcEnumerateDirectoryReset ( 
+NcEnumerateDirectoryReset (
     _Inout_ PNC_DIR_QRY_CONTEXT dirCtx
     );
 
@@ -818,9 +819,9 @@ NcPopulateCacheEntry (
     _Out_ PNC_CACHE_ENTRY Cache
     );
 
-PNC_CACHE_ENTRY 
-NcDirEnumSelectNextEntry ( 
-    _Inout_ PNC_DIR_QRY_CONTEXT Context, 
+PNC_CACHE_ENTRY
+NcDirEnumSelectNextEntry (
+    _Inout_ PNC_DIR_QRY_CONTEXT Context,
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
     _In_ BOOLEAN IgnoreCase
     );
@@ -828,7 +829,7 @@ NcDirEnumSelectNextEntry (
 BOOLEAN
 NcSkipName (
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
-    _In_ PNC_DIR_QRY_CONTEXT Context, 
+    _In_ PNC_DIR_QRY_CONTEXT Context,
     _In_ NC_PATH_OVERLAP RealOverlap,
     _In_ PNC_MAPPING Mapping,
     _In_ BOOLEAN IgnoreCase
@@ -836,22 +837,22 @@ NcSkipName (
 
 _Success_(*Copied)
 ULONG
-NcCopyDirEnumEntry ( 
-    _Out_ PVOID UserBuffer, 
-    _In_ ULONG UserOffset, 
-    _In_ ULONG UserSize, 
+NcCopyDirEnumEntry (
+    _Out_ PVOID UserBuffer,
+    _In_ ULONG UserOffset,
+    _In_ ULONG UserSize,
     _Inout_ PNC_CACHE_ENTRY Entry,
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
-    _Out_ PBOOLEAN Copied 
+    _Out_ PBOOLEAN Copied
     );
 
 NTSTATUS
 NcStreamHandleContextDirEnumCreate (
-    _Out_ PNC_DIR_QRY_CONTEXT Context 
+    _Out_ PNC_DIR_QRY_CONTEXT Context
     );
 
 NTSTATUS
-NcStreamHandleContextEnumSetup ( 
+NcStreamHandleContextEnumSetup (
     _Inout_ PNC_DIR_QRY_CONTEXT DirContext,
     _In_ PNC_INSTANCE_CONTEXT InstanceContext,
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
@@ -861,9 +862,9 @@ NcStreamHandleContextEnumSetup (
     _Out_ PBOOLEAN  FirstUsage
     );
 
-VOID 
+VOID
 NcStreamHandleContextEnumClose (
-    _In_ PNC_DIR_QRY_CONTEXT DirContext 
+    _In_ PNC_DIR_QRY_CONTEXT DirContext
     );
 
 //
@@ -885,19 +886,19 @@ NcPostNotifyDirectory (
     _In_ FLT_POST_OPERATION_FLAGS Flags
     );
 
-NTSTATUS 
-NcStreamHandleContextNotCreate ( 
+NTSTATUS
+NcStreamHandleContextNotCreate (
     _Out_ PNC_DIR_NOT_CONTEXT Context
     );
 
-VOID 
+VOID
 NcStreamHandleContextNotCleanup(
-    _In_ PNC_STREAM_HANDLE_CONTEXT HandleContext 
+    _In_ PNC_STREAM_HANDLE_CONTEXT HandleContext
     );
 
-VOID 
+VOID
 NcStreamHandleContextNotClose (
-    _In_ PNC_DIR_NOT_CONTEXT DirContext 
+    _In_ PNC_DIR_NOT_CONTEXT DirContext
     );
 
 //
@@ -970,10 +971,10 @@ NcPostEnumUsnData (
 
 NTSTATUS
 NcStreamHandleContextFindBySidCreate (
-    _Out_ PNC_FIND_BY_SID_CONTEXT Context 
+    _Out_ PNC_FIND_BY_SID_CONTEXT Context
     );
 
-VOID 
+VOID
 NcStreamHandleContextFindBySidClose (
     _In_ PNC_FIND_BY_SID_CONTEXT Context
     );

@@ -187,7 +187,7 @@ NcFindFilesBySidTranslateBuffers (
     _Out_ PULONG InputBufferConsumed,
     _Out_ PULONG OutputBufferWritten,
     _In_ BOOLEAN ReturnRealMappingPaths
-    ) 
+    )
 /*++
 
 Routine Description:
@@ -222,7 +222,7 @@ Arguments:
         Note however that the contents of the buffer may have originated from
         a user buffer (e.g. via a memcpy), so although the contents are non-volatile,
         they are not to be trusted.
-        
+
     OutputUserBuffer - The buffer we are returning munged results into.
         This buffer is expected to have been probed, and this function will
         catch and return any invalid buffer exceptions.
@@ -299,7 +299,7 @@ Return Value:
     FLT_ASSERT( InputBufferLength && OutputBufferLength );
 
     try {
-        
+
         while( SourceEntry ) {
 
             //
@@ -364,9 +364,9 @@ Return Value:
                     NcFreeUnicodeString( &NameString );
                 }
 
-                NameString.Buffer = ExAllocatePoolWithTag( PagedPool,
-                                                           EntryLength,
-                                                           NC_TAG );
+                NameString.Buffer = ExAllocatePoolZero( PagedPool,
+                                                        EntryLength,
+                                                        NC_TAG );
 
                 if (NameString.Buffer == NULL) {
 
@@ -459,10 +459,10 @@ Return Value:
                     ReturnName->Buffer[ReturnName->Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) {
 
                     ReturnName->Length -= sizeof(WCHAR);
-                } 
-    
+                }
+
                 EntryLength = AlignToSize( FIELD_OFFSET( FILE_NAME_INFORMATION, FileName ) + ReturnName->Length - UserRequestName->Length - sizeof(WCHAR), 8);
-    
+
                 //
                 //  We've done all we can.  Return now to let our caller deal
                 //  with the remaining buffer.
@@ -479,7 +479,7 @@ Return Value:
                     DestEntry = NULL;
                     break;
                 }
-    
+
                 //
                 //  Copy the relative path name, taking care to exclude the
                 //  initial slash.
@@ -489,7 +489,7 @@ Return Value:
                 RtlCopyMemory( DestEntry->FileName,
                                Add2Ptr( ReturnName->Buffer, UserRequestName->Length + sizeof(WCHAR)),
                                ReturnName->Length - UserRequestName->Length - sizeof(WCHAR));
-    
+
                 //
                 //  Advance the destination that we're writing new entries by
                 //  however much we just consumed.
@@ -497,7 +497,7 @@ Return Value:
 
                 *OutputBufferWritten += EntryLength;
                 DestEntry = Add2Ptr( DestEntry, EntryLength );
-    
+
                 if (MungedName.Buffer != NULL) {
                     ExFreePoolWithTag( MungedName.Buffer, NC_GENERATE_NAME_TAG );
                     MungedName.Buffer = NULL;
@@ -511,7 +511,7 @@ Return Value:
             //
 
             EntryLength = AlignToSize( FIELD_OFFSET( FILE_NAME_INFORMATION, FileName ) + SourceEntry->FileNameLength, 8 );
-            
+
             PointerResult = Add2Ptr( SourceEntry, EntryLength );
 
             Status = RtlULongAdd( *InputBufferConsumed,
@@ -525,7 +525,7 @@ Return Value:
             //  2) We wrapped when advancing SourceEntry
             //  3) PointerResult is not within InputSystemBuffer
             //
-            
+
             if (!NT_SUCCESS( Status ) ||
                 (PointerResult < (PVOID)SourceEntry) ||
                 (PointerResult < Add2Ptr( InputSystemBuffer, sizeof(FILE_NAME_INFORMATION) ))) {
@@ -535,7 +535,7 @@ Return Value:
                 Status = STATUS_INVALID_USER_BUFFER;
                 goto NcFindFilesBySidTranslateBuffersCleanup;
             }
-            
+
             SourceEntry = (PFILE_NAME_INFORMATION)PointerResult;
 
             //
@@ -544,7 +544,7 @@ Return Value:
             //  structure, terminate the loop by setting SourceEntry to NULL so
             //  we can at least return the valid entries we have.
             //
-            
+
             FLT_ASSERT( *InputBufferConsumed <= InputBufferLength );
 
             if ((*InputBufferConsumed >= InputBufferLength) ||
@@ -693,12 +693,12 @@ Return Value:
     //  Get the file's name.
     //
 
-    Status = NcGetFileNameInformation( Data, 
+    Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
-                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
+                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo );
 
     if (!NT_SUCCESS( Status )) {
@@ -725,7 +725,7 @@ Return Value:
     FLT_ASSERT( UserRequestName.Length > 0 );
     if (UserRequestName.Buffer[UserRequestName.Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) {
         UserRequestName.Length -= sizeof(WCHAR);
-    } 
+    }
 
     //
     //  As an optimization, check if the handle queried on is an ancestor of
@@ -796,7 +796,7 @@ Return Value:
     //
     //  We only really need this if BufferToFree != NULL, but this may
     //  change as soon as we drop the lock.
-    //  
+    //
 
     if (FindBySidCtx->RealFileObject == NULL) {
 
@@ -814,41 +814,41 @@ Return Value:
         //
         //  In dropping the lock, it is possible that the FileObject to go
         //  to NULL.  However, since we know it was non-NULL, the only
-        //  possibility if this occurs is that we are done with the 
+        //  possibility if this occurs is that we are done with the
         //  enumeration.
         //
 
         ObReferenceObject( RealFileObject );
         NcUnlockStreamHandleContext( HandleContext );
         UnlockContext = FALSE;
-    
-        Status = NcGetFileNameInformation( NULL, 
+
+        Status = NcGetFileNameInformation( NULL,
                                            RealFileObject,
                                            FltObjects->Instance,
-                                           FLT_FILE_NAME_OPENED | 
-                                               FLT_FILE_NAME_QUERY_DEFAULT | 
-                                               FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                           FLT_FILE_NAME_OPENED |
+                                               FLT_FILE_NAME_QUERY_DEFAULT |
+                                               FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                            &FileInfoInternalHandle );
-    
+
         if (!NT_SUCCESS( Status )) {
-    
+
             ObDereferenceObject( RealFileObject );
             goto NcPreFindFilesBySidCleanup;
         }
-    
+
         Status = FltParseFileNameInformation( FileInfoInternalHandle );
-    
+
         if (!NT_SUCCESS( Status )) {
-    
+
             ObDereferenceObject( RealFileObject );
             goto NcPreFindFilesBySidCleanup;
         }
-    
+
         OpenedName = FileInfoInternalHandle->Name;
         FLT_ASSERT( OpenedName.Length > 0 );
         if (OpenedName.Buffer[OpenedName.Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) {
             OpenedName.Length -= sizeof(WCHAR);
-        } 
+        }
 
         //
         //  This may trigger a close, and must be done before we acquire the
@@ -1215,7 +1215,7 @@ Return Value:
     //
 
     if (!NT_SUCCESS( Data->IoStatus.Status )) {
-        
+
         Status = Data->IoStatus.Status;
         goto NcPostFindFilesBySidCleanup;
     }
@@ -1248,12 +1248,12 @@ Return Value:
     //  construct names by combining these values.
     //
 
-    Status = NcGetFileNameInformation( Data, 
+    Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
-                                           FLT_FILE_NAME_QUERY_DEFAULT | 
-                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                       FLT_FILE_NAME_OPENED |
+                                           FLT_FILE_NAME_QUERY_DEFAULT |
+                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo );
 
     if (!NT_SUCCESS( Status )) {
@@ -1327,7 +1327,7 @@ Return Value:
     FLT_ASSERT( UserRequestName.Length > 0 );
     if (UserRequestName.Buffer[UserRequestName.Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) {
         UserRequestName.Length -= sizeof(WCHAR);
-    } 
+    }
 
     if (UserOverlap.Ancestor && !RealOverlap.Ancestor) {
 
@@ -1429,12 +1429,12 @@ NcPostFindFilesBySidMungeBuffer:
 
         FLT_ASSERT( FileInfoInternalHandle == NULL );
 
-        Status = NcGetFileNameInformation( NULL, 
+        Status = NcGetFileNameInformation( NULL,
                                            FindBySidCtx->RealFileObject,
                                            FltObjects->Instance,
-                                           FLT_FILE_NAME_OPENED | 
-                                               FLT_FILE_NAME_QUERY_DEFAULT | 
-                                               FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                           FLT_FILE_NAME_OPENED |
+                                               FLT_FILE_NAME_QUERY_DEFAULT |
+                                               FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                            &FileInfoInternalHandle );
 
         if (!NT_SUCCESS( Status )) {
@@ -1453,10 +1453,10 @@ NcPostFindFilesBySidMungeBuffer:
         FLT_ASSERT( OpenedName.Length > 0 );
         if (OpenedName.Buffer[OpenedName.Length/sizeof(WCHAR) - 1] == NC_SEPARATOR) {
             OpenedName.Length -= sizeof(WCHAR);
-        } 
+        }
 
     }
-    
+
     if (!UnlockContext) {
         NcLockStreamHandleContext( HandleContext );
         UnlockContext = TRUE;
@@ -1507,9 +1507,9 @@ NcPostFindFilesBySidMungeBuffer:
         }
 
 #pragma warning(suppress: __WARNING_MEMORY_LEAK)
-        SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                              SourceBufferSize,
-                                              NC_TAG );
+        SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                           SourceBufferSize,
+                                           NC_TAG );
 
         if (SourceBuffer == NULL) {
 
@@ -1643,7 +1643,7 @@ NcPostFindFilesBySidMungeBuffer:
 
             FindBySidCtx->CurrentEntry += InputConsumed;
             FLT_ASSERT( FindBySidCtx->CurrentEntry <= FindBySidCtx->BufferSize );
-            
+
             if (FindBySidCtx->CurrentEntry >= FindBySidCtx->BufferSize) {
 
                 //
@@ -1717,7 +1717,7 @@ NcPostFindFilesBySidMungeBuffer:
             //  need to enumerate from the mapping.  At this point, the
             //  mapping has not been set up yet, so we do that now.
             //
-            //  Because we can't hold a lock doing this, we do so 
+            //  Because we can't hold a lock doing this, we do so
             //  speculatively: two threads may end up doing this work, and
             //  one may be thrown away.
             //
@@ -1736,13 +1736,13 @@ NcPostFindFilesBySidMungeBuffer:
             //  Open the mapping.  We're done returning data on the user's
             //  handle, but we still need to return data from the mapping.
             //
-        
+
             InitializeObjectAttributes( &MappingAttributes,
                                         &InstanceContext->Mapping.RealMapping.LongNamePath.FullPath,
                                         OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                         NULL,
                                         NULL);
-        
+
             Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                          FltObjects->Instance,                 // Instance
                                          &MappingHandle,                       // Returned Handle
@@ -1759,7 +1759,7 @@ NcPostFindFilesBySidMungeBuffer:
                                          0,                                    // EA Length
                                          IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                          FltObjects->FileObject );             // Transaction info.
-           
+
             if (!NT_SUCCESS( Status )) {
 
                 if ( Status == STATUS_OBJECT_PATH_NOT_FOUND ||
@@ -1960,7 +1960,7 @@ Return Value:
     //
 
     if (!NT_SUCCESS( Data->IoStatus.Status ) || SizeActuallyReturned == 0) {
-        
+
         Status = Data->IoStatus.Status;
         goto NcPostLookupStreamFromClusterCleanup;
     }
@@ -1984,9 +1984,9 @@ Return Value:
     //  buffer with our modified data.
     //
 
-    SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                          SizeActuallyReturned,
-                                          NC_TAG );
+    SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                       SizeActuallyReturned,
+                                       NC_TAG );
 
     if (SourceBuffer == NULL) {
 
@@ -2161,7 +2161,7 @@ NcUsnTranslateBuffers (
     _In_ ULONG OutputBufferLength,
     _Out_ PULONG InputBufferConsumed,
     _Out_ PULONG OutputBufferWritten
-    ) 
+    )
 /*++
 
 Routine Description:
@@ -2193,7 +2193,7 @@ Arguments:
         Note however that the contents of the buffer may have originated from
         a user buffer (via a memcpy), so although the contents are non-volatile,
         they are not to be trusted.
-        
+
     OutputUserBuffer - The buffer we are returning munged results into.
         This buffer is expected to have been probed, and this function will
         catch and return any invalid buffer exceptions.
@@ -2259,7 +2259,7 @@ Return Value:
     FLT_ASSERT( InputBufferLength && OutputBufferLength );
 
     try {
-        
+
         while (SourceEntry) {
 
             //
@@ -2400,7 +2400,7 @@ FailedBufferCheck:
 
                 break;
             }
-    
+
             //
             //  If we're not transforming (the common case) copy the entire
             //  record blindly from source to destination.  If we are
@@ -2461,7 +2461,7 @@ FailedBufferCheck:
             //  2) We wrapped when advancing SourceEntry
             //  3) PointerResult is not within InputSystemBuffer
             //
-            
+
             if (!NT_SUCCESS( Status ) ||
                 (PointerResult < (PVOID)SourceEntry) ||
                 (PointerResult < Add2Ptr( InputSystemBuffer, sizeof(USN_RECORD) ))) {
@@ -2477,13 +2477,13 @@ FailedBufferCheck:
             //  would not overflow our output buffer, meaning advancing DestEntry
             //  by EntryLength bytes is also safe.
             //
-            
+
             *OutputBufferWritten += EntryLength;
 
             DestEntry = Add2Ptr( DestEntry, EntryLength );
 
             SourceEntry = (PUSN_RECORD)PointerResult;
-            
+
             //
             //  If we've just advanced our next location beyond the end of the
             //  input buffer, or there isn't enough room in it for even a USN_RECORD
@@ -2605,7 +2605,7 @@ Return Value:
     //
 
     if (!NT_SUCCESS( Data->IoStatus.Status )) {
-        
+
         Status = Data->IoStatus.Status;
         goto NcPostReadFileUsnDataCleanup;
     }
@@ -2631,12 +2631,12 @@ Return Value:
     //  processing calls destined to the mapping.
     //
 
-    Status = NcGetFileNameInformation( Data, 
+    Status = NcGetFileNameInformation( Data,
                                        NULL,
                                        NULL,
-                                       FLT_FILE_NAME_OPENED | 
+                                       FLT_FILE_NAME_OPENED |
                                            FLT_FILE_NAME_QUERY_DEFAULT |
-                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER, 
+                                           FLT_FILE_NAME_REQUEST_FROM_CURRENT_PROVIDER,
                                        &FileInfo );
 
     if (!NT_SUCCESS( Status )) {
@@ -2710,13 +2710,13 @@ Return Value:
     //
     //  Open the mapping parents and query IDs.
     //
-        
+
     InitializeObjectAttributes( &MappingParentAttributes,
                                 &InstanceContext->Mapping.RealMapping.LongNamePath.ParentPath,
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  FltObjects->Instance,                 // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -2733,7 +2733,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  FltObjects->FileObject );             // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -2765,7 +2765,7 @@ Return Value:
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  FltObjects->Instance,                 // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -2782,7 +2782,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  FltObjects->FileObject );             // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -2818,9 +2818,9 @@ Return Value:
     //  any integrity at this point.
     //
 
-    SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                          SizeActuallyReturned,
-                                          NC_TAG );
+    SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                       SizeActuallyReturned,
+                                       NC_TAG );
 
     if (SourceBuffer == NULL) {
 
@@ -2984,7 +2984,7 @@ Return Value:
     //
 
     if (!NT_SUCCESS( Data->IoStatus.Status )) {
-        
+
         Status = Data->IoStatus.Status;
         goto NcPostEnumUsnDataCleanup;
     }
@@ -3051,13 +3051,13 @@ Return Value:
     //
     //  Open the mapping parents and query IDs.
     //
-        
+
     InitializeObjectAttributes( &MappingParentAttributes,
                                 &InstanceContext->Mapping.RealMapping.LongNamePath.ParentPath,
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  FltObjects->Instance,                 // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -3074,7 +3074,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  FltObjects->FileObject );             // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -3106,7 +3106,7 @@ Return Value:
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  FltObjects->Instance,                 // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -3123,7 +3123,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  FltObjects->FileObject );             // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -3159,9 +3159,9 @@ Return Value:
     //  any integrity at this point.
     //
 
-    SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                          SizeActuallyReturned,
-                                          NC_TAG );
+    SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                       SizeActuallyReturned,
+                                       NC_TAG );
 
     if (SourceBuffer == NULL) {
 
@@ -3317,7 +3317,7 @@ Return Value:
     //
 
     if (!NT_SUCCESS( Data->IoStatus.Status )) {
-        
+
         Status = Data->IoStatus.Status;
         goto NcPostReadUsnJournalSafeCleanup;
     }
@@ -3384,13 +3384,13 @@ Return Value:
     //
     //  Open the mapping parents and query IDs.
     //
-        
+
     InitializeObjectAttributes( &MappingParentAttributes,
                                 &InstanceContext->Mapping.RealMapping.LongNamePath.ParentPath,
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  Data->Iopb->TargetInstance,           // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -3407,7 +3407,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  Data->Iopb->TargetFileObject );       // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -3439,7 +3439,7 @@ Return Value:
                                 OBJ_KERNEL_HANDLE | (IgnoreCase?OBJ_CASE_INSENSITIVE:0),
                                 NULL,
                                 NULL);
-        
+
     Status = NcCreateFileHelper( NcGlobalData.FilterHandle,            // Filter
                                  Data->Iopb->TargetInstance,           // Instance
                                  &MappingParentHandle,                 // Returned Handle
@@ -3456,7 +3456,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  Data->Iopb->TargetFileObject );       // Transaction info.
-           
+
     if (!NT_SUCCESS( Status )) {
 
         FLT_ASSERT( Status != STATUS_OBJECT_PATH_NOT_FOUND &&
@@ -3492,9 +3492,9 @@ Return Value:
     //  any integrity at this point.
     //
 
-    SourceBuffer = ExAllocatePoolWithTag( PagedPool,
-                                          SizeActuallyReturned,
-                                          NC_TAG );
+    SourceBuffer = ExAllocatePoolZero( PagedPool,
+                                       SizeActuallyReturned,
+                                       NC_TAG );
 
     if (SourceBuffer == NULL) {
 

@@ -221,7 +221,7 @@ DEFINE_KSPROPERTY_TABLE(ExtendedPropertyItems)
         CCaptureFilter::SetRoiIspControl,
         NULL, 0, NULL, NULL, 0
     ),
-    DEFINE_PROP_ITEM(CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ZOOM, CExtendedVidProcSetting, Zoom),
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ZOOM, CExtendedVidProcSetting, Zoom),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOHDR, CExtendedProperty, VideoHDR ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VFR, CExtendedProperty, VFR ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ISO_ADVANCED, CExtendedVidProcSetting, IsoAdvanced ),
@@ -230,7 +230,8 @@ DEFINE_KSPROPERTY_TABLE(ExtendedPropertyItems)
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_OIS, CExtendedProperty, OpticalImageStabilization ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ADVANCEDPHOTO, CExtendedProperty, AdvancedPhoto ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE, CExtendedProfile, CameraProfile ),
-    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING, CExtendedProperty, VideoTemporalDenoising)
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOTEMPORALDENOISING, CExtendedProperty, VideoTemporalDenoising),
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANELOPTIMIZATION, CExtendedProperty, RelativePanel)
 };
 
 //  Front-facing cameras often have limited capabilities.  One way to express that is to use a restricted automation table such as this one.
@@ -244,6 +245,7 @@ DEFINE_KSPROPERTY_TABLE(ExtendedPropertyItemsFFC)
     DEFINE_PROP_ITEM_NO_SET( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_MAXVIDFPS_PHOTORES, CExtendedMaxVideoFpsForPhotoRes, MaxVideoFpsForPhotoRes ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_SCENEMODE, CExtendedProperty, SceneMode ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_TORCHMODE, CExtendedProperty, TorchMode ),
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_IRTORCHMODE, CExtendedVidProcSetting, IRTorch ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_OPTIMIZATIONHINT, CExtendedProperty, OptimizationHint ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_WHITEBALANCEMODE, CExtendedVidProcSetting, WhiteBalance ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_EXPOSUREMODE, CExtendedVidProcSetting, Exposure ),
@@ -258,11 +260,12 @@ DEFINE_KSPROPERTY_TABLE(ExtendedPropertyItemsFFC)
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ISO_ADVANCED, CExtendedVidProcSetting, IsoAdvanced ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_VIDEOSTABILIZATION, CExtendedProperty, VideoStabilization ),
     DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_ADVANCEDPHOTO, CExtendedProperty, AdvancedPhoto ),
-    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE, CExtendedProfile, CameraProfile )
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE, CExtendedProfile, CameraProfile ),
+    DEFINE_PROP_ITEM( CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXTENDED_RELATIVEPANELOPTIMIZATION, CExtendedProperty, RelativePanel)
 };
 
 //--------------------------------------------------------------
-//  Legacy Camera Contorl properties
+//  Legacy Camera Control properties
 DEFINE_KSPROPERTY_TABLE(CameraControlPropertyTable)
 {
     DEFINE_PROP_ITEM_WITH_VALUES(CCaptureFilter, KSPROPERTY_CAMERACONTROL_EXPOSURE, KSPROPERTY_CAMERACONTROL_S, Exposure, &ExposureValues),

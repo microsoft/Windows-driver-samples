@@ -243,8 +243,31 @@ DriverEntry (
     _In_ PUNICODE_STRING RegistryPath
     );
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+SimRepGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+SimRepOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 NTSTATUS
 SimRepSetConfiguration(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -506,6 +529,8 @@ SIMREP_GLOBAL_DATA Globals;
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)
+#pragma alloc_text(INIT, SimRepGetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, SimRepOpenServiceParametersKey)
 #pragma alloc_text(INIT, SimRepSetConfiguration)
 #pragma alloc_text(PAGE, SimRepUnload)
 #pragma alloc_text(PAGE, SimRepInstanceSetup)
@@ -609,7 +634,7 @@ Return Value:
     //  Set the filter configuration based on registry keys
     //
 
-    status = SimRepSetConfiguration( RegistryPath );
+    status = SimRepSetConfiguration( DriverObject, RegistryPath );
 
     DebugTrace( DEBUG_TRACE_LOAD_UNLOAD,
                 ("[SimRep]: Driver being loaded\n") );
@@ -664,8 +689,147 @@ DriverEntryCleanup:
 }
 #pragma warning(pop)
 
+PFN_IoOpenDriverRegistryKey
+SimRepGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+SimRepOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = SimRepGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto SimRepOpenServiceParametersKeyCleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto SimRepOpenServiceParametersKeyCleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto SimRepOpenServiceParametersKeyCleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+SimRepOpenServiceParametersKeyCleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
 NTSTATUS
 SimRepSetConfiguration(
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -675,6 +839,9 @@ Routine Descrition:
     This routine sets the filter configuration based on registry values.
 
 Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
 
     RegistryPath - The path key passed to the driver during DriverEntry.
 
@@ -686,7 +853,6 @@ Return Value:
 --*/
 {
     NTSTATUS status;
-    OBJECT_ATTRIBUTES attributes;
     HANDLE driverRegKey = NULL;
     UNICODE_STRING valueName;
     UCHAR buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + sizeof(ULONG)];
@@ -701,24 +867,18 @@ Return Value:
     PAGED_CODE();
 
     //
-    //  Open the SimRep registry key.
+    //  Open service parameters key to query values from
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
-
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    status = SimRepOpenServiceParametersKey( DriverObject,
+                                             RegistryPath,
+                                             &driverRegKey );
 
     if (!NT_SUCCESS( status )) {
 
+        driverRegKey = NULL;
         goto SimRepSetConfigurationCleanup;
     }
-
 
 #if DBG
 
@@ -784,9 +944,9 @@ Return Value:
     //  Extract the old mapping string.
     //
 
-    mappingValue = ExAllocatePoolWithTag( PagedPool,
-                                          mappingValueLength,
-                                          SIMREP_REG_TAG );
+    mappingValue = ExAllocatePoolZero( PagedPool,
+                                       mappingValueLength,
+                                       SIMREP_REG_TAG );
 
     if (mappingValue == NULL) {
 
@@ -855,9 +1015,9 @@ Return Value:
 
         ExFreePoolWithTag( mappingValue, SIMREP_REG_TAG );
 
-        mappingValue = ExAllocatePoolWithTag( PagedPool,
-                                               mappingValueLength,
-                                               SIMREP_REG_TAG );
+        mappingValue = ExAllocatePoolZero( PagedPool,
+                                           mappingValueLength,
+                                           SIMREP_REG_TAG );
 
         if (mappingValue == NULL) {
 
@@ -1745,6 +1905,8 @@ Return Value:
 
     fileInfoClass = Cbd->Iopb->Parameters.SetFileInformation.FileInformationClass;
 
+#pragma warning( push )
+#pragma warning( disable:4061 )
     switch (fileInfoClass) {
 
         case FileRenameInformation:
@@ -1835,6 +1997,7 @@ Return Value:
             NT_ASSERTMSG("SimRep passing through unknown information class\n", FALSE);
             goto SimRepPreSetInformationCleanup;
     }
+#pragma warning( pop )
 
     //
     //    When this filter is configured to remap renames and hardlinks we need
@@ -1940,7 +2103,7 @@ Return Value:
 
          bufferLength = FIELD_OFFSET( FILE_RENAME_INFORMATION, FileName ) + newFileName.Length;
 
-         buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
+         buffer = ExAllocatePoolZero( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
          if (buffer == NULL) {
 
@@ -1960,7 +2123,7 @@ Return Value:
 
         bufferLength = FIELD_OFFSET( FILE_LINK_INFORMATION, FileName ) + newFileName.Length;
 
-        buffer = ExAllocatePoolWithTag( PagedPool, bufferLength, SIMREP_STRING_TAG );
+        buffer = ExAllocatePoolZero( PagedPool, bufferLength, SIMREP_STRING_TAG );
 
         if (buffer == NULL) {
 
@@ -2061,9 +2224,9 @@ Return Value:
 
     PAGED_CODE();
 
-    String->Buffer = ExAllocatePoolWithTag( NonPagedPool,
-                                            String->MaximumLength,
-                                            SIMREP_STRING_TAG );
+    String->Buffer = ExAllocatePoolZero( NonPagedPool,
+                                         String->MaximumLength,
+                                         SIMREP_STRING_TAG );
 
     if (String->Buffer == NULL) {
 
@@ -2161,6 +2324,7 @@ Return Value:
     //
     if (FileNameLength <= fileName->MaximumLength) {
 
+        RtlZeroMemory(fileName->Buffer, fileName->MaximumLength);
         goto CopyAndReturn;
     }
 
@@ -2169,9 +2333,9 @@ Return Value:
     //
     newMaxLength = FileNameLength;
 
-    buffer = ExAllocatePoolWithTag( PagedPool,
-                                    newMaxLength,
-                                    SIMREP_STRING_TAG );
+    buffer = ExAllocatePoolZero( PagedPool,
+                                 newMaxLength,
+                                 SIMREP_STRING_TAG );
 
     if (!buffer) {
 
@@ -2189,7 +2353,6 @@ Return Value:
 CopyAndReturn:
 
     fileName->Length = FileNameLength;
-    RtlZeroMemory(fileName->Buffer, fileName->MaximumLength);
     RtlCopyMemory(fileName->Buffer, NewFileName, FileNameLength);
 
     return STATUS_SUCCESS;

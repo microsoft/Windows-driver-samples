@@ -199,8 +199,8 @@ Return Value:
 
     pStreamInfo->NumberOfStreams = supportedStreams;
 
-    pStreamInfo->StreamList = ExAllocatePoolWithTag(
-                                    NonPagedPoolNx,
+    pStreamInfo->StreamList = ExAllocatePool2(
+                                    POOL_FLAG_NON_PAGED,
                                     supportedStreams * sizeof(USBD_STREAM_INFORMATION),
                                     POOL_TAG);
 

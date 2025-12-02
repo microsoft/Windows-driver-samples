@@ -86,8 +86,31 @@ FmmInstanceTeardownComplete (
 
 #if DBG
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+FmmGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+FmmOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 VOID
 FmmInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -101,6 +124,8 @@ FmmInitializeDebugLevel (
 #pragma alloc_text(INIT, DriverEntry)
 
 #if DBG
+#pragma alloc_text(INIT, FmmGetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, FmmOpenServiceParametersKey)
 #pragma alloc_text(INIT, FmmInitializeDebugLevel)
 #endif
 
@@ -115,11 +140,11 @@ FmmInitializeDebugLevel (
 
 //
 //  If we need to verify that the metadata file is indeed open whenever
-//  a create suceeds on the volume, then we need to monitor all creates 
+//  a create suceeds on the volume, then we need to monitor all creates
 //  not just DASD creates.
 
-//  If that is not the case, then we are better off telling filter manager 
-//  to show us only DASD creates. That way we can avoid the performance 
+//  If that is not the case, then we are better off telling filter manager
+//  to show us only DASD creates. That way we can avoid the performance
 //  penalty of being called for all creates when we only have use for DASD
 //  creates.
 //
@@ -241,7 +266,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
 
@@ -253,7 +278,7 @@ Return Value:
     //  Initialize global debug level
     //
 
-    FmmInitializeDebugLevel( RegistryPath );
+    FmmInitializeDebugLevel( DriverObject, RegistryPath );
 
 #else
 
@@ -299,8 +324,147 @@ Return Value:
 
 #if DBG
 
+PFN_IoOpenDriverRegistryKey
+FmmGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+FmmOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = FmmGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+cleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
 VOID
 FmmInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -313,6 +477,9 @@ Routine Description:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -321,8 +488,7 @@ Return Value:
 
 --*/
 {
-    OBJECT_ATTRIBUTES attributes;
-    HANDLE driverRegKey;
+    HANDLE driverRegKey = NULL;
     NTSTATUS status;
     ULONG resultLength;
     UNICODE_STRING valueName;
@@ -331,47 +497,46 @@ Return Value:
     Globals.DebugLevel = DEBUG_TRACE_ERROR;
 
     //
-    //  Open the desired registry key
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    status = FmmOpenServiceParametersKey( DriverObject,
+                                          RegistryPath,
+                                          &driverRegKey );
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    if (!NT_SUCCESS( status )) {
+
+        driverRegKey = NULL;
+        goto cleanup;
+    }
+
+    //
+    // Read the DebugFlags value from the registry.
+    //
+
+    RtlInitUnicodeString( &valueName, L"DebugLevel" );
+
+    status = ZwQueryValueKey( driverRegKey,
+                              &valueName,
+                              KeyValuePartialInformation,
+                              buffer,
+                              sizeof(buffer),
+                              &resultLength );
 
     if (NT_SUCCESS( status )) {
 
-        //
-        // Read the DebugFlags value from the registry.
-        //
-
-        RtlInitUnicodeString( &valueName, L"DebugLevel" );
-
-        status = ZwQueryValueKey( driverRegKey,
-                                  &valueName,
-                                  KeyValuePartialInformation,
-                                  buffer,
-                                  sizeof(buffer),
-                                  &resultLength );
-
-        if (NT_SUCCESS( status )) {
-
-            Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
-        }
-        
-        //
-        //  Close the registry entry
-        //
-        
-        ZwClose( driverRegKey );
-        
+        Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
     }
 
+cleanup:
+
+    //
+    //  Close the registry entry
+    //
+
+    if (driverRegKey != NULL) {
+        ZwClose( driverRegKey );
+    }
 }
 
 #endif
@@ -678,22 +843,22 @@ FmmInstanceSetupCleanup:
     }
 
     //
-    //  If this is an automatic attachment (mount, load, etc) and we are not 
-    //  attaching to this volume because we do not support attaching to this 
-    //  volume, then simply return STATUS_FLT_DO_NOT_ATTACH. If we return 
-    //  anything else fltmgr logs an event log indicating failure to attach. 
-    //  Since this failure to attach is not really an error, we do not want 
+    //  If this is an automatic attachment (mount, load, etc) and we are not
+    //  attaching to this volume because we do not support attaching to this
+    //  volume, then simply return STATUS_FLT_DO_NOT_ATTACH. If we return
+    //  anything else fltmgr logs an event log indicating failure to attach.
+    //  Since this failure to attach is not really an error, we do not want
     //  this failure to be logged as an error in the event log. For all other
     //  error codes besides the ones we consider "normal", if is ok for fltmgr
     //  to actually log the failure to attach.
     //
-    //  If this is a manual attach attempt that we have failed then we want to 
-    //  give the user a clear indication of why the attachment failed. Hence in 
+    //  If this is a manual attach attempt that we have failed then we want to
+    //  give the user a clear indication of why the attachment failed. Hence in
     //  this case, we will not override the error status with STATUS_FLT_DO_NOT_ATTACH
     //  irrespective of the cause of the failure to attach
     //
 
-    if (status == STATUS_NOT_SUPPORTED && 
+    if (status == STATUS_NOT_SUPPORTED &&
        !FlagOn( Flags, FLTFL_INSTANCE_SETUP_MANUAL_ATTACHMENT )) {
 
         status = STATUS_FLT_DO_NOT_ATTACH;

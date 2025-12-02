@@ -35,7 +35,7 @@ STDMETHODIMP CCustomPin::SendSample(
     // Log sample and exit.. The pipeline will just keep on churning more samples till 
     // We go into the stop state
     //
-    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Custom Pin %d recieved Sample %p", streamId(), pSample);
+    DMFTRACE(DMFT_GENERAL, TRACE_LEVEL_INFORMATION, "%!FUNC! Custom Pin %d received Sample %p", streamId(), pSample);
 
     return S_OK;
 }

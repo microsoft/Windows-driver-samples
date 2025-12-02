@@ -1,0 +1,20 @@
+#if 0
+Copyright (c) Microsoft Corporation. All Rights Reserved
+#endif
+
+#include "resource.h"
+#include "winres.h"
+#include <ntverp.h>
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "AEC APO"
+#define VER_INTERNALNAME_STR            "AecApo"
+#define VER_ORIGINALFILENAME_STR        "AecApo.Dll"
+#include <Common.ver>
+
+IDR_AECAPODLL          REGISTRY                "AecApoDll.rgs"
+IDR_AECAPOMFX          REGISTRY                "AecApoMFX.rgs"
+
+// ICON
+IDI_EFFECT_ICON			RCDATA					"AecApo.png"
+

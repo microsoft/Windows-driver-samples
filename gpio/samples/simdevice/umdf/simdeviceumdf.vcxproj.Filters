@@ -29,7 +29,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="simdeviceumdf.inx">
+    <Inf Include=".\simdeviceumdf.inx">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>

@@ -828,7 +828,7 @@ Return Value:
         // Allocate memory for the deviceinfo
         //
 
-        list = ExAllocatePoolWithTag(PagedPool,sizeof(DEVICE_INFO),DRIVER_TAG);
+        list = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(DEVICE_INFO), DRIVER_TAG);
         if (list == NULL)
         {
             goto Error;
@@ -841,10 +841,10 @@ Return Value:
         list->SymbolicLink.MaximumLength = symbolicLinkName->Length +
                                           sizeof(UNICODE_NULL);
         list->SymbolicLink.Length = symbolicLinkName->Length;
-        list->SymbolicLink.Buffer = ExAllocatePoolWithTag (
-                                       PagedPool,
-                                       list->SymbolicLink.MaximumLength,
-                                       DRIVER_TAG);
+        list->SymbolicLink.Buffer = ExAllocatePool2(
+                                        POOL_FLAG_PAGED,
+                                        list->SymbolicLink.MaximumLength,
+                                        DRIVER_TAG);
         if (list->SymbolicLink.Buffer == NULL)
         {
             goto Error;

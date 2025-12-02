@@ -154,7 +154,7 @@ BOOLEAN Cleanup(
 BOOL
 GetDeviceDescription(
     _In_ LPTSTR DevPath,
-    _Out_writes_bytes_(OutBufferLen) PBYTE OutBuffer,
+    _Out_writes_bytes_(OutBufferLen) PTSTR OutBuffer,
     _In_ ULONG OutBufferLen,
     _In_ PULONG SerialNo
     );

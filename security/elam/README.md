@@ -1,41 +1,38 @@
-<!---
-    name: Early Launch Anti-Malware Driver
-    platform: KMDF
-    language: cpp
-    category: Security
-    description: Demonstrates how to receive notifications about the initialization of regular boot start drivers in an Early Launch Anti-Malware driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617954
---->
+---
+page_type: sample
+description: "Demonstrates how to receive notifications about the initialization of regular boot start drivers in an Early Launch Anti-Malware driver."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
+# Early Launch Anti-Malware Driver
 
-Early Launch Anti-Malware Driver
-================================
-
-This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439379) and [**IoUnRegisterBootDriverCallback**](http://msdn.microsoft.com/en-us/library/windows/hardware/hh439394) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
+This sample demonstrates how to use the [**IoRegisterBootDriverCallback**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/ntddk/nf-ntddk-ioregisterbootdrivercallback) and [**IoUnRegisterBootDriverCallback**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/ntddk/nf-ntddk-iounregisterbootdrivercallback) DDIs from an Early Launch Anti-Malware driver, to receive notifications about the initialization of regular boot start drivers.
 
 This sample driver is a minimal driver meant to demonstrate the usage of the APIs mentioned above. It is not intended for use in a production environment.
 
-**SIGNING THE SAMPLE**
+## Signing the sample
 
 Early Launch drivers are required to be signed with a code-signing certificate that also contains the Early Launch EKU "1.3.6.1.4.1.311.61.4.1". In a production environment, Early Launch drivers are signed by Microsoft for qualifying Anti-Malware vendors with a WHQL certificate that contains this EKU. The makecert.exe tool can be used to generate a self-signed test certificate that contains both the Early Launch EKU and the "1.3.6.1.5.5.7.3.3" Code Signing EKU. Once a certificate of this form has been created, signtool.exe can be used to sign elamsample.sys.
 
+## Run the sample
 
-Run the sample
---------------
-
-**INSTALLING THE SAMPLE**
+### Installing the sample
 
 1. Copy the signed elamsample.sys file to the %WINDIR%\\System32\\Drivers directory on your test machine.
 
-2. Use the sc.exe tool present in Windows to install the driver:
+1. Use the sc.exe tool present in Windows to install the driver:
 
-  `sc create ElamSample binpath=%windir%\\system32\\drivers\\elamsample.sys type=kernel start=boot error=critical group=Early-Launch`
- 
-3. Enable test signing:
+    `sc create ElamSample binpath=%windir%\\system32\\drivers\\elamsample.sys type=kernel start=boot error=critical group=Early-Launch`
 
-  `bcdedit /set testsigning on`
+1. Enable test signing:
 
-**CODE TOUR**
+    `bcdedit /set testsigning on`
+
+## Code tour
 
 **DriverEntry:** Creates a framework driver object and calls IoRegisterBootDriverCallback to register to boot driver status callbacks.
 
@@ -49,11 +46,11 @@ Run the sample
 
 **ElamSamplePrintHex:** A utility function to display a buffer in hexadecimal form.
 
-**TESTING**
+## Testing
 
 After installing the driver, attach the Kernel Debugger and reboot your test machine. If ELAMSAMPLE\_TRACE\_LEVEL is set to DPFLTR\_ERROR\_LEVEL, traces will be output to the debugger automatically. For example:
 
-```
+```cmd
 ElamSample is being initialized.
 
 ElamSample reports the following dependency is about to be initialized: ElamSample:

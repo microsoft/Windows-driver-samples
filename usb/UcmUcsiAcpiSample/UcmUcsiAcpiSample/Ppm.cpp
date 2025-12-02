@@ -160,6 +160,7 @@ Ppm::PreparePpmConfig(
     )
 {
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
+    PAGED_CODE();
 
     NTSTATUS status;
     bool IsUsbDeviceControllerEnabled;
@@ -500,6 +501,7 @@ Ppm::EvtSendData(
     )
 {
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
+    PAGED_CODE();
 
     NTSTATUS status;
     PUCMUCSI_PPM_SEND_UCSI_DATA_BLOCK_IN_PARAMS inParams;
@@ -533,6 +535,7 @@ Ppm::EvtReceiveData(
     )
 {
     TRACE_FUNC_ENTRY(TRACE_FLAG_PPM);
+    PAGED_CODE();
 
     NTSTATUS status;
 

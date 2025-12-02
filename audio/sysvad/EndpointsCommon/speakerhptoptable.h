@@ -15,7 +15,7 @@ Abstract:
 #ifndef _SYSVAD_SPEAKERHPTOPTABLE_H_
 #define _SYSVAD_SPEAKERHPTOPTABLE_H_
 
-#include "mintopo.h"
+#include <mintopo.h>
 
 //=============================================================================
 static
@@ -130,6 +130,12 @@ PCPROPERTY_ITEM PropertiesSpeakerHpTopoFilter[] =
         &KSPROPSETID_Jack,
         KSPROPERTY_JACK_DESCRIPTION2,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_SpeakerHpTopoFilter
+    },
+    {
+        &KSPROPSETID_AudioResourceManagement,
+        KSPROPERTY_AUDIORESOURCEMANAGEMENT_RESOURCEGROUP,
+        KSPROPERTY_TYPE_SET,
         PropertyHandler_SpeakerHpTopoFilter
     }
 };

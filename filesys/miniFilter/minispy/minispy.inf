@@ -12,39 +12,86 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/16/2007,1.0.0.0
 CatalogFile = minispy.cat
+PnpLockdown = 1
 
+[SourceDisksFiles]
+minispy.sys = 1,,
+minispy.exe = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
 
 [DestinationDirs]
-DefaultDestDir          = 12
-Minispy.DriverFiles     = 12            ;%windir%\system32\drivers
-Minispy.UserFiles       = 10,FltMgr     ;%windir%\FltMgr
+MinispyDownlevel.CopyDriverFiles = 12            ;%windir%\system32\drivers
+MinispyDownlevel.DelDriverFiles  = 12            ;%windir%\system32\drivers
+Minispy.Files                    = 13            ;driver store
 
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$.10.0...25952]
 OptionDesc          = %ServiceDescription%
-CopyFiles           = Minispy.DriverFiles, Minispy.UserFiles
+CopyFiles           = Minispy.Files,
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.10.0...25952.Services]
 AddService          = %ServiceName%,,Minispy.Service
 
-;;
-;; Default uninstall sections
-;;
-
-[DefaultUninstall]
-DelFiles   = Minispy.DriverFiles, Minispy.UserFiles
-
-[DefaultUninstall.Services]
-DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
-
 ;
-; Services Section
+; Support sections
 ;
 
 [Minispy.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %13%\%DriverName%.sys        ;%windir%\system32\drivers\
+Dependencies     = FltMgr
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = Minispy.AddRegistry
+
+[Minispy.AddRegistry]
+HKR,"Parameters","SupportedFeatures",0x00010001,0x3
+HKR,"Parameters\Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+HKR,"Parameters\Instances\"%Instance2.Name%,"Altitude",0x00000000,%Instance2.Altitude%
+HKR,"Parameters\Instances\"%Instance2.Name%,"Flags",0x00010001,%Instance2.Flags%
+HKR,"Parameters\Instances\"%Instance3.Name%,"Altitude",0x00000000,%Instance3.Altitude%
+HKR,"Parameters\Instances\"%Instance3.Name%,"Flags",0x00010001,%Instance3.Flags%
+
+[Minispy.Files]
+%DriverName%.sys
+
+;;
+;; Downlevel default install sections
+;;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = MinispyDownlevel.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService          = %ServiceName%,,MinispyDownlevel.Service
+
+;;
+;; Downlevel default uninstall sections
+;;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = MinispyDownlevel.DelDriverFiles
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService      = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Downlevel support sections
+;
+
+[MinispyDownlevel.Service]
 DisplayName      = %ServiceName%
 Description      = %ServiceDescription%
 ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
@@ -53,13 +100,9 @@ ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                            ;SERVICE_DEMAND_START
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Activity Monitor"
-AddReg           = Minispy.AddRegistry
+AddReg           = MinispyDownlevel.AddRegistry
 
-;
-; Registry Modifications
-;
-
-[Minispy.AddRegistry]
+[MinispyDownlevel.AddRegistry]
 HKR,,"SupportedFeatures",0x00010001,0x3
 HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
 HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
@@ -69,22 +112,11 @@ HKR,"Instances\"%Instance2.Name%,"Flags",0x00010001,%Instance2.Flags%
 HKR,"Instances\"%Instance3.Name%,"Altitude",0x00000000,%Instance3.Altitude%
 HKR,"Instances\"%Instance3.Name%,"Flags",0x00010001,%Instance3.Flags%
 
-;
-; Copy Files
-;
-
-[Minispy.DriverFiles]
+[MinispyDownlevel.CopyDriverFiles]
 %DriverName%.sys
 
-[Minispy.UserFiles]
-%UserAppName%.exe
-
-[SourceDisksFiles]
-minispy.sys = 1,,
-minispy.exe = 1,,
-
-[SourceDisksNames]
-1 = %DiskId1%,,,
+[MinispyDownlevel.DelDriverFiles]
+%DriverName%.sys
 
 ;;
 ;; String Section
@@ -95,7 +127,6 @@ ProviderString          = "TODO-Set-Provider"
 ServiceDescription      = "Minispy mini-filter driver"
 ServiceName             = "Minispy"
 DriverName              = "minispy"
-UserAppName             = "minispy"
 DiskId1                 = "Minispy Device Installation Disk"
 
 ;Instances specific information.

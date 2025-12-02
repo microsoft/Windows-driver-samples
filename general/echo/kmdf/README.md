@@ -1,30 +1,28 @@
-<!---
-    name: KMDF Echo Sample
-    platform: KMDF
-    language: cpp
-    category: General WDF
-    description: Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617706
---->
+---
+page_type: sample
+description: "Demonstrates how to use a sequential queue to serialize read and write requests presented to the driver."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
-
-KMDF Echo Sample
-================
+# KMDF Echo Sample
 
 The ECHO (KMDF) sample demonstrates how to use a sequential queue to serialize read and write requests presented to the driver.
 
 It also shows how to synchronize execution of these events with other asynchronous events such as request cancellation and DPC.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Related technologies
---------------------
+## Related technologies
 
-[Kernel-Mode Driver Framework](http://msdn.microsoft.com/en-us/library/windows/hardware/ff544396)
+[Kernel-Mode Driver Framework](https://docs.microsoft.com/windows-hardware/drivers/kernel/)
 
-Code Tour
----------
+## Code Tour
 
 DriverEntry - Creates a framework driver object.
 
@@ -40,55 +38,33 @@ EvtIoRead: Retrieves request memory buffer and copies the data from the buffer c
 
 Since the queue is a sequential queue, only one request is outstanding in the driver.
 
-Testing
--------
+## Testing
 
 **Usage:**
 
-Echoapp.exe --- Send single write and read request synchronously
+- Echoapp.exe --- Send single write and read request synchronously
 
-Echoapp.exe -Async --- Send 100 reads and writes asynchronously
+- Echoapp.exe -Async --- Send 100 reads and writes asynchronously
 
 Exit the app anytime by pressing Ctrl-C
 
-File Manifest
--------------
+## File Manifest
 
-File
-
-Description
-
-Echo.htm
-
-Documentation for this sample (this file).
-
-***(The AutoSync and DriverSync versions of the sample each have their own version of the following files)***
+> [!NOTE]
+> The AutoSync and DriverSync versions of the sample each have their own version of the following files:
 
 Driver.h, Driver.c
 
-DriverEntry and Events on the Driver Object.
+- DriverEntry and Events on the Driver Object.
 
 Device.h, Device.c
 
-Events on the Device Object.
+- Events on the Device Object.
 
 Queue.h, Queue.c
 
-Contains Events on the I/O Queue Objects.
+- Contains Events on the I/O Queue Objects.
 
 Echo.inx
 
-File that describes the installation of this driver. The build process converts this into an INF file.
-
-Makefile.inc
-
-A makefile that defines custom build actions. This includes the conversion of the .INX file into a .INF file
-
-Makefile
-
-This file merely redirects to the real makefile that is shared by all the driver components of the Windows NT DDK.
-
-Sources
-
-Generic file that lists source files and all the build options.
-
+- File that describes the installation of this driver. The build process converts this into an INF file.

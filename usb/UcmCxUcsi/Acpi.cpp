@@ -554,18 +554,16 @@ Acpi_EvaluateUcsiDsm (
         FIELD_OFFSET(ACPI_EVAL_OUTPUT_BUFFER, Argument) +
         outputArgumentBufferSize;
 
-    outputBuffer = (PACPI_EVAL_OUTPUT_BUFFER) ExAllocatePoolWithTag(NonPagedPoolNx,
-                                                                    outputBufferSize,
-                                                                    TAG_UCSI);
+    outputBuffer = (PACPI_EVAL_OUTPUT_BUFFER) ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                                              outputBufferSize,
+                                                              TAG_UCSI);
 
     if (outputBuffer == nullptr)
     {
         status = STATUS_INSUFFICIENT_RESOURCES;
-        TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] ExAllocatePoolWithTag failed for %Iu bytes", device, outputBufferSize);
+        TRACE_ERROR(TRACE_FLAG_ACPI, "[Device: 0x%p] ExAllocatePool2 failed for %Iu bytes", device, outputBufferSize);
         goto Exit;
     }
-
-    RtlZeroMemory(outputBuffer, outputBufferSize);
 
     WDF_MEMORY_DESCRIPTOR_INIT_HANDLE(&inputMemDesc, inputMemory, NULL);
     WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&outputMemDesc, outputBuffer, (ULONG) outputBufferSize);

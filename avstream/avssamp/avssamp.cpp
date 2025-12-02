@@ -38,13 +38,7 @@ PVOID operator new
     POOL_TYPE       poolType
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType,iSize,'wNCK');
-
-    if (result) {
-        RtlZeroMemory(result,iSize);
-    }
-
-    return result;
+    return ExAllocatePoolZero(poolType,iSize,'wNCK');
 }
 
 PVOID operator new
@@ -57,13 +51,7 @@ PVOID operator new
     ULONG           tag
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType,iSize,tag);
-
-    if (result) {
-        RtlZeroMemory(result,iSize);
-    }
-
-    return result;
+    return ExAllocatePoolZero(poolType,iSize,tag);
 }
 
 /*++

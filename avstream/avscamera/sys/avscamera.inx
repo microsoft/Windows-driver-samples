@@ -1,0 +1,221 @@
+;
+; AVStream Camera Sample (AvsCamera.sys) installation file.
+;
+
+[Version]
+signature="$Windows NT$"
+Class=Camera
+ClassGuid={ca3e7ab9-b4c3-4ae6-8251-579ef933890f}
+PnpLockdown=1
+Provider=%ProviderName%
+Catalogfile=AvsCamera.cat
+DriverVer=04/27/2017,2.0.0.1
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+AvsCamera.sys=1
+AvsCameraDMFT.dll=1
+
+[DestinationDirs]
+AvsCamera.CopySys  = 13
+AvsCamera.CopyDMFT = 13
+
+[AvsCamera.CopySys]
+AvsCamera.sys
+
+[AvsCamera.CopyDMFT]
+AvsCameraDMFT.dll
+
+[Manufacturer]
+%ManufacturerName%=AvsCamera.Device,NT$ARCH$.10.0...16299
+
+[AvsCamera.Device.NT$ARCH$.10.0...16299]
+%AvsCamera.DeviceDesc%=AvsCamera,Root\AvsCamera
+
+[AvsCamera]
+Include=ks.inf, kscaptur.inf
+Needs=KS.Registration, KSCAPTUR.Registration.NT
+CopyFiles=AvsCamera.CopySys, AvsCamera.CopyDMFT
+AddReg=AvsCamera.MFT.AddReg
+
+;---------------------------------------------------------------
+;                I n t e r f a c e s
+;---------------------------------------------------------------
+
+[AvsCamera.Interfaces]
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,%AvsCamera_RearFilterName%,RearCameraInterface.NT,
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,%AvsCamera_FrontFilterName%,FrontCameraInterface.NT,
+
+[RearCameraInterface.NT]
+AddReg=AvsCamera.RearCamera.AddReg
+
+; Uncomment the following line to enable profile information.
+;AddReg=AvsCamera.Profiles.RearCamera.AddReg
+
+[FrontCameraInterface.NT]
+AddReg=AvsCamera.FrontCamera.AddReg
+
+; Uncomment the following line to enable profile information.
+;AddReg=AvsCamera.Profiles.FrontCamera.AddReg
+
+;---------------------------------------------------------------
+;                A d d R e g
+;---------------------------------------------------------------
+
+[AvsCamera.FrontCamera.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%AvsCamera.Front%
+HKR,,CameraDeviceMFTCLSID,,%DMFT.CLSID%
+
+;
+;   Profile information for the front camera
+;
+; Uncomment the following lines to enable profile information.
+;
+;[AvsCamera.Profiles.FrontCamera.AddReg]
+;HKR,,"OEMCameraProfiles",0,"KSCAMERAPROFILE_VideoRecording,0;KSCAMERAPROFILE_VideoRecording,1;KSCAMERAPROFILE_VideoRecording,2;KSCAMERAPROFILE_VideoConferencing,0;KSCAMERAPROFILE_HighQualityPhoto,0;KSCAMERAPROFILE_PhotoSequence,0;KSCAMERAPROFILE_BalancedVideoAndPhoto,0;{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0",
+;HKR,,"ReferenceGUID",0,%AvsCamera_FrontFilterName%
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_PhotoSequence,0","Disabled",0x00010001,1
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0","Concurrency",0,"%AvsCamera_FrontFilterName%;KSCAMERAPROFILE_VideoConferencing,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+
+[AvsCamera.RearCamera.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%AvsCamera.Rear%
+HKR,,CameraDeviceMFTCLSID,,%DMFT.CLSID%
+
+;
+;   Profile information for the rear camera
+;
+; Uncomment the following lines to enable profile information.
+;
+;[AvsCamera.Profiles.RearCamera.AddReg]
+;HKR,,"OEMCameraProfiles",0,"KSCAMERAPROFILE_VideoRecording,0;KSCAMERAPROFILE_VideoRecording,1;KSCAMERAPROFILE_VideoRecording,2;KSCAMERAPROFILE_VideoConferencing,0;KSCAMERAPROFILE_HighQualityPhoto,0;KSCAMERAPROFILE_PhotoSequence,0;KSCAMERAPROFILE_BalancedVideoAndPhoto,0;{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0",
+;HKR,,"ReferenceGUID",0,%AvsCamera_RearFilterName%
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,2,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,2,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_PhotoSequence,0","Disabled",0x00010001,1
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0","Concurrency",0,"%AvsCamera_RearFilterName%;KSCAMERAPROFILE_VideoConferencing,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+
+[AvsCamera.MFT.AddReg]
+HKR,Classes\CLSID\%DMFT.CLSID%,,,"AvsCamera DMFT Class"
+HKR,Classes\CLSID\%DMFT.CLSID%\InprocServer32,,%REG_EXPAND_SZ%,"%13%\AvsCameraDMFT.dll"
+HKR,Classes\CLSID\%DMFT.CLSID%\InprocServer32,ThreadingModel,,"Both"
+
+
+;---------------------------------------------------------------
+;                S e r v i c e s  
+;---------------------------------------------------------------
+
+[AvsCamera.Services]
+AddService=AvsCamera, 0x00000002, AvsCamera.ServiceInstall
+
+[AvsCamera.ServiceInstall]
+DisplayName=%AvsCamera.DeviceDesc%
+ServiceType=%SERVICE_KERNEL_DRIVER%
+StartType=%SERVICE_DEMAND_START%
+ErrorControl=%SERVICE_ERROR_NORMAL%
+ServiceBinary=%13%\AvsCamera.sys
+
+;---------------------------------------------------------------
+;                S t r i n g s
+;---------------------------------------------------------------
+
+[Strings]
+
+; non-localizable
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_VIDEO_CAMERA="{E5323777-F976-4f5b-9B55-B94699C46E44}"
+DMFT.CLSID="{836E84ED-45E9-4160-A79D-771F1C718CD2}"
+
+; The following GUIDs need to match the filter factory descriptors
+AvsCamera_FrontFilterName="{B27E3887-AD10-4A4E-BFB8-D6765ADD0E38}"
+AvsCamera_RearFilterName= "{4EE16166-F358-4F10-8889-93107806B7A7}"
+
+SERVICE_KERNEL_DRIVER=1
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
+REG_DWORD=0x00010001
+REG_EXPAND_SZ=0x00020000
+
+;localizable
+ProviderName="TODO-Set-Provider"
+ManufacturerName="TODO-Set-Manufacturer"
+DiskId1="AvsCamera Disk"
+AvsCamera.DeviceDesc="A/V Stream Sample Camera"
+AvsCamera.FriendlyName="A/V Stream Sample Camera"
+AvsCamera.Rear="AvsCamera RFC"
+AvsCamera.Front="AvsCamera FFC"

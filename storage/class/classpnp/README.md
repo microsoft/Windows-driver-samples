@@ -1,25 +1,23 @@
-<!---
-    name: ClassPnP Class Driver Library 
-    platform: WDM
-    language: cpp
-    category: Storage
-    description: A library storage class driver used by disk, CDROM, and the tape class drivers.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617978
---->
+---
+page_type: sample
+description: "A library storage class driver used by disk, CDROM, and the tape class drivers."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
+# ClassPnP Storage Class Driver Library
 
-ClassPnP Storage Class Driver Library
-=====================================
-
-This library is the library for all storage drivers. It simplifies writing a storage class driver by implementing 90 percent of the code that you need to support Plug and Play (PnP), power management, and so on. This library is used by disk, CDROM, and the tape class drivers.
+This is the library for all storage drivers. It simplifies writing a storage class driver by implementing 90 percent of the code that you need to support Plug and Play (PnP), power management, and so on. This library is used by disk, CDROM, and the tape class drivers.
 
 ## Universal Windows Driver Compliant
+
 This sample builds a Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 
-Installation and Operation
---------------------------
+## Installation and Operation
 
 The storage class drivers are used to interact with mass storage devices along with appropriate port driver. The class drivers are layered above the port drivers and manage mass storage devices of a specific class, regardless of their bus type. The classpnp sample contains the common routines that are required for all storage class drivers such as PnP and power management. It also provides I/O and error handling support.
 
-For more information, see [Introduction to Storage Class Drivers](http://msdn.microsoft.com/en-us/library/windows/hardware/ff559215) in the storage technologies design guide.
-
+For more information, see [Introduction to Storage Class Drivers](https://docs.microsoft.com/windows-hardware/drivers/storage/introduction-to-storage-class-drivers) in the storage technologies design guide.

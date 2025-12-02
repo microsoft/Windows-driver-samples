@@ -25,6 +25,10 @@ For more information, type: %1 help %2
 ;//
 MessageId=60100 SymbolicName=MSG_HELP_LONG
 Language=English
+------------------------------------------------------------------------------
+|          Devcon is a code sample intended for learning purposes.           |
+|      Use PnpUtil for optimal functionality/compatiblity with this OS.      |
+------------------------------------------------------------------------------
 Device Console Help:
 %1 [-r] [-m:\\<machine>] <command> [<arg>...]
 -r           Reboots the system only when a restart or reboot is required.
@@ -54,6 +58,8 @@ Lists all device setup classes. Valid on local and remote computers.
 <machine>    Specifies a remote computer.
 Class entries have the format <name>: <descr>
 where <name> is the class name and <descr> is the class description.
+
+Recommended Equivalent: pnputil /enum-classes
 .
 MessageId=60201 SymbolicName=MSG_CLASSES_SHORT
 Language=English
@@ -80,6 +86,8 @@ Lists all devices in the specified setup classes. Valid on local and remote comp
 <class>      Specifies a device setup class.
 Device entries have the format <instance>: <descr>
 where <instance> is a unique instance of the device and <descr> is the device description.
+
+Recommended Equivalent: pnputil /enum-devices /class <class>
 .
 MessageId=60301 SymbolicName=MSG_LISTCLASS_SHORT
 Language=English
@@ -130,6 +138,8 @@ Examples of <id>:
                                                including the asterisk.)
 Device entries have the format <instance>: <descr>
 where <instance> is the unique instance of the device and <descr> is the device description.
+
+Recommended Equivalent: pnputil /enum-devices
 .
 MessageId=60401 SymbolicName=MSG_FIND_SHORT
 Language=English
@@ -169,6 +179,8 @@ Examples of <id>:
                                                including the asterisk.)
 Device entries have the format <instance>: <descr>
 where <instance> is the unique instance of the device and <descr> is the description.
+
+Recommended Equivalent: pnputil /enum-devices
 .
 MessageId=60407 SymbolicName=MSG_FINDALL_SHORT
 Language=English
@@ -190,6 +202,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-devices
 .
 MessageId=60409 SymbolicName=MSG_STATUS_SHORT
 Language=English
@@ -210,6 +224,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-drivers /files
 .
 MessageId=60411 SymbolicName=MSG_DRIVERFILES_SHORT
 Language=English
@@ -232,6 +248,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-devices /resources
 .
 MessageId=60413 SymbolicName=MSG_RESOURCES_SHORT
 Language=English
@@ -253,6 +271,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-devices /deviceids
 .
 MessageId=60415 SymbolicName=MSG_HWIDS_SHORT
 Language=English
@@ -275,6 +295,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-devices /stack
 .
 MessageId=60417 SymbolicName=MSG_STACK_SHORT
 Language=English
@@ -299,6 +321,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enable-device <id>
 .
 MessageId=60501 SymbolicName=MSG_ENABLE_SHORT
 Language=English
@@ -338,6 +362,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /disable-device <id>
 .
 MessageId=60601 SymbolicName=MSG_DISABLE_SHORT
 Language=English
@@ -377,6 +403,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /restart-device <id>
 .
 MessageId=60701 SymbolicName=MSG_RESTART_SHORT
 Language=English
@@ -404,6 +432,8 @@ MessageId=60800 SymbolicName=MSG_REBOOT_LONG
 Language=English
 %1 %2
 Reboots the local computer as part of a planned hardware installation.
+
+Recommended Equivalent: shutdown /r /t 0
 .
 MessageId=60801 SymbolicName=MSG_REBOOT_SHORT
 Language=English
@@ -598,6 +628,9 @@ Installs the specified device manually. Valid only on the local computer.
 <inf>        Specifies an INF file with installation information for the device.
 <hwid>       Specifies a hardware ID for the device.
 -r           Reboots the system only when a restart or reboot is required.
+
+Recommended Equivalent: devgen /add /bus ROOT /hardwareid <hwid>
+                        pnputil /add-driver <inf> /install
 .
 MessageId=61001 SymbolicName=MSG_INSTALL_SHORT
 Language=English
@@ -620,6 +653,7 @@ Valid only on the local computer. (To reboot when necesary, Include -r .)
 -r           Reboots the system only when a restart or reboot is required.
 <inf>        Specifies an INF file with installation information for the devices.
 <hwid>       Specifies the hardware ID of the devices.
+Recommended Equivalent: pnputil /add-driver <inf> /install
 .
 MessageId=61101 SymbolicName=MSG_UPDATE_SHORT
 Language=English
@@ -643,6 +677,8 @@ Specify -r to reboot automatically if needed.
 All devices that match <hwid> are updated.
 Unsigned installs will fail. No UI will be
 presented.
+
+Recommended Equivalent: pnputil /add-driver <inf> /install
 .
 MessageId=61105 SymbolicName=MSG_UPDATENI_SHORT
 Language=English
@@ -662,6 +698,8 @@ Adds (installs) a third-party (OEM) driver package.
 This command will only work on the local machine.
 <inf> is a full path to the INF of the Driver
 Package that will be installed on this machine.
+
+Recommended Equivalent: pnputil /add-driver <inf>
 .
 MessageId=61108 SymbolicName=MSG_DPADD_SHORT
 Language=English
@@ -677,6 +715,8 @@ if it is in use by a device.
 <inf> is the name of a published INF on the local
 machine.  This is the value returned from dp_add
 and dp_enum.
+
+Recommended Equivalent: pnputil /delete-driver <inf>
 .
 MessageId=61110 SymbolicName=MSG_DPDELETE_SHORT
 Language=English
@@ -689,6 +729,8 @@ Lists the third-party (OEM) driver packages installed on this machine.
 This command will only work on the local machine.
 Values returned from dp_enum can be sent to dp_delete
 to be removed from the machine.
+
+Recommended Equivalent: pnputil /enum-drivers
 .
 MessageId=61112 SymbolicName=MSG_DPENUM_SHORT
 Language=English
@@ -794,6 +836,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /remove-device <id>
 .
 MessageId=61201 SymbolicName=MSG_REMOVE_SHORT
 Language=English
@@ -827,6 +871,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /remove-device <id> 
 .
 MessageId=61206 SymbolicName=MSG_REMOVEALL_SHORT
 Language=English
@@ -842,6 +888,8 @@ Devcon Rescan Command
 Directs Plug and Play to scan for new hardware. Valid on a local or remote computer.
 %1 [-m:\\<machine>] %2
 <machine>    Specifies a remote computer.
+
+Recommended Equivalent: pnputil /scan-devices
 .
 MessageId=61301 SymbolicName=MSG_RESCAN_SHORT
 Language=English
@@ -878,6 +926,8 @@ Examples of <id>:
  @ISAPNP\*\*    - Instance ID with wildcards  (@ prefixes instance ID)
  '*PNP0501      - Hardware ID with apostrophe (' prefixes literal match - matches exactly as typed,
                                                including the asterisk.)
+
+Recommended Equivalent: pnputil /enum-devices /drivers
 .
 MessageId=61401 SymbolicName=MSG_DRIVERNODES_SHORT
 Language=English

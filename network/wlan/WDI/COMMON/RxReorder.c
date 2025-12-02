@@ -462,7 +462,7 @@ RxPktPendingTimeout(
 	
 	RT_TRACE(COMP_RX_REORDER, DBG_WARNING, ("==>RxPktPendingTimeout()\n"));
 	
-	//Only 8814AE set bSupportAvoidRxDpcWatchdogVoilation ture now.
+	//Only 8814AE set bSupportAvoidRxDpcWatchdogVoilation true now.
 	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_AVOID_RX_DPC_WATCHDOG_VIOLATION, (pu1Byte)(&bSupportAvoidRxDpcWatchdogVoilation));
 	if(bSupportAvoidRxDpcWatchdogVoilation)
 	{

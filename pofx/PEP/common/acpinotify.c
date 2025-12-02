@@ -190,9 +190,9 @@ Return Value:
                  RegisterDevice->AcpiDeviceName->Length +
                  sizeof(WCHAR);
 
-    PepInternalDevice = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                              SizeNeeded,
-                                              PEP_POOL_TAG);
+    PepInternalDevice = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                        SizeNeeded,
+                                        PEP_POOL_TAG);
 
     if (PepInternalDevice == NULL) {
         TraceEvents(ERROR,

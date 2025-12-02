@@ -535,8 +535,8 @@ Arguments:
     DeviceContext = UfxDeviceGetContext(ControllerContext->UfxDevice);
 
 #pragma prefast(suppress:6014, "Memory allocation is expected")
-    HardwareFailureContext = ExAllocatePoolWithTag(
-                                 NonPagedPoolNx,
+    HardwareFailureContext = ExAllocatePool2(
+                                 POOL_FLAG_NON_PAGED,
                                  sizeof(HARDWARE_FAILURE_CONTEXT),
                                  UFX_CLIENT_TAG);
 

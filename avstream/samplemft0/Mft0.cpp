@@ -298,7 +298,7 @@ STDMETHODIMP CMft0::GetInputAvailableType(
     IUnknown *pUnk = NULL;
     IMFAttributes *pSourceAttributes = NULL;
     UINT32 uiSourceStreamId = 0;
-    wchar_t *pszName;
+    wchar_t *pszName = NULL;
 
     EnterCriticalSection(&m_critSec);
 
@@ -321,8 +321,7 @@ STDMETHODIMP CMft0::GetInputAvailableType(
             } else if(m_stStreamType == PINNAME_IMAGE) {
                 wprintf(L"Stream type: PINNAME_IMAGE\n");
             } else {
-                StringFromCLSID(m_stStreamType, &pszName);
-                if(pszName){
+                if(SUCCEEDED(StringFromCLSID(m_stStreamType, &pszName)) && pszName){
                     wprintf(L"Stream type: %s\n", pszName);
                     CoTaskMemFree(pszName);
                 }
@@ -349,7 +348,7 @@ STDMETHODIMP CMft0::GetOutputAvailableType(
     IUnknown *pUnk = NULL;
     IMFAttributes *pSourceAttributes = NULL;
     UINT32 uiSourceStreamId = 0;
-    wchar_t *pszName;
+    wchar_t *pszName = NULL;
 
     EnterCriticalSection(&m_critSec);
 
@@ -370,8 +369,10 @@ STDMETHODIMP CMft0::GetOutputAvailableType(
             } else if(m_stStreamType == PINNAME_IMAGE) {
                 wprintf(L"Stream type: PINNAME_IMAGE\n");
             } else {
-                StringFromCLSID(m_stStreamType, &pszName);
-                wprintf(L"Stream type: %s\n", pszName);
+                if (SUCCEEDED(StringFromCLSID(m_stStreamType, &pszName)) && pszName) {
+                    wprintf(L"Stream type: %s\n", pszName);
+                    CoTaskMemFree(pszName);
+                }
             }
             CHK_LOG_BRK((m_stStreamType == PINNAME_VIDEO_PREVIEW || m_stStreamType == PINNAME_VIDEO_CAPTURE) ? S_OK : E_UNEXPECTED);
             CHK_LOG_BRK(GenerateMFMediaTypeListFromDevice(uiSourceStreamId));

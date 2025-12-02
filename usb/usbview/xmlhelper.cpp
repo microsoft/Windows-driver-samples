@@ -2071,6 +2071,7 @@ String ^ XmlGetStringDescriptor(UCHAR index, PSTRING_DESCRIPTOR_NODE stringDesc,
             {
                 // If we are required to return only english descriptor, continue
                 foundNonEnglishDescriptor = true;
+                stringDesc = stringDesc->Next;
                 continue;
             }
 

@@ -835,9 +835,9 @@ Return Value:
                     (ULONG)RequiredSizeAugmented,
                     (ULONG)(*BiosResourcesSize));
 
-        BiosResource = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                             RequiredSize,
-                                             PEP_POOL_TAG);
+        BiosResource = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                       RequiredSize,
+                                       PEP_POOL_TAG);
 
         Request.InputBuffer = ResourceBuffer;
         Request.InputBufferSize = ResourceBufferSize;

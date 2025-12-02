@@ -146,7 +146,7 @@ Return Value:
 
     KeInitializeSpinLock(&LogSpinLock);
 
-    SerenumLStart = ExAllocatePoolWithTag(NonPagedPoolNx, logSize, 'mneS');
+    SerenumLStart = ExAllocatePoolZero(NonPagedPoolNx, logSize, 'mneS');
 
     if (SerenumLStart) {
         SerenumLPtr = SerenumLStart;

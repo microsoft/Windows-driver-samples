@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  resources:
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: vsPackage
+      directives:
+        description: Install Visual Studio 2022 Community
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudio.2022.Community
+        source: winget
+        useLatest: true
+    - resource: Microsoft.VisualStudio.DSC/VSComponents
+      id: vsComponents
+      dependsOn:
+        - vsPackage
+      directives:
+        description: Install required VS workloads and components
+      settings:
+        productId: Microsoft.VisualStudio.Product.Community
+        channelId: VisualStudio.17.Release
+        includeRecommended: false
+        components:
+          - Microsoft.VisualStudio.Component.VC.CoreBuildTools
+          - Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core
+          - Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+          - Microsoft.VisualStudio.Component.VC.Tools.ARM64
+          - Microsoft.VisualStudio.Component.VC.Tools.ARM64EC
+          - Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre
+          - Microsoft.VisualStudio.Component.VC.Runtimes.ARM64.Spectre
+          - Microsoft.VisualStudio.Component.VC.Runtimes.ARM64EC.Spectre
+          - Microsoft.VisualStudio.Component.VC.Redist.14.Latest
+          - Microsoft.VisualStudio.Component.Windows10SDK
+          - Microsoft.VisualStudio.Component.VC.ATL
+          - Microsoft.VisualStudio.Component.VC.ATL.ARM64
+          - Microsoft.VisualStudio.Component.VC.ATL.Spectre
+          - Microsoft.VisualStudio.Component.VC.ATL.ARM64.Spectre
+          - Microsoft.VisualStudio.Component.VC.ATLMFC
+          - Microsoft.VisualStudio.Component.VC.ATLMFC.Spectre
+          - Microsoft.VisualStudio.Component.VC.ASAN
+          - Microsoft.VisualStudio.Component.NuGet.BuildTools
+          - Microsoft.VisualStudio.Component.VC.MFC.ARM64
+          - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
+          - Microsoft.VisualStudio.Workload.NativeDesktop
+          - Component.Microsoft.Windows.DriverKit
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: sdkPackage
+      directives:
+        description: Install Windows SDK version 26100
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsSDK.10.0.26100
+        source: winget
+        useLatest: true
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: wdkPackage
+      dependsOn:
+        - sdkPackage
+      directives:
+        description: Install Windows Driver Kit version 26100
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsWDK.10.0.26100
+        source: winget
+        useLatest: true
+  configurationVersion: 0.2.1

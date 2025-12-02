@@ -25,6 +25,14 @@
 #pragma code_seg("PAGE")
 #endif // ALLOC_PRAGMA
 
+//  Define 720p resolution.
+#define D720P_W 1280
+#define D720P_H 720
+
+//  Add 20% for overscan.
+#define D720P_W_OS (1280+(1280/5))
+#define D720P_H_OS (720+(720/5))
+
 
 /**************************************************************************
 
@@ -311,6 +319,23 @@ DEFINE_DATARANGE_VIDEO(
     32,
     KS_BI_RGB)
 
+DEFINE_DATARANGE_VIDEO(
+    FormatNV12_720p,
+    STATICGUIDOF(KSDATAFORMAT_SUBTYPE_NV12),
+    D720P_W, D720P_H,
+    30,
+    1,
+    12,
+    FOURCC_NV12)
+
+DEFINE_DATARANGE_VIDEO(
+    FormatNV12_720pOverscan,
+    STATICGUIDOF(KSDATAFORMAT_SUBTYPE_NV12),
+    D720P_W_OS, D720P_H_OS,
+    30,
+    1,
+    12,
+    FOURCC_NV12)
 
 //
 // CapturePinDataRanges:
@@ -366,6 +391,8 @@ VideoCapturePinDataRanges [VIDEO_CAPTURE_PIN_DATA_RANGE_COUNT] =
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureVGA_120fpsOverscan,
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureQVGA,
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureQVGAOverscan,
+    (PKSDATARANGE) &FormatNV12_720p,
+    (PKSDATARANGE) &FormatNV12_720pOverscan
 };
 
 const
@@ -387,4 +414,5 @@ VideoPreviewPinDataRanges[VIDEO_PREVIEW_PIN_DATA_RANGE_COUNT] =
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureVGA_90fps,
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureVGA_120fps,
     (PKSDATARANGE) &FormatRGB32Bpp_CaptureQVGA,
+    (PKSDATARANGE) &FormatNV12_720p
 };

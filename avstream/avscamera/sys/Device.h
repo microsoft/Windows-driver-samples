@@ -34,6 +34,17 @@ struct CSensorContext
     AcpiPldRotation             AcpiRotation;   //  How the device is oriented with respect to the panel.
 };
 
+static constexpr ULONG PnpAcpiPanelSideMap[]
+{
+    1, // AcpiPldPanelTop
+    2, // AcpiPldPanelBottom
+    3, // AcpiPldPanelLeft
+    4, // AcpiPldPanelRight
+    5, // AcpiPldPanelFront
+    6, // AcpiPldPanelBack
+    0, // AcpiPldPanelUnknown
+};
+
 class CCaptureDevice
 {
 protected:
@@ -106,6 +117,7 @@ protected:
     //  This is a seperate helper function to allow the derived DispatchCreate
     //  implementation to be as simple as is feasible.
     //
+    virtual
     NTSTATUS
     Prepare();
 
@@ -392,11 +404,18 @@ public:
     PDEVICE_OBJECT
     GetDeviceObject();
 
-    PKSDEVICE
-    GetKsDevice()
-    {
-        return m_Device;
-    }
+    static IO_COMPLETION_ROUTINE IrpSynchronousCompletion;
+
+    virtual
+    NTSTATUS
+    QueryForInterface(
+        _In_ PDEVICE_OBJECT TopOfStack,
+        _In_ const GUID* InterfaceType,
+        _Out_ PINTERFACE Interface,
+        _In_ USHORT Size,
+        _In_ USHORT Version,
+        _In_opt_ PVOID InterfaceSpecificData
+    );
 
     ULONG
     GetFilterIndex(PKSFILTER Filter);

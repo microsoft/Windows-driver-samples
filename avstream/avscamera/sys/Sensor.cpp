@@ -188,7 +188,7 @@ Initialize()
         m_InterruptTime[i] = 0;
         m_LastMappingsCompleted[i] = 0;
     }
-    return STATUS_SUCCESS;
+    return m_Device ? STATUS_SUCCESS : STATUS_INVALID_PARAMETER;
 }
 
 void
@@ -356,7 +356,7 @@ CreateSynthesizer(
 
     if( NT_SUCCESS( Status ) )
     {
-        DBG_TRACE( "Setting Mounting Orientation to %d°", DbgRotation2Degrees(m_MountingOrientation) )
+        DBG_TRACE( "Setting Mounting Orientation to %dÂ°", DbgRotation2Degrees(m_MountingOrientation) )
         m_Synthesizer[ Pin->Id ]->SetRotation( m_MountingOrientation );
     }
 
@@ -412,15 +412,17 @@ Return Value:
 
     NTSTATUS Status = STATUS_SUCCESS;
     LONG lPindex = Pin->Id;
+
+    //  Hold off all image generation while we manipulate the capture pin and synthensizer arrays.
+    KScopedMutex    Lock(m_SensorMutex);
+
     //
     // If we're the first pin to go into acquire (remember we can have
     // a filter in another graph going simultaneously), grab the resources for Preview
     //
-    if( InterlockedCompareExchangePointer(
-                (PVOID *) &m_CapturePin[lPindex],
-                CapturePin,
-                nullptr) == nullptr)
+    if (m_CapturePin[lPindex] == nullptr)
     {
+        m_CapturePin[lPindex] = CapturePin;
         m_VideoInfoHeader[lPindex] = VideoInfoHeader;
 
         //
@@ -449,7 +451,6 @@ Return Value:
             //
             // If everything has succeeded thus far, set the capture pin.
             //
-            m_CapturePin[lPindex] = CapturePin;
             *pSim = m_HardwareSimulation[lPindex];
 
         }
@@ -460,6 +461,8 @@ Return Value:
             // acquired.
             //
             ReleaseHardwareResources(Pin);
+            *pSim = nullptr;
+            m_CapturePin[lPindex] = nullptr;
         }
     }
     else
@@ -1088,20 +1091,23 @@ Return Value:
 
 void
 CSensor::
-SetSynthesizerAttribute( 
-    CSynthesizer::Attribute Attrib, 
-    LONGLONG Info,
-    LONG PinId
+SetSynthesizerAttributeList(
+    _In_ size_t Count,
+    _In_ SynthesizerAttributeEntry AttributeList[]
 )
 {
     PAGED_CODE();
-
-    for( ULONG Pin=0; IsValidIndex(Pin); Pin++ )
+    //  Syncrhonize access to sensor.
+    KScopedMutex    Lock(m_SensorMutex);
+    for (size_t item = 0; item < Count; item++)
     {
-        if( (Pin==(ULONG)PinId || IsStillIndex(Pin)) &&
-            m_Synthesizer[Pin] )
+        for (ULONG Pin = 0; IsValidIndex(Pin); Pin++)
         {
-            m_Synthesizer[Pin]->Set( Attrib, Info );
+            if ((Pin == (ULONG)AttributeList[item].PinId || IsStillIndex(Pin)) &&
+                m_Synthesizer[Pin])
+            {
+                m_Synthesizer[Pin]->Set(AttributeList[item].Attrib, AttributeList[item].Info);
+            }
         }
     }
 }
@@ -1140,10 +1146,14 @@ Return Value:
     DBG_ENTER( "( Pin=%d )\n", Pin->Id ) ;
 
     LONG lPindex = Pin->Id;
+
     //
     // Blow away the image synth.
     //
     m_HardwareSimulation[lPindex]->Reset();
+
+    //  Hold off all image generation while we free the capture pin and synthensizer arrays.
+    KScopedMutex    Lock(m_SensorMutex);
 
     SAFE_DELETE( m_Synthesizer[lPindex] );
     m_VideoInfoHeader[lPindex] = NULL;
@@ -1152,10 +1162,7 @@ Return Value:
     // Release our "lock" on hardware resources.  This will allow another
     // pin (perhaps in another graph) to acquire them.
     //
-    InterlockedExchangePointer(
-        (PVOID *) &(m_CapturePin[lPindex]),
-        nullptr
-    );
+    m_CapturePin[lPindex] = nullptr;
 
     DBG_LEAVE( "( Pin=%d )\n", Pin->Id ) ;
 }
@@ -1322,6 +1329,7 @@ DEFINE_NULL_PROPERTY_GET(CSensor, KSPROPERTY_CAMERACONTROL_IMAGE_PIN_CAPABILITY_
 
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, TriggerTime)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, TorchMode)
+DEFINE_NULL_PROPERTY(CSensor, CExtendedVidProcSetting, IRTorch)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, ExtendedFlash)
 
 DEFINE_NULL_PROPERTY_GET(CSensor, CExtendedProperty, PhotoFrameRate)
@@ -1352,6 +1360,7 @@ DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, OptimizationHint)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, AdvancedPhoto)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedVidProcSetting, FaceDetection)
 DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, VideoTemporalDenoising)
+DEFINE_NULL_PROPERTY(CSensor, CExtendedProperty, RelativePanel)
 
 DEFINE_NULL_PROPERTY(CSensor, KSPROPERTY_CAMERACONTROL_VIDEOSTABILIZATION_MODE_S, VideoStabMode)
 

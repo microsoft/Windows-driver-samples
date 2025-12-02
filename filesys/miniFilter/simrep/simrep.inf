@@ -12,10 +12,7 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
 Provider    = %ProviderString%
 DriverVer   = 01/01/2004,1.0.0.1
 CatalogFile = simrep.cat
-
-[DestinationDirs]
-DefaultDestDir = 12
-SimRep.DriverFiles = 12                        ;%windir%\system32\drivers
+PnpLockdown = 1
 
 [SourceDisksNames]
 1 = %Disk1%
@@ -23,34 +20,84 @@ SimRep.DriverFiles = 12                        ;%windir%\system32\drivers
 [SourceDisksFiles]
 simrep.sys = 1
 
+[DestinationDirs]
+SimRepDownlevel.CopyDriverFiles = 12                  ;%windir%\system32\drivers
+SimRepDownlevel.DelDriverFiles  = 12                  ;%windir%\system32\drivers
+SimRep.DriverFiles              = 13                  ;driver store
+
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$.10.0...25952]
 OptionDesc          = %SimRepServiceDesc%
 CopyFiles           = SimRep.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.10.0...25952.Services]
 AddService          = %SimRepServiceName%,,SimRep.Service
 
-;;
-;; Default uninstall sections
-;;
-
-[DefaultUninstall]
-DelFiles   = SimRep.DriverFiles
-DelReg     = SimRep.DelRegistry
-
-
-[DefaultUninstall.Services]
-DelService = SimRep,0x204
-
 ;
-; Services Section
+; Support sections
 ;
 
 [SimRep.Service]
+DisplayName      = %SimRepServiceName%
+Description      = %SimRepServiceDesc%
+ServiceBinary    = %13%\simrep.sys              ;driver store
+Dependencies     = %FltmgrServiceName%          ;FltMgr
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = SimRep.AddRegistry, Common.AddRegistry
+
+[SimRep.AddRegistry]
+HKR,"Parameters","SupportedFeatures",0x00010001,0x3
+HKR,"Parameters\Instances",%RegDefaultInstanceValueName%,0x00000000,%DefaultInstance%
+HKR,"Parameters\Instances\"%Instance1.Name%,%RegAltitudeValueName%,0x00000000,%Instance1.Altitude%
+HKR,"Parameters\Instances\"%Instance1.Name%,%RegFlagsValueName%,0x00010001,%Instance1.Flags%
+
+[SimRep.DriverFiles]
+simrep.sys
+
+;;
+;; Registry values shared for all OS versions
+;;
+
+[Common.AddRegistry]
+HKR,"Parameters","DebugLevel",0x00010001,0x1F
+HKR,"Parameters","RemapRenamesAndLinks",0x00010001,0x00
+HKR,"Parameters","NewMapping",0x00000000,%NewMapping%
+HKR,"Parameters","OldMapping",0x00000000,%OldMapping%
+
+;;
+;; Downlevel default install sections
+;;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc          = %SimRepServiceDesc%
+CopyFiles           = SimRepDownlevel.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService          = %SimRepServiceName%,,SimRepDownlevel.Service
+
+;;
+;; Downlevel default uninstall sections
+;;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = SimRepDownlevel.DelDriverFiles
+
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService      = %SimRepServiceName%,0x204
+
+;
+; Downlevel support sections
+;
+
+[SimRepDownlevel.Service]
 DisplayName      = %SimRepServiceName%
 Description      = %SimRepServiceDesc%
 ServiceBinary    = %12%\simrep.sys              ;%windir%\system32\drivers\simrep.sys
@@ -59,29 +106,18 @@ ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                            ;SERVICE_DEMAND_START
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Activity Monitor"
-AddReg           = SimRep.AddRegistry
+AddReg           = SimRepDownlevel.AddRegistry, Common.AddRegistry
 
-;
-; Registry Modifications
-;
-
-[SimRep.AddRegistry]
-HKR,,%SimRepDebugLevel%,0x00010001,0x1F
-HKR,,%SimRepRemapRenamesAndLinks%,0x00010001,0x00
-HKR,,"NewMapping",0x00000000,%NewMapping%
-HKR,,"OldMapping",0x00000000,%OldMapping%
+[SimRepDownlevel.AddRegistry]
 HKR,,"SupportedFeatures",0x00010001,0x3
-HKR,%RegInstancesSubkeyName%,%RegDefaultInstanceValueName%,0x00000000,%DefaultInstance%
-HKR,%RegInstancesSubkeyName%"\"%Instance1.Name%,%RegAltitudeValueName%,0x00000000,%Instance1.Altitude%
-HKR,%RegInstancesSubkeyName%"\"%Instance1.Name%,%RegFlagsValueName%,0x00010001,%Instance1.Flags%
+HKR,"Instances",%RegDefaultInstanceValueName%,0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance1.Name%,%RegAltitudeValueName%,0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%Instance1.Name%,%RegFlagsValueName%,0x00010001,%Instance1.Flags%
 
-[SimRep.DelRegistry]
+[SimRepDownlevel.CopyDriverFiles]
+simrep.sys
 
-;
-; Copy Files
-;
-
-[SimRep.DriverFiles]
+[SimRepDownlevel.DelDriverFiles]
 simrep.sys
 
 ;;
@@ -92,10 +128,7 @@ simrep.sys
 ProviderString                      = "TODO-Set-Provider"
 SimRepServiceDesc                   = "Simulate Reparse File System Filter Driver Sample"
 SimRepServiceName                   = "SimRep"
-SimRepDebugLevel                    = "DebugLevel"
-SimRepRemapRenamesAndLinks          = "RemapRenamesAndLinks"
 FltmgrServiceName                   = "FltMgr"
-RegInstancesSubkeyName              = "Instances"
 RegDefaultInstanceValueName         = "DefaultInstance"
 RegAltitudeValueName                = "Altitude"
 RegFlagsValueName                   = "Flags"

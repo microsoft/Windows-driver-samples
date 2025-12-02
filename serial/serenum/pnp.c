@@ -183,7 +183,7 @@ Arguments:
                                       NULL, &nameLength);
 
          if ((nameLength != 0) && (status == STATUS_BUFFER_TOO_SMALL)) {
-            deviceName = ExAllocatePoolWithTag(NonPagedPoolNx, nameLength,SERENUM_POOL_TAG);
+            deviceName = ExAllocatePoolZero(NonPagedPoolNx, nameLength,SERENUM_POOL_TAG);
 
             if (NULL == deviceName) {
                goto someDebugStuffExit;
@@ -726,7 +726,7 @@ Routine Description:
         length = sizeof(DEVICE_RELATIONS) +
                 ((DeviceData->NumPDOs + i) * sizeof (PDEVICE_OBJECT));
 
-        relations = (PDEVICE_RELATIONS) ExAllocatePoolWithTag (NonPagedPoolNx, length,SERENUM_POOL_TAG);
+        relations = (PDEVICE_RELATIONS) ExAllocatePoolZero(NonPagedPoolNx, length,SERENUM_POOL_TAG);
 
         if (NULL == relations) {
            Irp->IoStatus.Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -970,7 +970,7 @@ Routine Description:
          break;
       }
 
-      returnBuffer = ExAllocatePoolWithTag(PagedPool, DeviceData->DevDesc.Length,SERENUM_POOL_TAG);
+      returnBuffer = ExAllocatePoolZero(PagedPool, DeviceData->DevDesc.Length,SERENUM_POOL_TAG);
 
       if (returnBuffer == NULL) {
          status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1016,7 +1016,7 @@ Routine Description:
          status = STATUS_SUCCESS;
 
          length = SERENUM_INSTANCE_IDS_LENGTH * sizeof(WCHAR);
-         returnBuffer = ExAllocatePoolWithTag(PagedPool, length,SERENUM_POOL_TAG);
+         returnBuffer = ExAllocatePoolZero(PagedPool, length,SERENUM_POOL_TAG);
 
          if (returnBuffer != NULL) {
             RtlCopyMemory(returnBuffer, SERENUM_INSTANCE_IDS, length);
@@ -1060,7 +1060,7 @@ Routine Description:
 
             if (buffer != NULL) {
                length = pId->Length;
-               returnBuffer = ExAllocatePoolWithTag(PagedPool, length + sizeof(WCHAR),SERENUM_POOL_TAG);
+               returnBuffer = ExAllocatePoolZero(PagedPool, length + sizeof(WCHAR),SERENUM_POOL_TAG);
                if (returnBuffer != NULL) {
                   RtlZeroMemory(returnBuffer, length + sizeof(WCHAR) );
                   RtlCopyMemory(returnBuffer, buffer, length);
@@ -1087,7 +1087,7 @@ Routine Description:
        ASSERTMSG("Serenum appears not to be the sole bus?!?",
                  Irp->IoStatus.Information == (ULONG_PTR)NULL);
 
-       pBusInfo = ExAllocatePoolWithTag(PagedPool, sizeof(PNP_BUS_INFORMATION),SERENUM_POOL_TAG);
+       pBusInfo = ExAllocatePoolZero(PagedPool, sizeof(PNP_BUS_INFORMATION),SERENUM_POOL_TAG);
 
        if (pBusInfo == NULL) {
           status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1125,7 +1125,7 @@ Routine Description:
          }
 
 
-         pDevRel = ExAllocatePoolWithTag(PagedPool, sizeof(DEVICE_RELATIONS),SERENUM_POOL_TAG);
+         pDevRel = ExAllocatePoolZero(PagedPool, sizeof(DEVICE_RELATIONS),SERENUM_POOL_TAG);
 
          if (pDevRel == NULL) {
             status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1175,7 +1175,7 @@ Routine Description:
          if(DeviceData->PnPRev.Length) {
             RtlInitUnicodeString(&keyname, NULL);
             keyname.MaximumLength = sizeof(L"PnPRev");
-            keyname.Buffer = ExAllocatePoolWithTag(PagedPool, keyname.MaximumLength,SERENUM_POOL_TAG);
+            keyname.Buffer = ExAllocatePoolZero(PagedPool, keyname.MaximumLength,SERENUM_POOL_TAG);
 
             if (keyname.Buffer != NULL) {
 
@@ -1194,7 +1194,7 @@ Routine Description:
          if(DeviceData->SerialNo.Length) {
             RtlInitUnicodeString(&keyname, NULL);
             keyname.MaximumLength = sizeof(L"Serial Number");
-            keyname.Buffer = ExAllocatePoolWithTag(PagedPool, keyname.MaximumLength,SERENUM_POOL_TAG);
+            keyname.Buffer = ExAllocatePoolZero(PagedPool, keyname.MaximumLength,SERENUM_POOL_TAG);
 
             if (keyname.Buffer != NULL) {
 
@@ -1442,7 +1442,7 @@ VOID SerenumStartDeviceWorker(
 	
     _Analysis_assume_(Irp != NULL); // Not NULL when passed to IoQueueWorkItem()
 
-    if (NULL == (QueryTable = ExAllocatePoolWithTag(
+    if (NULL == (QueryTable = ExAllocatePoolZero(
                                PagedPool,
                                sizeof(RTL_QUERY_REGISTRY_TABLE)*2,
                                SERENUM_POOL_TAG

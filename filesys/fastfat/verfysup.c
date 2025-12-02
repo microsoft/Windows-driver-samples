@@ -198,7 +198,7 @@ Return Value:
             if (FcbCondition == FcbNeedsToBeVerified) {
                 FatResetFcb( IrpContext, Fcb );
             }
-            
+
         }
     }
 
@@ -300,7 +300,7 @@ Return Value:
     //
 
     DevMarkedForVerify = BooleanFlagOn(Vcb->Vpb->RealDevice->Flags, DO_VERIFY_VOLUME);
-    
+
     //
     //  We ALWAYS force CREATE requests on unmounted volumes through the
     //  verify path.  These requests could have been in limbo between
@@ -351,7 +351,7 @@ Return Value:
 }
 
 
-_Requires_lock_held_(_Global_critical_region_)    
+_Requires_lock_held_(_Global_critical_region_)
 VOID
 FatVerifyFcb (
     IN PIRP_CONTEXT IrpContext,
@@ -475,8 +475,8 @@ Return Value:
     default:
 
         DebugDump("Invalid FcbCondition\n", 0, Fcb);
-        
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
+
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
         FatBugCheck( Fcb->FcbCondition, 0, 0 );
     }
 
@@ -545,7 +545,7 @@ Return Value:
     //
 
 #pragma prefast( push )
-#pragma prefast( disable: 28193, "this will always wait" )        
+#pragma prefast( disable: 28193, "this will always wait" )
     FatAcquireSharedGlobal( &IrpContext );
 #pragma prefast( pop )
 
@@ -695,7 +695,7 @@ Return Value:
     //  If we couldn't get pool, oh well....
     //
 
-    Packet = ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(CLEAN_AND_DIRTY_VOLUME_PACKET), ' taF');
+    Packet = ExAllocatePoolZero(NonPagedPoolNx, sizeof(CLEAN_AND_DIRTY_VOLUME_PACKET), ' taF');
 
     if ( Packet ) {
 
@@ -708,9 +708,12 @@ Return Value:
 
         ClearFlag( Packet->Vcb->VcbState, VCB_STATE_FLAG_VOLUME_DIRTY );
 
+#pragma prefast( suppress: 28155, "the function prototype is correct" )
+#pragma warning( suppress:4996 )
         ExInitializeWorkItem( &Packet->Item, &FatDeferredCleanVolume, Packet );
-        
+
 #pragma prefast( suppress:28159, "prefast indicates this is an obsolete API, but it is ok for fastfat to keep using it" )
+#pragma warning( suppress:4996 )
         ExQueueWorkItem( &Packet->Item, CriticalWorkQueue );
     }
 
@@ -718,7 +721,7 @@ Return Value:
 }
 
 
-_Requires_lock_held_(_Global_critical_region_)    
+_Requires_lock_held_(_Global_critical_region_)
 VOID
 FatMarkVolume (
     IN PIRP_CONTEXT IrpContext,
@@ -1408,7 +1411,7 @@ Return Value:
 
     PAGED_CODE();
     UNREFERENCED_PARAMETER( IrpContext );
-    
+
     //
     //  Don't do the two following operations for the Root Dcb
     //  of a non FAT32 volume or paging files.  Paging files!?
@@ -1570,7 +1573,7 @@ Return Value:
     if (DirentBcb == NULL) {
 
         FatMarkFcbCondition( IrpContext, Fcb, FcbBad, FALSE );
-        
+
         return;
     }
 
@@ -1607,7 +1610,7 @@ Return Value:
                 ||
 
              !FatMatchFileSize(IrpContext, Dirent, Fcb )
-                
+
                 ||
 
              (FirstClusterOfFile != Fcb->FirstClusterOfFile)
@@ -1761,12 +1764,12 @@ Return Value:
     default:
 
         DebugDump("Invalid VcbCondition\n", 0, Vcb);
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
         FatBugCheck( Vcb->VcbCondition, 0, 0 );
     }
 }
 
-_Requires_lock_held_(_Global_critical_region_)    
+_Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
 FatPerformVerify (
     _In_ PIRP_CONTEXT IrpContext,
@@ -1900,7 +1903,7 @@ Return Value:
             FatReleaseVcb( IrpContext, Vcb);
 
 #pragma prefast( push )
-#pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )            
+#pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193 )
             FatAcquireExclusiveGlobal( IrpContext );
 #pragma prefast( pop )

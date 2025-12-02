@@ -1,27 +1,24 @@
-<!---
-    name: ObCallback Callback Registration Driver
-    platform: WDM
-    language: cpp
-    category: General
-    description: Demonstrates the use of registered callbacks for process protection.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617716
---->
+---
+page_type: sample
+description: "Demonstrates the use of registered callbacks for process protection."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
-
-ObCallback Callback Registration Driver
-=======================================
+# ObCallback Callback Registration Driver
 
 The ObCallback sample driver demonstrates the use of registered callbacks for process protection. The driver registers control callbacks which are called at process creation.
 
+## Design and Operation
 
-Design and Operation
---------------------
-
-The sample exercises both the [**PsSetCreateProcessNotifyRoutineEx**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff559951) and the [**ObRegisterCallbacks**](http://msdn.microsoft.com/en-us/library/windows/hardware/ff558692) routines. The first example uses the **ObRegisterCallbacks** routine and a callback to restrict requested access rights during a open process action. The second example uses the **PsSetCreateProcessNotifyRoutineEx** routine to reject a process creation by examining the command line.
+The sample exercises both the [**PsSetCreateProcessNotifyRoutineEx**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/ntddk/nf-ntddk-pssetcreateprocessnotifyroutine) and the [**ObRegisterCallbacks**](https://docs.microsoft.com/windows-hardware/drivers/ddi/content/wdm/nf-wdm-obregistercallbacks) routines. The first example uses the **ObRegisterCallbacks** routine and a callback to restrict requested access rights during a open process action. The second example uses the **PsSetCreateProcessNotifyRoutineEx** routine to reject a process creation by examining the command line.
 
 The following is a command line usage scenario to exercise access restriction:
 
-```
+```cmd
 C:\> obcallbacktestctrl.exe  -?                      (for command line help)
 C:\> obcallbacktestctrl.exe  -install                (installs the kernel driver)
 C:\> obcallbacktestctrl.exe  -name  notepad          (specifies that the string "notepad"  will be watched as a protected executable)
@@ -41,7 +38,7 @@ C:\> obcallbacktestctrl.exe  -uninstall              (uninstall the kernel drive
 
 The following is another sample test you can run to prevent a process from being created:
 
-```
+```cmd
 C:\> obcallbacktestctrl.exe  -install                (installs the kernel driver)
 C:\> obcallbacktestctrl.exe  -reject  notepad        (specifies that the string "notepad"  will be watched and prevented from starting as a process)
 

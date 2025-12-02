@@ -37,20 +37,12 @@ extern "C" {
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType,
-    ULONG           tag
+    size_t      iSize,
+    POOL_FLAGS  poolFlags,
+    ULONG       tag
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, tag);
-
-    if (result)
-    {
-        RtlZeroMemory(result, iSize);
-    }
+    PVOID result = ExAllocatePool2(poolFlags, iSize, tag);
 
     return result;
 }
@@ -63,19 +55,11 @@ PVOID operator new
 */
 PVOID operator new
 (
-    size_t          iSize,
-    _When_((poolType & NonPagedPoolMustSucceed) != 0,
-        __drv_reportError("Must succeed pool allocations are forbidden. "
-            "Allocation failures cause a system crash"))
-    POOL_TYPE       poolType
+    size_t      iSize,
+    POOL_FLAGS  poolFlags
 )
 {
-    PVOID result = ExAllocatePoolWithTag(poolType, iSize, SYSVAD_POOLTAG);
-
-    if (result)
-    {
-        RtlZeroMemory(result, iSize);
-    }
+    PVOID result = ExAllocatePool2(poolFlags, iSize, SYSVAD_POOLTAG);
 
     return result;
 }
@@ -117,6 +101,30 @@ void __cdecl operator delete
         ExFreePoolWithTag(pVoid, SYSVAD_POOLTAG);
     }
 }
+
+
+/*****************************************************************************
+* ::delete()
+*****************************************************************************
+* Sized Delete function with alignment.
+*/
+#ifdef __cpp_aligned_new
+void __cdecl operator delete
+(
+    _Pre_maybenull_ __drv_freesMem(Mem) PVOID pVoid,
+    _In_ size_t cbSize,
+    _In_ std::align_val_t cbAlign
+)
+{
+    UNREFERENCED_PARAMETER(cbSize);
+    UNREFERENCED_PARAMETER(cbAlign);
+
+    if (pVoid)
+    {
+        ExFreePoolWithTag(pVoid, SYSVAD_POOLTAG);
+    }
+}
+#endif // __cpp_aligned_new
 
 
 /*****************************************************************************

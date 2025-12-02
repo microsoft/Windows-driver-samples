@@ -10,8 +10,8 @@ Abstract:
 
     Header file which contains the structures, type definitions,
     constants, global variables and function prototypes that are
-    only visible within the kernel. The functions include 
-	generic table routines. 
+    only visible within the kernel. The functions include
+	generic table routines.
 
 Environment:
 
@@ -32,10 +32,10 @@ CgAllocateMutex (
     //
     //  Fast mutex by its rule has to be in the non-paged pool
     //
-    
-    return ExAllocatePoolWithTag( NonPagedPoolNx,
-                                  sizeof( FAST_MUTEX ),
-                                  CG_MUTEX_TAG );
+
+    return ExAllocatePoolZero( NonPagedPoolNx,
+                               sizeof( FAST_MUTEX ),
+                               CG_MUTEX_TAG );
 }
 
 FORCEINLINE

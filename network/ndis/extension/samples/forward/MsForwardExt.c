@@ -95,9 +95,9 @@ Routine Description:
     NDIS_STATUS status = NDIS_STATUS_SUCCESS;
     PMSFORWARD_CONTEXT switchContext;
         
-    switchContext = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                          sizeof(MSFORWARD_CONTEXT),
-                                          SxExtAllocationTag);
+    switchContext = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                    sizeof(MSFORWARD_CONTEXT),
+                                    SxExtAllocationTag);
                                           
     if (switchContext == NULL)
     {
@@ -1879,9 +1879,9 @@ Routine Description:
                                        
     if (nicEntry == NULL)
     {
-        nicEntry = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                         sizeof(MSFORWARD_NIC_LIST_ENTRY),
-                                         SxExtAllocationTag);
+        nicEntry = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                   sizeof(MSFORWARD_NIC_LIST_ENTRY),
+                                   SxExtAllocationTag);
                                          
         if (nicEntry == NULL)
         {
@@ -1937,9 +1937,9 @@ Routine Description:
                                             
     if (newPolicy == NULL)
     {
-        newPolicy = ExAllocatePoolWithTag(NonPagedPoolNx,
-                                          sizeof(MSFORWARD_MAC_POLICY_LIST_ENTRY),
-                                          SxExtAllocationTag);
+        newPolicy = ExAllocatePool2(POOL_FLAG_NON_PAGED,
+                                    sizeof(MSFORWARD_MAC_POLICY_LIST_ENTRY),
+                                    SxExtAllocationTag);
                                           
         if (newPolicy == NULL)
         {

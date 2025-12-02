@@ -12,6 +12,7 @@ ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determine
 Provider    = %ProviderString%
 DriverVer   = 06/05/2009,1.0.0.1
 CatalogFile = NameChanger.cat
+PnpLockdown = 1
 
 [SourceDisksNames]
 12=%ServiceDescription%,,,
@@ -19,37 +20,81 @@ CatalogFile = NameChanger.cat
 [SourceDisksFiles]
 NameChanger.sys = 12
 
-
 [DestinationDirs]
-DefaultDestDir          = 12
-NameChanger.DriverFiles = 12            ;%windir%\system32\drivers
+NameChangerDownlevel.CopyDriverFiles = 12            ;%windir%\system32\drivers
+NameChangerDownlevel.DelDriverFiles  = 12            ;%windir%\system32\drivers
+NameChanger.DriverFiles              = 13            ;driver store
 
 ;;
 ;; Default install sections
 ;;
 
-[DefaultInstall]
+[DefaultInstall.NT$ARCH$.10.0...25952]
 OptionDesc          = %ServiceDescription%
 CopyFiles           = NameChanger.DriverFiles
 
-[DefaultInstall.Services]
+[DefaultInstall.NT$ARCH$.10.0...25952.Services]
 AddService          = %ServiceName%,,NameChanger.Service
 
-;;
-;; Default uninstall sections
-;;
-
-[DefaultUninstall]
-DelFiles   = NameChanger.DriverFiles
-
-[DefaultUninstall.Services]
-DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
-
 ;
-; Services Section
+; Support sections
 ;
 
 [NameChanger.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %13%\%DriverName%.sys        ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+AddReg           = NameChanger.AddRegistry, Common.AddRegistry
+
+[NameChanger.AddRegistry]
+HKR,"Parameters","SupportedFeatures",0x00010001,0x3
+HKR,"Parameters\Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Parameters\Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+
+[NameChanger.DriverFiles]
+%DriverName%.sys
+
+;;
+;; Registry values shared for all OS versions
+;;
+[Common.AddRegistry]
+HKR,"Parameters","UserMapping",0x00000000,%UserMapping%
+HKR,"Parameters","UserMappingFinalComponentShort",0x00000000,%UserMappingFinalComponentShort%
+HKR,"Parameters","RealMapping",0x00000000,%RealMapping%
+
+;;
+;; Downlevel default install sections
+;;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = NameChangerDownlevel.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService          = %ServiceName%,,NameChangerDownlevel.Service
+
+;;
+;; Downlevel default uninstall sections
+;;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = NameChangerDownlevel.DelDriverFiles
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Downlevel support sections
+;
+
+[NameChangerDownlevel.Service]
 DisplayName      = %ServiceName%
 Description      = %ServiceDescription%
 ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
@@ -58,29 +103,19 @@ ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                            ;SERVICE_DEMAND_START
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
 LoadOrderGroup   = "FSFilter Activity Monitor"
-AddReg           = NameChanger.AddRegistry
+AddReg           = NameChangerDownlevel.AddRegistry, Common.AddRegistry
 
-;
-; Registry Modifications
-;
-
-[NameChanger.AddRegistry]
-HKR,,"DebugFlags",0x00010001 ,0x0
+[NameChangerDownlevel.AddRegistry]
 HKR,,"SupportedFeatures",0x00010001,0x3
 HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
 HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
 HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
-HKR,,"UserMapping",0x00000000,%UserMapping%
-HKR,,"UserMappingFinalComponentShort",0x00000000,%UserMappingFinalComponentShort%
-HKR,,"RealMapping",0x00000000,%RealMapping%
 
-;
-; Copy Files
-;
-
-[NameChanger.DriverFiles]
+[NameChangerDownlevel.CopyDriverFiles]
 %DriverName%.sys
 
+[NameChangerDownlevel.DelDriverFiles]
+%DriverName%.sys
 
 ;;
 ;; String Section

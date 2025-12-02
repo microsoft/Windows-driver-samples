@@ -1628,7 +1628,7 @@ P2PDumpScanList(
 	IN u4Byte nDevDescriptors
 	)
 {
-	u1Byte i;
+	u4Byte i;
 
 	for(i = 0; i < nDevDescriptors; i++)
 	{
@@ -1934,7 +1934,7 @@ P2PScanListFind(
 	OUT pu4Byte pScanListIndex
 	)
 {
-	u1Byte i;
+	u4Byte i;
 	BOOLEAN bFound = FALSE;
 	pu1Byte KeyAddr = (DeviceAddress) ? (DeviceAddress) : ((InterfaceAddress) ? (InterfaceAddress) : (NULL));
 	BOOLEAN bDevAddressAsKey = (DeviceAddress) ? (TRUE) : (FALSE);
@@ -1968,7 +1968,8 @@ P2PScanListAllFound(
 	IN PP2P_INFO pP2PInfo
 	)
 {
-	u1Byte i = 0,j=0,uNumOfDeviceFoud=0;
+	ULONG i = 0;
+	u1Byte j = 0, uNumOfDevicesFound = 0;
 	BOOLEAN bAllFound = FALSE;
 
 	if(pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs == 0 ||pP2PInfo->DeviceListForQuery.uNumberOfDevices ==0)
@@ -1983,13 +1984,13 @@ P2PScanListAllFound(
 			if(eqMacAddr(pP2PInfo->ScanDeviceIDs.DeviceIDs[i], pP2PInfo->DeviceListForQuery.DeviceEntry[j].DeviceAddress) 
 				&&pP2PInfo->DeviceListForQuery.DeviceEntry[j].ProbeResponseHostTimestamp != 0)
 			{
-				uNumOfDeviceFoud ++;
+				uNumOfDevicesFound ++;
 			}
 		}
 	}
 	}
 
-	if(uNumOfDeviceFoud == pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs)
+	if(uNumOfDevicesFound == pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs)
 	{	
 		bAllFound =TRUE;
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: All of DeviceID Found : Terminate Device Discovery!! !\n", __FUNCTION__));						
@@ -2008,7 +2009,8 @@ P2PScanListFindClient(
 	OUT PP2P_CLIENT_INFO_DISCRIPTOR *ppClientInfoDesc
 	)
 {
-	u1Byte i, j;
+	u4Byte i;
+	u1Byte j;
 	BOOLEAN bFound = FALSE;
 	pu1Byte KeyAddr = (DeviceAddress) ? (DeviceAddress) : ((InterfaceAddress) ? (InterfaceAddress) : (NULL));
 	BOOLEAN bDevAddressAsKey = (DeviceAddress) ? (TRUE) : (FALSE);
@@ -2709,7 +2711,7 @@ P2PHasNon11BRateAsSupportingRate(
 {
 	OCTET_STRING BratesBeacon, ExtratesBeacon;
 	BOOLEAN bHasNon11bRate = FALSE;
-	u1Byte i;
+	u2Byte i;
 
 	//
 	// Note: if no supported rate IE in osPacket, FALSE is returned.

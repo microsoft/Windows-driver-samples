@@ -50,6 +50,7 @@ protected:
     ULONG m_FaceDetectionCurrentMax;
     ULONGLONG m_SceneMode;
     CExtendedProperty   m_TorchMode;
+    CExtendedVidProcSetting m_IRTorch;
     CExtendedProperty   m_OptimizationHint;
     CExtendedMetadata   *m_MetadataInfo;
     PKSCAMERA_PERFRAMESETTING_HEADER m_pPerFrameSettings;
@@ -61,7 +62,8 @@ protected:
     ULONGLONG m_Histogram;
     ULONGLONG m_OpticalImageStabilization;
     ULONGLONG m_VideoTemporalDenoising;
-    CExtendedProperty   m_AdvancedPhoto;
+    CExtendedProperty m_RelativePanel;
+    CExtendedProperty m_AdvancedPhoto;
 
     CWhiteBalanceRoiIspControl  m_RoiWhiteBalance;
     CExposureRoiIspControl      m_RoiExposureMode;
@@ -138,6 +140,14 @@ protected:
     NTSTATUS
     ProgramDefaults();
 
+    virtual
+    NTSTATUS
+    CreateHardwareSimulation(
+        _In_ LONG pinID,
+        _In_ const KSPIN_DESCRIPTOR_EX *pinDescriptors,
+        _Out_ CHardwareSimulation** pSim
+    );
+
 public:
     //
     //  This simulation is based solely on the Descriptors.  Yours might
@@ -199,6 +209,7 @@ public:
     DECLARE_PROPERTY_GET( KSPROPERTY_CAMERACONTROL_IMAGE_PIN_CAPABILITY_S, PinDependence );
     DECLARE_PROPERTY( CExtendedProperty, TriggerTime );
     DECLARE_PROPERTY( CExtendedProperty, TorchMode );
+    DECLARE_PROPERTY( CExtendedVidProcSetting, IRTorch );
 
     DECLARE_PROPERTY( CExtendedProperty, ExtendedFlash );
 
@@ -228,6 +239,7 @@ public:
     DECLARE_PROPERTY_GET( CExtendedFieldOfView, FieldOfView );
     DECLARE_PROPERTY_GET( CExtendedCameraAngleOffset, CameraAngleOffset );
     DECLARE_PROPERTY( CExtendedProperty, VideoTemporalDenoising);
+    DECLARE_PROPERTY( CExtendedProperty, RelativePanel);
 
     DECLARE_PROPERTY_VARSIZE_ASYNC_NOCANCEL( CRoiProperty, Roi );
 

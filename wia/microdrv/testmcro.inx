@@ -1,0 +1,65 @@
+; TESTMCRO.INF  -- WIA sample MicroDriver scanner setup file
+; Copyright (c) 2001 Microsoft Corporation
+; Manufacturer:  Microsoft
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Image
+ClassGUID={6bdd1fc6-810f-11d0-bec7-08002be2092f}
+Provider=%ProviderString%
+DriverVer=01/10/2023,1.0.0.2
+CatalogFile=testmcro.cat
+PnpLockdown=1 ; Prevent applications from directly modifying the files specified by this INF
+
+[SourceDisksFiles]
+testmcro.dll=1
+
+[SourceDisksNames]
+1=%Location%,,,
+
+[DestinationDirs]
+DefaultDestDir=13
+
+[Manufacturer]
+%ManufacturerName%=Models,NT$ARCH$.10.0...16299
+
+[Models.NT$ARCH$.10.0...16299]
+%WIASample.DeviceDesc% = WIASample.Scanner, PnPIDInformation
+
+[WIASample.Scanner]
+Include=sti.inf
+Needs=STI.SerialSection, STI.MICRODRIVERSection
+SubClass=StillImage
+DeviceType=1
+DeviceSubType=0x1
+Capabilities=0x30
+;Events=WIASample.Events  TODO: Enable if events are used by your driver
+DeviceData=WIASample.DeviceData
+AddReg=WIASample.AddReg
+CopyFiles=WIASample.CopyFiles
+ICMProfiles="sRGB Color Space Profile.icm"
+
+; Enable and populate this section if events are used by your driver
+;[WIASample.Events]
+
+[WIASample.Scanner.Services]
+Include=sti.inf
+Needs=STI.SerialSection.Services
+
+[WIASample.DeviceData]
+Server=local
+UI Class ID={4DB1AD10-3391-11D2-9A33-00C04FA36145}
+MicroDriver=%13%\TESTMCRO.DLL
+Sample Entry=1,1
+
+[WIASample.AddReg]
+HKR,,HardwareConfig,1,1
+
+[WIASample.CopyFiles]
+testmcro.dll
+
+[Strings]
+ManufacturerName="TODO-Set-Manufacturer"
+ProviderString="TODO-Set-Provider"
+Location="Install Source"
+WIASample.DeviceDesc="WIA Sample MicroDriver Scanner Device"

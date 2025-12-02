@@ -43,7 +43,6 @@ public:
 
 protected:
     METADATA_PREVIEWAGGREGATION
-        CPreviewHardwareSimulation::
         GetMetadata();
 
     VOID GetCaptureStats(
@@ -56,6 +55,9 @@ protected:
     EmitMetadata(
         _Inout_ PKSSTREAM_HEADER   pStreamHeader
     );
+
+private:
+    BOOLEAN m_Illuminated;
 
 };
 

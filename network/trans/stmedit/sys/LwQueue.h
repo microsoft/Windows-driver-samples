@@ -1,6 +1,7 @@
 #ifndef _LWQUEUE_H
 #define _LWQUEUE_H
 
+#define POOL_ZERO_DOWN_LEVEL_SUPPORT
 #include <wdm.h>
 
 #define STMEDIT_TAG_LQWI 'wLeS'   // Light Weight Queue Work Items.

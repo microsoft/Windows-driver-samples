@@ -14,7 +14,8 @@ Provider=%ProviderName%
 ClassGUID={4d36e967-e325-11ce-bfc1-08002be10318}
 Class=DiskDrive
 DriverVer=08/27/1999,5.2.1425.0
-;CatalogFile=your_cat_here.cat	; Supply your own catalog file here.
+CatalogFile=diskdev.cat	; Supply your own catalog file here.
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir   = 12
@@ -24,15 +25,7 @@ DefaultDestDir   = 12
 ;
 
 [Manufacturer]
-%MfgName% = Standard.Mfg, NTx86, NTia64, NTamd64
-
-[Standard.Mfg.NTx86]
-%GenDisk.DeviceDesc%    = disk, GenDisk
-%GenOptical.DeviceDesc% = disk, GenOptical
-
-[Standard.Mfg.NTia64]
-%GenDisk.DeviceDesc%    = disk, GenDisk
-%GenOptical.DeviceDesc% = disk, GenOptical
+%MfgName% = Standard.Mfg, NTamd64
 
 [Standard.Mfg.NTamd64]
 %GenDisk.DeviceDesc%    = disk, GenDisk
@@ -73,12 +66,6 @@ ServiceBinary  = %12%\disk.sys
 ;
 ; Source file information
 ;
-
-[SourceDisksNames.x86]
-1 = %DiskId1%,,,\i386
-
-[SourceDisksNames.ia64]
-1 = %DiskId1%,,,\ia64
 
 [SourceDisksNames.amd64]
 1 = %DiskId1%,,,\amd64

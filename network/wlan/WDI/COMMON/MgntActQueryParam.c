@@ -13,9 +13,9 @@ u1Byte SS_Rate_Map_B[2][2]= {{7, MGN_11M}, {0, MGN_5_5M}};
 //
 
 u1Byte SS_Rate_Map_AC_1SS_MCS9[10][2]= {{46, MGN_VHT1SS_MCS9},{43, MGN_VHT1SS_MCS8},{39, MGN_VHT1SS_MCS7}, {35, MGN_VHT1SS_MCS5}, {29, MGN_VHT1SS_MCS4}, {25, MGN_VHT1SS_MCS3}, {20, MGN_VHT1SS_MCS2}, {15, MGN_VHT1SS_MCS1}, {10, MGN_VHT1SS_MCS0},{0, MGN_6M}};
-//(10¥H¤U½ÐÅã¥Ü6M in 5G)
+//(10ä»¥ä¸‹è«‹é¡¯ç¤º6M in 5G)
 u1Byte SS_Rate_Map_AC_1SS_MCS7[8][2]= {{41, MGN_VHT1SS_MCS7}, {35, MGN_VHT1SS_MCS5}, {29, MGN_VHT1SS_MCS4}, {25, MGN_VHT1SS_MCS3}, {20, MGN_VHT1SS_MCS2}, {15, MGN_VHT1SS_MCS1}, {10, MGN_VHT1SS_MCS0},{0, MGN_6M}};
-//(10¥H¤U½ÐÅã¥Ü6M in 5G)
+//(10ä»¥ä¸‹è«‹é¡¯ç¤º6M in 5G)
 
 u1Byte SS_Rate_Map_N_MCS7[7][2]= {{40, MGN_MCS7}, {30, MGN_MCS5}, {25, MGN_MCS4}, {23, MGN_MCS3}, {19, MGN_MCS2}, {8, MGN_MCS1}, {0, MGN_MCS0}};
 u1Byte SS_Rate_Map_N_MCS7_Lv1[7][2]= {{40, MGN_MCS7}, {30, MGN_MCS5}, {25, MGN_MCS4}, {19, MGN_MCS3}, {8, MGN_MCS2}, {5, MGN_MCS1}, {2, MGN_MCS0}};
@@ -35,7 +35,7 @@ u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv4[7][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2S
 u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv5[5][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {15, MGN_VHT2SS_MCS4}, {0, MGN_VHT1SS_MCS2}}; 
 u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv6[5][2]= {{45, MGN_VHT2SS_MCS9}, {40, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {10, MGN_VHT2SS_MCS6}, {0, MGN_VHT2SS_MCS4}}; 
 
-//(10¥H¤U½ÐÅã¥Ü6M in 5G)
+//(10ä»¥ä¸‹è«‹é¡¯ç¤º6M in 5G)
 u1Byte SS_Rate_Map_AC_2SS_MCS7[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT2SS_MCS4}, {28, MGN_VHT1SS_MCS5}, {24, MGN_VHT1SS_MCS4},  {21, MGN_VHT1SS_MCS3}, {18, MGN_VHT1SS_MCS2}, {14, MGN_VHT1SS_MCS1}, {10, MGN_VHT1SS_MCS0}, {0, MGN_6M}}; 
 // Lvl1 replace as original value.
 u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv1[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {21, MGN_VHT1SS_MCS2}, {18, MGN_VHT1SS_MCS1}, {14, MGN_VHT1SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}}; 
@@ -47,7 +47,7 @@ u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv6[3][2]= {{36, MGN_VHT2SS_MCS7}, {20, MGN_VHT2S
 
 u1Byte SS_Rate_Map_AC_3SS_MCS9[12][2]= {{50, MGN_VHT3SS_MCS9}, {47, MGN_VHT3SS_MCS8}, {44, MGN_VHT3SS_MCS7}, {40, MGN_VHT3SS_MCS6}, {36, MGN_VHT3SS_MCS5}, {32, MGN_VHT3SS_MCS4}, {28, MGN_VHT3SS_MCS3}, {24, MGN_VHT3SS_MCS2}, {21, MGN_VHT3SS_MCS1}, {18, MGN_VHT3SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}}; 
 
-//(10¥H¤U½ÐÅã¥Ü6M in 5G)
+//(10ä»¥ä¸‹è«‹é¡¯ç¤º6M in 5G)
 
 u1Byte SS_Rate_Map_N_MCS15[7][2]= {{40, MGN_MCS15}, {35, MGN_MCS14}, {31, MGN_MCS12}, {28, MGN_MCS7}, {25, MGN_MCS5}, {23, MGN_MCS3}, {10, MGN_MCS0}};
 u1Byte SS_Rate_Map_N_MCS15_Lv1[12][2]= {{40, MGN_MCS15}, {37, MGN_MCS14}, {35, MGN_MCS13}, {31, MGN_MCS12}, {28, MGN_MCS7}, {25, MGN_MCS6}, {22, MGN_MCS5}, {20, MGN_MCS4}, {15, MGN_MCS3}, {12, MGN_MCS2}, {8, MGN_MCS1},  {4, MGN_MCS0}};
@@ -365,10 +365,10 @@ MgntActQuery_802_11_BSSID_LIST(
 	PRT_WLAN_BSS		pBSSDesc = NULL;
 		
 	u1Byte	Rssibuf[MAX_BSS_DESC];
-	u2Byte	idxBuf[MAX_BSS_DESC];
+	u4Byte	idxBuf[MAX_BSS_DESC];
 
 	u1Byte	MaxRSSI=0;
-	u2Byte	a=0, idx=0, findidx =0, tmpidx=0;
+	u4Byte	a=0, idx=0, findidx=0, tmpidx=0;
 
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("[REDX]: MgntActQuery_802_11_BSSID_LIST() ===> \n"));
 	//
@@ -1086,7 +1086,7 @@ DecorateTxRateBySingalStrength(
 	u1Byte	MapSize
 )
 {
-	u1Byte index = 0;
+	int index = 0;
 	
 	for(index=0; index<(MapSize*2); index+=2)
 	{

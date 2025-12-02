@@ -26,6 +26,7 @@ Abstract:
 // CMiniportTopology 
 //   
 
+#pragma code_seg()
 class CMiniportTopology : 
     public CMiniportTopologySYSVAD,
     public IMiniportTopology,
@@ -33,6 +34,17 @@ class CMiniportTopology :
 {
   private:
     eDeviceType             m_DeviceType;
+
+    typedef struct
+    {
+        AUDIOPOSTURE_ORIENTATION    Orientation;
+    }SYSVAD_AUDIOPOSTURE;
+
+    // Assuming that Each filter will have only one endpoint supporting posture
+    SYSVAD_AUDIOPOSTURE m_PostureCache;
+
+    AUDIORESOURCEMANAGEMENT_RESOURCEGROUP   m_ResourceGroup {0};
+
     union {
         PVOID               m_DeviceContext;
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
@@ -55,6 +67,8 @@ public:
       m_DeviceType(DeviceType),
       m_DeviceContext(DeviceContext)
     {
+        m_PostureCache.Orientation = AUDIOPOSTURE_ORIENTATION_NOTROTATED;  
+
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
         if (IsSidebandDevice())
         {
@@ -73,17 +87,52 @@ public:
 
     NTSTATUS PropertyHandlerJackDescription
     (
-        _In_        PPCPROPERTY_REQUEST                      PropertyRequest,
-        _In_        ULONG                                    cJackDescriptions,
-        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION *  JackDescriptions
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions
     );
 
     NTSTATUS PropertyHandlerJackDescription2
     ( 
-        _In_        PPCPROPERTY_REQUEST                      PropertyRequest,
-        _In_        ULONG                                    cJackDescriptions,
-        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION *  JackDescriptions,
-        _In_        DWORD                                    JackCapabilities
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions,
+        _In_        DWORD                                       JackCapabilities
+    );
+
+    NTSTATUS PropertyHandlerJackDescription3
+    ( 
+        _In_        PPCPROPERTY_REQUEST                         PropertyRequest,
+        _In_        ULONG                                       cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION       *JackDescriptions,
+        _In_        ULONG                                       ConfigId
+    );
+
+    NTSTATUS PropertyHandlerAudioResourceGroup
+    (
+        _In_        PPCPROPERTY_REQUEST         PropertyRequest
+    );
+
+    NTSTATUS PropertyHandler_SetAudioResourceGroup
+    (
+        _In_        PPCPROPERTY_REQUEST         PropertyRequest
+    );
+
+    NTSTATUS PropertyHandlerAudioPostureOrientation
+    ( 
+        _In_        PPCPROPERTY_REQUEST                                         PropertyRequest,
+        _In_        ULONG                                                       cAudioPostureInfos,
+        _In_reads_(cAudioPostureInfos) PSYSVAD_AUDIOPOSTURE_INFO                *AudioPostureInfos
+    );
+
+    NTSTATUS PropertyHandler_AudioPostureOrientationBasicSupport
+    (
+        _In_ PPCPROPERTY_REQUEST    PropertyRequest
+    );
+
+    NTSTATUS PropertyHandler_SetAudioPostureOrientation
+    (
+        _In_ PPCPROPERTY_REQUEST                    PropertyRequest
     );
     
 #if defined(SYSVAD_BTH_BYPASS) || defined(SYSVAD_USB_SIDEBAND)
@@ -92,7 +141,8 @@ public:
         return (m_DeviceType == eBthHfpMicDevice ||
                 m_DeviceType == eBthHfpSpeakerDevice ||
                 m_DeviceType == eUsbHsMicDevice ||
-                m_DeviceType == eUsbHsSpeakerDevice ) ? TRUE : FALSE;
+                m_DeviceType == eUsbHsSpeakerDevice ||
+                m_DeviceType == eA2dpHpSpeakerDevice) ? TRUE : FALSE;
     }
 
     // Returns a weak ref to the Bluetooth HFP device.
@@ -163,6 +213,14 @@ public:
     friend NTSTATUS PropertyHandler_UsbHsMute_BasicSupport(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
     friend NTSTATUS PropertyHandler_UsbHsMicMute(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_A2dpHpJackContainerId(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest,
+        _In_ ULONG                    cJackDescriptions,
+        _In_reads_(cJackDescriptions) PKSJACK_DESCRIPTION * JackDescriptions);
+    friend NTSTATUS PropertyHandler_A2dpHpVolumeLevel_BasicSupport(
+        _In_ PPCPROPERTY_REQUEST      PropertyRequest);
+    friend NTSTATUS PropertyHandler_A2dpHpMute_BasicSupport(
         _In_ PPCPROPERTY_REQUEST      PropertyRequest);
 };
 

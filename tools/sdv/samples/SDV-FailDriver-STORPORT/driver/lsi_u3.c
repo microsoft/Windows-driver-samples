@@ -1243,7 +1243,7 @@ Return Value:
     
     // Enable data phase mismatch processing internal to 1010
     WRITE_SIOP_UCHAR( CCNTL0, CCNTL0_DISABLE_PIPE_REQ + CCNTL0_ENA_PM_JUMP);
-    // Disable 64-bit slave cycles
+    // Disable 64-bit subordinate cycles
     WRITE_SIOP_UCHAR( CCNTL1, 0x10);
     // Set phase mismatch jump registers
     WRITE_SIOP_ULONG( PMJAD1, DeviceExtension->PhaseMisJump1Phys);

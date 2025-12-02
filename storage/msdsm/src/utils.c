@@ -93,10 +93,7 @@ Return Value:
                 Tag));
 
     #pragma warning(suppress: 28118) // False-positive; PoolType is simply passed through
-    Block = ExAllocatePoolWithTag(PoolType, NumberOfBytes, Tag);
-    if (Block) {
-        RtlZeroMemory(Block, NumberOfBytes);
-    }
+    Block = ExAllocatePoolZero(PoolType, NumberOfBytes, Tag);
 
     TracePrint((TRACE_LEVEL_VERBOSE,
                 TRACE_FLAG_GENERAL,
@@ -176,7 +173,7 @@ Return Value:
     if (NT_SUCCESS(status)) {
 
 	#pragma warning(suppress: 6014 28118) // Block isn't leaked, this function is marked as an allocator; PoolType is simply passed through
-        Block = ExAllocatePoolWithTag(PoolType, totalSize, Tag);
+        Block = ExAllocatePoolZero(PoolType, totalSize, Tag);
 
         if (Block != NULL) {
 
@@ -194,7 +191,6 @@ __Exit:
 
     if (NT_SUCCESS(status)) {
 
-        RtlZeroMemory(Block, totalSize);
         *BytesAllocated = totalSize;
     }
 

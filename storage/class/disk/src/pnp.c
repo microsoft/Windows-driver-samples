@@ -281,7 +281,7 @@ Return Value:
     // Allocate request sense buffer.
     //
 
-    fdoExtension->SenseData = ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
+    fdoExtension->SenseData = ExAllocatePool2(POOL_FLAG_NON_PAGED | POOL_FLAG_CACHE_ALIGNED,
                                                     SENSE_BUFFER_SIZE_EX,
                                                     DISK_TAG_START);
 
@@ -642,7 +642,7 @@ Return Value:
             return status;
         }
 
-    *RawName = ExAllocatePoolWithTag(PagedPool,
+    *RawName = ExAllocatePool2(POOL_FLAG_PAGED,
                                      strlen(rawName) + 1,
                                      DISK_TAG_NAME);
 

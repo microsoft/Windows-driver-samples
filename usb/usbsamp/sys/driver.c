@@ -72,7 +72,7 @@ Return Value:
     UsbSamp_DbgPrint(3, ("Built %s %s\n", __DATE__, __TIME__));
 
     //
-    // Initiialize driver config to control the attributes that
+    // Initialize driver config to control the attributes that
     // are global to the driver. Note that framework by default
     // provides a driver unload routine. If you create any resources
     // in the DriverEntry and want to be cleaned in driver unload,

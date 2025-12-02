@@ -68,6 +68,7 @@ BOOL WINAPI DllMain (HINSTANCE hInstance,
 /////////////////////////////////////////////////////////////////////////////
 // Used to determine whether the DLL can be unloaded by OLE
 
+__control_entrypoint(DllExport)
 STDAPI DllCanUnloadNow(void)
 {
 	HRESULT hr;
@@ -85,6 +86,7 @@ STDAPI DllCanUnloadNow(void)
 /////////////////////////////////////////////////////////////////////////////
 // Returns a class factory to create an object of the requested type
 
+_Check_return_
 STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID* ppv)
 {
 	TraceMsg( L"-->DllGetClassObject.\n");

@@ -98,7 +98,7 @@ protected:
     static PDEVICE_OBJECT       m_pDeviceObject;
     static ULONG                m_ulStreamId;
     static ULONG                m_ulOffloadStreamId;
-    static PSAVEWORKER_PARAM    m_pWorkItems;
+    PSAVEWORKER_PARAM           m_pWorkItems;
 
     BOOL                        m_fWriteDisabled;
 
@@ -108,11 +108,11 @@ public:
     CSaveData();
     ~CSaveData();
 
-    static NTSTATUS             InitializeWorkItems
+    NTSTATUS                    InitializeWorkItems
     (
         _In_  PDEVICE_OBJECT    DeviceObject
     );
-    static void                 DestroyWorkItems
+    void                        DestroyWorkItems
     (
         void
     );
@@ -120,7 +120,7 @@ public:
     (
         _In_ BOOL               fDisable
     );
-    static PSAVEWORKER_PARAM    GetNewWorkItem
+    PSAVEWORKER_PARAM           GetNewWorkItem
     (
         void
     );

@@ -292,7 +292,7 @@ STDMETHODIMP CDelayAPOMFX::LockForProcess(UINT32 u32NumInputConnections,
         //
         // A more typical approach would be to allocate the memory using AERT_Allocate, which locks the memory
         // But for the purposes of this APO, CoTaskMemAlloc suffices, and the risk of glitches is not important
-        m_pf32DelayBuffer.Allocate(GetSamplesPerFrame() * m_nDelayFrames);
+        m_pf32DelayBuffer.Allocate((size_t) GetSamplesPerFrame() * m_nDelayFrames);
         WriteSilence(m_pf32DelayBuffer, m_nDelayFrames, GetSamplesPerFrame());
         if (nullptr == m_pf32DelayBuffer)
         {
@@ -430,7 +430,8 @@ HRESULT CDelayAPOMFX::Initialize(UINT32 cbDataSize, BYTE* pbyData)
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_SPEECH         &&
                          processingMode != AUDIO_SIGNALPROCESSINGMODE_MEDIA          &&
-                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE), hr = E_INVALIDARG, Exit);
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_MOVIE          &&
+                         processingMode != AUDIO_SIGNALPROCESSINGMODE_NOTIFICATION), hr = E_INVALIDARG, Exit);
     m_AudioProcessingMode = processingMode;
 
     //
@@ -863,9 +864,9 @@ HRESULT CDelayAPOMFX::ValidateAndCacheConnectionInfo(UINT32 u32NumInputConnectio
     // Set scalars to decrease volume from 1.0 to 1.0/N where N is the number of channels
     // starting with the first channel.
     f32InverseChannelCount = 1.0f/m_u32SamplesPerFrame;
-    for (UINT16 u16Index=0; u16Index<m_u32SamplesPerFrame; u16Index++)
+    for (UINT32 u32Index=0; u32Index<m_u32SamplesPerFrame; u32Index++)
     {
-        m_pf32Coefficients[u16Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u16Index;
+        m_pf32Coefficients[u32Index] = 1.0f - (FLOAT32)(f32InverseChannelCount)*u32Index;
     }
 
     
@@ -905,8 +906,9 @@ DEFINE_GUIDSTRUCT("00000092-0000-0010-8000-00aa00389b71", KSDATAFORMAT_SUBTYPE_A
 CUSTOM_FORMAT_ITEM _rgCustomFormats[] =
 {
     {{ WAVE_FORMAT_EXTENSIBLE, 2, 44100, 176400, 4, 16, sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX), 16, KSAUDIO_SPEAKER_STEREO, KSDATAFORMAT_SUBTYPE_PCM},  L"Custom #1 (really 44.1 KHz, 16-bit, stereo)"},
-    {{ WAVE_FORMAT_EXTENSIBLE, 2, 48000, 192000, 4, 16, sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX), 16, KSAUDIO_SPEAKER_STEREO, KSDATAFORMAT_SUBTYPE_PCM},  L"Custom #2 (really 48 KHz, 16-bit, stereo)"},
-    {{ WAVE_FORMAT_EXTENSIBLE, 2, 48000, 192000, 4, 16, sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX), 16, KSAUDIO_SPEAKER_STEREO, KSDATAFORMAT_SUBTYPE_AC3},  L"Custom #3 (really 48 KHz AC-3)"}
+    {{ WAVE_FORMAT_EXTENSIBLE, 2, 48000, 192000, 4, 16, sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX), 16, KSAUDIO_SPEAKER_STEREO, KSDATAFORMAT_SUBTYPE_PCM},  L"Custom #2 (really 48 KHz, 16-bit, stereo)"}
+    // The compressed AC3 format has been temporarily removed since the APO is not set up for compressed formats or EFXs yet.
+    // {{ WAVE_FORMAT_EXTENSIBLE, 2, 48000, 192000, 4, 16, sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX), 16, KSAUDIO_SPEAKER_STEREO, KSDATAFORMAT_SUBTYPE_AC3},  L"Custom #3 (really 48 KHz AC-3)"}
 };
 
 #define _cCustomFormats (ARRAYSIZE(_rgCustomFormats))
@@ -1028,4 +1030,140 @@ STDMETHODIMP CDelayAPOMFX::GetFormatRepresentation
 
 Exit:
     return hr;
+}
+
+//-------------------------------------------------------------------------
+// Description:
+//
+//  Implementation of IAudioProcessingObject::IsOutputFormatSupported
+//
+// Parameters:
+//
+//      pInputFormat - [in] A pointer to an IAudioMediaType interface. This parameter indicates the output format. This parameter must be set to NULL to indicate that the output format can be any type
+//      pRequestedOutputFormat - [in] A pointer to an IAudioMediaType interface. This parameter indicates the output format that is to be verified
+//      ppSupportedOutputFormat - [in] This parameter indicates the supported output format that is closest to the format to be verified
+//
+// Return values:
+//
+//      S_OK                            Success
+//      S_FALSE                         The format of Input/output format pair is not supported. The ppSupportedOutPutFormat parameter returns a suggested new format
+//      APOERR_FORMAT_NOT_SUPPORTED     The format is not supported. The value of ppSupportedOutputFormat does not change. 
+//      E_POINTER                       Null pointer passed
+//
+// Remarks:
+//
+STDMETHODIMP CDelayAPOMFX::IsOutputFormatSupported
+(
+    IAudioMediaType *pInputFormat, 
+    IAudioMediaType *pRequestedOutputFormat, 
+    IAudioMediaType **ppSupportedOutputFormat
+)
+{
+    ASSERT_NONREALTIME();
+    bool formatChanged = false;
+    HRESULT hResult;
+    UNCOMPRESSEDAUDIOFORMAT uncompOutputFormat;
+    IAudioMediaType *recommendedFormat = NULL;
+
+    IF_TRUE_ACTION_JUMP((NULL == pRequestedOutputFormat) || (NULL == ppSupportedOutputFormat), hResult = E_POINTER, Exit);
+    *ppSupportedOutputFormat = NULL;
+
+    // Initial comparison to make sure the requested format is valid and consistent with the input
+    // format. Because of the APO flags specified during creation, the samples per frame value will
+    // not be validated.
+    hResult = IsFormatTypeSupported(pInputFormat, pRequestedOutputFormat, &recommendedFormat, true);
+    IF_FAILED_JUMP(hResult, Exit);
+
+    // Check to see if a custom format from the APO was used.
+    if (S_FALSE == hResult)
+    {
+        hResult = CheckCustomFormats(pRequestedOutputFormat);
+
+        // If the output format is changed, make sure we track it for our return code.
+        if (S_FALSE == hResult)
+        {
+            formatChanged = true;
+        }
+    }
+
+    // now retrieve the format that IsFormatTypeSupported decided on, building upon that by adding
+    // our channel count constraint.
+    hResult = recommendedFormat->GetUncompressedAudioFormat(&uncompOutputFormat);
+    IF_FAILED_JUMP(hResult, Exit);
+
+    // If the requested format exactly matched our requirements,
+    // just return it.
+    if (!formatChanged)
+    {
+        *ppSupportedOutputFormat = pRequestedOutputFormat;
+        (*ppSupportedOutputFormat)->AddRef();
+        hResult = S_OK;
+    }
+    else // we're proposing something different, copy it and return S_FALSE
+    {
+        hResult = CreateAudioMediaTypeFromUncompressedAudioFormat(&uncompOutputFormat, ppSupportedOutputFormat);
+        IF_FAILED_JUMP(hResult, Exit);
+        hResult = S_FALSE;
+    }
+
+Exit:
+    if (recommendedFormat)
+    {
+        recommendedFormat->Release();
+    }
+
+    return hResult;
+}
+
+HRESULT CDelayAPOMFX::CheckCustomFormats(IAudioMediaType *pRequestedFormat)
+{
+    HRESULT hResult = S_OK;
+
+    for (int i = 0; i < _cCustomFormats; i++)
+    {
+        hResult = S_OK;
+        const WAVEFORMATEX* waveFormat = pRequestedFormat->GetAudioFormat();
+
+        if (waveFormat->wFormatTag != _rgCustomFormats[i].wfxFmt.Format.wFormatTag)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->nChannels != _rgCustomFormats[i].wfxFmt.Format.nChannels)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->nSamplesPerSec != _rgCustomFormats[i].wfxFmt.Format.nSamplesPerSec)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->nAvgBytesPerSec != _rgCustomFormats[i].wfxFmt.Format.nAvgBytesPerSec)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->nBlockAlign != _rgCustomFormats[i].wfxFmt.Format.nBlockAlign)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->wBitsPerSample != _rgCustomFormats[i].wfxFmt.Format.wBitsPerSample)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (waveFormat->cbSize != _rgCustomFormats[i].wfxFmt.Format.cbSize)
+        {
+            hResult = S_FALSE;
+        }
+
+        if (hResult == S_OK)
+        {
+            break;
+        }
+    }
+
+    return hResult;
 }

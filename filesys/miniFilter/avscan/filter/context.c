@@ -21,7 +21,7 @@ Environment:
 //
 //  Local function prototypes.
 //
-    
+
 VOID
 AvStreamContextCleanup (
     _In_ PFLT_CONTEXT Context,
@@ -45,7 +45,7 @@ AvInstanceContextCleanup(
   _In_ PFLT_CONTEXT Context,
   _In_ FLT_CONTEXT_TYPE ContextType
     );
-    
+
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(PAGE, AvCreateStreamContext)
 #pragma alloc_text(PAGE, AvCreateStreamHandleContext)
@@ -59,8 +59,8 @@ AvInstanceContextCleanup(
 #pragma alloc_text(PAGE, AvReferenceScanContext)
 #pragma alloc_text(PAGE, AvReleaseScanContext)
 #endif
-	
-    
+
+
 //
 //  Context registration structure
 //
@@ -78,13 +78,13 @@ const FLT_CONTEXT_REGISTRATION ContextRegistration[] = {
       NULL,
       AV_STREAMHANDLE_CONTEXT_SIZE,
       AV_STREAMHANDLE_CONTEXT_TAG },
-      
+
     { FLT_TRANSACTION_CONTEXT,
       0,
       AvTransactionContextCleanup,
       AV_TRANSACTION_CONTEXT_SIZE,
       AV_TRANSACTION_CONTEXT_TAG },
-      
+
     { FLT_SECTION_CONTEXT,
       0,
       AvSectionContextCleanup,
@@ -96,7 +96,7 @@ const FLT_CONTEXT_REGISTRATION ContextRegistration[] = {
       AvInstanceContextCleanup,
       AV_INSTANCE_CONTEXT_SIZE,
       AV_INSTANCE_CONTEXT_TAG },
-      
+
     { FLT_CONTEXT_END }
 };
 
@@ -110,17 +110,17 @@ AvStreamContextCleanup (
 
 Routine Description:
 
-    This function is called by the filter manager before freeing any of the minifilter 
+    This function is called by the filter manager before freeing any of the minifilter
     driver's contexts of that type.
-    
-    In this routine, the driver has to perform any needed cleanup, such as freeing 
+
+    In this routine, the driver has to perform any needed cleanup, such as freeing
     additional memory that the minifilter driver allocated inside the context structure
-    
+
 Arguments:
 
     Context - Pointer to the minifilter driver's portion of the context.
     ContextType - Supposed to be FLT_STREAM_CONTEXT.
-    
+
 Return Value:
 
     None
@@ -129,12 +129,12 @@ Return Value:
 {
     PAV_STREAM_CONTEXT streamContext = (PAV_STREAM_CONTEXT) Context;
     UNREFERENCED_PARAMETER( ContextType );
-    
+
     PAGED_CODE();
-    
-    FLT_ASSERTMSG( "[AV]: Stream context is not supposed to be in the transaction context list at cleanup.!\n", 
+
+    FLT_ASSERTMSG( "[AV]: Stream context is not supposed to be in the transaction context list at cleanup.!\n",
                    NULL == streamContext->TxContext );
-                   
+
     AvFreeKevent( streamContext->ScanSynchronizationEvent );
 }
 
@@ -147,19 +147,19 @@ AvTransactionContextCleanup (
 
 Routine Description:
 
-    This function is called by the filter manager before freeing any of the minifilter 
+    This function is called by the filter manager before freeing any of the minifilter
     driver's contexts of that type.
-    
-    In this routine, the driver has to perform any needed cleanup, such as freeing 
+
+    In this routine, the driver has to perform any needed cleanup, such as freeing
     additional memory that the minifilter driver allocated inside the context structure
-    
+
     We delete the stream context list in transaction context here.
-    
+
 Arguments:
 
     Context - Pointer to the minifilter driver's portion of the context.
     ContextType - Supposed to be FLT_TRANSACTION_CONTEXT.
-    
+
 Return Value:
 
     None
@@ -167,14 +167,14 @@ Return Value:
 --*/
 {
     PAV_TRANSACTION_CONTEXT transactionContext = (PAV_TRANSACTION_CONTEXT) Context;
-    
+
     UNREFERENCED_PARAMETER( ContextType );
-    
+
     PAGED_CODE();
 
     AV_DBG_PRINT( AVDBG_TRACE_DEBUG,
                     ("[Av]: AvTransactionContextCleanup context cleanup entered.\n") );
-    
+
     ExDeleteResourceLite( transactionContext->Resource );
     AvFreeResource( transactionContext->Resource );
     transactionContext->Resource = NULL;
@@ -191,17 +191,17 @@ AvSectionContextCleanup(
 
 Routine Description:
 
-    This function is called by the filter manager before freeing any of the minifilter 
+    This function is called by the filter manager before freeing any of the minifilter
     driver's contexts of that type.
-    
-    In this routine, the driver has to perform any needed cleanup, such as freeing 
+
+    In this routine, the driver has to perform any needed cleanup, such as freeing
     additional memory that the minifilter driver allocated inside the context structure
-    
+
 Arguments:
 
     Context - Pointer to the minifilter driver's portion of the context.
     ContextType - Supposed to be FLT_SECTION_CONTEXT (win8 or later).
-    
+
 Return Value:
 
     None
@@ -210,14 +210,14 @@ Return Value:
 {
     PAGED_CODE();
 
-    UNREFERENCED_PARAMETER( Context );    
+    UNREFERENCED_PARAMETER( Context );
     UNREFERENCED_PARAMETER( ContextType );
-    
-    FLT_ASSERTMSG( "[AV] AvSectionContextCleanup: Section handle should be NULL at cleanup.\n", 
+
+    FLT_ASSERTMSG( "[AV] AvSectionContextCleanup: Section handle should be NULL at cleanup.\n",
                    ((PAV_SECTION_CONTEXT) Context)->SectionHandle == NULL );
-    FLT_ASSERTMSG( "[AV] AvSectionContextCleanup: Section object should be NULL at cleanup.\n", 
+    FLT_ASSERTMSG( "[AV] AvSectionContextCleanup: Section object should be NULL at cleanup.\n",
                    ((PAV_SECTION_CONTEXT) Context)->SectionObject == NULL );
-    
+
 }
 
 VOID
@@ -229,19 +229,19 @@ AvInstanceContextCleanup(
 
 Routine Description:
 
-    This function is called by the filter manager before freeing any of the minifilter 
+    This function is called by the filter manager before freeing any of the minifilter
     driver's contexts of that type.
-    
-    In this routine, the driver has to perform any needed cleanup, such as freeing 
+
+    In this routine, the driver has to perform any needed cleanup, such as freeing
     additional memory that the minifilter driver allocated inside the context structure.
-    
+
     We delete the cache table if the file system supports one.
-    
+
 Arguments:
 
     Context - Pointer to the minifilter driver's portion of the context.
     ContextType - Supposed to be FLT_INSTANCE_CONTEXT (win8 or later).
-    
+
 Return Value:
 
     None
@@ -253,15 +253,15 @@ Return Value:
 
     UNREFERENCED_PARAMETER( Context );
     UNREFERENCED_PARAMETER( ContextType );
-    
+
     PAGED_CODE();
-    
+
     AV_DBG_PRINT( AVDBG_TRACE_ROUTINES,
                 ( "[Av]: AvInstanceContextCleanup context cleanup entered\n") );
-    
+
     if (FS_SUPPORTS_FILE_STATE_CACHE( instanceContext->VolumeFSType )) {
-    
-        FLT_ASSERTMSG( "[AV] AvInstanceContextCleanup: The generic table should be empty at cleanup.\n", 
+
+        FLT_ASSERTMSG( "[AV] AvInstanceContextCleanup: The generic table should be empty at cleanup.\n",
                         RtlIsGenericTableEmpty( &instanceContext->FileStateCacheTable ) );
         ExDeleteResourceLite( &instanceContext->Resource );
     }
@@ -290,9 +290,9 @@ Return Value:
 {
     NTSTATUS status;
     PAV_STREAMHANDLE_CONTEXT streamHandleContext;
-    
+
     PAGED_CODE();
-        
+
     //
     //  Allocate a streamhandle context
     //
@@ -314,7 +314,7 @@ Return Value:
     //
     //  Initialize the newly created context
     //
-    
+
     RtlZeroMemory(streamHandleContext, AV_STREAMHANDLE_CONTEXT_SIZE);
     *StreamHandleContext = streamHandleContext;
 
@@ -345,20 +345,20 @@ Return Value:
     NTSTATUS status;
     PKEVENT  event = NULL;
     PAV_STREAM_CONTEXT streamContext;
-    
+
     PAGED_CODE();
-    
+
     //
     //  Allocate the kernel event object
     //
-    
+
     event = AvAllocateKevent();
 
     if (NULL == event) {
-    
+
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    
+
     //
     //  Allocate a stream context
     //
@@ -381,10 +381,10 @@ Return Value:
     //
     //  Initialize the newly created context
     //
-    
+
     RtlZeroMemory(streamContext, AV_STREAM_CONTEXT_SIZE);
     streamContext->ScanSynchronizationEvent = event;
-    KeInitializeEvent( streamContext->ScanSynchronizationEvent, SynchronizationEvent, TRUE ); 
+    KeInitializeEvent( streamContext->ScanSynchronizationEvent, SynchronizationEvent, TRUE );
     SET_FILE_MODIFIED( streamContext );
     SET_FILE_TX_MODIFIED( streamContext );
     *StreamContext = streamContext;
@@ -402,61 +402,61 @@ AvFindOrCreateTransactionContext(
 Routine Description
 
     This routine finds the transaction context, if not found, it will
-    try to create a new one. The caller is responsible for calling 
+    try to create a new one. The caller is responsible for calling
     FltReleaseContext to decrement its reference count.
-    
+
 Arguments
 
     FltObjects - Contains parameters required to enlist in a transaction.
-    
+
     TransactionContext - Returns the transaction context
 
 Return value
 
-    Returns STATUS_SUCCESS if we were able to successfully find/create 
+    Returns STATUS_SUCCESS if we were able to successfully find/create
     a transaction context. Returns an appropriate error code on a failure.
-    
+
 --*/
 {
     NTSTATUS status;
     PAV_TRANSACTION_CONTEXT transactionContext = NULL;
     PAV_TRANSACTION_CONTEXT oldTransactionContext = NULL;
     PERESOURCE pResource = NULL;
-    
+
     PAGED_CODE();
-    
+
     AV_DBG_PRINT( AVDBG_TRACE_DEBUG,
                 ("[Av]: AvFindOrCreateTransactionContext entered. \n") );
-    
+
     status = FltGetTransactionContext( FltObjects->Instance,
                                        FltObjects->Transaction,
                                        &transactionContext );
-        
+
     if (NT_SUCCESS( status )) {
-    
+
         *TransactionContext = transactionContext;
         return STATUS_SUCCESS;
     }
-    
+
     if (status != STATUS_NOT_FOUND) {
-        
+
         AV_DBG_PRINT( AVDBG_TRACE_ERROR,
                     ("[AV]: Failed to get transaction context with status 0x%x \n",
                      status) );
         return status;
     }
-    
+
     //
     //  Allocate the resource
     //
-    
+
     pResource = AvAllocateResource();
-    
+
     if ( NULL == pResource ) {
-    
+
         return STATUS_INSUFFICIENT_RESOURCES;
     }
-    
+
     //
     //  Allocate a transaction context.
     //
@@ -475,30 +475,30 @@ Return value
         AvFreeResource( pResource );
         return status;
     }
-    
+
     FLT_ASSERTMSG( "[AV]: Transaction object pointer is not supposed to be NULL !\n", FltObjects->Transaction != NULL);
-    
+
     //
     //  Initialization of transaction context.
-    //  The reason we allocate eResource seperately is because 
+    //  The reason we allocate eResource seperately is because
     //  eResource has to be allocated in the non-paged pool.
     //
-    
+
     RtlZeroMemory(transactionContext, AV_TRANSACTION_CONTEXT_SIZE);
     transactionContext->Resource = pResource;
     ObReferenceObject( FltObjects->Transaction );
     transactionContext->Transaction = FltObjects->Transaction;
     InitializeListHead( &transactionContext->ScListHead );
     ExInitializeResourceLite( transactionContext->Resource );
-    
+
     status = FltSetTransactionContext( FltObjects->Instance,
                                        FltObjects->Transaction,
                                        FLT_SET_CONTEXT_KEEP_IF_EXISTS,
                                        transactionContext,
                                        &oldTransactionContext );
-                                       
+
     if (NT_SUCCESS( status )) {
-    
+
         *TransactionContext = transactionContext;
         return STATUS_SUCCESS;
     }
@@ -513,7 +513,7 @@ Return value
 
         return status;
     }
-    
+
     if (NULL == oldTransactionContext) {
 
         AV_DBG_PRINT( AVDBG_TRACE_ERROR,
@@ -543,9 +543,9 @@ Routine Description:
 Arguments:
 
     Instance - Opaque instance pointer for the caller. This parameter is required and cannot be NULL.
-    
+
     FileObject - File object pointer for the file. This parameter is required and cannot be NULL.
-    
+
     SectionContext - Returns the section context
 
 Return Value:
@@ -557,9 +557,9 @@ Return Value:
     NTSTATUS status;
     LONGLONG fileSize;
     PAV_SECTION_CONTEXT sectionContext = NULL;
-    
+
     PAGED_CODE();
-    
+
     status = FltAllocateContext( Globals.Filter,
                                  FLT_SECTION_CONTEXT,
                                  AV_SECTION_CONTEXT_SIZE,
@@ -574,11 +574,11 @@ Return Value:
     }
 
     RtlZeroMemory(sectionContext, AV_SECTION_CONTEXT_SIZE);
-    
+
     status = AvGetFileSize( Instance,
-                            FileObject, 
+                            FileObject,
                             &fileSize );
-    
+
     if (!NT_SUCCESS( status )) {
 
         AV_DBG_PRINT( AVDBG_TRACE_ERROR,
@@ -590,9 +590,9 @@ Return Value:
 
         sectionContext->FileSize = fileSize;
     }
-    
+
     *SectionContext = sectionContext;
-    
+
     return STATUS_SUCCESS;
 }
 
@@ -611,7 +611,7 @@ Routine Description:
 Arguments:
 
     InstanceArray - This function will allocate the memory of the arrary containing the instances.
-    
+
     NumberInstances - The number of instances in InstanceArray.
 
 Return Value:
@@ -625,8 +625,8 @@ Return Value:
     ULONG i = 0;
     ULONG instCnt = 0;
     ULONG newCount = 0;
-    
-    
+
+
     //
     //  Get a count of how many instances there are
     //
@@ -668,9 +668,9 @@ Return Value:
 
         instCnt += 2;
 
-        instArray = ExAllocatePoolWithTag( PagedPool,
-                                         (instCnt * sizeof(PFLT_INSTANCE)),
-                                          AV_INSTANCES_ARRAY_TAG );
+        instArray = ExAllocatePoolZero( PagedPool,
+                                        (instCnt * sizeof(PFLT_INSTANCE)),
+                                        AV_INSTANCES_ARRAY_TAG );
 
         if (instArray == NULL) {
 
@@ -718,11 +718,11 @@ Return Value:
 
     *InstanceArray = instArray;
     *NumberInstances = instCnt;
-    
+
 Cleanup:
-    
+
     if ( !NT_SUCCESS(status) ) {
-    
+
         if (instArray) {
 
             //
@@ -739,8 +739,8 @@ Cleanup:
             instArray = NULL;
         }
     }
-    
-    
+
+
     return status;
 
 }
@@ -759,7 +759,7 @@ Routine Description:
 Arguments:
 
     InstanceArray -  The instance arrary to be freed.
-    
+
     NumberInstances - The number of instances in InstanceArray.
 
 Return Value:
@@ -769,7 +769,7 @@ Return Value:
 --*/
 {
     ULONG i = 0;
-    
+
     //
     //  Release all the objects in the array
     //
@@ -794,13 +794,13 @@ AvAllocateScanContext(
 Routine Description:
 
     The routine allocates the scan context
-    
+
 Arguments:
 
     Instance - Opaque instance pointer for the caller. This parameter is required and cannot be NULL.
-        
+
     FileObject - File object pointer for the file. This parameter is required and cannot be NULL.
-        
+
     ScanContext - The output scan context.
 
 Return Value:
@@ -818,12 +818,12 @@ Return Value:
     ASSERT(Instance != NULL);
     ASSERT(FileObject != NULL);
 
-    scanCtx = ExAllocatePoolWithTag( NonPagedPoolNx,
-                                     sizeof(AV_SCAN_CONTEXT),
-                                     AV_SCAN_CTX_TAG );
-                           
+    scanCtx = ExAllocatePoolZero( NonPagedPoolNx,
+                                  sizeof(AV_SCAN_CONTEXT),
+                                  AV_SCAN_CTX_TAG );
+
     if (NULL == scanCtx) {
-    
+
         return STATUS_INSUFFICIENT_RESOURCES;
     }
     scanCtx->RefCount = 1;
@@ -846,7 +846,7 @@ Return Value:
     //
     ObReferenceObject( FileObject );
     scanCtx->FileObject = FileObject;
-    
+
     *ScanContext = scanCtx;
     return STATUS_SUCCESS;
 }
@@ -860,7 +860,7 @@ AvReferenceScanContext(
 Routine Description:
 
     The routine increments the reference count of scan context to prevent it from deletion.
-    
+
 Arguments:
 
     ScanContext - The scan context to be added reference.
@@ -873,18 +873,18 @@ Return Value:
 --*/
 {
     PAGED_CODE();
-    
+
     if (ScanContext == NULL) {
-        
+
         return STATUS_INVALID_PARAMETER;
     }
 
     ASSERT(ScanContext->RefCount != 0);
     ASSERT(ScanContext->FilterInstance != NULL);
     ASSERT(ScanContext->FileObject != NULL);
-    
+
     InterlockedIncrement(&ScanContext->RefCount);
-    
+
     return STATUS_SUCCESS;
 }
 
@@ -898,7 +898,7 @@ Routine Description:
 
     The routine decrements the reference count of scan context.
     Release it if reference count goes to zero.
-    
+
 Arguments:
 
     ScanContext - The scan context to be released.
@@ -913,15 +913,15 @@ Return Value:
     ULONG newRefCount = 0;
 
     PAGED_CODE();
-    
+
     if (ScanContext == NULL) {
-        
+
         return STATUS_INVALID_PARAMETER;
     }
 
     ASSERT(ScanContext->FilterInstance != NULL);
     ASSERT(ScanContext->FileObject != NULL);
-    
+
     //
     //  Assume the usage of AvReferenceScanContext and AvReleaseScanContext are not raced,
     //  This simple version would suffice.
@@ -935,7 +935,7 @@ Return Value:
         //
         FltObjectDereference( ScanContext->FilterInstance );
         ObDereferenceObject( ScanContext->FileObject );
-        ExFreePoolWithTag( ScanContext, AV_SCAN_CTX_TAG );  
+        ExFreePoolWithTag( ScanContext, AV_SCAN_CTX_TAG );
     }
     return STATUS_SUCCESS;
 }

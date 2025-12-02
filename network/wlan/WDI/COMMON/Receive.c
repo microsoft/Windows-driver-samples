@@ -76,7 +76,7 @@ ChkValidRFDs(
 	u2Byte		RfdIdx;
 	
 	
-	for(RfdIdx = 0; RfdIdx < Adapter->NumRfd + 1; RfdIdx++)
+	for(RfdIdx = 0; RfdIdx < (u2Byte)(Adapter->NumRfd + 1); RfdIdx++)
 	{
 		if(Adapter->RfdListAddr[RfdIdx] == pRfdAddr)
 			return TRUE;

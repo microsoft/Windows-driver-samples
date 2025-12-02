@@ -296,77 +296,74 @@ EnumerateHostControllers (
     {
         deviceInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
-        success = SetupDiEnumDeviceInterfaces(deviceInfo,
-                                              0,
-                                              (LPGUID)&GUID_CLASS_USB_HOST_CONTROLLER,
-                                              index,
-                                              &deviceInterfaceData);
-
-        if (!success)
+        for (int devInterfaceIndex = 0;
+            SetupDiEnumDeviceInterfaces(deviceInfo,
+                                        &deviceInfoData,
+                                        (LPGUID)&GUID_CLASS_USB_HOST_CONTROLLER,
+                                        devInterfaceIndex,
+                                        &deviceInterfaceData);
+            devInterfaceIndex++)
         {
-            OOPS();
-            break;
+            success = SetupDiGetDeviceInterfaceDetail(deviceInfo,
+                                                      &deviceInterfaceData,
+                                                      NULL,
+                                                      0,
+                                                      &requiredLength,
+                                                      NULL);
+
+            if (!success && GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+            {
+                OOPS();
+                break;
+            }
+
+            deviceDetailData = ALLOC(requiredLength);
+            if (deviceDetailData == NULL)
+            {
+                OOPS();
+                break;
+            }
+
+            deviceDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+
+            success = SetupDiGetDeviceInterfaceDetail(deviceInfo,
+                                                      &deviceInterfaceData,
+                                                      deviceDetailData,
+                                                      requiredLength,
+                                                      &requiredLength,
+                                                      NULL);
+
+            if (!success)
+            {
+                OOPS();
+                break;
+            }
+
+            hHCDev = CreateFile(deviceDetailData->DevicePath,
+                                GENERIC_WRITE,
+                                FILE_SHARE_WRITE,
+                                NULL,
+                                OPEN_EXISTING,
+                                0,
+                                NULL);
+
+            // If the handle is valid, then we've successfully opened a Host
+            // Controller.  Display some info about the Host Controller itself,
+            // then enumerate the Root Hub attached to the Host Controller.
+            //
+            if (hHCDev != INVALID_HANDLE_VALUE)
+            {
+                EnumerateHostController(hTreeParent,
+                                        hHCDev,
+                                        deviceDetailData->DevicePath,
+                                        deviceInfo,
+                                        &deviceInfoData);
+
+                CloseHandle(hHCDev);
+            }
+
+            FREE(deviceDetailData);
         }
-
-        success = SetupDiGetDeviceInterfaceDetail(deviceInfo,
-                                                  &deviceInterfaceData,
-                                                  NULL,
-                                                  0,
-                                                  &requiredLength,
-                                                  NULL);
-
-        if (!success && GetLastError() != ERROR_INSUFFICIENT_BUFFER)
-        {
-            OOPS();
-            break;
-        }
-
-        deviceDetailData = ALLOC(requiredLength);
-        if (deviceDetailData == NULL)
-        {
-            OOPS();
-            break;
-        }
-
-        deviceDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
-
-        success = SetupDiGetDeviceInterfaceDetail(deviceInfo,
-                                                  &deviceInterfaceData,
-                                                  deviceDetailData,
-                                                  requiredLength,
-                                                  &requiredLength,
-                                                  NULL);
-
-        if (!success)
-        {
-            OOPS();
-            break;
-        }
-
-        hHCDev = CreateFile(deviceDetailData->DevicePath,
-                            GENERIC_WRITE,
-                            FILE_SHARE_WRITE,
-                            NULL,
-                            OPEN_EXISTING,
-                            0,
-                            NULL);
-
-        // If the handle is valid, then we've successfully opened a Host
-        // Controller.  Display some info about the Host Controller itself,
-        // then enumerate the Root Hub attached to the Host Controller.
-        //
-        if (hHCDev != INVALID_HANDLE_VALUE)
-        {
-            EnumerateHostController(hTreeParent,
-                                    hHCDev,
-                                    deviceDetailData->DevicePath,
-                                    deviceInfo,
-                                    &deviceInfoData);
-
-            CloseHandle(hHCDev);
-        }
-
-        FREE(deviceDetailData);
     }
 
     SetupDiDestroyDeviceInfoList(deviceInfo);

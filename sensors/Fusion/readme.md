@@ -1,11 +1,12 @@
-<!---
-    name: Fusion Sensor Driver Sample
-    platform: UMDF2
-    language: cpp
-    category: Sensors
-    description: Demonstrates how to write a UMDF v2 driver to control a virtual FusionSensor sensor.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=856914
---->
+---
+page_type: sample
+description: "Demonstrates how to write a UMDF v2 driver to control a virtual FusionSensor sensor."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
 # Fusion Sensor Driver Sample
 

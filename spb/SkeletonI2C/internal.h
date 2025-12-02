@@ -92,8 +92,8 @@ typedef struct _PNP_I2C_SERIAL_BUS_DESCRIPTOR {
 #define MONITOR_POWER_ON         1
 #define MONITOR_POWER_OFF        0
 
-#define IDLE_TIMEOUT_MONITOR_ON  2000
-#define IDLE_TIMEOUT_MONITOR_OFF 50
+#define IDLE_TIMEOUT_MONITOR_ON  1000
+#define IDLE_TIMEOUT_MONITOR_OFF 100
 
 //
 // Target settings.

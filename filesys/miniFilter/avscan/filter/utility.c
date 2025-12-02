@@ -67,13 +67,13 @@ Return Value:
     //
 
     if (lhs->FileId.FileId64.Value < rhs->FileId.FileId64.Value) {
-        
+
         return GenericLessThan;
 
     } else if (lhs->FileId.FileId64.Value > rhs->FileId.FileId64.Value) {
-        
+
         return GenericGreaterThan;
-    
+
     } else if (lhs->FileId.FileId64.UpperZeroes < rhs->FileId.FileId64.UpperZeroes) {
 
         return GenericLessThan;
@@ -114,7 +114,7 @@ Return Value:
 
     UNREFERENCED_PARAMETER (Table);
 
-    return ExAllocatePoolWithTag(PagedPool, ByteSize, AV_TABLE_ENTRY_TAG);
+    return ExAllocatePoolZero( PagedPool, ByteSize, AV_TABLE_ENTRY_TAG );
 }
 
 VOID
@@ -167,7 +167,7 @@ Routine Description:
 Arguments:
 
     Instance - Opaque filter pointer for the caller. This parameter is required and cannot be NULL.
-    
+
     FileObject - File object pointer for the file. This parameter is required and cannot be NULL.
 
     pFileId - Pointer to file id. This is the output
@@ -242,7 +242,7 @@ Routine Description:
 Arguments:
 
     Instance - Opaque filter pointer for the caller. This parameter is required and cannot be NULL.
-    
+
     FileObject - File object pointer for the file. This parameter is required and cannot be NULL.
 
     Size - Pointer to a LONGLONG indicating the file size. This is the output.
@@ -290,7 +290,7 @@ Routine Description:
 Arguments:
 
     Instance - Opaque filter pointer for the caller. This parameter is required and cannot be NULL.
-    
+
     FileObject - File object pointer for the file. This parameter is required and cannot be NULL.
 
     Encrypted - Pointer to a boolean indicating if this file is encrypted or not. This is the output.

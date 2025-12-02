@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0
@@ -25,10 +25,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mspassthroughext", "samples
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{116389EB-9596-42A0-9C05-66DBD2A62363}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{116389EB-9596-42A0-9C05-66DBD2A62363}.Debug|ARM64.Build.0 = Debug|ARM64
+		{86E5643E-4462-4EDC-A315-07C2D260C5AD}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{86E5643E-4462-4EDC-A315-07C2D260C5AD}.Debug|ARM64.Build.0 = Debug|ARM64
+		{C0A48ACA-3961-4E93-B2B4-4D27E0106A3B}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{C0A48ACA-3961-4E93-B2B4-4D27E0106A3B}.Debug|ARM64.Build.0 = Debug|ARM64
+		{116389EB-9596-42A0-9C05-66DBD2A62363}.Release|ARM64.ActiveCfg = Release|ARM64
+		{116389EB-9596-42A0-9C05-66DBD2A62363}.Release|ARM64.Build.0 = Release|ARM64
+		{86E5643E-4462-4EDC-A315-07C2D260C5AD}.Release|ARM64.ActiveCfg = Release|ARM64
+		{86E5643E-4462-4EDC-A315-07C2D260C5AD}.Release|ARM64.Build.0 = Release|ARM64
+		{C0A48ACA-3961-4E93-B2B4-4D27E0106A3B}.Release|ARM64.ActiveCfg = Release|ARM64
+		{C0A48ACA-3961-4E93-B2B4-4D27E0106A3B}.Release|ARM64.Build.0 = Release|ARM64
 		{116389EB-9596-42A0-9C05-66DBD2A62363}.Debug|x64.ActiveCfg = Debug|x64
 		{116389EB-9596-42A0-9C05-66DBD2A62363}.Debug|x64.Build.0 = Debug|x64
 		{116389EB-9596-42A0-9C05-66DBD2A62363}.Release|x64.ActiveCfg = Release|x64

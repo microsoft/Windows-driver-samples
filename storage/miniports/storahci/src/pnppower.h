@@ -41,6 +41,8 @@ Revision History:
 #define ACPI_METHOD_DSM_LINKPOWER_REMOVE_POWER          0x00
 #define ACPI_METHOD_DSM_LINKPOWER_APPLY_POWER           0x01
 
+#define AHCI_DEVICE_IO_COALESCING_IDLE_TIMEOUT_MS       (1000) // 1s by default
+
 //
 // When waiting for the link to change power states, don't wait more
 // than 100 microseconds.
@@ -130,7 +132,6 @@ AhciPortAcpiDSMControl(
     _In_ BOOLEAN                 Sleep
   );
 
-
 VOID
 IssuePreservedSettingCommands(
     _In_ PAHCI_CHANNEL_EXTENSION    ChannelExtension,
@@ -178,4 +179,3 @@ AhciLpmSettingsModes(
 #pragma warning(default:4214)
 #pragma warning(default:4201)
 #endif
-

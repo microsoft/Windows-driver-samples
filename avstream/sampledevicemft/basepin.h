@@ -369,7 +369,7 @@ public:
     __requires_lock_held(m_lock)
         __inline HRESULT Active()
     {
-        return (m_state == DeviceStreamState_Run)?S_OK:E_FAIL;
+        return (m_state == DeviceStreamState_Run)?S_OK:HRESULT_FROM_WIN32(ERROR_INVALID_STATE);
     }
     __inline DWORD streamId()
     {
@@ -458,10 +458,10 @@ private:
 class CInPin: public CBasePin{
 public:
     CInPin( _In_opt_ IMFAttributes*, _In_ ULONG ulPinId = 0, _In_ CMultipinMft *pParent=NULL);
-    ~CInPin();
+    virtual ~CInPin();
 
     STDMETHOD ( Init )(
-        _In_ IMFTransform * 
+        _In_ IMFDeviceTransform * 
         );
     STDMETHOD_( VOID, ConnectPin)(
         _In_ CBasePin * 
@@ -511,25 +511,37 @@ public:
         return m_preferredStreamState;
     }
 
-    void ReleaseConnectedPins();
+    STDMETHOD_( VOID, ShutdownPin)();
 
 protected:
-    ComPtr<IMFTransform>        m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
+    ComPtr<IMFDeviceTransform>  m_spSourceTransform;  /*Source Transform i.e. DevProxy*/
     GUID                        m_stStreamType;      /*GUID representing the GUID*/
     ComPtr<CBasePin>            m_outpin;            //Only one output pin connected per input pin. There can be multiple pins connected and this could be a list   
     DeviceStreamState           m_preferredStreamState;
     ComPtr<IMFMediaType>        m_spPrefferedMediaType;
     HANDLE                      m_waitInputMediaTypeWaiter; /*Set when the input media type is changed*/
+
+    //  Helper functions
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    HRESULT ForwardSecureBuffer(
+        _In_    IMFSample *sample
+    );
+#endif
 };
 
 
 
 class COutPin: public CBasePin{
 public:
-    COutPin( _In_ ULONG         id = 0,
+    COutPin(
+        _In_ ULONG         id = 0,
         _In_opt_  CMultipinMft *pparent = NULL,
-         _In_     IKsControl*   iksControl=NULL);
-    ~COutPin();
+        _In_     IKsControl*   iksControl=NULL
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+        , _In_     MFSampleAllocatorUsage allocatorUsage = MFSampleAllocatorUsage_DoesNotAllocate
+#endif
+    );
+    virtual ~COutPin();
     STDMETHODIMP FlushQueues();
     STDMETHODIMP AddPin(
         _In_ DWORD pinId
@@ -541,7 +553,7 @@ public:
     STDMETHODIMP GetOutputStreamInfo(
         _Out_  MFT_OUTPUT_STREAM_INFO *pStreamInfo
         );
-    STDMETHODIMP ChangeMediaTypeFromInpin(
+    virtual STDMETHODIMP ChangeMediaTypeFromInpin(
         _In_ IMFMediaType *pInMediatype,
         _In_ IMFMediaType* pOutMediaType,
         _In_ DeviceStreamState state );
@@ -560,6 +572,16 @@ public:
     STDMETHODIMP_(VOID) SetFirstSample(
         _In_    BOOL 
         );
+
+    STDMETHODIMP_(VOID) SetAllocator(
+        _In_    IMFVideoSampleAllocator* pAllocator
+    );
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    MFSampleAllocatorUsage GetSampleAllocatorUsage()
+    {
+        return m_allocatorUsage;
+    }
+#endif
     UINT32 GetMediatypeCount()
     {
         return (UINT32)m_listOfMediaTypes.size();
@@ -568,13 +590,17 @@ public:
 protected:
     CPinQueue *               m_queue;           /* Queue where the sample will be stored*/
     BOOL                      m_firstSample;
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+    MFSampleAllocatorUsage    m_allocatorUsage;
+#endif
+    wil::com_ptr_nothrow<IMFVideoSampleAllocator> m_spDefaultAllocator;
+
 };
 
 
 class CAsyncInPin: public CInPin {
 public:
 
-    STDMETHODIMP FlushQueues();
     STDMETHODIMP SendSample(
         _In_ IMFSample *
         );
@@ -587,30 +613,19 @@ public:
         _In_ ULONG ulPinId,
         _In_ CMultipinMft *pParent) : CInPin(pAttributes,
             ulPinId, pParent)
-        , m_dwSamplesInFlight(0)
-        , m_hHandle(INVALID_HANDLE_VALUE)
-        , m_bFlushing(FALSE)
         , m_asyncCallback(nullptr)
 
     {
-        m_hHandle = CreateEvent(NULL, TRUE, TRUE, L"Async_Pin Event");
-        if (m_hHandle == nullptr)
-            throw bad_alloc();
         Init();
-       
     }
-    ~CAsyncInPin()
+    STDMETHOD_(VOID, ShutdownPin)();
+    virtual ~CAsyncInPin()
     {
         FlushQueues();
-        CloseHandle(m_hHandle);
-        m_hHandle = INVALID_HANDLE_VALUE;
     }
 
 
     ComPtr<CDMFTAsyncCallback<CAsyncInPin,&CAsyncInPin::Invoke> >  m_asyncCallback;   // Callback object
-    HANDLE              m_hHandle;              // Handles to keep flush state
-    DWORD               m_dwSamplesInFlight;    // Samples in flight i.e. waiting for the callback functions to be called
-    BOOL                m_bFlushing;
     ////////////////////////////////////////////////////////////////////////////////////////
     // End of Asynchronous callback definitions
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -623,12 +638,27 @@ class CTranslateOutPin : public COutPin {
         MFVideoFormat_H264,
         MFVideoFormat_MJPG
     };
-    // @@@@README : This is what the compressed media types will be translated into
+
+    // @@@@README 
+    // If you translate to YUY2 in D3D mode it is a suboptimal path, because the 
+    // pipeline i.e. Frameserver will lock the surface into a staging buffer and 
+    // map it to the client process like Teams, Camera App etc.
+    // Ideally when translating to YUY2, don't pass the D3D Manager to the 
+    // Decoder (CDecoderTee) or the Video Processor (CXVPTee). The pipeline will
+    // shove the system buffer back into the DX surface on the client side, if the App
+    // demands DX surfaces. NV12 is sharable from frameserver to clients and hence
+    // the preferred format to decode into.
+    // The below subtype is what the compressed media types will be translated into.
     const GUID translatedGUID = MFVideoFormat_NV12; // Translating to NV12
 public:
     CTranslateOutPin(_In_ ULONG         id = 0,
         _In_opt_  CMultipinMft *pparent = NULL,
-        _In_     IKsControl*   iksControl = NULL) : COutPin(id, pparent, iksControl)
+        _In_     IKsControl*   iksControl = NULL)
+        : COutPin(id, pparent, iksControl
+#if ((defined NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB))
+            , MFSampleAllocatorUsage_UsesCustomAllocator
+#endif
+        )
     {
         SetUINT32(MF_SD_VIDEO_SPHERICAL, TRUE);
     }
@@ -639,8 +669,14 @@ public:
         _In_ IMFMediaType *pMediaType,
         _When_(ppIMFMediaTypeFull != nullptr, _Outptr_result_maybenull_)
         IMFMediaType **ppIMFMediaTypeFull);
+    STDMETHOD(ChangeMediaTypeFromInpin)(
+        _In_ IMFMediaType *pInMediatype,
+        _In_ IMFMediaType* pOutMediaType,
+        _In_ DeviceStreamState state);
+    virtual ~CTranslateOutPin() {}
 protected:
 
-    map<IMFMediaType*, IMFMediaType*> m_TranslatedMediaTypes;
+    map<ComPtr<IMFMediaType>, ComPtr<IMFMediaType>> m_TranslatedMediaTypes;
 };
+
 

@@ -84,8 +84,8 @@ Return Value:
     BOOLEAN Single = BooleanFlagOn( Data->Iopb->OperationFlags, SL_RETURN_SINGLE_ENTRY );
     BOOLEAN IgnoreCase = !BooleanFlagOn( FltObjects->FileObject->Flags,
                                          FO_OPENED_CASE_SENSITIVE );
-    
-    FILE_INFORMATION_CLASS InformationClass = 
+
+    FILE_INFORMATION_CLASS InformationClass =
         Data->Iopb->Parameters.DirectoryControl.QueryDirectory.FileInformationClass;
 
     PVOID UserBuffer;
@@ -141,7 +141,7 @@ Return Value:
                                        NULL,
                                        NULL,
                                        FLT_FILE_NAME_OPENED | FLT_FILE_NAME_QUERY_DEFAULT,
-                                       &FileNameInformation ); 
+                                       &FileNameInformation );
 
     if (!NT_SUCCESS( Status )) {
 
@@ -207,7 +207,7 @@ Return Value:
     //
     //  Before looking at the context, we have to acquire the lock.
     //
-    
+
     NcLockStreamHandleContext( HandleContext );
     Unlock = TRUE;
 
@@ -239,7 +239,7 @@ Return Value:
     //
     //  Now we need to initialize or clear the cache and query options.
     //
-    
+
     Status = NcStreamHandleContextEnumSetup( DirCtx,
                                              InstanceContext,
                                              &Offsets,
@@ -314,9 +314,9 @@ Return Value:
             break;
         }
 
-        if (NcSkipName( &Offsets, 
-                        DirCtx, 
-                        RealOverlap, 
+        if (NcSkipName( &Offsets,
+                        DirCtx,
+                        RealOverlap,
                         &InstanceContext->Mapping,
                         IgnoreCase )) {
 
@@ -357,7 +357,7 @@ Return Value:
 
         }// end of "we are copying entry"
 
-    } while (MoreRoom && 
+    } while (MoreRoom &&
              (Single ? (NumEntriesCopied < 1) : TRUE));
 
     if (NumEntriesCopied > 0) {
@@ -370,7 +370,7 @@ Return Value:
         try {
 
             NcSetNextEntryOffset( Add2Ptr(UserBuffer, LastEntryStart),
-                                  &Offsets, 
+                                  &Offsets,
                                   TRUE );
 
         } except (NcExceptionFilter( GetExceptionInformation(), TRUE )) {
@@ -409,32 +409,32 @@ Return Value:
 NcEnumerateDirectoryCleanup:
 
     if (ReturnValue == FLT_PREOP_COMPLETE) {
- 
+
         //
         //  We need to write back results of query.
         //
- 
+
         Data->IoStatus.Status = Status;
- 
+
         if (NT_SUCCESS( Status )) {
- 
+
             //success
             Data->IoStatus.Information = UserBufferOffset;
 
         } else {
- 
+
             //failure
             Data->IoStatus.Information = 0;
         }
     }
- 
+
     if (InstanceContext != NULL) {
 
         FltReleaseContext( InstanceContext );
     }
- 
+
     if (DirCtx != NULL) {
-        
+
         if (!Unlock) {
             NcLockStreamHandleContext( HandleContext );
             Unlock = TRUE;
@@ -450,16 +450,16 @@ NcEnumerateDirectoryCleanup:
     }
 
     FLT_ASSERT( !Unlock );
- 
+
     if (FileNameInformation != NULL) {
 
         FltReleaseFileNameInformation( FileNameInformation );
     }
- 
+
     return ReturnValue;
 }
 
-NTSTATUS 
+NTSTATUS
 NcEnumerateDirectorySetupInjection (
     _Inout_ PNC_DIR_QRY_CONTEXT DirQryCtx,
     _In_ PCFLT_RELATED_OBJECTS FltObjects,
@@ -479,7 +479,7 @@ Arguments:
     DirQryCtx - Pointer to directory query context (on the stream handle.)
 
     FltObjects - FltObjects structure for this operation.
-    
+
     InstanceContext - Instance Context for this operation.
 
     Offsets - Offsets structure for this information class.
@@ -566,7 +566,7 @@ Return Value:
                                  0,                                    // EA Length
                                  IO_IGNORE_SHARE_ACCESS_CHECK,         // Flags
                                  FltObjects->FileObject );             // Transaction state
-   
+
     if (!NT_SUCCESS( Status )) {
 
         goto NcEnumerateDirectorySetupCleanup;
@@ -581,7 +581,7 @@ Return Value:
 
     QueryBufferLength = Offsets->FileNameDist + NameLength;
 
-    QueryBuffer = ExAllocatePoolWithTag( PagedPool, QueryBufferLength, NC_DIR_QRY_CACHE_TAG );
+    QueryBuffer = ExAllocatePoolZero( PagedPool, QueryBufferLength, NC_DIR_QRY_CACHE_TAG );
 
     if (QueryBuffer == NULL) {
 
@@ -625,7 +625,7 @@ Return Value:
         //
 
         goto NcEnumerateDirectorySetupCleanup;
-        
+
     } else {
 
         //
@@ -680,7 +680,7 @@ NcEnumerateDirectorySetupCleanup:
 
 VOID
 NcEnumerateDirectoryReset (
-    _Inout_ PNC_DIR_QRY_CONTEXT DirCtx 
+    _Inout_ PNC_DIR_QRY_CONTEXT DirCtx
     )
 /*++
 
@@ -713,7 +713,7 @@ Return Value:
 BOOLEAN
 NcSkipName (
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
-    _In_ PNC_DIR_QRY_CONTEXT Context, 
+    _In_ PNC_DIR_QRY_CONTEXT Context,
     _In_ NC_PATH_OVERLAP RealOverlap,
     _In_ PNC_MAPPING Mapping,
     _In_ BOOLEAN IgnoreCase
@@ -767,7 +767,7 @@ Return Value:
         CacheString.MaximumLength = CacheString.Length;
 
 
-        if (RtlCompareUnicodeString( &CacheString, 
+        if (RtlCompareUnicodeString( &CacheString,
                                      IgnoreString,
                                      IgnoreCase ) == 0) {
 
@@ -799,7 +799,7 @@ Return Value:
 
                 Context->Cache.CurrentOffset += ElementSize;
             }
-        } 
+        }
     }
 
     return Result;
@@ -864,7 +864,7 @@ Return Value:
         SearchString = NULL;
     }
 
-    Buffer = ExAllocatePoolWithTag( PagedPool, BufferLength, NC_DIR_QRY_CACHE_TAG );
+    Buffer = ExAllocatePoolZero( PagedPool, BufferLength, NC_DIR_QRY_CACHE_TAG );
 
     if (Buffer == NULL) {
 
@@ -917,8 +917,8 @@ Return Value:
 }
 
 PNC_CACHE_ENTRY
-NcDirEnumSelectNextEntry( 
-    _Inout_ PNC_DIR_QRY_CONTEXT Context, 
+NcDirEnumSelectNextEntry(
+    _Inout_ PNC_DIR_QRY_CONTEXT Context,
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
     _In_ BOOLEAN IgnoreCase
     )
@@ -957,7 +957,7 @@ Return Value:
     //  Figure out which name comes first
     //
 
-    if ((Context->Cache.Buffer == NULL) && 
+    if ((Context->Cache.Buffer == NULL) &&
         (Context->InjectionEntry.Buffer == NULL)) {
 
         //
@@ -1037,7 +1037,7 @@ NcCopyDirEnumEntry (
     _In_ ULONG UserSize,
     _Inout_ PNC_CACHE_ENTRY Entry,
     _In_ PDIRECTORY_CONTROL_OFFSETS Offsets,
-    _Out_ PBOOLEAN Copied 
+    _Out_ PBOOLEAN Copied
     )
 /*++
 
@@ -1128,8 +1128,8 @@ Return Value:
     return UserOffset;
 }
 
-NTSTATUS 
-NcStreamHandleContextDirEnumCreate ( 
+NTSTATUS
+NcStreamHandleContextDirEnumCreate (
     _Out_ PNC_DIR_QRY_CONTEXT Context
     )
 /*++
@@ -1220,10 +1220,10 @@ Return Value:
     PAGED_CODE();
 
     //
-    //  This context could be in its first use. If it is, then we need to 
-    //  setup the search string and information class. 
+    //  This context could be in its first use. If it is, then we need to
+    //  setup the search string and information class.
     //
-    
+
     if (DirContext->InUse == FALSE) {
 
         //
@@ -1233,16 +1233,16 @@ Return Value:
 
         if (SearchString != NULL) {
 
-            DirContext->SearchString.Buffer = ExAllocatePoolWithTag( PagedPool,
-                                                                     SearchString->Length,
-                                                                     NC_DIR_QRY_SEARCH_STRING );
+            DirContext->SearchString.Buffer = ExAllocatePoolZero( PagedPool,
+                                                                  SearchString->Length,
+                                                                  NC_DIR_QRY_SEARCH_STRING );
 
             if (DirContext->SearchString.Buffer == NULL) {
 
                 Status = STATUS_INSUFFICIENT_RESOURCES;
                 goto NcStreamHandleContextEnumSetupCleanup;
             }
-            
+
             DirContext->SearchString.MaximumLength = SearchString->Length;
 
             if (IgnoreCase) {
@@ -1280,7 +1280,7 @@ Return Value:
         *FirstUsage = FALSE;
 
         //
-        //  This is not the first query. Lets make sure that our data 
+        //  This is not the first query. Lets make sure that our data
         //  is consistent. If the information classes don't line up
         //  then our cache might be inconsistant. We should fail this
         //  operation.
@@ -1299,12 +1299,12 @@ Return Value:
 
         //
         //  Either this is the first use of the context,
-        //  or they are reseting the enumeration. We 
+        //  or they are reseting the enumeration. We
         //  should clear the cache either way.
         //
 
         if (DirContext->Cache.Buffer != NULL) {
-            
+
             ExFreePoolWithTag( DirContext->Cache.Buffer, NC_TAG );
             DirContext->Cache.Buffer = NULL;
             DirContext->Cache.CurrentOffset = 0;
@@ -1330,19 +1330,19 @@ Return Value:
                                                          FltObjects,
                                                          InstanceContext,
                                                          Offsets,
-                                                         InformationClass ); 
+                                                         InformationClass );
             if (!NT_SUCCESS( Status )) {
-                
+
                 goto NcStreamHandleContextEnumSetupCleanup;
             }
         }
     }
 
-    // 
+    //
     //  Now we know that the entry is setup.
     //  Mark it as in use.
     //
-    
+
     DirContext->InUse = TRUE;
     Status = STATUS_SUCCESS;
 
@@ -1370,9 +1370,9 @@ NcStreamHandleContextEnumSetupCleanup:
     return Status;
 }
 
-VOID 
+VOID
 NcStreamHandleContextEnumClose (
-    _In_ PNC_DIR_QRY_CONTEXT DirContext 
+    _In_ PNC_DIR_QRY_CONTEXT DirContext
     )
 /*++
 

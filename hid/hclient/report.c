@@ -513,7 +513,7 @@ Routine Description:
     ULONG       i;
     ULONG       CurrReportID;
     BOOLEAN     result = FALSE;
-
+    PHID_DATA   Head = Data;
     /*
     // All report buffers that are initially sent need to be zero'd out
     */
@@ -584,6 +584,7 @@ Routine Description:
     //    having been set.
     */
 
+    Data = Head;
     for (i = 0; i < DataLength; i++, Data++) 
     {
         if (CurrReportID == Data -> ReportID)

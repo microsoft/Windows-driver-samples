@@ -942,7 +942,7 @@ NullSSID(
 	)
 {
 	OCTET_STRING	ssIdBeacon;
-	u1Byte			i;
+	u2Byte			i;
 	BOOLEAN			athHdnAP;	//sean,20030410, fix for linksys BEFW11S4
 
 //	ssIdBeacon = PacketGetElement( bcnPkt, EID_SsId );		// Rewrited for new added parameter. Annie, 2005-11-08.

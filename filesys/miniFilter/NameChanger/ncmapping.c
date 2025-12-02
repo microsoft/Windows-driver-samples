@@ -99,7 +99,7 @@ NcIsMappingPathZeroed(
     if (Path->VolumePath.Buffer != NULL ||
         Path->VolumePath.Length != 0 ||
         Path->VolumePath.MaximumLength != 0) {
-    
+
         return FALSE;
     }
 
@@ -133,7 +133,7 @@ NcInitMappingPath (
     )
 /*++
 
-Routine Description: 
+Routine Description:
 
     Routine to initialize a mapping path.
 
@@ -162,11 +162,11 @@ Routine Description:
     Frees the allocations in a NC_MAPPING_PATH.
 
 Arguments:
-    
+
     Path - The mapping which you want to clean up.
 
 Return Value:
-    
+
     None.
 
 --*/
@@ -203,7 +203,7 @@ Routine Description:
 
 Arguments:
 
-    VolumeName - Name of the volume. 
+    VolumeName - Name of the volume.
 
     ParentPath - string for the parent of mapping.
 
@@ -257,9 +257,9 @@ Return Value:
 
     NameLength = VolumeName->Length + ParentPath->Length + SeparatorLength + FinalComponent->Length;
 
-    NameBuffer = ExAllocatePoolWithTag( PagedPool,
-                                        NameLength,
-                                        NC_MAPPING_TAG );
+    NameBuffer = ExAllocatePoolZero( PagedPool,
+                                     NameLength,
+                                     NC_MAPPING_TAG );
 
     if (NameBuffer == NULL) {
 
@@ -292,7 +292,7 @@ Return Value:
     //
 
     if (SeparatorLength != 0) {
-        
+
         NameString.Buffer[NameString.Length/SeparatorLength] = NC_SEPARATOR;
         NameString.Length = NameString.Length + SeparatorLength;
         FLT_ASSERT( NameString.Length <= NameString.MaximumLength );
@@ -317,11 +317,11 @@ Return Value:
     Path->VolumePath.MaximumLength = VolumeName->Length;
 
     Path->ParentPath.Buffer = NameString.Buffer;
-    Path->ParentPath.Length = SeparatorLength == sizeof(WCHAR) ? 
-        VolumeName->Length+ParentPath->Length : 
+    Path->ParentPath.Length = SeparatorLength == sizeof(WCHAR) ?
+        VolumeName->Length+ParentPath->Length :
         VolumeName->Length+ParentPath->Length-sizeof(WCHAR);
-    Path->ParentPath.MaximumLength = SeparatorLength == sizeof(WCHAR) ? 
-        VolumeName->Length+ParentPath->Length : 
+    Path->ParentPath.MaximumLength = SeparatorLength == sizeof(WCHAR) ?
+        VolumeName->Length+ParentPath->Length :
         VolumeName->Length+ParentPath->Length-sizeof(WCHAR);
 
     Path->FinalComponentName.Buffer = (PWSTR)Add2Ptr( NameString.Buffer,
@@ -355,7 +355,7 @@ Return Value:
     //
     //  We reached the end without incident.
     //
-     
+
     Status = STATUS_SUCCESS;
 
 NcBuildMappingPathCleanup:
@@ -421,7 +421,7 @@ Return Value:
     if (!NT_SUCCESS( Status ) && Status != STATUS_BUFFER_TOO_SMALL) {
 
         goto NcBuildPathCleanup;
-    } 
+    }
 
     //
     //  Allocate a buffer for the name.
@@ -429,9 +429,9 @@ Return Value:
 
     Status = STATUS_SUCCESS;
 
-    VolumeNameBuffer = ExAllocatePoolWithTag( PagedPool,
-                                              VolumeNameLength,
-                                              NC_MAPPING_TAG );
+    VolumeNameBuffer = ExAllocatePoolZero( PagedPool,
+                                           VolumeNameLength,
+                                           NC_MAPPING_TAG );
 
     if (VolumeNameBuffer == NULL) {
 
@@ -509,7 +509,7 @@ Arguments:
 
     Path - Pointer to a user allocated NC_MAPPING_PATH which will be populated.
 
-Return Value 
+Return Value
 
     On success, returns STATUS_SUCCESS, otherwise returns an error code.
 
@@ -538,7 +538,7 @@ Return Value
     //  Get File parent's name info.
     //
 
-    Status = NcGetFileNameInformation( NULL, 
+    Status = NcGetFileNameInformation( NULL,
                                        Parent,
                                        Instance,
                                        NameFlags,
@@ -557,7 +557,7 @@ Return Value
     }
 
 
-    FLT_ASSERT( ParentNameInfo->Format == FLT_FILE_NAME_NORMALIZED || 
+    FLT_ASSERT( ParentNameInfo->Format == FLT_FILE_NAME_NORMALIZED ||
                 ParentNameInfo->Format == FLT_FILE_NAME_OPENED );
 
 
@@ -685,7 +685,7 @@ NcInitMapping (
 }
 
 VOID
-NcTeardownMapping ( 
+NcTeardownMapping (
     _Inout_ PNC_MAPPING Mapping
     )
 {

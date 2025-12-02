@@ -77,7 +77,7 @@ Return Value:
     KdPrint(("ToastMon Driver Sample - Driver Framework Edition.\n"));
 
     //
-    // Initiialize driver config to control the attributes that
+    // Initialize driver config to control the attributes that
     // are global to the driver. Note that framework by default
     // provides a driver unload routine. If you create any resources
     // in the DriverEntry and want to be cleaned in driver unload,
@@ -334,7 +334,11 @@ Routine Description:
     for (i = 0; i < count; i ++) {
 
         ioTarget = WdfCollectionGetItem(deviceExtension->TargetDeviceCollection, i);
-        WdfIoTargetStart(ioTarget);
+        NTSTATUS status = WdfIoTargetStart(ioTarget);
+        if (!NT_SUCCESS(status)) {
+            KdPrint(("WdfIoTargetStart failed: 0x%x\n", status));
+            continue;
+        }
 
         targetDeviceInfo = GetTargetDeviceInfo(ioTarget);
         WdfTimerStart(targetDeviceInfo->TimerForPostingRequests,

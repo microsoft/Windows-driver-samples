@@ -77,9 +77,9 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
     //
     arraySize = KeQueryHighestNodeNumber() + 1;
     fdoData->FreeTransferPacketsLists =
-        ExAllocatePoolWithTag(NonPagedPoolNxCacheAligned,
-                              sizeof(PNL_SLIST_HEADER) * arraySize,
-                              CLASS_TAG_PRIVATE_DATA);
+        ExAllocatePoolZero(NonPagedPoolNxCacheAligned,
+                           sizeof(PNL_SLIST_HEADER) * arraySize,
+                           CLASS_TAG_PRIVATE_DATA);
 
     if (fdoData->FreeTransferPacketsLists == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -264,11 +264,12 @@ NTSTATUS InitializeTransferPackets(PDEVICE_OBJECT Fdo)
                 NT_ASSERT(FALSE);
             }
         } else {
-            fdoData->SrbTemplate = ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(SCSI_REQUEST_BLOCK), '-brs');
+            fdoData->SrbTemplate = ExAllocatePoolZero(NonPagedPoolNx,
+                                                      sizeof(SCSI_REQUEST_BLOCK),
+                                                      '-brs');
             if (fdoData->SrbTemplate == NULL) {
                 status = STATUS_INSUFFICIENT_RESOURCES;
             } else {
-                RtlZeroMemory(fdoData->SrbTemplate, sizeof(SCSI_REQUEST_BLOCK));
                 fdoData->SrbTemplate->Length = sizeof(SCSI_REQUEST_BLOCK);
                 fdoData->SrbTemplate->Function = SRB_FUNCTION_EXECUTE_SCSI;
             }
@@ -342,47 +343,51 @@ PTRANSFER_PACKET NewTransferPacket(PDEVICE_OBJECT Fdo)
      *  Allocate the actual packet.
      */
     if (NT_SUCCESS(status)) {
-        newPkt = ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(TRANSFER_PACKET), 'pnPC');
+        newPkt = ExAllocatePoolZero(NonPagedPoolNx, 
+                                    sizeof(TRANSFER_PACKET), 
+                                    'pnPC');
         if (newPkt == NULL) {
             TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_RW, "Failed to allocate transfer packet."));
             status = STATUS_INSUFFICIENT_RESOURCES;
         } else {
-            RtlZeroMemory(newPkt, sizeof(TRANSFER_PACKET));
             newPkt->AllocateNode = KeGetCurrentNodeNumber();
             if (fdoExt->AdapterDescriptor->SrbType == SRB_TYPE_STORAGE_REQUEST_BLOCK) {
 #if (NTDDI_VERSION >= NTDDI_WINBLUE)
                 if ((fdoExt->MiniportDescriptor != NULL) &&
                     (fdoExt->MiniportDescriptor->Size >= RTL_SIZEOF_THROUGH_FIELD(STORAGE_MINIPORT_DESCRIPTOR, ExtraIoInfoSupported)) &&
                     (fdoExt->MiniportDescriptor->ExtraIoInfoSupported == TRUE)) {
-                    status = CreateStorageRequestBlock((PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
-                                        fdoExt->AdapterDescriptor->AddressType,
-                                        DefaultStorageRequestBlockAllocateRoutine,
-                                        NULL,
-                                        2,
-                                        SrbExDataTypeScsiCdb16,
-                                        SrbExDataTypeIoInfo
-                                        );
+
+                    status = CreateStorageRequestBlock(
+                                 (PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
+                                 fdoExt->AdapterDescriptor->AddressType,
+                                 DefaultStorageRequestBlockAllocateRoutine,
+                                 NULL,
+                                 2,
+                                 SrbExDataTypeScsiCdb16,
+                                 SrbExDataTypeIoInfo);
                 } else {
-                    status = CreateStorageRequestBlock((PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
-                                        fdoExt->AdapterDescriptor->AddressType,
-                                        DefaultStorageRequestBlockAllocateRoutine,
-                                        NULL,
-                                        1,
-                                        SrbExDataTypeScsiCdb16
-                                        );
+                    status = CreateStorageRequestBlock(
+                                 (PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
+                                 fdoExt->AdapterDescriptor->AddressType,
+                                 DefaultStorageRequestBlockAllocateRoutine,
+                                 NULL,
+                                 1,
+                                 SrbExDataTypeScsiCdb16);
                 }
 #else
-                status = CreateStorageRequestBlock((PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
-                                    fdoExt->AdapterDescriptor->AddressType,
-                                    DefaultStorageRequestBlockAllocateRoutine,
-                                    NULL,
-                                    1,
-                                    SrbExDataTypeScsiCdb16
-                                    );
+                status = CreateStorageRequestBlock(
+                             (PSTORAGE_REQUEST_BLOCK *)&newPkt->Srb,
+                             fdoExt->AdapterDescriptor->AddressType,
+                             DefaultStorageRequestBlockAllocateRoutine,
+                             NULL,
+                             1,
+                             SrbExDataTypeScsiCdb16);
 #endif
             } else {
 #pragma prefast(suppress:6014, "The allocated memory that Pkt->Srb points to will be freed in DestroyTransferPacket().")
-                newPkt->Srb = ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(SCSI_REQUEST_BLOCK), '-brs');
+                newPkt->Srb = ExAllocatePoolZero(NonPagedPoolNx, 
+                                                 sizeof(SCSI_REQUEST_BLOCK), 
+                                                 '-brs');
                 if (newPkt->Srb == NULL) {
                     status = STATUS_INSUFFICIENT_RESOURCES;
                 }
@@ -447,7 +452,9 @@ PTRANSFER_PACKET NewTransferPacket(PDEVICE_OBJECT Fdo)
         historyByteCount = sizeof(SRB_HISTORY_ITEM) * fdoData->InterpretSenseInfo->HistoryCount;
         historyByteCount += sizeof(SRB_HISTORY) - sizeof(SRB_HISTORY_ITEM);
 
-        newPkt->RetryHistory = (PSRB_HISTORY)ExAllocatePoolWithTag(NonPagedPoolNx, historyByteCount, 'hrPC');
+        newPkt->RetryHistory = (PSRB_HISTORY)ExAllocatePoolZero(NonPagedPoolNx, 
+                                                                historyByteCount, 
+                                                                'hrPC');
 
         if (newPkt->RetryHistory == NULL) {
             TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_RW, "Failed to allocate MDL for transfer packet."));

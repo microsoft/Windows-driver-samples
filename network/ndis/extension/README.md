@@ -1,15 +1,14 @@
-<!---
-    name: Hyper-V Extensible Switch extension filter driver
-    platform: WDM
-    language: cpp
-    category: Network
-    description: A base library used to implement a Hyper-V Extensible Switch extension filter driver.
-    samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=617913
---->
+---
+page_type: sample
+description: "A base library used to implement a Hyper-V Extensible Switch extension filter driver."
+languages:
+- cpp
+products:
+- windows
+- windows-wdk
+---
 
-
-Hyper-V Extensible Switch extension filter driver
-=================================================
+# Hyper-V Extensible Switch extension filter driver
 
 This sample contains a base library used to implement a Hyper-V Extensible Switch extension filter driver. This sample also contains two different extension filter drivers that were developed by using the library.
 
@@ -21,11 +20,8 @@ MsPassthroughExt is a basic filtering extension filter driver that is implemente
 
 MsForwardExt is a basic forwarding extension filter driver that is implemented by using *SxBase.lib*. MsForwardExt uses basic MAC forwarding and custom switch policy to allow sends from given MAC addresses. This forwarding sample implements Hybrid Forwarding, which means that the destination table is not populated by this sample if the packet is flagged as a Hyper-V Network Virtualization (HNV) packet. HNV flagged packets' destination tables are computed by the vSwitch HNV policies instead. If this extension filter driver is unconfigured, it will block sends from all VMs, but will maintain connectivity to the host. Each switch policy, which is defined in *MsForwardExtPolicy.mof*, is a MAC address. Applying a switch policy to MsForwardExt allows packets to be sent from the MAC address that is defined in the policy.
 
-
-Installation
-------------
+## Installation
 
 Use the *install.cmd* script provided with each extension filter driver. The *install.cmd* uses **netcfg** to install the extension and **mofcomp** to register any required mof files. The PowerShell cmdlet *Enable-VmSwitchExtension* can then be used to enable the extension filter driver on a Hyper-V Extensible Switch.
 
-For more information on Hyper-V Extensible Switch extensions, see [Hyper-V Extensible Switch](http://msdn.microsoft.com/en-us/library/windows/hardware/hh598161).
-
+For more information on Hyper-V Extensible Switch extensions, see [Hyper-V Extensible Switch](https://docs.microsoft.com/windows-hardware/drivers/network/hyper-v-extensible-switch).

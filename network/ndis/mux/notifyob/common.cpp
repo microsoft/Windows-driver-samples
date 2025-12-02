@@ -328,6 +328,7 @@ HRESULT HrFindInstance (INetCfg *pnc,
     ULONG                 ulCount;
     BOOL                  found;
     HRESULT               hr;
+    int                   numChars;
 
     TraceMsg( L"-->HrFindInstance.\n" );
 
@@ -336,9 +337,16 @@ HRESULT HrFindInstance (INetCfg *pnc,
 
     if ( hr == S_OK ) {
 
-        StringFromGUID2( guidInstance,
+        numChars = StringFromGUID2( guidInstance,
                       szGuid,
                       MAX_PATH+1 );
+
+        if (numChars == 0) {
+
+            ReleaseObj(pencc);
+
+            return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+        }
 
         TraceMsg( L"  Looking for component with InstanceGuid %s\n",
                szGuid );
@@ -353,9 +361,19 @@ HRESULT HrFindInstance (INetCfg *pnc,
 
             if ( hr == S_OK ) {
 
-                StringFromGUID2( guid,
+                numChars = StringFromGUID2( guid,
                                 szGuid,
                                 MAX_PATH+1 );
+
+                if (numChars == 0) {
+
+                    ReleaseObj(pncc);
+
+                    ReleaseObj(pencc);
+
+                    return HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW);
+                }
+
 
                 TraceMsg( L"  Found component with InstanceGuid %s\n",
                          szGuid );
