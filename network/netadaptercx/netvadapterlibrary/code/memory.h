@@ -1,6 +1,5 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 #pragma once
-#include <KSpinLock.h>
 
 #define MAX_RX_BUFFER_SIZE 65535
 
@@ -55,7 +54,7 @@ private:
     size_t
         m_lastBufferToUse;
 
-    KSpinLock
+    WDFSPINLOCK
         m_spinLock{};
 };
 

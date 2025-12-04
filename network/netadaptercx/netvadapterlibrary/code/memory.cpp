@@ -34,6 +34,13 @@ Memory::Initialize(
     }
 
     m_lastBufferToUse = PREALLOCATED_BUFFERS_COUNT;
+    // Create WDF spinlock for the queue, parent to the queue's WDF handle
+    {
+        WDF_OBJECT_ATTRIBUTES attributes;
+        WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+        status = WdfSpinLockCreate(&attributes, &m_spinLock);
+        NT_ASSERT(NT_SUCCESS(status));
+    }
     return STATUS_SUCCESS;
 }
 
@@ -56,14 +63,17 @@ Memory::PopAvailableBuffer(
     void
 )
 {
-    KAcquireSpinLock lock{ m_spinLock };
+    WdfSpinLockAcquire(m_spinLock);
 
     if (m_lastBufferToUse == 0)
     {
+        WdfSpinLockRelease(m_spinLock);
         return nullptr;
     }
+    auto returnbuffer = m_buffersReadyToUse[--m_lastBufferToUse];
+    WdfSpinLockRelease(m_spinLock);
 
-    return m_buffersReadyToUse[--m_lastBufferToUse];
+    return returnbuffer;
 }
 
 void
@@ -71,11 +81,12 @@ Memory::ReturnBuffer(
     MemoryBuffer* Buffer
 )
 {
-    KAcquireSpinLock lock{ m_spinLock };
+    WdfSpinLockAcquire(m_spinLock);
 
     NT_FRE_ASSERT(m_lastBufferToUse < PREALLOCATED_BUFFERS_COUNT);
 
     m_buffersReadyToUse[m_lastBufferToUse++] = Buffer;
+    WdfSpinLockRelease(m_spinLock);
 }
 #endif //NETCX 2.6 only
 

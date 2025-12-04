@@ -241,13 +241,15 @@ enlpCheckAndArmQueue(
     // arm it.
     if (ringBuffer->BeginIndex == ringBuffer->EndIndex)
     {
-        KAcquireSpinLock lock(Q->Spinlock);
+        WdfSpinLockAcquire(Q->Spinlock);
 
         if (ringBuffer->BeginIndex == ringBuffer->EndIndex)
         {
             armed = TRUE;
             Q->Armed = TRUE;
         }
+
+        WdfSpinLockRelease(Q->Spinlock);
     }
 
     return armed;
@@ -543,6 +545,7 @@ EnlCreateQueue(
     ENLP_LINK* enlLink;
     ENLP_PORT* port;
     ENLP_QUEUE* enlQueue;
+    NTSTATUS status;
 
     if (Tx) // Tx
     {
@@ -580,6 +583,15 @@ EnlCreateQueue(
             &netvRxQueue->m_adapter, reinterpret_cast<ULONG_PTR>(Queue), netvRxQueue);
     }
 
+    // Create WDF spinlock for the queue, parent to the queue's WDF handle
+    {
+        WDF_OBJECT_ATTRIBUTES attributes;
+        WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+        attributes.ParentObject = enlQueue->Queue->m_handle;
+        status = WdfSpinLockCreate(&attributes, &enlQueue->Spinlock);
+        NT_ASSERT(NT_SUCCESS(status));
+    }
+
     EnlpResumeThread(&enlLink->EnlThread);
 
     return enlQueue;
@@ -615,15 +627,16 @@ EnlRingDoorBell(
     )
 {
     InterlockedExchange((volatile LONG *)&Queue->QueueEnd, (LONG)EndIndex);
-
-    KAcquireSpinLock lock{ Queue->Spinlock };
+    WdfSpinLockAcquire(Queue->Spinlock);
     if (Queue->Armed)
     {
         NT_ASSERT(Queue->ArmWaitEvent != NULL);
         Queue->Armed = FALSE;
-        lock.Release();
+        WdfSpinLockRelease(Queue->Spinlock);
         Queue->ArmWaitEvent->Set();
+        return;
     }
+    WdfSpinLockRelease(Queue->Spinlock);
 }
 
 _IRQL_requires_max_(PASSIVE_LEVEL)

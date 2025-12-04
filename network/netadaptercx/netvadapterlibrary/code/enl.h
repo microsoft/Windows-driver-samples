@@ -27,7 +27,6 @@
 
 #endif
 #include "rtl/KWaitEvent.h"
-#include "rtl/KSpinLock.h"
 
 #define ENL_MAX_PROC_COUNT 16
 #define ENLP_PORT_COUNT 2
@@ -209,7 +208,7 @@ struct ENLP_QUEUE
     ENLP_PORT * EnlPortHandle{};
 
     BOOLEAN Armed{};
-    KSpinLock Spinlock{};
+    WDFSPINLOCK Spinlock{};
     KAutoEvent *ArmWaitEvent{};
 
     ENL_QUEUE_STATE State{};
