@@ -6,6 +6,7 @@
 #include "txqueue.h"
 #include "trace.h"
 #include "memory.h"
+#include "rtl\KLockHolder.h"
 #include "enl.tmh"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -759,7 +760,7 @@ EnlDeactivateLinkPort(
     ULONG i;
     NT_FRE_ASSERT(EnlIsPortActive(EnlLink, PortIndex));
 
-    //KLockThisExclusive(EnlLink->Lock);
+    KLockThisExclusive(EnlLink->Lock);
     NT_FRE_ASSERT(!EnlpIsThreadPaused(&EnlLink->EnlThread));
     EnlpPauseThread(&EnlLink->EnlThread);
 

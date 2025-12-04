@@ -27,6 +27,7 @@
 
 #endif
 #include "rtl/KWaitEvent.h"
+#include "rtl/KPushLock.h"
 
 #define ENL_MAX_PROC_COUNT 16
 #define ENLP_PORT_COUNT 2
@@ -237,6 +238,7 @@ struct DECLSPEC_ALIGN(PAGE_SIZE) ENLP_PORT
 
 struct ENLP_LINK
 {
+    KPushLock Lock{};
     ULONG64 Ts{};
     ULONG64 BusyTicks{};
     ULONG64 EmptyTicks{};
