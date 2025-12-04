@@ -8,7 +8,7 @@
 #else
 #include "net/umxfilter.h" // Copied from Km XFilter.h, NETCX please move this xfilter.h into shared location
 #endif
-#include "adapter.h"
+#include "netvadapter.h"
 #include "rxqueue.h"
 #include "txqueue.h"
 #include "configuration.h"
@@ -431,6 +431,7 @@ NetvAdapterSetUsoUroOffloadCapabilities(
 _Use_decl_annotations_
 NTSTATUS NetvAdapter::ConfigureDataCapabilities()
 {
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
     if (PreallocatedRxBuffers)
     {
         WDF_OBJECT_ATTRIBUTES attributes;
@@ -466,20 +467,21 @@ NTSTATUS NetvAdapter::ConfigureDataCapabilities()
                 MAX_RX_BUFFER_SIZE
             ));
     }
+#endif //NETCX 2.6 only
 
     NET_ADAPTER_TX_CAPABILITIES txCapabilities;
     NET_ADAPTER_TX_CAPABILITIES_INIT(&txCapabilities, MAX_TX_QUEUES);
 
     NET_ADAPTER_RX_CAPABILITIES rxCapabilities;
     NET_ADAPTER_RX_CAPABILITIES_INIT_SYSTEM_MANAGED(&rxCapabilities, MAX_RX_BUFFER_SIZE, MAX_RX_QUEUES);
-
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
     if (PreallocatedRxBuffers)
     {
         rxCapabilities.AllocationMode = NetRxFragmentBufferAllocationModeDriverV2;
         rxCapabilities.AttachmentMode = NetRxFragmentBufferAttachmentModeDriver;
         rxCapabilities.MemoryCollection = m_preallocatedRxBuffers;
     }
-
+#endif //NETCX 2.6 only
     NET_ADAPTER_LINK_LAYER_CAPABILITIES linkLayerCapabilities;
     NET_ADAPTER_LINK_LAYER_CAPABILITIES_INIT(&linkLayerCapabilities, MAX_LINK_SPEED, MAX_LINK_SPEED);
 

@@ -33,32 +33,66 @@ NTSTATUS EvtDeviceReleaseHardware(WDFDEVICE device, WDFCMRESLIST resourcesTransl
 _Use_decl_annotations_
 NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterInit)
 {
+    if (WifiAdapterInitGetType(AdapterInit) != WIFI_ADAPTER_EXTENSIBLE_STATION)
+    {
+        WFCError("%!FUNC!: Unsupported adapter type = 0x%x != 0x%x", WifiAdapterInitGetType(AdapterInit), WIFI_ADAPTER_EXTENSIBLE_STATION);
+        return STATUS_NOT_SUPPORTED;
+    }
 
-    //NET_ADAPTER_DATAPATH_CALLBACKS datapathCallbacks;
-    //NET_ADAPTER_DATAPATH_CALLBACKS_INIT(&datapathCallbacks, EvtAdapterCreateTxQueue, EvtAdapterCreateRxQueue);
+    NET_ADAPTER_DATAPATH_CALLBACKS datapathCallbacks;
+    NET_ADAPTER_DATAPATH_CALLBACKS_INIT(&datapathCallbacks, EvtAdapterCreateTxQueue, EvtAdapterCreateRxQueue);
 
-    //NetAdapterInitSetDatapathCallbacks(AdapterInit, &datapathCallbacks);
+    NetAdapterInitSetDatapathCallbacks(AdapterInit, &datapathCallbacks);
 
     WDF_OBJECT_ATTRIBUTES adapterAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT(&adapterAttributes);
-    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WIFI_IHV_NETADAPTER_CONTEXT);
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WifiNetvAdapter);
     adapterAttributes.EvtCleanupCallback = EvtAdapterCleanup;
 
-    NETADAPTER netAdapter{};
-    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-        NetAdapterCreate(AdapterInit, &adapterAttributes, &netAdapter), "Failed to create NetAdapter");
+    NETADAPTER netAdapter;
+    NTSTATUS ntStatus = NetAdapterCreate(AdapterInit, &adapterAttributes, &netAdapter);
+    if (!NT_SUCCESS(ntStatus))
+    {
+        WFCError("%!FUNC!: NetAdapterCreate failed, status=0x%x", ntStatus);
+        return ntStatus;
+    }
 
-    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-        WifiAdapterInitialize(netAdapter), "Failed to initialize WifiAdapter");
+    ntStatus = WifiAdapterInitialize(netAdapter);
+    ASSERT(NT_SUCCESS(ntStatus));
+    if (!NT_SUCCESS(ntStatus))
+    {
+        WFCError("%!FUNC!: WifiAdapterInitialize failed with %!STATUS!", ntStatus);
+        return ntStatus;
+    }
+    auto wifiNetvAdapter = new (reinterpret_cast<void*>(WifiNetvAdapterGetContext(netAdapter))) WifiNetvAdapter(netAdapter, Device);
+    ntStatus = wifiNetvAdapter->Initialize();
+    if (!NT_SUCCESS(ntStatus))
+    {
+        WFCError("%!FUNC!: WifiNetvAdapter::Initialize failed with %!STATUS!", ntStatus);
+        return ntStatus;
+    }
 
-    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-        WifiIhvInitAdapterContext(Device, netAdapter), "Failed to initialize WifiAdapterContext");
-    
-    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(
-        WifiIhvAdapterStart(netAdapter), "Failed to start WifiIhvAdapter");
+    ntStatus = wifiNetvAdapter->AdapterStart();
+    ASSERT(NT_SUCCESS(ntStatus));
+    if (!NT_SUCCESS(ntStatus))
+    {
+        WFCError("%!FUNC!: WifiNetvAdapter::AdapterStart failed with %!STATUS!", ntStatus);
+        return ntStatus;
+    }
 
-    return STATUS_SUCCESS;
+    WFCInfo("%!FUNC!: Success!");
+    return ntStatus;
 }
+
+_Use_decl_annotations_
+void EvtAdapterCleanup(_In_ WDFOBJECT NetAdapter)
+{
+    TraceEntry();
+    auto wifiNetvAdapter = WifiNetvAdapterGetContext(NetAdapter);
+    wifiNetvAdapter->Destroy();
+    TraceExit(STATUS_SUCCESS);
+}
+
 
 _Use_decl_annotations_
 NTSTATUS EvtWifiDeviceCreateWifiDirectDevice(WDFDEVICE, WIFIDIRECT_DEVICE_INIT*)
@@ -69,10 +103,19 @@ NTSTATUS EvtWifiDeviceCreateWifiDirectDevice(WDFDEVICE, WIFIDIRECT_DEVICE_INIT*)
     return status;
 }
 
+
 _Use_decl_annotations_
-void EvtAdapterCleanup(_In_ WDFOBJECT NetAdapter)
+NTSTATUS
+EvtAdapterCreateTxQueue(NETADAPTER Adapter, NETTXQUEUE_INIT* Init)
 {
-    UNREFERENCED_PARAMETER(NetAdapter);
     TraceEntry();
-    TraceExit(STATUS_SUCCESS);
+    return WifiNetvAdapterGetContext(Adapter)->CreateTxQueue(Init);
+}
+
+_Use_decl_annotations_
+NTSTATUS
+EvtAdapterCreateRxQueue(NETADAPTER Adapter, NETRXQUEUE_INIT* Init)
+{
+    TraceEntry();
+    return WifiNetvAdapterGetContext(Adapter)->CreateRxQueue(Init);
 }

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved
 
 #include "pch.hpp"
-#include "adapter.h"
+#include "netvadapter.h"
 #include "rxqueue.h"
 #include "memory.h"
 
@@ -68,7 +68,7 @@ NetvRxQueue::NetvRxQueue(
         NetExtensionTypePacket);
 
     NetRxQueueGetExtension(m_handle, &extension, &RxXSumExtension);
-
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
     if (Adapter.PreallocatedRxBuffers)
     {
         NET_EXTENSION_QUERY_INIT(
@@ -87,7 +87,7 @@ NetvRxQueue::NetvRxQueue(
 
         NetRxQueueGetExtension(m_handle, &extension, &NetMemoryReturnContextExtensionIn);
     }
-
+#endif //NETCX 2.6 only
     EnlQueueHandle = EnlCreateQueue(Handle, RX);
 }
 
@@ -150,7 +150,7 @@ NetvRxQueue::Advance(
             break;
         }
     }
-
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
     if (m_adapter.PreallocatedRxBuffers)
     {
         NET_RING* dataBufferRing = GetNetMemoryReturnRing();
@@ -166,7 +166,7 @@ NetvRxQueue::Advance(
             dataBufferRing->BeginIndex = NetRingIncrementIndex(dataBufferRing, dataBufferRing->BeginIndex);
         }
     }
-
+#endif //NETCX 2.6 only
     NetFragmentIteratorSet(&fi);
     NetPacketIteratorSet(&pi);
     EnlRingDoorBell(EnlQueueHandle, fr->EndIndex);

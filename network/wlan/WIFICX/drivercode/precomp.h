@@ -26,3 +26,8 @@
 
 // WPP Tracing Headers
 #include "trace.h"
+
+// Minimal placement-new to match operator new(size_t, void*)
+// TLV generator/parser memory interface has the ULONG_PTR version
+inline void* operator new(size_t, void* p) noexcept { return p; }
+inline void  operator delete(void*, void*) noexcept { /* no-op */ }

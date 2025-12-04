@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved
-
 #pragma once
 
-#include <netadaptercx.h>
-
-#define MAX_RX_BUFFER_SIZE 65535
+#define MAX_MULTICAST_LIST_SIZE 32
+#define MAC_ADDR_LEN 6
 #define MAX_RX_QUEUES 1
 #define MAX_TX_QUEUES 1
 #define MTU_SIZE 1500
-#define MAX_MULTICAST_LIST_SIZE 32
-#define MAC_ADDR_LEN 6
+
 #define NETV_NUMBER_OF_QUEUES 1
 
 // supported filters
@@ -19,6 +16,7 @@
     NetPacketFilterFlagBroadcast | \
     NetPacketFilterFlagPromiscuous | \
     NetPacketFilterFlagAllMulticast)
+
 
 NTSTATUS
 ConfigureAndStartAdapter(
@@ -50,40 +48,29 @@ public:
         WDFDEVICE Device
     ) noexcept;
 
-    void
-    Destroy(
-        void
-    );
+    // Public API
+    void Destroy();
+    NTSTATUS Initialize();
+    NTSTATUS CreateRxQueue(_Inout_ NETRXQUEUE_INIT* NetRxQueueInit);
+    NTSTATUS CreateTxQueue(_Inout_ NETTXQUEUE_INIT* NetTxQueueInit);
 
-    NTSTATUS
-    Initialize(
-        void
-    );
-
-    NTSTATUS
-    CreateRxQueue(
-        NETRXQUEUE_INIT * NetRxQueueInit
-    );
-
-    NTSTATUS
-    CreateTxQueue(
-        NETTXQUEUE_INIT * NetTxQueueInit
-    );
-
+    // Former INetvAdapter method (kept as regular method)
     NTSTATUS ConfigureDataCapabilities();
 
+    // Existing public API
     void SetPdoWakeSignalCallback(_In_ EVT_PDO_WAKE_SIGNAL* evtPdoWakeSignal, _In_ void* context);
-
     void ArmWakeFromS0(void);
-
     void DisarmWakeFromS0(void);
 
     NETADAPTER m_handle = WDF_NO_HANDLE;
 
     WDFDEVICE m_device = WDF_NO_HANDLE;
 
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
+    BOOLEAN PreallocatedRxBuffers;
     NETMEMORYCOLLECTION
         m_preallocatedRxBuffers = WDF_NO_HANDLE;
+#endif //NETCX 2.6 only
 
     // configuration
     NET_ADAPTER_LINK_LAYER_ADDRESS PermanentAddress;
@@ -91,7 +78,6 @@ public:
     ULONG MACLastByte;
     BOOLEAN S0Idle;
     BOOLEAN EnableUsoUro;
-    BOOLEAN PreallocatedRxBuffers;
 
     // Packet Filter and look ahead size.
     NET_PACKET_FILTER_FLAGS PacketFilter;
@@ -127,6 +113,7 @@ private:
         void
     ) const;
 
+   
     virtual NTSTATUS NetvAdapterReadAddress();
 };
 
@@ -137,5 +124,3 @@ typedef struct _GLOBAL_CONTEXT
 } GLOBAL_CONTEXT;
 
 extern GLOBAL_CONTEXT NetvGlobalContext;
-
-

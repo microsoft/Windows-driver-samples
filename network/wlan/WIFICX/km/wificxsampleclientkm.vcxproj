@@ -40,7 +40,7 @@
     <KMDF_MINIMUM_VERSION_REQUIRED>33</KMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
     <NETADAPTER_MINIMUM_VERSION_REQUIRED>4</NETADAPTER_MINIMUM_VERSION_REQUIRED>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
@@ -59,7 +59,7 @@
     <KMDF_MINIMUM_VERSION_REQUIRED>33</KMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
     <NETADAPTER_MINIMUM_VERSION_REQUIRED>4</NETADAPTER_MINIMUM_VERSION_REQUIRED>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
@@ -78,7 +78,7 @@
     <KMDF_MINIMUM_VERSION_REQUIRED>33</KMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
     <NETADAPTER_MINIMUM_VERSION_REQUIRED>4</NETADAPTER_MINIMUM_VERSION_REQUIRED>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
@@ -97,7 +97,7 @@
     <KMDF_MINIMUM_VERSION_REQUIRED>33</KMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>4</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
     <NETADAPTER_MINIMUM_VERSION_REQUIRED>4</NETADAPTER_MINIMUM_VERSION_REQUIRED>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
@@ -138,10 +138,11 @@
     </DriverSign>
     <ClCompile>
       <WppEnabled>true</WppEnabled>
-      <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -155,11 +156,12 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -173,11 +175,12 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -191,11 +194,12 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(DDK_INC_PATH)wlan\2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -231,6 +235,11 @@
     <ClInclude Include="..\drivercode\trace.h" />
     <ClInclude Include="..\drivercode\wifihal.h" />
     <ClInclude Include="..\drivercode\wifitransition.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\netadaptercx\netvadapterlibrary\km\netvadapterlibrarykm.vcxproj">
+      <Project>{e2a65efd-25cc-4af0-b180-0cd56ee277a9}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

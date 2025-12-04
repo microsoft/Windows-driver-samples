@@ -57,13 +57,13 @@ NTSTATUS WifiHAL::WifiIhvIsDeviceReadyForRequest()
 {
     NTSTATUS status = 
          ((m_Device != WDF_NO_HANDLE) // Make sure device is initialized (since this is hardware abstraction layer, IHV can replace with firmware state)
-        && (WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter != WDF_NO_HANDLE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY);// In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
+        && (WifiGetIhvDeviceContext(m_Device)->netAdapters[0] != WDF_NO_HANDLE) ? STATUS_SUCCESS : STATUS_DEVICE_NOT_READY);// In WIFICX, the logic sits on top of primary STA adapter, make sure it is initialized
     if(NT_SUCCESS(status) == FALSE)
     {
         WFCError(
             "Device not ready for request. Device=%p, primaryStaAdapter=%p",
             m_Device,
-            (m_Device != WDF_NO_HANDLE) ? WifiGetIhvDeviceContext(m_Device)->primaryStaAdapter : WDF_NO_HANDLE);
+            (m_Device != WDF_NO_HANDLE) ? WifiGetIhvDeviceContext(m_Device)->netAdapters[0] : WDF_NO_HANDLE);
     }
     return status;
 }

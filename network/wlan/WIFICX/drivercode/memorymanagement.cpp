@@ -114,12 +114,12 @@ _Ret_writes_bytes_maybenull_(_Size) void* PlacementNewHelper(size_t _Size, PCPLA
     return nullptr;
 }
 
-void* __cdecl operator new(size_t Size)
+void* __cdecl operator new(size_t Size) noexcept
 {
     return AllocateWdfMemoryBuffer(Size, _ReturnAddress());
 }
 
-__forceinline void* __cdecl operator new(size_t _Size, ULONG_PTR AllocationContext) throw()
+__forceinline void* __cdecl operator new(size_t _Size, ULONG_PTR AllocationContext) noexcept // for WIFICX TLV
 {
     if (AllocationContext != 0)
     {
@@ -128,22 +128,22 @@ __forceinline void* __cdecl operator new(size_t _Size, ULONG_PTR AllocationConte
     return AllocateWdfMemoryBuffer(_Size, _ReturnAddress());
 }
 
-void __cdecl operator delete(void* pData)
+void __cdecl operator delete(void* pData) noexcept
 {
     FreeWdfMemoryBuffer(pData);
 }
 
-void __cdecl operator delete[](void* pData)
+void __cdecl operator delete[](void* pData) noexcept
 {
     FreeWdfMemoryBuffer(pData);
 }
 
-void __cdecl operator delete(void* pData, ULONG_PTR)
+void __cdecl operator delete(void* pData, ULONG_PTR) noexcept // For WIFICX TLV
 {
     FreeWdfMemoryBuffer(pData);
 }
 
-void __cdecl operator delete[](void* pData, ULONG_PTR)
+void __cdecl operator delete[](void* pData, ULONG_PTR) noexcept // For WIFICX TLV
 {
     FreeWdfMemoryBuffer(pData);
 }

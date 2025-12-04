@@ -5,6 +5,8 @@
 #include "trace.h"
 #include "memory.tmh"
 
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
+
 NTSTATUS
 Memory::Initialize(
     NETMEMORYCOLLECTION MemoryCollection,
@@ -74,4 +76,12 @@ Memory::ReturnBuffer(
     NT_FRE_ASSERT(m_lastBufferToUse < PREALLOCATED_BUFFERS_COUNT);
 
     m_buffersReadyToUse[m_lastBufferToUse++] = Buffer;
+}
+#endif //NETCX 2.6 only
+
+// for wil::make_unique_nothrow
+void*
+operator new(size_t s, std::nothrow_t const&)
+{
+    return operator new(s);
 }

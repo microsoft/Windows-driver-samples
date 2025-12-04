@@ -1,4 +1,4 @@
-
+// Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // Emulated Network Link (ENL) definitions
 //
@@ -21,16 +21,13 @@
 // NBL completions by queueing DPCs to the target processor.
 //
 
-//#include <ntassert.h>
+
 #ifndef _KERNEL_MODE
 #define ASSERT(x) NT_ASSERT(x)
-#include "rtl/UmPool.h"
+
 #endif
 #include "rtl/KWaitEvent.h"
-#include "rtl/KLockHolder.h"
 #include "rtl/KSpinLock.h"
-#include "rtl/KPushLock.h"
-#include "rtl/KNew.h"
 
 #define ENL_MAX_PROC_COUNT 16
 #define ENLP_PORT_COUNT 2
@@ -239,10 +236,8 @@ struct DECLSPEC_ALIGN(PAGE_SIZE) ENLP_PORT
         ENLP_QUEUE RxQueue[ENL_MAX_PROC_COUNT];
 };
 
-struct ENLP_LINK :
-    public NONPAGED_OBJECT<'LLNE'>
+struct ENLP_LINK
 {
-    KPushLock Lock{};
     ULONG64 Ts{};
     ULONG64 BusyTicks{};
     ULONG64 EmptyTicks{};

@@ -1,7 +1,10 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 #pragma once
-#include "adapter.h"
 #include <KSpinLock.h>
+
+#define MAX_RX_BUFFER_SIZE 65535
+
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
 
 static const size_t PREALLOCATED_BUFFERS_COUNT = 128;
 
@@ -57,3 +60,4 @@ private:
 };
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(Memory, GetMemoryFromHandle);
+#endif //NETCX 2.6 only

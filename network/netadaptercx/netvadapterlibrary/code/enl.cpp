@@ -1,7 +1,7 @@
+// Copyright (C) Microsoft Corporation. All rights reserved.
 #include "pch.hpp"
 #include <stdlib.h>
-//#include <ntassert.h>
-#include "adapter.h"
+#include "netvadapter.h"
 #include "rxqueue.h"
 #include "txqueue.h"
 #include "trace.h"
@@ -345,7 +345,7 @@ EnlpIterationRoutine(
 
                             auto fragment = NetFragmentIteratorGetFragment(&rxFi);
                             BYTE* fragmentBuffer = nullptr;
-
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
                             if (rxq->RxQueue->m_adapter.PreallocatedRxBuffers)
                             {
                                 MemoryBuffer* bufferToUse = GetMemoryFromHandle(rxq->RxQueue->m_adapter.m_preallocatedRxBuffers)->PopAvailableBuffer();
@@ -382,6 +382,7 @@ EnlpIterationRoutine(
                                 fragment->Scratch = 0;
                             }
                             else
+#endif //NETCX 2.6 only
                             {
                                 auto const rxVirtualAddress =
                                     NetExtensionGetFragmentVirtualAddress(
@@ -659,7 +660,7 @@ EnlCreateLink(
     )
 {
     LogInformation(FLAG_DRIVER, L"ProcessorIndex=%u", ProcessorIndex);
-    
+
     auto enlLink = wil::make_unique_nothrow<ENLP_LINK>();
     RETURN_NTSTATUS_IF(
         STATUS_INSUFFICIENT_RESOURCES,
@@ -745,7 +746,7 @@ EnlDeactivateLinkPort(
     ULONG i;
     NT_FRE_ASSERT(EnlIsPortActive(EnlLink, PortIndex));
 
-    KLockThisExclusive(EnlLink->Lock);
+    //KLockThisExclusive(EnlLink->Lock);
     NT_FRE_ASSERT(!EnlpIsThreadPaused(&EnlLink->EnlThread));
     EnlpPauseThread(&EnlLink->EnlThread);
 

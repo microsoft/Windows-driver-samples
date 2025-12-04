@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved
 
 #include "pch.hpp"
-#include "adapter.h"
+#include "netvadapter.h"
 #include "txqueue.h"
 
 NetvTxQueue::NetvTxQueue(

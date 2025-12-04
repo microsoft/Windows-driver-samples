@@ -9,6 +9,9 @@ EVT_WIFI_DEVICE_CREATE_WIFIDIRECTDEVICE EvtWifiDeviceCreateWifiDirectDevice;
 EVT_WIFI_DEVICE_SEND_COMMAND EvtWifiDeviceSendCommand;
 EVT_WDF_OBJECT_CONTEXT_CLEANUP EvtAdapterCleanup;
 
+EVT_NET_ADAPTER_CREATE_TXQUEUE EvtAdapterCreateTxQueue;
+EVT_NET_ADAPTER_CREATE_RXQUEUE EvtAdapterCreateRxQueue;
+
 typedef struct _WIFI_IHV_DEVICE_CONTEXT
 {
     //
@@ -19,7 +22,7 @@ typedef struct _WIFI_IHV_DEVICE_CONTEXT
     void* WdfTriageInfoPtr;
     WDFDEVICE WdfDevice;
     TLV_CONTEXT TlvContext;
-    NETADAPTER primaryStaAdapter;
+    NETADAPTER netAdapters[5]{};
 } WIFI_IHV_DEVICE_CONTEXT, * PWIFI_IHV_DEVICE_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WIFI_IHV_DEVICE_CONTEXT, WifiGetIhvDeviceContext);

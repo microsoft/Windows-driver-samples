@@ -38,7 +38,7 @@
     <KMDF_VERSION_MINOR>33</KMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -51,7 +51,7 @@
     <KMDF_VERSION_MINOR>33</KMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -64,7 +64,7 @@
     <KMDF_VERSION_MINOR>33</KMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -77,7 +77,7 @@
     <KMDF_VERSION_MINOR>33</KMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -89,19 +89,19 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>
@@ -159,7 +159,6 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\adapter.h" />
     <ClInclude Include="..\code\configuration.h" />
     <ClInclude Include="..\code\enl.h" />
     <ClInclude Include="..\code\enlthreads.h" />
@@ -169,6 +168,8 @@
     <ClInclude Include="..\code\rxqueue.h" />
     <ClInclude Include="..\code\trace.h" />
     <ClInclude Include="..\code\txqueue.h" />
+    <ClInclude Include="..\Interface\netvadapter.h" />
+    <ClInclude Include="..\netvInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\adapter.cpp" />
