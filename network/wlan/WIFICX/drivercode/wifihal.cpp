@@ -606,10 +606,9 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
     NT_ASSERT(m_LastConnectEntryId == 0);
     if (m_LastConnectEntryId != 0) // Not Disconnected State
     {
-#ifdef WIFI_IHV_NETV
-        DeleteDatapathPeer(
-            deviceContext->netAdapters[pWdiHeader->PortId], reinterpret_cast<NET_EUI48_ADDRESS*>(&deviceContext->ConnectedPeer));
-#endif // WIFI_IHV_NETV
+        WifiAdapterRemovePeer(
+            WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId],
+            reinterpret_cast<NET_EUI48_ADDRESS*>(&m_ConnectedPeer));
     }
 
     WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(WifiIhvPerformAssociation(
@@ -704,11 +703,9 @@ NTSTATUS WifiHAL::WifiIhvPerformAssociation(
     UINT32 NewConnectEntryId = 0; // Disconnected State
     WDI_AUTH_ALGORITHM NewAuthAlgo = pAuthenticationAlgorithms->pElements[0];
     UCHAR pucData[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10 };
-#ifdef WIFI_IHV_NETV
-    WifiNetvDevice* pDeviceContext = WifiNetvDeviceGetContext(Device);
-#else
+
     PWIFI_IHV_DEVICE_CONTEXT pDeviceContext = WifiGetIhvDeviceContext(m_Device);
-#endif // WIFI_IHV_NETV
+
     ULONG assocStatus = WDI_ASSOC_STATUS_SUCCESS;
 
     do
@@ -727,12 +724,10 @@ NTSTATUS WifiHAL::WifiIhvPerformAssociation(
 
                     NewConnectEntryId = connectEntry;
                     m_LastConnectTransactionId = pWdiHeader->TransactionId;
-#ifdef WIFI_IHV_NETV
-                    // add peer on datapath
-                    AddDatapathPeer(pDeviceContext->netAdapters[pWdiHeader->PortId],
-                        reinterpret_cast<NET_EUI48_ADDRESS*>(g_ConnectEntries[connectEntry].pMacAddress));
-#endif // WIFI_IHV_NETV
 
+                    // add peer on datapath
+                    WifiAdapterAddPeer(pDeviceContext->netAdapters[pWdiHeader->PortId],
+                        reinterpret_cast<NET_EUI48_ADDRESS*>(g_ConnectEntries[connectEntry].pMacAddress));
 #ifdef  WIFI_IHV_HANDSHAKE
                     // Pretend to recieve M1 on datapath before, the association complete has made it up the control path.
                     RecieveDatapathFrame(0x33, sizeof(pucData), pucData);
@@ -976,9 +971,11 @@ NTSTATUS WifiHAL::WifiIhvDisconnect(const WDI_TASK_DISCONNECT_PARAMETERS&, const
 
     m_LastConnectEntryId = 0; // Disconnected State
 
-#ifdef WIFI_IHV_NETV
-    DeleteDatapathPeer(0x33);
-#endif
+    WifiAdapterRemovePeer(
+        WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId],
+        reinterpret_cast<NET_EUI48_ADDRESS*>(&m_ConnectedPeer));
+
+    RtlZeroMemory(&m_ConnectedPeer, sizeof(DOT11_MAC_ADDRESS));
 
     return STATUS_SUCCESS;
 }

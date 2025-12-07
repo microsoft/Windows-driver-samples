@@ -80,6 +80,9 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
         return ntStatus;
     }
 
+    auto wifiNetvDevice = WifiGetIhvDeviceContext(Device);
+    wifiNetvDevice->netAdapters[WifiAdapterGetPortId(netAdapter)] = netAdapter;
+
     WFCInfo("%!FUNC!: Success!");
     return ntStatus;
 }

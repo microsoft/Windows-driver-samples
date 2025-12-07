@@ -26,10 +26,12 @@ public:
         void
     );
 
+#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
     NET_RING *
     GetNetMemoryReturnRing(
         void
     );
+#endif // NETCX 2.6 only
 
     NETPACKETQUEUE const
         m_handle{WDF_NO_HANDLE};
