@@ -28,9 +28,6 @@ NETVADAPTER_ADVANCED_PROPERTY NetvSupportedProperties[] =
     { CONSTANT_UNICODE_STRING(L"LinkProcIndex"), NETV_OFFSET(LinkProcIndex), NETV_SIZE(LinkProcIndex), 1000, 0, 1023 },
     { CONSTANT_UNICODE_STRING(L"S0Idle"), NETV_OFFSET(S0Idle), NETV_SIZE(S0Idle), 0, 0, 1 },
     { CONSTANT_UNICODE_STRING(L"EnableUsoUro"), NETV_OFFSET(EnableUsoUro), NETV_SIZE(EnableUsoUro), 0, 0, 1 },
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    { CONSTANT_UNICODE_STRING(L"PreallocatedRxBuffers"), NETV_OFFSET(PreallocatedRxBuffers), NETV_SIZE(PreallocatedRxBuffers), 0, 0, 1 },
-#endif //NETCX 2.6 only
 };
 
 NTSTATUS

@@ -37,7 +37,7 @@ wificxsampleclientkm.sys = 1,,
 CopyFiles = File_Copy
 Characteristics = 0x84      ; NCF_HAS_UI, NCF_PHYSICAL
 BusType         = 0         ; Internal
-AddReg          = wificxsampleclientkm.reg
+AddReg          = wificxsampleclientkm.reg, netvadapter.params
 *IfType         = 71        ; IF_TYPE_IEEE80211
 *MediaType      = 16        ; NdisMediumNative802_11
 *PhysicalMediaType = 9      ; NdisPhysicalMediumNative802_11
@@ -84,3 +84,13 @@ ManufacturerName = "WDK Sample"
 DiskName = "Wificxsampleclientkm Installation Disk"
 wificxsampleclientkm.DeviceDesc = "[KMDF]Wificx Sample Client Device"
 wificxsampleclientkm.SVCDESC = "Wificxsampleclientkm Service"
+
+[netvadapter.params] 
+; MACLastByte
+ HKR, Ndi\params\MACLastByte,  ParamDesc,         0, "MACLastByte"
+ HKR, Ndi\params\MACLastByte,  default,           0, "1"
+ HKR, Ndi\params\MACLastByte,  type,              0, "int"
+ HKR, Ndi\params\MACLastByte,  min,               0, "1"
+ HKR, Ndi\params\MACLastByte,  max,               0, "254"
+ HKR, Ndi\params\MACLastByte,  step,              0, "1"
+ HKR, Ndi\params\MACLastByte,  Optional,          0, "0"

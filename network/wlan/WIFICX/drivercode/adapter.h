@@ -1,14 +1,10 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 #pragma once
-
 #include "device.h"
 #include "netvadapter.h"
 
-// packet and header sizes
-#define WIFI_MAX_PACKET_SIZE (1514)
-
-// maximum link speed for send and recv in bps
-#define WIFI_MEDIA_MAX_SPEED 1'000'000'000
+// for STA TX DEMUX
+#define MaxNumOfPeers 1
 
 // Context for each "Wdi Port"[NetAdapter] instance.
 // Each NetAdapter instance corresponds to an IP interface
@@ -41,9 +37,6 @@ public:
 
     bool CanReportWifiWakeSourceTypeClientDriverDiagnostic;
 
-private:
-    NTSTATUS
-        NetvAdapterReadAddress() override;
 };
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WifiNetvAdapter, WifiNetvAdapterGetContext);

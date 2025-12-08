@@ -108,7 +108,7 @@ private:
     ) const;
 
    
-    virtual NTSTATUS NetvAdapterReadAddress();
+    NTSTATUS NetvAdapterReadAddress();
 };
 
 extern NetvAdapter* NetvAdapterGetContextFromWDFObject(NETADAPTER netAdapter);

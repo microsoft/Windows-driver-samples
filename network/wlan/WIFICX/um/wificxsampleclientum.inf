@@ -31,7 +31,7 @@ Characteristics             = 0x1     ; NCF_VIRTUAL
 *PhysicalMediaType          = 9       ; NdisPhysicalMediumNative802_11
 BusType                     = 15      ; PnpBus
 NumberOfNetworkInterfaces   = 5
-AddReg                      = Wificxsampleclientum.reg
+AddReg                      = Wificxsampleclientum.reg, netvadapter.params
 CopyFiles                   = Wificxsampleclientum.Copy
 
 [Wificxsampleclientum_Device.ndi.Hw]
@@ -95,3 +95,13 @@ wificxsampleclientum.dll = 1
 ManufacturerName = "WDK Sample"
 DiskName = "wificxsampleclientum Installation Disk"
 DeviceName = "[UMDF] Wificx Sample Client Device"
+
+[netvadapter.params] 
+; MACLastByte
+ HKR, Ndi\params\MACLastByte,  ParamDesc,         0, "MACLastByte"
+ HKR, Ndi\params\MACLastByte,  default,           0, "1"
+ HKR, Ndi\params\MACLastByte,  type,              0, "int"
+ HKR, Ndi\params\MACLastByte,  min,               0, "1"
+ HKR, Ndi\params\MACLastByte,  max,               0, "254"
+ HKR, Ndi\params\MACLastByte,  step,              0, "1"
+ HKR, Ndi\params\MACLastByte,  Optional,          0, "0"
