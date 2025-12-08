@@ -68,26 +68,7 @@ NetvRxQueue::NetvRxQueue(
         NetExtensionTypePacket);
 
     NetRxQueueGetExtension(m_handle, &extension, &RxXSumExtension);
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    if (Adapter.PreallocatedRxBuffers)
-    {
-        NET_EXTENSION_QUERY_INIT(
-            &extension,
-            NET_FRAGMENT_EXTENSION_NET_MEMORY_NAME,
-            NET_FRAGMENT_EXTENSION_NET_MEMORY_VERSION_1,
-            NetExtensionTypeFragment);
 
-        NetRxQueueGetExtension(m_handle, &extension, &NetMemoryExtension);
-
-        NET_EXTENSION_QUERY_INIT(
-            &extension,
-            NET_FRAGMENT_EXTENSION_RETURN_CONTEXT_NAME,
-            NET_FRAGMENT_EXTENSION_RETURN_CONTEXT_VERSION_1,
-            NetExtensionTypeFragment);
-
-        NetRxQueueGetExtension(m_handle, &extension, &NetMemoryReturnContextExtensionIn);
-    }
-#endif //NETCX 2.6 only
     EnlQueueHandle = EnlCreateQueue(Handle, RX);
 }
 
@@ -150,23 +131,7 @@ NetvRxQueue::Advance(
             break;
         }
     }
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    if (m_adapter.PreallocatedRxBuffers)
-    {
-        NET_RING* dataBufferRing = GetNetMemoryReturnRing();
-        while (dataBufferRing->BeginIndex != dataBufferRing->EndIndex)
-        {
-            NET_FRAGMENT_RETURN_CONTEXT* netMemoryReturnContextOut =
-                NetRingGetFragmentReturnContextAtIndex(
-                    dataBufferRing,
-                    dataBufferRing->BeginIndex);
 
-            MemoryBuffer* memoryBuffer = reinterpret_cast<MemoryBuffer*>(netMemoryReturnContextOut->Handle);
-            GetMemoryFromHandle(m_adapter.m_preallocatedRxBuffers)->ReturnBuffer(memoryBuffer);
-            dataBufferRing->BeginIndex = NetRingIncrementIndex(dataBufferRing, dataBufferRing->BeginIndex);
-        }
-    }
-#endif //NETCX 2.6 only
     NetFragmentIteratorSet(&fi);
     NetPacketIteratorSet(&pi);
     EnlRingDoorBell(EnlQueueHandle, fr->EndIndex);

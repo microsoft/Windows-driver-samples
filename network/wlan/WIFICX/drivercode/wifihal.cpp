@@ -604,13 +604,14 @@ _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
     NT_ASSERT(m_LastConnectEntryId == 0);
+#ifdef NETV_SUPPORT_TX_DEMUXING
     if (m_LastConnectEntryId != 0) // Not Disconnected State
     {
         WifiAdapterRemovePeer(
             WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId],
             reinterpret_cast<NET_EUI48_ADDRESS*>(&m_ConnectedPeer));
     }
-
+#endif //NETV_SUPPORT_TX_DEMUXING
     WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(WifiIhvPerformAssociation(
         &ConnectParameters.PreferredBSSEntryList, &ConnectParameters.ConnectParameters.AuthenticationAlgorithms, pWdiHeader),
         "Failed to perform association");
@@ -724,10 +725,11 @@ NTSTATUS WifiHAL::WifiIhvPerformAssociation(
 
                     NewConnectEntryId = connectEntry;
                     m_LastConnectTransactionId = pWdiHeader->TransactionId;
-
+#ifdef NETV_SUPPORT_TX_DEMUXING
                     // add peer on datapath
                     WifiAdapterAddPeer(pDeviceContext->netAdapters[pWdiHeader->PortId],
                         reinterpret_cast<NET_EUI48_ADDRESS*>(g_ConnectEntries[connectEntry].pMacAddress));
+#endif // NETV_SUPPORT_TX_DEMUXING
 #ifdef  WIFI_IHV_HANDSHAKE
                     // Pretend to recieve M1 on datapath before, the association complete has made it up the control path.
                     RecieveDatapathFrame(0x33, sizeof(pucData), pucData);
@@ -971,10 +973,11 @@ NTSTATUS WifiHAL::WifiIhvDisconnect(const WDI_TASK_DISCONNECT_PARAMETERS&, const
 
     m_LastConnectEntryId = 0; // Disconnected State
 
+#ifdef NETV_SUPPORT_TX_DEMUXING
     WifiAdapterRemovePeer(
         WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId],
         reinterpret_cast<NET_EUI48_ADDRESS*>(&m_ConnectedPeer));
-
+#endif
     RtlZeroMemory(&m_ConnectedPeer, sizeof(DOT11_MAC_ADDRESS));
 
     return STATUS_SUCCESS;

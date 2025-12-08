@@ -49,10 +49,13 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&adapterAttributes, WifiNetvAdapter);
     adapterAttributes.EvtCleanupCallback = EvtAdapterCleanup;
 
+#ifdef  NETV_SUPPORT_TX_DEMUXING
     WIFI_ADAPTER_TX_DEMUX peerInfoDemux;
     WIFI_ADAPTER_TX_PEER_ADDRESS_DEMUX_INIT(&peerInfoDemux, MaxNumOfPeers);
     WifiAdapterInitAddTxDemux(AdapterInit, &peerInfoDemux);
+#endif // NETV_SUPPORT_TX_DEMUXING
 
+    
     NETADAPTER netAdapter;
     NTSTATUS ntStatus = NetAdapterCreate(AdapterInit, &adapterAttributes, &netAdapter);
     if (!NT_SUCCESS(ntStatus))

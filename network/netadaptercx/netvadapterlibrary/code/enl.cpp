@@ -668,10 +668,10 @@ EnlIsPortActive(
 {
     ENLP_PORT* port = &EnlLink->Ports[PortIndex];
     ENLP_QUEUE* txq = &port->TxQueue[0];
-
+    ENLP_QUEUE* rxq = &port->RxQueue[0];
     NT_FRE_ASSERT(PortIndex < ENLP_PORT_COUNT);
 
-    return (txq->Queue == nullptr) ? FALSE : TRUE;
+    return (txq->Queue == nullptr && rxq->Queue == nullptr) ? FALSE : TRUE;
 }
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
@@ -718,7 +718,6 @@ EnlDeactivateLinkPort(
     ENLP_PORT* port = &EnlLink->Ports[PortIndex];
     LogInformation(FLAG_DRIVER, L"PortIndex=%u Queue=%p", PortIndex, port->TxQueue[0].Queue);
 
-    ULONG i;
     NT_FRE_ASSERT(EnlIsPortActive(EnlLink, PortIndex));
 
     KLockThisExclusive(EnlLink->Lock);
@@ -737,7 +736,7 @@ EnlDeactivateLinkPort(
 
 
     // As long as there's one port with active queues, the EnlThread will run.
-    for (i = 0; i < ENLP_PORT_COUNT; i++)
+    for (ULONG i = 0; i < ENLP_PORT_COUNT; i++)
     {
         if (EnlIsPortActive(EnlLink, i))
         {
