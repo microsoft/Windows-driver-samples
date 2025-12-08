@@ -66,12 +66,6 @@ public:
 
     WDFDEVICE m_device = WDF_NO_HANDLE;
 
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    BOOLEAN PreallocatedRxBuffers;
-    NETMEMORYCOLLECTION
-        m_preallocatedRxBuffers = WDF_NO_HANDLE;
-#endif //NETCX 2.6 only
-
     // configuration
     NET_ADAPTER_LINK_LAYER_ADDRESS PermanentAddress;
     NET_ADAPTER_LINK_LAYER_ADDRESS CurrentAddress;

@@ -348,52 +348,13 @@ EnlpIterationRoutine(
 
                             auto fragment = NetFragmentIteratorGetFragment(&rxFi);
                             BYTE* fragmentBuffer = nullptr;
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-                            if (rxq->RxQueue->m_adapter.PreallocatedRxBuffers)
-                            {
-                                MemoryBuffer* bufferToUse = GetMemoryFromHandle(rxq->RxQueue->m_adapter.m_preallocatedRxBuffers)->PopAvailableBuffer();
-                                if (bufferToUse == nullptr)
-                                {
-                                    // No more buffers available, stop processing packets
-                                    rxq->QueueNext = NetFragmentIteratorGetIndex(&rxFi);
-                                    break;
-                                }
 
-                                NET_FRAGMENT_NET_MEMORY* netMemoryId =
-                                    NetExtensionGetFragmentNetMemory(
-                                        &rxq->RxQueue->NetMemoryExtension,
-                                        NetFragmentIteratorGetIndex(&rxFi));
+                            auto const rxVirtualAddress =
+                                NetExtensionGetFragmentVirtualAddress(
+                                    &rxq->RxQueue->VirtualAddressExtension,
+                                    NetFragmentIteratorGetIndex(&rxFi));
 
-                                NET_FRAGMENT_RETURN_CONTEXT* fragmentReturnContext =
-                                    NetExtensionGetFragmentReturnContext(
-                                        &rxq->RxQueue->NetMemoryReturnContextExtensionIn,
-                                        NetFragmentIteratorGetIndex(&rxFi));
-
-                                netMemoryId->NetMemoryId = bufferToUse->MemoryId;
-                                fragmentReturnContext->Handle = reinterpret_cast<NET_FRAGMENT_RETURN_CONTEXT_HANDLE>(bufferToUse);
-                                fragmentBuffer = bufferToUse->VirtualAddress;
-
-                                auto const rxVirtualAddress =
-                                    NetExtensionGetFragmentVirtualAddress(
-                                        &rxq->RxQueue->VirtualAddressExtension,
-                                        NetFragmentIteratorGetIndex(&rxFi));
-
-                                rxVirtualAddress->VirtualAddress = bufferToUse->VirtualAddress;
-
-                                fragment->Capacity = MAX_RX_BUFFER_SIZE;
-                                fragment->Offset = 0;
-                                fragment->Scratch = 0;
-                            }
-                            else
-#endif //NETCX 2.6 only
-                            {
-                                auto const rxVirtualAddress =
-                                    NetExtensionGetFragmentVirtualAddress(
-                                        &rxq->RxQueue->VirtualAddressExtension,
-                                        NetFragmentIteratorGetIndex(&rxFi));
-
-                                fragmentBuffer = static_cast<BYTE *>(rxVirtualAddress->VirtualAddress);
-                            }
+                            fragmentBuffer = static_cast<BYTE *>(rxVirtualAddress->VirtualAddress);
 
                             fragment->Offset = 0;
                             fragment->ValidLength =

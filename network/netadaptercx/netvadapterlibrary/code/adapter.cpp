@@ -431,57 +431,14 @@ NetvAdapterSetUsoUroOffloadCapabilities(
 _Use_decl_annotations_
 NTSTATUS NetvAdapter::ConfigureDataCapabilities()
 {
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    if (PreallocatedRxBuffers)
-    {
-        WDF_OBJECT_ATTRIBUTES attributes;
-        WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, Memory);
-        attributes.EvtDestroyCallback = [](WDFOBJECT Object)
-        {
-            Memory* memory = GetMemoryFromHandle(Object);
-            memory->~Memory();
-        };
 
-        attributes.EvtCleanupCallback = [](WDFOBJECT Object)
-        {
-            Memory* memory = GetMemoryFromHandle(Object);
-            memory->ReleaseAllMappings();
-        };
-
-        NET_MEMORY_COLLECTION_CONFIG collectionConfig;
-        NET_MEMORY_COLLECTION_CONFIG_INIT(
-            &collectionConfig,
-            PREALLOCATED_BUFFERS_COUNT);
-
-        RETURN_IF_NOT_STATUS_SUCCESS(
-            NetMemoryCollectionCreate(
-                m_device,
-                &attributes,
-                &collectionConfig,
-                &m_preallocatedRxBuffers));
-
-        Memory* memory = new (GetMemoryFromHandle(m_preallocatedRxBuffers)) Memory();
-        RETURN_IF_NOT_STATUS_SUCCESS(
-            memory->Initialize(
-                m_preallocatedRxBuffers,
-                MAX_RX_BUFFER_SIZE
-            ));
-    }
-#endif //NETCX 2.6 only
 
     NET_ADAPTER_TX_CAPABILITIES txCapabilities;
     NET_ADAPTER_TX_CAPABILITIES_INIT(&txCapabilities, MAX_TX_QUEUES);
 
     NET_ADAPTER_RX_CAPABILITIES rxCapabilities;
     NET_ADAPTER_RX_CAPABILITIES_INIT_SYSTEM_MANAGED(&rxCapabilities, MAX_RX_BUFFER_SIZE, MAX_RX_QUEUES);
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-    if (PreallocatedRxBuffers)
-    {
-        rxCapabilities.AllocationMode = NetRxFragmentBufferAllocationModeDriverV2;
-        rxCapabilities.AttachmentMode = NetRxFragmentBufferAttachmentModeDriver;
-        rxCapabilities.MemoryCollection = m_preallocatedRxBuffers;
-    }
-#endif //NETCX 2.6 only
+
     NET_ADAPTER_LINK_LAYER_CAPABILITIES linkLayerCapabilities;
     NET_ADAPTER_LINK_LAYER_CAPABILITIES_INIT(&linkLayerCapabilities, MAX_LINK_SPEED, MAX_LINK_SPEED);
 

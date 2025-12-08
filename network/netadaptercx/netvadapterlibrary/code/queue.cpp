@@ -32,13 +32,3 @@ NetvQueue::GetFragmentRing(
 {
     return NetRingCollectionGetFragmentRing(m_rings);
 }
-
-#if ((NETADAPTER_VERSION_MAJOR == 2) && (NETADAPTER_VERSION_MINOR >= 6))
-NET_RING *
-NetvQueue::GetNetMemoryReturnRing(
-    void
-)
-{
-    return NetRingCollectionGetFragmentReturnContextRing(m_rings);
-}
-#endif // NETCX 2.6 only
