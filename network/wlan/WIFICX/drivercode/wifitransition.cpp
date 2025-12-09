@@ -40,8 +40,8 @@ template<UINT16 MsgId>
 struct TransitionTraits;
 
 // --- Generic pure-type traits template (add before existing specializations) ---
-// WIFIREQUEST typically requires M3 notification, making TPreM3Fn important. 
-// WIFICX expects M3 -> M4 order under normal conditions;
+// WIFIREQUEST always needs M3 notification, so TPreM3Fn is mandatory.
+// and WIFICX expectes the M3 then M4 order, so we always execute M3 then M4.
 // using template parameters to configure parsing, cleanup, M3/M4 steps.
 // to make sure that all transitions have consistent implementations.
 template<
