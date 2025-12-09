@@ -39,15 +39,12 @@ The control path uses hardcoded data since this sample does not target real hard
 - [x] Scan access points and report BSS entries to the Windows UI.
 - [x] Connect to an open access point from the Windows UI.
 - [x] Disconnect from the connected access point.
-
-<video width="640" height="360" controls>
-  <source src="video/ControlPath.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
 - [x] Transfer data between two Wi-Fi device instances (e.g., ping and throughput test).
 
-<video width="640" height="360" controls>
-  <source src="video/DataPath.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+## 🎥 Control & Data Path Demo Video
+A walkthrough video demonstrating the Control & Data Path flow are available here:
+
+[▶ Watch Control Path Demo](video/controlpath.mp4)
+
+[▶ Watch Data Path Demo](video/datapath.mp4)
+
