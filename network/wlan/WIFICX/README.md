@@ -10,7 +10,7 @@ products:
 
 # WIFICX and NetAdapterCx Samples
 
-This sample illustrates how to leverage **WIFICX** for control flow and **NetAdapterCx** for data flow. It supports both **KMDF** and **UMDF** drivers.
+This sample illustrates how to leverage **WIFICX** for control flow and **NetAdapterCx** for data flow. It supports both **KMDF** and **UMDF(In Preview Stage)** drivers.
 
 ## How to Build
 1. Mount the EWDK ISO from a local drive (network share paths are not supported).
@@ -30,7 +30,7 @@ The sample interacts with three OS components:
   `wifixxxxx.cpp` files implement the **control path**, handling commands sent to Wi-Fi firmware (e.g., scan access points, connect, disconnect).
 
 - **WDF NetAdapter Class Extension (NetAdapterCx)**  
-  `netvxxxx.cpp` files implement the **data path**, managing network buffers and synchronizing with the control path for transfer start/stop operations.
+  `netvxxxx` files and classes implement the **data path**, managing network buffers and synchronizing with the control path for transfer start/stop operations.
 
 ## Data Buffers from Firmware
 The control path uses hardcoded data since this sample does not target real hardware. The data path uses **Emulated Network Link (ENL)**, which connects two virtual network adapters directly. Packets sent over one adapter are delivered to the other and vice versa.
