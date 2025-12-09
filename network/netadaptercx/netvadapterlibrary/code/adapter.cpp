@@ -470,22 +470,6 @@ NTSTATUS NetvAdapter::ConfigureDataCapabilities()
     RETURN_STATUS_SUCCESS();
 }
 
-_Use_decl_annotations_
-NTSTATUS
-ConfigureAndStartAdapter(
-    NETADAPTER Adapter
-    )
-{
-    auto adapter = NetvAdapterGetContextFromWDFObject(Adapter);
-    RETURN_IF_NOT_STATUS_SUCCESS(
-        adapter->ConfigureDataCapabilities());
-
-    RETURN_IF_NOT_STATUS_SUCCESS(
-        NetAdapterStart(Adapter));
-
-    RETURN_STATUS_SUCCESS();
-}
-
 NTSTATUS
 NetvAdapter::NetvAdapterReadAddress()
 {

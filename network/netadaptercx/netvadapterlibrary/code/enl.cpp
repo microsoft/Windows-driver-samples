@@ -546,13 +546,12 @@ EnlCreateQueue(
     }
 
     // Create WDF spinlock for the queue, parent to the queue's WDF handle
-    {
-        WDF_OBJECT_ATTRIBUTES attributes;
-        WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-        attributes.ParentObject = enlQueue->Queue->m_handle;
-        status = WdfSpinLockCreate(&attributes, &enlQueue->Spinlock);
-        NT_ASSERT(NT_SUCCESS(status));
-    }
+    WDF_OBJECT_ATTRIBUTES attributes;
+    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+    attributes.ParentObject = enlQueue->Queue->m_handle;
+    status = WdfSpinLockCreate(&attributes, &enlQueue->Spinlock);
+    NT_ASSERT(NT_SUCCESS(status));
+
 
     EnlpResumeThread(&enlLink->EnlThread);
 
@@ -668,10 +667,9 @@ EnlIsPortActive(
 {
     ENLP_PORT* port = &EnlLink->Ports[PortIndex];
     ENLP_QUEUE* txq = &port->TxQueue[0];
-    ENLP_QUEUE* rxq = &port->RxQueue[0];
     NT_FRE_ASSERT(PortIndex < ENLP_PORT_COUNT);
 
-    return (txq->Queue == nullptr && rxq->Queue == nullptr) ? FALSE : TRUE;
+    return (txq->Queue == nullptr) ? FALSE : TRUE;
 }
 
 _IRQL_requires_max_(PASSIVE_LEVEL)

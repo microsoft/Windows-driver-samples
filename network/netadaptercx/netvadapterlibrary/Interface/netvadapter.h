@@ -9,8 +9,8 @@
 
 #define NETV_NUMBER_OF_QUEUES 1
 
-#define NETV_SUPPORT_RSS FALSE         // RSS not supported due to ENL limitations
-#define NETV_SUPPORT_TX_DEMUXING FALSE // TX Demuxing not supported due to ENL limitations
+//#define NETV_SUPPORT_RSS FALSE   // RSS not supported due to ENL limitations
+//#define NETV_SUPPORT_TX_DEMUXING // TX Demuxing not supported due to ENL limitations
 
 // supported filters
 #define NETV_SUPPORTED_FILTERS ( \
@@ -20,11 +20,6 @@
     NetPacketFilterFlagPromiscuous | \
     NetPacketFilterFlagAllMulticast)
 
-
-NTSTATUS
-ConfigureAndStartAdapter(
-    _In_ NETADAPTER Adapter
-    );
 
 EVT_NET_ADAPTER_CREATE_TXQUEUE
     CreateTxQueue;
