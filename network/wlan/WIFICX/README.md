@@ -44,7 +44,7 @@ The control path uses hardcoded data since this sample does not target real hard
 ## 🎥 Control & Data Path Demo Video
 A walkthrough video demonstrating the Control & Data Path flow are available here:
 
-[▶ Watch Control Path Demo](video/controlpath.mp4)
+[▶ Watch Control Path Demo](video/ControlPath.mp4)
 
-[▶ Watch Data Path Demo](video/datapath.mp4)
+[▶ Watch Data Path Demo](video/DataPath.mp4)
 
