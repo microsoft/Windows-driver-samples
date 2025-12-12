@@ -84,10 +84,10 @@ EnlpAffinitizeThread(
             // next highest numbered proc for 1002, ...
             ULONG index;
 #ifdef _WIN64
-            BitScanReverse64(&index, (ULONG64)affinity.Mask);
+            NT_FRE_ASSERTMSG("Failed to find bit", TRUE == BitScanReverse64(&index, (ULONG64)affinity.Mask));
             affinity.Mask = (KAFFINITY)((ULONG64)1 << (index - (ProcIndex - 1001)));
 #else
-            BitScanReverse(&index, (ULONG)affinity.Mask);
+            NT_FRE_ASSERTMSG("Failed to find bit", TRUE == BitScanReverse(&index, (ULONG)affinity.Mask));
             affinity.Mask = (KAFFINITY)((ULONG)1 << (index - (ProcIndex - 1001)));
 #endif
         }
@@ -588,7 +588,9 @@ EnlRingDoorBell(
     )
 {
     InterlockedExchange((volatile LONG *)&Queue->QueueEnd, (LONG)EndIndex);
+
     WdfSpinLockAcquire(Queue->Spinlock);
+    
     if (Queue->Armed)
     {
         NT_ASSERT(Queue->ArmWaitEvent != NULL);
@@ -597,6 +599,7 @@ EnlRingDoorBell(
         Queue->ArmWaitEvent->Set();
         return;
     }
+
     WdfSpinLockRelease(Queue->Spinlock);
 }
 
