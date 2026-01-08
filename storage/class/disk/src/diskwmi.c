@@ -1739,7 +1739,7 @@ DiskInfoExceptionComplete(
                 //
                 // Reset byte count of transfer in SRB Extension.
                 //
-                srbEx->DataTransferLength = Irp->MdlAddress->ByteCount;
+                srbEx->DataTransferLength = MmGetMdlByteCount(Irp->MdlAddress);
 
                 //
                 // Zero SRB statuses.
@@ -1768,7 +1768,7 @@ DiskInfoExceptionComplete(
                 //
                 // Reset byte count of transfer in SRB Extension.
                 //
-                srb->DataTransferLength = Irp->MdlAddress->ByteCount;
+                srb->DataTransferLength = MmGetMdlByteCount(Irp->MdlAddress);
 
                 //
                 // Zero SRB statuses.

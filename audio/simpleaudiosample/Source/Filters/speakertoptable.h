@@ -87,7 +87,7 @@ static
 KSJACK_DESCRIPTION SpeakerJackDescBridge =
 {
     KSAUDIO_SPEAKER_STEREO,
-    0xB3C98C,               // Color spec for green
+    JACKDESC_RGB(0xB3,0xC9,0x8C),              // Color spec for green
     eConnTypeUnknown,
     eGeoLocFront,
     eGenLocPrimaryBox,

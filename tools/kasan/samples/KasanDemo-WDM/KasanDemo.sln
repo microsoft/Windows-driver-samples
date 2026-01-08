@@ -1,0 +1,46 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0
+MinimumVisualStudioVersion = 12.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{C4575BAC-8843-4B59-88F5-8D142A59F463}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sys", "Sys", "{52CD4CBC-6018-4367-BE2B-EA5A2864E7BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kasanagent", "exe\kasanagent.vcxproj", "{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kasantrigger", "sys\kasantrigger.vcxproj", "{29BD96E0-B6C5-42A0-B683-FD9740810699}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Debug|ARM64.Build.0 = Debug|ARM64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Debug|ARM64.Build.0 = Debug|ARM64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Release|ARM64.ActiveCfg = Release|ARM64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Release|ARM64.Build.0 = Release|ARM64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Release|ARM64.ActiveCfg = Release|ARM64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Release|ARM64.Build.0 = Release|ARM64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Debug|x64.ActiveCfg = Debug|x64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Debug|x64.Build.0 = Debug|x64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Release|x64.ActiveCfg = Release|x64
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9}.Release|x64.Build.0 = Release|x64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Debug|x64.ActiveCfg = Debug|x64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Debug|x64.Build.0 = Debug|x64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Release|x64.ActiveCfg = Release|x64
+		{29BD96E0-B6C5-42A0-B683-FD9740810699}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{61899E58-10C2-4EB1-9508-58AE7DC3B3A9} = {C4575BAC-8843-4B59-88F5-8D142A59F463}
+		{29BD96E0-B6C5-42A0-B683-FD9740810699} = {52CD4CBC-6018-4367-BE2B-EA5A2864E7BE}
+	EndGlobalSection
+EndGlobal

@@ -22,7 +22,7 @@ foreach ($file in $ChangedFiles) {
     $filename = Split-Path $file -Leaf
 
     # Files that can affect how every sample is built should trigger a full build
-    if ($filename -eq "Build-AllSamples.ps1" -or $filename -eq "Build-Sample.ps1" -or $filename -eq "Build-SampleSet.ps1" -or $filename -eq "exclusions.csv") {
+    if ($filename -eq "Build-AllSamples.ps1" -or $filename -eq "Build-Sample.ps1" -or $filename -eq "Build-SampleSet.ps1" -or $filename -eq "exclusions.csv" -or $filename -eq "Directory.Build.props" -or $filename -eq "packages.config") {
         $buildAll = $true
     }
     if ($dir -like "$root\.github\scripts" -or $dir -like "$root\.github\scripts\*") {

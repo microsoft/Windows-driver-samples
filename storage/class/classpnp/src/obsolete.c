@@ -119,7 +119,7 @@ ClassIoCompleteAssociated(
     PIRP originalIrp = Irp->AssociatedIrp.MasterIrp;
     LONG irpCount;
 
-    NTSTATUS status;
+    NTSTATUS status = STATUS_SUCCESS;
     BOOLEAN retry;
 
     TracePrint((TRACE_LEVEL_WARNING, TRACE_FLAG_GENERAL, "ClassIoCompleteAssociated is OBSOLETE !"));
@@ -390,8 +390,8 @@ RetryRequest(
         //
 
         NT_ASSERT(SrbGetDataBuffer(srbHeader) == MmGetMdlVirtualAddress(Irp->MdlAddress));
-    _Analysis_assume_(Irp->MdlAddress->ByteCount <= dataTransferLength);
-        transferByteCount = Irp->MdlAddress->ByteCount;
+    _Analysis_assume_(MmGetMdlByteCount(Irp->MdlAddress) <= dataTransferLength);
+        transferByteCount = MmGetMdlByteCount(Irp->MdlAddress);
 
     } else {
 

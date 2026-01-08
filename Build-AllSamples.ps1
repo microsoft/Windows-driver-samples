@@ -56,7 +56,10 @@ $sampleSet = @{}
 foreach ($file in $solutionFiles) {
     $dir = (Get-Item $file).DirectoryName
     $dir_norm = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
-    if ($dir_norm -match ($Samples)) {
+    if ($dir_norm -match ("^packages.")) {
+        Write-Verbose "`u{1F50E} Found and ignored non-sample [$dir_norm] at $dir"
+    }
+    elseif ($dir_norm -match ($Samples)) {
         Write-Verbose "`u{1F50E} Found and filtered in sample [$dir_norm] at $dir"
         $sampleSet[$dir_norm] = $dir
     }

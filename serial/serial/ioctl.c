@@ -2032,7 +2032,7 @@ Return Value:
         //
         // Override the default settings from allow user control to do not allow.
         //
-        wakeSettings.UserControlOfWakeSettings = IdleDoNotAllowUserControl;
+        wakeSettings.UserControlOfWakeSettings = WakeDoNotAllowUserControl;
         status = WdfDeviceAssignSxWakeSettings(pDevExt->WdfDevice, &wakeSettings);
         if (!NT_SUCCESS(status)) {
             SerialDbgPrintEx(TRACE_LEVEL_ERROR, DBG_PNP, "WdfDeviceAssignSxWakeSettings failed %x \n", status);
@@ -2050,7 +2050,7 @@ Return Value:
        // Override the default settings.
        //
        wakeSettings.Enabled = WdfFalse; // Disables wait-wake
-       wakeSettings.UserControlOfWakeSettings = IdleDoNotAllowUserControl;
+       wakeSettings.UserControlOfWakeSettings = WakeDoNotAllowUserControl;
        status = WdfDeviceAssignSxWakeSettings(pDevExt->WdfDevice, &wakeSettings);
        if (!NT_SUCCESS(status)) {
            SerialDbgPrintEx(TRACE_LEVEL_ERROR, DBG_PNP, "WdfDeviceAssignSxWakeSettings failed %x \n", status);

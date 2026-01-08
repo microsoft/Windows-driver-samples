@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
@@ -11,24 +11,22 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrEEMiniportSample", "Minip
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Arm = Debug|Arm
-		Debug|Win32 = Debug|Win32
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
 		Debug|x64 = Debug|x64
-		Release|Arm = Release|Arm
-		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Arm.ActiveCfg = Debug|Arm
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Arm.Build.0 = Debug|Arm
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|Win32.Build.0 = Debug|Win32
+		{420587AA-51DE-4966-B692-C428836BF8B2}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{420587AA-51DE-4966-B692-C428836BF8B2}.Debug|ARM64.Build.0 = Debug|ARM64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|ARM64.Build.0 = Debug|ARM64
+		{420587AA-51DE-4966-B692-C428836BF8B2}.Release|ARM64.ActiveCfg = Release|ARM64
+		{420587AA-51DE-4966-B692-C428836BF8B2}.Release|ARM64.Build.0 = Release|ARM64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|ARM64.ActiveCfg = Release|ARM64
+		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|ARM64.Build.0 = Release|ARM64
 		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|x64.ActiveCfg = Debug|x64
 		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Debug|x64.Build.0 = Debug|x64
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Arm.ActiveCfg = Release|Arm
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Arm.Build.0 = Release|Arm
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Win32.ActiveCfg = Release|Win32
-		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|Win32.Build.0 = Release|Win32
 		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|x64.ActiveCfg = Release|x64
 		{C1B22B3C-BE1A-40CE-82D0-8AE1628C297C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

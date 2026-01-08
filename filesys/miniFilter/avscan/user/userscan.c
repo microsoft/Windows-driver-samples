@@ -759,7 +759,6 @@ Return Value:
     HRESULT  hr = S_OK;
     ULONG    bytesReturned = 0;
     HANDLE   sectionHandle = NULL;
-    DWORD    dwErrCode = 0;
     PVOID    scanAddress = NULL;
     MEMORY_BASIC_INFORMATION memoryInfo;
     PAV_SCANNER_NOTIFICATION notification = &Message->Notification;
@@ -847,7 +846,7 @@ Cleanup:
     if (!CloseHandle(sectionHandle)) {
 
         fprintf(stderr, "[UserScanHandleStartScanMsg]: Failed to close the section handle.\n");
-        DisplayError(HRESULT_FROM_WIN32(dwErrCode));
+        DisplayError(HRESULT_FROM_WIN32(GetLastError()));
     }
 
     //

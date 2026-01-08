@@ -248,7 +248,7 @@ MbbBusGetStat(__in MBB_BUS_HANDLE BusHandle, __in USHORT StatIndex, __out ULONGL
 
     if (NT_SUCCESS(Status))
     {
-        if (BytesTransfered < sizeof(Value))
+        if (BytesTransfered < sizeof(*Value))
         {
             Status = STATUS_INFO_LENGTH_MISMATCH;
         }

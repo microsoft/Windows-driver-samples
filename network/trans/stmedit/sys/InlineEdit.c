@@ -55,7 +55,7 @@ InlineEditFlushData(
         if (DataLength == 0)
             break;
 
-        Buffer = ExAllocatePoolZero(NonPagedPool, DataLength, STMEDIT_TAG_MDL_DATA);
+        Buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, DataLength, STMEDIT_TAG_MDL_DATA);
         if (Buffer == NULL)
 		{
             Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -316,8 +316,8 @@ InlineEditClassify(
     // If a FIN/RST has been classified, flush any data and permit the FIN/RST.
     //
     if ((!FlowContext->bFlowActive) ||
-        (streamData->flags & FWPS_STREAM_FLAG_SEND_DISCONNECT) ||
-        (streamData->flags & FWPS_STREAM_FLAG_RECEIVE_DISCONNECT))
+        (streamData->flags & FWPS_STREAM_FLAG_SEND_DISCONNECT) || // must also handle FWPS_STREAM_FLAG_SEND_ABORT
+        (streamData->flags & FWPS_STREAM_FLAG_RECEIVE_DISCONNECT)) // must also handle FWPS_STREAM_FLAG_RECEIVE_ABORT
     {
         DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "FlowCtx %p, FIN/RST classified (Flow Active %d)!", FlowContext, FlowContext->bFlowActive);
 

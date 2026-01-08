@@ -24,6 +24,10 @@
 *.vcxproj      text eol=crlf
 *.xaml         text eol=crlf
 
+# Declare files that are encoded in UTF-16
+*.inf          text diff working-tree-encoding=UTF-16LE-BOM eol=crlf
+*.inx          text diff working-tree-encoding=UTF-16LE-BOM eol=crlf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
@@ -32,4 +36,3 @@
 # Note: This is only used by command line
 ###############################################################################
 *.cs     diff=csharp
-

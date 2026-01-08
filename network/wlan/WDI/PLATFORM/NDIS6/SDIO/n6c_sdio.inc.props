@@ -17,7 +17,7 @@
 	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Win8'">11</KMDF_VERSION_MINOR>
 	<!-- WinBlue now only supports v11. It will be 13 later -->
 	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='WindowsV6.3'">11</KMDF_VERSION_MINOR>
-	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Windows10'">13</KMDF_VERSION_MINOR>
+	<KMDF_VERSION_MINOR Condition="'$(TargetVersion)'=='Windows10'">15</KMDF_VERSION_MINOR>
 	
 	<C_DEFINES Condition="'$(TargetVersion)'=='Vista'">			-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>
 	<C_DEFINES Condition="'$(TargetVersion)'=='Win7'">			-DNDIS_MINIPORT_DRIVER -DNDIS60_MINIPORT=1 -DNDIS61_MINIPORT=1 -DNDIS620_MINIPORT=1 -DBINARY_COMPATIBLE=0 -DUSE_KLOCKS=1</C_DEFINES>

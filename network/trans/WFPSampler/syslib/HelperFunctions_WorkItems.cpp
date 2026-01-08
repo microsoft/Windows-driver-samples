@@ -68,7 +68,7 @@
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPurge(_Inout_ WORKITEM_DATA* pWorkItemData)
+VOID KrnlHlprWorkItemDataPurge(_Inout_ WORKITEM_DATA* pWorkItemData)
 {
 #if DBG
    
@@ -112,7 +112,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppWorkItemData == 0)
-inline VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
+VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
 {
 #if DBG
    
@@ -156,7 +156,7 @@ inline VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
+VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_ CLASSIFY_DATA* pClassifyData,
                                          _In_opt_ INJECTION_DATA* pInjectionData, /* 0 */
                                          _In_opt_ PIO_WORKITEM pIOWorkItem,       /* 0 */
@@ -202,7 +202,7 @@ inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
+VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_ CLASSIFY_DATA* pClassifyData,
                                          _In_ PEND_DATA* pPendData,
                                          _In_opt_ PIO_WORKITEM pIOWorkItem,    /* 0 */
@@ -249,7 +249,7 @@ inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
+VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_ CLASSIFY_DATA* pClassifyData,
                                          _In_ REDIRECT_DATA* pRedirectData,
                                          _In_opt_ PIO_WORKITEM pIOWorkItem,    /* 0 */
@@ -296,7 +296,7 @@ inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
+VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_ NOTIFY_DATA* pNotifyData,
                                          _In_opt_ PIO_WORKITEM pIOWorkItem,   /* 0 */
                                          _In_opt_ VOID* pContext)             /* 0 */
@@ -340,7 +340,7 @@ inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
-inline VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
+VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_ PEND_DATA* pPendData,
                                          _In_opt_ PIO_WORKITEM pIOWorkItem,    /* 0 */
                                          _In_opt_ VOID* pContext)              /* 0 */

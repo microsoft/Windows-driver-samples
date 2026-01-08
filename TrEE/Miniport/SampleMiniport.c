@@ -22,11 +22,17 @@ Environment:
 #include <wdmguid.h>
 #include <ntstrsafe.h>
 #include <TrustedRuntimeClx.h>
-#include <ntefi.h>
+
+//
+// Header file <TrEEVariableService.h> requires prior definition of a CHAR16.
+// For now we need to define this in sample.
+//
+typedef UINT16 CHAR16;
+
 #include <TrEEVariableService.h>
 #include "sampleminiport.h"
-#include <SampleSecureService.h>
-#include <SampleOSService.h>
+#include "..\inc\SampleSecureService.h"
+#include "..\inc\SampleOSService.h"
 
 #define SDDL_SAMPLE_TEST2_SERVICE L"D:P(A;;FRFW;;;WD)(A;;FRFW;;;RC)(A;;FRFW;;;AC)"
 

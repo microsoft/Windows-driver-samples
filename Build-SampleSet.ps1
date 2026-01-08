@@ -9,6 +9,14 @@ param(
 )
 
 $root = Get-Location
+
+# launch developer powershell (if necessary to prevent multiple developer sessions)
+if (-not $env:VSCMD_VER) {
+    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
+    Set-Location $root
+}
+
 $ThrottleFactor = 5
 $LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
 
@@ -45,15 +53,36 @@ finally {
 }
 
 #
-# Determine build environment: 'WDK', 'EWDK', or 'GitHub'.  Only used to determine build number.
+# Determine build environment: 'GitHub', 'NuGet', 'EWDK', or 'WDK'.
 # Determine build number (used for exclusions based on build number).  Five digits.  Say, '22621'.
+# Determine NuGet package version (if applicable).
 #
 $build_environment=""
 $build_number=0
+$nuget_package_version=0
+#
+# In Github we build using NuGet.
+#
+if ($env:GITHUB_REPOSITORY) {
+    $build_environment="GitHub"
+    $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
+    $build_number=$nuget_package_version.split('.')[2]
+}
+#
+# WDK NuGet will require presence of a folder 'packages'. The version is sourced from repo .\Env-Vars.ps1.
+#
+# Hack: If user has hydrated nuget packages, then use those. That will be indicated by presence of a folder named '.\packages'. 
+#       Further, we need to test that the directory has been hydrated using '.\packages\*'.
+#
+elseif(Test-Path(".\packages\*")) {
+    $build_environment=("NuGet")
+    $nuget_package_version=([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-Childitem .\packages\*WDK.x64* -Name)).Value
+    $build_number=$nuget_package_version.split('.')[2]
+}
 #
 # EWDK sets environment variable BuildLab.  For example 'ni_release_svc_prod1.22621.2428'.
 #
-if($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
+elseif($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
     $build_environment=("EWDK."+$Matches.branch+"."+$Matches.build+"."+$Matches.qfe)
     $build_number=$Matches.build
 }
@@ -64,23 +93,47 @@ elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
     $build_environment="WDK"
     $build_number=$Matches.build
 }
-#
-# Hack: In GitHub we do not have an environment variable where we can see WDK build number, so we have it hard coded.
-#
-elseif (-not $env:GITHUB_REPOSITORY -eq '') {
-    $build_environment="GitHub"
-    $build_number=22621
-}
 else {
 
     # Dump all environment variables so as to help debug error:
     Write-Output "Environment variables {"
-    gci env:* | sort-object name
+    Get-ChildItem env:* | Sort-Object name
     Write-Output "Environment variables }"
 
     Write-Error "Could not determine build environment."
     exit 1
 }
+
+# Determine WDK Visual Studio Component version
+#
+# Be lenient with EWDK builds that do not include the component information
+if ($build_environment -match '^EWDK') {
+    $wdk_vs_component_ver = "(WDK Visual Studio Component Version is not included for EWDK builds)"
+} else {
+    # Get the WDK extension version from installed packages
+    $wdk_vs_component_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
+    if (-not $wdk_vs_component_ver) {
+        Write-Error "WDK Visual Studio Component version not found. Please ensure the WDK Component is installed."
+        exit 1
+    }
+    $wdk_vs_component_ver = [regex]::Match($wdk_vs_component_ver.Name, '(\d+\.){3}\d+').Value
+}
+
+#
+#
+# InfVerif_AdditionalOptions
+#
+# Samples must build cleanly and even without warnings.
+#
+# An exception is for infverif where specific warnings are acceptable.  Those
+# specific warnings indicates issues intentially present in the samples, that
+# anyone that clones the samples must fix as part of productizing a driver.
+# 
+# In 22621 those warnings are: /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
+# 
+# After 22621 those warnings are put under a common flag: /samples
+#
+$InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
 
 #
 # Determine exclusions.  
@@ -120,6 +173,7 @@ $jresult = @{
     SolutionsExcluded    = 0
     SolutionsUnsupported = 0
     SolutionsFailed      = 0
+    SolutionsSporadic    = 0
     Results              = @()
     FailSet              = @()
     lock                 = [System.Threading.Mutex]::new($false)
@@ -127,17 +181,22 @@ $jresult = @{
 
 $SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
 
-Write-Output ("Build Environment:    " + $build_environment)
-Write-Output ("Build Number:         " + $build_number)
-Write-Output ("Samples:              " + $sampleSet.Count)
-Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
-Write-Output "Combinations:         $SolutionsTotal"
-Write-Output "LogicalProcessors:    $LogicalProcessors"
-Write-Output "ThrottleFactor:       $ThrottleFactor"
-Write-Output "ThrottleLimit:        $ThrottleLimit"
-Write-Output "WDS_WipeOutputs:      $env:WDS_WipeOutputs"
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output "WDK Build Environment:               $build_environment"
+Write-Output "WDK Build Number:                    $build_number"
+if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) { 
+Write-Output "WDK Nuget Version:                   $nuget_package_version" 
+}
+Write-Output "WDK Visual Studio Component Version: $wdk_vs_component_ver"
+Write-Output "Samples:                             $($sampleSet.Count)"
+Write-Output "Configurations:                      $($Configurations.Count) ($Configurations)"
+Write-Output "Platforms:                           $($Platforms.Count) ($Platforms)"
+Write-Output "InfVerif_AdditionalOptions:          $InfVerif_AdditionalOptions"
+Write-Output "Combinations:                        $SolutionsTotal"
+Write-Output "LogicalProcessors:                   $LogicalProcessors"
+Write-Output "ThrottleFactor:                      $ThrottleFactor"
+Write-Output "ThrottleLimit:                       $ThrottleLimit"
+Write-Output "WDS_WipeOutputs:                     $env:WDS_WipeOutputs"
+Write-Output "Disk Remaining (GB):                 $(((Get-Volume ((Get-Item ".").PSDrive.Name)).SizeRemaining) / 1GB)"
 Write-Output ""
 Write-Output "T: Combinations"
 Write-Output "B: Built"
@@ -148,6 +207,7 @@ Write-Output "S: Built and result was 'Succeeded'"
 Write-Output "E: Built and result was 'Excluded'"
 Write-Output "U: Built and result was 'Unsupported' (Platform and Configuration combination)"
 Write-Output "F: Built and result was 'Failed'"
+Write-Output "O: Built and result was 'Sporadic'"
 Write-Output ""
 Write-Output "Building all combinations..."
 
@@ -161,6 +221,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $exclusionReasons = $using:exclusionReasons
     $Configurations = $using:Configurations
     $Platforms = $using:Platforms
+    $InfVerif_AdditionalOptions = $using:InfVerif_AdditionalOptions
     $Verbose = $using:Verbose
 
     $sampleName = $_.Key
@@ -173,10 +234,12 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
         foreach ($platform in $Platforms) {
             $thisunsupported = 0
             $thisfailed = 0
+            $thissporadic = 0
             $thisexcluded = 0
             $thissucceeded = 0
             $thisresult = "Not run"
             $thisfailset = @()
+            $thissporadicset = @()
 
             if ($exclusionConfigurations.ContainsKey($sampleName) -and ($exclusionConfigurations[$sampleName].Split(';') | Where-Object { "$configuration|$platform" -like $_ })) {
                 # Verbose
@@ -185,7 +248,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $thisresult = "Excluded"
             }
             else {
-                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -Verbose:$Verbose
+                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -InfVerif_AdditionalOptions $InfVerif_AdditionalOptions -Verbose:$Verbose
                 if ($LASTEXITCODE -eq 0) {
                     $thissucceeded += 1
                     $thisresult = "Succeeded"
@@ -195,8 +258,13 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                     $thisfailed += 1
                     $thisresult = "Failed"
                 }
+                elseif ($LASTEXITCODE -eq 2) {
+                    $thissporadicset += "$sampleName $configuration|$platform"
+                    $thissporadic += 1
+                    $thisresult = "Sporadic"
+                }
                 else {
-                    # ($LASTEXITCODE -eq 2)
+                    # ($LASTEXITCODE -eq 3)
                     $thisunsupported += 1
                     $thisresult = "Unsupported"
                 }
@@ -210,7 +278,9 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 ($using:jresult).SolutionsExcluded += $thisexcluded
                 ($using:jresult).SolutionsUnsupported += $thisunsupported
                 ($using:jresult).SolutionsFailed += $thisfailed
+                ($using:jresult).SolutionsSporadic += $thissporadic
                 ($using:jresult).FailSet += $thisfailset
+                ($using:jresult).SporadicSet += $thissporadicset
                 $SolutionsTotal = $using:SolutionsTotal
                 $ThrottleLimit = $using:ThrottleLimit
                 $SolutionsBuilt = ($using:jresult).SolutionsBuilt
@@ -219,7 +289,7 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $SolutionsPending = if ($SolutionsRemaining -ge $ThrottleLimit) { ($SolutionsRemaining - $ThrottleLimit) } else { 0 }
                 $SolutionsBuiltPercent = [Math]::Round(100 * ($SolutionsBuilt / $using:SolutionsTotal))
                 $TBRP = "T:" + ($SolutionsTotal) + "; B:" + (($using:jresult).SolutionsBuilt) + "; R:" + ($SolutionsRunning) + "; P:" + ($SolutionsPending)
-                $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed)
+                $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed) + "; O:" + (($using:jresult).SolutionsSporadic)
                 Write-Progress -Activity "Building combinations" -Status "$SolutionsBuilt of $using:SolutionsTotal combinations built ($SolutionsBuiltPercent%) | $TBRP | $rstr" -PercentComplete $SolutionsBuiltPercent
             }
             finally {
@@ -238,6 +308,8 @@ $SampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
 
 $sw.Stop()
 
+Write-Output ""
+
 if ($jresult.FailSet.Count -gt 0) {
     Write-Output "Some combinations were built with errors:"
     $jresult.FailSet = $jresult.FailSet | Sort-Object
@@ -247,10 +319,27 @@ if ($jresult.FailSet.Count -gt 0) {
         $failConfiguration = $Matches[2]
         $failPlatform = $Matches[3]
         Write-Output "Build errors in Sample $failName; Configuration: $failConfiguration; Platform: $failPlatform {"
-        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.err" | Write-Output
+        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.0.err" | Write-Output
         Write-Output "} $failedSample"
     }
     Write-Error "Some combinations were built with errors."
+    Write-Output ""
+}
+
+if ($jresult.SporadicSet.Count -gt 0) {
+    Write-Output "Some combinations were built with sporadic error:"
+    $jresult.SporadicSet = $jresult.SporadicSet | Sort-Object
+    foreach ($sporadicSample in $jresult.SporadicSet) {
+        $sporadicSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
+        $sporadicName = $Matches[1]
+        $sporadicConfiguration = $Matches[2]
+        $sporadicPlatform = $Matches[3]
+        Write-Output "Build sporadic errors in Sample $sporadicName; Configuration: $sporadicConfiguration; Platform: $sporadicPlatform {"
+        Get-Content "$LogFilesDirectory\$sporadicName.$sporadicConfiguration.$sporadicPlatform.0.err" | Write-Output
+        Write-Output "} $sporadicSample"
+    }
+    Write-Error "Some combinations were built with sporadic errors."
+    Write-Output ""
 }
 
 # Display timer statistics to host
@@ -261,13 +350,13 @@ $SolutionsSucceeded = $jresult.SolutionsSucceeded
 $SolutionsExcluded = $jresult.SolutionsExcluded
 $SolutionsUnsupported = $jresult.SolutionsUnsupported
 $SolutionsFailed = $jresult.SolutionsFailed
+$SolutionsSporadic = $jresult.SolutionsSporadic
 $Results = $jresult.Results
 
-Write-Output ""
 Write-Output "Built all combinations."
 Write-Output ""
 Write-Output "Elapsed time:         $min minutes, $seconds seconds."
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume ($DriveLetter = (Get-Item ".").PSDrive.Name)).SizeRemaining / 1GB)))
+Write-Output ("Disk Remaining (GB):  " + (((Get-Volume (Get-Item ".").PSDrive.Name).SizeRemaining / 1GB)))
 Write-Output ("Samples:              " + $sampleSet.Count)
 Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
 Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
@@ -276,6 +365,7 @@ Write-Output "Succeeded:            $SolutionsSucceeded"
 Write-Output "Excluded:             $SolutionsExcluded"
 Write-Output "Unsupported:          $SolutionsUnsupported"
 Write-Output "Failed:               $SolutionsFailed"
+Write-Output "Sporadic:             $SolutionsSporadic"
 Write-Output "Log files directory:  $LogFilesDirectory"
 Write-Output "Overview report:      $reportFilePath"
 Write-Output ""

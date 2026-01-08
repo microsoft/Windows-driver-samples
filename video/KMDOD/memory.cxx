@@ -20,6 +20,9 @@ void* __cdecl operator new(size_t Size, POOL_FLAGS Flags)
 
     Size = (Size != 0) ? Size : 1;
     
+    // Note that ExAllocatePool2 replaces ExAllocatePool* APIs in OS's starting
+    // with Windows 10, version 2004. If your driver targets previous versions it
+    // should use ExAllocatePoolZero instead.
     void* pObject = ExAllocatePool2(Flags, Size, BDDTAG);
 
 #if DBG

@@ -17,6 +17,9 @@ Configuration name that will be used to build the solution. Common available val
 .PARAMETER Platform
 Platform to build the solution for (e.g. "x64", "arm64").
 
+.PARAMETER InfVerif_AdditionalOptions
+Additional options for infverif (e.g. "/samples").
+
 .PARAMETER LogFilesDirectoy
 Path to a directory where the log files will be written to. If not provided, outputs will be logged to the current working directory.
 
@@ -43,6 +46,7 @@ param(
     [string]$SampleName,
     [string]$Configuration = "Debug",
     [string]$Platform = "x64",
+    [string]$InfVerif_AdditionalOptions = "/samples",
     $LogFilesDirectory = (Get-Location)
 )
 
@@ -130,37 +134,78 @@ foreach ($line in Get-Content -Path $solutionFile)
 if (-not $configurationIsSupported)
 {
     Write-Verbose "[$SampleName] `u{23E9} Skipped. Configuration $Configuration|$Platform not supported."
-    exit 2
+    exit 3
 }
-
-$errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.err"
-$warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.wrn"
-$OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.out"
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
 
-# Exclude certain InfVerif exceptions to allow samples to build and detect other errors.
-# error 1205: Section [xxx] referenced from DelFiles and CopyFiles directive - network\trans
-# error 1233: Missing directive CatalogFile required for digital signature - storage\class\disk
-# error 2083: Section [xxx] not referenced or used - network\trans, storage\msdsm
-# error 2084: Service binary 'xxx' should reference a CopyFiles destination file - network\trans, wpd\wpdservicesampledriver
-# errors 1324, 1420, 1421, 1402 will be excluded in main branch only until the fixes are merged.
-# error 2086 will be excluded until the WDK used in GitHub is updated.
-msbuild $solutionFile -clp:Verbosity=m -t:clean,build -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="/samples /msft /sw1199 /sw1205 /sw1233 /sw1324 /sw1420 /sw1421 /sw2083 /sw2084 /sw2086 /sw1402" -p:SignToolWS=/fdws -p:DriverCFlagAddOn=/wd4996 -warnaserror -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
-if ($env:WDS_WipeOutputs -ne $null)
+$myexit=0
+
+#
+# Let us build up to three times (0th, 1st, and 2nd attempt).
+# If we succeed at first, then it is a success.
+# If we fail at first, but succeed at either of next two attempts, then it is a sporadic failure.
+# If we even at third attempt fail, then it is a true failure.
+#
+for ($i = 0; $i -lt 3; $i++)
 {
-    Write-Verbose ("WipeOutputs: "+$Directory+" "+(((Get-Volume ($DriveLetter=(Get-Item ".").PSDrive.Name)).SizeRemaining/1GB)))
-    Get-ChildItem -path $Directory -Recurse -Include x64|Remove-Item -Recurse
-    Get-ChildItem -path $Directory -Recurse -Include arm64|Remove-Item -Recurse
+    $binLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.binlog"
+    $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
+    $warnLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
+    $OutLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
+
+    msbuild $solutionFile -clp:Verbosity=m -t:rebuild -property:Configuration=$Configuration -property:Platform=$Platform -p:TargetVersion=Windows10 -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" -warnaserror -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None -flp1:errorsonly`;logfile=$errorLogFilePath -flp2:WarningsOnly`;logfile=$warnLogFilePath -noLogo > $OutLogFilePath
+    if ($null -ne $env:WDS_WipeOutputs)
+    {
+        Write-Verbose ("WipeOutputs: " + $Directory + " " + (((Get-Volume (Get-Item ".").PSDrive.Name).SizeRemaining / 1GB)))
+        Get-ChildItem -path $Directory -Recurse -Include x64 | Remove-Item -Recurse
+        Get-ChildItem -path $Directory -Recurse -Include arm64 | Remove-Item -Recurse
+    }
+    if ($LASTEXITCODE -eq 0)
+    {
+        # We succeeded building. 
+        # If it was at a later attempt, let the caller know with a different exit code.
+        if ($i -eq 0)
+        {
+            $myexit = 0
+        }
+        else
+        {
+            $myexit = 2
+        }
+        # Remove binlog on success to save space; keep otherwise to diagnose issues.
+        Remove-Item $binLogFilePath
+        break;
+    }
+    else
+    {
+        # We failed building. 
+        # Let us sleep for a bit.
+        # Then let the while loop do its thing and re-run.
+        Start-Sleep 1
+        if ($Verbose)
+        {
+            Write-Warning "`u{274C} Build failed. Retrying to see if sporadic..."
+        }
+    }
 }
 
-if ($LASTEXITCODE -ne 0)
+if ($myexit -eq 1)
 {
     if ($Verbose)
     {
         Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
     }
     exit 1
+}
+
+if ($myexit -eq 2)
+{
+    if ($Verbose)
+    {
+        Write-Warning "`u{274C} Build sporadically failed. Log available at $errorLogFilePath"
+    }
+    exit 2
 }
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform }"

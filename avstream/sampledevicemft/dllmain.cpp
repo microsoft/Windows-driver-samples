@@ -199,7 +199,7 @@ STDMETHODIMP_(BOOL) WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *)
 
         //  Hook up WIL tracing to our trace provider.
         wil::SetResultLoggingCallback(
-            [](const wil::FailureInfo &failure)
+            [](const wil::FailureInfo &failure) noexcept
         {
             wchar_t debugString[2048];
             if (SUCCEEDED(wil::GetFailureLogString(debugString, ARRAYSIZE(debugString), failure)))

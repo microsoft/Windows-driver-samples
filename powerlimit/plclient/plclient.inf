@@ -1,0 +1,83 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    plclient.inf
+;
+;Abstract:
+;
+;    INF file for installing simulate power limit client driver.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderString%
+DriverVer=08/29/2023, 1.00.0000
+CatalogFile=plclient.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+plclient.sys  = 1,,
+
+;********************************************
+; Simulated Power Limit Client Install Section
+;********************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NTamd64
+%StdMfg%=Standard,NTarm64
+
+[Standard.NTamd64]
+%PlCl.DeviceDesc% = PlCl_Device, ACPI\PLCL0001
+%PlCl.DeviceDesc% = PlCl_Device, root\PLCL0001
+
+[Standard.NTarm64]
+%PlCl.DeviceDesc% = PlCl_Device, ACPI\PLCL0001
+%PlCl.DeviceDesc% = PlCl_Device, root\PLCL0001
+
+[PlCl_Device.NT]
+CopyFiles=PlCl_Device_Drivers
+
+[PlCl_Device.NT.HW]
+AddReg=PlCl_Device.NT.AddReg
+
+[PlCl_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[PlCl_Device_Drivers]
+plclient.sys
+
+;-------------- Service installation
+
+[PlCl_Device.NT.Services]
+AddService = plclient,%SPSVCINST_ASSOCSERVICE%,PlCl_Service_Inst
+
+; -------------- plclient driver install sections
+
+[PlCl_Service_Inst]
+DisplayName    = %PlCl.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\plclient.sys
+LoadOrderGroup = Extended Base
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderString = "TODO-Set-Provider"
+StdMfg = "(Standard system devices)"
+DiskId1 = "Simulate Power Limit Client Installation Disk #1"
+PlCl.DeviceDesc = "Simulate Power Limit Client Device"
+PlCl.SVCDESC = "Simulate Power Limit Client Driver"
