@@ -47,7 +47,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"             /// .
-#include "ClassifyFunctions_PendAuthorizationCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_PendAuthorizationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PrvCloneAuthorizedNBLAndInject"

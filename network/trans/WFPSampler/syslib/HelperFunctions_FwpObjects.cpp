@@ -74,7 +74,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"      /// .
-#include "HelperFunctions_FwpObjects.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_FwpObjects.tmh" /// $(OBJ_PATH)\$(O)\
 
 HANDLE g_EngineHandle                                    = 0;
 HANDLE g_pIPv4InboundMACInjectionHandles[2]              = {0};

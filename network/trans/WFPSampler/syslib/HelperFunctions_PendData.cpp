@@ -49,7 +49,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"    /// .
-#include "HelperFunctions_PendData.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_PendData.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @kernel_helper_function="KrnlHlprPendDataPurge"
