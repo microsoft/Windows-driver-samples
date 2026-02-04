@@ -42,7 +42,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"               /// .
-#include "ClassifyFunctions_FastStreamInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_FastStreamInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
 

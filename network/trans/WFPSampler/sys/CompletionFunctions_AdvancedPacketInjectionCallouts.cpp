@@ -52,7 +52,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"                     /// . 
-#include "CompletionFunctions_AdvancedPacketInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "CompletionFunctions_AdvancedPacketInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if DBG
 
