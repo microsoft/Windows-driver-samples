@@ -106,7 +106,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"                   /// .
-#include "ClassifyFunctions_BasicPacketModificationCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_BasicPacketModificationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if(NTDDI_VERSION >= NTDDI_WIN8)
 
