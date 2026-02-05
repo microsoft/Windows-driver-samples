@@ -12,8 +12,8 @@ $root = Get-Location
 
 # launch developer powershell (if necessary to prevent multiple developer sessions)
 if (-not $env:VSCMD_VER) {
-    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
-    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\2022\*")
+    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*")
     Set-Location $root
 }
 
