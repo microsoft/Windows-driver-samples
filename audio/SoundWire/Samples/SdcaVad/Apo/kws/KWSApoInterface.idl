@@ -1,0 +1,21 @@
+//
+// KWSApoInterface.idl -- Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Description:
+//
+//      The interface and type definitions for KWS APO functionality.
+//
+import "oaidl.idl";
+import "ocidl.idl";
+import "audioenginebaseapo.idl";
+
+
+[
+    object,
+    uuid(CF5C2AA7-68A8-4FD1-B86F-EBC008AD1B6F),
+    pointer_default(unique)
+]
+interface IKWSApoEFX : IUnknown
+{
+};
+
