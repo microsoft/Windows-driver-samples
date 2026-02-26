@@ -6,6 +6,7 @@ on:
 
 jobs:
   tag-codeowner:
+    if: false # Disabled - workflow intentionally turned off
     runs-on: ubuntu-latest
 
     steps:
