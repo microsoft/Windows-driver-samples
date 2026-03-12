@@ -5,6 +5,7 @@ param(
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { "x64" } else { $env:WDS_Platform }),
     $LogFilesDirectory = (Get-Location),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
+    [string]$InfOptions = "",
     [int]$ThrottleLimit = 0
 )
 
@@ -134,6 +135,11 @@ if ($build_environment -match '^EWDK') {
 # After 22621 those warnings are put under a common flag: /samples
 #
 $InfVerif_AdditionalOptions=($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
+
+# Override InfVerif_AdditionalOptions if InfOptions parameter was provided
+if (-not [string]::IsNullOrEmpty($InfOptions)) {
+    $InfVerif_AdditionalOptions = $InfOptions
+}
 
 #
 # Determine exclusions.  
