@@ -1,0 +1,13 @@
+{
+    "_comment": "Manual keyword overrides for team classification. Add domain-specific terms here that are not derivable from CODEOWNERS paths or subdirectory names. Each key is a CODEOWNERS team alias; value is a list of additional keywords to match.",
+    "filesystems": ["fat"],
+    "display-kernel-devs": ["wddm", "kmdod", "display driver", "dxgkrnl"],
+    "coreos-buses-and-wdf": ["umdf", "kmdf", "wdf framework"],
+    "netsec": ["wfp", "wfpsampler"],
+    "windowsaudio": ["sysvad", "audio driver"],
+    "cameraplatdev": ["camera driver", "dmft"],
+    "ee-devs": ["power management"],
+    "connection-awareness": ["gnss driver", "radio manager"],
+    "consumer-storage": ["sd card", "smart card"],
+    "storage-core": ["nvme", "scsi"]
+}

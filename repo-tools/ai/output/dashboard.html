@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows Driver Samples — Issues &amp; PR Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --text-muted: #8b949e; --accent: #58a6ff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
+  .container { max-width:1400px; margin:0 auto; padding:24px; }
+  header { text-align:center; padding:32px 0 24px; border-bottom:1px solid var(--border); margin-bottom:24px; }
+  header h1 { font-size:28px; font-weight:600; }
+  header p { color:var(--text-muted); margin-top:8px; font-size:14px; }
+  header a { color:var(--accent); }
+  .summary-bar { display:flex; gap:16px; justify-content:center; margin:16px 0 24px; flex-wrap:wrap; }
+  .summary-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 28px; text-align:center; }
+  .summary-box .big { font-size:32px; font-weight:700; }
+  .summary-box .lbl { color:var(--text-muted); font-size:13px; margin-top:2px; }
+  .section-title { font-size:20px; font-weight:600; margin:28px 0 12px; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin-bottom:28px; }
+  .team-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; display:flex; overflow:hidden; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+  .team-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.4); }
+  .card-color { width:5px; flex-shrink:0; }
+  .card-body { padding:14px 16px; }
+  .card-title { font-weight:600; font-size:14px; margin-bottom:6px; font-family:monospace; }
+  .card-stats { display:flex; gap:14px; }
+  .stat { font-size:13px; color:var(--text-muted); }
+  .filter-bar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .filter-btn { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:5px 14px; font-size:12px; cursor:pointer; transition:all .15s; font-family:monospace; }
+  .filter-btn:hover { background:#21262d; }
+  .filter-btn.active { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+  .search-box { margin-bottom:16px; }
+  .search-box input { width:100%; padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:14px; outline:none; }
+  .search-box input:focus { border-color:var(--accent); }
+  /* Tabs */
+  .tab-bar { display:flex; gap:0; margin-bottom:0; border-bottom:2px solid var(--border); }
+  .tab { padding:12px 28px; font-size:15px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; color:var(--text-muted); transition:all .15s; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-content { display:none; padding-top:20px; }
+  .tab-content.active { display:block; }
+  table { width:100%; border-collapse:collapse; }
+  table th { text-align:left; font-size:12px; color:var(--text-muted); padding:8px 10px; border-bottom:1px solid var(--border); }
+  table td { padding:10px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:top; }
+  table td a { color:var(--accent); text-decoration:none; }
+  table td a:hover { text-decoration:underline; }
+  .title-cell { max-width:500px; }
+  .item-title { font-weight:500; }
+  .meta { color:var(--text-muted); font-size:12px; }
+  .label { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; color:#fff; margin:1px 2px; }
+  .team-badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500; color:#fff; margin:1px 2px; font-family:monospace; }
+  .detected-path { font-family:monospace; font-size:12px; color:#7ee787; background:#1b2a1b; padding:2px 6px; border-radius:4px; }
+  .no-path { font-size:11px; color:var(--text-muted); font-style:italic; }
+  .hidden { display:none; }
+  .counter { color:var(--text-muted); font-size:14px; margin-bottom:8px; }
+  footer { text-align:center; padding:32px 0; color:var(--text-muted); font-size:12px; border-top:1px solid var(--border); margin-top:32px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📊 Windows Driver Samples Dashboard</h1>
+    <p>Open Issues &amp; Pull Requests by CODEOWNERS Team — <a href="https://github.com/microsoft/Windows-driver-samples" target="_blank">microsoft/Windows-driver-samples</a></p>
+  </header>
+
+  <div class="summary-bar">
+    <div class="summary-box"><div class="big">120</div><div class="lbl">Total Open Items</div></div>
+    <div class="summary-box"><div class="big" style="color:#d73a4a">38</div><div class="lbl">Open Issues</div></div>
+    <div class="summary-box"><div class="big" style="color:#3fb950">82</div><div class="lbl">Open PRs</div></div>
+    <div class="summary-box"><div class="big" style="color:var(--accent)">17</div><div class="lbl">Active Teams</div></div>
+  </div>
+
+  <div class="section-title">Teams Overview</div>
+  <div class="team-grid">
+    <div class="team-card" onclick="filterByTeam('bluetooth')">
+      <div class="card-color" style="background:#0078d4"></div>
+      <div class="card-body">
+        <div class="card-title">bluetooth</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 0 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('cameraplatdev')">
+      <div class="card-color" style="background:#107c10"></div>
+      <div class="card-body">
+        <div class="card-title">cameraplatdev</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 3 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('core-print')">
+      <div class="card-color" style="background:#b4009e"></div>
+      <div class="card-body">
+        <div class="card-title">core-print</div>
+        <div class="card-stats">
+          <span class="stat">🔴 0 issues</span>
+          <span class="stat">🟢 1 PR</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('coreos-buses-and-wdf')">
+      <div class="card-color" style="background:#e3008c"></div>
+      <div class="card-body">
+        <div class="card-title">coreos-buses-and-wdf</div>
+        <div class="card-stats">
+          <span class="stat">🔴 12 issues</span>
+          <span class="stat">🟢 11 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('device-enumeration-and-interconnect')">
+      <div class="card-color" style="background:#986f0b"></div>
+      <div class="card-body">
+        <div class="card-title">device-enumeration-and-interconnect</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 0 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('display-kernel-devs')">
+      <div class="card-color" style="background:#498205"></div>
+      <div class="card-body">
+        <div class="card-title">display-kernel-devs</div>
+        <div class="card-stats">
+          <span class="stat">🔴 2 issues</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('driver-samples-maintainers')">
+      <div class="card-color" style="background:#00b7c3"></div>
+      <div class="card-body">
+        <div class="card-title">driver-samples-maintainers</div>
+        <div class="card-stats">
+          <span class="stat">🔴 5 issues</span>
+          <span class="stat">🟢 42 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('filesystems')">
+      <div class="card-color" style="background:#847545"></div>
+      <div class="card-body">
+        <div class="card-title">filesystems</div>
+        <div class="card-stats">
+          <span class="stat">🔴 4 issues</span>
+          <span class="stat">🟢 7 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('filter-manager')">
+      <div class="card-color" style="background:#6b69d6"></div>
+      <div class="card-body">
+        <div class="card-title">filter-manager</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 0 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('kernel-core')">
+      <div class="card-color" style="background:#038387"></div>
+      <div class="card-body">
+        <div class="card-title">kernel-core</div>
+        <div class="card-stats">
+          <span class="stat">🔴 0 issues</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('netsec')">
+      <div class="card-color" style="background:#c30052"></div>
+      <div class="card-body">
+        <div class="card-title">netsec</div>
+        <div class="card-stats">
+          <span class="stat">🔴 5 issues</span>
+          <span class="stat">🟢 4 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('network-driver-platform')">
+      <div class="card-color" style="background:#7a7574"></div>
+      <div class="card-body">
+        <div class="card-title">network-driver-platform</div>
+        <div class="card-stats">
+          <span class="stat">🔴 2 issues</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('pnp')">
+      <div class="card-color" style="background:#69797e"></div>
+      <div class="card-body">
+        <div class="card-title">pnp</div>
+        <div class="card-stats">
+          <span class="stat">🔴 0 issues</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('sensors-platform')">
+      <div class="card-color" style="background:#744da9"></div>
+      <div class="card-body">
+        <div class="card-title">sensors-platform</div>
+        <div class="card-stats">
+          <span class="stat">🔴 0 issues</span>
+          <span class="stat">🟢 1 PR</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('storage-core')">
+      <div class="card-color" style="background:#da3b01"></div>
+      <div class="card-body">
+        <div class="card-title">storage-core</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('wi-fi-core')">
+      <div class="card-color" style="background:#107c10"></div>
+      <div class="card-body">
+        <div class="card-title">wi-fi-core</div>
+        <div class="card-stats">
+          <span class="stat">🔴 2 issues</span>
+          <span class="stat">🟢 2 PRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-card" onclick="filterByTeam('windowsaudio')">
+      <div class="card-color" style="background:#c239b3"></div>
+      <div class="card-body">
+        <div class="card-title">windowsaudio</div>
+        <div class="card-stats">
+          <span class="stat">🔴 1 issue</span>
+          <span class="stat">🟢 1 PR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Filter</div>
+  <div class="search-box"><input type="text" id="searchInput" placeholder="🔍  Search issues and PRs..." oninput="applyFilters()"></div>
+  <div class="filter-bar" id="teamFilters"><button class="filter-btn active" onclick="filterByTeam('all')">All Teams</button>
+<button class="filter-btn" data-team="bluetooth" onclick="filterByTeam('bluetooth')" style="border-left:3px solid #0078d4">bluetooth</button>
+<button class="filter-btn" data-team="cameraplatdev" onclick="filterByTeam('cameraplatdev')" style="border-left:3px solid #107c10">cameraplatdev</button>
+<button class="filter-btn" data-team="core-print" onclick="filterByTeam('core-print')" style="border-left:3px solid #b4009e">core-print</button>
+<button class="filter-btn" data-team="coreos-buses-and-wdf" onclick="filterByTeam('coreos-buses-and-wdf')" style="border-left:3px solid #e3008c">coreos-buses-and-wdf</button>
+<button class="filter-btn" data-team="device-enumeration-and-interconnect" onclick="filterByTeam('device-enumeration-and-interconnect')" style="border-left:3px solid #986f0b">device-enumeration-and-interconnect</button>
+<button class="filter-btn" data-team="display-kernel-devs" onclick="filterByTeam('display-kernel-devs')" style="border-left:3px solid #498205">display-kernel-devs</button>
+<button class="filter-btn" data-team="driver-samples-maintainers" onclick="filterByTeam('driver-samples-maintainers')" style="border-left:3px solid #00b7c3">driver-samples-maintainers</button>
+<button class="filter-btn" data-team="filesystems" onclick="filterByTeam('filesystems')" style="border-left:3px solid #847545">filesystems</button>
+<button class="filter-btn" data-team="filter-manager" onclick="filterByTeam('filter-manager')" style="border-left:3px solid #6b69d6">filter-manager</button>
+<button class="filter-btn" data-team="kernel-core" onclick="filterByTeam('kernel-core')" style="border-left:3px solid #038387">kernel-core</button>
+<button class="filter-btn" data-team="netsec" onclick="filterByTeam('netsec')" style="border-left:3px solid #c30052">netsec</button>
+<button class="filter-btn" data-team="network-driver-platform" onclick="filterByTeam('network-driver-platform')" style="border-left:3px solid #7a7574">network-driver-platform</button>
+<button class="filter-btn" data-team="pnp" onclick="filterByTeam('pnp')" style="border-left:3px solid #69797e">pnp</button>
+<button class="filter-btn" data-team="sensors-platform" onclick="filterByTeam('sensors-platform')" style="border-left:3px solid #744da9">sensors-platform</button>
+<button class="filter-btn" data-team="storage-core" onclick="filterByTeam('storage-core')" style="border-left:3px solid #da3b01">storage-core</button>
+<button class="filter-btn" data-team="wi-fi-core" onclick="filterByTeam('wi-fi-core')" style="border-left:3px solid #107c10">wi-fi-core</button>
+<button class="filter-btn" data-team="windowsaudio" onclick="filterByTeam('windowsaudio')" style="border-left:3px solid #c239b3">windowsaudio</button>
+</div>
+
+  <!-- TABS: Issues / PRs -->
+  <div class="tab-bar">
+    <div class="tab active" data-tab="issues" onclick="switchTab('issues')">🔴 Issues (38)</div>
+    <div class="tab" data-tab="prs" onclick="switchTab('prs')">🟢 Pull Requests (82)</div>
+  </div>
+
+  <div class="tab-content active" id="tab-issues">
+    <div class="counter" id="counter-issues"></div>
+    <table>
+      <thead><tr><th>#</th><th>Title</th><th>Team</th><th>Detected Path</th><th>Labels</th></tr></thead>
+      <tbody id="issuesBody"><tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1342" target="_blank">#1342</a></td><td class="title-cell"><span class="item-title">No console output for WFPSampler</span><br><span class="meta">by Nehluxhes</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/trans/WFPSampler/lib/HelperFunctions_Log.cpp</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1338" target="_blank">#1338</a></td><td class="title-cell"><span class="item-title">[network/trans/inspect]: ICMPv6 Ping not working!</span><br><span class="meta">by SinghNanak</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1330" target="_blank">#1330</a></td><td class="title-cell"><span class="item-title">Revive Component Firmware Update (CFU) samples</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1313" target="_blank">#1313</a></td><td class="title-cell"><span class="item-title">ThrottleLimit calculation is incorrect on systems with more than one physical processor, breaking the build. (Added bonus: inf2cat travels through time to break the build)</span><br><span class="meta">by gsuberland</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 defect_toastmon.vcxproj</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="storage-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1311" target="_blank">#1311</a></td><td class="title-cell"><span class="item-title">spti does not recognize NVMe drives</span><br><span class="meta">by armaber</span></td><td><span class="team-badge" style="background:#da3b01">storage-core</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1290" target="_blank">#1290</a></td><td class="title-cell"><span class="item-title">general/ioctl tips</span><br><span class="meta">by ZOL4789</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1287" target="_blank">#1287</a></td><td class="title-cell"><span class="item-title">HID client driver sample?</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 hid/minidriver-operations</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1279" target="_blank">#1279</a></td><td class="title-cell"><span class="item-title">Pin tj-actions/changed-files to commit hash</span><br><span class="meta">by joebowbeer</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 .github/workflows</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="display-kernel-devs"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1270" target="_blank">#1270</a></td><td class="title-cell"><span class="item-title">KMDOD sample is broken and does not load</span><br><span class="meta">by osy</span></td><td><span class="team-badge" style="background:#498205">display-kernel-devs</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1266" target="_blank">#1266</a></td><td class="title-cell"><span class="item-title">Windows-driver-samples/tree/main/network/trans/stmedit</span><br><span class="meta">by jdaruja</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/trans/stmedit</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="windowsaudio"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1265" target="_blank">#1265</a></td><td class="title-cell"><span class="item-title">Capturing and Processing Audio from a Physical Microphone to a Virtual Mic (SimpleAudioSample)</span><br><span class="meta">by zardamhussain</span></td><td><span class="team-badge" style="background:#c239b3">windowsaudio</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="filter-manager"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1249" target="_blank">#1249</a></td><td class="title-cell"><span class="item-title">Change MiniFilter: Is the PreCreate operation comment correct?</span><br><span class="meta">by johnwallsmsft</span></td><td><span class="team-badge" style="background:#6b69d6">filter-manager</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 filesys/miniFilter/change/change.c</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1243" target="_blank">#1243</a></td><td class="title-cell"><span class="item-title">Missing Communication Ports Option on Windows 11 ARM</span><br><span class="meta">by kasperk81</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="wi-fi-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1197" target="_blank">#1197</a></td><td class="title-cell"><span class="item-title">Wi-Fi: WiFiCx reference driver</span><br><span class="meta">by krish2718</span></td><td><span class="team-badge" style="background:#107c10">wi-fi-core</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1185" target="_blank">#1185</a></td><td class="title-cell"><span class="item-title">USB Device Emulation (UDE) samples</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="bluetooth"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1177" target="_blank">#1177</a></td><td class="title-cell"><span class="item-title">[bluetooth/bthecho] Unable to build bthecho</span><br><span class="meta">by steam3d</span></td><td><span class="team-badge" style="background:#0078d4">bluetooth</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 bluetooth/bthecho/bthcli/sys/BthEchoSampleCli.inx</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="device-enumeration-and-interconnect"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1146" target="_blank">#1146</a></td><td class="title-cell"><span class="item-title">WMI ACPI object conversion rules</span><br><span class="meta">by Wer-Wolf</span></td><td><span class="team-badge" style="background:#986f0b">device-enumeration-and-interconnect</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="cameraplatdev"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1077" target="_blank">#1077</a></td><td class="title-cell"><span class="item-title">AVSSAMP example  not working</span><br><span class="meta">by shiqifeng2000</span></td><td><span class="team-badge" style="background:#107c10">cameraplatdev</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1070" target="_blank">#1070</a></td><td class="title-cell"><span class="item-title">FAT should probably use CcSetFileSizes Ex</span><br><span class="meta">by rodwiddowson</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1034" target="_blank">#1034</a></td><td class="title-cell"><span class="item-title">Recommended way of exposing WMI enums?</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 general/toaster/toastDrv/kmdf/func/featured/toaster.mof</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1025" target="_blank">#1025</a></td><td class="title-cell"><span class="item-title">Reserved service name errors when building Toaster KMDF samples</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 general/toaster/toastDrv</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="network-driver-platform"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1023" target="_blank">#1023</a></td><td class="title-cell"><span class="item-title">Modernize filter drivers with AddFilter directive?</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#7a7574">network-driver-platform</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1022" target="_blank">#1022</a></td><td class="title-cell"><span class="item-title">Interest in modernizing the firefly sample?</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 hid/firefly/driver/firefly.inx</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/1006" target="_blank">#1006</a></td><td class="title-cell"><span class="item-title">Firefly driver always rebuilt (broken &amp;#34;dirty&amp;#34; check)</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 hid/firefly/driver</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/998" target="_blank">#998</a></td><td class="title-cell"><span class="item-title">UMDF filter driver sample for HID device?</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 hid/firefly</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/979" target="_blank">#979</a></td><td class="title-cell"><span class="item-title">FWPM_LAYER_ALE_CONNECT_REDIRECT_V4: Can&amp;#39;t redirect to local proxy</span><br><span class="meta">by darind</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/trans/WFPSampler</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/902" target="_blank">#902</a></td><td class="title-cell"><span class="item-title">Building XPSDrvSmpl VS Code 2019 Enterprise and Unable to install .INF</span><br><span class="meta">by mkhalid578</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 package.c</span></td><td><span class="label" style="background:#008672">help wanted</span></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/821" target="_blank">#821</a></td><td class="title-cell"><span class="item-title">[help] fastfat testing</span><br><span class="meta">by ivanstepanovftw</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/777" target="_blank">#777</a></td><td class="title-cell"><span class="item-title">usbview reports different USB device power state from device manager</span><br><span class="meta">by sdbbs</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="display-kernel-devs"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/773" target="_blank">#773</a></td><td class="title-cell"><span class="item-title">Sample WDDM driver</span><br><span class="meta">by DemiMarie</span></td><td><span class="team-badge" style="background:#498205">display-kernel-devs</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/762" target="_blank">#762</a></td><td class="title-cell"><span class="item-title">No JobCopiesAllDocuments feature in the xps file generated by XpsDrvSmpl</span><br><span class="meta">by sylin211</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 Job_PT.xml</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/753" target="_blank">#753</a></td><td class="title-cell"><span class="item-title">FastFat can sometimes fail FilePositionInformation unnecessarily for read-only media</span><br><span class="meta">by AshwinTidke</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 filesys/fastfat/verfysup.c</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/498" target="_blank">#498</a></td><td class="title-cell"><span class="item-title">2004 Updates</span><br><span class="meta">by EatonZ</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d876e3">question</span></td></tr>
+<tr class="item-row" data-team="network-driver-platform"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/362" target="_blank">#362</a></td><td class="title-cell"><span class="item-title">Retrieving PrintTicket for shared XPS driver failes (returns PrintTicket of local computer)</span><br><span class="meta">by wstaelens</span></td><td><span class="team-badge" style="background:#7a7574">network-driver-platform</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#d73a4a">bug</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/333" target="_blank">#333</a></td><td class="title-cell"><span class="item-title">Using SetupDiEnumDeviceInterfaces instead of symbolic links</span><br><span class="meta">by tonysepia</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 usb/usbview/enum.c</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="wi-fi-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/239" target="_blank">#239</a></td><td class="title-cell"><span class="item-title">WDI Driver Usage for reference</span><br><span class="meta">by mrchsreddy</span></td><td><span class="team-badge" style="background:#107c10">wi-fi-core</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/wlan/wdi</span></td><td><span class="label" style="background:#008672">help wanted</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/154" target="_blank">#154</a></td><td class="title-cell"><span class="item-title">Virtual HID Framework (VHF): need xample</span><br><span class="meta">by TronicLabs</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/issues/135" target="_blank">#135</a></td><td class="title-cell"><span class="item-title">More keyboard driver samples</span><br><span class="meta">by miloush</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td><span class="label" style="background:#0075ca">request</span></td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-prs">
+    <div class="counter" id="counter-prs"></div>
+    <table>
+      <thead><tr><th>#</th><th>Title</th><th>Team</th><th>Detected Path</th><th>Labels</th></tr></thead>
+      <tbody id="prsBody"><tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1345" target="_blank">#1345</a></td><td class="title-cell"><span class="item-title">Remove references to non-existent WFPSamplerProxyService.exe</span><br><span class="meta">by riwaida</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1343" target="_blank">#1343</a></td><td class="title-cell"><span class="item-title">Correct the buggy KMOD sample</span><br><span class="meta">by Spruill-1</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1339" target="_blank">#1339</a></td><td class="title-cell"><span class="item-title">SDCA sample driver.</span><br><span class="meta">by saurinshah9</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1337" target="_blank">#1337</a></td><td class="title-cell"><span class="item-title">WDKBatchBuild</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="sensors-platform"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1335" target="_blank">#1335</a></td><td class="title-cell"><span class="item-title">Add SPDX license identifiers to source files</span><br><span class="meta">by rwmjones</span></td><td><span class="team-badge" style="background:#744da9">sensors-platform</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1329" target="_blank">#1329</a></td><td class="title-cell"><span class="item-title">Test commit</span><br><span class="meta">by 5an7y-Microsoft</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="cameraplatdev"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1325" target="_blank">#1325</a></td><td class="title-cell"><span class="item-title">Handling KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE on avscamera DMFT</span><br><span class="meta">by welljeng</span></td><td><span class="team-badge" style="background:#107c10">cameraplatdev</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1303" target="_blank">#1303</a></td><td class="title-cell"><span class="item-title">FastFAT: Fix &amp;#39;reqired&amp;#39; typo, in a comment</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1296" target="_blank">#1296</a></td><td class="title-cell"><span class="item-title">Update exclusions.csv</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 exclusions.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1295" target="_blank">#1295</a></td><td class="title-cell"><span class="item-title">Update exclusions.csv</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 exclusions.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1292" target="_blank">#1292</a></td><td class="title-cell"><span class="item-title">Update README.md to use WIL</span><br><span class="meta">by jiteshkris</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 README.md</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1286" target="_blank">#1286</a></td><td class="title-cell"><span class="item-title">Update HelperFunctions_RedirectData.cpp</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 HelperFunctions_RedirectData.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1268" target="_blank">#1268</a></td><td class="title-cell"><span class="item-title">Updated QFE for 3037 release</span><br><span class="meta">by ghost</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1222" target="_blank">#1222</a></td><td class="title-cell"><span class="item-title">[usb/usbview] Fix memory leak when handling enumeration error cases</span><br><span class="meta">by dkala97</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1212" target="_blank">#1212</a></td><td class="title-cell"><span class="item-title">Update Capture.cpp</span><br><span class="meta">by gerritsMSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 Capture.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1205" target="_blank">#1205</a></td><td class="title-cell"><span class="item-title">Update tdriver.c</span><br><span class="meta">by andreiminca</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 tdriver.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1203" target="_blank">#1203</a></td><td class="title-cell"><span class="item-title">Replace IoCreateDevice to IoCreateDeviceSecure.</span><br><span class="meta">by riwaida</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 wdm.h</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1199" target="_blank">#1199</a></td><td class="title-cell"><span class="item-title">Update userscan.c</span><br><span class="meta">by wqreytuk</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 userscan.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1198" target="_blank">#1198</a></td><td class="title-cell"><span class="item-title">Update userscan.c</span><br><span class="meta">by wqreytuk</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 userscan.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1192" target="_blank">#1192</a></td><td class="title-cell"><span class="item-title">AVS Camera  AddComServer</span><br><span class="meta">by gerritsMSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 AVSCamera.inx</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1187" target="_blank">#1187</a></td><td class="title-cell"><span class="item-title">simbatt: Provide instructions for how to test the driver</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 simbatt.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1175" target="_blank">#1175</a></td><td class="title-cell"><span class="item-title">51217363</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1174" target="_blank">#1174</a></td><td class="title-cell"><span class="item-title">FASTFAT: Remove erroneous comment</span><br><span class="meta">by HBelusca</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1173" target="_blank">#1173</a></td><td class="title-cell"><span class="item-title">Update README.md</span><br><span class="meta">by GabeNI</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 README.md</span></td><td></td></tr>
+<tr class="item-row" data-team="cameraplatdev"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1155" target="_blank">#1155</a></td><td class="title-cell"><span class="item-title">Support Occlusion Image in AvsCamera</span><br><span class="meta">by gerritsMSFT</span></td><td><span class="team-badge" style="background:#107c10">cameraplatdev</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="wi-fi-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1138" target="_blank">#1138</a></td><td class="title-cell"><span class="item-title">Add support for ARM64 for network/wlan</span><br><span class="meta">by NeoAdonis</span></td><td><span class="team-badge" style="background:#107c10">wi-fi-core</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="network-driver-platform"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1137" target="_blank">#1137</a></td><td class="title-cell"><span class="item-title">Draft of moving to NuGet PackageReference instead of packages.config</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#7a7574">network-driver-platform</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/ndis/filter</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1121" target="_blank">#1121</a></td><td class="title-cell"><span class="item-title">Draft - not to be completed - arm64 remaining samples and script</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1116" target="_blank">#1116</a></td><td class="title-cell"><span class="item-title">Pchahar/pc load letter6</span><br><span class="meta">by prashantchahar</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1114" target="_blank">#1114</a></td><td class="title-cell"><span class="item-title">moufiltr: Mirror mouse movement</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1113" target="_blank">#1113</a></td><td class="title-cell"><span class="item-title">Build: Do not set target version</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1112" target="_blank">#1112</a></td><td class="title-cell"><span class="item-title">Add templates</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1028" target="_blank">#1028</a></td><td class="title-cell"><span class="item-title">[Toaster] Update notify, toast &amp;amp; Enum project GUID references</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1026" target="_blank">#1026</a></td><td class="title-cell"><span class="item-title">Remove UMDF references from toastDrv readme</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="display-kernel-devs"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1020" target="_blank">#1020</a></td><td class="title-cell"><span class="item-title">KMDOD: Correctly copy the DXGKRNL_INTERFACE structure</span><br><span class="meta">by MartinDrab</span></td><td><span class="team-badge" style="background:#498205">display-kernel-devs</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="wi-fi-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/1007" target="_blank">#1007</a></td><td class="title-cell"><span class="item-title">Firefly: Configure Inf2CatUseLocalTime to fix build failure right after midnight</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#107c10">wi-fi-core</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 network/wlan/WDI/PLATFORM/NDIS6/SDIO/sdio.vcxproj</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/999" target="_blank">#999</a></td><td class="title-cell"><span class="item-title">nullFilter: VS2022 compatibility and best practices by default</span><br><span class="meta">by olljanat</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 ntstrsafe.h</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/997" target="_blank">#997</a></td><td class="title-cell"><span class="item-title">Modernize flicker app sources</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/995" target="_blank">#995</a></td><td class="title-cell"><span class="item-title">Firefly driver: Postpone variable definitions until first use</span><br><span class="meta">by forderud</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 hid/firefly/driver/vfeature.c</span></td><td></td></tr>
+<tr class="item-row" data-team="cameraplatdev"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/935" target="_blank">#935</a></td><td class="title-cell"><span class="item-title">[avstream/sampledevicemft] Fix possible deadlock while changes output stream state</span><br><span class="meta">by jammgit</span></td><td><span class="team-badge" style="background:#107c10">cameraplatdev</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/922" target="_blank">#922</a></td><td class="title-cell"><span class="item-title">Patch rare infinite loops when enumerating USB_COMMON_DESCRIPTORs </span><br><span class="meta">by alan-rowe</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/913" target="_blank">#913</a></td><td class="title-cell"><span class="item-title">add missing PAGED_CODE() macro</span><br><span class="meta">by darwin-msft</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 filesys/fastfat/dirsup.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/860" target="_blank">#860</a></td><td class="title-cell"><span class="item-title">user-jakobl-CodeQL-Testing</span><br><span class="meta">by JakobL-MSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 .github/workflows</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/854" target="_blank">#854</a></td><td class="title-cell"><span class="item-title">IoStatus.Information should not be set on cleanup/close. Appears to b…</span><br><span class="meta">by jeffbromberger</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/774" target="_blank">#774</a></td><td class="title-cell"><span class="item-title">[hid\hclient] Passing right arguments to reopen device for write</span><br><span class="meta">by DrInfiniteExplorer</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="pnp"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/760" target="_blank">#760</a></td><td class="title-cell"><span class="item-title">Fix build issue in DCHU project</span><br><span class="meta">by andylsn</span></td><td><span class="team-badge" style="background:#69797e">pnp</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/744" target="_blank">#744</a></td><td class="title-cell"><span class="item-title">Typo &amp;#34;.VcxProj&amp;#34;→&amp;#34;.vcxproj&amp;#34;</span><br><span class="meta">by hyoshioka0128</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 filesys/fastfat/README.md</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/690" target="_blank">#690</a></td><td class="title-cell"><span class="item-title">Update simple custom media sample</span><br><span class="meta">by vclin0</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 trace.h</span></td><td></td></tr>
+<tr class="item-row" data-team="kernel-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/687" target="_blank">#687</a></td><td class="title-cell"><span class="item-title">Delete sub layer in case of failure</span><br><span class="meta">by AvivShabtay</span></td><td><span class="team-badge" style="background:#038387">kernel-core</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="core-print"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/651" target="_blank">#651</a></td><td class="title-cell"><span class="item-title">Initial publish of Print Support App sample</span><br><span class="meta">by takashi-moriyama</span></td><td><span class="team-badge" style="background:#b4009e">core-print</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/623" target="_blank">#623</a></td><td class="title-cell"><span class="item-title">User/maige/inspect sample fixes</span><br><span class="meta">by matthewige</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="display-kernel-devs"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/616" target="_blank">#616</a></td><td class="title-cell"><span class="item-title">[video\KMDOD]: Switch to ExAllocatePool2</span><br><span class="meta">by zeusk</span></td><td><span class="team-badge" style="background:#498205">display-kernel-devs</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/604" target="_blank">#604</a></td><td class="title-cell"><span class="item-title">(USBView) Add MIDI device class support</span><br><span class="meta">by tendrils</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/602" target="_blank">#602</a></td><td class="title-cell"><span class="item-title">uvcview.c: don&amp;#39;t show the console in quiet mode</span><br><span class="meta">by imacovei</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 uvcview.c</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/587" target="_blank">#587</a></td><td class="title-cell"><span class="item-title">input/layout: Fix settings application crash when selecting keyboard layout</span><br><span class="meta">by davidebeatrici</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 input/layout</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/575" target="_blank">#575</a></td><td class="title-cell"><span class="item-title">Update main.cpp</span><br><span class="meta">by raikrahul</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 main.c</span></td><td></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/538" target="_blank">#538</a></td><td class="title-cell"><span class="item-title">Fix WFPSampler build for SDK 10.0.19041.0</span><br><span class="meta">by darinkes</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="storage-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/528" target="_blank">#528</a></td><td class="title-cell"><span class="item-title">modify DelReg directive to refer correct section</span><br><span class="meta">by jesweare</span></td><td><span class="team-badge" style="background:#da3b01">storage-core</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="network-driver-platform"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/525" target="_blank">#525</a></td><td class="title-cell"><span class="item-title">NetVMini: Don&amp;#39;t use the same values for statistics flags</span><br><span class="meta">by nxtn</span></td><td><span class="team-badge" style="background:#7a7574">network-driver-platform</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/524" target="_blank">#524</a></td><td class="title-cell"><span class="item-title">toastDrv/kmdf/filter/sideband: Ensure that queue event callbacks are run at PASSIVE_LEVEL</span><br><span class="meta">by ColinFinck</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/521" target="_blank">#521</a></td><td class="title-cell"><span class="item-title">FastFAT: Add &amp;#39;static&amp;#39; to &amp;#39;strcsup.c&amp;#39; functions</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="windowsaudio"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/518" target="_blank">#518</a></td><td class="title-cell"><span class="item-title">Encapsulate Power relation changes within SYSVAD_USB_SIDEBAND preproc…</span><br><span class="meta">by girishpattabiraman</span></td><td><span class="team-badge" style="background:#c239b3">windowsaudio</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/475" target="_blank">#475</a></td><td class="title-cell"><span class="item-title">wsksmple: Use ExAllocatePoolZero instead of ExAllocatePoolWithTag</span><br><span class="meta">by nigriMSFT</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/460" target="_blank">#460</a></td><td class="title-cell"><span class="item-title">SFloppy: Fool-proof &amp;#39;NUMBER_OF_DRIVE_MEDIA_COMBINATIONS&amp;#39;</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="kernel-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/454" target="_blank">#454</a></td><td class="title-cell"><span class="item-title">Fix build failed</span><br><span class="meta">by o60816</span></td><td><span class="team-badge" style="background:#038387">kernel-core</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/451" target="_blank">#451</a></td><td class="title-cell"><span class="item-title">SFloppy: Clarify an &amp;#39;if()&amp;#39;</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/445" target="_blank">#445</a></td><td class="title-cell"><span class="item-title">Clean up some MAX_*</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/440" target="_blank">#440</a></td><td class="title-cell"><span class="item-title">Removed incorrect file handle check</span><br><span class="meta">by m417z</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/431" target="_blank">#431</a></td><td class="title-cell"><span class="item-title">NULL pointer exception errors fixed</span><br><span class="meta">by JinZhuXing</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/413" target="_blank">#413</a></td><td class="title-cell"><span class="item-title">User/dahung/camera sample diridfix</span><br><span class="meta">by dhung-msft</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/381" target="_blank">#381</a></td><td class="title-cell"><span class="item-title">FastFAT: Check FASTFATDBG with #ifdef, not #if</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="filesystems"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/380" target="_blank">#380</a></td><td class="title-cell"><span class="item-title">FastFAT: Check DBG with #if, not #ifdef</span><br><span class="meta">by SergeGautherie</span></td><td><span class="team-badge" style="background:#847545">filesystems</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/351" target="_blank">#351</a></td><td class="title-cell"><span class="item-title">Update clisrv.c</span><br><span class="meta">by SweatingEgg</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 clisrv.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/350" target="_blank">#350</a></td><td class="title-cell"><span class="item-title">Update connection.c</span><br><span class="meta">by SweatingEgg</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 connection.c</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/339" target="_blank">#339</a></td><td class="title-cell"><span class="item-title">Updated README.md to reflect changes made to the code</span><br><span class="meta">by tonysepia</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="detected-path" title="Matched via CODEOWNERS">📁 README.md</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/321" target="_blank">#321</a></td><td class="title-cell"><span class="item-title">Fixed some annotations and some incorrect accesses to possible null v…</span><br><span class="meta">by microkatz</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="driver-samples-maintainers"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/306" target="_blank">#306</a></td><td class="title-cell"><span class="item-title">Fix service handle not closed when StartService fails</span><br><span class="meta">by ixjf</span></td><td><span class="team-badge" style="background:#00b7c3">driver-samples-maintainers</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/283" target="_blank">#283</a></td><td class="title-cell"><span class="item-title">Fix IOCTL_BTHX_READ/WRITE_HCI parameter sizes</span><br><span class="meta">by Googulator</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="netsec"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/277" target="_blank">#277</a></td><td class="title-cell"><span class="item-title">wfpsampler: fix null reference</span><br><span class="meta">by levi106</span></td><td><span class="team-badge" style="background:#c30052">netsec</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="coreos-buses-and-wdf"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/195" target="_blank">#195</a></td><td class="title-cell"><span class="item-title">Make console output visible for hclient in command line mode</span><br><span class="meta">by jovermann</span></td><td><span class="team-badge" style="background:#e3008c">coreos-buses-and-wdf</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="pnp"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/194" target="_blank">#194</a></td><td class="title-cell"><span class="item-title">Fix segfault in FillDeviceInfo</span><br><span class="meta">by jovermann</span></td><td><span class="team-badge" style="background:#69797e">pnp</span></td><td><span class="no-path">keyword match</span></td><td></td></tr>
+<tr class="item-row" data-team="storage-core"><td><a href="https://github.com/microsoft/Windows-driver-samples/pull/53" target="_blank">#53</a></td><td class="title-cell"><span class="item-title">ramdisk: Added device IO control support for Windows 10</span><br><span class="meta">by tchaudev</span></td><td><span class="team-badge" style="background:#da3b01">storage-core</span></td><td><span class="no-path">keyword match</span></td><td></td></tr></tbody>
+    </table>
+  </div>
+
+  <footer>
+    Teams derived from <code>.github/CODEOWNERS</code> — each item assigned to one team by context matching<br>
+    Generated on 2026-02-12 23:03 UTC
+  </footer>
+</div>
+
+<script>
+let activeTeam = 'all';
+let activeTab = 'issues';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  applyFilters();
+}
+
+function filterByTeam(team) {
+  activeTeam = team;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', (team === 'all' && !b.dataset.team) || b.dataset.team === team);
+  });
+  if (team === 'all') document.querySelector('.filter-btn:not([data-team])').classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  ['issues', 'prs'].forEach(section => {
+    const bodyId = section === 'issues' ? 'issuesBody' : 'prsBody';
+    const rows = document.querySelectorAll('#' + bodyId + ' .item-row');
+    let count = 0;
+    rows.forEach(row => {
+      const team = row.dataset.team;
+      const text = row.textContent.toLowerCase();
+      const teamMatch = activeTeam === 'all' || team === activeTeam;
+      const searchMatch = !search || text.includes(search);
+      const show = teamMatch && searchMatch;
+      row.classList.toggle('hidden', !show);
+      if (show) count++;
+    });
+    document.getElementById('counter-' + section).textContent = count + ' items shown';
+  });
+}
+
+applyFilters();
+</script>
+</body>
+</html>
