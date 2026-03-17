@@ -1,5 +1,6 @@
 //
 // AecApo.h -- Copyright (c) Microsoft Corporation. All rights reserved.
+// AecApo.h -- SPDX-License-Identifier: MS-PL
 //
 // Description:
 //

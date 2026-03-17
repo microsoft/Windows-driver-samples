@@ -1,5 +1,6 @@
 //
 // Copyright (C) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MS-PL
 //
 
 #ifndef SIMPLEMEDIASTREAM_H

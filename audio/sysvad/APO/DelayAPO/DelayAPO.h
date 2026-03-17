@@ -1,5 +1,6 @@
 //
 // DelayAPO.h -- Copyright (c) Microsoft Corporation. All rights reserved.
+// DelayAPO.h -- SPDX-License-Identifier: MS-PL
 //
 // Description:
 //

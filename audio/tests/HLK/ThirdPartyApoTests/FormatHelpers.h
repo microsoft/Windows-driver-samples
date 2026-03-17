@@ -1,5 +1,6 @@
 //
 // FormatHelpers.h -- Copyright (c) Microsoft Corporation
+// FormatHelpers.h -- SPDX-License-Identifier: MS-PL
 //
 // Author: zaneh
 //

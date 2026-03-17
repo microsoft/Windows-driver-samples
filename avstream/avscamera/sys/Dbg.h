@@ -3,6 +3,7 @@
     AVStream Camera Sample
 
     Copyright (c) 2014, Microsoft Corporation.
+    SPDX-License-Identifier: MS-PL
 
     File:
 

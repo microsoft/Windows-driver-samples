@@ -2,6 +2,7 @@
 * Module Name: kbd101.c
 *
 * Copyright (c) 1985-2000, Microsoft Corporation
+* SPDX-License-Identifier: MS-PL
 *
 * History:
 \***************************************************************************/

@@ -1,6 +1,7 @@
 /*++
 
 Copyright (c) Microsoft Corporation. All rights reserved.
+SPDX-License-Identifier: MS-PL
 
 Module Name:
     N62C_QuerySetOID.h

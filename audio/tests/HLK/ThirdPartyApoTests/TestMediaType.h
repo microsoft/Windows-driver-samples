@@ -1,4 +1,5 @@
 // Copyright (c) Microsoft Corporation
+// SPDX-License-Identifier: MS-PL
 //
 // Author:      Alper Selcuk
 //

@@ -1,5 +1,6 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
+//    SPDX-License-Identifier: MS-PL
 //
 #ifndef __FILTERUSER_H__
 #define __FILTERUSER_H__
