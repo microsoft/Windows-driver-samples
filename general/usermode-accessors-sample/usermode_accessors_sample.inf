@@ -1,0 +1,73 @@
+;
+; usermode_accessors_sample.inf
+;
+; Installation file for the usermode_accessors sample driver.
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Sample
+ClassGuid   = {78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider    = %ProviderString%
+CatalogFile = usermode_accessors_sample.cat
+DriverVer   = 03/17/2026,1.0.0.0
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+usermode_accessors_sample.sys = 1,,
+
+; =================== Class Section ===================
+
+[ClassInstall32]
+Addreg = SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+; =================== Device Install Section ===================
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%UmaSample.DeviceDesc% = UmaSample_Device, Root\UmaAccessorsSample
+
+[UmaSample_Device.NT]
+CopyFiles = UmaSample_Device.CopyFiles
+
+[UmaSample_Device.CopyFiles]
+usermode_accessors_sample.sys
+
+[UmaSample_Device.NT.Services]
+AddService = UmaAccessorsSample,%SPSVCINST_ASSOCSERVICE%,UmaSample_Service_Inst
+
+[UmaSample_Service_Inst]
+DisplayName    = %UmaSample.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\usermode_accessors_sample.sys
+
+[UmaSample_Device.NT.Wdf]
+KmdfService = UmaAccessorsSample, UmaSample_wdfsect
+
+[UmaSample_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+; =================== Strings ===================
+
+[Strings]
+ProviderString     = "TODO-Set-Provider"
+ManufacturerName   = "TODO-Set-Manufacturer"
+ClassName          = "Sample"
+DiskId1            = "Usermode Accessors Sample Install Disk"
+UmaSample.DeviceDesc = "Usermode Accessors Sample Driver"
+UmaSample.SVCDESC  = "Usermode Accessors Sample Service"
+SPSVCINST_ASSOCSERVICE = 0x00000002
