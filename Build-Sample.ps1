@@ -139,7 +139,7 @@ if (-not $configurationIsSupported)
 
 Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
 
-$myexit=0
+$myexit=1
 
 #
 # Let us build up to three times (0th, 1st, and 2nd attempt).
