@@ -33,7 +33,7 @@ foreach ($file in $solutionFiles) {
     $dir = (Get-Item $file).DirectoryName
     $dirNorm = $dir.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
 
-    if ($dirNorm -match '^packages\.') {
+    if ($dirNorm -match '(^|\.|\b)packages(\.|$)') {
         Write-Verbose "Ignored NuGet package directory: $dirNorm"
         continue
     }

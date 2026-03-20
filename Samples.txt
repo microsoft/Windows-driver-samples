@@ -1,4 +1,4 @@
-audio.acx.samples.audiocodec.driver
+﻿audio.acx.samples.audiocodec.driver
 audio.simpleaudiosample
 audio.soundwire.samples.sdcavad
 audio.sysvad
@@ -8,8 +8,6 @@ avstream.avssamp
 avstream.sampledevicemft
 avstream.samplemft0
 bluetooth.bthecho
-bluetooth.bthecho.packages.microsoft.windows.wdk.x64.10.0.26100.3323.c.tools.10.0.26100.0.x64.acpigenfx.samples
-bluetooth.bthecho.packages.microsoft.windows.wdk.x64.10.0.26100.6584-preview.ge-release-svc-prod1.c.tools.10.0.26100.0.x64.acpigenfx.samples
 bluetooth.serialhcibus
 filesys.cdfs
 filesys.fastfat
@@ -63,8 +61,8 @@ network.modem.fakemodem
 network.ndis.extension
 network.ndis.filter
 network.ndis.mux
-network.ndis.ndisprot_kmdf
 network.ndis.ndisprot.6x
+network.ndis.ndisprot_kmdf
 network.ndis.netvmini.6x
 network.radio.radiomanagersample
 network.trans.ddproxy
@@ -95,7 +93,6 @@ sensors.pedometer
 sensors.sensorscombodriver
 sensors.simpledeviceorientationsensor
 serial.serenum
-serial.serenum.packages.microsoft.windows.wdk.x64.10.0.26100.3323.c.tools.10.0.26100.0.x64.acpigenfx.samples
 serial.serial
 serial.virtualserial2
 setup.devcon
