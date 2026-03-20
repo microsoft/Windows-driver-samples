@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Searches for all .sln files recursively from the repo root, excludes NuGet package directories
-    (paths starting with 'packages.'), computes a normalized sample name for each, and writes
+    (paths containing 'packages' as a segment), computes a normalized sample name for each, and writes
     the sorted list to Samples.txt (one sample name per line).
 
     The sample name is derived from the relative directory path: backslashes are replaced with dots

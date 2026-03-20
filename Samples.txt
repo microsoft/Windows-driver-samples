@@ -1,4 +1,4 @@
-﻿audio.acx.samples.audiocodec.driver
+audio.acx.samples.audiocodec.driver
 audio.simpleaudiosample
 audio.soundwire.samples.sdcavad
 audio.sysvad
@@ -61,8 +61,8 @@ network.modem.fakemodem
 network.ndis.extension
 network.ndis.filter
 network.ndis.mux
-network.ndis.ndisprot.6x
 network.ndis.ndisprot_kmdf
+network.ndis.ndisprot.6x
 network.ndis.netvmini.6x
 network.radio.radiomanagersample
 network.trans.ddproxy

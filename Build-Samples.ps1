@@ -3,15 +3,24 @@
     Builds driver samples from a sample list file with parallel execution and exclusion support.
 
 .DESCRIPTION
-    Reads sample names from Samples.txt (or a specified file), processes exclusions from
-    exclusions.csv, determines the build environment, and builds all non-excluded samples
-    in parallel using Build-Sample.ps1. Generates CSV and HTML overview reports.
+    This is the main build orchestrator for driver samples. It performs these steps:
 
-    Requires PowerShell 7+ (uses ForEach-Object -Parallel and ternary operators).
+    1. Ensures a developer build environment (VS DevShell or EWDK) is active
+    2. Reads sample names from Samples.txt (or a specified file/array)
+    3. Detects the build environment (GitHub CI, NuGet, EWDK, or WDK) and build number
+    4. Loads exclusions from exclusions.csv (supports wildcard paths)
+    5. Builds all non-excluded sample/configuration/platform combinations in parallel
+    6. Generates CSV and HTML overview reports
+
+    Requires PowerShell 7+ (uses ForEach-Object -Parallel).
+
+    Typical call chain:
+        Build-AllSamples.ps1 -> ListAllSamples.ps1 -> Build-Samples.ps1 -> Build-Sample.ps1
+                                                         (this script)
 
 .PARAMETER SampleListPath
-    Path to the file containing sample names (one per line). Defaults to Samples.txt in the
-    current directory.
+    Path to the file containing sample names (one per line, dot-separated).
+    Defaults to Samples.txt in the current directory.
 
 .PARAMETER Samples
     Optional array of specific sample names to build. When provided, overrides SampleListPath.
@@ -31,7 +40,8 @@
     or '_overview'.
 
 .PARAMETER InfOptions
-    Additional InfVerif options. If not provided, determined automatically based on build number.
+    Additional InfVerif options (e.g. '/samples', '/msft'). If not provided, determined
+    automatically based on the WDK build number.
 
 .PARAMETER ThrottleLimit
     Maximum parallel build jobs. Defaults to 5 x logical processors.
@@ -39,12 +49,20 @@
 .EXAMPLE
     .\Build-Samples
 
+    Builds all samples from Samples.txt with default settings.
+
 .EXAMPLE
     .\Build-Samples -Samples 'audio.acx.samples.audiocodec.driver','usb.kmdf_fx2' -Configurations 'Debug' -Platforms 'x64'
 
+    Builds specific samples for a single configuration and platform.
+
 .EXAMPLE
     .\Build-Samples -SampleListPath .\MySamples.txt -ThrottleLimit 8
+
+    Builds samples from a custom list with limited parallelism.
 #>
+
+#Requires -Version 7.0
 
 [CmdletBinding()]
 param(
@@ -58,350 +76,518 @@ param(
     [int]$ThrottleLimit = 0
 )
 
+# =============================================================================
+#  Helper Functions
+# =============================================================================
+
+function Initialize-DevShell {
+    <#
+    .SYNOPSIS Imports the Visual Studio Developer PowerShell if not already active.
+    #>
+    param([string]$ReturnToDirectory)
+
+    if ($env:VSCMD_VER) {
+        Write-Verbose "VS Developer Shell already active (VSCMD_VER=$env:VSCMD_VER)."
+        return
+    }
+
+    $devShellDll = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" `
+        -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $devShellDll) {
+        Write-Error "Visual Studio Developer Shell module not found."
+        exit 1
+    }
+
+    Import-Module $devShellDll.Path
+    $vsInstall = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*" | Select-Object -First 1
+    Enter-VsDevShell -VsInstallPath $vsInstall.Path
+    Set-Location $ReturnToDirectory
+}
+
+function Assert-MsBuildAvailable {
+    <#
+    .SYNOPSIS Verifies msbuild.exe is on PATH. Exits with error if not found.
+    #>
+    $savedPref = $ErrorActionPreference
+    $ErrorActionPreference = 'Stop'
+    try {
+        Get-Command 'msbuild' | Out-Null
+    }
+    catch {
+        Write-Error "msbuild cannot be called from current environment. Ensure it is on PATH (run from VS Developer Command Prompt or EWDK)."
+        exit 1
+    }
+    finally {
+        $ErrorActionPreference = $savedPref
+    }
+}
+
+function Resolve-BuildEnvironment {
+    <#
+    .SYNOPSIS
+        Detects the active build environment and returns metadata.
+    .DESCRIPTION
+        Checks (in priority order) for GitHub CI, local NuGet packages, EWDK, or WDK.
+        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion.
+    #>
+    param([string]$RepoRoot)
+
+    $result = @{
+        Name                  = ''
+        BuildNumber           = [int]0
+        NuGetVersion          = ''
+        WdkVsComponentVersion = ''
+    }
+
+    if ($env:GITHUB_REPOSITORY) {
+        $result.Name = 'GitHub'
+        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
+        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
+        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
+    }
+    elseif (Test-Path "$RepoRoot\packages\*") {
+        $result.Name = 'NuGet'
+        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
+        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
+        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
+    }
+    elseif ($env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
+        $result.Name = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
+        $result.BuildNumber = [int]$Matches.build
+    }
+    elseif ($env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0') {
+        $result.Name = 'WDK'
+        $result.BuildNumber = [int]$Matches.build
+    }
+    else {
+        Write-Output "Environment variables {"
+        Get-ChildItem env:* | Sort-Object Name
+        Write-Output "Environment variables }"
+        Write-Error "Could not determine build environment. Ensure EWDK, WDK, or NuGet packages are configured."
+        exit 1
+    }
+
+    # WDK VS component version (EWDK does not ship this metadata)
+    if ($result.Name -match '^EWDK') {
+        $result.WdkVsComponentVersion = '(not available for EWDK builds)'
+    }
+    else {
+        $vsComponent = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
+        if (-not $vsComponent) {
+            Write-Error "WDK Visual Studio Component not found. Ensure the WDK Component is installed."
+            exit 1
+        }
+        $result.WdkVsComponentVersion = [regex]::Match($vsComponent.Name, '(\d+\.){3}\d+').Value
+    }
+
+    return $result
+}
+
+function Import-SampleExclusions {
+    <#
+    .SYNOPSIS
+        Loads exclusions.csv and returns exclusion objects applicable to the current build.
+    .DESCRIPTION
+        Each returned exclusion has:
+          - Pattern:        dot-separated path (may contain wildcards, e.g. 'general.*')
+          - Configurations: semicolon-separated config|platform patterns (or '*' for all)
+          - Reason:         human-readable explanation
+
+        Only exclusions whose [MinBuild, MaxBuild] range includes the given build number
+        are returned. Exclusions outside the range are silently skipped.
+    .NOTES
+        CSV format:  Path,Configurations,MinBuild,MaxBuild,Reason
+        Example row: network\wlan\wdi,*,,27100,"failure introduced in VS17.14"
+    #>
+    param(
+        [string]$CsvPath,
+        [int]$BuildNumber
+    )
+
+    if (-not (Test-Path $CsvPath)) {
+        Write-Warning "Exclusions file not found: $CsvPath. No exclusions will be applied."
+        return @()
+    }
+
+    $exclusions = [System.Collections.ArrayList]::new()
+    Import-Csv $CsvPath | ForEach-Object {
+        $pattern  = $_.Path.Trim('\').Replace('\', '.').ToLower()
+        $configs  = if ([string]::IsNullOrWhiteSpace($_.Configurations)) { '*' } else { $_.Configurations }
+        $minBuild = if ([string]::IsNullOrWhiteSpace($_.MinBuild)) { 0 }     else { [int]$_.MinBuild }
+        $maxBuild = if ([string]::IsNullOrWhiteSpace($_.MaxBuild)) { 99999 } else { [int]$_.MaxBuild }
+
+        if ($minBuild -le $BuildNumber -and $BuildNumber -le $maxBuild) {
+            [void]$exclusions.Add([PSCustomObject]@{
+                Pattern        = $pattern
+                Configurations = $configs
+                Reason         = $_.Reason
+            })
+            Write-Verbose "Exclusion applied: '$pattern' configs='$configs' reason='$($_.Reason)'"
+        }
+        else {
+            Write-Verbose "Exclusion skipped: '$pattern' - build $BuildNumber outside [$minBuild, $maxBuild]"
+        }
+    }
+
+    return $exclusions.ToArray()
+}
+
+function Get-DiskFreeGB {
+    <#
+    .SYNOPSIS Returns free disk space in GB for the current drive, or 'N/A' on error.
+    #>
+    try {
+        return [math]::Round((Get-Volume (Get-Item '.').PSDrive.Name).SizeRemaining / 1GB, 1)
+    }
+    catch {
+        return 'N/A'
+    }
+}
+
+# =============================================================================
+#  Step 1 - Prepare Build Environment
+# =============================================================================
+
 $root = (Get-Location).Path
 
-# Launch developer PowerShell if necessary
-if (-not $env:VSCMD_VER) {
-    Import-Module (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
-    Enter-VsDevShell -VsInstallPath (Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*")
-    Set-Location $root
-}
+Initialize-DevShell -ReturnToDirectory $root
+Assert-MsBuildAvailable
 
-$ThrottleFactor = 5
-$LogicalProcessors = (Get-CIMInstance -Class 'CIM_Processor' -Verbose:$false).NumberOfLogicalProcessors
+# =============================================================================
+#  Step 2 - Calculate Parallelism
+# =============================================================================
+
+$throttleFactor    = 5
+# Sum across all CPU sockets (Get-CimInstance returns an array on multi-socket systems)
+$logicalProcessors = ((Get-CimInstance -Class CIM_Processor -Verbose:$false).NumberOfLogicalProcessors | Measure-Object -Sum).Sum
 
 if ($ThrottleLimit -eq 0) {
-    $ThrottleLimit = $ThrottleFactor * $LogicalProcessors
+    $ThrottleLimit = $throttleFactor * $logicalProcessors
 }
 
-$Verbose = $false
-if ($PSBoundParameters.ContainsKey('Verbose')) {
-    $Verbose = $PsBoundParameters.Get_Item('Verbose')
-}
+$verbose = $PSBoundParameters.ContainsKey('Verbose') -and $PSBoundParameters['Verbose']
 
-# Prepare log directory
-Remove-Item -Recurse -Path $LogFilesDirectory 2>&1 | Out-Null
+# =============================================================================
+#  Step 3 - Prepare Log Directory
+# =============================================================================
+
+Remove-Item -Recurse -Path $LogFilesDirectory -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
 
-$reportFilePath = Join-Path $LogFilesDirectory "$ReportFileName.htm"
-$reportCsvFilePath = Join-Path $LogFilesDirectory "$ReportFileName.csv"
+$reportHtmlPath = Join-Path $LogFilesDirectory "$ReportFileName.htm"
+$reportCsvPath  = Join-Path $LogFilesDirectory "$ReportFileName.csv"
 
-# Verify msbuild is available
-$oldPreference = $ErrorActionPreference
-$ErrorActionPreference = "stop"
-try {
-    Get-Command "msbuild" | Out-Null
-}
-catch {
-    Write-Host "`u{274C} msbuild cannot be called from current environment. Check that msbuild is set in current path (for example, that it is called from a Visual Studio developer command)."
-    Write-Error "msbuild cannot be called from current environment."
-    exit 1
-}
-finally {
-    $ErrorActionPreference = $oldPreference
-}
+# =============================================================================
+#  Step 4 - Load Sample List
+# =============================================================================
 
-#
-# Load sample list
-#
 if ($Samples) {
     $sampleNames = $Samples
 }
 else {
     if (-not (Test-Path $SampleListPath)) {
-        Write-Error "Sample list file not found: $SampleListPath. Run .\ListAllSamples.ps1 first to generate Samples.txt."
+        Write-Error "Sample list not found: $SampleListPath. Run .\ListAllSamples.ps1 first."
         exit 1
     }
     $sampleNames = Get-Content $SampleListPath | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 }
 
-# Build the sampleSet hashtable: sampleName -> directory path
-$sampleSet = @{}
+# Map sample names to directory paths, validating each exists
+$sampleSet = [ordered]@{}
+$skippedCount = 0
 foreach ($name in $sampleNames) {
-    $relativePath = $name.Replace('.', '\')
-    $fullPath = Join-Path $root $relativePath
-    $sampleSet[$name] = $fullPath
+    $fullPath = Join-Path $root ($name.Replace('.', '\'))
+    if (Test-Path $fullPath -PathType Container) {
+        $sampleSet[$name] = $fullPath
+    }
+    else {
+        Write-Warning "Sample directory not found, skipping: $name"
+        $skippedCount++
+    }
 }
 
-#
-# Determine build environment
-#
-$build_environment = ""
-$build_number = 0
-$nuget_package_version = 0
-
-if ($env:GITHUB_REPOSITORY) {
-    $build_environment = "GitHub"
-    $nuget_package_version = ([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-ChildItem .\packages\*WDK.x64* -Name)).Value
-    $build_number = $nuget_package_version.split('.')[2]
-}
-elseif (Test-Path(".\packages\*")) {
-    $build_environment = "NuGet"
-    $nuget_package_version = ([regex]'(?<=x64\.)(\d+\.)(\d+\.)(\d+\.)(\d+)').Matches((Get-ChildItem .\packages\*WDK.x64* -Name)).Value
-    $build_number = $nuget_package_version.split('.')[2]
-}
-elseif ($env:BuildLab -match '(?<branch>[^.]*).(?<build>[^.]*).(?<qfe>[^.]*)') {
-    $build_environment = "EWDK." + $Matches.branch + "." + $Matches.build + "." + $Matches.qfe
-    $build_number = $Matches.build
-}
-elseif ($env:UCRTVersion -match '10.0.(?<build>.*).0') {
-    $build_environment = "WDK"
-    $build_number = $Matches.build
-}
-else {
-    Write-Output "Environment variables {"
-    Get-ChildItem env:* | Sort-Object name
-    Write-Output "Environment variables }"
-    Write-Error "Could not determine build environment."
+if ($sampleSet.Count -eq 0) {
+    Write-Error "No valid sample directories found. Verify Samples.txt and current directory."
     exit 1
 }
 
-# Determine WDK Visual Studio Component version
-if ($build_environment -match '^EWDK') {
-    $wdk_vs_component_ver = "(WDK Visual Studio Component Version is not included for EWDK builds)"
-}
-else {
-    $wdk_vs_component_ver = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
-    if (-not $wdk_vs_component_ver) {
-        Write-Error "WDK Visual Studio Component version not found. Please ensure the WDK Component is installed."
-        exit 1
-    }
-    $wdk_vs_component_ver = [regex]::Match($wdk_vs_component_ver.Name, '(\d+\.){3}\d+').Value
-}
+# =============================================================================
+#  Step 5 - Detect Build Environment
+# =============================================================================
 
+$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root
+$buildNumber = $buildEnv.BuildNumber
+
+# =============================================================================
+#  Step 6 - Determine InfVerif Options
+# =============================================================================
 #
-# InfVerif_AdditionalOptions
+# Samples must build cleanly, but certain InfVerif warnings are acceptable because
+# they flag issues intentionally present in samples (to be fixed when productizing).
+#   <= 22621: suppress individual warnings  /sw1284 /sw1285 /sw1293 /sw2083 /sw2086
+#   >  22621: these are grouped under       /samples
 #
 if ($InfOptions) {
-    $InfVerif_AdditionalOptions = $InfOptions
+    $infVerifOptions = $InfOptions
 }
 else {
-    $InfVerif_AdditionalOptions = ($build_number -le 22621 ? "/sw1284 /sw1285 /sw1293 /sw2083 /sw2086" : "/samples")
+    $infVerifOptions = if ($buildNumber -le 22621) { '/sw1284 /sw1285 /sw1293 /sw2083 /sw2086' } else { '/samples' }
 }
 
-#
-# Load exclusions from exclusions.csv
-#
-$exclusionConfigurations = @{}
-$exclusionReasons = @{}
-Import-Csv 'exclusions.csv' | ForEach-Object {
-    $excluded_driver = $_.Path.Replace($root, '').Trim('\').Replace('\', '.').ToLower()
-    $excluded_configurations = ($_.configurations -eq '' ? '*' : $_.configurations)
-    $excluded_minbuild = ($_.MinBuild -eq '' ? 00000 : $_.MinBuild)
-    $excluded_maxbuild = ($_.MaxBuild -eq '' ? 99999 : $_.MaxBuild)
-    if (($excluded_minbuild -le $build_number) -and ($build_number -le $excluded_maxbuild)) {
-        $exclusionConfigurations[$excluded_driver] = $excluded_configurations
-        $exclusionReasons[$excluded_driver] = $_.Reason
-        Write-Verbose "Exclusion.csv entry applied for '$excluded_driver' for configuration '$excluded_configurations'."
-    }
-    else {
-        Write-Verbose "Exclusion.csv entry not applied for '$excluded_driver' due to build number."
-    }
-}
+# =============================================================================
+#  Step 7 - Load Exclusions
+# =============================================================================
 
-#
-# Build all samples
-#
-$jresult = @{
-    SolutionsBuilt       = 0
-    SolutionsSucceeded   = 0
-    SolutionsExcluded    = 0
-    SolutionsUnsupported = 0
-    SolutionsFailed      = 0
-    SolutionsSporadic    = 0
-    Results              = @()
-    FailSet              = @()
-    SporadicSet          = @()
-    lock                 = [System.Threading.Mutex]::new($false)
-}
+$exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber
 
-$SolutionsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
+# =============================================================================
+#  Step 8 - Print Build Plan
+# =============================================================================
 
-Write-Output "WDK Build Environment:               $build_environment"
-Write-Output "WDK Build Number:                    $build_number"
-if (($build_environment -eq "GitHub") -or ($build_environment -eq "NuGet")) {
-    Write-Output "WDK Nuget Version:                   $nuget_package_version"
-}
-Write-Output "WDK Visual Studio Component Version: $wdk_vs_component_ver"
-Write-Output "Samples:                             $($sampleSet.Count)"
-Write-Output "Configurations:                      $($Configurations.Count) ($Configurations)"
-Write-Output "Platforms:                           $($Platforms.Count) ($Platforms)"
-Write-Output "InfVerif_AdditionalOptions:          $InfVerif_AdditionalOptions"
-Write-Output "Combinations:                        $SolutionsTotal"
-Write-Output "LogicalProcessors:                   $LogicalProcessors"
-Write-Output "ThrottleFactor:                      $ThrottleFactor"
-Write-Output "ThrottleLimit:                       $ThrottleLimit"
-Write-Output "WDS_WipeOutputs:                     $env:WDS_WipeOutputs"
-Write-Output "Disk Remaining (GB):                 $(((Get-Volume ((Get-Item ".").PSDrive.Name)).SizeRemaining) / 1GB)"
+$combinationsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
+
 Write-Output ""
-Write-Output "T: Combinations"
-Write-Output "B: Built"
-Write-Output "R: Build is running currently"
-Write-Output "P: Build is pending an available build slot"
+Write-Output "--- WDK Sample Build Plan ------------------------------------------"
+Write-Output "  Environment:      $($buildEnv.Name)"
+Write-Output "  Build Number:     $buildNumber"
+if ($buildEnv.NuGetVersion) {
+    Write-Output "  NuGet Version:    $($buildEnv.NuGetVersion)"
+}
+Write-Output "  WDK VS Component: $($buildEnv.WdkVsComponentVersion)"
+Write-Output "  InfVerif Options: $infVerifOptions"
 Write-Output ""
-Write-Output "S: Built and result was 'Succeeded'"
-Write-Output "E: Built and result was 'Excluded'"
-Write-Output "U: Built and result was 'Unsupported' (Platform and Configuration combination)"
-Write-Output "F: Built and result was 'Failed'"
-Write-Output "O: Built and result was 'Sporadic'"
+Write-Output "  Samples:          $($sampleSet.Count) ($skippedCount skipped)"
+Write-Output "  Configurations:   $($Configurations -join ', ')"
+Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  Combinations:     $combinationsTotal"
+Write-Output "  Exclusions:       $($exclusions.Count)"
+Write-Output ""
+Write-Output "  Parallelism:      $ThrottleLimit jobs ($logicalProcessors cores x $throttleFactor)"
+Write-Output "  Disk Free (GB):   $(Get-DiskFreeGB)"
+Write-Output "  Wipe Outputs:     $(-not [string]::IsNullOrEmpty($env:WDS_WipeOutputs))"
+Write-Output "--------------------------------------------------------------------"
+Write-Output ""
+Write-Output "Progress legend:"
+Write-Output "  T=Total  B=Built  R=Running  P=Pending"
+Write-Output "  S=Succeeded  E=Excluded  U=Unsupported  F=Failed  O=Sporadic"
 Write-Output ""
 Write-Output "Building all combinations..."
 
-$sw = [Diagnostics.Stopwatch]::StartNew()
+# =============================================================================
+#  Step 9 - Execute Parallel Builds
+# =============================================================================
+
+# Shared mutable state protected by a Mutex. This is required because
+# ForEach-Object -Parallel runs each iteration in a separate runspace,
+# so standard .NET locks (Monitor/lock) do not work across runspaces.
+$buildState = @{
+    Built       = 0
+    Succeeded   = 0
+    Excluded    = 0
+    Unsupported = 0
+    Failed      = 0
+    Sporadic    = 0
+    Results     = @()
+    FailSet     = @()
+    SporadicSet = @()
+    Lock        = [System.Threading.Mutex]::new($false)
+}
+
+$stopwatch = [Diagnostics.Stopwatch]::StartNew()
 
 $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
-    $LogFilesDirectory = $using:LogFilesDirectory
-    $exclusionConfigurations = $using:exclusionConfigurations
-    $exclusionReasons = $using:exclusionReasons
-    $Configurations = $using:Configurations
-    $Platforms = $using:Platforms
-    $InfVerif_AdditionalOptions = $using:InfVerif_AdditionalOptions
-    $Verbose = $using:Verbose
+    # --- Import shared state from parent scope ---
+    $logDir     = $using:LogFilesDirectory
+    $exclusions = $using:exclusions
+    $configs    = $using:Configurations
+    $platforms  = $using:Platforms
+    $infOpts    = $using:infVerifOptions
+    $isVerbose  = $using:verbose
+    $state      = $using:buildState
+    $total      = $using:combinationsTotal
+    $throttle   = $using:ThrottleLimit
 
     $sampleName = $_.Key
-    $directory = $_.Value
+    $directory  = $_.Value
 
-    $ResultElement = New-Object psobject
-    Add-Member -InputObject $ResultElement -MemberType NoteProperty -Name Sample -Value "$sampleName"
+    # Build a result row: one column per configuration|platform combination
+    $resultRow = [PSCustomObject]@{ Sample = $sampleName }
 
-    foreach ($configuration in $Configurations) {
-        foreach ($platform in $Platforms) {
-            $thisunsupported = 0
-            $thisfailed = 0
-            $thissporadic = 0
-            $thisexcluded = 0
-            $thissucceeded = 0
-            $thisresult = "Not run"
-            $thisfailset = @()
-            $thissporadicset = @()
+    foreach ($configuration in $configs) {
+        foreach ($platform in $platforms) {
+            $result           = 'Not run'
+            $succeededDelta   = 0
+            $excludedDelta    = 0
+            $unsupportedDelta = 0
+            $failedDelta      = 0
+            $sporadicDelta    = 0
+            $failEntry        = $null
+            $sporadicEntry    = $null
 
-            if ($exclusionConfigurations.ContainsKey($sampleName) -and ($exclusionConfigurations[$sampleName].Split(';') | Where-Object { "$configuration|$platform" -like $_ })) {
-                Write-Verbose "[$sampleName $configuration|$platform] `u{23E9} Excluded and skipped. Reason: $($exclusionReasons[$sampleName])"
-                $thisexcluded += 1
-                $thisresult = "Excluded"
+            # -- Check exclusions (supports wildcard paths like 'general.*') --
+            $exclusionReason = $null
+            foreach ($excl in $exclusions) {
+                if ($sampleName -like $excl.Pattern) {
+                    $configKey = "$configuration|$platform"
+                    foreach ($cfgPattern in $excl.Configurations.Split(';')) {
+                        if ($configKey -like $cfgPattern) {
+                            $exclusionReason = $excl.Reason
+                            break
+                        }
+                    }
+                    if ($exclusionReason) { break }
+                }
+            }
+
+            if ($exclusionReason) {
+                Write-Verbose "[$sampleName $configuration|$platform] Excluded: $exclusionReason"
+                $excludedDelta = 1
+                $result = 'Excluded'
             }
             else {
-                .\Build-Sample -Directory $directory -SampleName $sampleName -LogFilesDirectory $LogFilesDirectory -Configuration $configuration -Platform $platform -InfVerif_AdditionalOptions $InfVerif_AdditionalOptions -Verbose:$Verbose
-                if ($LASTEXITCODE -eq 0) {
-                    $thissucceeded += 1
-                    $thisresult = "Succeeded"
-                }
-                elseif ($LASTEXITCODE -eq 1) {
-                    $thisfailset += "$sampleName $configuration|$platform"
-                    $thisfailed += 1
-                    $thisresult = "Failed"
-                }
-                elseif ($LASTEXITCODE -eq 2) {
-                    $thissporadicset += "$sampleName $configuration|$platform"
-                    $thissporadic += 1
-                    $thisresult = "Sporadic"
-                }
-                else {
-                    $thisunsupported += 1
-                    $thisresult = "Unsupported"
+                # -- Build the sample --
+                .\Build-Sample -Directory $directory -SampleName $sampleName `
+                    -LogFilesDirectory $logDir -Configuration $configuration `
+                    -Platform $platform -InfVerif_AdditionalOptions $infOpts `
+                    -Verbose:$isVerbose
+
+                # Exit codes from Build-Sample.ps1:
+                #   0 = succeeded on first attempt
+                #   1 = failed after all retries
+                #   2 = sporadic (failed first, succeeded on retry)
+                #   3 = unsupported configuration/platform
+                switch ($LASTEXITCODE) {
+                    0       { $succeededDelta   = 1; $result = 'Succeeded' }
+                    1       { $failedDelta      = 1; $result = 'Failed';      $failEntry     = "$sampleName $configuration|$platform" }
+                    2       { $sporadicDelta    = 1; $result = 'Sporadic';    $sporadicEntry = "$sampleName $configuration|$platform" }
+                    default { $unsupportedDelta = 1; $result = 'Unsupported' }
                 }
             }
-            Add-Member -InputObject $ResultElement -MemberType NoteProperty -Name "$configuration|$platform" -Value "$thisresult"
 
-            $null = ($using:jresult).lock.WaitOne()
+            $resultRow | Add-Member -MemberType NoteProperty -Name "$configuration|$platform" -Value $result
+
+            # -- Update shared counters (under lock) --
+            $null = $state.Lock.WaitOne()
             try {
-                ($using:jresult).SolutionsBuilt += 1
-                ($using:jresult).SolutionsSucceeded += $thissucceeded
-                ($using:jresult).SolutionsExcluded += $thisexcluded
-                ($using:jresult).SolutionsUnsupported += $thisunsupported
-                ($using:jresult).SolutionsFailed += $thisfailed
-                ($using:jresult).SolutionsSporadic += $thissporadic
-                ($using:jresult).FailSet += $thisfailset
-                ($using:jresult).SporadicSet += $thissporadicset
-                $SolutionsTotal = $using:SolutionsTotal
-                $ThrottleLimit = $using:ThrottleLimit
-                $SolutionsBuilt = ($using:jresult).SolutionsBuilt
-                $SolutionsRemaining = $SolutionsTotal - $SolutionsBuilt
-                $SolutionsRunning = if ($SolutionsRemaining -ge $ThrottleLimit) { $ThrottleLimit } else { $SolutionsRemaining }
-                $SolutionsPending = if ($SolutionsRemaining -ge $ThrottleLimit) { ($SolutionsRemaining - $ThrottleLimit) } else { 0 }
-                $SolutionsBuiltPercent = [Math]::Round(100 * ($SolutionsBuilt / $using:SolutionsTotal))
-                $TBRP = "T:" + ($SolutionsTotal) + "; B:" + (($using:jresult).SolutionsBuilt) + "; R:" + ($SolutionsRunning) + "; P:" + ($SolutionsPending)
-                $rstr = "S:" + (($using:jresult).SolutionsSucceeded) + "; E:" + (($using:jresult).SolutionsExcluded) + "; U:" + (($using:jresult).SolutionsUnsupported) + "; F:" + (($using:jresult).SolutionsFailed) + "; O:" + (($using:jresult).SolutionsSporadic)
-                Write-Progress -Activity "Building combinations" -Status "$SolutionsBuilt of $using:SolutionsTotal combinations built ($SolutionsBuiltPercent%) | $TBRP | $rstr" -PercentComplete $SolutionsBuiltPercent
+                $state.Built       += 1
+                $state.Succeeded   += $succeededDelta
+                $state.Excluded    += $excludedDelta
+                $state.Unsupported += $unsupportedDelta
+                $state.Failed      += $failedDelta
+                $state.Sporadic    += $sporadicDelta
+                if ($failEntry)     { $state.FailSet     += $failEntry }
+                if ($sporadicEntry) { $state.SporadicSet += $sporadicEntry }
+
+                # Update progress bar
+                $built     = $state.Built
+                $remaining = $total - $built
+                $running   = [Math]::Min($remaining, $throttle)
+                $pending   = [Math]::Max($remaining - $throttle, 0)
+                $pct       = [Math]::Round(100 * $built / $total)
+
+                $statusLine = "$built of $total combinations built ($pct%) | " +
+                    "T:$total; B:$built; R:$running; P:$pending | " +
+                    "S:$($state.Succeeded); E:$($state.Excluded); U:$($state.Unsupported); F:$($state.Failed); O:$($state.Sporadic)"
+
+                # Write-Host with carriage return for a single-line progress indicator.
+                # Write-Progress does not reliably render from -Parallel runspaces.
+                Write-Host "`rBuilding combinations [$statusLine]" -NoNewline
             }
             finally {
-                ($using:jresult).lock.ReleaseMutex()
+                $state.Lock.ReleaseMutex()
             }
         }
     }
-    $null = ($using:jresult).lock.WaitOne()
+
+    # Append the completed result row
+    $null = $state.Lock.WaitOne()
     try {
-        ($using:jresult).Results += $ResultElement
+        $state.Results += $resultRow
     }
     finally {
-        ($using:jresult).lock.ReleaseMutex()
+        $state.Lock.ReleaseMutex()
     }
 }
 
-$sw.Stop()
+$stopwatch.Stop()
+
+# End the progress line
+Write-Host ""
+
+# =============================================================================
+#  Step 10 - Report Failures
+# =============================================================================
 
 Write-Output ""
 
-if ($jresult.FailSet.Count -gt 0) {
-    Write-Output "Some combinations were built with errors:"
-    $jresult.FailSet = $jresult.FailSet | Sort-Object
-    foreach ($failedSample in $jresult.FailSet) {
-        $failedSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
-        $failName = $Matches[1]
-        $failConfiguration = $Matches[2]
-        $failPlatform = $Matches[3]
-        Write-Output "Build errors in Sample $failName; Configuration: $failConfiguration; Platform: $failPlatform {"
-        Get-Content "$LogFilesDirectory\$failName.$failConfiguration.$failPlatform.0.err" | Write-Output
-        Write-Output "} $failedSample"
+if ($buildState.FailSet.Count -gt 0) {
+    Write-Output "--- Build Failures -------------------------------------------------"
+    foreach ($entry in ($buildState.FailSet | Sort-Object)) {
+        if ($entry -match '^(?<name>.*)\s+(?<config>\w+)\|(?<platform>\w+)$') {
+            $errLog = Join-Path $LogFilesDirectory "$($Matches.name).$($Matches.config).$($Matches.platform).0.err"
+            Write-Output "  [FAIL] $($Matches.name) ($($Matches.config)|$($Matches.platform)):"
+            if (Test-Path $errLog) {
+                Get-Content $errLog | ForEach-Object { Write-Output "     $_" }
+            }
+            else {
+                Write-Output "     (error log not found: $errLog)"
+            }
+        }
     }
+    Write-Output ""
     Write-Error "Some combinations were built with errors."
-    Write-Output ""
 }
 
-if ($jresult.SporadicSet.Count -gt 0) {
-    Write-Output "Some combinations were built with sporadic error:"
-    $jresult.SporadicSet = $jresult.SporadicSet | Sort-Object
-    foreach ($sporadicSample in $jresult.SporadicSet) {
-        $sporadicSample -match "^(.*) (\w*)\|(\w*)$" | Out-Null
-        $sporadicName = $Matches[1]
-        $sporadicConfiguration = $Matches[2]
-        $sporadicPlatform = $Matches[3]
-        Write-Output "Build sporadic errors in Sample $sporadicName; Configuration: $sporadicConfiguration; Platform: $sporadicPlatform {"
-        Get-Content "$LogFilesDirectory\$sporadicName.$sporadicConfiguration.$sporadicPlatform.0.err" | Write-Output
-        Write-Output "} $sporadicSample"
+if ($buildState.SporadicSet.Count -gt 0) {
+    Write-Output "--- Sporadic Failures (succeeded on retry) -------------------------"
+    foreach ($entry in ($buildState.SporadicSet | Sort-Object)) {
+        if ($entry -match '^(?<name>.*)\s+(?<config>\w+)\|(?<platform>\w+)$') {
+            $errLog = Join-Path $LogFilesDirectory "$($Matches.name).$($Matches.config).$($Matches.platform).0.err"
+            Write-Output "  [SPORADIC] $($Matches.name) ($($Matches.config)|$($Matches.platform)):"
+            if (Test-Path $errLog) {
+                Get-Content $errLog | ForEach-Object { Write-Output "     $_" }
+            }
+        }
     }
-    Write-Error "Some combinations were built with sporadic errors."
     Write-Output ""
+    Write-Error "Some combinations had sporadic build failures."
 }
 
-# Display timer statistics
-$min = $sw.Elapsed.Minutes
-$seconds = $sw.Elapsed.Seconds
+# =============================================================================
+#  Step 11 - Final Summary
+# =============================================================================
 
-$SolutionsSucceeded = $jresult.SolutionsSucceeded
-$SolutionsExcluded = $jresult.SolutionsExcluded
-$SolutionsUnsupported = $jresult.SolutionsUnsupported
-$SolutionsFailed = $jresult.SolutionsFailed
-$SolutionsSporadic = $jresult.SolutionsSporadic
-$Results = $jresult.Results
+$elapsed = $stopwatch.Elapsed
 
-Write-Output "Built all combinations."
+Write-Output "--- Build Complete -------------------------------------------------"
+Write-Output "  Elapsed:          $($elapsed.Minutes)m $($elapsed.Seconds)s"
+Write-Output "  Disk Free (GB):   $(Get-DiskFreeGB)"
 Write-Output ""
-Write-Output "Elapsed time:         $min minutes, $seconds seconds."
-Write-Output ("Disk Remaining (GB):  " + (((Get-Volume (Get-Item ".").PSDrive.Name).SizeRemaining / 1GB)))
-Write-Output ("Samples:              " + $sampleSet.Count)
-Write-Output ("Configurations:       " + $Configurations.Count + " (" + $Configurations + ")")
-Write-Output ("Platforms:            " + $Platforms.Count + " (" + $Platforms + ")")
-Write-Output "Combinations:         $SolutionsTotal"
-Write-Output "Succeeded:            $SolutionsSucceeded"
-Write-Output "Excluded:             $SolutionsExcluded"
-Write-Output "Unsupported:          $SolutionsUnsupported"
-Write-Output "Failed:               $SolutionsFailed"
-Write-Output "Sporadic:             $SolutionsSporadic"
-Write-Output "Log files directory:  $LogFilesDirectory"
-Write-Output "Overview report:      $reportFilePath"
+Write-Output "  Samples:          $($sampleSet.Count)"
+Write-Output "  Configurations:   $($Configurations -join ', ')"
+Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  Combinations:     $combinationsTotal"
 Write-Output ""
+Write-Output "  Succeeded:        $($buildState.Succeeded)"
+Write-Output "  Excluded:         $($buildState.Excluded)"
+Write-Output "  Unsupported:      $($buildState.Unsupported)"
+Write-Output "  Failed:           $($buildState.Failed)"
+Write-Output "  Sporadic:         $($buildState.Sporadic)"
+Write-Output ""
+Write-Output "  Log directory:    $LogFilesDirectory"
+Write-Output "  CSV report:       $reportCsvPath"
+Write-Output "  HTML report:      $reportHtmlPath"
+Write-Output "--------------------------------------------------------------------"
 
-$Results | Sort-Object { $_.Sample } | ConvertTo-Csv | Out-File $reportCsvFilePath
-$Results | Sort-Object { $_.Sample } | ConvertTo-Html -Title "Overview" | Out-File $reportFilePath
-Invoke-Item $reportFilePath
+# =============================================================================
+#  Step 12 - Generate Reports
+# =============================================================================
+
+$sortedResults = $buildState.Results | Sort-Object { $_.Sample }
+$sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
+$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
+
+# Only open the HTML report interactively (not in CI/automation)
+if (-not $env:GITHUB_REPOSITORY -and -not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
+    Invoke-Item $reportHtmlPath
+}
