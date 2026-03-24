@@ -111,7 +111,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\usbd.lib;$(DDK_LIB_PATH)\usbdex.lib</AdditionalDependencies>
     </Link>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
@@ -132,7 +132,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\usbd.lib;$(DDK_LIB_PATH)\usbdex.lib</AdditionalDependencies>
     </Link>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
@@ -153,7 +153,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\usbd.lib;$(DDK_LIB_PATH)\usbdex.lib</AdditionalDependencies>
     </Link>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
@@ -174,7 +174,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\inc</AdditionalIncludeDirectories>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\usbd.lib;$(DDK_LIB_PATH)\usbdex.lib</AdditionalDependencies>
     </Link>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
