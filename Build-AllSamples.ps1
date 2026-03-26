@@ -40,6 +40,7 @@ param(
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { ('Debug', 'Release') } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { ('x64', 'arm64') } else { $env:WDS_Platform }),
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
+    [string]$InfOptions = "",
     [int]$ThrottleLimit
 )
 
@@ -68,4 +69,4 @@ foreach ($file in $solutionFiles) {
     }
 }
 
-.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit
+.\Build-SampleSet -SampleSet $sampleSet -Configurations $Configurations -Platform $Platforms -LogFilesDirectory $LogFilesDirectory -Verbose:$Verbose -ThrottleLimit $ThrottleLimit -InfOptions $InfOptions

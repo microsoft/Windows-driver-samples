@@ -23,13 +23,15 @@ jobs:
       - name: Extract selected path and tag codeowner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           python3 - <<EOF
           import os
           import re
           import requests
 
-          issue_body = """${{ github.event.issue.body }}"""
+          issue_body = os.environ['ISSUE_BODY']
           selected_path = None
 
           # Try to extract the selected path from the issue body
@@ -68,8 +70,9 @@ jobs:
           comment = f"{codeowner} can you please take a look at this issue related to {selected_path}?"
           repo = os.environ['GITHUB_REPOSITORY']
           token = os.environ['GITHUB_TOKEN']
+          issue_number = os.environ['ISSUE_NUMBER']
 
-          url = f"https://api.github.com/repos/{repo}/issues/${{ github.event.issue.number }}/comments"
+          url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
           headers = {
               "Authorization": f"Bearer {token}",
               "Accept": "application/vnd.github.v3+json"
