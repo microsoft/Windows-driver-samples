@@ -1,6 +1,7 @@
 /*++
 
 Copyright (c) Microsoft Corporation. All rights reserved
+SPDX-License-Identifier: MS-PL
 
 Abstract:
 	Stream Edit Callout Driver Sample.

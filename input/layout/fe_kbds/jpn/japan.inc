@@ -2,6 +2,7 @@
 # File Name: Sources.inc for JPN KBDs
 #
 # Copyright (c) 1985-2000, Microsoft Corporation
+# SPDX-License-Identifier: MS-PL
 #
 # Project specific SOURCES file.
 #

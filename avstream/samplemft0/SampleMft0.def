@@ -3,6 +3,7 @@
 ; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 ; PARTICULAR PURPOSE.
 ; Copyright (c) Microsoft Corporation. All rights reserved
+; SPDX-License-Identifier: MS-PL
 
 ; SampleMft0.def : Declares the module parameters.
 

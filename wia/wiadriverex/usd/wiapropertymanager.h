@@ -1,6 +1,7 @@
 /**************************************************************************
 *
 *  Copyright (c) 2003  Microsoft Corporation
+*  SPDX-License-Identifier: MS-PL
 *
 *  Title:       wiapropertymanager.h
 *

@@ -1,5 +1,6 @@
 //
 // DelayAPOSFX.cpp -- Copyright (c) Microsoft Corporation. All rights reserved.
+// DelayAPOSFX.cpp -- SPDX-License-Identifier: MS-PL
 //
 // Description:
 //

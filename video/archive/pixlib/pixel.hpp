@@ -1,6 +1,7 @@
 /*==========================================================================;
  *
  *  Copyright (C) 1999-2002 Microsoft Corporation.  All Rights Reserved.
+ *  SPDX-License-Identifier: MS-PL
  *
  *  File:       pixel.hpp
  *  Content:    Utility class for working with pixel formats

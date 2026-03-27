@@ -3,6 +3,7 @@
  *  wiacapabilitymanager.h
  *
  *  Copyright (c) 2003 Microsoft Corporation.  All Rights Reserved.
+ *  SPDX-License-Identifier: MS-PL
  *
  *  DESCRIPTION:
  *
