@@ -6,7 +6,7 @@
     This is the main build orchestrator for driver samples. It performs these steps:
 
     1. Ensures a developer build environment (VS DevShell or EWDK) is active
-    2. Reads sample names from Samples.txt (or a specified file/array)
+    2. Discovers samples via ListAllSamples.ps1 (or uses the -Samples parameter if provided)
     3. Detects the build environment (GitHub CI, NuGet, EWDK, or WDK) and build number
     4. Loads exclusions from exclusions.csv (supports wildcard paths)
     5. Builds all non-excluded sample/configuration/platform combinations in parallel
@@ -15,15 +15,12 @@
     Requires PowerShell 7+ (uses ForEach-Object -Parallel).
 
     Typical call chain:
-        Build-AllSamples.ps1 -> ListAllSamples.ps1 -> Build-Samples.ps1 -> Build-Sample.ps1
-                                                         (this script)
+        Build-AllSamples.ps1 -> Build-Samples.ps1 -> ListAllSamples.ps1 (for discovery)
+                                   (this script)   -> Build-Sample.ps1  (per sample)
 
-.PARAMETER SampleListPath
-    Path to the file containing sample names (one per line, dot-separated).
-    Defaults to Samples.txt in the current directory.
 
 .PARAMETER Samples
-    Optional array of specific sample names to build. When provided, overrides SampleListPath.
+    Optional array of specific sample names to build. When omitted, all samples are discovered dynamically via ListAllSamples.ps1.
 
 .PARAMETER Configurations
     Build configurations (e.g. 'Debug','Release'). Defaults to $env:WDS_Configuration or
@@ -49,7 +46,7 @@
 .EXAMPLE
     .\Build-Samples
 
-    Builds all samples from Samples.txt with default settings.
+    Discovers all samples via ListAllSamples.ps1 and builds them with default settings.
 
 .EXAMPLE
     .\Build-Samples -Samples 'audio.acx.samples.audiocodec.driver','usb.kmdf_fx2' -Configurations 'Debug' -Platforms 'x64'
@@ -57,16 +54,15 @@
     Builds specific samples for a single configuration and platform.
 
 .EXAMPLE
-    .\Build-Samples -SampleListPath .\MySamples.txt -ThrottleLimit 8
+    .\Build-Samples -ThrottleLimit 8
 
-    Builds samples from a custom list with limited parallelism.
+    Discovers all samples and builds them with limited parallelism.
 #>
 
 #Requires -Version 7.0
 
 [CmdletBinding()]
 param(
-    [string]$SampleListPath = (Join-Path (Get-Location) "Samples.txt"),
     [string[]]$Samples,
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { ('Debug', 'Release') } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { ('x64', 'arm64') } else { $env:WDS_Platform }),
@@ -282,14 +278,15 @@ $reportCsvPath  = Join-Path $LogFilesDirectory "$ReportFileName.csv"
 # =============================================================================
 
 if ($Samples) {
-    $sampleNames = $Samples
+    # Explicit list passed by the caller — use as-is, sorted alphabetically.
+    $sampleNames = $Samples | Sort-Object
 }
 else {
-    if (-not (Test-Path $SampleListPath)) {
-        Write-Error "Sample list not found: $SampleListPath. Run .\ListAllSamples.ps1 first."
-        exit 1
-    }
-    $sampleNames = Get-Content $SampleListPath | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    # Default: discover samples dynamically via ListAllSamples.ps1.
+    # ListAllSamples outputs one alphabetically-sorted sample name per line to stdout.
+    Write-Verbose "No -Samples provided. Discovering samples via ListAllSamples.ps1..."
+    $sampleNames = & (Join-Path $PSScriptRoot 'ListAllSamples.ps1') -Verbose:$verbose |
+                   Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 }
 
 # Map sample names to directory paths, validating each exists
@@ -307,7 +304,7 @@ foreach ($name in $sampleNames) {
 }
 
 if ($sampleSet.Count -eq 0) {
-    Write-Error "No valid sample directories found. Verify Samples.txt and current directory."
+    Write-Error "No valid sample directories found. Ensure ListAllSamples.ps1 is available in the repo root."
     exit 1
 }
 
