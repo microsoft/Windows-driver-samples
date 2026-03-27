@@ -1240,7 +1240,7 @@ Return Value:
     
     if (!CloseHandle(abortPort)) {
 
-        fprintf(stderr, "[UserScanListenAbortProc]: Failed to close the connection port.\n");
+        fprintf(stderr, "[UserScanListenAbortProc]: Failed to close the abortion port.\n");
     }
     abortPort = NULL;
     
