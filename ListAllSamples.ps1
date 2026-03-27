@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Enumerates all available sample solutions in the repository and writes them to Samples.txt.
+    Enumerates all available sample solutions in the repository and writes them to the console.
 
 .DESCRIPTION
     Searches for all .sln files recursively from the repo root, excludes NuGet package directories
     (paths containing 'packages' as a segment), computes a normalized sample name for each, and writes
-    the sorted list to Samples.txt (one sample name per line).
+    the sorted list to stdout (one sample name per line).
 
     The sample name is derived from the relative directory path: backslashes are replaced with dots
     and the result is lowercased.
@@ -13,10 +13,10 @@
 .EXAMPLE
     .\ListAllSamples
 
-    Discovers all samples and writes Samples.txt to the repo root.
+    Discovers all samples and writes the sorted names to the console.
 
 .OUTPUTS
-    Samples.txt in the current working directory.
+    Sorted sample names written to stdout, one per line.
 #>
 
 [CmdletBinding()]
@@ -45,7 +45,5 @@ foreach ($file in $solutionFiles) {
 
 $sortedNames = $sampleNames.Keys | Sort-Object
 
-$outputPath = Join-Path $root "Samples.txt"
-$sortedNames | Out-File -FilePath $outputPath -Encoding utf8
-
-Write-Output "Found $($sortedNames.Count) samples. Written to Samples.txt"
+Write-Verbose "Found $($sortedNames.Count) samples."
+$sortedNames | Write-Output
