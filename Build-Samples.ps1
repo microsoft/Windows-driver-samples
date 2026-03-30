@@ -14,10 +14,6 @@
 
     Requires PowerShell 7+ (uses ForEach-Object -Parallel).
 
-    Typical call chain:
-        Build-AllSamples.ps1 -> Build-Samples.ps1 -> ListAllSamples.ps1 (for discovery)
-                                   (this script)   -> Build-Sample.ps1  (per sample)
-
 
 .PARAMETER Samples
     Optional array of specific sample names to build. When omitted, all samples are discovered dynamically via ListAllSamples.ps1.
@@ -240,6 +236,141 @@ function Get-DiskFreeGB {
     }
 }
 
+function Build-SingleSample {
+    <#
+    .SYNOPSIS
+        Builds a single sample directory for one configuration/platform combination.
+    .DESCRIPTION
+        Locates the .sln in the given directory, verifies the configuration|platform is
+        supported, then invokes msbuild with up to 3 attempts (to detect sporadic failures).
+    .OUTPUTS
+        Returns an integer exit code:
+          0 = succeeded on first attempt
+          1 = failed after all retries
+          2 = sporadic (failed first, succeeded on retry)
+          3 = unsupported configuration/platform
+    #>
+    param(
+        [string]$Directory,
+        [string]$SampleName,
+        [string]$Configuration = 'Debug',
+        [string]$Platform = 'x64',
+        [string]$InfVerif_AdditionalOptions = '/samples',
+        [string]$LogFilesDirectory = (Get-Location),
+        [bool]$Verbose = $false
+    )
+
+    if (-not (Test-Path -Path $Directory -PathType Container)) {
+        Write-Warning "`u{274C} A valid directory could not be found under $Directory"
+        return 1
+    }
+
+    New-Item -ItemType Directory -Force -Path $LogFilesDirectory | Out-Null
+
+    if ([string]::IsNullOrWhiteSpace($SampleName)) {
+        $SampleName = (Resolve-Path $Directory).Path.Replace((Get-Location), '').Replace('\', '.').Trim('.').ToLower()
+    }
+
+    $solutionFile = Get-ChildItem -Path $Directory -Filter *.sln |
+                    Select-Object -ExpandProperty FullName -First 1
+
+    if ($null -eq $solutionFile) {
+        Write-Warning "`u{274C} A solution could not be found under $Directory"
+        return 1
+    }
+
+    # --- Check whether the solution supports the requested configuration|platform ---
+    $configurationIsSupported = $false
+    $inSolutionConfigurationPlatformsSection = $false
+    foreach ($line in Get-Content -Path $solutionFile) {
+        if (-not $inSolutionConfigurationPlatformsSection -and
+            $line -match '\s*GlobalSection\(SolutionConfigurationPlatforms\).*') {
+            $inSolutionConfigurationPlatformsSection = $true
+            continue
+        }
+        elseif ($line -match '\s*EndGlobalSection.*') {
+            $inSolutionConfigurationPlatformsSection = $false
+            continue
+        }
+
+        if ($inSolutionConfigurationPlatformsSection) {
+            [regex]$regex = '.*=\s*(?<ConfigString>(?<Configuration>.*)\|(?<Platform>.*))\s*'
+            $match = $regex.Match($line)
+            if ([string]::IsNullOrWhiteSpace($match.Groups['ConfigString'].Value) -or
+                [string]::IsNullOrWhiteSpace($match.Groups['Platform'].Value)) {
+                Write-Warning "Could not parse configuration entry $line from file $solutionFile."
+                continue
+            }
+            if ($match.Groups['Configuration'].Value.Trim() -eq $Configuration -and
+                $match.Groups['Platform'].Value.Trim() -eq $Platform) {
+                $configurationIsSupported = $true
+            }
+        }
+    }
+
+    if (-not $configurationIsSupported) {
+        Write-Verbose "[$SampleName] `u{23E9} Skipped. Configuration $Configuration|$Platform not supported."
+        return 3
+    }
+
+    Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform {"
+
+    $myexit = 1
+
+    # Build up to three times (0th, 1st, and 2nd attempt).
+    #   Succeed on 1st  -> success (0)
+    #   Fail 1st, succeed on retry -> sporadic (2)
+    #   Fail all three  -> failure (1)
+    for ($i = 0; $i -lt 3; $i++) {
+        $binLogFilePath   = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.binlog"
+        $errorLogFilePath = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.err"
+        $warnLogFilePath  = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.wrn"
+        $outLogFilePath   = "$LogFilesDirectory\$SampleName.$Configuration.$Platform.$i.out"
+
+        msbuild $solutionFile `
+            -clp:Verbosity=m -t:rebuild `
+            -property:Configuration=$Configuration `
+            -property:Platform=$Platform `
+            -p:TargetVersion=Windows10 `
+            -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" `
+            -warnaserror `
+            -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None `
+            -flp1:errorsonly`;logfile=$errorLogFilePath `
+            -flp2:WarningsOnly`;logfile=$warnLogFilePath `
+            -noLogo > $outLogFilePath
+
+        if ($null -ne $env:WDS_WipeOutputs) {
+            Write-Verbose ("WipeOutputs: $Directory " + (((Get-Volume (Get-Item '.').PSDrive.Name).SizeRemaining / 1GB)))
+            Get-ChildItem -Path $Directory -Recurse -Include x64   | Remove-Item -Recurse
+            Get-ChildItem -Path $Directory -Recurse -Include arm64 | Remove-Item -Recurse
+        }
+
+        if ($LASTEXITCODE -eq 0) {
+            $myexit = if ($i -eq 0) { 0 } else { 2 }
+            # Remove binlog on success to save space; keep otherwise to diagnose issues.
+            Remove-Item $binLogFilePath
+            break
+        }
+        else {
+            Start-Sleep 1
+            if ($Verbose) {
+                Write-Warning "`u{274C} Build failed. Retrying to see if sporadic..."
+            }
+        }
+    }
+
+    if ($myexit -eq 1 -and $Verbose) {
+        Write-Warning "`u{274C} Build failed. Log available at $errorLogFilePath"
+    }
+    if ($myexit -eq 2 -and $Verbose) {
+        Write-Warning "`u{274C} Build sporadically failed. Log available at $errorLogFilePath"
+    }
+
+    Write-Verbose "Building Sample: $SampleName; Configuration: $Configuration; Platform: $Platform }"
+
+    return $myexit
+}
+
 # =============================================================================
 #  Step 1 - Prepare Build Environment
 # =============================================================================
@@ -392,6 +523,9 @@ $buildState = @{
 
 $stopwatch = [Diagnostics.Stopwatch]::StartNew()
 
+# Capture function definition so it can be reconstructed inside each parallel runspace.
+$buildSingleSampleDef = ${function:Build-SingleSample}.ToString()
+
 $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
     # --- Import shared state from parent scope ---
     $logDir     = $using:LogFilesDirectory
@@ -403,6 +537,9 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $state      = $using:buildState
     $total      = $using:combinationsTotal
     $throttle   = $using:ThrottleLimit
+
+    # Reconstruct the function inside this parallel runspace
+    ${function:Build-SingleSample} = $using:buildSingleSampleDef
 
     $sampleName = $_.Key
     $directory  = $_.Value
@@ -443,17 +580,18 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
             }
             else {
                 # -- Build the sample --
-                .\Build-Sample -Directory $directory -SampleName $sampleName `
+                $buildResult = Build-SingleSample `
+                    -Directory $directory -SampleName $sampleName `
                     -LogFilesDirectory $logDir -Configuration $configuration `
                     -Platform $platform -InfVerif_AdditionalOptions $infOpts `
                     -Verbose:$isVerbose
 
-                # Exit codes from Build-Sample.ps1:
+                # Return codes from Build-SingleSample:
                 #   0 = succeeded on first attempt
                 #   1 = failed after all retries
                 #   2 = sporadic (failed first, succeeded on retry)
                 #   3 = unsupported configuration/platform
-                switch ($LASTEXITCODE) {
+                switch ($buildResult) {
                     0       { $succeededDelta   = 1; $result = 'Succeeded' }
                     1       { $failedDelta      = 1; $result = 'Failed';      $failEntry     = "$sampleName $configuration|$platform" }
                     2       { $sporadicDelta    = 1; $result = 'Sporadic';    $sporadicEntry = "$sampleName $configuration|$platform" }
