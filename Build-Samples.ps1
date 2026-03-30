@@ -16,7 +16,9 @@
 
 
 .PARAMETER Samples
-    Optional array of specific sample names to build. When omitted, all samples are discovered dynamically via ListAllSamples.ps1.
+    Optional array of specific sample names or wildcard patterns to build. Supports
+    wildcards (e.g. 'tools.*', 'audio.*') which are matched against all discovered
+    samples. When omitted, all samples are discovered dynamically via ListAllSamples.ps1.
 
 .PARAMETER Configurations
     Build configurations (e.g. 'Debug','Release'). Defaults to $env:WDS_Configuration or
@@ -48,6 +50,11 @@
     .\Build-Samples -Samples 'audio.acx.samples.audiocodec.driver','usb.kmdf_fx2' -Configurations 'Debug' -Platforms 'x64'
 
     Builds specific samples for a single configuration and platform.
+
+.EXAMPLE
+    .\Build-Samples -Samples 'tools.*'
+
+    Builds all samples whose name matches the wildcard pattern 'tools.*'.
 
 .EXAMPLE
     .\Build-Samples -ThrottleLimit 8
@@ -408,16 +415,36 @@ $reportCsvPath  = Join-Path $LogFilesDirectory "$ReportFileName.csv"
 #  Step 4 - Load Sample List
 # =============================================================================
 
-if ($Samples) {
-    # Explicit list passed by the caller — use as-is, sorted alphabetically.
-    $sampleNames = $Samples | Sort-Object
-}
-else {
-    # Default: discover samples dynamically via ListAllSamples.ps1.
-    # ListAllSamples outputs one alphabetically-sorted sample name per line to stdout.
+# Always discover the full sample list when patterns contain wildcards,
+# or when no -Samples were provided at all.
+$hasWildcards = $Samples | Where-Object { $_ -match '[*?]' }
+
+if (-not $Samples) {
+    # No filter: discover and build everything.
     Write-Verbose "No -Samples provided. Discovering samples via ListAllSamples.ps1..."
     $sampleNames = & (Join-Path $PSScriptRoot 'ListAllSamples.ps1') -Verbose:$verbose |
                    Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+}
+elseif ($hasWildcards) {
+    # One or more entries contain wildcards — discover all, then filter with -like.
+    Write-Verbose "Wildcard detected in -Samples. Discovering all samples to match patterns..."
+    $allSamples = & (Join-Path $PSScriptRoot 'ListAllSamples.ps1') -Verbose:$verbose |
+                  Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    $sampleNames = @()
+    foreach ($pattern in $Samples) {
+        $matched = $allSamples | Where-Object { $_ -like $pattern }
+        if ($matched) {
+            $sampleNames += $matched
+        }
+        else {
+            Write-Warning "Pattern '$pattern' did not match any samples."
+        }
+    }
+    $sampleNames = $sampleNames | Sort-Object -Unique
+}
+else {
+    # Exact list passed by the caller — use as-is, sorted alphabetically.
+    $sampleNames = $Samples | Sort-Object
 }
 
 # Map sample names to directory paths, validating each exists

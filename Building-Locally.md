@@ -155,6 +155,9 @@ Get-Help .\Build-Samples
 # Build specific samples for all flavors:
 .\Build-Samples -Samples 'tools.sdv.samples.sampledriver','usb.kmdf_fx2'
 
+# Build all samples inside the 'tools' folder using wildcards:
+.\Build-Samples -Samples 'tools.*'
+
 # Build specific samples for only 'Debug|x64':
 .\Build-Samples -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
 ```
