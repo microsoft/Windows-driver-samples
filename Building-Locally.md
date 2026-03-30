@@ -152,9 +152,6 @@ Get-Help .\Build-Samples
 # Build without massive parallelism (slow, but good for debugging):
 .\Build-Samples -ThrottleLimit 1
 
-# Build specific samples for all flavors:
-.\Build-Samples -Samples 'tools.sdv.samples.sampledriver','usb.kmdf_fx2'
-
 # Build all samples inside the 'tools' folder using wildcards:
 .\Build-Samples -Samples 'tools.*'
 
