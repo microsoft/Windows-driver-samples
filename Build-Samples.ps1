@@ -39,9 +39,8 @@
     automatically based on the WDK build number.
 
 .PARAMETER RunMode
-    Selects the build environment mode. Valid values: Auto, WDK, NuGet, EWDK, Github.
-    Defaults to 'Auto', which detects the environment automatically (EWDK → WDK → NuGet).
-    'Github' behaves identically to 'NuGet' but suppresses opening the HTML report at the end.
+    Selects the build environment mode. Valid values: Auto, WDK, NuGet, EWDK.
+    Defaults to 'Auto', which detects the environment automatically (NuGet → EWDK → WDK).
 
 .PARAMETER ThrottleLimit
     Maximum parallel build jobs. Defaults to 5 x logical processors.
@@ -70,11 +69,6 @@
     .\Build-Samples -RunMode WDK
 
     Forces WDK mode regardless of environment variables.
-
-.EXAMPLE
-    .\Build-Samples -RunMode Github
-
-    Runs as NuGet mode (reads packages\) without opening the HTML report — intended for CI.
 #>
 
 #Requires -Version 7.0
@@ -87,7 +81,7 @@ param(
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
-    [ValidateSet('Auto', 'WDK', 'NuGet', 'EWDK', 'Github')]
+    [ValidateSet('Auto', 'WDK', 'NuGet', 'EWDK')]
     [string]$RunMode = 'Auto',
     [int]$ThrottleLimit = 0
 )
@@ -665,7 +659,7 @@ $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
 $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
 $sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
 
-# Only open the HTML report interactively (not in CI/automation or Github mode)
-if (-not $buildEnv.IsGithubMode -and -not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
+# Only open the HTML report interactively (not in CI/automation)
+if (-not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
     Invoke-Item $reportHtmlPath
 }

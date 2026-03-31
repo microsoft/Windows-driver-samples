@@ -122,11 +122,10 @@ function Resolve-BuildEnvironment {
         Detects or resolves the active build environment and returns metadata.
     .DESCRIPTION
         When RunMode is 'Auto', checks in priority order: NuGet, EWDK, WDK.
-        When RunMode is 'Github', behaves identically to 'NuGet' and sets IsGithubMode.
         When RunMode is explicitly set to WDK/NuGet/EWDK, skips detection and uses that mode.
         Pass the VsInstallation returned by Initialize-DevShell to avoid prompting the user
         a second time when multiple VS installations are present.
-        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion, IsGithubMode.
+        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion.
     #>
     param(
         [string]$RepoRoot,
@@ -139,12 +138,9 @@ function Resolve-BuildEnvironment {
         BuildNumber           = [int]0
         NuGetVersion          = ''
         WdkVsComponentVersion = ''
-        IsGithubMode          = $false
     }
 
-    # Resolve effective mode for Github (same path as NuGet)
-    $effectiveMode = if ($RunMode -eq 'Github') { 'NuGet' } else { $RunMode }
-    if ($RunMode -eq 'Github') { $result.IsGithubMode = $true }
+    $effectiveMode = $RunMode
 
     # --- Resolve build environment ---
     if ($effectiveMode -eq 'NuGet' -or
