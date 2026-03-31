@@ -56,7 +56,7 @@ jobs:
           separator: ","
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           build-mode: manual
@@ -89,6 +89,6 @@ jobs:
           WDS_WipeOutputs: ${{ true }}
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}/shard-${{ matrix.shard }}"
