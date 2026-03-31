@@ -18,12 +18,14 @@ function Get-VsInstallationsWithWdk {
         exit 1
     }
 
-    $json = & $vswhere -all -format json -requires Microsoft.Windows.DriverKit 2>$null
+    $json = & $vswhere -all -format json -requires Microsoft.Windows.DriverKit -include packages 2>$null
     $installations = $json | ConvertFrom-Json
     return $installations | ForEach-Object {
+        $wdkPackage = $_.packages | Where-Object { $_.id -eq 'Microsoft.Windows.DriverKit' } | Select-Object -First 1
         [PSCustomObject]@{
-            DisplayName      = $_.displayName
-            InstallationPath = $_.installationPath
+            DisplayName          = $_.displayName
+            InstallationPath     = $_.installationPath
+            WdkVsComponentVersion = $wdkPackage.version
         }
     }
 }
@@ -67,13 +69,19 @@ function Select-VsInstallation {
 
 function Initialize-DevShell {
     <#
-    .SYNOPSIS Imports the Visual Studio Developer PowerShell if not already active.
+    .SYNOPSIS
+        Imports the Visual Studio Developer PowerShell if not already active.
+    .OUTPUTS
+        Returns the selected VS installation object ({ DisplayName, InstallationPath,
+        WdkVsComponentVersion }), or $null if the shell was already active.
+        Callers should pass the returned object to Resolve-BuildEnvironment so VS
+        selection happens exactly once.
     #>
     param([string]$ReturnToDirectory)
 
     if ($env:VSCMD_VER) {
         Write-Verbose "VS Developer Shell already active (VSCMD_VER=$env:VSCMD_VER)."
-        return
+        return $null
     }
 
     $vsInstall = Select-VsInstallation (Get-VsInstallationsWithWdk)
@@ -87,6 +95,7 @@ function Initialize-DevShell {
     Import-Module $devShellDll
     Enter-VsDevShell -VsInstallPath $vsInstall.InstallationPath
     Set-Location $ReturnToDirectory
+    return $vsInstall
 }
 
 function Assert-MsBuildAvailable {
@@ -115,11 +124,14 @@ function Resolve-BuildEnvironment {
         When RunMode is 'Auto', checks in priority order: NuGet, EWDK, WDK.
         When RunMode is 'Github', behaves identically to 'NuGet' and sets IsGithubMode.
         When RunMode is explicitly set to WDK/NuGet/EWDK, skips detection and uses that mode.
+        Pass the VsInstallation returned by Initialize-DevShell to avoid prompting the user
+        a second time when multiple VS installations are present.
         Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion, IsGithubMode.
     #>
     param(
         [string]$RepoRoot,
-        [string]$RunMode = 'Auto'
+        [string]$RunMode = 'Auto',
+        [object]$VsInstallation = $null
     )
 
     $result = @{
@@ -180,12 +192,14 @@ function Resolve-BuildEnvironment {
         $result.WdkVsComponentVersion = '(not available for EWDK builds)'
     }
     else {
-        $vsComponent = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
-        if (-not $vsComponent) {
-            Write-Error "WDK Visual Studio Component not found. Ensure the WDK Component is installed."
+        # Re-use the installation selected during Initialize-DevShell if available,
+        # otherwise query vswhere again (e.g. when the Dev Shell was already active).
+        $vsInstall = if ($VsInstallation) { $VsInstallation } else { Select-VsInstallation (Get-VsInstallationsWithWdk) }
+        if (-not $vsInstall.WdkVsComponentVersion) {
+            Write-Error "Could not determine WDK component version for '$($vsInstall.DisplayName)'. Ensure the WDK Visual Studio component is installed."
             exit 1
         }
-        $result.WdkVsComponentVersion = [regex]::Match($vsComponent.Name, '(\d+\.){3}\d+').Value
+        $result.WdkVsComponentVersion = $vsInstall.WdkVsComponentVersion
     }
 
     return $result

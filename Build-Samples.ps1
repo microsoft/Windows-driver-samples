@@ -300,7 +300,7 @@ function Build-SingleSample {
 
 $root = (Get-Location).Path
 
-Initialize-DevShell -ReturnToDirectory $root
+$selectedVsInstall = Initialize-DevShell -ReturnToDirectory $root
 Assert-MsBuildAvailable
 
 # =============================================================================
@@ -386,7 +386,7 @@ if ($sampleSet.Count -eq 0) {
 #  Step 5 - Detect Build Environment
 # =============================================================================
 
-$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode
+$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode -VsInstallation $selectedVsInstall
 $buildNumber = $buildEnv.BuildNumber
 
 # =============================================================================
