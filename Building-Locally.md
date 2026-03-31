@@ -129,80 +129,82 @@ Microsoft.Windows.WDK.arm64.10.0.26000.1
 
 ---
 
-## Step 6: Check all samples builds with expected results for all flavors
+## Step 6: Build all samples
 
 ```powershell
 pwsh
-.\Build-AllSamples
+.\Build-Samples
 ```
-Above builds all samples for all configurations and platforms.  
+Above builds all samples for all configurations and platforms.
 
-You can refine what exact samples to build, what configurations, and platforms to build.  build Here are a few examples:
+You can refine what exact samples to build, what configurations, and platforms to build. Here are a few examples:
 
 ```powershell
 # Get Help:
-Get-Help .\Build-AllSamples
+Get-Help .\Build-Samples
 
 # Build all solutions for all flavors with builds running in parallel:
-.\Build-AllSamples
+.\Build-Samples
 
 # Build with Verbose output (print start and finish of each sample):
-.\Build-AllSamples -Verbose
+.\Build-Samples -Verbose
 
-# Build without massive parallism (slow, but good debugging):
-.\Build-AllSamples -ThrottleLimit 1
+# Build without massive parallelism (slow, but good for debugging):
+.\Build-Samples -ThrottleLimit 1
 
-# Build the solutions in the tools folder for all flavors:
-.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64'
+# Build all samples inside the 'tools' folder using wildcards:
+.\Build-Samples -Samples 'tools.*'
 
-# Build the solutions in the tools folder for only 'Debug|x64':
-.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug' -Platforms 'x64'
+# Build specific samples for only 'Debug|x64':
+.\Build-Samples -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
 ```
 
 Example of expected output:
 
 ```
-Build Environment:          NuGet
-Build Number:               26100
-Samples:                    132
-Configurations:             2 (Debug Release)
-Platforms:                  2 (x64 arm64)
-InfVerif_AdditionalOptions: /samples
-Combinations:               528
-LogicalProcessors:          12
-ThrottleFactor:             5
-ThrottleLimit:              60
-WDS_WipeOutputs:
-Disk Remaining (GB):        ...
+--- WDK Sample Build Plan ------------------------------------------
+  Environment:      NuGet
+  Build Number:     26100
+  NuGet Version:    10.0.26100.1
+  WDK VS Component: 10.0.26100.1882
+  InfVerif Options: /samples
 
-T: Combinations
-B: Built
-R: Build is running currently
-P: Build is pending an available build slot
+  Samples:          132 (0 skipped)
+  Configurations:   Debug, Release
+  Platforms:        x64, arm64
+  Combinations:     528
+  Exclusions:       4
 
-S: Built and result was 'Succeeded'
-E: Built and result was 'Excluded'
-U: Built and result was 'Unsupported' (Platform and Configuration combination)
-F: Built and result was 'Failed'
-O: Built and result was 'Sporadic'
+  Parallelism:      60 jobs (12 cores x 5)
+  Disk Free (GB):   ...
+  Wipe Outputs:     False
+--------------------------------------------------------------------
+
+Progress legend:
+  T=Total  B=Built  R=Running  P=Pending
+  S=Succeeded  E=Excluded  U=Unsupported  F=Failed  O=Sporadic
 
 Building all combinations...
 
-Built all combinations.
+--- Build Complete -------------------------------------------------
+  Elapsed:          12m 42s
+  Disk Free (GB):   ...
 
-Elapsed time:         12 minutes, 42 seconds.
-Disk Remaining (GB):  ...
-Samples:              132
-Configurations:       2 (Debug Release)
-Platforms:            2 (x64 arm64)
-Combinations:         528
-Succeeded:            526
-Excluded:             0
-Unsupported:          2
-Failed:               0
-Sporadic:             0
-Log files directory:  .\_logs
-Overview report:      .\_overview.htm
+  Samples:          132
+  Configurations:   Debug, Release
+  Platforms:        x64, arm64
+  Combinations:     528
+
+  Succeeded:        526
+  Excluded:         0
+  Unsupported:      2
+  Failed:           0
+  Sporadic:         0
+
+  Log directory:    .\_logs
+  CSV report:       .\_logs\_overview.csv
+  HTML report:      .\_logs\_overview.htm
+--------------------------------------------------------------------
 ```
 
 ---
@@ -214,7 +216,7 @@ To restore a specific version of our WDK NuGet packages:
 Follow these steps before running "nuget restore" command:
 * Open the .\packages.config file and update the full version (including the branch if required) in all three entries.
 * Open the .\Directory.build.props file and update the version and build of the package with the same values as in previous step.
-* Open .\Build-SampleSet and change the NuGet build number (used by .\exclusions.csv and for determining infverif flags)
+* Open .\Build-Samples.ps1 and check the NuGet build number logic (used by .\exclusions.csv and for determining infverif flags)
 * Now you can run "nuget restore"
 
 A few examples of how to interact with nuget:
