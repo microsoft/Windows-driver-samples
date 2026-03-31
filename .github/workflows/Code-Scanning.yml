@@ -1,5 +1,7 @@
 # This workflow runs the latest CodeQL CLI and checks against CodeQL's Cpp library.
 # This is the source for the GitHub Security Code Scanning job.
+# Samples are split across 4 parallel shards to reduce total wall-clock time while
+# keeping ThrottleLimit 1 per shard (required for accurate CodeQL tracing).
 
 name: "CodeQL Analysis"
 
@@ -25,7 +27,7 @@ on:
 
 jobs:
   analyze:
-    name: Analysis
+    name: Analysis (shard ${{ matrix.shard }})
     runs-on: windows-latest
     permissions:
       actions: read
@@ -35,43 +37,58 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - language: c-cpp
-          build-mode: manual
+        language: [c-cpp]
+        shard: [0, 1, 2, 3]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
       - name: Get changed files
         id: get-changed-files
         uses: tj-actions/changed-files@v41
         with:
           separator: ","
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+          build-mode: manual
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+
       - if: github.event_name == 'pull_request'
+        name: Build changed samples (PR)
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
           .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
-        env: 
-          WDS_Configuration: Debug
-          WDS_Platform: x64
-          WDS_WipeOutputs: ${{ true }}
-      - if: github.event_name == 'push'
-        run: .\Build-Samples.ps1 -Verbose -ThrottleLimit 1
         env:
           WDS_Configuration: Debug
           WDS_Platform: x64
           WDS_WipeOutputs: ${{ true }}
+
+      - if: github.event_name != 'pull_request'
+        name: Build sample shard ${{ matrix.shard }} of 4
+        run: |
+          $totalShards = 4
+          $shardIndex  = ${{ matrix.shard }}
+          $allSamples  = .\ListAllSamples.ps1
+          $shardSize   = [Math]::Ceiling($allSamples.Count / $totalShards)
+          $start       = $shardIndex * $shardSize
+          $mySamples   = $allSamples | Select-Object -Skip $start -First $shardSize
+          Write-Output "Shard $shardIndex/$totalShards — building $($mySamples.Count) of $($allSamples.Count) samples (indices $start..$($start + $mySamples.Count - 1))"
+          .\Build-Samples.ps1 -Samples $mySamples -Verbose -ThrottleLimit 1
+        env:
+          WDS_Configuration: Debug
+          WDS_Platform: x64
+          WDS_WipeOutputs: ${{ true }}
+
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{matrix.language}}"
+          category: "/language:${{ matrix.language }}/shard-${{ matrix.shard }}"
