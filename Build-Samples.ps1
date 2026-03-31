@@ -7,7 +7,7 @@
 
     1. Ensures a developer build environment (VS DevShell or EWDK) is active
     2. Discovers samples via ListAllSamples.ps1 (or uses the -Samples parameter if provided)
-    3. Detects the build environment (GitHub CI, NuGet, EWDK, or WDK) and build number
+    3. Resolves the build environment (auto-detected or forced via -RunMode) and build number
     4. Loads exclusions from exclusions.csv (supports wildcard paths)
     5. Builds all non-excluded sample/configuration/platform combinations in parallel
     6. Generates CSV and HTML overview reports
@@ -38,6 +38,11 @@
     Additional InfVerif options (e.g. '/samples', '/msft'). If not provided, determined
     automatically based on the WDK build number.
 
+.PARAMETER RunMode
+    Selects the build environment mode. Valid values: Auto, WDK, NuGet, EWDK, Github.
+    Defaults to 'Auto', which detects the environment automatically (EWDK → WDK → NuGet).
+    'Github' behaves identically to 'NuGet' but suppresses opening the HTML report at the end.
+
 .PARAMETER ThrottleLimit
     Maximum parallel build jobs. Defaults to 5 x logical processors.
 
@@ -60,6 +65,16 @@
     .\Build-Samples -ThrottleLimit 8
 
     Discovers all samples and builds them with limited parallelism.
+
+.EXAMPLE
+    .\Build-Samples -RunMode WDK
+
+    Forces WDK mode regardless of environment variables.
+
+.EXAMPLE
+    .\Build-Samples -RunMode Github
+
+    Runs as NuGet mode (reads packages\) without opening the HTML report — intended for CI.
 #>
 
 #Requires -Version 7.0
@@ -72,12 +87,77 @@ param(
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
+    [ValidateSet('Auto', 'WDK', 'NuGet', 'EWDK', 'Github')]
+    [string]$RunMode = 'Auto',
     [int]$ThrottleLimit = 0
 )
 
 # =============================================================================
 #  Helper Functions
 # =============================================================================
+
+function Get-VsInstallationsWithWdk {
+    <#
+    .SYNOPSIS
+        Returns all Visual Studio installations that have the WDK component installed.
+    .DESCRIPTION
+        Uses vswhere.exe (from its fixed install location under Program Files (x86)) to
+        enumerate VS installations that carry the Microsoft.Windows.DriverKit component.
+        If vswhere.exe is not found at the expected path the installed VS version is too
+        old to be supported and the script exits with an error.
+    #>
+    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (-not (Test-Path $vswhere)) {
+        Write-Error "vswhere.exe was not found at '$vswhere'. Visual Studio 2017 or later is required."
+        exit 1
+    }
+
+    $json = & $vswhere -all -format json -requires Microsoft.Windows.DriverKit 2>$null
+    $installations = $json | ConvertFrom-Json
+    return $installations | ForEach-Object {
+        [PSCustomObject]@{
+            DisplayName      = $_.displayName
+            InstallationPath = $_.installationPath
+        }
+    }
+}
+
+function Select-VsInstallation {
+    <#
+    .SYNOPSIS
+        Chooses a Visual Studio installation from the list returned by Get-VsInstallationsWithWdk.
+    .DESCRIPTION
+        - 0 found  : error + exit
+        - 1 found  : verbose log, return it
+        - 2+ found : display a numbered menu and prompt the user to choose
+    #>
+    param([object[]]$Installations)
+
+    if (-not $Installations -or $Installations.Count -eq 0) {
+        Write-Error "No Visual Studio installation with the required WDK media was found. Ensure the WDK Visual Studio component is installed."
+        exit 1
+    }
+
+    if ($Installations.Count -eq 1) {
+        Write-Verbose "Found Visual Studio installation with required WDK media: $($Installations[0].DisplayName) at $($Installations[0].InstallationPath)"
+        return $Installations[0]
+    }
+
+    # Multiple installations — let the user choose
+    Write-Output ""
+    Write-Output "The following Visual Studio installations were found with the required WDK media:"
+    for ($i = 0; $i -lt $Installations.Count; $i++) {
+        Write-Output "  [$($i + 1)] $($Installations[$i].DisplayName)  —  $($Installations[$i].InstallationPath)"
+    }
+    Write-Output ""
+
+    do {
+        $choice = Read-Host "Select the installation to use [1-$($Installations.Count)]"
+        $index  = [int]$choice - 1
+    } while ($index -lt 0 -or $index -ge $Installations.Count)
+
+    return $Installations[$index]
+}
 
 function Initialize-DevShell {
     <#
@@ -90,16 +170,16 @@ function Initialize-DevShell {
         return
     }
 
-    $devShellDll = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" `
-        -ErrorAction SilentlyContinue | Select-Object -First 1
-    if (-not $devShellDll) {
-        Write-Error "Visual Studio Developer Shell module not found."
+    $vsInstall = Select-VsInstallation (Get-VsInstallationsWithWdk)
+
+    $devShellDll = Join-Path $vsInstall.InstallationPath 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll'
+    if (-not (Test-Path $devShellDll)) {
+        Write-Error "Visual Studio Developer Shell module not found at '$devShellDll'."
         exit 1
     }
 
-    Import-Module $devShellDll.Path
-    $vsInstall = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*" | Select-Object -First 1
-    Enter-VsDevShell -VsInstallPath $vsInstall.Path
+    Import-Module $devShellDll
+    Enter-VsDevShell -VsInstallPath $vsInstall.InstallationPath
     Set-Location $ReturnToDirectory
 }
 
@@ -124,38 +204,61 @@ function Assert-MsBuildAvailable {
 function Resolve-BuildEnvironment {
     <#
     .SYNOPSIS
-        Detects the active build environment and returns metadata.
+        Detects or resolves the active build environment and returns metadata.
     .DESCRIPTION
-        Checks (in priority order) for GitHub CI, local NuGet packages, EWDK, or WDK.
-        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion.
+        When RunMode is 'Auto', checks in priority order: NuGet, EWDK, WDK.
+        When RunMode is 'Github', behaves identically to 'NuGet' and sets IsGithubMode.
+        When RunMode is explicitly set to WDK/NuGet/EWDK, skips detection and uses that mode.
+        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion, IsGithubMode.
     #>
-    param([string]$RepoRoot)
+    param(
+        [string]$RepoRoot,
+        [string]$RunMode = 'Auto'
+    )
 
     $result = @{
         Name                  = ''
         BuildNumber           = [int]0
         NuGetVersion          = ''
         WdkVsComponentVersion = ''
+        IsGithubMode          = $false
     }
 
-    if ($env:GITHUB_REPOSITORY) {
-        $result.Name = 'GitHub'
-        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
-        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
-        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
-    }
-    elseif (Test-Path "$RepoRoot\packages\*") {
+    # Resolve effective mode for Github (same path as NuGet)
+    $effectiveMode = if ($RunMode -eq 'Github') { 'NuGet' } else { $RunMode }
+    if ($RunMode -eq 'Github') { $result.IsGithubMode = $true }
+
+    # --- Resolve build environment ---
+    if ($effectiveMode -eq 'NuGet' -or
+            ($effectiveMode -eq 'Auto' -and (Test-Path "$RepoRoot\packages\*"))) {
+        if ($effectiveMode -eq 'NuGet' -and -not (Test-Path "$RepoRoot\packages\*")) {
+            Write-Error "RunMode is 'NuGet' but no packages were found under '$RepoRoot\packages\'. Ensure NuGet restore has been run."
+            exit 1
+        }
         $result.Name = 'NuGet'
         $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
         $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
-        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
+        $result.BuildNumber  = [int]($result.NuGetVersion.Split('.')[2])
     }
-    elseif ($env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
-        $result.Name = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
+    elseif ($effectiveMode -eq 'EWDK' -or
+        ($effectiveMode -eq 'Auto' -and $env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$')) {
+        if ($effectiveMode -eq 'EWDK') {
+            # Forced EWDK: require BuildLab to be set
+            if ($env:BuildLab -notmatch '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
+                Write-Error "RunMode is 'EWDK' but the EWDK environment variable BuildLab is not set. Ensure the EWDK is mounted and the environment is initialised."
+                exit 1
+            }
+        }
+        $result.Name        = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
         $result.BuildNumber = [int]$Matches.build
     }
-    elseif ($env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0') {
-        $result.Name = 'WDK'
+    elseif ($effectiveMode -eq 'WDK' -or
+            ($effectiveMode -eq 'Auto' -and $env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0')) {
+        if ($effectiveMode -eq 'WDK' -and $env:UCRTVersion -notmatch '10\.0\.(?<build>\d+)\.0') {
+            Write-Error "RunMode is 'WDK' but UCRTVersion ('$env:UCRTVersion') is not set or does not match the expected format. Ensure the VS Developer Shell is active."
+            exit 1
+        }
+        $result.Name        = 'WDK'
         $result.BuildNumber = [int]$Matches.build
     }
     else {
@@ -470,7 +573,7 @@ if ($sampleSet.Count -eq 0) {
 #  Step 5 - Detect Build Environment
 # =============================================================================
 
-$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root
+$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode
 $buildNumber = $buildEnv.BuildNumber
 
 # =============================================================================
@@ -749,7 +852,7 @@ $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
 $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
 $sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
 
-# Only open the HTML report interactively (not in CI/automation)
-if (-not $env:GITHUB_REPOSITORY -and -not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
+# Only open the HTML report interactively (not in CI/automation or Github mode)
+if (-not $buildEnv.IsGithubMode -and -not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
     Invoke-Item $reportHtmlPath
 }
