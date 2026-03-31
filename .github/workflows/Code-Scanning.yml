@@ -66,7 +66,7 @@ jobs:
           WDS_Platform: x64
           WDS_WipeOutputs: ${{ true }}
       - if: github.event_name == 'push'
-        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+        run: .\Build-Samples.ps1 -Verbose -ThrottleLimit 1
         env:
           WDS_Configuration: Debug
           WDS_Platform: x64
