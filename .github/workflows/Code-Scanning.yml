@@ -27,7 +27,7 @@ on:
 
 jobs:
   analyze:
-    name: Analysis (shard ${{ matrix.shard }})
+    name: Analysis (shard ${{ matrix.shard + 1 }} of 4)
     runs-on: windows-latest
     permissions:
       actions: read
@@ -38,6 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [c-cpp]
+        build-mode: [manual]
         shard: [0, 1, 2, 3]
 
     steps:
@@ -59,7 +60,7 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-          build-mode: manual
+          build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
 
       - if: github.event_name == 'pull_request'
@@ -73,7 +74,7 @@ jobs:
           WDS_WipeOutputs: ${{ true }}
 
       - if: github.event_name != 'pull_request'
-        name: Build sample shard ${{ matrix.shard }} of 4
+        name: Build sample shard ${{ matrix.shard + 1 }} of 4
         run: |
           $totalShards = 4
           $shardIndex  = ${{ matrix.shard }}
@@ -81,7 +82,7 @@ jobs:
           $shardSize   = [Math]::Ceiling($allSamples.Count / $totalShards)
           $start       = $shardIndex * $shardSize
           $mySamples   = $allSamples | Select-Object -Skip $start -First $shardSize
-          Write-Output "Shard $shardIndex/$totalShards — building $($mySamples.Count) of $($allSamples.Count) samples (indices $start..$($start + $mySamples.Count - 1))"
+          Write-Output "Shard $($shardIndex + 1)/$totalShards — building $($mySamples.Count) of $($allSamples.Count) samples (indices $start..$($start + $mySamples.Count - 1))"
           .\Build-Samples.ps1 -Samples $mySamples -Verbose -ThrottleLimit 1
         env:
           WDS_Configuration: Debug
