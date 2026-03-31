@@ -5523,7 +5523,8 @@ GetVCInterfaceSize (
     // return this interface's sum of descriptor lengths
     //   starting from this header until (and not including) the first endpoint
     while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
-        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
+        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd &&
+        commonDesc->bLength > 0)
     {
         if (commonDesc->bDescriptorType == USB_ENDPOINT_DESCRIPTOR_TYPE)
             break;
