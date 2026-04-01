@@ -1,7 +1,8 @@
 # This workflow runs the latest CodeQL CLI and checks against CodeQL's Cpp library.
 # This is the source for the GitHub Security Code Scanning job.
-# Samples are split across 4 parallel shards to reduce total wall-clock time while
-# keeping ThrottleLimit 1 per shard (required for accurate CodeQL tracing).
+# On push/schedule: samples are split across 4 parallel shards to reduce wall-clock
+# time while keeping ThrottleLimit 1 per shard (required for accurate CodeQL tracing).
+# On pull_request: only changed samples are built in a single job (no sharding needed).
 
 name: "CodeQL Analysis"
 
@@ -26,8 +27,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
-    name: Analysis (shard ${{ matrix.shard }} of 4)
+  # -----------------------------------------------------------------------
+  # PR job: single runner, builds only changed samples
+  # -----------------------------------------------------------------------
+  analyze-pr:
+    name: Analysis (PR)
+    if: github.event_name == 'pull_request'
     runs-on: windows-latest
     permissions:
       actions: read
@@ -39,7 +44,6 @@ jobs:
       matrix:
         language: [c-cpp]
         build-mode: [manual]
-        shard: [1, 2, 3, 4]
 
     steps:
       - name: Checkout repository
@@ -63,8 +67,7 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
           config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
 
-      - if: github.event_name == 'pull_request'
-        name: Build changed samples (PR)
+      - name: Build changed samples (PR)
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
           .\.github\scripts\Build-ChangedSamples.ps1 -ChangedFiles $changedFiles -Verbose
@@ -73,8 +76,47 @@ jobs:
           WDS_Platform: x64
           WDS_WipeOutputs: ${{ true }}
 
-      - if: github.event_name != 'pull_request'
-        name: Build sample shard ${{ matrix.shard }} of 4
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # -----------------------------------------------------------------------
+  # Push/schedule job: 4 parallel shards, each builds a slice of all samples
+  # -----------------------------------------------------------------------
+  analyze:
+    name: Analysis (shard ${{ matrix.shard }} of 4)
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [c-cpp]
+        build-mode: [manual]
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+
+      - name: Build sample shard ${{ matrix.shard }} of 4
         run: |
           $totalShards = 4
           $shardIndex  = ${{ matrix.shard }} - 1
