@@ -67,37 +67,6 @@ function Select-VsInstallation {
     return $Installations[$index]
 }
 
-function Initialize-DevShell {
-    <#
-    .SYNOPSIS
-        Imports the Visual Studio Developer PowerShell if not already active.
-    .OUTPUTS
-        Returns the selected VS installation object ({ DisplayName, InstallationPath,
-        WdkVsComponentVersion }), or $null if the shell was already active.
-        Callers should pass the returned object to Resolve-BuildEnvironment so VS
-        selection happens exactly once.
-    #>
-    param([string]$ReturnToDirectory)
-
-    if ($env:VSCMD_VER) {
-        Write-Verbose "VS Developer Shell already active (VSCMD_VER=$env:VSCMD_VER)."
-        return $null
-    }
-
-    $vsInstall = Select-VsInstallation (Get-VsInstallationsWithWdk)
-
-    $devShellDll = Join-Path $vsInstall.InstallationPath 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll'
-    if (-not (Test-Path $devShellDll)) {
-        Write-Error "Visual Studio Developer Shell module not found at '$devShellDll'."
-        exit 1
-    }
-
-    Import-Module $devShellDll
-    Enter-VsDevShell -VsInstallPath $vsInstall.InstallationPath
-    Set-Location $ReturnToDirectory
-    return $vsInstall
-}
-
 function Assert-MsBuildAvailable {
     <#
     .SYNOPSIS Verifies msbuild.exe is on PATH. Exits with error if not found.
@@ -119,20 +88,21 @@ function Assert-MsBuildAvailable {
 function Resolve-BuildEnvironment {
     <#
     .SYNOPSIS
-        Detects or resolves the active build environment and returns metadata.
+        Detects the active build environment, opens a VS Developer Shell when needed,
+        and returns metadata about the environment.
     .DESCRIPTION
-        When RunMode is 'Auto', checks in priority order: EWDK, NuGet, WDK.
-        EWDK is checked first because $env:BuildLab is an active, explicit signal
-        whereas the packages\ folder is a passive disk artifact that may linger.
-        When RunMode is explicitly set to WDK/NuGet/EWDK, skips detection and uses that mode.
-        Pass the VsInstallation returned by Initialize-DevShell to avoid prompting the user
-        a second time when multiple VS installations are present.
+        Handles the full setup sequence in one place:
+          1. Detect mode: EWDK → NuGet → WDK (Auto), or use the explicitly supplied RunMode.
+          2. For NuGet / WDK: open a VS Developer Shell if one is not already active,
+             prompting the user to choose if multiple VS installations with the required
+             WDK media are found. If the shell is already active, the matching installation
+             is located via $env:VSINSTALLDIR.
+          3. For EWDK: skip VS detection entirely ($env:BuildLab is the authoritative signal).
         Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion.
     #>
     param(
         [string]$RepoRoot,
-        [string]$RunMode = 'Auto',
-        [object]$VsInstallation = $null
+        [string]$RunMode = 'Auto'
     )
 
     $result = @{
@@ -142,63 +112,98 @@ function Resolve-BuildEnvironment {
         WdkVsComponentVersion = ''
     }
 
-    $effectiveMode = $RunMode
+    # -------------------------------------------------------------------------
+    # Step 1 – Detect / validate build mode
+    # -------------------------------------------------------------------------
 
-    # --- Resolve build environment ---
-    if ($effectiveMode -eq 'EWDK' -or
-        ($effectiveMode -eq 'Auto' -and $env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$')) {
-        if ($effectiveMode -eq 'EWDK') {
-            # Forced EWDK: require BuildLab to be set
-            if ($env:BuildLab -notmatch '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
-                Write-Error "RunMode is 'EWDK' but the EWDK environment variable BuildLab is not set. Ensure the EWDK is mounted and the environment is initialised."
-                exit 1
-            }
-        }
-        $result.Name        = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
-        $result.BuildNumber = [int]$Matches.build
-    }
-    elseif ($effectiveMode -eq 'NuGet' -or
-            ($effectiveMode -eq 'Auto' -and (Test-Path "$RepoRoot\packages\*"))) {
-        if ($effectiveMode -eq 'NuGet' -and -not (Test-Path "$RepoRoot\packages\*")) {
-            Write-Error "RunMode is 'NuGet' but no packages were found under '$RepoRoot\packages\'. Ensure NuGet restore has been run."
+    # EWDK: checked first. $env:BuildLab is an active, explicit signal that
+    # disappears when you close the EWDK prompt, unlike the packages\ folder.
+    if ($RunMode -eq 'EWDK' -or
+        ($RunMode -eq 'Auto' -and $env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$')) {
+
+        if ($RunMode -eq 'EWDK' -and
+            $env:BuildLab -notmatch '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
+            Write-Error "RunMode is 'EWDK' but the EWDK environment variable BuildLab is not set. Ensure the EWDK is mounted and the environment is initialised."
             exit 1
         }
-        $result.Name = 'NuGet'
-        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
+        # Re-run the match to populate $Matches (the Auto branch already matched above;
+        # the forced-EWDK branch needs an explicit match after the validation guard).
+        $null = $env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$'
+        $result.Name                  = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
+        $result.BuildNumber           = [int]$Matches.build
+        $result.WdkVsComponentVersion = '(not available for EWDK builds)'
+        return $result
+    }
+
+    $isNuGet = ($RunMode -eq 'NuGet') -or
+               ($RunMode -eq 'Auto'   -and (Test-Path "$RepoRoot\packages\*"))
+
+    if ($RunMode -eq 'NuGet' -and -not (Test-Path "$RepoRoot\packages\*")) {
+        Write-Error "RunMode is 'NuGet' but no packages were found under '$RepoRoot\packages\'. Ensure NuGet restore has been run."
+        exit 1
+    }
+
+    # If not EWDK and not NuGet, assume WDK. VS Dev Shell setup below will validate
+    # the environment; if no VS with WDK media is found, Select-VsInstallation errors out.
+
+    # -------------------------------------------------------------------------
+    # Step 2 – Set up VS Developer Shell
+    # -------------------------------------------------------------------------
+
+    $vsInstall = $null
+
+    if (-not $env:VSCMD_VER) {
+        # Dev Shell not active – open one now.
+        $vsInstall   = Select-VsInstallation (Get-VsInstallationsWithWdk)
+        $devShellDll = Join-Path $vsInstall.InstallationPath 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll'
+        if (-not (Test-Path $devShellDll)) {
+            Write-Error "Visual Studio Developer Shell module not found at '$devShellDll'."
+            exit 1
+        }
+        Import-Module $devShellDll
+        Enter-VsDevShell -VsInstallPath $vsInstall.InstallationPath
+        Set-Location $RepoRoot
+    }
+    else {
+        Write-Verbose "VS Developer Shell already active (VSCMD_VER=$env:VSCMD_VER)."
+        # Locate the matching installation via VSINSTALLDIR so we can read its
+        # WdkVsComponentVersion without prompting the user again.
+        # Normalize trailing backslash: VSINSTALLDIR ends with '\', vswhere paths do not.
+        $normalizedVsInstallDir = $env:VSINSTALLDIR.TrimEnd('\')
+        $vsInstall = Get-VsInstallationsWithWdk |
+                     Where-Object { $_.InstallationPath.TrimEnd('\') -eq $normalizedVsInstallDir } |
+                     Select-Object -First 1
+        if (-not $vsInstall) {
+            Write-Error "The active Visual Studio Developer Shell ('$env:VSINSTALLDIR') does not have the required WDK media installed. Ensure the WDK Visual Studio component is installed."
+            exit 1
+        }
+    }
+
+    # -------------------------------------------------------------------------
+    # Step 3 – Fill mode-specific fields (Dev Shell is now guaranteed active)
+    # -------------------------------------------------------------------------
+
+    if ($isNuGet) {
+        $result.Name        = 'NuGet'
+        $wdkPackage         = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
         $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
         $result.BuildNumber  = [int]($result.NuGetVersion.Split('.')[2])
     }
-    elseif ($effectiveMode -eq 'WDK' -or
-            ($effectiveMode -eq 'Auto' -and $env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0')) {
-        if ($effectiveMode -eq 'WDK' -and $env:UCRTVersion -notmatch '10\.0\.(?<build>\d+)\.0') {
-            Write-Error "RunMode is 'WDK' but UCRTVersion ('$env:UCRTVersion') is not set or does not match the expected format. Ensure the VS Developer Shell is active."
+    else {
+        # WDK – Dev Shell is now active, UCRTVersion must be set.
+        if ($env:UCRTVersion -notmatch '10\.0\.(?<build>\d+)\.0') {
+            Write-Error "UCRTVersion ('$env:UCRTVersion') is not set or does not match the expected format. Ensure the VS Developer Shell is active."
             exit 1
         }
         $result.Name        = 'WDK'
         $result.BuildNumber = [int]$Matches.build
     }
-    else {
-        Write-Output "Environment variables {"
-        Get-ChildItem env:* | Sort-Object Name
-        Write-Output "Environment variables }"
-        Write-Error "Could not determine build environment. Ensure EWDK, WDK, or NuGet packages are configured."
+
+    if (-not $vsInstall.WdkVsComponentVersion) {
+        Write-Error "Could not determine WDK component version for '$($vsInstall.DisplayName)'. Ensure the WDK Visual Studio component is installed."
         exit 1
     }
-
-    # WDK VS component version (EWDK does not ship this metadata)
-    if ($result.Name -match '^EWDK') {
-        $result.WdkVsComponentVersion = '(not available for EWDK builds)'
-    }
-    else {
-        # Re-use the installation selected during Initialize-DevShell if available,
-        # otherwise query vswhere again (e.g. when the Dev Shell was already active).
-        $vsInstall = if ($VsInstallation) { $VsInstallation } else { Select-VsInstallation (Get-VsInstallationsWithWdk) }
-        if (-not $vsInstall.WdkVsComponentVersion) {
-            Write-Error "Could not determine WDK component version for '$($vsInstall.DisplayName)'. Ensure the WDK Visual Studio component is installed."
-            exit 1
-        }
-        $result.WdkVsComponentVersion = $vsInstall.WdkVsComponentVersion
-    }
+    $result.WdkVsComponentVersion = $vsInstall.WdkVsComponentVersion
 
     return $result
 }

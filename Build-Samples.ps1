@@ -292,9 +292,9 @@ function Build-SingleSample {
 #  Step 1 - Prepare Build Environment
 # =============================================================================
 
-$root = (Get-Location).Path
-
-$selectedVsInstall = Initialize-DevShell -ReturnToDirectory $root
+$root        = (Get-Location).Path
+$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode
+$buildNumber = $buildEnv.BuildNumber
 Assert-MsBuildAvailable
 
 # =============================================================================
@@ -377,14 +377,7 @@ if ($sampleSet.Count -eq 0) {
 }
 
 # =============================================================================
-#  Step 5 - Detect Build Environment
-# =============================================================================
-
-$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode -VsInstallation $selectedVsInstall
-$buildNumber = $buildEnv.BuildNumber
-
-# =============================================================================
-#  Step 6 - Determine InfVerif Options
+#  Step 5 - Determine InfVerif Options
 # =============================================================================
 #
 # Samples must build cleanly, but certain InfVerif warnings are acceptable because
@@ -400,13 +393,13 @@ else {
 }
 
 # =============================================================================
-#  Step 7 - Load Exclusions
+#  Step 6 - Load Exclusions
 # =============================================================================
 
 $exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber
 
 # =============================================================================
-#  Step 8 - Print Build Plan
+#  Step 7 - Print Build Plan
 # =============================================================================
 
 $combinationsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
@@ -439,7 +432,7 @@ Write-Output ""
 Write-Output "Building all combinations..."
 
 # =============================================================================
-#  Step 9 - Execute Parallel Builds
+#  Step 8 - Execute Parallel Builds
 # =============================================================================
 
 # Shared mutable state protected by a Mutex. This is required because
@@ -587,7 +580,7 @@ $stopwatch.Stop()
 Write-Host ""
 
 # =============================================================================
-#  Step 10 - Report Failures
+#  Step 9 - Report Failures
 # =============================================================================
 
 Write-Output ""
@@ -626,7 +619,7 @@ if ($buildState.SporadicSet.Count -gt 0) {
 }
 
 # =============================================================================
-#  Step 11 - Final Summary
+#  Step 10 - Final Summary
 # =============================================================================
 
 $elapsed = $stopwatch.Elapsed
@@ -652,7 +645,7 @@ Write-Output "  HTML report:      $reportHtmlPath"
 Write-Output "--------------------------------------------------------------------"
 
 # =============================================================================
-#  Step 12 - Generate Reports
+#  Step 11 - Generate Reports
 # =============================================================================
 
 $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
