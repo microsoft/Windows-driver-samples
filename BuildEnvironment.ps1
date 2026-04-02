@@ -121,7 +121,9 @@ function Resolve-BuildEnvironment {
     .SYNOPSIS
         Detects or resolves the active build environment and returns metadata.
     .DESCRIPTION
-        When RunMode is 'Auto', checks in priority order: NuGet, EWDK, WDK.
+        When RunMode is 'Auto', checks in priority order: EWDK, NuGet, WDK.
+        EWDK is checked first because $env:BuildLab is an active, explicit signal
+        whereas the packages\ folder is a passive disk artifact that may linger.
         When RunMode is explicitly set to WDK/NuGet/EWDK, skips detection and uses that mode.
         Pass the VsInstallation returned by Initialize-DevShell to avoid prompting the user
         a second time when multiple VS installations are present.
@@ -143,18 +145,7 @@ function Resolve-BuildEnvironment {
     $effectiveMode = $RunMode
 
     # --- Resolve build environment ---
-    if ($effectiveMode -eq 'NuGet' -or
-            ($effectiveMode -eq 'Auto' -and (Test-Path "$RepoRoot\packages\*"))) {
-        if ($effectiveMode -eq 'NuGet' -and -not (Test-Path "$RepoRoot\packages\*")) {
-            Write-Error "RunMode is 'NuGet' but no packages were found under '$RepoRoot\packages\'. Ensure NuGet restore has been run."
-            exit 1
-        }
-        $result.Name = 'NuGet'
-        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
-        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
-        $result.BuildNumber  = [int]($result.NuGetVersion.Split('.')[2])
-    }
-    elseif ($effectiveMode -eq 'EWDK' -or
+    if ($effectiveMode -eq 'EWDK' -or
         ($effectiveMode -eq 'Auto' -and $env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$')) {
         if ($effectiveMode -eq 'EWDK') {
             # Forced EWDK: require BuildLab to be set
@@ -165,6 +156,17 @@ function Resolve-BuildEnvironment {
         }
         $result.Name        = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
         $result.BuildNumber = [int]$Matches.build
+    }
+    elseif ($effectiveMode -eq 'NuGet' -or
+            ($effectiveMode -eq 'Auto' -and (Test-Path "$RepoRoot\packages\*"))) {
+        if ($effectiveMode -eq 'NuGet' -and -not (Test-Path "$RepoRoot\packages\*")) {
+            Write-Error "RunMode is 'NuGet' but no packages were found under '$RepoRoot\packages\'. Ensure NuGet restore has been run."
+            exit 1
+        }
+        $result.Name = 'NuGet'
+        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
+        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
+        $result.BuildNumber  = [int]($result.NuGetVersion.Split('.')[2])
     }
     elseif ($effectiveMode -eq 'WDK' -or
             ($effectiveMode -eq 'Auto' -and $env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0')) {
