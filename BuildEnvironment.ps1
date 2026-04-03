@@ -52,12 +52,12 @@ function Select-VsInstallation {
     }
 
     # Multiple installations — let the user choose
-    Write-Output ""
-    Write-Output "The following Visual Studio installations were found with the required WDK media:"
+    Write-Host ""
+    Write-Host "The following Visual Studio installations were found with the required WDK media:"
     for ($i = 0; $i -lt $Installations.Count; $i++) {
-        Write-Output "  [$($i + 1)] $($Installations[$i].DisplayName)  —  $($Installations[$i].InstallationPath)"
+        Write-Host "  [$($i + 1)] $($Installations[$i].DisplayName)  —  $($Installations[$i].InstallationPath)"
     }
-    Write-Output ""
+    Write-Host ""
 
     do {
         $choice = Read-Host "Select the installation to use [1-$($Installations.Count)]"
