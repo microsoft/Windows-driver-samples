@@ -18,7 +18,7 @@ function Get-VsInstallationsWithWdk {
         exit 1
     }
 
-    $json = & $vswhere -all -format json -requires Microsoft.Windows.DriverKit -include packages 2>$null
+    $json = & $vswhere -all -products * -format json -requires Microsoft.Windows.DriverKit -include packages 2>$null
     $installations = $json | ConvertFrom-Json
     return $installations | ForEach-Object {
         $wdkPackage = $_.packages | Where-Object { $_.id -eq 'Microsoft.Windows.DriverKit' } | Select-Object -First 1
