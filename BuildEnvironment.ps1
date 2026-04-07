@@ -18,10 +18,21 @@ function Get-VsInstallationsWithWdk {
         exit 1
     }
 
-    $json = & $vswhere -all -products * -format json -requires Microsoft.Windows.DriverKit -include packages 2>$null
-    $installations = $json | ConvertFrom-Json
+    # Full VS editions install the WDK component as 'Microsoft.Windows.DriverKit',
+    # while Build Tools uses 'Component.Microsoft.Windows.DriverKit.BuildTools'.
+    # Query for either so both product types are discovered.
+    $wdkComponentIds = @('Microsoft.Windows.DriverKit', 'Component.Microsoft.Windows.DriverKit.BuildTools')
+    $allInstallations = @()
+    foreach ($componentId in $wdkComponentIds) {
+        $json = & $vswhere -all -products * -format json -requires $componentId -include packages 2>$null
+        if ($json) {
+            $allInstallations += ($json | ConvertFrom-Json)
+        }
+    }
+    # Deduplicate by installationPath in case both components are present
+    $installations = $allInstallations | Sort-Object -Property installationPath -Unique
     return $installations | ForEach-Object {
-        $wdkPackage = $_.packages | Where-Object { $_.id -eq 'Microsoft.Windows.DriverKit' } | Select-Object -First 1
+        $wdkPackage = $_.packages | Where-Object { $_.id -in $wdkComponentIds } | Select-Object -First 1
         [PSCustomObject]@{
             DisplayName          = $_.displayName
             InstallationPath     = $_.installationPath
