@@ -22,57 +22,29 @@ git clone --recurse-submodules "https://github.com/microsoft/Windows-driver-samp
 cd ".\Windows-driver-samples"
 ```
 
-Use `main` for in-market WDK releases, `develop` for WDK Preview / EEAP builds:
+### Environment specific requisites
+
+- If you are using the WDK via **NuGet**: install NuGet and restore the packages:
 
 ```powershell
-git checkout main      # stable / in-market
-git checkout develop   # preview / EEAP
+winget install --id Microsoft.NuGet --source winget
+nuget restore -PackagesDirectory ".\packages"
 ```
+
+- If you are using the WDK via **EWDK**: mount the EWDK ISO, open a terminal in the mounted drive, and launch the build environment:
+
+```powershell
+.\LaunchBuildEnv
+```
+
 
 ---
 
 ## Building the Samples
 
-The script auto-detects which WDK environment is active. Use `-RunMode` to force a specific one if needed:
+The `Build-Samples.ps1` script auto-detects which WDK environment is active and will build all the samples with all the configurations by default. Just run the following command from **PowerShell**:
 
 ```powershell
-.\Build-Samples.ps1 -RunMode NuGet    # force NuGet
-.\Build-Samples.ps1 -RunMode EWDK     # force EWDK
-.\Build-Samples.ps1 -RunMode WDK      # force WDK
-```
-
-### NuGet Package
-
-Install NuGet if you don't have it:
-
-```powershell
-winget install --id Microsoft.NuGet --source winget
-```
-
-Restore the WDK packages and build from Powershell:
-
-```powershell
-nuget restore -PackagesDirectory ".\packages"
-pwsh
-.\Build-Samples.ps1
-```
-
-### EWDK
-
-Mount the EWDK ISO, open a terminal in the mounted drive, launch the build environment, then build:
-
-```powershell
-.\LaunchBuildEnv
-pwsh
-.\Build-Samples.ps1
-```
-
-### WDK MSI/winget
-
-Build the samples from PowerShell:
-
-```powershell
-pwsh
 .\Build-Samples.ps1
 ```
 
