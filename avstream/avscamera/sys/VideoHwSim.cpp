@@ -51,8 +51,12 @@ EmitMetadata(
 
     if (0 != (pStreamHeader->OptionsFlags & KSSTREAM_HEADER_OPTIONSF_METADATA))
     {
-        PKS_FRAME_INFO          pFrameInfo = (PKS_FRAME_INFO)(pStreamHeader + 1);
-        PKSSTREAM_METADATA_INFO pMetadata = (PKSSTREAM_METADATA_INFO)(pFrameInfo + 1);
+        PKS_FRAME_INFO pFrameInfo = reinterpret_cast<PKS_FRAME_INFO>(
+            reinterpret_cast<PUCHAR>(pStreamHeader) + sizeof(KSSTREAM_HEADER)
+        );
+        PKSSTREAM_METADATA_INFO pMetadata = reinterpret_cast<PKSSTREAM_METADATA_INFO>(
+            reinterpret_cast<PUCHAR>(pFrameInfo) + sizeof(KS_FRAME_INFO)
+        );
         ULONG                   BytesLeft = pMetadata->BufferSize - pMetadata->UsedSize;
 
         //  TODO: This metadata should only be exposed on a sensor category preview pin.
@@ -80,7 +84,7 @@ EmitMetadata(
             }
             else if ((State.Flags & KSCAMERA_EXTENDEDPROP_IRTORCHMODE_ALTERNATING_FRAME_ILLUMINATION))
             {
-                m_Illuminated = !m_Illuminated;
+                m_Illuminated = ~m_Illuminated;
                 if (m_Illuminated)
                 {
                     pPreviewIllumination->Flags = KSCAMERA_METADATA_FRAMEILLUMINATION_FLAG_ON;
