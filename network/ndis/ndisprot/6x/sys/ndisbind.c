@@ -70,7 +70,7 @@ Return Value:
 
 --*/
 {
-    PNDISPROT_OPEN_CONTEXT          pOpenContext;
+    PNDISPROT_OPEN_CONTEXT          pOpenContext = NULL;
     NDIS_STATUS                     Status;
 
     UNREFERENCED_PARAMETER(ProtocolDriverContext);
