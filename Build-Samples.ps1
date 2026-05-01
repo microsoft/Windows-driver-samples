@@ -7,7 +7,7 @@
 
     1. Ensures a developer build environment (VS DevShell or EWDK) is active
     2. Discovers samples via ListAllSamples.ps1 (or uses the -Samples parameter if provided)
-    3. Detects the build environment (GitHub CI, NuGet, EWDK, or WDK) and build number
+    3. Resolves the build environment (auto-detected or forced via -RunMode) and build number
     4. Loads exclusions from exclusions.csv (supports wildcard paths)
     5. Builds all non-excluded sample/configuration/platform combinations in parallel
     6. Generates CSV and HTML overview reports
@@ -38,6 +38,10 @@
     Additional InfVerif options (e.g. '/samples', '/msft'). If not provided, determined
     automatically based on the WDK build number.
 
+.PARAMETER RunMode
+    Selects the build environment mode. Valid values: Auto, WDK, NuGet, EWDK.
+    Defaults to 'Auto', which detects the environment automatically (NuGet → EWDK → WDK).
+
 .PARAMETER ThrottleLimit
     Maximum parallel build jobs. Defaults to 5 x logical processors.
 
@@ -60,6 +64,11 @@
     .\Build-Samples -ThrottleLimit 8
 
     Discovers all samples and builds them with limited parallelism.
+
+.EXAMPLE
+    .\Build-Samples -RunMode WDK
+
+    Forces WDK mode regardless of environment variables.
 #>
 
 #Requires -Version 7.0
@@ -72,6 +81,8 @@ param(
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
+    [ValidateSet('Auto', 'WDK', 'NuGet', 'EWDK')]
+    [string]$RunMode = 'Auto',
     [int]$ThrottleLimit = 0
 )
 
@@ -79,108 +90,7 @@ param(
 #  Helper Functions
 # =============================================================================
 
-function Initialize-DevShell {
-    <#
-    .SYNOPSIS Imports the Visual Studio Developer PowerShell if not already active.
-    #>
-    param([string]$ReturnToDirectory)
-
-    if ($env:VSCMD_VER) {
-        Write-Verbose "VS Developer Shell already active (VSCMD_VER=$env:VSCMD_VER)."
-        return
-    }
-
-    $devShellDll = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" `
-        -ErrorAction SilentlyContinue | Select-Object -First 1
-    if (-not $devShellDll) {
-        Write-Error "Visual Studio Developer Shell module not found."
-        exit 1
-    }
-
-    Import-Module $devShellDll.Path
-    $vsInstall = Resolve-Path "$env:ProgramFiles\Microsoft Visual Studio\*\*" | Select-Object -First 1
-    Enter-VsDevShell -VsInstallPath $vsInstall.Path
-    Set-Location $ReturnToDirectory
-}
-
-function Assert-MsBuildAvailable {
-    <#
-    .SYNOPSIS Verifies msbuild.exe is on PATH. Exits with error if not found.
-    #>
-    $savedPref = $ErrorActionPreference
-    $ErrorActionPreference = 'Stop'
-    try {
-        Get-Command 'msbuild' | Out-Null
-    }
-    catch {
-        Write-Error "msbuild cannot be called from current environment. Ensure it is on PATH (run from VS Developer Command Prompt or EWDK)."
-        exit 1
-    }
-    finally {
-        $ErrorActionPreference = $savedPref
-    }
-}
-
-function Resolve-BuildEnvironment {
-    <#
-    .SYNOPSIS
-        Detects the active build environment and returns metadata.
-    .DESCRIPTION
-        Checks (in priority order) for GitHub CI, local NuGet packages, EWDK, or WDK.
-        Returns a hashtable: Name, BuildNumber (int), NuGetVersion, WdkVsComponentVersion.
-    #>
-    param([string]$RepoRoot)
-
-    $result = @{
-        Name                  = ''
-        BuildNumber           = [int]0
-        NuGetVersion          = ''
-        WdkVsComponentVersion = ''
-    }
-
-    if ($env:GITHUB_REPOSITORY) {
-        $result.Name = 'GitHub'
-        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
-        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
-        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
-    }
-    elseif (Test-Path "$RepoRoot\packages\*") {
-        $result.Name = 'NuGet'
-        $wdkPackage = Get-ChildItem "$RepoRoot\packages\*WDK.x64*" -Name -ErrorAction SilentlyContinue
-        $result.NuGetVersion = ([regex]'(?<=x64\.)(\d+\.){3}\d+').Match($wdkPackage).Value
-        $result.BuildNumber = [int]($result.NuGetVersion.Split('.')[2])
-    }
-    elseif ($env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
-        $result.Name = "EWDK.$($Matches.branch).$($Matches.build).$($Matches.qfe)"
-        $result.BuildNumber = [int]$Matches.build
-    }
-    elseif ($env:UCRTVersion -match '10\.0\.(?<build>\d+)\.0') {
-        $result.Name = 'WDK'
-        $result.BuildNumber = [int]$Matches.build
-    }
-    else {
-        Write-Output "Environment variables {"
-        Get-ChildItem env:* | Sort-Object Name
-        Write-Output "Environment variables }"
-        Write-Error "Could not determine build environment. Ensure EWDK, WDK, or NuGet packages are configured."
-        exit 1
-    }
-
-    # WDK VS component version (EWDK does not ship this metadata)
-    if ($result.Name -match '^EWDK') {
-        $result.WdkVsComponentVersion = '(not available for EWDK builds)'
-    }
-    else {
-        $vsComponent = Get-ChildItem "${env:ProgramData}\Microsoft\VisualStudio\Packages\Microsoft.Windows.DriverKit,version=*" -ErrorAction SilentlyContinue
-        if (-not $vsComponent) {
-            Write-Error "WDK Visual Studio Component not found. Ensure the WDK Component is installed."
-            exit 1
-        }
-        $result.WdkVsComponentVersion = [regex]::Match($vsComponent.Name, '(\d+\.){3}\d+').Value
-    }
-
-    return $result
-}
+. (Join-Path $PSScriptRoot 'BuildEnvironment.ps1')
 
 function Import-SampleExclusions {
     <#
@@ -382,9 +292,9 @@ function Build-SingleSample {
 #  Step 1 - Prepare Build Environment
 # =============================================================================
 
-$root = (Get-Location).Path
-
-Initialize-DevShell -ReturnToDirectory $root
+$root        = (Get-Location).Path
+$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root -RunMode $RunMode
+$buildNumber = $buildEnv.BuildNumber
 Assert-MsBuildAvailable
 
 # =============================================================================
@@ -467,14 +377,7 @@ if ($sampleSet.Count -eq 0) {
 }
 
 # =============================================================================
-#  Step 5 - Detect Build Environment
-# =============================================================================
-
-$buildEnv    = Resolve-BuildEnvironment -RepoRoot $root
-$buildNumber = $buildEnv.BuildNumber
-
-# =============================================================================
-#  Step 6 - Determine InfVerif Options
+#  Step 5 - Determine InfVerif Options
 # =============================================================================
 #
 # Samples must build cleanly, but certain InfVerif warnings are acceptable because
@@ -490,13 +393,13 @@ else {
 }
 
 # =============================================================================
-#  Step 7 - Load Exclusions
+#  Step 6 - Load Exclusions
 # =============================================================================
 
 $exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber
 
 # =============================================================================
-#  Step 8 - Print Build Plan
+#  Step 7 - Print Build Plan
 # =============================================================================
 
 $combinationsTotal = $sampleSet.Count * $Configurations.Count * $Platforms.Count
@@ -529,7 +432,7 @@ Write-Output ""
 Write-Output "Building all combinations..."
 
 # =============================================================================
-#  Step 9 - Execute Parallel Builds
+#  Step 8 - Execute Parallel Builds
 # =============================================================================
 
 # Shared mutable state protected by a Mutex. This is required because
@@ -677,7 +580,7 @@ $stopwatch.Stop()
 Write-Host ""
 
 # =============================================================================
-#  Step 10 - Report Failures
+#  Step 9 - Report Failures
 # =============================================================================
 
 Write-Output ""
@@ -716,7 +619,7 @@ if ($buildState.SporadicSet.Count -gt 0) {
 }
 
 # =============================================================================
-#  Step 11 - Final Summary
+#  Step 10 - Final Summary
 # =============================================================================
 
 $elapsed = $stopwatch.Elapsed
@@ -742,7 +645,7 @@ Write-Output "  HTML report:      $reportHtmlPath"
 Write-Output "--------------------------------------------------------------------"
 
 # =============================================================================
-#  Step 12 - Generate Reports
+#  Step 11 - Generate Reports
 # =============================================================================
 
 $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
@@ -750,6 +653,6 @@ $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
 $sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
 
 # Only open the HTML report interactively (not in CI/automation)
-if (-not $env:GITHUB_REPOSITORY -and -not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
+if (-not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
     Invoke-Item $reportHtmlPath
 }
