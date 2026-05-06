@@ -15,7 +15,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         platform: [x64, arm64]
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
