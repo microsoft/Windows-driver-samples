@@ -379,6 +379,7 @@ GetSrcMac(
                 BytesReturned));
 
 #pragma warning(suppress:6202) // buffer overrun warning - enough space allocated in QueryBuffer
+        // codeql[cpp/buffer-overflow]
         memcpy(pSrcMacAddr, pQueryOid->Data, MAC_ADDR_LEN);
     }
     else
