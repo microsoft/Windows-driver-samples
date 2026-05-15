@@ -102,158 +102,158 @@ typedef enum _RT_CHANNEL_DOMAIN_NEW
 
 Countries							"Country Abbreviation"	Domain Code					SKU's	Ch# of 20MHz
 															2G			5G						Ch# of 40MHz
-"Albania�����ڥ���"					AL													Local Test
-
-"Algeria�����ΧQ��"					DZ									CE TCF
-
-"Antigua & Barbuda�w���ʮq&�ڥ��F"	AG						2G_WORLD					FCC TCF
-
-"Argentina���ڧ�"					AR						2G_WORLD					Local Test
-
-"Armenia�Ȭ�����"					AM						2G_WORLD					ETSI
-
-"Aruba���|�ڮq"						AW						2G_WORLD					FCC TCF
-
-"Australia�D�w"						AU						2G_WORLD		5G_ETSI2
-
-"Austria���a�Q"						AT						2G_WORLD		5G_ETSI1	CE
-
-"Azerbaijan�������"				AZ						2G_WORLD					CE TCF
-
-"Bahamas�ګ���"						BS						2G_WORLD
-
-"Barbados�ڤڦh��"					BB						2G_WORLD					FCC TCF
-
-"Belgium��Q��"						BE						2G_WORLD		5G_ETSI1	CE
-
-"Bermuda�ʼ}�F"						BM						2G_WORLD					FCC TCF
-
-"Brazil�ڦ�"						BR						2G_WORLD					Local Test
-
-"Bulgaria�O�[�Q��"					BG						2G_WORLD		5G_ETSI1	CE
-
+"Albania�����ڥ���"					AL													Local Test	
+									    					        	            	
+"Algeria�����ΧQ��"					DZ									CE TCF	    	
+					                    					        	            	
+"Antigua & Barbuda�w���ʮq&�ڥ��F"	AG						2G_WORLD					FCC TCF	
+					                    					        	        		
+"Argentina���ڧ�"					AR						2G_WORLD					Local Test	
+									    					        	        		
+"Armenia�Ȭ�����"					AM						2G_WORLD					ETSI	
+									    					        	        		
+"Aruba���|�ڮq"						AW						2G_WORLD					FCC TCF	
+															        	
+"Australia�D�w"						AU						2G_WORLD		5G_ETSI2		
+															        	
+"Austria���a�Q"						AT						2G_WORLD		5G_ETSI1	CE	
+					    			    					        	
+"Azerbaijan�������"				AZ						2G_WORLD					CE TCF	
+					                    					        	
+"Bahamas�ګ���"						BS						2G_WORLD				
+									    					        	
+"Barbados�ڤڦh��"					BB						2G_WORLD					FCC TCF	
+									    					        	
+"Belgium��Q��"						BE						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Bermuda�ʼ}�F"						BM						2G_WORLD					FCC TCF	
+															        	        		
+"Brazil�ڦ�"						BR						2G_WORLD					Local Test	
+									    					        	
+"Bulgaria�O�[�Q��"					BG						2G_WORLD		5G_ETSI1	CE	
+									    					        	
 "Canada�[���j"						CA						2G_FCC1			5G_FCC7		IC / FCC	IC / FCC
-
-"Cayman Islands�}�Ҹs�q"			KY						2G_WORLD		5G_ETSI1	CE
-
-"Chile���Q"							CL						2G_WORLD					FCC TCF
-
-"China����"							CN						2G_WORLD		5G_FCC5		�H��?�i2002�j353?
-
-"Columbia���ۤ��"					CO						2G_WORLD					Voluntary
-
-"Costa Rica�����F���["				CR						2G_WORLD					FCC TCF
-
-"Cyprus�������"					CY						2G_WORLD		5G_ETSI1	CE
-
-"Czech ���J"						CZ						2G_WORLD		5G_ETSI1	CE
-
-"Denmark����"						DK						2G_WORLD		5G_ETSI1	CE
-
-"Dominican Republic�h�����[�@�M��"	DO						2G_WORLD					FCC TCF
-
-"Egypt�J��"	EG	2G_WORLD			CE T												CF
-
-"El Salvador�ĺ��˦h"				SV						2G_WORLD					Voluntary
-
-"Estonia�R�F����"					EE						2G_WORLD		5G_ETSI1	CE
-
-"Finland����"						FI						2G_WORLD		5G_ETSI1	CE
-
-"France�k��"						FR										5G_E		TSI1	CE
-
-"Germany�w��"						DE						2G_WORLD		5G_ETSI1	CE
-
-"Greece ��þ"						GR						2G_WORLD		5G_ETSI1	CE
-
-"Guam���q"							GU						2G_WORLD
-
-"Guatemala�ʦa����"					GT						2G_WORLD
-
-"Haiti���a"							HT						2G_WORLD					FCC TCF
-
-"Honduras�����Դ�"					HN						2G_WORLD					FCC TCF
-
-"Hungary�I���Q"						HU						2G_WORLD		5G_ETSI1	CE
-
-"Iceland�B�q"						IS						2G_WORLD		5G_ETSI1	CE
-
-"India�L��"							IN						2G_WORLD		5G_FCC3		FCC/CE TCF
-
-"Ireland�R����"						IE						2G_WORLD		5G_ETSI1	CE
-
-"Israel�H��C"						IL										5G_F		CC6	CE TCF
-
-"Italy�q�j�Q"						IT						2G_WORLD		5G_ETSI1	CE
-
+					                    					        	
+"Cayman Islands�}�Ҹs�q"			KY						2G_WORLD		5G_ETSI1	CE	
+					                    					        	
+"Chile���Q"							CL						2G_WORLD					FCC TCF	
+																    	
+"China����"							CN						2G_WORLD		5G_FCC5		�H��?�i2002�j353? 	
+					                    					        	
+"Columbia���ۤ��"					CO						2G_WORLD					Voluntary 	
+					    			    					        	
+"Costa Rica�����F���["				CR						2G_WORLD					FCC TCF	
+					    			    					        	
+"Cyprus�������"					CY						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Czech ���J"						CZ						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Denmark����"						DK						2G_WORLD		5G_ETSI1	CE	
+					                    					        	
+"Dominican Republic�h�����[�@�M��"	DO						2G_WORLD					FCC TCF	
+					                    					        	
+"Egypt�J��"	EG	2G_WORLD			CE T												CF	    	
+					                    					        	
+"El Salvador�ĺ��˦h"				SV						2G_WORLD					Voluntary	
+					        		    					        	
+"Estonia�R�F����"					EE						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Finland����"						FI						2G_WORLD		5G_ETSI1	CE	
+															        	
+"France�k��"						FR										5G_E		TSI1	CE	
+															        	
+"Germany�w��"						DE						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Greece ��þ"						GR						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Guam���q"							GU						2G_WORLD				
+									    					        	
+"Guatemala�ʦa����"					GT						2G_WORLD				
+									    					        	
+"Haiti���a"							HT						2G_WORLD					FCC TCF	
+									    					        	
+"Honduras�����Դ�"					HN						2G_WORLD					FCC TCF	
+									    					        	
+"Hungary�I���Q"						HU						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Iceland�B�q"						IS						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"India�L��"							IN						2G_WORLD		5G_FCC3		FCC/CE TCF	
+															        	
+"Ireland�R����"						IE						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Israel�H��C"						IL										5G_F		CC6	CE TCF	
+															        	
+"Italy�q�j�Q"						IT						2G_WORLD		5G_ETSI1	CE	
+									    					        	
 "Japan�饻"							JP						2G_MKK1			5G_MKK1		MKK	MKK
-
+																    	
 "Korea����"							KR						2G_WORLD		5G_KCC1		KCC	KCC
-
-"Latvia�Բ����"					LV						2G_WORLD		5G_ETSI1	CE
-
-"Lithuania�߳��{"					LT						2G_WORLD		5G_ETSI1	CE
-
-"Luxembourg�c�˳�"					LU						2G_WORLD		5G_ETSI1	CE
-
-"Malaysia���Ӧ��"					MY						2G_WORLD					Local Test
-
-"Malta�����L"						MT						2G_WORLD		5G_ETSI1	CE
-
-"Mexico�����"						MX						2G_WORLD		5G_FCC3		Local Test
-
-"Morocco������"						MA													CE TCF
-
-"Netherlands����"					NL						2G_WORLD		5G_ETSI1	CE
-
-"New Zealand�æ���"					NZ						2G_WORLD		5G_ETSI2
-
-"Norway����"						NO						2G_WORLD		5G_ETSI1	CE
-
-"Panama�ڮ��� "						PA						2G_FCC1						Voluntary
-
-"Philippines��߻�"					PH						2G_WORLD					FCC TCF
-
-"Poland�i��"						PL						2G_WORLD		5G_ETSI1	CE
-
-"Portugal�����"					PT						2G_WORLD		5G_ETSI1	CE
-
-"Romaniaù������"					RO						2G_WORLD		5G_ETSI1	CE
-
-"Russia�Xù��"						RU						2G_WORLD		5G_ETSI3	CE TCF
-
-"Saudi Arabia�F�a���ԧB"			SA						2G_WORLD					CE TCF
-
-"Singapore�s�[�Y"					SG						2G_WORLD
-
-"Slovakia������J"					SK						2G_WORLD		5G_ETSI1	CE
-
-"Slovenia����������"				SI						2G_WORLD		5G_ETSI1	CE
-
-"South Africa�n�D"					ZA						2G_WORLD					CE TCF
-
-"Spain��Z��"						ES										5G_ETSI1	CE
-
-"Sweden���"						SE						2G_WORLD		5G_ETSI1	CE
-
-"Switzerland��h"					CH						2G_WORLD		5G_ETSI1	CE
-
-"Taiwan�O�W"						TW						2G_FCC1			5G_NCC1	NCC
-
-"Thailand����"						TH						2G_WORLD					FCC/CE TCF
-
-"Turkey�g�ը�"						TR						2G_WORLD
-
-"Ukraine�Q�J��"						UA						2G_WORLD					Local Test
-
+									    					        	
+"Latvia�Բ����"					LV						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Lithuania�߳��{"					LT						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Luxembourg�c�˳�"					LU						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Malaysia���Ӧ��"					MY						2G_WORLD					Local Test	
+									    					        	
+"Malta�����L"						MT						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Mexico�����"						MX						2G_WORLD		5G_FCC3		Local Test	
+															        	
+"Morocco������"						MA													CE TCF	
+									    					        	
+"Netherlands����"					NL						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"New Zealand�æ���"					NZ						2G_WORLD		5G_ETSI2		
+									    					        	
+"Norway����"						NO						2G_WORLD		5G_ETSI1	CE	
+															        	
+"Panama�ڮ��� "						PA						2G_FCC1						Voluntary	
+									    					        	
+"Philippines��߻�"					PH						2G_WORLD					FCC TCF	
+									    					        	
+"Poland�i��"						PL						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Portugal�����"					PT						2G_WORLD		5G_ETSI1	CE	
+									    					        	
+"Romaniaù������"					RO						2G_WORLD		5G_ETSI1	CE	
+					        		    					        	
+"Russia�Xù��"						RU						2G_WORLD		5G_ETSI3	CE TCF	
+					        		    					        	
+"Saudi Arabia�F�a���ԧB"			SA						2G_WORLD					CE TCF	
+					        		    					        	
+"Singapore�s�[�Y"					SG						2G_WORLD				
+									    					        	
+"Slovakia������J"					SK						2G_WORLD		5G_ETSI1	CE	
+					    			    					        	
+"Slovenia����������"				SI						2G_WORLD		5G_ETSI1	CE	
+					    			    					        	
+"South Africa�n�D"					ZA						2G_WORLD					CE TCF	
+					        		    					        	
+"Spain��Z��"						ES										5G_ETSI1	CE	
+															        	
+"Sweden���"						SE						2G_WORLD		5G_ETSI1	CE	
+					        		    					        	
+"Switzerland��h"					CH						2G_WORLD		5G_ETSI1	CE	
+					        		    					        	
+"Taiwan�O�W"						TW						2G_FCC1			5G_NCC1	NCC	
+															        	
+"Thailand����"						TH						2G_WORLD					FCC/CE TCF	
+															        	
+"Turkey�g�ը�"						TR						2G_WORLD				
+															        	
+"Ukraine�Q�J��"						UA						2G_WORLD					Local Test	
+					        		    					        	
 "United Kingdom�^��"				GB						2G_WORLD		5G_ETSI1	CE	ETSI
-
+					    			    					        	
 "United States����"					US						2G_FCC1			5G_FCC7		FCC	FCC
-
-"Venezuela�e�����"					VE						2G_WORLD		5G_FCC4		FCC TCF
-
-"Vietnam�V�n"						VN						2G_WORLD					FCC/CE TCF
-
+					    			    					        	
+"Venezuela�e�����"					VE						2G_WORLD		5G_FCC4		FCC TCF	
+					    			    					        	
+"Vietnam�V�n"						VN						2G_WORLD					FCC/CE TCF	
+					
 
 
 */
@@ -261,83 +261,83 @@ Countries							"Country Abbreviation"	Domain Code					SKU's	Ch# of 20MHz
 // Counter abbervation.
 typedef enum _RT_COUNTRY_DEFINE_NUM
 {
-	RT_CTRY_AL,				//	"Albania�����ڥ���"
-	RT_CTRY_DZ,             //  "Algeria�����ΧQ��"
-	RT_CTRY_AG,             //  "Antigua & Barbuda�w���ʮq&�ڥ��F"
-	RT_CTRY_AR,             //  "Argentina���ڧ�"
-	RT_CTRY_AM,             //  "Armenia�Ȭ�����"
-	RT_CTRY_AW,             //  "Aruba���|�ڮq"
-	RT_CTRY_AU,             //  "Australia�D�w"
-	RT_CTRY_AT,             //  "Austria���a�Q"
-	RT_CTRY_AZ,             //  "Azerbaijan�������"
-	RT_CTRY_BS,             //  "Bahamas�ګ���"
-	RT_CTRY_BB,             //  "Barbados�ڤڦh��"
-	RT_CTRY_BE,             //  "Belgium��Q��"
-	RT_CTRY_BM,             //  "Bermuda�ʼ}�F"
-	RT_CTRY_BR,             //  "Brazil�ڦ�"
-	RT_CTRY_BG,             //  "Bulgaria�O�[�Q��"
-	RT_CTRY_CA,             //  "Canada�[���j"
-	RT_CTRY_KY,             //  "Cayman Islands�}�Ҹs�q"
-	RT_CTRY_CL,             //  "Chile���Q"
-	RT_CTRY_CN,             //  "China����"
-	RT_CTRY_CO,             //  "Columbia���ۤ��"
-	RT_CTRY_CR,             //  "Costa Rica�����F���["
-	RT_CTRY_CY,             //  "Cyprus�������"
-	RT_CTRY_CZ,             //  "Czech ���J"
-	RT_CTRY_DK,             //  "Denmark����"
-	RT_CTRY_DO,             //  "Dominican Republic�h�����[�@�M��"
-	RT_CTRY_CE,             //  "Egypt�J��"	EG	2G_WORLD
-	RT_CTRY_SV,             //  "El Salvador�ĺ��˦h"
-	RT_CTRY_EE,             //  "Estonia�R�F����"
-	RT_CTRY_FI,             //  "Finland����"
-	RT_CTRY_FR,             //  "France�k��"
-	RT_CTRY_DE,             //  "Germany�w��"
-	RT_CTRY_GR,             //  "Greece ��þ"
-	RT_CTRY_GU,             //  "Guam���q"
-	RT_CTRY_GT,             //  "Guatemala�ʦa����"
-	RT_CTRY_HT,             //  "Haiti���a"
-	RT_CTRY_HN,             //  "Honduras�����Դ�"
-	RT_CTRY_HU,             //  "Hungary�I���Q"
-	RT_CTRY_IS,             //  "Iceland�B�q"
-	RT_CTRY_IN,             //  "India�L��"
-	RT_CTRY_IE,             //  "Ireland�R����"
-	RT_CTRY_IL,             //  "Israel�H��C"
-	RT_CTRY_IT,             //  "Italy�q�j�Q"
-	RT_CTRY_JP,             //  "Japan�饻"
-	RT_CTRY_KR,             //  "Korea����"
-	RT_CTRY_LV,             //  "Latvia�Բ����"
-	RT_CTRY_LT,             //  "Lithuania�߳��{"
-	RT_CTRY_LU,             //  "Luxembourg�c�˳�"
-	RT_CTRY_MY,             //  "Malaysia���Ӧ��"
-	RT_CTRY_MT,             //  "Malta�����L"
-	RT_CTRY_MX,             //  "Mexico�����"
-	RT_CTRY_MA,             //  "Morocco������"
-	RT_CTRY_NL,             //  "Netherlands����"
-	RT_CTRY_NZ,             //  "New Zealand�æ���"
-	RT_CTRY_NO,             //  "Norway����"
-	RT_CTRY_PA,             //  "Panama�ڮ��� "
-	RT_CTRY_PH,             //  "Philippines��߻�"
-	RT_CTRY_PL,             //  "Poland�i��"
-	RT_CTRY_PT,             //  "Portugal�����"
-	RT_CTRY_RO,             //  "Romaniaù������"
-	RT_CTRY_RU,             //  "Russia�Xù��"
-	RT_CTRY_SA,             //  "Saudi Arabia�F�a���ԧB"
-	RT_CTRY_SG,             //  "Singapore�s�[�Y"
-	RT_CTRY_SK,             //  "Slovakia������J"
-	RT_CTRY_SI,             //  "Slovenia����������"
-	RT_CTRY_ZA,             //  "South Africa�n�D"
-	RT_CTRY_ES,             //  "Spain��Z��"
-	RT_CTRY_SE,             //  "Sweden���"
-	RT_CTRY_CH,             //  "Switzerland��h"
-	RT_CTRY_TW,             //  "Taiwan�O�W"
-	RT_CTRY_TH,             //  "Thailand����"
-	RT_CTRY_TR,             //  "Turkey�g�ը�"
-	RT_CTRY_UA,             //  "Ukraine�Q�J��"
-	RT_CTRY_GB,             //  "United Kingdom�^��"
-	RT_CTRY_US,             //  "United States����"
-	RT_CTRY_VE,             //  "Venezuela�e�����"
-	RT_CTRY_VN,             //  "Vietnam�V�n"
-	RT_CTRY_MAX,            //
+	RT_CTRY_AL,				//	"Albania�����ڥ���"					
+	RT_CTRY_DZ,             //  "Algeria�����ΧQ��"					
+	RT_CTRY_AG,             //  "Antigua & Barbuda�w���ʮq&�ڥ��F"	
+	RT_CTRY_AR,             //  "Argentina���ڧ�"					
+	RT_CTRY_AM,             //  "Armenia�Ȭ�����"					
+	RT_CTRY_AW,             //  "Aruba���|�ڮq"						
+	RT_CTRY_AU,             //  "Australia�D�w"						
+	RT_CTRY_AT,             //  "Austria���a�Q"						
+	RT_CTRY_AZ,             //  "Azerbaijan�������"				
+	RT_CTRY_BS,             //  "Bahamas�ګ���"					
+	RT_CTRY_BB,             //  "Barbados�ڤڦh��"				
+	RT_CTRY_BE,             //  "Belgium��Q��"					
+	RT_CTRY_BM,             //  "Bermuda�ʼ}�F"					
+	RT_CTRY_BR,             //  "Brazil�ڦ�"						
+	RT_CTRY_BG,             //  "Bulgaria�O�[�Q��"				
+	RT_CTRY_CA,             //  "Canada�[���j"					
+	RT_CTRY_KY,             //  "Cayman Islands�}�Ҹs�q"			
+	RT_CTRY_CL,             //  "Chile���Q"						
+	RT_CTRY_CN,             //  "China����"						
+	RT_CTRY_CO,             //  "Columbia���ۤ��"				
+	RT_CTRY_CR,             //  "Costa Rica�����F���["			
+	RT_CTRY_CY,             //  "Cyprus�������"					
+	RT_CTRY_CZ,             //  "Czech ���J"						
+	RT_CTRY_DK,             //  "Denmark����"					
+	RT_CTRY_DO,             //  "Dominican Republic�h�����[�@�M��"	
+	RT_CTRY_CE,             //  "Egypt�J��"	EG	2G_WORLD			
+	RT_CTRY_SV,             //  "El Salvador�ĺ��˦h"				
+	RT_CTRY_EE,             //  "Estonia�R�F����"					
+	RT_CTRY_FI,             //  "Finland����"						
+	RT_CTRY_FR,             //  "France�k��"						
+	RT_CTRY_DE,             //  "Germany�w��"					
+	RT_CTRY_GR,             //  "Greece ��þ"					
+	RT_CTRY_GU,             //  "Guam���q"						
+	RT_CTRY_GT,             //  "Guatemala�ʦa����"				
+	RT_CTRY_HT,             //  "Haiti���a"						
+	RT_CTRY_HN,             //  "Honduras�����Դ�"				
+	RT_CTRY_HU,             //  "Hungary�I���Q"					
+	RT_CTRY_IS,             //  "Iceland�B�q"					
+	RT_CTRY_IN,             //  "India�L��"						
+	RT_CTRY_IE,             //  "Ireland�R����"					
+	RT_CTRY_IL,             //  "Israel�H��C"					
+	RT_CTRY_IT,             //  "Italy�q�j�Q"					
+	RT_CTRY_JP,             //  "Japan�饻"						
+	RT_CTRY_KR,             //  "Korea����"						
+	RT_CTRY_LV,             //  "Latvia�Բ����"					
+	RT_CTRY_LT,             //  "Lithuania�߳��{"				
+	RT_CTRY_LU,             //  "Luxembourg�c�˳�"				
+	RT_CTRY_MY,             //  "Malaysia���Ӧ��"				
+	RT_CTRY_MT,             //  "Malta�����L"					
+	RT_CTRY_MX,             //  "Mexico�����"					
+	RT_CTRY_MA,             //  "Morocco������"					
+	RT_CTRY_NL,             //  "Netherlands����"				
+	RT_CTRY_NZ,             //  "New Zealand�æ���"				
+	RT_CTRY_NO,             //  "Norway����"						
+	RT_CTRY_PA,             //  "Panama�ڮ��� "					
+	RT_CTRY_PH,             //  "Philippines��߻�"				
+	RT_CTRY_PL,             //  "Poland�i��"						
+	RT_CTRY_PT,             //  "Portugal�����"					
+	RT_CTRY_RO,             //  "Romaniaù������"				
+	RT_CTRY_RU,             //  "Russia�Xù��"					
+	RT_CTRY_SA,             //  "Saudi Arabia�F�a���ԧB"			
+	RT_CTRY_SG,             //  "Singapore�s�[�Y"				
+	RT_CTRY_SK,             //  "Slovakia������J"				
+	RT_CTRY_SI,             //  "Slovenia����������"				
+	RT_CTRY_ZA,             //  "South Africa�n�D"				
+	RT_CTRY_ES,             //  "Spain��Z��"					
+	RT_CTRY_SE,             //  "Sweden���"						
+	RT_CTRY_CH,             //  "Switzerland��h"				
+	RT_CTRY_TW,             //  "Taiwan�O�W"						
+	RT_CTRY_TH,             //  "Thailand����"					
+	RT_CTRY_TR,             //  "Turkey�g�ը�"					
+	RT_CTRY_UA,             //  "Ukraine�Q�J��"					
+	RT_CTRY_GB,             //  "United Kingdom�^��"				
+	RT_CTRY_US,             //  "United States����"				
+	RT_CTRY_VE,             //  "Venezuela�e�����"				
+	RT_CTRY_VN,             //  "Vietnam�V�n"					
+	RT_CTRY_MAX,            //  
 
 }RT_COUNTRY_NAME, *PRT_COUNTRY_NAME;
 
